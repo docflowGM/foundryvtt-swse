@@ -1,0 +1,662 @@
+{
+  "schema": "swse.droid.clone.review-backlog/0.1",
+  "bookId": "CLONE",
+  "sourceClaims": 40,
+  "sourceDraftIdentities": 40,
+  "selectedFieldVisualReviews": 40,
+  "unreviewedFirstPages": 0,
+  "pendingFullMechanicalCertifications": 40,
+  "priorityNotes": [
+    "CLONE-DROID-014: original census p95 is a source-index error; printed B1 squad statblock p94.",
+    "CLONE-DROID-015: FX-6 statblock starts on printed p160 and continues printed p161.",
+    "CLONE-DROID-020 and -021: two-column TXT interleaves B1-A with Battle Droid Assassin; do not assert OCR-derived feats or attacks.",
+    "CLONE-DROID-034..040: all vehicle/starship-owned stats and firing groups must stay under Vehicle/Starship authority.",
+    "CLONE-DROID-033: Ultra Droideka printed p197 PC prohibition verified; complex p198 attack modes/mounts remain unverified.",
+    "All 32 individual-droid hero permissions were verified on the printed page; do not grant those to squad/vehicle format.",
+    "CLONE-DROID-018: A-DSD main statblock begins printed p188 and continues p189; leg shield Ref 14/18 is a conditional defense mode.",
+    "CLONE-DROID-027: JK-13 killing rage remains source-only and pending engine reconciliation.",
+    "CLONE-DROID-030: Octuptarra persistent virus burst is not ordinary weapon damage."
+  ],
+  "entries": [
+    {
+      "sourceEntryKey": "CLONE-DROID-001",
+      "printedName": "DD-13 Medical Assistant Droid",
+      "printedPage": 66,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-002",
+      "printedName": "EW-3 Midwife Droid",
+      "printedPage": 67,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-003",
+      "printedName": "IM-6 Medical Droid",
+      "printedPage": 67,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-004",
+      "printedName": "SP-4 Analysis Droid",
+      "printedPage": 68,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-005",
+      "printedName": "LE Series Repair Droid",
+      "printedPage": 69,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-006",
+      "printedName": "P2 Series Astromech Droid",
+      "printedPage": 69,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-007",
+      "printedName": "Serv-O-Droid Pit Droid",
+      "printedPage": 70,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-008",
+      "printedName": "5YQ Protocol Droid",
+      "printedPage": 70,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-009",
+      "printedName": "BCA-11/X Training Droid",
+      "printedPage": 71,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-010",
+      "printedName": "IG-86 Sentinel Droid",
+      "printedPage": 71,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-011",
+      "printedName": "CLL-6 Binary Load Lifter",
+      "printedPage": 72,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-012",
+      "printedName": "FA-5 Valet Droid",
+      "printedPage": 72,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-013",
+      "printedName": "IW-37 Pincer Loader Droid",
+      "printedPage": 73,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-014",
+      "printedName": "B1-Series Battle Droid Squad",
+      "printedPage": 94,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "squad-aggregation"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-015",
+      "printedName": "FX-6 Medical Assistance Droid",
+      "printedPage": 160,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-016",
+      "printedName": "FA-4 Pilot Droid",
+      "printedPage": 161,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-017",
+      "printedName": "Marksman-H Combat Remote",
+      "printedPage": 162,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-018",
+      "printedName": "A-DSD Advanced Dwarf Spider Droid",
+      "printedPage": 188,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-019",
+      "printedName": "A-Series Assassin Droid",
+      "printedPage": 189,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-020",
+      "printedName": "B1-A Series Air Battle Droid",
+      "printedPage": 190,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-021",
+      "printedName": "Battle Droid Assassin",
+      "printedPage": 190,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-022",
+      "printedName": "Cold Assault Battle Droid",
+      "printedPage": 191,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-023",
+      "printedName": "C-B3 Cortosis Battle Droid",
+      "printedPage": 192,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-024",
+      "printedName": "Droid Commando",
+      "printedPage": 192,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-025",
+      "printedName": "IG Lancer Combat Droid",
+      "printedPage": 193,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-026",
+      "printedName": "IG-110 Lightsaber Droid",
+      "printedPage": 193,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-027",
+      "printedName": "JK-13 Security Droid",
+      "printedPage": 194,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-028",
+      "printedName": "LM-432 Assault Crab Droid",
+      "printedPage": 194,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-029",
+      "printedName": "LR-57 Combat Droid",
+      "printedPage": 195,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-030",
+      "printedName": "Octuptarra Combat Tri-Droid",
+      "printedPage": 196,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-031",
+      "printedName": "OOM-Series Battle Droid",
+      "printedPage": 196,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-032",
+      "printedName": "Spelunker Probe Droid",
+      "printedPage": 197,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-033",
+      "printedName": "Ultra Droideka",
+      "printedPage": 198,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "droid"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-034",
+      "printedName": "Ground Armored Tank",
+      "printedPage": 198,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "vehicle"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-035",
+      "printedName": "IG-227 Hailfire-class Droid Tank",
+      "printedPage": 199,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "vehicle"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-036",
+      "printedName": "Manta Droid Subfighter",
+      "printedPage": 200,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "vehicle"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-037",
+      "printedName": "OG-9 Homing Spider Droid",
+      "printedPage": 201,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "vehicle"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-038",
+      "printedName": "Persuader-class Droid Enforcer",
+      "printedPage": 201,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "vehicle"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-039",
+      "printedName": "Tri-Droid",
+      "printedPage": 202,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "vehicle"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-040",
+      "printedName": "Hyena-class Bomber",
+      "printedPage": 208,
+      "selectedFirstPageFieldReview": "COMPLETE",
+      "nextReview": [
+        "full page/source text/layout match",
+        "continuation and special rules",
+        "exact feat/talent prerequisite provenance",
+        "installed components versus possessions",
+        "weapon ownership and attack alternatives",
+        "hero/stock PC rules",
+        "full official JSON schema, engine test"
+      ],
+      "authority": "vehicle"
+    }
+  ]
+}

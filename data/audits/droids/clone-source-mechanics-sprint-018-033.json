@@ -1,0 +1,189 @@
+{
+  "schema": "swse.droids.clone.source-mechanical-deepening/0.1",
+  "date": "2026-11-02",
+  "sourceBook": "Clone Wars Campaign Guide",
+  "checkpoint": "018-033",
+  "scope": "Primary PDF printed pages 188–198, full column-layout review and source-only authority facts. NOT strict mechanical feat/equipment certification.",
+  "records": [
+    {
+      "id": "CLONE-DROID-018",
+      "printedName": "A-DSD Advanced Dwarf Spider Droid",
+      "printedPage": 188,
+      "classesRaw": "nonheroic 9/soldier 3",
+      "installedSourceSystemTokens": 6,
+      "possessions": 4,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-019",
+      "printedName": "A-Series Assassin Droid",
+      "printedPage": 189,
+      "classesRaw": "nonheroic 6/soldier 6/elite trooper 3",
+      "installedSourceSystemTokens": 6,
+      "possessions": 3,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-020",
+      "printedName": "B1-A Series Air Battle Droid",
+      "printedPage": 190,
+      "classesRaw": "nonheroic 3/soldier 3",
+      "installedSourceSystemTokens": 5,
+      "possessions": 3,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-021",
+      "printedName": "Battle Droid Assassin",
+      "printedPage": 190,
+      "classesRaw": "nonheroic 3/soldier 3",
+      "installedSourceSystemTokens": 7,
+      "possessions": 3,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-022",
+      "printedName": "Cold Assault Battle Droid",
+      "printedPage": 191,
+      "classesRaw": "nonheroic 6",
+      "installedSourceSystemTokens": 8,
+      "possessions": 1,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-023",
+      "printedName": "C-B3 Cortosis Battle Droid",
+      "printedPage": 192,
+      "classesRaw": "nonheroic 6/soldier 3",
+      "installedSourceSystemTokens": 8,
+      "possessions": 1,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-024",
+      "printedName": "Droid Commando",
+      "printedPage": 192,
+      "classesRaw": "nonheroic 6/soldier 4",
+      "installedSourceSystemTokens": 5,
+      "possessions": 2,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-025",
+      "printedName": "IG Lancer Combat Droid",
+      "printedPage": 193,
+      "classesRaw": "nonheroic 6",
+      "installedSourceSystemTokens": 5,
+      "possessions": 1,
+      "mechanicalClaims": 3,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-026",
+      "printedName": "IG-110 Lightsaber Droid",
+      "printedPage": 193,
+      "classesRaw": "soldier 1/Jedi 5",
+      "installedSourceSystemTokens": 8,
+      "possessions": 2,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-027",
+      "printedName": "JK-13 Security Droid",
+      "printedPage": 194,
+      "classesRaw": "soldier 12",
+      "installedSourceSystemTokens": 7,
+      "possessions": 1,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-028",
+      "printedName": "LM-432 Assault Crab Droid",
+      "printedPage": 194,
+      "classesRaw": "nonheroic 18",
+      "installedSourceSystemTokens": 6,
+      "possessions": 2,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-029",
+      "printedName": "LR-57 Combat Droid",
+      "printedPage": 195,
+      "classesRaw": "nonheroic 9",
+      "installedSourceSystemTokens": 8,
+      "possessions": 2,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-030",
+      "printedName": "Octuptarra Combat Tri-Droid",
+      "printedPage": 196,
+      "classesRaw": "nonheroic 9",
+      "installedSourceSystemTokens": 6,
+      "possessions": 1,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-031",
+      "printedName": "OOM-Series Battle Droid",
+      "printedPage": 196,
+      "classesRaw": "nonheroic 6",
+      "installedSourceSystemTokens": 5,
+      "possessions": 3,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-032",
+      "printedName": "Spelunker Probe Droid",
+      "printedPage": 197,
+      "classesRaw": "nonheroic 3/scout 5",
+      "installedSourceSystemTokens": 5,
+      "possessions": 4,
+      "mechanicalClaims": 5,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-033",
+      "printedName": "Ultra Droideka",
+      "printedPage": 198,
+      "classesRaw": "nonheroic 16",
+      "installedSourceSystemTokens": 6,
+      "possessions": 2,
+      "mechanicalClaims": 4,
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "totals": {
+    "records": 16,
+    "individualDroids": 16,
+    "sourceSystemDescriptions": 101,
+    "sourcePossessions": 35,
+    "conditionalClaims": 64,
+    "contradictions": 0,
+    "heroProhibited": 16,
+    "secondPassReviewed": 33,
+    "totalIdentities": 40,
+    "certified": 0
+  },
+  "limitations": [
+    "Source System tokens and possession claims are not canonical item/mount IDs; no actor runtime grants.",
+    "Printed feat/talent lists require separate canonical identity reconciliation; class lines are source observations.",
+    "Source visuals resolve distinct same-page entities B1-A versus Battle Droid Assassin, avoiding combined OCR columns.",
+    "Alternative attack groups remain original source-only with no combat resolution.",
+    "Vehicle-format droids 034-040 still pending second pass."
+  ],
+  "next": "Seven vehicle/starship-format source records 034–040 plus combined closeout."
+}

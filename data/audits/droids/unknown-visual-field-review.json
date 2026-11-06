@@ -1,0 +1,59 @@
+{
+  "schema": "swse.droid.unknown.selected-pdf-visual/0.1",
+  "sourceBook": "The Unknown Regions",
+  "manualVisualReviews": 6,
+  "directFieldComparisons": 99,
+  "sourcePdfHash": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+  "method": "Printed PDF page images, primary text where available, selected values only.",
+  "scope": "Selected printed-page facts, not mechanically certified fields.",
+  "items": [
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-001",
+      "printedName": "AS23 Aerial Survey Droid",
+      "printedPage": 43,
+      "verifiedFieldCount": 16,
+      "sourceImage": "work/unknown_pdf_review/printed_p43.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-002",
+      "printedName": "DSH-3 Probe Droid",
+      "printedPage": 44,
+      "verifiedFieldCount": 16,
+      "sourceImage": "work/unknown_pdf_review/printed_p44.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-003",
+      "printedName": "F1 Exploration Droid",
+      "printedPage": 44,
+      "verifiedFieldCount": 16,
+      "sourceImage": "work/unknown_pdf_review/printed_p44.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-004",
+      "printedName": "MULE Droid",
+      "printedPage": 45,
+      "verifiedFieldCount": 17,
+      "sourceImage": "work/unknown_pdf_review/printed_p45.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-005",
+      "printedName": "Wanderer Scout Surveyor Droid",
+      "printedPage": 46,
+      "verifiedFieldCount": 17,
+      "sourceImage": "work/unknown_pdf_review/printed_p46.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-006",
+      "printedName": "WED-20 Treadwell",
+      "printedPage": 47,
+      "verifiedFieldCount": 17,
+      "sourceImage": "work/unknown_pdf_review/printed_p47.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    }
+  ]
+}

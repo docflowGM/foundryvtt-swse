@@ -1,0 +1,33 @@
+{
+  "schema": "swse.droid.kotor.local-state/0.1",
+  "bookId": "KOTOR",
+  "localCheckpoint": 7,
+  "selectedFirstPageReviews": 24,
+  "selectedFieldComparisons": 369,
+  "sourceDraftEntries": 24,
+  "sourcePrintedPages": [
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    165,
+    203,
+    212,
+    213,
+    216,
+    222,
+    223
+  ],
+  "pdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+  "textSha256": "5f5dbde873d6f221165b516101d8f9c3fd126607f0c31e8beb0f983f9240f163",
+  "ledgerSha256": "d03fdb092f671347f4f66751b2bea0667346b3558a95f03853113c0f167f3b41",
+  "mechanicalCertification": 0,
+  "gitHubWriteAuthorization": false,
+  "pending": "Full rule and executable mechanic certification; upstream schema and live V13 checks.",
+  "publishedAuditScope": "selected-field-source-review-only"
+}

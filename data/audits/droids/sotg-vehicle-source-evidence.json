@@ -1,0 +1,83 @@
+{
+  "schema": "swse.droid.vehicle-owned-source-evidence/0.1",
+  "book": "Starships of the Galaxy",
+  "droidActorPropertiesCopied": false,
+  "sourceOnly": true,
+  "vehicles": [
+    {
+      "sourceEntryKey": "SOTG-DROID-001",
+      "page": 78,
+      "owner": "vehicle",
+      "vehicleSourceValues": {
+        "hitPoints": 60,
+        "damageReduction": 10,
+        "damageThreshold": 32,
+        "reflex": 14,
+        "flatFootedReflex": 11,
+        "fortitude": 22,
+        "starshipSpeedSquares": 4,
+        "walkSquares": 6,
+        "flySquares": 16,
+        "newCredits": 19000,
+        "attackGroupLabels": [
+          "laser cannons",
+          "medium concussion missiles"
+        ]
+      },
+      "weaponOwnership": "SOURCE_ONLY_UNCERTIFIED",
+      "notes": [
+        "Model has dual vehicle walker/flight movement; independent droid brain is an optional retrofit, not default.",
+        "Missile and laser rows are vehicle attack groups, not certified individual mount rights."
+      ]
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-002",
+      "page": 79,
+      "owner": "vehicle",
+      "vehicleSourceValues": {
+        "hitPoints": 100,
+        "damageReduction": 10,
+        "damageThreshold": 34,
+        "reflex": 16,
+        "flatFootedReflex": 12,
+        "fortitude": 24,
+        "starshipSpeedSquares": 4,
+        "flySquares": 16,
+        "newCredits": 40000,
+        "attackGroupLabels": [
+          "laser cannon",
+          "3 light laser cannons",
+          "medium concussion missiles"
+        ]
+      },
+      "weaponOwnership": "SOURCE_ONLY_UNCERTIFIED",
+      "notes": [
+        "Three light laser cannons printed as one attack-group label, not proof of three independently firing mounts."
+      ]
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-003",
+      "page": 79,
+      "owner": "vehicle",
+      "vehicleSourceValues": {
+        "hitPoints": 80,
+        "damageReduction": 10,
+        "shieldRating": 20,
+        "damageThreshold": 43,
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 23,
+        "starshipSpeedSquares": 3,
+        "flySquares": 12,
+        "newCredits": 17000,
+        "attackGroupLabels": [
+          "blaster cannons"
+        ]
+      },
+      "weaponOwnership": "SOURCE_ONLY_UNCERTIFIED",
+      "notes": [
+        "Printed SR20 belongs to starfighter vehicle authority; no unprinted payload or weapon mounts."
+      ]
+    }
+  ]
+}

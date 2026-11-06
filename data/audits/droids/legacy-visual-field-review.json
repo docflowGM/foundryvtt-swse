@@ -1,0 +1,107 @@
+{
+  "schema": "swse.droid.legacy.selected-pdf-visual/0.1",
+  "sourceBook": "Legacy Era Campaign Guide",
+  "manualVisualReviews": 12,
+  "directFieldComparisons": 251,
+  "sourcePdfHash": "344d172e21daa7fdb3e0b032671e6833122f95d1175cf943bb1bb4a8110c561d",
+  "method": "PDF printed pages visually reviewed; selected source fields compared with searchable text as index.",
+  "scope": "Selected first-page fields only; no complete mechanical certification.",
+  "items": [
+    {
+      "sourceEntryKey": "LEGACY-DROID-001",
+      "printedName": "PI-Series Medical Assistant Droid",
+      "printedPage": 69,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p69.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-002",
+      "printedName": "3Z3 Medical Droid",
+      "printedPage": 70,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p70.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-003",
+      "printedName": "BL-39 Interrogator Droid",
+      "printedPage": 71,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p71.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-004",
+      "printedName": "FEG-Series Pilot Droid",
+      "printedPage": 71,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p71.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-005",
+      "printedName": "Holocam Droid",
+      "printedPage": 72,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p72.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-006",
+      "printedName": "Roving Eye Observation Droid",
+      "printedPage": 73,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p73.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-007",
+      "printedName": "Z65 Patrol Droid",
+      "printedPage": 74,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p74.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-008",
+      "printedName": "LV8-Series Guard Droid",
+      "printedPage": 74,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/legacy_pdf_review/printed_p74.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-009",
+      "printedName": "Aggressor-Series Battle Droid",
+      "printedPage": 75,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p75.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-010",
+      "printedName": "IX-6 Heavy Combat Droid",
+      "printedPage": 76,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p76.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-011",
+      "printedName": "LON-29 Battle Droid Commander",
+      "printedPage": 76,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p76.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-012",
+      "printedName": "HV-7 Loading Droid",
+      "printedPage": 77,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/legacy_pdf_review/printed_p77.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    }
+  ]
+}

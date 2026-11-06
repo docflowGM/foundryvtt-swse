@@ -1,0 +1,1200 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "FORCE",
+  "book": "Force Unleashed Campaign Guide",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+  "expectedPublicationClaims": 11,
+  "scope": "Selected PDF-source facts, no executable mechanics; not an import-ready pack.",
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-001",
+        "printedName": "FX-6 Medical Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 103,
+        "printedPageEnd": 103,
+        "pdfPageStart1Based": 104,
+        "textLineAnchor1Based": 9835,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 1,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 1,
+        "perceptionPrinted": 5,
+        "str": 9,
+        "dex": 10,
+        "int": 15,
+        "wis": 14,
+        "cha": 9
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 11,
+        "flatFootedReflex": 11,
+        "fortitude": 10,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 10
+      },
+      "movement": {
+        "speedLineRaw": "8 squares (wheeled)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Force Unleashed FX-6 and Clone Wars FX-6 are separate publication claims."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "FORCE-DROID-001-BOUNDARY-1",
+            "statement": "Force Unleashed FX-6 and Clone Wars FX-6 are separate publication claims.",
+            "scope": "FORCE-DROID-001",
+            "source": {
+              "book": "Force Unleashed Campaign Guide",
+              "page": 103,
+              "pdfPage1Based": 104,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "FORCE-DROID-001"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-001:pdf-p103",
+          "FORCE-DROID-001:txt-line-9835"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-002",
+        "printedName": "Q7 Series Astromech Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 104,
+        "printedPageEnd": 104,
+        "pdfPageStart1Based": 105,
+        "textLineAnchor1Based": 9933,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 4,
+        "perceptionPrinted": 3,
+        "str": 7,
+        "dex": 16,
+        "int": 15,
+        "wis": 10,
+        "cha": 7
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 11,
+        "fortitude": 7,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 7
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-002:pdf-p104",
+          "FORCE-DROID-002:txt-line-9933"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-003",
+        "printedName": "BD-3000 Luxury Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 105,
+        "printedPageEnd": 105,
+        "pdfPageStart1Based": 106,
+        "textLineAnchor1Based": 10059,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": -1,
+        "perceptionPrinted": -1,
+        "str": 8,
+        "dex": 13,
+        "int": 12,
+        "wis": 9,
+        "cha": 15
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1"
+      },
+      "defenses": {
+        "reflex": 11,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 9
+      },
+      "durability": {
+        "hitPoints": 2,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 25000,
+        "usedCredits": 8000
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "New price 25,000 credits; used price 8,000 credits are distinct fields."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "FORCE-DROID-003-BOUNDARY-1",
+            "statement": "New price 25,000 credits; used price 8,000 credits are distinct fields.",
+            "scope": "FORCE-DROID-003",
+            "source": {
+              "book": "Force Unleashed Campaign Guide",
+              "page": 105,
+              "pdfPage1Based": 106,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "FORCE-DROID-003"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-003:pdf-p105",
+          "FORCE-DROID-003:txt-line-10059"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-004",
+        "printedName": "Junk Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 106,
+        "printedPageEnd": 106,
+        "pdfPageStart1Based": 107,
+        "textLineAnchor1Based": 10173,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": null,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "contextualDegreeHeading": 4
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 4,
+        "perceptionPrinted": 5,
+        "str": 15,
+        "dex": 16,
+        "int": 10,
+        "wis": 8,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 3"
+      },
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 11,
+        "fortitude": 13,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 12,
+        "damageThreshold": 13
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "No degree printed; contextual fourth-degree heading is not explicit degree."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/classification/publishedDegree": "not-stated",
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "FORCE-DROID-004-BOUNDARY-1",
+            "statement": "No degree printed; contextual fourth-degree heading is not explicit degree.",
+            "scope": "FORCE-DROID-004",
+            "source": {
+              "book": "Force Unleashed Campaign Guide",
+              "page": 106,
+              "pdfPage1Based": 107,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "FORCE-DROID-004"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-004:pdf-p106",
+          "FORCE-DROID-004:txt-line-10173"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-005",
+        "printedName": "Brute Junk Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 107,
+        "printedPageEnd": 107,
+        "pdfPageStart1Based": 108,
+        "textLineAnchor1Based": 10206,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": null,
+        "size": "Large",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "contextualDegreeHeading": 4
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 7,
+        "perceptionPrinted": 8,
+        "str": 25,
+        "dex": 16,
+        "int": 10,
+        "wis": 8,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 9"
+      },
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 10,
+        "fortitude": 18,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 43,
+        "damageThreshold": 23
+      },
+      "movement": {
+        "speedLineRaw": "8 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "No degree printed; source describes a distinct Large junk variant."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/classification/publishedDegree": "not-stated",
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "FORCE-DROID-005-BOUNDARY-1",
+            "statement": "No degree printed; source describes a distinct Large junk variant.",
+            "scope": "FORCE-DROID-005",
+            "source": {
+              "book": "Force Unleashed Campaign Guide",
+              "page": 107,
+              "pdfPage1Based": 108,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "FORCE-DROID-005"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-005:pdf-p107",
+          "FORCE-DROID-005:txt-line-10206"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-006",
+        "printedName": "Behemoth Junk Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 107,
+        "printedPageEnd": 107,
+        "pdfPageStart1Based": 108,
+        "textLineAnchor1Based": 10243,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": null,
+        "size": "Huge",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "contextualDegreeHeading": 4
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 5,
+        "perceptionPrinted": 11,
+        "str": 34,
+        "dex": 12,
+        "int": 10,
+        "wis": 11,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 12"
+      },
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 23,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 63,
+        "damageThreshold": 33
+      },
+      "movement": {
+        "speedLineRaw": "8 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "No degree printed; Huge junk variant and optional passenger space are not fixed chassis capacities."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/classification/publishedDegree": "not-stated",
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "FORCE-DROID-006-BOUNDARY-1",
+            "statement": "No degree printed; Huge junk variant and optional passenger space are not fixed chassis capacities.",
+            "scope": "FORCE-DROID-006",
+            "source": {
+              "book": "Force Unleashed Campaign Guide",
+              "page": 107,
+              "pdfPage1Based": 108,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "FORCE-DROID-006"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-006:pdf-p107",
+          "FORCE-DROID-006:txt-line-10243"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-007",
+        "printedName": "IT-O Interrogator",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 195,
+        "printedPageEnd": 195,
+        "pdfPageStart1Based": 196,
+        "textLineAnchor1Based": 19621,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 8,
+        "perceptionPrinted": 9,
+        "str": 8,
+        "dex": 11,
+        "int": 16,
+        "wis": 15,
+        "cha": 16
+      },
+      "progression": {
+        "classLineRaw": "noble 1"
+      },
+      "defenses": {
+        "reflex": 12,
+        "flatFootedReflex": 12,
+        "fortitude": 9,
+        "will": 14
+      },
+      "durability": {
+        "hitPoints": 17,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "conditional",
+        "heroEligibilityCondition": "Source requires reprogramming; not a generic unrestricted starting choice."
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Hero route conditional on reprogramming; not unconditional allowed."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "FORCE-DROID-007-BOUNDARY-1",
+            "statement": "Hero route conditional on reprogramming; not unconditional allowed.",
+            "scope": "FORCE-DROID-007",
+            "source": {
+              "book": "Force Unleashed Campaign Guide",
+              "page": 195,
+              "pdfPage1Based": 196,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "FORCE-DROID-007"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-007:pdf-p195",
+          "FORCE-DROID-007:txt-line-19621"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-008",
+        "printedName": "RA-7 Protocol Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 196,
+        "printedPageEnd": 196,
+        "pdfPageStart1Based": 197,
+        "textLineAnchor1Based": 19732,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 1,
+        "perceptionPrinted": 14,
+        "str": 8,
+        "dex": 13,
+        "int": 12,
+        "wis": 15,
+        "cha": 9
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1"
+      },
+      "defenses": {
+        "reflex": 11,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 2,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-008:pdf-p196",
+          "FORCE-DROID-008:txt-line-19732"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-009",
+        "printedName": "PROXY",
+        "namedIndividual": true
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 197,
+        "printedPageEnd": 197,
+        "pdfPageStart1Based": 198,
+        "textLineAnchor1Based": 19802,
+        "publicationKind": "named-character"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 13
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 14,
+        "perceptionPrinted": 6,
+        "str": 18,
+        "dex": 16,
+        "int": 13,
+        "wis": 10,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "soldier 1/Jedi 9/independent droid 3"
+      },
+      "defenses": {
+        "reflex": 30,
+        "flatFootedReflex": 27,
+        "fortitude": 29,
+        "will": 27
+      },
+      "durability": {
+        "hitPoints": 89,
+        "damageThreshold": 29
+      },
+      "movement": {
+        "speedLineRaw": "6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "PROXY is a named droid with Jedi levels and Force points; neither implies universal Force sensitivity for droids."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "FORCE-DROID-009-BOUNDARY-1",
+            "statement": "PROXY is a named droid with Jedi levels and Force points; neither implies universal Force sensitivity for droids.",
+            "scope": "FORCE-DROID-009",
+            "source": {
+              "book": "Force Unleashed Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "FORCE-DROID-009"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-009:pdf-p197",
+          "FORCE-DROID-009:txt-line-19802"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-010",
+        "printedName": "R-1 Recon Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 197,
+        "printedPageEnd": 197,
+        "pdfPageStart1Based": 198,
+        "textLineAnchor1Based": 19876,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 8,
+        "perceptionPrinted": 9,
+        "str": 10,
+        "dex": 16,
+        "int": 12,
+        "wis": 15,
+        "cha": 11
+      },
+      "progression": {
+        "classLineRaw": "scout 1"
+      },
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 13,
+        "fortitude": 11,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 24,
+        "damageThreshold": 11
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Integral blaster is described in narrative but listed as a possession; must reconcile weapon/component ownership."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "FORCE-DROID-010-BOUNDARY-1",
+            "statement": "Integral blaster is described in narrative but listed as a possession; must reconcile weapon/component ownership.",
+            "scope": "FORCE-DROID-010",
+            "source": {
+              "book": "Force Unleashed Campaign Guide",
+              "page": 197,
+              "pdfPage1Based": 198,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "FORCE-DROID-010"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-010:pdf-p197",
+          "FORCE-DROID-010:txt-line-19876"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "FORCE-DROID-011",
+        "printedName": "MSE-6 Repair Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Force Unleashed Campaign Guide",
+        "bookId": "FORCE",
+        "printedPageStart": 198,
+        "printedPageEnd": 198,
+        "pdfPageStart1Based": 199,
+        "textLineAnchor1Based": 19978,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 5,
+        "size": "Tiny",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 3,
+        "str": 6,
+        "dex": 14,
+        "int": 15,
+        "wis": 7,
+        "cha": 7
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 12,
+        "fortitude": 8,
+        "will": 8
+      },
+      "durability": {
+        "hitPoints": 6,
+        "damageThreshold": 8
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (wheeled)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Reach 0 and model-specific reaction are not universal droid weaknesses."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "FORCE-DROID-011-BOUNDARY-1",
+            "statement": "Reach 0 and model-specific reaction are not universal droid weaknesses.",
+            "scope": "FORCE-DROID-011",
+            "source": {
+              "book": "Force Unleashed Campaign Guide",
+              "page": 198,
+              "pdfPage1Based": 199,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "FORCE-DROID-011"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "FORCE-DROID-011:pdf-p198",
+          "FORCE-DROID-011:txt-line-19978"
+        ]
+      }
+    }
+  ]
+}

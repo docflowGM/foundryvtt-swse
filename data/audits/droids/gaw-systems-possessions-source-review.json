@@ -1,0 +1,22 @@
+{
+  "schema": "swse.droids.gaw.system-possession-source-token-review/0.1",
+  "date": "2026-11-02",
+  "scope": "Capture separate Systems/Possessions printed labels for 20 individual GAW droids. One vehicle (GAT) and one squad remain deferred to their distinct authority. Raw grouped quantities not counted as physical appendage/mount instances.",
+  "totals": {
+    "actorRecords": 20,
+    "systemLabels": 147,
+    "possessionLabels": 29,
+    "vehiclesDeferred": 1,
+    "squadsDeferred": 1,
+    "sourceIdentities": 22,
+    "strictCertifications": 0
+  },
+  "sourcePrintedPages": "51-57, 98, 181, 210-219",
+  "outstanding": [
+    "Full canonical feat/talent and action alternatives",
+    "Individual physical appendage and installed armament reconciliation",
+    "GAT vehicle-only source stats and squad aggregation behavior",
+    "Foundry runtime, full schema/negative mutation tests"
+  ],
+  "productionMutation": 0
+}

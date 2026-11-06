@@ -1,0 +1,1970 @@
+{
+  "schema": "swse.droids.mechanical-source-review/v3",
+  "batch": "MECH-003",
+  "date": "2026-11-02",
+  "scope": "25 new canonical Core+SGD identities; source facts and strict PASS/HOLD, no runtime certification",
+  "censusReference": "data/audits/droids/component-122-identity-source-coverage.json",
+  "sourceMethod": "Original PDFs rendered, printed tables checked visually; TXT used only for locating text. Every source page has PDF +1 index.",
+  "priceFactorAuthority": {
+    "source": "Core Table 11-2 printed p187",
+    "values": {
+      "fine": 20,
+      "diminutive": 10,
+      "tiny": 5,
+      "small": 2,
+      "medium": 1,
+      "large": 2,
+      "huge": 5,
+      "gargantuan": 10,
+      "colossal": 20
+    }
+  },
+  "batchCounts": {
+    "reviewed": 25,
+    "passed": 17,
+    "held": 8
+  },
+  "cumulative": {
+    "previouslyCertified": 44,
+    "newCertified": 17,
+    "totalCertified": 61,
+    "sourceHoldBefore": 6,
+    "sourceHoldAfter": 14,
+    "mechanicallyUnreviewed": 47,
+    "remainingNotCertified": 61,
+    "productionCertified": 0,
+    "applicationParityCertified": 0,
+    "foundryRuntimeCertified": 0
+  },
+  "records": [
+    {
+      "canonicalId": "droid-climbing-claws",
+      "canonicalName": "Climbing Claws",
+      "source": {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "pages": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 189,
+            "pdfPage1Based": 190,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 194,
+            "pdfPage1Based": 195,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-core-003.json"
+      },
+      "decision": "HOLD",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "p189: 2x Walking locomotion cost; Table 11-5 p194: 2x appendage cost"
+        },
+        "weight": {
+          "kind": "NOT_SPECIFIED",
+          "kg": null,
+          "note": "Printed weight not separately specified"
+        },
+        "availability": "-",
+        "host": "Walking locomotion system",
+        "prerequisites": "Walking locomotion installed",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "climbSpeed": "half walking speed",
+          "mayRerollFailedClimbKeepBetter": true,
+          "mayTake10WhenRushedOrThreatened": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": {
+        "reason": "Printed prose and table disagree on price base",
+        "unresolvedFields": [
+          "authoritative pricing base",
+          "source appendage identity"
+        ]
+      },
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "raw prereq Hand/Claw rather than walking"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-extra-legs",
+      "canonicalName": "Extra Legs",
+      "source": {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "pages": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 189,
+            "pdfPage1Based": 190,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-core-003.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "2x selected Walking locomotion price"
+        },
+        "weight": {
+          "kind": "NOT_SPECIFIED",
+          "kg": null,
+          "note": "Printed weight not separately specified"
+        },
+        "availability": "-",
+        "host": "Walking leg configuration",
+        "prerequisites": "Walking locomotion",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "carryingCapacityMultiplierVsSameStrengthBiped": 1.5,
+          "stabilityBonusAgainstProne": 5
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": []
+      }
+    },
+    {
+      "canonicalId": "droid-jump-servos",
+      "canonicalName": "Jump Servos",
+      "source": {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "pages": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 189,
+            "pdfPage1Based": 190,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 194,
+            "pdfPage1Based": 195,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-core-003.json"
+      },
+      "decision": "HOLD",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "p189: 2x Walking locomotion cost; Table 11-5: 2x appendage cost"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "2x size cost factor kg"
+        },
+        "availability": "-",
+        "host": "Walking locomotion",
+        "prerequisites": "Walking locomotion installed",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "treatAllJumpsAsRunning": true,
+          "rerollFailedJumpKeepBetter": true,
+          "take10WhenRushedOrThreatened": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": {
+        "reason": "Printed prose and accessory table disagree on cost base",
+        "unresolvedFields": [
+          "authoritative pricing base"
+        ]
+      },
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": []
+      }
+    },
+    {
+      "canonicalId": "droid-magnetic-feet",
+      "canonicalName": "Magnetic Feet",
+      "source": {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "pages": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 189,
+            "pdfPage1Based": 190,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 194,
+            "pdfPage1Based": 195,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-core-003.json"
+      },
+      "decision": "HOLD",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "Table 11-5: 2x appendage cost; referenced appendage not specified"
+        },
+        "weight": {
+          "kind": "NOT_SPECIFIED",
+          "kg": null,
+          "note": "Printed weight not separately specified"
+        },
+        "availability": "-",
+        "host": "Walking/wheeled/tracked locomotion",
+        "prerequisites": "One of walking, wheeled or tracked locomotion",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "clingToMovingShipHull": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": {
+        "reason": "Table uses appendage-based pricing without identifying which appendage belongs to the foot hardware",
+        "unresolvedFields": [
+          "selected appendage price base"
+        ]
+      },
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": []
+      }
+    },
+    {
+      "canonicalId": "droid-telescopic-appendage",
+      "canonicalName": "Telescopic Appendage",
+      "source": {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "pages": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 190,
+            "pdfPage1Based": 191,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 194,
+            "pdfPage1Based": 195,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-core-003.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "2x actual selected appendage base price"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "2x actual selected appendage base weight"
+        },
+        "availability": "-",
+        "host": "Modified installed appendage",
+        "prerequisites": "Selected appendage",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "reachMultiplier": 2,
+          "exampleMediumReachSquares": 2,
+          "noAdditionalAttacks": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "Generic callback supplied size factor instead of selected appendage price and weight"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-stabilized-mount",
+      "canonicalName": "Stabilized Mount",
+      "source": {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "pages": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 190,
+            "pdfPage1Based": 191,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-core-003.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "5x Tool appendage cost",
+          "mediumCredits": 50
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "5x Tool appendage weight",
+          "mediumKg": 10
+        },
+        "availability": "-",
+        "host": "Tool appendage",
+        "prerequisites": "Tool appendage with separate purchased weapon",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "largerWeaponHeldAsTwoHanded": true,
+          "doesNotSupplyWeapon": true,
+          "doesNotGrantExtraAttack": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "Raw 125cr*CF/2kg*CF vs source 50cr*CF/10kg*CF"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-spring-loaded-mechanism",
+      "canonicalName": "Spring-Loaded Mechanism",
+      "source": {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "pages": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 194,
+            "pdfPage1Based": 195,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 195,
+            "pdfPage1Based": 196,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-source-facts-sprint-002.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FIXED",
+          "credits": 150
+        },
+        "weight": {
+          "kind": "FIXED",
+          "kg": 3
+        },
+        "availability": "-",
+        "host": "Internal storage launcher",
+        "prerequisites": "Internal Storage component; Small/Medium/Large typical, Huge+ not normally practical",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "launchAction": "standard",
+          "maxCargoKg": 4,
+          "rangeSquares": 4,
+          "attack": "Ranged attack vs Reflex 10 for selected square",
+          "miss": "Random adjacent square",
+          "catch": {
+            "requiresReadiedAction": true,
+            "withinReachOfSquare": true,
+            "dexterityDC": 10,
+            "catchAction": "move"
+          }
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "missing from production"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-locked-access",
+      "canonicalName": "Locked Access",
+      "source": {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "pages": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 194,
+            "pdfPage1Based": 195,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 195,
+            "pdfPage1Based": 196,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-source-facts-sprint-002.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FIXED",
+          "credits": 50
+        },
+        "weight": {
+          "kind": "NOT_SPECIFIED",
+          "kg": null,
+          "note": "Printed weight not separately specified"
+        },
+        "availability": "Licensed",
+        "host": "Droid secured shutdown mechanism",
+        "prerequisites": "Droid with shutdown switch",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "cannotBeForcedOffUnless": "disabled or otherwise helpless",
+          "voluntaryShutdownUnaffected": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "missing from production"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-translator-unit",
+      "canonicalName": "Translator Unit",
+      "source": {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "pages": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 195,
+            "pdfPage1Based": 196,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-edit-families-source-facts-c2-001.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "Select one of 4 source DC variants"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "Select corresponding weight 1/2/4/8kg"
+        },
+        "availability": "-",
+        "host": "Integrated translator",
+        "prerequisites": "Droid capable of an Intelligence check",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "check": "Intelligence when encountering form of communication for first time",
+          "includesNonverbal": true,
+          "lowerDCIndicatesStrongerDatabase": true
+        },
+        "variants": [
+          {
+            "intelligenceDC": 20,
+            "credits": 200,
+            "kg": 1,
+            "availability": "-"
+          },
+          {
+            "intelligenceDC": 15,
+            "credits": 500,
+            "kg": 2,
+            "availability": "-"
+          },
+          {
+            "intelligenceDC": 10,
+            "credits": 1000,
+            "kg": 4,
+            "availability": "-"
+          },
+          {
+            "intelligenceDC": 5,
+            "credits": 2000,
+            "kg": 8,
+            "availability": "-"
+          }
+        ],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "Legacy three translator aliases do not match four priced source tiers"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-burrower-drive",
+      "canonicalName": "Burrower Drive",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 52,
+            "pdfPage1Based": 53,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-007.json"
+      },
+      "decision": "HOLD",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "200 * Core size factor * chosen speed squared"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "50 * Core size factor kg"
+        },
+        "availability": "Restricted",
+        "host": "Chassis underground-drive addition",
+        "prerequisites": "Droid with selected movement speed",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "undergroundTravel": "Half base speed horizontally or vertically",
+          "drill": {
+            "meleeAttack": true,
+            "successDamage": "Published Self-Destruct System damage for droid size",
+            "eachSuccessfulHit": "Droid suffers 1 persistent condition-track step"
+          }
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": {
+        "reason": "Tiny and smaller have no published self-destruct collateral damage dice, so drill attack damage is unquantified for those sizes",
+        "unresolvedFields": [
+          "tiny-or-smaller drill damage"
+        ]
+      },
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "overlay-only price/weight"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-gyroscopic-stabilizers",
+      "canonicalName": "Gyroscopic Stabilizers",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 52,
+            "pdfPage1Based": 53,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-004.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "2 * size factor * selected speed squared"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "4 * size factor kg"
+        },
+        "availability": "-",
+        "host": "Integrated droid stability system",
+        "prerequisites": "Droid with locomotion",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "stabilityBonus": 5,
+          "scope": "resist knocked prone",
+          "stacksWithExtraLegs": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "raw definition omits published weight"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-underwater-drive",
+      "canonicalName": "Underwater Drive",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 52,
+            "pdfPage1Based": 53,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-007.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "20 * size factor * selected speed squared"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "10 * size factor kg"
+        },
+        "availability": "Licensed",
+        "host": "Chassis water-propulsion accessory",
+        "prerequisites": "Droid with base land speed",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "swimSpeed": "equal to base land speed",
+          "factoryStandard": "Water-world examples, not universal no-charge default"
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "overlay-only missing price and weight"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-magnetic-hands",
+      "canonicalName": "Magnetic Hands",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 52,
+            "pdfPage1Based": 53,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-004.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "2 * actual selected appendage cost"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "2 * size cost factor kg"
+        },
+        "availability": "-",
+        "host": "Selected hand appendage",
+        "prerequisites": "Functional magnetic hand; Magnetic Feet for cooperative benefit",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "magneticFeetSynergy": {
+            "climbBonusOnShipHull": 2,
+            "bonusToDefensesVsKnockOff": 5
+          },
+          "whileActivated": {
+            "mayAttack": false,
+            "mayUseHandRequiringTools": false
+          }
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "raw fixed price 200*factor ignores chosen appendage"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-projectile-hand",
+      "canonicalName": "Projectile Hand",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 52,
+            "pdfPage1Based": 53,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],        "priorEvidencePacket": "data/audits/droids/component-edit-families-source-facts-c2-001.json"
+      },
+      "decision": "HOLD",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "p52 250cr install; Table 3-2 p59 2x appendage cost"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "2 * size factor kg"
+        },
+        "availability": "Licensed",
+        "host": "Projectile-capable appendage",
+        "prerequisites": "Projectile hand or similar projectile appendage",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "rangedSimpleWeapon": true,
+          "nonlethal": true,
+          "damage": "2d8",
+          "rangedDisarmMaximumSquares": 6
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": {
+        "reason": "250cr description and double appendage-cost table contradict for some chosen appendages",
+        "unresolvedFields": [
+          "exact price including appendage purchase"
+        ]
+      },
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": []
+      }
+    },
+    {
+      "canonicalId": "droid-quick-release-coupling",
+      "canonicalName": "Quick-Release Coupling",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 52,
+            "pdfPage1Based": 53,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 53,
+            "pdfPage1Based": 54,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-004.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "Tool 10*factor; appendage 50*factor"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "Tool 2*factor kg; appendage 5*factor kg"
+        },
+        "availability": "-",
+        "host": "Matching coupling on both sides",
+        "prerequisites": "Tool-to-appendage or appendage-to-chassis must use matching type, extra capable manipulator needed to swap own parts",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "toolSwap": "2 standard actions, one detach one attach",
+          "appendageSwap": "2 full-round actions, one detach one attach",
+          "mechanicsCheckForSwap": false,
+          "typesInterchangeable": false
+        },
+        "variants": [
+          {
+            "kind": "tool",
+            "creditsBase": 10,
+            "kgBase": 2
+          },
+          {
+            "kind": "appendage",
+            "creditsBase": 50,
+            "kgBase": 5
+          }
+        ],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "Live swap prerequisites and manipulator checks not tested"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-remote-limb-control",
+      "canonicalName": "Remote Limb Control",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 53,
+            "pdfPage1Based": 54,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-004.json"
+      },
+      "decision": "HOLD",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "p53 basic 1500cr/deluxe 6000cr; table appendage cost x2"
+        },
+        "weight": {
+          "kind": "NOT_SPECIFIED",
+          "kg": null,
+          "note": "Printed weight not separately specified"
+        },
+        "availability": "Restricted",
+        "host": "Selected detachable droid appendage",
+        "prerequisites": "Designated controllable limb",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "basic": {
+            "maxControlledLimbs": 1,
+            "hoverSpeedSquares": 6,
+            "rangeSquares": 24
+          },
+          "deluxe": {
+            "maxControlledLimbs": "max(1,1+Int modifier)"
+          },
+          "detachedLimbActsAsIfAttached": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": {
+        "reason": "Prose prices differ from table appendage-based price, and table does not specify basic/deluxe distinction",
+        "unresolvedFields": [
+          "separate basic/deluxe purchase quotes"
+        ]
+      },
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": []
+      }
+    },
+    {
+      "canonicalId": "droid-rocket-arm",
+      "canonicalName": "Rocket Arm",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 53,
+            "pdfPage1Based": 54,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-004.json"
+      },
+      "decision": "HOLD",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "p53 2000cr; Table 3-2 4x selected appendage cost"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "2 * size factor kg"
+        },
+        "availability": "Illegal",
+        "host": "Detachable rocket appendage",
+        "prerequisites": "Existing arm and special installation Mechanics DC20",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "installation": {
+            "mechanicsDC": 20,
+            "onFailedCheck": "Rocket may detonate causing damage to droid and targets in 1-square splash"
+          },
+          "weapon": {
+            "category": "ranged heavy",
+            "damage": "3d8",
+            "splashRadiusSquares": 1,
+            "unguided": true
+          }
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": {
+        "reason": "Printed 2000cr fixed price conflicts with four-times-appendage table",
+        "unresolvedFields": [
+          "approved single cost formula"
+        ]
+      },
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "raw source adds separate 1d8 splash number not established in paragraph"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-droid-remote-control",
+      "canonicalName": "Droid Remote Control",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 53,
+            "pdfPage1Based": 54,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-006.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FIXED",
+          "credits": 500
+        },
+        "weight": {
+          "kind": "FIXED",
+          "kg": 0.5
+        },
+        "availability": "-",
+        "host": "Advanced restraining bolt controller device",
+        "prerequisites": "Droid caller with owner authority",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "movement": "Only direct target own locomotion",
+          "speedFraction": 0.5,
+          "compelWeaponUse": false,
+          "compelOtherSystemUse": false
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": []
+      }
+    },
+    {
+      "canonicalId": "droid-hidden-core",
+      "canonicalName": "Hidden Core",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 53,
+            "pdfPage1Based": 54,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-006.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "200cr standard, 400cr enhanced"
+        },
+        "weight": {
+          "kind": "HOST_CONDITIONAL",
+          "secondaryDataStoreKg": 1,
+          "mainProcessorStored": "unlisted"
+        },
+        "availability": "Restricted",
+        "host": "Hidden main processor or separate concealed data store",
+        "prerequisites": "Backup copy of essential personality/data/skills/memories",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "recovery": {
+            "delayDays": "1d6",
+            "skill": "Use Computer DC20",
+            "roll": "1d20+max(10,current Use Computer modifier)",
+            "repeatDelay": "1d6 days if failed"
+          },
+          "detection": {
+            "requiresIntentionalSearch": true,
+            "check": "Use Computer vs droid Will Defense",
+            "enhancedDC": 30
+          }
+        },
+        "variants": [
+          {
+            "kind": "normal",
+            "credits": 200
+          },
+          {
+            "kind": "enhanced",
+            "credits": 400,
+            "searchDC": 30
+          }
+        ],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "Raw fixed 1kg not correct for unlisted internal-processor host"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-personality-downloader",
+      "canonicalName": "Personality Downloader",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 53,
+            "pdfPage1Based": 54,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-006.json"
+      },
+      "decision": "HOLD",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "Custom build 5000+ credits; exact price unspecified"
+        },
+        "weight": {
+          "kind": "MINIMUM_ONLY",
+          "minimumKg": 2
+        },
+        "availability": "Illegal",
+        "host": "External connected data-port tool, not chassis-installed accessory",
+        "prerequisites": "Accessible droid data port; locked/hidden port requires authorized physical access",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "initial": "Use Computer opposed by target Will Defense",
+          "suppressionTimeMinutes": 5,
+          "maintenanceCheckEveryMinutes": 10,
+          "maintainedBy": "initial user Use Computer skill modifier even if away",
+          "ownershipNotAutomaticallyPermanent": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": {
+        "reason": "Custom item has published minimum price/weight, not exact price or mass for a configured sale",
+        "unresolvedFields": [
+          "chosen custom build quote and mass"
+        ]
+      },
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "Raw minimum fields could be mistaken for exact product price"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-specialized-subprocessor",
+      "canonicalName": "Specialized Subprocessor",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 53,
+            "pdfPage1Based": 54,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 54,
+            "pdfPage1Based": 55,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-004.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FIXED",
+          "credits": 1000
+        },
+        "weight": {
+          "kind": "FIXED",
+          "kg": 2
+        },
+        "availability": "-",
+        "host": "Integrated specialized droid subprocessor",
+        "prerequisites": "Select one skill at creation; one such subprocessor maximum",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "extraSwiftActionsPerTurn": 1,
+          "eligibleActions": "actions related to chosen skill only",
+          "maximumInstalled": 1
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "Live turn resource enforcement unverified"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-tactician-battle-computer",
+      "canonicalName": "Tactician Battle Computer",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 54,
+            "pdfPage1Based": 55,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-004.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FIXED",
+          "credits": 5000
+        },
+        "weight": {
+          "kind": "FIXED",
+          "kg": 10
+        },
+        "availability": "Restricted",
+        "host": "Droid computer and matching ranged weapon transceivers",
+        "prerequisites": "Transceivers on all usable ranged weapons; eligible on droid regardless degree",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "activateAction": "standard",
+          "affectedAllies": "max(1,Intelligence modifier)",
+          "bonusToNextEligibleRangedAttack": 2,
+          "expires": "end of each ally next turn if unused",
+          "unmatchedWeaponUse": "disables system",
+          "restartMechanicsDC": 20
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": [
+          "Raw availability unregulated instead of Restricted"
+        ]
+      }
+    },
+    {
+      "canonicalId": "droid-laminanium-plating",
+      "canonicalName": "Laminanium Plating",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 54,
+            "pdfPage1Based": 55,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-edit-families-source-facts-c2-001.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FORMULA",
+          "expression": "Light 3000*factor; heavy 20000*factor"
+        },
+        "weight": {
+          "kind": "FORMULA",
+          "expression": "15*factor kg for either version"
+        },
+        "availability": "Military / Military, Rare",
+        "host": "Built-in droid armor",
+        "prerequisites": "Select light or heavy plating; normal armor nonstacking",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "fortitudeEquipmentBonus": 2,
+          "passiveHitPointRegeneration": "No printed numerical/timed healing",
+          "heavyRunningSpeedMultiplier": 3
+        },
+        "variants": [
+          {
+            "armorClass": "light",
+            "baseCredits": 3000,
+            "baseKg": 15,
+            "reflexBonus": 4,
+            "maxDex": 3,
+            "armorCheckPenalty": -2,
+            "availability": "Military"
+          },
+          {
+            "armorClass": "heavy",
+            "baseCredits": 20000,
+            "baseKg": 15,
+            "reflexBonus": 12,
+            "maxDex": 2,
+            "armorCheckPenalty": -10,
+            "availability": "Military, Rare"
+          }
+        ],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": []
+      }
+    },
+    {
+      "canonicalId": "droid-communications-countermeasure-system",
+      "canonicalName": "Communications Countermeasure System",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 56,
+            "pdfPage1Based": 57,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-edit-families-source-facts-c2-001.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FIXED",
+          "credits": 1000
+        },
+        "weight": {
+          "kind": "FIXED",
+          "kg": 3
+        },
+        "availability": "Restricted",
+        "host": "Droid communications anti-jamming system",
+        "prerequisites": "Droid capable of communications",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "equipmentBonus": 5,
+          "skill": "Use Computer",
+          "scope": "checks made to overcome communication jamming only"
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": []
+      }
+    },
+    {
+      "canonicalId": "droid-communications-jammer",
+      "canonicalName": "Communications Jammer",
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "pages": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 56,
+            "pdfPage1Based": 57,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 59,
+            "pdfPage1Based": 60,
+            "source": "original uploaded PDF",
+            "verification": "rendered_page_visually_inspected"
+          }
+        ],
+        "priorEvidencePacket": "data/audits/droids/component-keep-source-facts-sgd-006.json"
+      },
+      "decision": "PASS",
+      "published": {
+        "price": {
+          "kind": "FIXED",
+          "credits": 5000
+        },
+        "weight": {
+          "kind": "FIXED",
+          "kg": 5
+        },
+        "availability": "Military",
+        "host": "Droid communications jammer",
+        "prerequisites": "Use Computer checks appropriate to chosen facility or local mode",
+        "installation": {
+          "category": "Core modification check determined by actual work: locomotion DC25/1day, appendage DC20/1hour, accessory DC15/1hour, mounted tool DC15/10min; self modification -5 Mechanics; processor self-installation prohibited",
+          "source": [
+            {
+              "book": "Star Wars Saga Edition Core Rulebook",
+              "printedPage": 197,
+              "pdfPage1Based": 198,
+              "source": "original uploaded PDF",
+              "verification": "rendered_page_visually_inspected"
+            }
+          ]
+        },
+        "mechanics": {
+          "facility": {
+            "equipmentBonus": 5,
+            "scope": "Use Computer to slice and shut down communications computer, or resist slicers trying to undo it",
+            "persistence": "until disconnected or forced out"
+          },
+          "local": {
+            "radiusKm": 1,
+            "check": "Use Computer DC25",
+            "effect": "Jam incoming/outgoing comlinks"
+          },
+          "notGenericUseComputerBonus": true
+        },
+        "variants": [],
+        "exceptions": []
+      },
+      "hold": null,
+      "production": {
+        "definitionCertified": false,
+        "garageTested": false,
+        "chargenTested": false,
+        "followerTested": false,
+        "storeTested": false,
+        "foundryRuntimeCertified": false,
+        "knownDivergences": []
+      }
+    }
+  ],
+  "explicitHolds": [
+    {
+      "id": "droid-climbing-claws",
+      "name": "Climbing Claws",
+      "reason": "Printed prose and table disagree on price base",
+      "unresolved": [
+        "authoritative pricing base",
+        "source appendage identity"
+      ]
+    },
+    {
+      "id": "droid-jump-servos",
+      "name": "Jump Servos",
+      "reason": "Printed prose and accessory table disagree on cost base",
+      "unresolved": [
+        "authoritative pricing base"
+      ]
+    },
+    {
+      "id": "droid-magnetic-feet",
+      "name": "Magnetic Feet",
+      "reason": "Table uses appendage-based pricing without identifying which appendage belongs to the foot hardware",
+      "unresolved": [
+        "selected appendage price base"
+      ]
+    },
+    {
+      "id": "droid-burrower-drive",
+      "name": "Burrower Drive",
+      "reason": "Tiny and smaller have no published self-destruct collateral damage dice, so drill attack damage is unquantified for those sizes",
+      "unresolved": [
+        "tiny-or-smaller drill damage"
+      ]
+    },
+    {
+      "id": "droid-projectile-hand",
+      "name": "Projectile Hand",
+      "reason": "250cr description and double appendage-cost table contradict for some chosen appendages",
+      "unresolved": [
+        "exact price including appendage purchase"
+      ]
+    },
+    {
+      "id": "droid-remote-limb-control",
+      "name": "Remote Limb Control",
+      "reason": "Prose prices differ from table appendage-based price, and table does not specify basic/deluxe distinction",
+      "unresolved": [
+        "separate basic/deluxe purchase quotes"
+      ]
+    },
+    {
+      "id": "droid-rocket-arm",
+      "name": "Rocket Arm",
+      "reason": "Printed 2000cr fixed price conflicts with four-times-appendage table",
+      "unresolved": [
+        "approved single cost formula"
+      ]
+    },
+    {
+      "id": "droid-personality-downloader",
+      "name": "Personality Downloader",
+      "reason": "Custom item has published minimum price/weight, not exact price or mass for a configured sale",
+      "unresolved": [
+        "chosen custom build quote and mass"
+      ]
+    }
+  ],
+  "notice": "No production system changes, no executed runtime tests; source-price conflicts are blocked."
+}

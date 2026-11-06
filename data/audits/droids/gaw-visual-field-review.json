@@ -1,0 +1,209 @@
+{
+  "schema": "swse.droid.gaw.selected-pdf-visual/0.1",
+  "sourceBook": "Galaxy at War",
+  "manualVisualReviews": 22,
+  "directFieldComparisons": 285,
+  "sourcePdfHash": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+  "method": "Owner-provided PDF rendered and manually inspected on printed pp51-57,98,175,181,210-220. Selected numeric fields transcribed from the visible statblock images; disagreements with OCR resolved in favor of print.",
+  "scope": "Source fieldValues only; 0 mechanical certifications; 0 Foundry runtime permissions.",
+  "items": [
+    {
+      "sourceEntryKey": "GAW-DROID-001",
+      "printedName": "A-Series Medical Droid",
+      "printedPage": 51,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-002",
+      "printedName": "KDY-4 Tech Droid",
+      "printedPage": 52,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-003",
+      "printedName": "Chiba-DR10 Protocol Droid",
+      "printedPage": 52,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-004",
+      "printedName": "Air Assault Super Battle Droid",
+      "printedPage": 53,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-005",
+      "printedName": "Eradicator-Series Battle Droid",
+      "printedPage": 53,
+      "verifiedFieldCount": 15,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-006",
+      "printedName": "Purge Trooper",
+      "printedPage": 54,
+      "verifiedFieldCount": 15,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-007",
+      "printedName": "Sniper Droideka",
+      "printedPage": 55,
+      "verifiedFieldCount": 15,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-008",
+      "printedName": "Tactical Droid",
+      "printedPage": 55,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-009",
+      "printedName": "Vigilant 2X Picket Droid",
+      "printedPage": 56,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-010",
+      "printedName": "CLL-M2 Ordnance Lifter Droid",
+      "printedPage": 56,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-011",
+      "printedName": "MR-200 Series Minesweeper Droid",
+      "printedPage": 57,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-012",
+      "printedName": "Automated Sentry Gun",
+      "printedPage": 98,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-013",
+      "printedName": "Arakyd AZ-Series Battle Droid",
+      "printedPage": 181,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-014",
+      "printedName": "B1-Series Battle Droid",
+      "printedPage": 210,
+      "verifiedFieldCount": 13,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-015",
+      "printedName": "B2-Series Super Battle Droid",
+      "printedPage": 210,
+      "verifiedFieldCount": 13,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-016",
+      "printedName": "Droideka Series Destroyer Droid",
+      "printedPage": 211,
+      "verifiedFieldCount": 14,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-017",
+      "printedName": "Droid Commando",
+      "printedPage": 214,
+      "verifiedFieldCount": 13,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-018",
+      "printedName": "OOM-Series Battle Droid",
+      "printedPage": 215,
+      "verifiedFieldCount": 13,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-019",
+      "printedName": "Ground Armored Tank",
+      "printedPage": 216,
+      "verifiedFieldCount": 4,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "vehicle",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-020",
+      "printedName": "B1-Series Battle Droid Squad",
+      "printedPage": 217,
+      "verifiedFieldCount": 4,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "squad-aggregation",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-021",
+      "printedName": "Battle Droid Assassin",
+      "printedPage": 218,
+      "verifiedFieldCount": 13,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": null
+    },
+    {
+      "sourceEntryKey": "GAW-DROID-022",
+      "printedName": "LR-57 Combat Droid",
+      "printedPage": 219,
+      "verifiedFieldCount": 13,
+      "scope": "selected-first-page-fields",
+      "primaryActorAuthority": "droid",
+      "heroEligibility": null
+    }
+  ]
+}

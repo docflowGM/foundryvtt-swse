@@ -1,0 +1,31 @@
+{
+  "schema": "swse.droid.rebellion.crossbook-validation-receipt/0.1",
+  "localCheckpoint": 9,
+  "semanticValidators": {
+    "sgd": "PASS",
+    "clone": "PASS",
+    "threats": "PASS",
+    "kotor": "PASS",
+    "gaw": "PASS",
+    "rebellion": "PASS"
+  },
+  "negativeMutationTests": {
+    "rebellion": "PASS_34_OF_34_THIS_CHECKPOINT",
+    "sgd": "PASS_14_OF_14_THIS_CHECKPOINT",
+    "clone": "TIMEOUT_DURING_THIS_CHECKPOINT",
+    "threats": "NOT_RERUN_THIS_CHECKPOINT",
+    "kotor": "NOT_RERUN_THIS_CHECKPOINT",
+    "gaw": "NOT_RERUN_THIS_CHECKPOINT"
+  },
+  "historicalIndividualBookNegativeTestStatus": {
+    "clone": "22_OF_22_PREVIOUSLY_PASSED",
+    "threats": "17_OF_17_PREVIOUSLY_PASSED",
+    "kotor": "26_OF_26_PREVIOUSLY_PASSED",
+    "gaw": "38_OF_38_PREVIOUSLY_PASSED"
+  },
+  "overallCrossbookNegativeSuitePass": false,
+  "upstreamUniversalJsonSchemaValidationPerformed": false,
+  "foundryV13RuntimeValidationPerformed": false,
+  "gitHubWritesPerformed": false,
+  "note": "Complete fresh combined negative suite is outstanding; semantics pass for all six. No mechanical certifications."
+}

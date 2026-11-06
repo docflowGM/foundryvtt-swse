@@ -1,0 +1,268 @@
+{
+  "schema": "swse.droids.catalog.repo-only-source-screen/0.1",
+  "date": "2026-11-02",
+  "phase": "C3-001",
+  "scope": "Five frozen repo-only candidates; source-index check and live reference risk, no automatic deletion decision",
+  "sourceAuthority": "Core and Scavenger printed PDF pages for system tables, with All Books TXT as nonauthoritative broad index; no claim of full 14-book PDF negative proof",
+  "counts": {
+    "candidatesReviewed": 5,
+    "candidatesCertifiedUnsupportedAcrossAllPublishedBooks": 0,
+    "sourceAuthoritativeDeletionsApproved": 0,
+    "productionRemovals": 0,
+    "confirmedPreserveUntilDependencyWork": 5,
+    "suspectedStaticCompatibilityDiscrepancies": 1
+  },
+  "codeBlobVerification": {
+    "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+    "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+    "scripts/domain/droids/droid-part-schema.js": "aa37db77900b4a01ed452907e165a510b5a83d85"
+  },
+  "records": [
+    {
+      "id": "SGD-CAT-REPO-ONLY-001",
+      "repoId": "military",
+      "liveDisplayedName": "Military Processor",
+      "definitionPath": "scripts/data/droid-systems.js",
+      "sourceStatus": "NO_MATCHING_PUBLISHED_PURCHASABLE_IDENTITY_IN_CORE_OR_SGD_REVIEWED",
+      "historicalCensus": "REPO_ONLY_OR_UNSUPPORTED",
+      "sourceScreens": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPages": [
+            190,
+            191,
+            195
+          ],
+          "content": "Core processor categories Basic, Heuristic, Remote, and published processor/receiver pricing"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPages": [
+            53,
+            59
+          ],
+          "content": "SGD processor additions and table 3-2"
+        }
+      ],
+      "currentRuntime": {
+        "priceCredits": 5000,
+        "weightKg": 10,
+        "availability": "Military",
+        "notedBehavior": "Combat/ethical-inhibitor changes",
+        "otherConsumers": [
+          "DroidCustomizationEngine primary processor identity classifier references military-processor"
+        ],
+        "publishedProvenanceForExactPriceAndEffect": "not established"
+      },
+      "possibleCanonicalRelationship": "Could be a site-specific interpretation of Basic/Heuristic Processor or behavioral inhibitor programming, but not proof of an independent purchase option.",
+      "risk": "Treating code-only 5,000-credit Military Processor as printed law would create noncanonical purchasable choices.",
+      "disposition": "BLOCK_REMOVE_AND_ADD_UNTIL_ALIAS_AND_CONSUMER_AUDIT",
+      "all14BookPdfExhaustiveness": false,
+      "ocrCorpusExactStringScan": {
+        "result": "No exact matching standalone equipment name identified in consolidated All Books TXT index for these five names; general manipulator-arm and repulsorlift terms occur as descriptive language",
+        "status": "SEARCH_HINT_NOT_NEGATIVE_PROOF"
+      },
+      "identityMechanicallyCertified": false,
+      "deletionAuthorized": false,
+      "productionEdited": false,
+      "worldActorRefsAudited": false
+    },
+    {
+      "id": "SGD-CAT-REPO-ONLY-002",
+      "repoId": "manipulator-arm",
+      "liveDisplayedName": "Manipulator Arm",
+      "definitionPath": "scripts/data/droid-systems.js",
+      "sourceStatus": "GENERAL_NARRATIVE_NAME_ONLY_NO_MATCHING_PRICED_COMPONENT_IN_CORE_OR_SGD_REVIEWED",
+      "historicalCensus": "REPO_ONLY_OR_UNSUPPORTED",
+      "sourceScreens": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPages": [
+            189,
+            190,
+            194
+          ],
+          "content": "Printed appendage classes Probe, Instrument, Tool, Claw, Hand and their purchase mechanics"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPages": [
+            52,
+            59
+          ],
+          "content": "Appendage enhancement and basic appendage table"
+        }
+      ],
+      "currentRuntime": {
+        "priceCredits": 150,
+        "weightKg": 2,
+        "availability": "-"
+      },
+      "possibleCanonicalRelationship": "Potential presentation synonym for a Hand or Tool appendage; two named arms appearing in stock model prose are not a new general purchasable system.",
+      "risk": "Mapping to Hand or Tool without examining physical function/weapon mount or actor saved identities could corrupt appendage occupancy.",
+      "disposition": "REMAP_ONLY_AFTER_TYPED_APPENDAGE_PROOF",
+      "all14BookPdfExhaustiveness": false,
+      "ocrCorpusExactStringScan": {
+        "result": "No exact matching standalone equipment name identified in consolidated All Books TXT index for these five names; general manipulator-arm and repulsorlift terms occur as descriptive language",
+        "status": "SEARCH_HINT_NOT_NEGATIVE_PROOF"
+      },
+      "identityMechanicallyCertified": false,
+      "deletionAuthorized": false,
+      "productionEdited": false,
+      "worldActorRefsAudited": false
+    },
+    {
+      "id": "SGD-CAT-REPO-ONLY-003",
+      "repoId": "repulsor-lift",
+      "liveDisplayedName": "Repulsor Lift",
+      "definitionPath": "scripts/data/droid-systems.js",
+      "sourceStatus": "GENERAL_TECHNOLOGY_DESCRIPTION_NOT_MATCHING_PRICED_CHASSIS_COMPONENT_IN_CORE_OR_SGD_REVIEWED",
+      "historicalCensus": "REPO_ONLY_OR_UNSUPPORTED",
+      "sourceScreens": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPages": [
+            188,
+            189
+          ],
+          "content": "Droid locomotion rules and Hovering/Flying options"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPages": [
+            52,
+            59,
+            61
+          ],
+          "content": "SGD locomotion add-ons and repulsor-assisted device description"
+        }
+      ],
+      "currentRuntime": {
+        "priceCredits": 300,
+        "weightKg": 3,
+        "availability": "Restricted"
+      },
+      "possibleCanonicalRelationship": "Potential conceptual overlap with published Hovering/Flying locomotion; generic repulsorlift descriptions do not establish a separately purchasable 300-credit Restricted body part.",
+      "risk": "Wrong mapping may duplicate locomotion speed/weight and cost.",
+      "disposition": "REMAP_ONLY_AFTER_LOCOMOTION_CAPABILITY_COMPARISON",
+      "all14BookPdfExhaustiveness": false,
+      "ocrCorpusExactStringScan": {
+        "result": "No exact matching standalone equipment name identified in consolidated All Books TXT index for these five names; general manipulator-arm and repulsorlift terms occur as descriptive language",
+        "status": "SEARCH_HINT_NOT_NEGATIVE_PROOF"
+      },
+      "identityMechanicallyCertified": false,
+      "deletionAuthorized": false,
+      "productionEdited": false,
+      "worldActorRefsAudited": false
+    },
+    {
+      "id": "SGD-CAT-REPO-ONLY-004",
+      "repoId": "self-repair-kit",
+      "liveDisplayedName": "Self-Repair Kit",
+      "definitionPath": "scripts/data/droid-systems.js",
+      "sourceStatus": "NO_MATCHING_GENERAL_PURCHASABLE_COMPONENT_IN_CORE_OR_SGD_REVIEWED",
+      "historicalCensus": "REPO_ONLY_OR_UNSUPPORTED",
+      "sourceScreens": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPages": [
+            193,
+            194,
+            195,
+            196
+          ],
+          "content": "Core droid accessories, modification and repair sections"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPages": [
+            54,
+            56,
+            58
+          ],
+          "content": "Laminanium plating self-sealing narrative, oil bath maintenance and accessory table"
+        }
+      ],
+      "currentRuntime": {
+        "priceCredits": 200,
+        "weightKg": 1.5,
+        "availability": "-",
+        "description": "Integrated repair automation"
+      },
+      "possibleCanonicalRelationship": "Must not be equated with Laminanium Plating, an oil bath, or generic Mechanics repair without printed mechanical support.",
+      "risk": "Could introduce automatic HP/condition repair not granted by source.",
+      "disposition": "DEPRECATION_CANDIDATE_ONLY_AFTER_WORLD_REF_AND_EFFECT_SEARCH",
+      "all14BookPdfExhaustiveness": false,
+      "ocrCorpusExactStringScan": {
+        "result": "No exact matching standalone equipment name identified in consolidated All Books TXT index for these five names; general manipulator-arm and repulsorlift terms occur as descriptive language",
+        "status": "SEARCH_HINT_NOT_NEGATIVE_PROOF"
+      },
+      "identityMechanicallyCertified": false,
+      "deletionAuthorized": false,
+      "productionEdited": false,
+      "worldActorRefsAudited": false
+    },
+    {
+      "id": "SGD-CAT-REPO-ONLY-005",
+      "repoId": "miniaturized-self-destruct-system",
+      "liveDisplayedName": "Miniaturized Self-Destruct System",
+      "definitionPath": "scripts/data/droid-part-schema.js",
+      "sourceStatus": "SPECIFIC_MINIATURIZED_VARIANT_NOT_FOUND_IN_REVIEWED_CORE_SGD_PUBLISHED_COMPONENT_TABLES",
+      "historicalCensus": "REPO_ONLY_OR_UNSUPPORTED",
+      "sourceScreens": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPages": [
+            195,
+            196
+          ],
+          "content": "Ordinary Self-Destruct System cost/weight/damage and size table"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPages": [
+            58,
+            59
+          ],
+          "content": "SGD accessory inventory, no identified separately-priced miniaturized self-destruct row"
+        }
+      ],
+      "currentRuntime": {
+        "catalogOrigin": "RAW_OVERLAY only",
+        "costCredits": "not source-certified",
+        "sizeShiftEffect": "Code says treat droid as two sizes larger for self-destruct damage",
+        "knownLiveConsumers": [
+          "scripts/sheets/v2/droid-actor-sheet.js",
+          "scripts/patches/runtime-bugfix-hotfixes.js",
+          "scripts/ui/chat/chat-interaction-bridge.js"
+        ],
+        "sameNameCompatRepresentation": "scripts/domain/droids/droid-part-schema.js"
+      },
+      "possibleCanonicalRelationship": "May be unsupported convenience rule or separate modification concept; NOT equivalent to ordinary printed Self-Destruct System by default.",
+      "staticConsistencyFinding": {
+        "id": "DROID-MINI-SHIFT-DOUBLE",
+        "status": "STATIC_CODE_CONFLICT_NEEDS_CALLER_SCOPE_REVIEW",
+        "detail": "Compatibility module getSelfDestructDamage() shifts input size by +2 then indexes a miniaturized damageBySize table that is already source-sized-shifted; a Medium droid yields table huge (20d6) instead of data registry Medium (10d6). Main V2 sheet and chat code imports scripts/data/droid-part-schema.js, not this compatibility module; no live double-shift execution proven.",
+        "contrastingMainAuthority": "scripts/data/droid-part-schema.js uses a direct miniaturized table lookup for the requested size"
+      },
+      "risk": "Removing ID or changing damage mapping without testing would change live virtual-weapon and self-destruct behavior.",
+      "disposition": "HARD_BLOCK_REMOVE_UNTIL_SOURCE_ADJUDICATION_AND_DAMAGE_CONSUMER_MIGRATION",
+      "all14BookPdfExhaustiveness": false,
+      "ocrCorpusExactStringScan": {
+        "result": "No exact matching standalone equipment name identified in consolidated All Books TXT index for these five names; general manipulator-arm and repulsorlift terms occur as descriptive language",
+        "status": "SEARCH_HINT_NOT_NEGATIVE_PROOF"
+      },
+      "identityMechanicallyCertified": false,
+      "deletionAuthorized": false,
+      "productionEdited": false,
+      "worldActorRefsAudited": false
+    }
+  ],
+  "acceptance": [
+    "Search remaining official printed books for alternate published system identities, not only name spellings",
+    "Trace actual references in every code consumer and actor migration maps; GitHub search is incomplete and default-branch-scoped",
+    "Retain combat/damage effects and saved references until controlled migration",
+    "Do not put droid structural components into packs/equipment.db",
+    "No production modification in this source-only pass"
+  ]
+}

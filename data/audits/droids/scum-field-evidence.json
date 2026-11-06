@@ -1,0 +1,143 @@
+{
+  "schema": "swse.droid.scum.source-evidence/0.1",
+  "sourceBook": "Scum and Villainy",
+  "sourcePdf": "SAGA EDITION - Scum and Villainy.pdf",
+  "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+  "sourceTxt": "Scum and Villainy_djvu.txt",
+  "sourceTxtSha256": "3621af76a89cbc5070d4516a243cb7e4520e9c26ce9a8ca8749b6ac4df86414e",
+  "records": [
+    {
+      "sourceEntryKey": "SCUM-DROID-001",
+      "printedName": "Industrial Automaton K-Series Spaceport Control Droid",
+      "printedPage": 96,
+      "pdfPage1Based": 97,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6551,
+      "txtWindowSha256": "62dfe2927577dd5010ea93b65bcdf6e6e6bd1c09f3d54c8c1d3927b4dd34d0a2",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/scum_pdf_review/printed_p96.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Industrial Automaton K-Series Spaceport Control Droid",
+          "/publication/printedPageStart": 96,
+          "/publication/printedPageEnd": 96,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 3,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 7,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Comlink and datapad are possessions, not automatically installed chassis systems."
+      ]
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-002",
+      "printedName": "Industrial Automaton RX-Series Pilot Droid",
+      "printedPage": 96,
+      "pdfPage1Based": 97,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6584,
+      "txtWindowSha256": "3cf7d3d4191b1bf8ce20998b7b7221f69e05782d0fa86523d67b15e18387f40a",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/scum_pdf_review/printed_p96.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Industrial Automaton RX-Series Pilot Droid",
+          "/publication/printedPageStart": 96,
+          "/publication/printedPageEnd": 96,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 2,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 7,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Shared RX-Series model name with SGD is not certified mechanical lineage.",
+        "Droid pilot remains droid actor, not the vehicle it pilots."
+      ]
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-003",
+      "printedName": "Roche 11-17 Series Mining Droid",
+      "printedPage": 156,
+      "pdfPage1Based": 157,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 11406,
+      "txtWindowSha256": "546c8e46ed36b9f4faabf0685067ad70f8e3bb06246969cee95245638ed17425",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/scum_pdf_review/printed_p156.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Roche 11-17 Series Mining Droid",
+          "/publication/printedPageStart": 156,
+          "/publication/printedPageEnd": 156,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 5
+        },
+        "fieldComparisonCount": 6,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Mining encounter p216 repeats model with hostile programming; no second factory identity."
+      ]
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-004",
+      "printedName": "Roche 8D8 Smelting Operator Droid",
+      "printedPage": 157,
+      "pdfPage1Based": 158,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 11470,
+      "txtWindowSha256": "7355f1d24b95fbc3119a7d51a70553024f89fcce7933a03a558c67e629a86540",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/scum_pdf_review/printed_p157.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Roche 8D8 Smelting Operator Droid",
+          "/publication/printedPageStart": 157,
+          "/publication/printedPageEnd": 157,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 5
+        },
+        "fieldComparisonCount": 6,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Explicit +20 equipment Fortitude bonus vs extreme heat/fire is model-specific; do not equate this with SGD 8D."
+      ]
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-005",
+      "printedName": "Roche J9 Worker Drone",
+      "printedPage": 157,
+      "pdfPage1Based": 158,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 11491,
+      "txtWindowSha256": "92f26d25b21621c12e8288059c02784614cedc6227592153e751c6d41fac2f7d",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/scum_pdf_review/printed_p157.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Roche J9 Worker Drone",
+          "/publication/printedPageStart": 157,
+          "/publication/printedPageEnd": 157,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 3
+        },
+        "fieldComparisonCount": 6,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Statblock does not enumerate manipulators; absence of statement is not zero manipulators."
+      ]
+    }
+  ]
+}

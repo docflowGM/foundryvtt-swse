@@ -1,0 +1,19 @@
+{
+  "schema": "swse.droid.kotor.local-validation/0.1",
+  "status": "PASS",
+  "scope": "LOCAL_SEMANTIC_AND_SELECTED_PDF_FIELD_VALIDATION_ONLY",
+  "errors": [],
+  "counts": {
+    "publicationClaims": 24,
+    "selectedFieldVisualReviews": 24,
+    "directFieldComparisons": 369,
+    "standardDroidActors": 23,
+    "vehiclePrimaryRecords": 1,
+    "namedIndividuals": 3,
+    "independentlyMechanicallyCertified": 0
+  },
+  "fullUpstreamJsonSchema202012Validated": false,
+  "foundryRuntimeCertified": false,
+  "sourceLedgerSha256": "d03fdb092f671347f4f66751b2bea0667346b3558a95f03853113c0f167f3b41",
+  "limitations": "No complete secondary-page/feat/talent/PC-route/weapon-mount certification. No upstream JSON Schema or live V13 test."
+}

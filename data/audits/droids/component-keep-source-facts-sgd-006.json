@@ -1,0 +1,713 @@
+{
+  "schema": "swse.droid.catalog.sgd-keep-source-facts/0.1",
+  "sprint": "KEEP-006",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "sourceBook": "Scavenger's Guide to Droids",
+  "sourcePdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "sourceMethod": "Original PDF visually reviewed printed pp53,56,58,59,61; TXT only used to locate. Source table 3-2 reviewed in both columns.",
+  "codeEvidence": {
+    "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+    "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+  },
+  "counts": {
+    "newRows": 8,
+    "cumulativeSourceFactRows": 90,
+    "keepFactRows": 63,
+    "missingAddSourceReviewed": 23,
+    "editFamilySourceReviewed": 7,
+    "repoOnlySourceScreened": 5,
+    "hostClassExternalOrAttachment": 3,
+    "sourceRiskFindings": 11,
+    "acceptanceFixturesUnexecuted": 10,
+    "fullMechanicalCertifications": 0,
+    "productionChanges": 0,
+    "applicationParityTests": 0,
+    "foundryRuntimeCertifications": 0
+  },
+  "records": [
+    {
+      "id": "communications-jammer",
+      "name": "Communications Jammer",
+      "hostClass": "DROID_INTERNAL_COMMUNICATIONS_CANDIDATE",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "publication": {
+        "priceCredits": 5000,
+        "weightKg": 5,
+        "availability": "Military"
+      },
+      "mechanics": {
+        "emittedRangeKm": 1,
+        "localJamming": {
+          "skill": "Use Computer",
+          "dc": 25,
+          "scope": "Incoming/outgoing comlink signals in radius"
+        },
+        "facilityIntrusion": {
+          "bonus": 5,
+          "bonusType": "equipment",
+          "scope": "Use Computer to slice into communications computer to shut down system, and to maintain that shutdown against slicers"
+        },
+        "duration": "Maintains connected facility jamming until disconnect or forced out"
+      },
+      "registry": {
+        "raw": true,
+        "overlay": true,
+        "sourcePriceAligned": true,
+        "sourceWeightAligned": true,
+        "chargenRestriction": "Raw says NOT available at chargen; no universal such rule verified in this printed passage"
+      },
+      "risks": [
+        "Do not grant +5 to every Use Computer roll",
+        "DC25 local broadcast is not automatically a device-free passive aura",
+        "Facility-computer jam vs local 1km broadcast are different modes"
+      ],
+      "evidenceId": "SGD-KEEP-006-001",
+      "publicationIdentityPresent": true,
+      "sourceFactsVisuallyVerified": true,
+      "mechanicallyCertified": false,
+      "productionMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "remote-receiver-jammer",
+      "name": "Remote Receiver Jammer",
+      "hostClass": "PORTABLE_BACKPACK_TRANSMITTER_HANDHELD_CONTROLLER_NOT_BODY",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "publication": {
+        "priceCredits": 2000,
+        "weightKg": 2,
+        "availability": "Military"
+      },
+      "mechanics": {
+        "activationAction": "standard",
+        "repeat": "Must activate each turn, reroll Use Computer each activation",
+        "targets": "All remote-receiver droids without backup processors in actual short effective range",
+        "check": {
+          "skill": "Use Computer",
+          "compare": "one activation result >= affected droid Will Defense at start of that droid's turn"
+        },
+        "onSuccess": [
+          "no actions",
+          "flat-footed"
+        ],
+        "effectUntil": "start of affected droid's next turn",
+        "rangeSquares": "Not specified; narrative says extremely short range"
+      },
+      "registry": {
+        "raw": true,
+        "overlay": false,
+        "sourcePriceAligned": true,
+        "sourceWeightAligned": true,
+        "categoryDanger": "Raw communications offensive category may invite mistaken chassis installation"
+      },
+      "risks": [
+        "Do not install backpack controller as integral part of target or user without separate host proof",
+        "Backup processor grants immunity to this effect",
+        "Do not invent a numeric short range"
+      ],
+      "evidenceId": "SGD-KEEP-006-002",
+      "publicationIdentityPresent": true,
+      "sourceFactsVisuallyVerified": true,
+      "mechanicallyCertified": false,
+      "productionMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "remote-receiver-signal-booster",
+      "name": "Remote Receiver Signal Booster",
+      "hostClass": "RECEIVER_MODIFICATION",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "publication": {
+        "priceCredits": 500,
+        "weightKg": 2,
+        "availability": "Licensed"
+      },
+      "mechanics": {
+        "requires": "remote receiver and remote-processor-controlled link",
+        "normalRangeMultiplier": 1.5,
+        "boost": {
+          "skill": "Use Computer",
+          "dc": 30,
+          "sourceWording": "Further extend range up to 100% for 1 hour",
+          "durationHours": 1,
+          "exactAggregationWithPassive50Percent": "NOT_ADJUDICATED"
+        }
+      },
+      "registry": {
+        "raw": true,
+        "overlay": true,
+        "sourcePriceAligned": true,
+        "sourceWeightAligned": true,
+        "chargenRestriction": "Raw 'typically unavailable at chargen' unsupported by inspected paragraph"
+      },
+      "risks": [
+        "Do not stack +50% and +100% as 2.5x without printed authority",
+        "No generic Use Computer equipment bonus; DC30 is a special activation check"
+      ],
+      "evidenceId": "SGD-KEEP-006-003",
+      "publicationIdentityPresent": true,
+      "sourceFactsVisuallyVerified": true,
+      "mechanicallyCertified": false,
+      "productionMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "droid-remote-control",
+      "name": "Droid Remote Control",
+      "hostClass": "DROID_CONTROL_ATTACHMENT_REQUIRES_CALLER",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 53,
+          "pdfPage1Based": 54,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "publication": {
+        "priceCredits": 500,
+        "weightKg": 0.5,
+        "availability": "-"
+      },
+      "mechanics": {
+        "relationship": "Advanced restraining-bolt system; owner commands using droid caller",
+        "speedMultiplier": 0.5,
+        "onlyAuthority": "Use droid's own locomotion system to move it",
+        "cannotCompel": [
+          "other droid systems",
+          "tools or equipment",
+          "weapons",
+          "unrelated actions"
+        ],
+        "ownerIdentityAndPairing": "Requires explicit proof separate from simple presence of device"
+      },
+      "registry": {
+        "raw": true,
+        "overlay": false,
+        "sourcePriceAligned": true,
+        "sourceWeightAligned": true
+      },
+      "risks": [
+        "Not equivalent to independent Remote Processor; do not grant full turn control",
+        "Do not treat any installed droid caller owned by unrelated actor as permission"
+      ],
+      "evidenceId": "SGD-KEEP-006-004",
+      "publicationIdentityPresent": true,
+      "sourceFactsVisuallyVerified": true,
+      "mechanicallyCertified": false,
+      "productionMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "hidden-core",
+      "name": "Hidden Core",
+      "hostClass": "PROCESSOR_BACKUP_OR_SEPARATE_DATA_STORE",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 53,
+          "pdfPage1Based": 54,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "publication": {
+        "basePriceCredits": 200,
+        "protectedVariantCredits": 400,
+        "weight": {
+          "embeddedProcessor": "—",
+          "secondaryStorageKg": 1
+        },
+        "availability": "Restricted"
+      },
+      "mechanics": {
+        "content": "Backup personality, essential memories, data, skills",
+        "wipeRecovery": {
+          "initialDelayDays": "1d6",
+          "check": "Use Computer DC20",
+          "rollFormula": "1d20 + max(10, current droid Use Computer modifier)",
+          "afterFailureRetryDays": "1d6; repeat until successful"
+        },
+        "detection": {
+          "skill": "Use Computer",
+          "dc": "droid Will Defense",
+          "requiresDeliberateSearch": true,
+          "protectedVariantDC": 30
+        }
+      },
+      "registry": {
+        "raw": true,
+        "overlay": false,
+        "rawCostCredits": 200,
+        "rawProtectedCostCredits": 400,
+        "rawWeightKg": 1,
+        "problem": "The zero-added-weight main-processor host is not modeled by constant 1 kg"
+      },
+      "risks": [
+        "Do not use plain droid Use Computer if lower than +10",
+        "Recovery does not occur immediately after memory wipe",
+        "Protection price is a 400-credit variant, not additive +400",
+        "Concealment detection requires intentional search"
+      ],
+      "evidenceId": "SGD-KEEP-006-005",
+      "publicationIdentityPresent": true,
+      "sourceFactsVisuallyVerified": true,
+      "mechanicallyCertified": false,
+      "productionMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "personality-downloader",
+      "name": "Personality Downloader",
+      "hostClass": "EXTERNAL_ILLEGAL_INVASIVE_DATAPORT_TOOL",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 53,
+          "pdfPage1Based": 54,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "publication": {
+        "basePriceMinimumCredits": 5000,
+        "minimumWeightKg": 2,
+        "priceText": "Custom build (5,000+)",
+        "weightText": "2 kg+",
+        "availability": "Illegal"
+      },
+      "mechanics": {
+        "requires": "Physical connection to accessible droid data port",
+        "lockedAccess": "Requires coaxing compliance when data port locked/inaccessible",
+        "initialCheck": {
+          "skill": "Use Computer",
+          "opposedBy": "droid Will Defense"
+        },
+        "initialSuccessTimeMinutes": 5,
+        "repeatedCheckIntervalMinutes": 10,
+        "continuedCheck": "Another Use Computer opposed by original personality; uses attacker's Use Computer skill even if controller not actively present",
+        "status": "Personality override is temporary/contested, not permanent ownership"
+      },
+      "registry": {
+        "raw": true,
+        "overlay": false,
+        "rawCostCredits": 5000,
+        "rawWeightKg": 2,
+        "sourceExactPriceNotFixed": true
+      },
+      "risks": [
+        "Never display 5,000 as guaranteed complete custom-build price",
+        "Not installed chassis improvement bought for target actor",
+        "No permanent character ownership transfer or irreversible changes inferred",
+        "Must respect Locked Access/dataport gate"
+      ],
+      "evidenceId": "SGD-KEEP-006-006",
+      "publicationIdentityPresent": true,
+      "sourceFactsVisuallyVerified": true,
+      "mechanicallyCertified": false,
+      "productionMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "remote-starship-starter",
+      "name": "Remote Starship Starter",
+      "hostClass": "DROID_SHIP_SIGNAL_ACCESSORY",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 53,
+          "pdfPage1Based": 54,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "publication": {
+        "priceCredits": 50,
+        "weightKg": 2,
+        "availability": "-"
+      },
+      "mechanics": {
+        "signal": "Request ship begin preflight processes",
+        "response": "Ship sends preflight diagnostics back as a free action",
+        "notAuthorized": "Remote ship piloting or operating its systems",
+        "prerequisite": "Compatible ship communication interface not detailed"
+      },
+      "registry": {
+        "raw": true,
+        "overlay": false,
+        "sourcePriceAligned": true,
+        "sourceWeightAligned": true
+      },
+      "risks": [
+        "Not remotely start engines/launch without ship-specific authorization",
+        "Do not invent automatic free repair, flight or command rights"
+      ],
+      "evidenceId": "SGD-KEEP-006-007",
+      "publicationIdentityPresent": true,
+      "sourceFactsVisuallyVerified": true,
+      "mechanicallyCertified": false,
+      "productionMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "credit-reader",
+      "name": "Credit Reader",
+      "hostClass": "DROID_INSTALLED_FINANCIAL_SENSOR",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Original PDF visually inspected 2026-11-02"
+        }
+      ],
+      "publication": {
+        "priceCredits": 50,
+        "weightKg": 1,
+        "availability": "Licensed"
+      },
+      "mechanics": {
+        "detect": "Determine if a target's credits are real or credit line exists",
+        "bonus": {
+          "value": 5,
+          "check": "Perception vs Deception forging credit accounts or financial documents"
+        },
+        "action": "Count any presented quantity of hard credits as a free action"
+      },
+      "registry": {
+        "raw": false,
+        "overlay": true,
+        "defaultSharedPricePossible": 0,
+        "defaultSharedWeightPossible": 0
+      },
+      "risks": [
+        "Price and weight cannot inherit zero from overlay-only data",
+        "Not +5 to all Perception or all Deception",
+        "Detecting financial documents is not permission to access private banking records"
+      ],
+      "evidenceId": "SGD-KEEP-006-008",
+      "publicationIdentityPresent": true,
+      "sourceFactsVisuallyVerified": true,
+      "mechanicallyCertified": false,
+      "productionMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    }
+  ],
+  "findings": [
+    {
+      "code": "SGD-K006-EXTERNAL-JAMMER-HOST",
+      "severity": "HIGH",
+      "kind": "HOST_CLASSIFICATION",
+      "parts": [
+        "remote-receiver-jammer"
+      ],
+      "detail": "SGD p61 describes a portable backpack transmitter and handheld computer controller. Raw registry category offensive risks classifying it as a droid-installed part."
+    },
+    {
+      "code": "SGD-K006-REMOTE-JAMMER-TURN",
+      "severity": "HIGH",
+      "kind": "ACTION_AUTHORITY",
+      "parts": [
+        "remote-receiver-jammer"
+      ],
+      "detail": "Standard action every activator turn, compare that check at beginning of each eligible target turn; no actions/flat-footed only if >= Will; backup processors immune."
+    },
+    {
+      "code": "SGD-K006-HIDDEN-CORE-ROLL",
+      "severity": "HIGH",
+      "kind": "SOURCE_TO_CODE_OMISSION",
+      "parts": [
+        "hidden-core"
+      ],
+      "detail": "Published recovery roll d20+max(10, current Use Computer modifier) vs DC20 with retry each 1d6 days; raw description only notes DC20."
+    },
+    {
+      "code": "SGD-K006-HIDDEN-CORE-HOST",
+      "severity": "MEDIUM",
+      "kind": "WEIGHT_AND_VARIANT",
+      "parts": [
+        "hidden-core"
+      ],
+      "detail": "Main processor concealment has unlisted weight, external store weighs 1kg; 400 credit enhanced detection Will 30 variant must not be flattened into same 1kg SKU."
+    },
+    {
+      "code": "SGD-K006-CREDIT-READER-ZERO",
+      "severity": "HIGH",
+      "kind": "OVERLAY_MISSING_PRICE",
+      "parts": [
+        "credit-reader"
+      ],
+      "detail": "Table price 50 credits/1kg Licensed; overlay-only cost and weight absent; default helper can return zero."
+    },
+    {
+      "code": "SGD-K006-PERSONALITY-CUSTOM",
+      "severity": "HIGH",
+      "kind": "SOURCE_PRICE_AND_EXTERNAL_HOST",
+      "parts": [
+        "personality-downloader"
+      ],
+      "detail": "Custom build 5,000+ credits, weight 2kg+, Illegal; raw fixed values only minima, not exact published sale price; connected tool, not body upgrade."
+    },
+    {
+      "code": "SGD-K006-SIGNAL-BOOSTER-MULTIPLIER",
+      "severity": "MEDIUM",
+      "kind": "SOURCE_SCOPE_AMBIGUITY",
+      "parts": [
+        "remote-receiver-signal-booster"
+      ],
+      "detail": "Printed +50% base, DC30 additional up to 100% for one hour; exact additive vs replacement multiplier not stated explicitly; do not assume +150%."
+    },
+    {
+      "code": "SGD-K006-COMM-JAMMER-BONUS",
+      "severity": "HIGH",
+      "kind": "CHECK_SCOPE",
+      "parts": [
+        "communications-jammer"
+      ],
+      "detail": "+5 equipment applies to facility communication computer intrusion to shut down or maintain jamming, not all Use Computer including local DC25."
+    },
+    {
+      "code": "SGD-K006-CHARGEN-UNSOURCED",
+      "severity": "MEDIUM",
+      "kind": "UNPROVEN_INSTALLATION_RESTRICTION",
+      "parts": [
+        "communications-jammer",
+        "remote-receiver-jammer",
+        "remote-receiver-signal-booster"
+      ],
+      "detail": "Raw data states unavailable/typically unavailable at chargen; inspected printed entries provide Military/Licensed but not universal chargen prohibitions."
+    },
+    {
+      "code": "SGD-K006-REMOTE-CONTROL-PERMISSION",
+      "severity": "HIGH",
+      "kind": "CONTROL_AUTHORITY",
+      "parts": [
+        "droid-remote-control"
+      ],
+      "detail": "Droid caller permits owner-directed half-speed locomotion only; not attacks, possessions or processor transfer."
+    },
+    {
+      "code": "SGD-K006-STARSHIP-PRE-FLIGHT",
+      "severity": "MEDIUM",
+      "kind": "STARSHIP_PERMISSION",
+      "parts": [
+        "remote-starship-starter"
+      ],
+      "detail": "Remote starter allows preflight signaling and diagnostics, not ship piloting or arbitrary vehicle system execution."
+    }
+  ],
+  "acceptanceFixtures": [
+    {
+      "id": "SGD006-F01",
+      "title": "Jammer vs remote droid lacking backup",
+      "part": "remote-receiver-jammer",
+      "given": "Receiver droid without backup; on target turn jammer rolled Use Computer 22, target Will 20",
+      "expected": "Target takes no actions and is flat-footed through start of its next turn; reactivation requires new standard action/check each jammer turn",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    },
+    {
+      "id": "SGD006-F02",
+      "title": "Jammer cannot disable backup droid",
+      "part": "remote-receiver-jammer",
+      "given": "Target has functioning backup processor with receiver",
+      "expected": "Jammer is ineffective regardless of roll",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    },
+    {
+      "id": "SGD006-F03",
+      "title": "Hidden core minimum recovery skill",
+      "part": "hidden-core",
+      "given": "Wipe completed; droid Use Computer +6",
+      "expected": "After 1d6 days recovery check d20+10 vs DC20; on failure retry after another 1d6 days",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    },
+    {
+      "id": "SGD006-F04",
+      "title": "Hidden core higher skill and protection",
+      "part": "hidden-core",
+      "given": "Droid Use Computer +14, protected variant purchased",
+      "expected": "Recovery uses d20+14 vs DC20; deliberate search DC30; variant cost 400 not 600 credits",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    },
+    {
+      "id": "SGD006-F05",
+      "title": "Droid remote control cannot fire",
+      "part": "droid-remote-control",
+      "given": "Droid move speed 8, authorized owner and caller paired",
+      "expected": "Control can direct movement at 4 squares; cannot compel attack, weapon or other system use",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    },
+    {
+      "id": "SGD006-F06",
+      "title": "Remote receiver range booster base",
+      "part": "remote-receiver-signal-booster",
+      "given": "Remote link rated 50 km, ordinary booster active",
+      "expected": "Normal range becomes 75 km. DC30 one-hour enhanced boost maximum remains unresolved until 50%/100% stacking adjudicated.",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    },
+    {
+      "id": "SGD006-F07",
+      "title": "Personality downloader physical prerequisite",
+      "part": "personality-downloader",
+      "given": "Target has locked, inaccessible data port; no voluntary access",
+      "expected": "Cannot start download without permitted physical connection, regardless of user's Use Computer score",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    },
+    {
+      "id": "SGD006-F08",
+      "title": "Credit Reader published price",
+      "part": "credit-reader",
+      "given": "Standard component with no explicit price override",
+      "expected": "Source base price 50 credits and weight 1 kg, Licensed; shared overlay's zero fallback is not a permitted free quote",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    },
+    {
+      "id": "SGD006-F09",
+      "title": "Communications jammer scoping",
+      "part": "communications-jammer",
+      "given": "Local comlink signals inside 1km; no facility computer access",
+      "expected": "Requires DC25 Use Computer to jam local comlinks; +5 facility shutdown bonus cannot be treated as generic +5 to DC25 local check without rule support",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    },
+    {
+      "id": "SGD006-F10",
+      "title": "Remote starter is not autopilot",
+      "part": "remote-starship-starter",
+      "given": "Droid signals starship to begin preflight",
+      "expected": "Preflight may commence and diagnostics are reported; this does not authorize droid to pilot, fire weapons or jump to hyperspace",
+      "status": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundry": "NOT_TESTED"
+    }
+  ],
+  "guardrails": [
+    "No source facts promote mechanics execution",
+    "Portable controller/ invasive dataport tool are not installed chassis parts merely because in raw catalog",
+    "Preserve minimum versus exact price distinction",
+    "Each source variant requires explicit purchaser/host choice",
+    "No code, compendium, actor or Store mutations",
+    "Stock droid publication census is a separate project"
+  ]
+}

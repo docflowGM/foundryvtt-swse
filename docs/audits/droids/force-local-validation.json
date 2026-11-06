@@ -1,0 +1,11 @@
+{
+  "bookId": "FORCE",
+  "sourceEntries": 11,
+  "pdfVisualReviews": 11,
+  "directComparedFields": 229,
+  "mechanicallyCertified": 0,
+  "semanticValidation": "PASS",
+  "fullUpstreamJsonSchema202012Validated": false,
+  "foundryV13RuntimeCertified": false,
+  "scope": "Selected field review, not entire mechanical source field or narrative certification."
+}

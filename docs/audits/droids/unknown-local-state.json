@@ -1,0 +1,10 @@
+{
+  "bookId": "UNKNOWN",
+  "draftEntries": 6,
+  "selectedPdfReviewed": 6,
+  "comparisons": 99,
+  "mechanicallyCertified": 0,
+  "runtimeVerified": 0,
+  "status": "IN_PROGRESS_SOURCE_REVIEW_ONLY",
+  "publishedAuditScope": "selected-field-source-review-only"
+}

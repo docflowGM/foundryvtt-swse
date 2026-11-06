@@ -1,0 +1,1269 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "LEGACY",
+  "book": "Legacy Era Campaign Guide",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+  "expectedPublicationClaims": 12,
+  "scope": "Selected PDF-source facts, no executable mechanics; not an import-ready pack.",
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-001",
+        "printedName": "PI-Series Medical Assistant Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 69,
+        "printedPageEnd": 69,
+        "pdfPageStart1Based": 70,
+        "textLineAnchor1Based": 6089,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 1,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 12,
+        "str": 8,
+        "dex": 14,
+        "int": 15,
+        "wis": 13,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 9,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "fly 6 squares (hover)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Printed PI uses capital I; do not transform into P1."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "LEGACY-DROID-001-BOUNDARY-1",
+            "statement": "Printed PI uses capital I; do not transform into P1.",
+            "scope": "LEGACY-DROID-001",
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "page": 69,
+              "pdfPage1Based": 70,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "LEGACY-DROID-001"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-001:pdf-p69",
+          "LEGACY-DROID-001:txt-line-6089"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-002",
+        "printedName": "3Z3 Medical Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 70,
+        "printedPageEnd": 70,
+        "pdfPageStart1Based": 71,
+        "textLineAnchor1Based": 6175,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 1,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 11,
+        "str": 10,
+        "dex": 12,
+        "int": 14,
+        "wis": 15,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 4"
+      },
+      "defenses": {
+        "reflex": 11,
+        "flatFootedReflex": 10,
+        "fortitude": 10,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 10,
+        "damageThreshold": 10
+      },
+      "movement": {
+        "speedLineRaw": "6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-002:pdf-p70",
+          "LEGACY-DROID-002:txt-line-6175"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-003",
+        "printedName": "BL-39 Interrogator Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 71,
+        "printedPageEnd": 71,
+        "pdfPageStart1Based": 72,
+        "textLineAnchor1Based": 6244,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 1,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 2,
+        "perceptionPrinted": 11,
+        "str": 8,
+        "dex": 12,
+        "int": 14,
+        "wis": 17,
+        "cha": 15
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1/scoundrel 1"
+      },
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 14,
+        "fortitude": 9,
+        "will": 15
+      },
+      "durability": {
+        "hitPoints": 6,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "fly 6 squares (hover); maximum altitude of 2 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Medical reprogramming is narrative; no general free-chassis reconfiguration entitlement."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "LEGACY-DROID-003-BOUNDARY-1",
+            "statement": "Medical reprogramming is narrative; no general free-chassis reconfiguration entitlement.",
+            "scope": "LEGACY-DROID-003",
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "page": 71,
+              "pdfPage1Based": 72,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "LEGACY-DROID-003"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-003:pdf-p71",
+          "LEGACY-DROID-003:txt-line-6244"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-004",
+        "printedName": "FEG-Series Pilot Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 71,
+        "printedPageEnd": 71,
+        "pdfPageStart1Based": 72,
+        "textLineAnchor1Based": 6328,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 2,
+        "perceptionPrinted": 6,
+        "str": 13,
+        "dex": 15,
+        "int": 14,
+        "wis": 12,
+        "cha": 10
+      },
+      "progression": {
+        "classLineRaw": "scoundrel 1"
+      },
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 13,
+        "fortitude": 12,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 18,
+        "damageThreshold": 12
+      },
+      "movement": {
+        "speedLineRaw": "6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "FEG pilots vehicles but is itself a droid actor; do not transfer vehicle authority."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "LEGACY-DROID-004-BOUNDARY-1",
+            "statement": "FEG pilots vehicles but is itself a droid actor; do not transfer vehicle authority.",
+            "scope": "LEGACY-DROID-004",
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "page": 71,
+              "pdfPage1Based": 72,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "LEGACY-DROID-004"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-004:pdf-p71",
+          "LEGACY-DROID-004:txt-line-6328"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-005",
+        "printedName": "Holocam Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 72,
+        "printedPageEnd": 72,
+        "pdfPageStart1Based": 73,
+        "textLineAnchor1Based": 6399,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Tiny",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 2,
+        "perceptionPrinted": 14,
+        "str": 6,
+        "dex": 15,
+        "int": 10,
+        "wis": 14,
+        "cha": 6
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1"
+      },
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 12,
+        "fortitude": 8,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 2,
+        "damageThreshold": 8
+      },
+      "movement": {
+        "speedLineRaw": "fly 8 squares (hover)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-005:pdf-p72",
+          "LEGACY-DROID-005:txt-line-6399"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-006",
+        "printedName": "Roving Eye Observation Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 73,
+        "printedPageEnd": 73,
+        "pdfPageStart1Based": 74,
+        "textLineAnchor1Based": 6479,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Diminutive",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 14,
+        "str": 4,
+        "dex": 17,
+        "int": 10,
+        "wis": 14,
+        "cha": 6
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1"
+      },
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 15,
+        "fortitude": 7,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 2,
+        "damageThreshold": 7
+      },
+      "movement": {
+        "speedLineRaw": "fly 8 squares (hover)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-006:pdf-p73",
+          "LEGACY-DROID-006:txt-line-6479"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-007",
+        "printedName": "Z65 Patrol Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 74,
+        "printedPageEnd": 74,
+        "pdfPageStart1Based": 75,
+        "textLineAnchor1Based": 6524,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 6,
+        "perceptionPrinted": 12,
+        "str": 14,
+        "dex": 16,
+        "int": 10,
+        "wis": 14,
+        "cha": 12
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 6/soldier 1"
+      },
+      "defenses": {
+        "reflex": 21,
+        "flatFootedReflex": 18,
+        "fortitude": 15,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 21,
+        "damageThreshold": 15
+      },
+      "movement": {
+        "speedLineRaw": "6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-007:pdf-p74",
+          "LEGACY-DROID-007:txt-line-6524"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-008",
+        "printedName": "LV8-Series Guard Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 74,
+        "printedPageEnd": 74,
+        "pdfPageStart1Based": 75,
+        "textLineAnchor1Based": 6622,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": null,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid",
+        "contextualDegreeHeading": 4
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 15,
+        "perceptionPrinted": 9,
+        "str": 14,
+        "dex": 18,
+        "int": 8,
+        "wis": 16,
+        "cha": 10
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 12"
+      },
+      "defenses": {
+        "reflex": 20,
+        "flatFootedReflex": 17,
+        "fortitude": 12,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 30,
+        "damageThreshold": 12
+      },
+      "movement": {
+        "speedLineRaw": "6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Printed statblock omits degree; fourth-degree is the contextual heading only."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/classification/publishedDegree": "not-stated",
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "LEGACY-DROID-008-BOUNDARY-1",
+            "statement": "Printed statblock omits degree; fourth-degree is the contextual heading only.",
+            "scope": "LEGACY-DROID-008",
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "LEGACY-DROID-008"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-008:pdf-p74",
+          "LEGACY-DROID-008:txt-line-6622"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-009",
+        "printedName": "Aggressor-Series Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 75,
+        "printedPageEnd": 75,
+        "pdfPageStart1Based": 76,
+        "textLineAnchor1Based": 6688,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 7,
+        "perceptionPrinted": 6,
+        "str": 15,
+        "dex": 14,
+        "int": 10,
+        "wis": 13,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "soldier 1"
+      },
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 15,
+        "fortitude": 15,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 30,
+        "damageThreshold": 15
+      },
+      "movement": {
+        "speedLineRaw": "6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Printed starting soldier bonus feat replacement is conditional on this starting route; not free feat stacking."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "LEGACY-DROID-009-BOUNDARY-1",
+            "statement": "Printed starting soldier bonus feat replacement is conditional on this starting route; not free feat stacking.",
+            "scope": "LEGACY-DROID-009",
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "page": 75,
+              "pdfPage1Based": 76,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "LEGACY-DROID-009"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-009:pdf-p75",
+          "LEGACY-DROID-009:txt-line-6688"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-010",
+        "printedName": "IX-6 Heavy Combat Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 76,
+        "printedPageEnd": 76,
+        "pdfPageStart1Based": 77,
+        "textLineAnchor1Based": 6780,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 10,
+        "perceptionPrinted": 9,
+        "str": 14,
+        "dex": 16,
+        "int": 13,
+        "wis": 10,
+        "cha": 9
+      },
+      "progression": {
+        "classLineRaw": "soldier 5"
+      },
+      "defenses": {
+        "reflex": 23,
+        "flatFootedReflex": 20,
+        "fortitude": 20,
+        "will": 16
+      },
+      "durability": {
+        "hitPoints": 52,
+        "damageThreshold": 20
+      },
+      "movement": {
+        "speedLineRaw": "6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Two blaster rifles in possessions do not establish two executable attacks."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "LEGACY-DROID-010-BOUNDARY-1",
+            "statement": "Two blaster rifles in possessions do not establish two executable attacks.",
+            "scope": "LEGACY-DROID-010",
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "page": 76,
+              "pdfPage1Based": 77,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "LEGACY-DROID-010"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-010:pdf-p76",
+          "LEGACY-DROID-010:txt-line-6780"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-011",
+        "printedName": "LON-29 Battle Droid Commander",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 76,
+        "printedPageEnd": 77,
+        "pdfPageStart1Based": 77,
+        "textLineAnchor1Based": 6861,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 12,
+        "perceptionPrinted": 13,
+        "str": 11,
+        "dex": 14,
+        "int": 16,
+        "wis": 13,
+        "cha": 14
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 6/soldier 2/officer 2"
+      },
+      "defenses": {
+        "reflex": 23,
+        "flatFootedReflex": 21,
+        "fortitude": 17,
+        "will": 20
+      },
+      "durability": {
+        "hitPoints": 35,
+        "damageThreshold": 17
+      },
+      "movement": {
+        "speedLineRaw": "6 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Battle Analysis and Deployment Tactics require canonical rules and sharing conditions."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "LEGACY-DROID-011-BOUNDARY-1",
+            "statement": "Battle Analysis and Deployment Tactics require canonical rules and sharing conditions.",
+            "scope": "LEGACY-DROID-011",
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "page": 76,
+              "pdfPage1Based": 77,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "LEGACY-DROID-011"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-011:pdf-p76",
+          "LEGACY-DROID-011:txt-line-6861"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "LEGACY-DROID-012",
+        "printedName": "HV-7 Loading Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Legacy Era Campaign Guide",
+        "bookId": "LEGACY",
+        "printedPageStart": 77,
+        "printedPageEnd": 77,
+        "pdfPageStart1Based": 78,
+        "textLineAnchor1Based": 6953,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 5,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 2,
+        "str": 15,
+        "dex": 14,
+        "int": 10,
+        "wis": 13,
+        "cha": 6
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 3"
+      },
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 12,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 12
+      },
+      "movement": {
+        "speedLineRaw": "fly 8 squares (hover)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Repulsor-assisted lifting is source-specific, not a global cargo coefficient."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "LEGACY-DROID-012-BOUNDARY-1",
+            "statement": "Repulsor-assisted lifting is source-specific, not a global cargo coefficient.",
+            "scope": "LEGACY-DROID-012",
+            "source": {
+              "book": "Legacy Era Campaign Guide",
+              "page": 77,
+              "pdfPage1Based": 78,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "LEGACY-DROID-012"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "LEGACY-DROID-012:pdf-p77",
+          "LEGACY-DROID-012:txt-line-6953"
+        ]
+      }
+    }
+  ]
+}

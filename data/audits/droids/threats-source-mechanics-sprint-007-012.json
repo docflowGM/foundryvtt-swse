@@ -1,0 +1,99 @@
+{
+  "schema": "swse.droids.threats.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "bookId": "THREATS",
+  "scope": "Printed pages 139-143 (PDF 140-144), full statblock and adjacent narrative source-only second pass for 007-012.",
+  "records": [
+    {
+      "id": "THREATS-DROID-007",
+      "name": "R2-R Series Reconnaissance Astromech Droid",
+      "printedPage": 139,
+      "pdfPage1Based": 140,
+      "components": 15,
+      "sourceClaims": 4,
+      "featGroups": 3,
+      "talentGroups": 1,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-008",
+      "name": "B3 Series Ultra Battle Droid",
+      "printedPage": 140,
+      "pdfPage1Based": 141,
+      "components": 13,
+      "sourceClaims": 4,
+      "featGroups": 4,
+      "talentGroups": 0,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-009",
+      "name": "B3-A Series Ultra Battle Droid",
+      "printedPage": 141,
+      "pdfPage1Based": 142,
+      "components": 13,
+      "sourceClaims": 4,
+      "featGroups": 5,
+      "talentGroups": 3,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-010",
+      "name": "IG Series Battle Droid",
+      "printedPage": 141,
+      "pdfPage1Based": 142,
+      "components": 6,
+      "sourceClaims": 4,
+      "featGroups": 4,
+      "talentGroups": 0,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-011",
+      "name": "Pistoeka Buzz Droid",
+      "printedPage": 142,
+      "pdfPage1Based": 143,
+      "components": 11,
+      "sourceClaims": 4,
+      "featGroups": 4,
+      "talentGroups": 2,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-012",
+      "name": "EVS Construction Droid",
+      "printedPage": 143,
+      "pdfPage1Based": 144,
+      "components": 6,
+      "sourceClaims": 5,
+      "featGroups": 9,
+      "talentGroups": 0,
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "totals": {
+    "models": 6,
+    "components": 64,
+    "physicalAppendages": 26,
+    "possessions": 17,
+    "featGroups": 29,
+    "talentGroups": 6,
+    "skills": 20,
+    "constraints": 25,
+    "attackRows": 19,
+    "deepSourceReviewed": 12,
+    "sourceIdentities": 29,
+    "strictlyCertified": 0
+  },
+  "guardrails": {
+    "modelB3VersusB3AProcessorSeparation": true,
+    "mechanicsSourceOnly": true,
+    "attacksNonExecutable": true,
+    "all29SourceIdentitiesPreserved": true,
+    "fullSchemaNotRun": true,
+    "foundryRuntimeNotRun": true,
+    "productionMutations": 0
+  },
+  "next": "THREATS-DROID-013–018 printed pages 144–149"
+}

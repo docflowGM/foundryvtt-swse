@@ -1,0 +1,96 @@
+{
+  "schema": "swse.droids.sgd.published-source-deepening-closeout/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "sourceBook": "Scavenger's Guide to Droids",
+  "sourcePdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "printedPagesReviewed": "68-159 inclusive (92 printed pages), as 46 paired model spreads; source-first and protocol/secondary variant review",
+  "scope": "FULL source-mechanical second-pass claim capture completed. This is NOT strict field/trait/weapon-mount mechanical certification, nor Foundry runtime implementation.",
+  "totals": {
+    "publishedIdentities": 46,
+    "sourceHydrated": 46,
+    "deepSourceReviewed": 46,
+    "protocolActions": 200,
+    "publishedNonFactoryVariants": 110,
+    "sourceConstraints": 117,
+    "unresolvedPrintedConflicts": 23,
+    "printedAttackRows": 133,
+    "strictMechanicalCertifications": 0,
+    "foundryRuntimeCertifications": 0
+  },
+  "milestones": [
+    "001-005",
+    "006-010",
+    "011-015",
+    "016-020",
+    "021-025",
+    "026-030",
+    "031-035",
+    "036-040",
+    "041-045",
+    "046-final"
+  ],
+  "lastModel": {
+    "sourceEntryKey": "SGD-DROID-046",
+    "printedName": "YVH-Series Battle Droid",
+    "printedPages": [
+      158,
+      159
+    ],
+    "protocolActions": [
+      "SGD-046-CANNON-NORMAL",
+      "SGD-046-CANNON-MAX",
+      "SGD-046-VIBROBLADE-PROTOCOL",
+      "SGD-046-TAUNT-PROTOCOL",
+      "SGD-046-SCAN-PROTOCOL"
+    ],
+    "publishedVariants": [
+      "SGD-046-VARIANT-GUARDIAN"
+    ],
+    "constraints": [
+      "SGD-046-WEAPON-MOUNT-NARRATIVE",
+      "SGD-046-CONSTRAINT-REPULSOR-LEAP-NOT-FLIGHT",
+      "SGD-046-CONSTRAINT-YV-SCAN-TARGET-AND-CONFLICT",
+      "SGD-046-CONSTRAINT-YV-TAUNT-TARGET-AND-CONFLICT",
+      "SGD-046-CONSTRAINT-VARIABLE-OUTPUT-AMMUNITION",
+      "SGD-046-CONSTRAINT-GUARDIAN-REQUIRES-REPLACEMENT"
+    ],
+    "sourceConflicts": [
+      "SGD-046-SCAN-ACTION-COST-CONFLICT",
+      "SGD-046-TAUNT-ACTION-AND-TARGET-CONFLICT"
+    ],
+    "heroicCreationRouteSeparate": true,
+    "mechanicalStatus": "partial",
+    "runtimeStatus": "not-tested"
+  },
+  "correction": {
+    "sourceEntryKey": "SGD-DROID-036",
+    "ruleId": "SGD-036-THREAT-SCAN-ACTION-CONFLICT",
+    "protocolLocatorCorrectedToPrintedPage": 139,
+    "pdfPage1Based": 140
+  },
+  "integrity": {
+    "all46HaveSourceActions": true,
+    "allNewAndPreviouslyRecordedActionsAndVariantsAreSourceOnly": true,
+    "strictSourceCertifiedZero": true,
+    "foundryRuntimeVerifiedZero": true,
+    "printedAttacksNonExecutable": true,
+    "all23ConflictsUnresolved": true,
+    "allNewClaimsHaveCitations": true,
+    "allSourceRuleIdsUnique": true,
+    "sourceIdentityInvariant": true
+  },
+  "testsNotRun": [
+    "original Python Draft202012Validator against repository data",
+    "full repository-wide test suite",
+    "canonical feat/talent and equipment mount/weapon integration",
+    "live Foundry V13 runtime"
+  ],
+  "next": [
+    "Canonical feat/talent identity certification",
+    "physical mount/cost/power-resource authority reconciliation",
+    "23 contradictions require adjudication, preserving original printed claims",
+    "independent field-level source mechanics certification per droid",
+    "post-merge Foundry runtime tests by delegated implementation workstream"
+  ]
+}

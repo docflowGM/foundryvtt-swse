@@ -1,0 +1,23 @@
+{
+  "schema": "swse.droids.kotor.system-possession-source-token-review/0.1",
+  "date": "2026-11-02",
+  "scope": "Separate printed Systems and Possessions for all 23 KOTOR character-format records. Source-token quantities (for example '2 hand appendages') are NOT certified physical mount instances. Vehicle Basilisk explicitly deferred to vehicle-authoritative equipment.",
+  "totals": {
+    "records": 23,
+    "systemLabels": 133,
+    "possessionLabels": 61,
+    "vehicleDeferred": 1,
+    "sourceClaimedMounts": 0,
+    "sourceIdentities": 24,
+    "strictlyCertified": 0
+  },
+  "sourceRef": "Knights of the Old Republic Campaign Guide printed pp.81–89, 165, 203, 212–213, 216, 222–223",
+  "outstanding": [
+    "Canonical item identities and prices",
+    "Basilisk full vehicle field/weapon payload certification",
+    "Any unclear same-page OCR interleaving requiring high-resolution PDF field check",
+    "Feats/talents/classes full individual legal construction",
+    "Attack action costs, installed weapon mount ownership and resources"
+  ],
+  "noProductionChanges": true
+}

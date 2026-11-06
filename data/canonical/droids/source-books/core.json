@@ -1,0 +1,1378 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "CORE",
+  "book": "Saga Edition Core Rulebook",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "Star Wars Saga Edition.pdf",
+  "expectedPublicationClaims": 13,
+  "scope": "Selected PDF-source facts, no executable mechanics; not an import-ready pack.",
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-001",
+        "printedName": "2-1B Medical Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 197,
+        "printedPageEnd": 197,
+        "pdfPageStart1Based": 198,
+        "textLineAnchor1Based": 18637,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 1,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 1,
+        "perceptionPrinted": 5,
+        "str": 8,
+        "dex": 11,
+        "int": 14,
+        "wis": 15,
+        "cha": 9
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-001:pdf-p197",
+          "CORE-DROID-001:txt-line-18637"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-002",
+        "printedName": "R2 Series Astromech Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 198,
+        "printedPageEnd": 198,
+        "pdfPageStart1Based": 199,
+        "textLineAnchor1Based": 18706,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 3,
+        "str": 9,
+        "dex": 14,
+        "int": 15,
+        "wis": 10,
+        "cha": 7
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 8,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 8
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (wheeled), 4 squares (walking), 9 squares (flying)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-002:pdf-p198",
+          "CORE-DROID-002:txt-line-18706"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-003",
+        "printedName": "3PO Series Protocol Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 198,
+        "printedPageEnd": 198,
+        "pdfPageStart1Based": 199,
+        "textLineAnchor1Based": 18777,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": -1,
+        "perceptionPrinted": 1
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1"
+      },
+      "defenses": {
+        "reflex": 9,
+        "flatFootedReflex": 9,
+        "fortitude": 9,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 2,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-003:pdf-p198",
+          "CORE-DROID-003:txt-line-18777"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-004",
+        "printedName": "B1 Series Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 199,
+        "printedPageEnd": 199,
+        "pdfPageStart1Based": 200,
+        "textLineAnchor1Based": 18837,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 0,
+        "perceptionPrinted": 6,
+        "str": 13,
+        "dex": 9,
+        "int": 9,
+        "wis": 10,
+        "cha": 10
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 3"
+      },
+      "defenses": {
+        "reflex": 9,
+        "flatFootedReflex": 9,
+        "fortitude": 11,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 10,
+        "damageThreshold": 11
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "B1 model is explicitly prohibited as a droid hero (printed p199)."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CORE-DROID-004-BOUNDARY-1",
+            "statement": "B1 model is explicitly prohibited as a droid hero (printed p199).",
+            "scope": "CORE-DROID-004",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "page": 199,
+              "pdfPage1Based": 200,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CORE-DROID-004"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-004:pdf-p199",
+          "CORE-DROID-004:txt-line-18837"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-005",
+        "printedName": "B2 Series Super Battle Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 199,
+        "printedPageEnd": 199,
+        "pdfPageStart1Based": 200,
+        "textLineAnchor1Based": 18884,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 8,
+        "str": 14,
+        "dex": 11,
+        "int": 10,
+        "wis": 11,
+        "cha": 7
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 6"
+      },
+      "defenses": {
+        "reflex": 12,
+        "flatFootedReflex": 12,
+        "fortitude": 12,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 21,
+        "damageThreshold": 12
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "B2 is explicitly permitted as a droid hero (printed p199), unlike B1."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CORE-DROID-005-BOUNDARY-1",
+            "statement": "B2 is explicitly permitted as a droid hero (printed p199), unlike B1.",
+            "scope": "CORE-DROID-005",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "page": 199,
+              "pdfPage1Based": 200,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CORE-DROID-005"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-005:pdf-p199",
+          "CORE-DROID-005:txt-line-18884"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-006",
+        "printedName": "Droideka Series Destroyer Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 200,
+        "printedPageEnd": 200,
+        "pdfPageStart1Based": 201,
+        "textLineAnchor1Based": 18968,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Large",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 8,
+        "perceptionPrinted": 13,
+        "str": 16,
+        "dex": 14,
+        "int": 8,
+        "wis": 14,
+        "cha": 7
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 12"
+      },
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 14,
+        "fortitude": 13,
+        "will": 10,
+        "shieldRating": 20
+      },
+      "durability": {
+        "hitPoints": 40,
+        "damageThreshold": 18
+      },
+      "movement": {
+        "speedLineRaw": "2 squares (walking), 10 squares (wheeled)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Printed CL 4, upstream census CL 6: retain disagreement; printed p200 controls source record.",
+          "SR 20 and wheeled mode are source facts, not executed shield or transformation."
+        ]
+      },
+      "exceptions": {
+        "transcriptionWarnings": [
+          "Earlier publication census lists CL 6; printed Core Rulebook p200 instead lists CL 4. Not a source-book contradiction: correct census before future merge."
+        ],
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CORE-DROID-006-BOUNDARY-1",
+            "statement": "Printed CL 4, upstream census CL 6: retain disagreement; printed p200 controls source record.",
+            "scope": "CORE-DROID-006",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "page": 200,
+              "pdfPage1Based": 201,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CORE-DROID-006"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "CORE-DROID-006-BOUNDARY-2",
+            "statement": "SR 20 and wheeled mode are source facts, not executed shield or transformation.",
+            "scope": "CORE-DROID-006",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "page": 200,
+              "pdfPage1Based": 201,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CORE-DROID-006"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-006:pdf-p200",
+          "CORE-DROID-006:txt-line-18968"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-007",
+        "printedName": "Dwarf Spider Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 200,
+        "printedPageEnd": 201,
+        "pdfPageStart1Based": 201,
+        "textLineAnchor1Based": 19032,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Large",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 12,
+        "str": 22,
+        "dex": 9,
+        "int": 10,
+        "wis": 12,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 9"
+      },
+      "defenses": {
+        "reflex": 13,
+        "flatFootedReflex": 13,
+        "fortitude": 16,
+        "will": 11
+      },
+      "durability": {
+        "hitPoints": 32,
+        "damageThreshold": 26
+      },
+      "movement": {
+        "speedLineRaw": "8 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Printed CL 3, census value absent. Statblock starts printed p200 and continues p201."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CORE-DROID-007-BOUNDARY-1",
+            "statement": "Printed CL 3, census value absent. Statblock starts printed p200 and continues p201.",
+            "scope": "CORE-DROID-007",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "page": 200,
+              "pdfPage1Based": 201,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CORE-DROID-007"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-007:pdf-p200",
+          "CORE-DROID-007:txt-line-19032"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-008",
+        "printedName": "Crab Droid Scout",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 201,
+        "printedPageEnd": 201,
+        "pdfPageStart1Based": 202,
+        "textLineAnchor1Based": 19082,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Large",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 4
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "perceptionPrinted": 13,
+        "str": 24,
+        "dex": 9,
+        "int": 10,
+        "wis": 14,
+        "cha": 8
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 12"
+      },
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 18,
+        "fortitude": 17,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 80,
+        "damageThreshold": 42
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking), climb 3 squares"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-008:pdf-p201",
+          "CORE-DROID-008:txt-line-19082"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-009",
+        "printedName": "IG-100 Series MagnaGuard",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 201,
+        "printedPageEnd": 202,
+        "pdfPageStart1Based": 202,
+        "textLineAnchor1Based": 19147,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 9,
+        "perceptionPrinted": 12,
+        "str": 13,
+        "dex": 13,
+        "int": 14,
+        "wis": 14,
+        "cha": 10
+      },
+      "progression": {
+        "classLineRaw": "soldier 6"
+      },
+      "defenses": {
+        "reflex": 17,
+        "flatFootedReflex": 16,
+        "fortitude": 17,
+        "will": 18
+      },
+      "durability": {
+        "hitPoints": 53,
+        "damageThreshold": 17
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "IG-100 printed CL 6, census value absent. Statblock continues on p202."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CORE-DROID-009-BOUNDARY-1",
+            "statement": "IG-100 printed CL 6, census value absent. Statblock continues on p202.",
+            "scope": "CORE-DROID-009",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "page": 201,
+              "pdfPage1Based": 202,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CORE-DROID-009"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-009:pdf-p201",
+          "CORE-DROID-009:txt-line-19147"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-010",
+        "printedName": "Viper Series Probe Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 202,
+        "printedPageEnd": 203,
+        "pdfPageStart1Based": 203,
+        "textLineAnchor1Based": 19224,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Large",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 6,
+        "perceptionPrinted": 9,
+        "str": 18,
+        "dex": 12,
+        "int": 12,
+        "wis": 15,
+        "cha": 11
+      },
+      "progression": {
+        "classLineRaw": "scout 1"
+      },
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 13,
+        "fortitude": 14,
+        "will": 13
+      },
+      "durability": {
+        "hitPoints": 34,
+        "damageThreshold": 19
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Viper printed CL 1, census value absent; its statblock continues onto printed p203."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CORE-DROID-010-BOUNDARY-1",
+            "statement": "Viper printed CL 1, census value absent; its statblock continues onto printed p203.",
+            "scope": "CORE-DROID-010",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "page": 202,
+              "pdfPage1Based": 203,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CORE-DROID-010"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-010:pdf-p202",
+          "CORE-DROID-010:txt-line-19224"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-011",
+        "printedName": "ASP Series Labor Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 203,
+        "printedPageEnd": 203,
+        "pdfPageStart1Based": 204,
+        "textLineAnchor1Based": 19301,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 5,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 2,
+        "perceptionPrinted": 1,
+        "str": 17,
+        "dex": 12,
+        "int": 6,
+        "wis": 11,
+        "cha": 5
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2"
+      },
+      "defenses": {
+        "reflex": 15,
+        "flatFootedReflex": 14,
+        "fortitude": 13,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 5,
+        "damageThreshold": 13
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-011:pdf-p203",
+          "CORE-DROID-011:txt-line-19301"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-012",
+        "printedName": "R2-D2 (Episode VI)",
+        "namedIndividual": true
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 267,
+        "printedPageEnd": 267,
+        "pdfPageStart1Based": 268,
+        "textLineAnchor1Based": 25872,
+        "publicationKind": "named-character"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 6,
+        "str": 8,
+        "dex": 16,
+        "int": 16,
+        "wis": 10,
+        "cha": 7
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 2/scoundrel 6"
+      },
+      "defenses": {
+        "reflex": 23,
+        "flatFootedReflex": 20,
+        "fortitude": 16,
+        "will": 18
+      },
+      "durability": {
+        "hitPoints": 34,
+        "damageThreshold": 16
+      },
+      "movement": {
+        "speedLineRaw": "4 squares (wheeled), 1 square (walking), 6 squares (flying)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Named R2-D2 is not the stock R2 starting profile."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CORE-DROID-012-BOUNDARY-1",
+            "statement": "Named R2-D2 is not the stock R2 starting profile.",
+            "scope": "CORE-DROID-012",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "page": 267,
+              "pdfPage1Based": 268,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CORE-DROID-012"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-012:pdf-p267",
+          "CORE-DROID-012:txt-line-25872"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "CORE-DROID-013",
+        "printedName": "C-3PO (Episode VI)",
+        "namedIndividual": true
+      },
+      "publication": {
+        "book": "Saga Edition Core Rulebook",
+        "bookId": "CORE",
+        "printedPageStart": 267,
+        "printedPageEnd": 268,
+        "pdfPageStart1Based": 268,
+        "textLineAnchor1Based": 25942,
+        "publicationKind": "named-character"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 5
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": -1,
+        "perceptionPrinted": 0,
+        "str": 8,
+        "dex": 9,
+        "int": 12,
+        "wis": 12,
+        "cha": 16
+      },
+      "progression": {
+        "classLineRaw": "nonheroic 1/noble 5"
+      },
+      "defenses": {
+        "reflex": 16,
+        "flatFootedReflex": 16,
+        "fortitude": 15,
+        "will": 19
+      },
+      "durability": {
+        "hitPoints": 26,
+        "damageThreshold": 15
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected first-page printed fields only. OCR is not final authority.",
+          "No weapon mount, feat, talent, runtime effect or character-creation entitlement may be inferred from a statblock.",
+          "Named C-3PO continues onto printed p268 and is not the stock 3PO starting profile."
+        ]
+      },
+      "exceptions": {
+        "notes": "Publication source claim only: complete equipment, combat, feat/talent, secondary-page, PC route, JSON Schema, and Foundry runtime certification outstanding."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "mechanicalExecutionStatus": "source-only",
+        "conditionalMechanics": [
+          {
+            "ruleId": "CORE-DROID-013-BOUNDARY-1",
+            "statement": "Named C-3PO continues onto printed p268 and is not the stock 3PO starting profile.",
+            "scope": "CORE-DROID-013",
+            "source": {
+              "book": "Saga Edition Core Rulebook",
+              "page": 267,
+              "pdfPage1Based": 268,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "CORE-DROID-013"
+            },
+            "executionStatus": "source-only"
+          }
+        ]
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected fields reviewed visually against printed PDF; no complete mechanical certification.",
+        "reviewerEvidenceRefs": [
+          "CORE-DROID-013:pdf-p267",
+          "CORE-DROID-013:txt-line-25942"
+        ]
+      }
+    }
+  ]
+}

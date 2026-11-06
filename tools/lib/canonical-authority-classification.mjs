@@ -24,6 +24,7 @@ export function walk(dir, out = []) {
 export const RULES = [
   [/^data\/canonical\/(feats|weapons|talents)\.json$/, 'CANONICAL_SSOT', 'The one operational authority for its domain.'],
   [/^data\/canonical\/(armor|equipment)\.json$/, 'OTHER_DOMAIN_DATA', 'Canonical armor / equipment Item documents (tools/build-canonical-item-packs.mjs); not the feat or weapon corpus.'],
+  [/^data\/canonical\/droids\/source-books\/[a-z-]+\.json$/, 'OTHER_DOMAIN_DATA', 'Droid-only partial publication-source ledgers; non-runtime and not canonical feat/weapon production data.'],
   [/^packs\/feats\.db(\.sha256)?$/, 'GENERATED_PRODUCTION', 'tools/build-feat-production.mjs from data/canonical/feats.json'],
   [/^packs\/weapons(-[a-z]+)?\.db$/, 'GENERATED_PRODUCTION', 'tools/build-weapon-production.mjs from data/canonical/weapons.json'],
   [/^data\/feat-catalog\.json$/, 'GENERATED_COMPATIBILITY', 'Catalog projection of packs/feats.db documents; retire when every consumer reads the pack/registry (5G).'],

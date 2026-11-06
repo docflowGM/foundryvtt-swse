@@ -1,0 +1,86 @@
+{
+  "schema": "swse.droid.sotg.source-evidence/0.1",
+  "sourceBook": "Starships of the Galaxy",
+  "sourcePdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+  "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "sourceTxt": "Starships of the Galaxy_djvu.txt",
+  "sourceTxtSha256": "04fc2297996f2370d4e183dfe33df0b885215cb84c2f1602f60e227f3d853ad3",
+  "records": [
+    {
+      "sourceEntryKey": "SOTG-DROID-001",
+      "printedName": "Baktoid Armor Workshop Vulture-class Starfighter",
+      "printedPage": 78,
+      "pdfPage1Based": 79,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 7405,
+      "txtWindowSha256": "20034ca80dc8ce7d99d24623260e8413b7e80e5ddd9a4e41620c19c6f75f141b",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/sotg_pdf_review/printed_p78.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Baktoid Armor Workshop Vulture-class Starfighter",
+          "/publication/printedPageStart": 78,
+          "/publication/printedPageEnd": 78,
+          "/classification/size": "Huge",
+          "/challenge/challengeLevel": 7
+        },
+        "fieldComparisonCount": 5,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Model has dual vehicle walker/flight movement; independent droid brain is an optional retrofit, not default.",
+        "Missile and laser rows are vehicle attack groups, not certified individual mount rights."
+      ]
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-002",
+      "printedName": "Phlac-Arphocc Automata Industries Droid Tri-Fighter",
+      "printedPage": 79,
+      "pdfPage1Based": 80,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 7515,
+      "txtWindowSha256": "0c003339f68c7f89408eb0ab04ad0483b46f9b00d2f6ca664437b0a8986d2f59",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/sotg_pdf_review/printed_p79.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Phlac-Arphocc Automata Industries Droid Tri-Fighter",
+          "/publication/printedPageStart": 79,
+          "/publication/printedPageEnd": 79,
+          "/classification/size": "Huge",
+          "/challenge/challengeLevel": 9
+        },
+        "fieldComparisonCount": 5,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Three light laser cannons printed as one attack-group label, not proof of three independently firing mounts."
+      ]
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-003",
+      "printedName": "Haor Chall Engineering Scarab-class Starfighter",
+      "printedPage": 79,
+      "pdfPage1Based": 80,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 7566,
+      "txtWindowSha256": "872b0216642940ae87925314638c79bb3b8ee8f750c99503626362bb30561611",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/sotg_pdf_review/printed_p79.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Haor Chall Engineering Scarab-class Starfighter",
+          "/publication/printedPageStart": 79,
+          "/publication/printedPageEnd": 79,
+          "/classification/size": "Huge",
+          "/challenge/challengeLevel": 6
+        },
+        "fieldComparisonCount": 5,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Printed SR20 belongs to starfighter vehicle authority; no unprinted payload or weapon mounts."
+      ]
+    }
+  ]
+}

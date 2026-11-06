@@ -1,0 +1,11 @@
+{
+  "bookId": "LEGACY",
+  "sourceEntries": 12,
+  "pdfVisualReviews": 12,
+  "directComparedFields": 251,
+  "mechanicallyCertified": 0,
+  "semanticValidation": "PASS",
+  "fullUpstreamJsonSchema202012Validated": false,
+  "foundryV13RuntimeCertified": false,
+  "scope": "Selected field review, not entire mechanical source field or narrative certification."
+}

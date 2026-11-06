@@ -1,0 +1,2488 @@
+{
+  "schema": "swse.droids.component.source-mechanical-certificate/v1",
+  "batch": "MECH-001",
+  "date": "2026-11-02",
+  "scope": "Exactly 25 unique Core+SGD canonical identities; first true source-mechanical certification; no production changes",
+  "frozenAuthority": "data/audits/droids/component-122-identity-source-coverage.json",
+  "sourceAuthority": {
+    "costFactorTable": {
+      "book": "Star Wars Saga Edition Core Rulebook",
+      "printedPage": 187,
+      "table": "11-2",
+      "factors": {
+        "fine": 20,
+        "diminutive": 10,
+        "tiny": 5,
+        "small": 2,
+        "medium": 1,
+        "large": 2,
+        "huge": 5,
+        "gargantuan": 10,
+        "colossal": 20
+      }
+    },
+    "installationShared": {
+      "accessory": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "appendage": {
+        "skill": "Mechanics",
+        "dc": 20,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "processor": {
+        "skills": [
+          {
+            "name": "Use Computer",
+            "dc": 20
+          },
+          {
+            "name": "Mechanics",
+            "dc": 20
+          }
+        ],
+        "duration": "1 day",
+        "selfModificationAllowed": false,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "equipment": {
+        "type": "Equipment handling; not a remote command grant",
+        "source": [
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 51,
+            "pdfPage1Based": 52,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          },
+          {
+            "book": "Scavenger's Guide to Droids",
+            "printedPage": 53,
+            "pdfPage1Based": 54,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      }
+    }
+  },
+  "verification": {
+    "sourcePdfImagesVisuallyChecked": [
+      {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "printedPage": 193,
+        "pdfPage1Based": 194,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "printedPage": 196,
+        "pdfPage1Based": 197,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Scavenger's Guide to Droids",
+        "printedPage": 54,
+        "pdfPage1Based": 55,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "printedPage": 189,
+        "pdfPage1Based": 190,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "printedPage": 190,
+        "pdfPage1Based": 191,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "printedPage": 194,
+        "pdfPage1Based": 195,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "printedPage": 195,
+        "pdfPage1Based": 196,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "printedPage": 197,
+        "pdfPage1Based": 198,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "printedPage": 134,
+        "pdfPage1Based": 135,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Star Wars Saga Edition Core Rulebook",
+        "printedPage": 191,
+        "pdfPage1Based": 192,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Scavenger's Guide to Droids",
+        "printedPage": 56,
+        "pdfPage1Based": 57,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Scavenger's Guide to Droids",
+        "printedPage": 58,
+        "pdfPage1Based": 59,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Scavenger's Guide to Droids",
+        "printedPage": 53,
+        "pdfPage1Based": 54,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      },
+      {
+        "book": "Scavenger's Guide to Droids",
+        "printedPage": 59,
+        "pdfPage1Based": 60,
+        "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+      }
+    ],
+    "reviewLevel": "Source-mechanical specifications established; executed Foundry behaviors are intentionally NOT certified",
+    "documentedNotPublishedFieldsMustNotBeReplacedWithInferredZeros": true
+  },
+  "counts": {
+    "identitiesEvaluated": 25,
+    "sourceMechanicsCertified": 25,
+    "sourceMechanicsOnHold": 0,
+    "productionRegistryCertified": 0,
+    "appParityCertified": 0,
+    "foundryRuntimeCertified": 0,
+    "sourceBooks": 2,
+    "uniqueArmor": 13,
+    "uniqueAppendage": 5,
+    "uniqueSensor": 2,
+    "other": 5
+  },
+  "records": [
+    {
+      "canonicalId": "droid-plasteel-shell",
+      "canonicalName": "Plasteel Shell",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 400,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 2,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "-",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "light",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 2,
+        "maxDexterityBonus": 5,
+        "armorCheckPenalty": -2,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 4,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-quadanium-shell",
+      "canonicalName": "Quadanium Shell",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 900,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 3,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "-",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "light",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 3,
+        "maxDexterityBonus": 4,
+        "armorCheckPenalty": -2,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 4,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-durasteel-shell",
+      "canonicalName": "Durasteel Shell",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 1600,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 8,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "-",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "light",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 4,
+        "maxDexterityBonus": 4,
+        "armorCheckPenalty": -2,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 4,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-quadanium-plating",
+      "canonicalName": "Quadanium Plating",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 2500,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 10,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Licensed",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "light",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 5,
+        "maxDexterityBonus": 3,
+        "armorCheckPenalty": -2,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 4,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-durasteel-plating",
+      "canonicalName": "Durasteel Plating",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 3600,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 12,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Licensed",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "light",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 6,
+        "maxDexterityBonus": 3,
+        "armorCheckPenalty": -2,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 4,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-quadanium-battle-armor",
+      "canonicalName": "Quadanium Battle Armor",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 4900,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 7,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Restricted",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "medium",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 7,
+        "maxDexterityBonus": 3,
+        "armorCheckPenalty": -5,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 4,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-duranium-plating",
+      "canonicalName": "Duranium Plating",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 6400,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 16,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Restricted",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "medium",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 8,
+        "maxDexterityBonus": 2,
+        "armorCheckPenalty": -5,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 4,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-durasteel-battle-armor",
+      "canonicalName": "Durasteel Battle Armor",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 9600,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 8,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Restricted",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "medium",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 8,
+        "maxDexterityBonus": 3,
+        "armorCheckPenalty": -5,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 4,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-mandalorian-steel-shell",
+      "canonicalName": "Mandalorian Steel Shell",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 8100,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 9,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Military, Rare",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "heavy",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 9,
+        "maxDexterityBonus": 3,
+        "armorCheckPenalty": -10,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 3,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-duranium-battle-armor",
+      "canonicalName": "Duranium Battle Armor",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 10000,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 10,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Military",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "heavy",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 10,
+        "maxDexterityBonus": 2,
+        "armorCheckPenalty": -10,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 3,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-neutronium-plating",
+      "canonicalName": "Neutronium Plating",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 12100,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 20,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Military",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "heavy",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 11,
+        "maxDexterityBonus": 1,
+        "armorCheckPenalty": -10,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 3,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": null
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-duravlex-shell",
+      "canonicalName": "Duravlex Shell",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 54,
+          "pdfPage1Based": 55,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 1000,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 10,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Licensed",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "light",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 4,
+        "maxDexterityBonus": 3,
+        "armorCheckPenalty": -2,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 4,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": {
+          "trigger": "resist fire/extreme heat with Fortitude Defense",
+          "type": "equipment",
+          "bonus": 10,
+          "appliesTo": "Fortitude Defense vs fire and extreme heat only",
+          "notAppliesTo": "all other Fortitude challenges"
+        }
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-crystadurium-plating",
+      "canonicalName": "Crystadurium Plating",
+      "group": "BUILT_IN_ARMOR",
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 54,
+          "pdfPage1Based": 55,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 50000,
+        "factorAuthority": "Core Table 11-2 p187",
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 30,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "Military, Rare",
+      "host": {
+        "form": "INTEGRATED_DROID_ARMOR",
+        "actor": "DROID",
+        "armorClass": "heavy",
+        "slot": "BUILT_IN_ARMOR",
+        "wearableArmorStacking": "DO_NOT_STACK_REFLEX_BONUSES",
+        "independentSlotCount": "NOT_SPECIFIED_IN_PRINTED_SOURCE"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "reflexArmorBonus": 10,
+        "maxDexterityBonus": 2,
+        "armorCheckPenalty": -10,
+        "unproficientArmorPenaltyTargets": [
+          "attack rolls",
+          "Acrobatics",
+          "Climb",
+          "Endurance",
+          "Initiative",
+          "Jump",
+          "Stealth",
+          "Swim"
+        ],
+        "armorProficiencyNegatesCheckPenalty": true,
+        "normalMovementSpeedPenalty": 0,
+        "runSpeedMultiplier": 3,
+        "doesNotStackWithWornArmorBonus": true,
+        "rareBlackMarketListedCost": "usually doubled if Rare, per Core p193; not automatic transaction without black-market context",
+        "special": {
+          "trigger": "blaster attack damage",
+          "subtractPerDamageDie": 1,
+          "notAppliesTo": "non-blaster damage, universal DR"
+        }
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Availability law is separate from chargen legality",
+        "Published normal price does not include arbitrary market markup"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-probe",
+      "canonicalName": "Probe",
+      "group": "APPENDAGE",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 2,
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 0.5,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "-",
+      "host": {
+        "form": "DROID_APPENDAGE",
+        "actor": "DROID",
+        "minimumCount": 0,
+        "maximumCount": "NO_SOURCE_NUMERIC_LIMIT",
+        "attackActionBonusFromExtraAppendages": 0,
+        "requiresSeparateMountedToolPurchase": true
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 20,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "unarmedDamageBySize": {
+          "fine": null,
+          "diminutive": null,
+          "tiny": null,
+          "small": null,
+          "medium": "1",
+          "large": "1d2",
+          "huge": "1d3",
+          "gargantuan": "1d4",
+          "colossal": "1d6"
+        },
+        "strengthModifierAddsToListedDamage": true,
+        "damageDash": "No damage value published for this appendage/size pairing",
+        "canAttemptUnarmedAttackIfDamageListed": true,
+        "appendageCountDoesNotIncreaseActionsOrAttacks": true,
+        "primaryFunction": "Minimal probe that can push or pull; not a complete dexterous hand."
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Weapon proficiency and attacks use normal combat rules",
+        "No extra turns or attacks from extra limbs"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-instrument",
+      "canonicalName": "Instrument",
+      "group": "APPENDAGE",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 5,
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 1,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "-",
+      "host": {
+        "form": "DROID_APPENDAGE",
+        "actor": "DROID",
+        "minimumCount": 0,
+        "maximumCount": "NO_SOURCE_NUMERIC_LIMIT",
+        "attackActionBonusFromExtraAppendages": 0,
+        "requiresSeparateMountedToolPurchase": true
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 20,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "unarmedDamageBySize": {
+          "fine": null,
+          "diminutive": null,
+          "tiny": null,
+          "small": "1",
+          "medium": "1d2",
+          "large": "1d3",
+          "huge": "1d4",
+          "gargantuan": "1d6",
+          "colossal": "1d8"
+        },
+        "strengthModifierAddsToListedDamage": true,
+        "damageDash": "No damage value published for this appendage/size pairing",
+        "canAttemptUnarmedAttackIfDamageListed": true,
+        "appendageCountDoesNotIncreaseActionsOrAttacks": true,
+        "primaryFunction": "Instrument normally supports designated tasks; if clamping, carrying capacity calculated using one-quarter of actual Strength."
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Weapon proficiency and attacks use normal combat rules",
+        "No extra turns or attacks from extra limbs"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-tool",
+      "canonicalName": "Tool",
+      "group": "APPENDAGE",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 10,
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 2,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "-",
+      "host": {
+        "form": "DROID_APPENDAGE",
+        "actor": "DROID",
+        "minimumCount": 0,
+        "maximumCount": "NO_SOURCE_NUMERIC_LIMIT",
+        "attackActionBonusFromExtraAppendages": 0,
+        "requiresSeparateMountedToolPurchase": true
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 20,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "unarmedDamageBySize": {
+          "fine": null,
+          "diminutive": null,
+          "tiny": "1",
+          "small": "1d2",
+          "medium": "1d3",
+          "large": "1d4",
+          "huge": "1d6",
+          "gargantuan": "1d8",
+          "colossal": "2d6"
+        },
+        "strengthModifierAddsToListedDamage": true,
+        "damageDash": "No damage value published for this appendage/size pairing",
+        "canAttemptUnarmedAttackIfDamageListed": true,
+        "appendageCountDoesNotIncreaseActionsOrAttacks": true,
+        "primaryFunction": "For tasks not intended for tool appendage, require DC15 Dexterity (GM may set higher for delicate objects); failed check drops item; mounted weapons count as tool appendages unless stated, and weapon/tool price is separate."
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Weapon proficiency and attacks use normal combat rules",
+        "No extra turns or attacks from extra limbs"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-claw",
+      "canonicalName": "Claw",
+      "group": "APPENDAGE",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 20,
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 5,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "-",
+      "host": {
+        "form": "DROID_APPENDAGE",
+        "actor": "DROID",
+        "minimumCount": 0,
+        "maximumCount": "NO_SOURCE_NUMERIC_LIMIT",
+        "attackActionBonusFromExtraAppendages": 0,
+        "requiresSeparateMountedToolPurchase": true
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 20,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "unarmedDamageBySize": {
+          "fine": null,
+          "diminutive": "1",
+          "tiny": "1d2",
+          "small": "1d3",
+          "medium": "1d4",
+          "large": "1d6",
+          "huge": "1d8",
+          "gargantuan": "2d6",
+          "colossal": "2d8"
+        },
+        "strengthModifierAddsToListedDamage": true,
+        "damageDash": "No damage value published for this appendage/size pairing",
+        "canAttemptUnarmedAttackIfDamageListed": true,
+        "appendageCountDoesNotIncreaseActionsOrAttacks": true,
+        "primaryFunction": "For tasks normally requiring a true hand, DC15 Dexterity; failed check drops object."
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Weapon proficiency and attacks use normal combat rules",
+        "No extra turns or attacks from extra limbs"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-hand",
+      "canonicalName": "Hand",
+      "group": "APPENDAGE",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseCredits": 50,
+        "formula": "baseCredits * canonicalDroidSizeCostFactor"
+      },
+      "weight": {
+        "kind": "SIZE_FACTOR_MULTIPLIED",
+        "baseKg": 5,
+        "formula": "baseKg * canonicalDroidSizeCostFactor"
+      },
+      "availability": "-",
+      "host": {
+        "form": "DROID_APPENDAGE",
+        "actor": "DROID",
+        "minimumCount": 0,
+        "maximumCount": "NO_SOURCE_NUMERIC_LIMIT",
+        "attackActionBonusFromExtraAppendages": 0,
+        "requiresSeparateMountedToolPurchase": true
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 20,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "unarmedDamageBySize": {
+          "fine": null,
+          "diminutive": null,
+          "tiny": "1",
+          "small": "1d2",
+          "medium": "1d3",
+          "large": "1d4",
+          "huge": "1d6",
+          "gargantuan": "1d8",
+          "colossal": "2d6"
+        },
+        "strengthModifierAddsToListedDamage": true,
+        "damageDash": "No damage value published for this appendage/size pairing",
+        "canAttemptUnarmedAttackIfDamageListed": true,
+        "appendageCountDoesNotIncreaseActionsOrAttacks": true,
+        "primaryFunction": "At least three digits, one opposable; permits normal true-hand manipulation."
+      },
+      "variants": [],
+      "sourceExceptions": [
+        "Weapon proficiency and attacks use normal combat rules",
+        "No extra turns or attacks from extra limbs"
+      ],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-improved-sensor-package",
+      "canonicalName": "Improved Sensor Package",
+      "group": "SENSOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 197,
+          "pdfPage1Based": 198,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "FIXED",
+        "credits": 200
+      },
+      "weight": {
+        "kind": "FIXED",
+        "kg": 2.5
+      },
+      "availability": "-",
+      "host": {
+        "form": "DROID_CHASSIS_SENSOR",
+        "actor": "DROID",
+        "slot": "sensor",
+        "sourceSlotCapacity": "NOT_SPECIFIED"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "perceptionEquipmentBonus": 2,
+        "vision": "LOW_LIGHT",
+        "ignoresConcealmentWhen": "darkness only",
+        "ignoresTotalConcealment": false,
+        "otherConcealmentUnchanged": true
+      },
+      "variants": [],
+      "sourceExceptions": [],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-darkvision",
+      "canonicalName": "Darkvision",
+      "group": "SENSOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 197,
+          "pdfPage1Based": 198,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "FIXED",
+        "credits": 150
+      },
+      "weight": {
+        "kind": "FIXED",
+        "kg": 1.5
+      },
+      "availability": "-",
+      "host": {
+        "form": "DROID_CHASSIS_SENSOR",
+        "actor": "DROID",
+        "slot": "sensor",
+        "sourceSlotCapacity": "NOT_SPECIFIED"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "vision": "DARKVISION",
+        "ignoresConcealmentWhen": "darkness only",
+        "ignoresTotalConcealmentFromDarkness": true,
+        "otherConcealmentUnchanged": true
+      },
+      "variants": [],
+      "sourceExceptions": [],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-internal-comlink",
+      "canonicalName": "Internal Comlink",
+      "group": "COMMUNICATION",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 134,
+          "pdfPage1Based": 135,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "FIXED",
+        "credits": 250
+      },
+      "weight": {
+        "kind": "FIXED",
+        "kg": 0.1
+      },
+      "availability": "-",
+      "host": {
+        "form": "INTEGRATED_DROID_COMLINK",
+        "actor": "DROID",
+        "notPortableHandheld": true
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "equipmentFunction": "Identical to standard comlink except integrated",
+        "shortRangeKm": 50,
+        "shortRangeAlternative": "low orbit",
+        "longRangeKm": 200,
+        "upgradeOptions": "Generic Comlink long-range/video/holo/encryption options exist, but NOT automatically granted by purchasing 250-credit internal comlink",
+        "grantsAutonomousRemoteControl": false
+      },
+      "variants": [],
+      "sourceExceptions": [],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-vocabulator",
+      "canonicalName": "Vocabulator",
+      "group": "COMMUNICATION",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "FIXED",
+        "credits": 50
+      },
+      "weight": {
+        "kind": "FIXED",
+        "kg": 0.5
+      },
+      "availability": "-",
+      "host": {
+        "form": "INTEGRATED_DROID_SPEAKER",
+        "actor": "DROID"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "allows": "Droid to emulate audible speech rather than only Binary machine code",
+        "factoryIncludedWhen": "Droid can speak a non-Binary language as part of factory design",
+        "doubleChargingFactoryStandardProhibited": true,
+        "doesNotProvideAdditionalLanguages": true
+      },
+      "variants": [],
+      "sourceExceptions": [],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-heuristic-processor",
+      "canonicalName": "Heuristic Processor",
+      "group": "PROCESSOR",
+      "sourcePages": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 191,
+          "pdfPage1Based": 192,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "FIXED",
+        "credits": 2000
+      },
+      "weight": {
+        "kind": "FIXED",
+        "kg": 5
+      },
+      "availability": "-",
+      "host": {
+        "form": "PRIMARY_DROID_PROCESSOR",
+        "actor": "DROID",
+        "processorIdentity": "heuristic",
+        "localProcessor": true
+      },
+      "installation": {
+        "skills": [
+          {
+            "name": "Use Computer",
+            "dc": 20
+          },
+          {
+            "name": "Mechanics",
+            "dc": 20
+          }
+        ],
+        "duration": "1 day",
+        "selfModificationAllowed": false,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "canUseUntrainedSkills": "As an ordinary character, subject to each skill's underlying training rules",
+        "canUseNonproficientWeapons": true,
+        "nonproficiencyAttackPenalty": -5,
+        "interpretation": "Can creatively interpret orders and work around behavioral inhibitors when justification exists",
+        "doesNotGrantUnconditionalInhibitorImmunity": true,
+        "developsPersonalityOverTime": true
+      },
+      "variants": [],
+      "sourceExceptions": [],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-credit-reader",
+      "canonicalName": "Credit Reader",
+      "group": "FINANCIAL_SENSOR",
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "FIXED",
+        "credits": 50
+      },
+      "weight": {
+        "kind": "FIXED",
+        "kg": 1
+      },
+      "availability": "Licensed",
+      "host": {
+        "form": "DROID_SENSOR_SYSTEM",
+        "actor": "DROID",
+        "accessToOthersAccountsNotGranted": true
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "target": "Check whether credits are valid or an identified credit line exists",
+        "perceptionBonus": 5,
+        "bonusScope": "Perception checks opposed to Deception used to forge credit accounts/financial documents only",
+        "countPresentedHardCredits": {
+          "action": "free",
+          "amount": "any presented sum"
+        },
+        "doesNotGrantComputerIntrusion": true
+      },
+      "variants": [],
+      "sourceExceptions": [],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    },
+    {
+      "canonicalId": "droid-remote-starship-starter",
+      "canonicalName": "Remote Starship Starter",
+      "group": "COMMUNICATION",
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 53,
+          "pdfPage1Based": 54,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+        }
+      ],
+      "price": {
+        "kind": "FIXED",
+        "credits": 50
+      },
+      "weight": {
+        "kind": "FIXED",
+        "kg": 2
+      },
+      "availability": "-",
+      "host": {
+        "form": "INTEGRATED_DROID_RADIO_TRANSMITTER",
+        "actor": "DROID",
+        "target": "compatible starship for preflight"
+      },
+      "installation": {
+        "skill": "Mechanics",
+        "dc": 15,
+        "duration": "1 hour",
+        "selfModifyMechanicsPenalty": -5,
+        "source": [
+          {
+            "book": "Star Wars Saga Edition Core Rulebook",
+            "printedPage": 197,
+            "pdfPage1Based": 198,
+            "verification": "PDF_RENDERED_VISUAL_2026_11_02"
+          }
+        ]
+      },
+      "mechanics": {
+        "use": "Signal ship to begin preflight processing",
+        "diagnosticsReturn": {
+          "action": "free",
+          "source": "starship transmits preflight diagnostics back"
+        },
+        "mayOperateShipRemotely": false,
+        "mayPilotShipRemotely": false,
+        "mayFireShipWeapons": false,
+        "mayOrderJumpToHyperspace": false
+      },
+      "variants": [],
+      "sourceExceptions": [],
+      "unpublishedFieldsPolicy": "NOT_STATED_IS_NOT_ZERO_OR_UNLIMITED",
+      "certification": {
+        "printedIdentity": true,
+        "sourceNumericFacts": true,
+        "sourcePrerequisitesAndHost": true,
+        "sourceActionAndResourceRules": true,
+        "sourceEffectsAndExceptions": true,
+        "sourceMechanicsStatus": "CERTIFIED",
+        "productionDefinitionsCertified": false,
+        "appParityCertified": false,
+        "foundryRuntimeCertified": false
+      }
+    }
+  ],
+  "productionBlockers": [
+    {
+      "type": "CROSS_APPLICATION_COST_FACTOR_DEFECT",
+      "ids": [
+        "droid-plasteel-shell",
+        "droid-quadanium-shell",
+        "droid-durasteel-shell",
+        "droid-quadanium-plating",
+        "droid-durasteel-plating",
+        "droid-quadanium-battle-armor",
+        "droid-duranium-plating",
+        "droid-durasteel-battle-armor",
+        "droid-mandalorian-steel-shell",
+        "droid-duranium-battle-armor",
+        "droid-neutronium-plating",
+        "droid-duravlex-shell",
+        "droid-crystadurium-plating",
+        "droid-probe",
+        "droid-instrument",
+        "droid-tool",
+        "droid-claw",
+        "droid-hand"
+      ],
+      "severity": "CRITICAL",
+      "finding": "Seven of nine shared Garage cost factors disagree with printed authority. Source certificate specifies correct factor; code/transaction parity unverified.",
+      "status": "PRODUCTION_BLOCKED"
+    },
+    {
+      "type": "UNARMED_APPENDAGE_RUNTIME_MISMATCH",
+      "ids": [
+        "droid-probe",
+        "droid-instrument",
+        "droid-tool"
+      ],
+      "severity": "HIGH",
+      "finding": "Existing raw appendage definitions mark unarmed attack unavailable despite source size/damage rows.",
+      "status": "PRODUCTION_BLOCKED"
+    },
+    {
+      "type": "OVERLAY_ZERO_COST_RISK",
+      "ids": [
+        "droid-credit-reader"
+      ],
+      "severity": "HIGH",
+      "finding": "Credit Reader overlay has effect but no raw priced definition: 50 credits/1kg Licensed is canonical source price; current default quote risks zero.",
+      "status": "PRODUCTION_BLOCKED"
+    },
+    {
+      "type": "ARMOR_PROFICIENCY_RUN_DAMAGE",
+      "ids": [
+        "droid-plasteel-shell",
+        "droid-quadanium-shell",
+        "droid-durasteel-shell",
+        "droid-quadanium-plating",
+        "droid-durasteel-plating",
+        "droid-quadanium-battle-armor",
+        "droid-duranium-plating",
+        "droid-durasteel-battle-armor",
+        "droid-mandalorian-steel-shell",
+        "droid-duranium-battle-armor",
+        "droid-neutronium-plating",
+        "droid-duravlex-shell",
+        "droid-crystadurium-plating"
+      ],
+      "severity": "HIGH",
+      "finding": "Full runtime coverage of armor proficiency penalties, nonstacking, heavy run and Crystadurium/Duravlex special defenses not tested.",
+      "status": "RUNTIME_UNVERIFIED"
+    },
+    {
+      "type": "FACTORY_SPEECH_GRANT",
+      "ids": [
+        "droid-vocabulator"
+      ],
+      "severity": "MEDIUM",
+      "finding": "Factory-granted vocabulator for non-Binary-capable droids must not be charged again in PC chargen.",
+      "status": "RUNTIME_UNVERIFIED"
+    },
+    {
+      "type": "GENERAL_MODIFICATION_CHECKS",
+      "ids": [
+        "droid-plasteel-shell",
+        "droid-quadanium-shell",
+        "droid-durasteel-shell",
+        "droid-quadanium-plating",
+        "droid-durasteel-plating",
+        "droid-quadanium-battle-armor",
+        "droid-duranium-plating",
+        "droid-durasteel-battle-armor",
+        "droid-mandalorian-steel-shell",
+        "droid-duranium-battle-armor",
+        "droid-neutronium-plating",
+        "droid-duravlex-shell",
+        "droid-crystadurium-plating",
+        "droid-probe",
+        "droid-instrument",
+        "droid-tool",
+        "droid-claw",
+        "droid-hand",
+        "droid-improved-sensor-package",
+        "droid-darkvision",
+        "droid-internal-comlink",
+        "droid-vocabulator",
+        "droid-heuristic-processor",
+        "droid-credit-reader",
+        "droid-remote-starship-starter"
+      ],
+      "severity": "MEDIUM",
+      "finding": "DC/time/permission and self-modify exceptions are printed; no end-to-end Garage/chargen Store integration tests executed.",
+      "status": "RUNTIME_UNVERIFIED"
+    }
+  ],
+  "guardrails": [
+    "Full source-mechanical certificate validates what published rules require, not what current code correctly does",
+    "Cannot award runtime compliance without integration and Foundry verification",
+    "No source-invented slots, no additional attacks from appendages, no unconditional special defense triggers",
+    "Source-defined zero/silent fields not equivalent to zero-weight or zero-price",
+    "Apply Core p197 maintenance/installation DC, time, skill and self-work exceptions",
+    "Canonical ledger is system.installedSystems after creation, with external objects excluded",
+    "No compendium, actor, runtime code, Garage, Store or chargen modified"
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "schema": "swse.droids.clone.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "sourceBook": "Clone Wars Campaign Guide",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "scope": "First detailed PDF-visual source mechanical pass, first five nonmilitary factory models, printed pages 66-69 PDF pages 67-70.",
+  "records": [
+    {
+      "sourceEntryKey": "CLONE-DROID-001",
+      "name": "DD-13 Medical Assistant Droid",
+      "printedPage": 66,
+      "pdfPage1Based": 67,
+      "heroEligibility": "prohibited",
+      "installedSystems": 7,
+      "physicalAppendages": 2,
+      "possessions": 1,
+      "feats": 4,
+      "skills": 4,
+      "sourceConstraintIds": [
+        "CLONE-DROID-001-CONSTRAINT-FACTORY-MEDICAL-ARMS",
+        "CLONE-DROID-001-CONSTRAINT-HERO-PROHIBITED",
+        "CLONE-DROID-001-CONSTRAINT-POSSESSION-NOT-INTEGRATED"
+      ],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-002",
+      "name": "EW-3 Midwife Droid",
+      "printedPage": 67,
+      "pdfPage1Based": 68,
+      "heroEligibility": "allowed",
+      "installedSystems": 6,
+      "physicalAppendages": 2,
+      "possessions": 0,
+      "feats": 3,
+      "skills": 4,
+      "sourceConstraintIds": [
+        "CLONE-DROID-002-CONSTRAINT-HOVER-FACTORY",
+        "CLONE-DROID-002-CONSTRAINT-TOOL-APPENDAGES-ONLY",
+        "CLONE-DROID-002-CONSTRAINT-NO-MATERNAL-BONUS"
+      ],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-003",
+      "name": "IM-6 Medical Droid",
+      "printedPage": 67,
+      "pdfPage1Based": 68,
+      "heroEligibility": "allowed",
+      "installedSystems": 7,
+      "physicalAppendages": 2,
+      "possessions": 2,
+      "feats": 5,
+      "skills": 5,
+      "sourceConstraintIds": [
+        "CLONE-DROID-003-CONSTRAINT-MEDPAC-RESERVOIR-FIVE",
+        "CLONE-DROID-003-CONSTRAINT-HOVER-AND-HANDS",
+        "CLONE-DROID-003-CONSTRAINT-SURGERY-KIT-POSSESSION"
+      ],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-004",
+      "name": "SP-4 Analysis Droid",
+      "printedPage": 68,
+      "pdfPage1Based": 69,
+      "heroEligibility": "allowed",
+      "installedSystems": 8,
+      "physicalAppendages": 2,
+      "possessions": 0,
+      "feats": 5,
+      "skills": 6,
+      "sourceConstraintIds": [
+        "CLONE-DROID-004-CONSTRAINT-SOURCE-IMMUNITY-WORDING",
+        "CLONE-DROID-004-CONSTRAINT-NO-STOCK-WEAPON",
+        "CLONE-DROID-004-CONSTRAINT-NO-FABRICATED-ANALYSIS-BONUS"
+      ],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-005",
+      "name": "LE Series Repair Droid",
+      "printedPage": 69,
+      "pdfPage1Based": 70,
+      "heroEligibility": "allowed",
+      "installedSystems": 10,
+      "physicalAppendages": 2,
+      "possessions": 2,
+      "feats": 4,
+      "skills": 5,
+      "sourceConstraintIds": [
+        "CLONE-DROID-005-CONSTRAINT-DIAGNOSTICS-NOT-A-TOOL-KIT",
+        "CLONE-DROID-005-CONSTRAINT-CARRIED-HOLO-EQUIPMENT",
+        "CLONE-DROID-005-CONSTRAINT-TRANSLATOR-DC15"
+      ],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    }
+  ],
+  "counts": {
+    "models": 5,
+    "installedComponentInstances": 38,
+    "physicalAppendages": 10,
+    "possessions": 5,
+    "printedFeatInstances": 21,
+    "printedSkillEntries": 24,
+    "sourceConstraints": 15,
+    "publishedProtocolActions": 0,
+    "publishedOptionalVariants": 0,
+    "mechanicallyCertified": 0,
+    "sourceHydratedProjectRecords": 40,
+    "strictlyCertifiedProjectRecords": 0
+  },
+  "limitations": [
+    "Book p66-69 does not publish standalone protocol/action lists or nonfactory modification options for these specific models; zero is correct, not missing work.",
+    "Canonical feat scope, component authority, tool/medpac use, physical mounts and PC build legality are not certified.",
+    "No production pack or scripts mutated.",
+    "Full repository Python JSON schema and Foundry tests not run."
+  ],
+  "next": "CLONE-DROID-006 through CLONE-DROID-010 source-mechanical review, printed pp.69-71. Keep squad and seven vehicle-format records distinct."
+}

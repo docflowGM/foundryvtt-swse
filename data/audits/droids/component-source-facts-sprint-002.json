@@ -1,0 +1,574 @@
+{
+  "schema": "swse.droid.component.source-facts/0.2",
+  "sprint": "002",
+  "reviewDate": "2026-11-02",
+  "auditBranch": "audit/droid-publication-census-2026-10-29",
+  "readOnlyCatalogReferenceHead": "112bbb5e34eb6420a6a7b5ceba77da9249f992be",
+  "intent": "PDF-based source fact review of eight absent published identities; audit only, no registry implementation.",
+  "printedSources": [
+    {
+      "book": "Star Wars Saga Edition Core Rulebook",
+      "printedPages": [
+        193,
+        194,
+        195
+      ],
+      "pdfPage1Based": [
+        194,
+        195,
+        196
+      ]
+    },
+    {
+      "book": "Scavenger's Guide to Droids",
+      "printedPages": [
+        56,
+        57,
+        58
+      ],
+      "pdfPage1Based": [
+        57,
+        58,
+        59
+      ]
+    }
+  ],
+  "baselineAudit": "data/audits/droids/component-canonical-migration-backlog.json",
+  "priorPacket": "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+  "counts": {
+    "newSourceReviewed": 8,
+    "sourceConflicts": 1,
+    "missingAddTotal": 23,
+    "missingAddPreviouslyReviewed": 4,
+    "missingAddReviewedNow": 12,
+    "missingAddUnreviewedNow": 11,
+    "totalSourceFactSetsIncludingPrevious": 16,
+    "fullMechanicalCertifications": 0,
+    "runtimeCertifications": 0,
+    "productionRegistryEdits": 0,
+    "applicationParityTests": 0
+  },
+  "records": [
+    {
+      "id": "C-S002-001",
+      "backlogId": "SGD-CAT-ADD-001",
+      "name": "Diagnostics Package",
+      "proposedId": "diagnostics-package",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "review": "rendered PDF inspected"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "review": "rendered PDF inspected"
+        }
+      ],
+      "type": "installed-component",
+      "price": {
+        "credits": 250
+      },
+      "weight": {
+        "kg": 4
+      },
+      "availability": "-",
+      "installation": {
+        "host": "droid",
+        "physicalLocation": "not stated",
+        "sizeLimits": "not stated"
+      },
+      "mechanics": {
+        "bonus": 2,
+        "bonusType": "equipment",
+        "skill": "Mechanics",
+        "scope": "diagnosing problems only",
+        "action": "normal Mechanics task; no component activation specified"
+      },
+      "blockers": [
+        "Ensure +2 only for diagnosis, not all Mechanics tasks",
+        "Installation location, slots, and install action unresolved"
+      ],
+      "sourceFactsStatus": "PDF_VERIFIED",
+      "registry": {
+        "presentInDroidSystems": false,
+        "presentInPartSchema": false,
+        "exactNameIdSourceCheck": "2026-11-02 at handoff baseline 112bbb5e",
+        "production": "NOT_CREATED"
+      },
+      "certifications": {
+        "identity": true,
+        "sourceFactsReviewed": true,
+        "completeSourceMechanical": false,
+        "garageChargenStoreParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "id": "C-S002-002",
+      "backlogId": "SGD-CAT-ADD-002",
+      "name": "Internal Storage",
+      "proposedId": "internal-storage",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "review": "rendered PDF inspected"
+        }
+      ],
+      "type": "capacity-based chassis storage",
+      "price": {
+        "creditsPerKgCapacity": 50,
+        "formula": "50 * purchased storage kg"
+      },
+      "weight": {
+        "printedCell": "—",
+        "unitNotSpecified": true
+      },
+      "availability": "-",
+      "installation": {
+        "host": "inside droid chassis",
+        "excludedSizes": [
+          "fine",
+          "diminutive",
+          "tiny"
+        ],
+        "maxCapacityKgBySize": {
+          "small": 5,
+          "medium": 10,
+          "large": 20,
+          "huge": 50,
+          "gargantuan": 500,
+          "colossal": 5000
+        }
+      },
+      "mechanics": {
+        "effect": "Provides purchased interior storage space for carried goods or new components/compartments",
+        "capacityNotFree": true
+      },
+      "blockers": [
+        "Track storage capacity separately from weight of contents and component occupancy",
+        "No printed assertion that stored goods are weightless",
+        "Retrieval action, slots and installation time not defined in this entry"
+      ],
+      "sourceFactsStatus": "PDF_VERIFIED",
+      "registry": {
+        "presentInDroidSystems": false,
+        "presentInPartSchema": false,
+        "exactNameIdSourceCheck": "2026-11-02 at handoff baseline 112bbb5e",
+        "production": "NOT_CREATED"
+      },
+      "certifications": {
+        "identity": true,
+        "sourceFactsReviewed": true,
+        "completeSourceMechanical": false,
+        "garageChargenStoreParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "id": "C-S002-003",
+      "backlogId": "SGD-CAT-ADD-003",
+      "name": "Spring-Loaded Mechanism",
+      "proposedId": "spring-loaded-mechanism",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "review": "rendered PDF inspected"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "review": "rendered PDF inspected"
+        }
+      ],
+      "type": "internal storage launcher",
+      "price": {
+        "credits": 150
+      },
+      "weight": {
+        "kg": 3
+      },
+      "availability": "-",
+      "installation": {
+        "host": "droid with internal storage compartment",
+        "typicalSizes": [
+          "small",
+          "medium",
+          "large"
+        ],
+        "hugeOrLarger": "not typically designed or practical; no explicit absolute ban"
+      },
+      "mechanics": {
+        "action": "standard",
+        "payloadMaxKg": 4,
+        "rangeSquares": 4,
+        "launchCheck": "ranged attack against Reflex Defense 10",
+        "miss": "item lands in randomly determined adjacent square",
+        "catch": "Within reach of target square; readied action and successful launch",
+        "catchCheck": "Dexterity DC 10",
+        "catchAction": "move"
+      },
+      "blockers": [
+        "Do not invent weapon damage or an arbitrary attack against creature defenses",
+        "Do not convert Huge+ practical caveat to absolute illegal predicate",
+        "Integrate actual storage, ready-action and random scatter workflows"
+      ],
+      "sourceFactsStatus": "PDF_VERIFIED",
+      "registry": {
+        "presentInDroidSystems": false,
+        "presentInPartSchema": false,
+        "exactNameIdSourceCheck": "2026-11-02 at handoff baseline 112bbb5e",
+        "production": "NOT_CREATED"
+      },
+      "certifications": {
+        "identity": true,
+        "sourceFactsReviewed": true,
+        "completeSourceMechanical": false,
+        "garageChargenStoreParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "id": "C-S002-004",
+      "backlogId": "SGD-CAT-ADD-004",
+      "name": "Locked Access",
+      "proposedId": "locked-access",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "review": "rendered PDF inspected"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "review": "rendered PDF inspected"
+        }
+      ],
+      "type": "access-control accessory",
+      "price": {
+        "credits": 50
+      },
+      "weight": {
+        "printedCell": "—",
+        "unitNotSpecified": true
+      },
+      "availability": "Licensed",
+      "installation": {
+        "host": "droid shutdown switch secured or relocated internally"
+      },
+      "mechanics": {
+        "effect": "An opponent cannot shut the droid down while active and not helpless",
+        "exception": "droid can be shut down when disabled or otherwise helpless",
+        "baseline": "Normal unwilling shutdown uses grab then Mechanics versus Will Defense as standard action"
+      },
+      "blockers": [
+        "Willing shutdown, disabled/helpless predicate, and operator control need proper action authority",
+        "Licensed availability must not be mistaken for general heroic chargen prohibition"
+      ],
+      "sourceFactsStatus": "PDF_VERIFIED",
+      "registry": {
+        "presentInDroidSystems": false,
+        "presentInPartSchema": false,
+        "exactNameIdSourceCheck": "2026-11-02 at handoff baseline 112bbb5e",
+        "production": "NOT_CREATED"
+      },
+      "certifications": {
+        "identity": true,
+        "sourceFactsReviewed": true,
+        "completeSourceMechanical": false,
+        "garageChargenStoreParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "id": "C-S002-005",
+      "backlogId": "SGD-CAT-ADD-007",
+      "name": "Courier Compartments",
+      "proposedId": "courier-compartments",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "review": "rendered PDF inspected"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "review": "rendered PDF inspected"
+        }
+      ],
+      "type": "installed hidden compartment",
+      "price": {
+        "credits": 200
+      },
+      "weight": {
+        "printedCell": "2 x cost factor",
+        "unitNotPrintedInCell": true
+      },
+      "availability": "-",
+      "installation": {
+        "host": "droid",
+        "placements": [
+          {
+            "body": "torso",
+            "itemMustBeSizesSmaller": 3
+          },
+          {
+            "body": "arm",
+            "itemMustBeSizesSmaller": 4
+          },
+          {
+            "body": "leg",
+            "itemMustBeSizesSmaller": 4
+          },
+          {
+            "body": "head",
+            "itemMustBeSizesSmaller": 5
+          }
+        ],
+        "textClaimsLocations": 4,
+        "textEnumeratesLocations": 4
+      },
+      "mechanics": {
+        "detection": "Perception check against droid Will Defense +5",
+        "toasterOption": {
+          "destroysContentsWithPlasma": true,
+          "costMultiplier": 2
+        }
+      },
+      "blockers": [
+        "Weight-cell unit and optional toaster variant specification require review",
+        "Do not treat size-based courier capacity as Core kg-based Internal Storage"
+      ],
+      "sourceFactsStatus": "PDF_VERIFIED",
+      "registry": {
+        "presentInDroidSystems": false,
+        "presentInPartSchema": false,
+        "exactNameIdSourceCheck": "2026-11-02 at handoff baseline 112bbb5e",
+        "production": "NOT_CREATED"
+      },
+      "certifications": {
+        "identity": true,
+        "sourceFactsReviewed": true,
+        "completeSourceMechanical": false,
+        "garageChargenStoreParity": false,
+        "foundryRuntime": false
+      },
+      "sourceCorrection": {
+        "date": "2026-11-02",
+        "reason": "Printed SGD p.56 says arm OR leg; initial visual review omitted leg.",
+        "recheckedPrintedPage": 56,
+        "pdfPage1Based": 57,
+        "sourceStatus": "PDF_VISUAL_VERIFIED_CORRECTION"
+      }
+    },
+    {
+      "id": "C-S002-006",
+      "backlogId": "SGD-CAT-ADD-008",
+      "name": "Droid Oil Bath",
+      "proposedId": "droid-oil-bath",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "review": "rendered PDF inspected"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "review": "rendered PDF inspected"
+        }
+      ],
+      "type": "external maintenance equipment; not proven installable",
+      "sourceConflict": true,
+      "price": {
+        "tableCredits": 500,
+        "proseCreditsBySize": {
+          "smallOrSmaller": 100,
+          "medium": 1000,
+          "large": 5000,
+          "hugeOrLarger": 10000
+        },
+        "certifiedUnifiedPrice": null
+      },
+      "weight": {
+        "printedCell": "600 x cost factor",
+        "unitNotPrintedInCell": true
+      },
+      "availability": "-",
+      "installation": {
+        "host": "external bath, not proven to be a permanent part of a droid"
+      },
+      "mechanics": {
+        "immersionMinutes": 30,
+        "effect": "May activate a second wind even if already used that day",
+        "maintenanceRecommendation": "Weekly in harsh environments; monthly in temperate or aboard ship"
+      },
+      "blockers": [
+        "PRINTED CONFLICT: Table 3-2 price 500 credits vs size-dependent prose prices",
+        "Do not list as an installable Garage component without printed authority",
+        "Weight-table unit unspecified; second-wind grant scope and reset must be defined before automation"
+      ],
+      "sourceFactsStatus": "PDF_VERIFIED_CONFLICT_UNRESOLVED",
+      "registry": {
+        "presentInDroidSystems": false,
+        "presentInPartSchema": false,
+        "exactNameIdSourceCheck": "2026-11-02 at handoff baseline 112bbb5e",
+        "production": "NOT_CREATED"
+      },
+      "certifications": {
+        "identity": true,
+        "sourceFactsReviewed": true,
+        "completeSourceMechanical": false,
+        "garageChargenStoreParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "id": "C-S002-007",
+      "backlogId": "SGD-CAT-ADD-009",
+      "name": "Earphone Binary-to-Basic Translator",
+      "proposedId": "earphone-binary-to-basic-translator",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "review": "rendered PDF inspected"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "review": "rendered PDF inspected"
+        }
+      ],
+      "type": "droid output-jack accessory plus external receiver",
+      "price": {
+        "tableCredits": 20,
+        "earbudVariantCredits": null
+      },
+      "weight": {
+        "tableKg": 0.5
+      },
+      "availability": "-",
+      "installation": {
+        "host": "droid Basic-output jack",
+        "receiverTypes": [
+          "large headphone set",
+          "more expensive earbud receiver"
+        ]
+      },
+      "mechanics": {
+        "effect": "Converts spoken Binary to audible Basic for receiver wearer",
+        "earbudPerceptionDetectionDC": 20
+      },
+      "blockers": [
+        "Source gives no price for more expensive earbud; cannot infer from base 20 credits",
+        "Separate purchased receiver from installed output-jack interface"
+      ],
+      "sourceFactsStatus": "PDF_VERIFIED",
+      "registry": {
+        "presentInDroidSystems": false,
+        "presentInPartSchema": false,
+        "exactNameIdSourceCheck": "2026-11-02 at handoff baseline 112bbb5e",
+        "production": "NOT_CREATED"
+      },
+      "certifications": {
+        "identity": true,
+        "sourceFactsReviewed": true,
+        "completeSourceMechanical": false,
+        "garageChargenStoreParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "id": "C-S002-008",
+      "backlogId": "SGD-CAT-ADD-010",
+      "name": "Emergency Oxygen Supply",
+      "proposedId": "emergency-oxygen-supply",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "review": "rendered PDF inspected"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "review": "rendered PDF inspected"
+        }
+      ],
+      "type": "installed life-support tank",
+      "price": {
+        "credits": 200
+      },
+      "weight": {
+        "printedCell": "20",
+        "unitNotPrintedInCell": true
+      },
+      "availability": "-",
+      "installation": {
+        "host": "droid torso-mounted tank",
+        "usage": "Refill vac suit or supply breath mask"
+      },
+      "mechanics": {
+        "durationMinutesForMediumCreature": 30,
+        "connectToVacSuitAction": "swift",
+        "attachMaskAction": "standard",
+        "supplyFinite": true
+      },
+      "blockers": [
+        "Raw weight cell is 20 with no unit; do not invent units",
+        "Recharging, refilling and size-dependent oxygen duration not described",
+        "Resource depletion and recipient connection must be real, not free oxygen"
+      ],
+      "sourceFactsStatus": "PDF_VERIFIED",
+      "registry": {
+        "presentInDroidSystems": false,
+        "presentInPartSchema": false,
+        "exactNameIdSourceCheck": "2026-11-02 at handoff baseline 112bbb5e",
+        "production": "NOT_CREATED"
+      },
+      "certifications": {
+        "identity": true,
+        "sourceFactsReviewed": true,
+        "completeSourceMechanical": false,
+        "garageChargenStoreParity": false,
+        "foundryRuntime": false
+      }
+    }
+  ],
+  "requiredStatusSeparation": [
+    "Identity established",
+    "Published source facts verified",
+    "Full source-mechanical certification",
+    "Production migration",
+    "Application-level tests",
+    "Foundry runtime certification"
+  ],
+  "guardrails": [
+    "No production registry mutation authorized",
+    "No structural droid part in packs/equipment.db",
+    "Installed component ledger remains system.installedSystems",
+    "Store/chargen/Garage price must converge at eventual certified authority",
+    "Physical apparatus, externally carried maintenance equipment and installed system are not interchangeable"
+  ]
+}

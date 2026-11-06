@@ -1,0 +1,1960 @@
+{
+  "schema": "swse.droids.sgd-errata-host-fixtures/v1",
+  "date": "2026-11-03",
+  "references": {
+    "packet": "data/audits/droids/droid-component-sgd-errata-host-002.json",
+    "officialErrata": "data/audits/droids/droid-component-official-errata-authority-001.json"
+  },
+  "scope": "Independent numeric accessory weight arithmetic even for possession/unlocated variants; physical host and actor installation permissions validated separately. No application/Foundry tests executed.",
+  "summary": {
+    "accessoryCategoryCases": 126,
+    "locomotionExceptions": 9,
+    "blockedHostVariantCases": 2,
+    "total": 137,
+    "applicationExecuted": 0,
+    "foundryExecuted": 0
+  },
+  "expectedFactorAuthority": {
+    "sizes": [
+      {
+        "size": "fine",
+        "costFactor": 20,
+        "accessoryWeightFactor": 0.1
+      },
+      {
+        "size": "diminutive",
+        "costFactor": 10,
+        "accessoryWeightFactor": 0.2
+      },
+      {
+        "size": "tiny",
+        "costFactor": 5,
+        "accessoryWeightFactor": 0.4
+      },
+      {
+        "size": "small",
+        "costFactor": 2,
+        "accessoryWeightFactor": 1
+      },
+      {
+        "size": "medium",
+        "costFactor": 1,
+        "accessoryWeightFactor": 1
+      },
+      {
+        "size": "large",
+        "costFactor": 2,
+        "accessoryWeightFactor": 2
+      },
+      {
+        "size": "huge",
+        "costFactor": 5,
+        "accessoryWeightFactor": 5
+      },
+      {
+        "size": "gargantuan",
+        "costFactor": 10,
+        "accessoryWeightFactor": 10
+      },
+      {
+        "size": "colossal",
+        "costFactor": 20,
+        "accessoryWeightFactor": 20
+      }
+    ]
+  },
+  "locomotionFixtures": [
+    {
+      "caseId": "HOST002-LOCO-burrower-drive-small",
+      "component": "Burrower Drive",
+      "size": "small",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 14400,
+      "expectedKg": 100,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-burrower-drive-medium",
+      "component": "Burrower Drive",
+      "size": "medium",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 7200,
+      "expectedKg": 50,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-burrower-drive-large",
+      "component": "Burrower Drive",
+      "size": "large",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 14400,
+      "expectedKg": 100,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-gyroscopic-stabilizers-small",
+      "component": "Gyroscopic Stabilizers",
+      "size": "small",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 144,
+      "expectedKg": 8,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-gyroscopic-stabilizers-medium",
+      "component": "Gyroscopic Stabilizers",
+      "size": "medium",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 72,
+      "expectedKg": 4,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-gyroscopic-stabilizers-large",
+      "component": "Gyroscopic Stabilizers",
+      "size": "large",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 144,
+      "expectedKg": 8,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-underwater-drive-small",
+      "component": "Underwater Drive",
+      "size": "small",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 1440,
+      "expectedKg": 20,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-underwater-drive-medium",
+      "component": "Underwater Drive",
+      "size": "medium",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 720,
+      "expectedKg": 10,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-LOCO-underwater-drive-large",
+      "component": "Underwater Drive",
+      "size": "large",
+      "chosenSpeedSquares": 6,
+      "expectedCredits": 1440,
+      "expectedKg": 20,
+      "errataApplied": false,
+      "host": "LOCOMOTION_ADDON",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    }
+  ],
+  "blockedHostFixtures": [
+    {
+      "component": "Silence-Bubble Generator",
+      "size": "small",
+      "sourceListedAccessoryCredits": 3500,
+      "sourceListedAccessoryKg": 20,
+      "hostLedgerPermission": "NOT_ESTABLISHED_BY_SOURCE_LOCATION",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "component": "Micro Shield",
+      "size": "small",
+      "sourceAppendageModelCredits": 1200,
+      "sourceAppendageModelKg": 10,
+      "hostLedgerPermission": "POSSESSION_NOT_SYSTEM",
+      "handheldCredits": 400,
+      "handheldWeightKg": "NOT_SEPARATELY_LISTED",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    }
+  ],
+  "invariants": [
+    "Small-or-smaller accessory weight uses 2 / size cost factor independent of chassis/possession classification; printed accessory price cost factor stays unchanged.",
+    "Three Locomotion-subcategory entries keep normal locomotion cost factors for mass.",
+    "Appendage-attached Micro Shield is a possession, not chassis installedSystem; handheld model separately weighs NOT_LISTED.",
+    "Silence-Bubble Generator accessory mass is source-known, but physical installation location cannot be assumed.",
+    "Arithmetic fixtures do not confer legal size or host eligibility and are not Store quotes without other gates."
+  ],
+  "accessoryCategoryFixtures": [
+    {
+      "caseId": "HOST002-laminanium-plating-light-fine",
+      "component": "Laminanium Plating",
+      "variant": "light",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 60000,
+        "kg": 1.5
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-light-diminutive",
+      "component": "Laminanium Plating",
+      "variant": "light",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 30000,
+        "kg": 3
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-light-tiny",
+      "component": "Laminanium Plating",
+      "variant": "light",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 15000,
+        "kg": 6
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-light-small",
+      "component": "Laminanium Plating",
+      "variant": "light",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 6000,
+        "kg": 15
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-light-medium",
+      "component": "Laminanium Plating",
+      "variant": "light",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 3000,
+        "kg": 15
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-light-large",
+      "component": "Laminanium Plating",
+      "variant": "light",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 6000,
+        "kg": 30
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-light-huge",
+      "component": "Laminanium Plating",
+      "variant": "light",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 15000,
+        "kg": 75
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-light-gargantuan",
+      "component": "Laminanium Plating",
+      "variant": "light",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 30000,
+        "kg": 150
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-light-colossal",
+      "component": "Laminanium Plating",
+      "variant": "light",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 60000,
+        "kg": 300
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-heavy-fine",
+      "component": "Laminanium Plating",
+      "variant": "heavy",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 400000,
+        "kg": 1.5
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-heavy-diminutive",
+      "component": "Laminanium Plating",
+      "variant": "heavy",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 200000,
+        "kg": 3
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-heavy-tiny",
+      "component": "Laminanium Plating",
+      "variant": "heavy",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 100000,
+        "kg": 6
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-heavy-small",
+      "component": "Laminanium Plating",
+      "variant": "heavy",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 40000,
+        "kg": 15
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-heavy-medium",
+      "component": "Laminanium Plating",
+      "variant": "heavy",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 20000,
+        "kg": 15
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-heavy-large",
+      "component": "Laminanium Plating",
+      "variant": "heavy",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 40000,
+        "kg": 30
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-heavy-huge",
+      "component": "Laminanium Plating",
+      "variant": "heavy",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 100000,
+        "kg": 75
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-heavy-gargantuan",
+      "component": "Laminanium Plating",
+      "variant": "heavy",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 200000,
+        "kg": 150
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-laminanium-plating-heavy-colossal",
+      "component": "Laminanium Plating",
+      "variant": "heavy",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 400000,
+        "kg": 300
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-collapsible-construction-standard-fine",
+      "component": "Collapsible Construction",
+      "variant": "standard",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 40000,
+        "kg": 1
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-collapsible-construction-standard-diminutive",
+      "component": "Collapsible Construction",
+      "variant": "standard",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 20000,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-collapsible-construction-standard-tiny",
+      "component": "Collapsible Construction",
+      "variant": "standard",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 10000,
+        "kg": 4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-collapsible-construction-standard-small",
+      "component": "Collapsible Construction",
+      "variant": "standard",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 4000,
+        "kg": 10
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-collapsible-construction-standard-medium",
+      "component": "Collapsible Construction",
+      "variant": "standard",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 2000,
+        "kg": 10
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-collapsible-construction-standard-large",
+      "component": "Collapsible Construction",
+      "variant": "standard",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 4000,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-collapsible-construction-standard-huge",
+      "component": "Collapsible Construction",
+      "variant": "standard",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 10000,
+        "kg": 50
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-collapsible-construction-standard-gargantuan",
+      "component": "Collapsible Construction",
+      "variant": "standard",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 20000,
+        "kg": 100
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-collapsible-construction-standard-colossal",
+      "component": "Collapsible Construction",
+      "variant": "standard",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 40000,
+        "kg": 200
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-courier-compartments-standard-fine",
+      "component": "Courier Compartments",
+      "variant": "standard",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 0.2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-courier-compartments-standard-diminutive",
+      "component": "Courier Compartments",
+      "variant": "standard",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 0.4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-courier-compartments-standard-tiny",
+      "component": "Courier Compartments",
+      "variant": "standard",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 0.8
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-courier-compartments-standard-small",
+      "component": "Courier Compartments",
+      "variant": "standard",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-courier-compartments-standard-medium",
+      "component": "Courier Compartments",
+      "variant": "standard",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-courier-compartments-standard-large",
+      "component": "Courier Compartments",
+      "variant": "standard",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-courier-compartments-standard-huge",
+      "component": "Courier Compartments",
+      "variant": "standard",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 10
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-courier-compartments-standard-gargantuan",
+      "component": "Courier Compartments",
+      "variant": "standard",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-courier-compartments-standard-colossal",
+      "component": "Courier Compartments",
+      "variant": "standard",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 40
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-electric-defense-grid-standard-fine",
+      "component": "Electric Defense Grid",
+      "variant": "standard",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 60000,
+        "kg": 10
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-electric-defense-grid-standard-diminutive",
+      "component": "Electric Defense Grid",
+      "variant": "standard",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 30000,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-electric-defense-grid-standard-tiny",
+      "component": "Electric Defense Grid",
+      "variant": "standard",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 15000,
+        "kg": 40
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-electric-defense-grid-standard-small",
+      "component": "Electric Defense Grid",
+      "variant": "standard",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 6000,
+        "kg": 100
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-electric-defense-grid-standard-medium",
+      "component": "Electric Defense Grid",
+      "variant": "standard",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 3000,
+        "kg": 100
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-electric-defense-grid-standard-large",
+      "component": "Electric Defense Grid",
+      "variant": "standard",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 6000,
+        "kg": 200
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-electric-defense-grid-standard-huge",
+      "component": "Electric Defense Grid",
+      "variant": "standard",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 15000,
+        "kg": 500
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-electric-defense-grid-standard-gargantuan",
+      "component": "Electric Defense Grid",
+      "variant": "standard",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 30000,
+        "kg": 1000
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-electric-defense-grid-standard-colossal",
+      "component": "Electric Defense Grid",
+      "variant": "standard",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 60000,
+        "kg": 2000
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-hidden-holster-standard-fine",
+      "component": "Hidden Holster",
+      "variant": "standard",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 10000,
+        "kg": 0.2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-hidden-holster-standard-diminutive",
+      "component": "Hidden Holster",
+      "variant": "standard",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 5000,
+        "kg": 0.4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-hidden-holster-standard-tiny",
+      "component": "Hidden Holster",
+      "variant": "standard",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 2500,
+        "kg": 0.8
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-hidden-holster-standard-small",
+      "component": "Hidden Holster",
+      "variant": "standard",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 1000,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-hidden-holster-standard-medium",
+      "component": "Hidden Holster",
+      "variant": "standard",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 500,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-hidden-holster-standard-large",
+      "component": "Hidden Holster",
+      "variant": "standard",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 1000,
+        "kg": 4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-hidden-holster-standard-huge",
+      "component": "Hidden Holster",
+      "variant": "standard",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 2500,
+        "kg": 10
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-hidden-holster-standard-gargantuan",
+      "component": "Hidden Holster",
+      "variant": "standard",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 5000,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-hidden-holster-standard-colossal",
+      "component": "Hidden Holster",
+      "variant": "standard",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 10000,
+        "kg": 40
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-holographic-image-disguiser-basic-fine",
+      "component": "Holographic Image Disguiser",
+      "variant": "basic",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 400000,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-holographic-image-disguiser-basic-diminutive",
+      "component": "Holographic Image Disguiser",
+      "variant": "basic",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 200000,
+        "kg": 4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-holographic-image-disguiser-basic-tiny",
+      "component": "Holographic Image Disguiser",
+      "variant": "basic",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 100000,
+        "kg": 8
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-holographic-image-disguiser-basic-small",
+      "component": "Holographic Image Disguiser",
+      "variant": "basic",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 40000,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-holographic-image-disguiser-basic-medium",
+      "component": "Holographic Image Disguiser",
+      "variant": "basic",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 20000,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-holographic-image-disguiser-basic-large",
+      "component": "Holographic Image Disguiser",
+      "variant": "basic",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 40000,
+        "kg": 40
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-holographic-image-disguiser-basic-huge",
+      "component": "Holographic Image Disguiser",
+      "variant": "basic",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 100000,
+        "kg": 100
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-holographic-image-disguiser-basic-gargantuan",
+      "component": "Holographic Image Disguiser",
+      "variant": "basic",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 200000,
+        "kg": 200
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-holographic-image-disguiser-basic-colossal",
+      "component": "Holographic Image Disguiser",
+      "variant": "basic",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 400000,
+        "kg": 400
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-defenses-standard-fine",
+      "component": "Internal Defenses",
+      "variant": "standard",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 0.1
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-defenses-standard-diminutive",
+      "component": "Internal Defenses",
+      "variant": "standard",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 100,
+        "kg": 0.2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-defenses-standard-tiny",
+      "component": "Internal Defenses",
+      "variant": "standard",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 50,
+        "kg": 0.4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-defenses-standard-small",
+      "component": "Internal Defenses",
+      "variant": "standard",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 20,
+        "kg": 1
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-defenses-standard-medium",
+      "component": "Internal Defenses",
+      "variant": "standard",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 10,
+        "kg": 1
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-defenses-standard-large",
+      "component": "Internal Defenses",
+      "variant": "standard",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 20,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-defenses-standard-huge",
+      "component": "Internal Defenses",
+      "variant": "standard",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 50,
+        "kg": 5
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-defenses-standard-gargantuan",
+      "component": "Internal Defenses",
+      "variant": "standard",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 100,
+        "kg": 10
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-defenses-standard-colossal",
+      "component": "Internal Defenses",
+      "variant": "standard",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-grapple-gun-standard-fine",
+      "component": "Internal Grapple Gun",
+      "variant": "standard",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 2000,
+        "kg": 0.2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-grapple-gun-standard-diminutive",
+      "component": "Internal Grapple Gun",
+      "variant": "standard",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 1000,
+        "kg": 0.4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-grapple-gun-standard-tiny",
+      "component": "Internal Grapple Gun",
+      "variant": "standard",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 500,
+        "kg": 0.8
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-grapple-gun-standard-small",
+      "component": "Internal Grapple Gun",
+      "variant": "standard",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-grapple-gun-standard-medium",
+      "component": "Internal Grapple Gun",
+      "variant": "standard",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 100,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-grapple-gun-standard-large",
+      "component": "Internal Grapple Gun",
+      "variant": "standard",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-grapple-gun-standard-huge",
+      "component": "Internal Grapple Gun",
+      "variant": "standard",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 500,
+        "kg": 10
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-grapple-gun-standard-gargantuan",
+      "component": "Internal Grapple Gun",
+      "variant": "standard",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 1000,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-internal-grapple-gun-standard-colossal",
+      "component": "Internal Grapple Gun",
+      "variant": "standard",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 2000,
+        "kg": 40
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-radiant-heat-element-standard-fine",
+      "component": "Radiant Heat Element",
+      "variant": "standard",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 2
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-radiant-heat-element-standard-diminutive",
+      "component": "Radiant Heat Element",
+      "variant": "standard",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 4
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-radiant-heat-element-standard-tiny",
+      "component": "Radiant Heat Element",
+      "variant": "standard",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 8
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-radiant-heat-element-standard-small",
+      "component": "Radiant Heat Element",
+      "variant": "standard",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-radiant-heat-element-standard-medium",
+      "component": "Radiant Heat Element",
+      "variant": "standard",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 20
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-radiant-heat-element-standard-large",
+      "component": "Radiant Heat Element",
+      "variant": "standard",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 40
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-radiant-heat-element-standard-huge",
+      "component": "Radiant Heat Element",
+      "variant": "standard",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 100
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-radiant-heat-element-standard-gargantuan",
+      "component": "Radiant Heat Element",
+      "variant": "standard",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 200
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-radiant-heat-element-standard-colossal",
+      "component": "Radiant Heat Element",
+      "variant": "standard",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 200,
+        "kg": 400
+      },
+      "installEligibility": "NOT_ESTABLISHED_BY_ARITHMETIC",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr5-fine",
+      "component": "Shield Expansion Module",
+      "variant": "sr5",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 5000,
+        "kg": 1
+      },
+      "installEligibility": "BLOCKED_BY_SIZE_MINIMUM",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr5-diminutive",
+      "component": "Shield Expansion Module",
+      "variant": "sr5",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 2500,
+        "kg": 2
+      },
+      "installEligibility": "BLOCKED_BY_SIZE_MINIMUM",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr5-tiny",
+      "component": "Shield Expansion Module",
+      "variant": "sr5",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 1250,
+        "kg": 4
+      },
+      "installEligibility": "BLOCKED_BY_SIZE_MINIMUM",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr5-small",
+      "component": "Shield Expansion Module",
+      "variant": "sr5",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 500,
+        "kg": 10
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr5-medium",
+      "component": "Shield Expansion Module",
+      "variant": "sr5",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 250,
+        "kg": 10
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr5-large",
+      "component": "Shield Expansion Module",
+      "variant": "sr5",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 500,
+        "kg": 20
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr5-huge",
+      "component": "Shield Expansion Module",
+      "variant": "sr5",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 1250,
+        "kg": 50
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr5-gargantuan",
+      "component": "Shield Expansion Module",
+      "variant": "sr5",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 2500,
+        "kg": 100
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr5-colossal",
+      "component": "Shield Expansion Module",
+      "variant": "sr5",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 5000,
+        "kg": 200
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr20-fine",
+      "component": "Shield Expansion Module",
+      "variant": "sr20",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 20000,
+        "kg": 4
+      },
+      "installEligibility": "BLOCKED_BY_SIZE_MINIMUM",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr20-diminutive",
+      "component": "Shield Expansion Module",
+      "variant": "sr20",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 10000,
+        "kg": 8
+      },
+      "installEligibility": "BLOCKED_BY_SIZE_MINIMUM",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr20-tiny",
+      "component": "Shield Expansion Module",
+      "variant": "sr20",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 5000,
+        "kg": 16
+      },
+      "installEligibility": "BLOCKED_BY_SIZE_MINIMUM",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr20-small",
+      "component": "Shield Expansion Module",
+      "variant": "sr20",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 2000,
+        "kg": 40
+      },
+      "installEligibility": "BLOCKED_BY_SIZE_MINIMUM",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr20-medium",
+      "component": "Shield Expansion Module",
+      "variant": "sr20",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 1000,
+        "kg": 40
+      },
+      "installEligibility": "BLOCKED_BY_SIZE_MINIMUM",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr20-large",
+      "component": "Shield Expansion Module",
+      "variant": "sr20",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 2000,
+        "kg": 80
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr20-huge",
+      "component": "Shield Expansion Module",
+      "variant": "sr20",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 5000,
+        "kg": 200
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr20-gargantuan",
+      "component": "Shield Expansion Module",
+      "variant": "sr20",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 10000,
+        "kg": 400
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-shield-expansion-module-sr20-colossal",
+      "component": "Shield Expansion Module",
+      "variant": "sr20",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 20000,
+        "kg": 800
+      },
+      "installEligibility": "MEETS_SIZE_MINIMUM_ONLY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-fine",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 2
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-diminutive",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 4
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-tiny",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 8
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-small",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 20
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-medium",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 20
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-large",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 40
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-huge",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 100
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-gargantuan",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 200
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-silence-bubble-generator-standard-colossal",
+      "component": "Silence-Bubble Generator",
+      "variant": "standard",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 3500,
+        "kg": 400
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-fine",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "fine",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 0.1,
+      "sourceArithmetic": {
+        "credits": 12000,
+        "kg": 1
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-diminutive",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "diminutive",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 0.2,
+      "sourceArithmetic": {
+        "credits": 6000,
+        "kg": 2
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-tiny",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "tiny",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 0.4,
+      "sourceArithmetic": {
+        "credits": 3000,
+        "kg": 4
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-small",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "small",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 1200,
+        "kg": 10
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-medium",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "medium",
+      "priceCostFactor": 1,
+      "weightAccessoryFactor": 1,
+      "sourceArithmetic": {
+        "credits": 600,
+        "kg": 10
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-large",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "large",
+      "priceCostFactor": 2,
+      "weightAccessoryFactor": 2,
+      "sourceArithmetic": {
+        "credits": 1200,
+        "kg": 20
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-huge",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "huge",
+      "priceCostFactor": 5,
+      "weightAccessoryFactor": 5,
+      "sourceArithmetic": {
+        "credits": 3000,
+        "kg": 50
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-gargantuan",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "gargantuan",
+      "priceCostFactor": 10,
+      "weightAccessoryFactor": 10,
+      "sourceArithmetic": {
+        "credits": 6000,
+        "kg": 100
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    },
+    {
+      "caseId": "HOST002-micro-shield-appendage-attached-colossal",
+      "component": "Micro Shield",
+      "variant": "appendage-attached",
+      "size": "colossal",
+      "priceCostFactor": 20,
+      "weightAccessoryFactor": 20,
+      "sourceArithmetic": {
+        "credits": 12000,
+        "kg": 200
+      },
+      "installEligibility": "REQUIRES_SEPARATE_PHYSICAL_HOST_AUTHORITY",
+      "validation": "RULE_EXPECTATION_NOT_EXECUTED"
+    }
+  ]
+}

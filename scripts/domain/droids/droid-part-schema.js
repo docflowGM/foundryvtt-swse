@@ -435,7 +435,7 @@ function normalizeRawDefinition(raw, path = []) {
     availability: normalizeAvailability(raw?.availability ?? overlay.availability),
     required: overlay.required === true || raw?.required === true || id === 'heuristic' || id === 'walking' || id === 'hand',
     requiredForPc: overlay.requiredForPc === true,
-    requiresAny: coerceArray(overlay.requiresAny ?? raw?.requiredSystems ?? raw?.requires ?? raw?.requiredLocomotion ?? raw?.requiresLocomtion),
+    requiresAny: coerceArray(overlay.requiresAny ?? raw?.requiredSystems ?? raw?.requires ?? raw?.requiredLocomotion),
     blocks: coerceArray(overlay.blocks),
     blocksSkills: coerceArray(overlay.blocksSkills),
     traits,

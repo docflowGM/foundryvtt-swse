@@ -1,0 +1,20 @@
+{
+  "schema": "swse.droid.clone.local-checkpoint/0.1",
+  "bookId": "CLONE",
+  "status": "IN_PROGRESS",
+  "expectedClaims": 40,
+  "draftSourceClaims": 40,
+  "selectedFirstPageFieldReviews": 40,
+  "directPdfFieldComparisons": 528,
+  "mechanicalCertified": 0,
+  "nextUnreviewedSourceIdentity": null,
+  "fullOfficialSchemaValidated": false,
+  "runtimeCertified": false,
+  "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+  "ledgerSha256": "f46123b4b575c5a43e05ce3bcffe49db544d853d0a701129a060e18ba35876be",
+  "localSemanticGuardsPass": true,
+  "productionCompendiumsMutated": false,
+  "githubWritesThisPass": false,
+  "repositorySyncState": "LOCAL_ONLY_UNPUSHED",
+  "publishedAuditScope": "selected-field-source-review-only"
+}

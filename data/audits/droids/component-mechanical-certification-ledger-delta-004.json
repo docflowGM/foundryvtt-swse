@@ -1,0 +1,96 @@
+{
+  "schema": "swse.droids.mechanical-certification-delta/v1",
+  "batch": "MECH-004",
+  "requiresPriorBatch": "MECH-003",
+  "candidateIdentities": [
+    "droid-remote-receiver-jammer",
+    "droid-remote-receiver-signal-booster",
+    "droid-antitheft-comlink-locator",
+    "droid-audio-enhancers",
+    "droid-audio-radial-stunner",
+    "droid-automap",
+    "droid-blaster-recharge-interface",
+    "droid-collapsible-construction",
+    "droid-concealed-item",
+    "droid-courier-compartments",
+    "droid-droid-oil-bath",
+    "droid-earphone-binary-to-basic-translator",
+    "droid-electric-defense-grid",
+    "droid-emergency-oxygen-supply",
+    "droid-hidden-holster",
+    "droid-high-speed-cutting-torch-and-welder",
+    "droid-holographic-game-system",
+    "droid-holographic-image-disguiser",
+    "droid-id-dodge",
+    "droid-improved-coordination-circuitry",
+    "droid-interference-generator",
+    "droid-internal-defenses",
+    "droid-internal-grapple-gun",
+    "droid-mesh-tape-dispenser",
+    "droid-micro-shield"
+  ],
+  "newlySourceCertifiedIds": [
+    "droid-antitheft-comlink-locator",
+    "droid-audio-enhancers",
+    "droid-audio-radial-stunner",
+    "droid-automap",
+    "droid-blaster-recharge-interface",
+    "droid-collapsible-construction",
+    "droid-courier-compartments",
+    "droid-electric-defense-grid",
+    "droid-hidden-holster",
+    "droid-high-speed-cutting-torch-and-welder",
+    "droid-holographic-game-system",
+    "droid-holographic-image-disguiser",
+    "droid-id-dodge",
+    "droid-improved-coordination-circuitry",
+    "droid-internal-defenses",
+    "droid-internal-grapple-gun",
+    "droid-mesh-tape-dispenser",
+    "droid-micro-shield"
+  ],
+  "newHolds": [
+    {
+      "canonicalId": "droid-remote-receiver-jammer",
+      "reason": "Narrative says extremely short range but gives no numerical maximum, preventing deterministic range eligibility."
+    },
+    {
+      "canonicalId": "droid-remote-receiver-signal-booster",
+      "reason": "Printed 50% passive extension and up-to-100% temporary extension lack explicit combination/precedence."
+    },
+    {
+      "canonicalId": "droid-concealed-item",
+      "reason": "The composite cost expression has ambiguous multiplication grouping and may be adjusted by the GM; exact host/item price not certified."
+    },
+    {
+      "canonicalId": "droid-droid-oil-bath",
+      "reason": "Printed Table 3-2 500-credit price conflicts with 100/1,000/5,000/10,000 size-price tiers in prose. External ownership also must be respected."
+    },
+    {
+      "canonicalId": "droid-earphone-binary-to-basic-translator",
+      "reason": "Text describes more expensive earbud version but prints no price or differentiated mass for that version."
+    },
+    {
+      "canonicalId": "droid-emergency-oxygen-supply",
+      "reason": "Table 3-2 weight cell prints 20 without mass unit, and prose does not clarify. Cannot certify physical mass or burden."
+    },
+    {
+      "canonicalId": "droid-interference-generator",
+      "reason": "Deluxe model expands protection to video/holo but does not have separately printed price/weight; no typed purchasable deluxe variant certified."
+    }
+  ],
+  "cumulativeIfBatches1Through4Integrated": {
+    "evaluated": 100,
+    "sourceMechanicallyCertified": 79,
+    "onHold": 21,
+    "notYetEvaluated": 22,
+    "notYetMechanicallyCertified": 43,
+    "productionCertified": 0,
+    "foundryCertified": 0
+  },
+  "currentlyCommittedRepoBeforeApplyingBatch003": {
+    "certified": 44,
+    "sourceHeld": 6
+  },
+  "warning": "Apply MECH003 before MECH004; do not overwrite a concurrently changed shared ledger."
+}

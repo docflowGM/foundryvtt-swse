@@ -1,0 +1,1836 @@
+{
+  "schema": "swse.droid.kotor.source-evidence/0.1",
+  "book": "Knights of the Old Republic Campaign Guide",
+  "sourceTxt": "Knights of the Old Republic Campaign Guide_djvu.txt",
+  "sourceTxtSha256": "5f5dbde873d6f221165b516101d8f9c3fd126607f0c31e8beb0f983f9240f163",
+  "sourcePdf": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+  "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+  "records": [
+    {
+      "sourceEntryKey": "KOTOR-DROID-001",
+      "printedName": "ET-74 Communications Droid",
+      "printedPage": 81,
+      "pdfPage1Based": 82,
+      "txtAnchorLine1Based": 7661,
+      "txtWindowEnd1Based": 7726,
+      "txtWindowSha256": "500aac9f4b1859954f24f2ce219d626f9d425d76ddf18dca3b9429a44a26c0d0",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 12 (flat-footed 11), Fort 8, Will 10 assists, can plug directly into a planet's information network and immediately"
+        ],
+        "hp": [
+          "hp 3: Threshold 8 begin coordinating reconstruction and relief efforts, using its specialized"
+        ],
+        "Init": [
+          "Init +1; Senses Perception +0 serve as a central organizational hub for planetary rebuilding efforts. A GO-T0 7"
+        ],
+        "Speed": [
+          "Speed 4 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed -2 (1d2)}"
+        ],
+        "Abilities": [
+          "Abilities Str 7, Dex 12, Con —, Int 15, Wis 10, Cha 8"
+        ],
+        "Feats": [
+          "Feats Linguist, Skill Focus (Knowledge [technology]], Skill Focus (Use"
+        ],
+        "Skills": [
+          "Skills Knowledge (galactic lore} +7, Knowledge (technology) +12,"
+        ],
+        "Systems": [
+          "Systems walking locomotion, basic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions comlink, datapad, portable computer"
+        ],
+        "Availability": [
+          "Availability Licensed; Cost 2,700"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 81,
+        "pdfPage1Based": 82,
+        "sourceImage": "work/kotor_pdf_review/printed_p81.png",
+        "fieldValues": {
+          "/identity/printedName": "ET-74 Communications Droid",
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 1,
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 0,
+          "/defenses/reflex": 12,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 8,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 3,
+          "/durability/damageThreshold": 8,
+          "/economics/newCredits": 2700
+        },
+        "fieldComparisonCount": 15,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 4
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-002",
+      "printedName": "GO-TO Infrastructure-Planning Droid",
+      "printedPage": 82,
+      "pdfPage1Based": 83,
+      "txtAnchorLine1Based": 7727,
+      "txtWindowEnd1Based": 7734,
+      "txtWindowSha256": "b4b0ab90c56bb507a7fb6f19af05c11a07306e6d54556831412f266baabf53fb",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +4; Senses low-light vision, Perception +4"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 82,
+        "pdfPage1Based": 83,
+        "sourceImage": "work/kotor_pdf_review/printed_p82.png",
+        "fieldValues": {
+          "/identity/printedName": "GO-TO Infrastructure-Planning Droid",
+          "/classification/size": "Tiny",
+          "/challenge/challengeLevel": 1,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 4,
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 13,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 10,
+          "/durability/damageThreshold": 9,
+          "/defenses/shieldRating": 10,
+          "/economics/newCredits": 60000
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 4,
+      "crossPageHeroEligibilityEvidence": {
+        "printedPage": 81,
+        "pdfPage1Based": 82,
+        "value": "prohibited",
+        "sourceImage": "work/kotor_pdf_review/printed_p81.png",
+        "note": "Hero prohibition confirmed in preceding narrative page; deliberately not counted as a same-statblock-page field."
+      }
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-003",
+      "printedName": "T3-Series Utility Droid",
+      "printedPage": 82,
+      "pdfPage1Based": 83,
+      "txtAnchorLine1Based": 7735,
+      "txtWindowEnd1Based": 7865,
+      "txtWindowSha256": "42cc0c6d2d46a56e179a3b82cdb4f4fb8ef9b2f656b925b28ffa703ec3e2de0f",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 15 (flat-footed 13), Fort 9, Will 11",
+          "Defenses Ref 12 (flat-footed 11), Fort 9, Will 10"
+        ],
+        "hp": [
+          "hp 10; SR 10; Threshold 9",
+          "hp 5; Threshold 9"
+        ],
+        "Init": [
+          "Init +2; Senses darkvision, Perception +3"
+        ],
+        "Speed": [
+          "Speed 4 squares [fly)",
+          "Speed 4 squares"
+        ],
+        "Melee": [
+          "Melee electroshock probe +1 (1d8-2 ion)",
+          "Melee electroshock probe +1 (1d8-1 ion)"
+        ],
+        "Ranged": [
+          "Ranged stun ray +1 (3d6 stun)"
+        ],
+        "Abilities": [
+          "Abilities Str 6, Dex 15, Con —, Int 16, Wis 10, Cha 14",
+          "Abilities Str 8, Dex 12, Con —, Int 14, Wis 11, Cha 7"
+        ],
+        "Feats": [
+          "Feats Improved Defenses, Skill Focus (Knowledge [social sciences]]), Skill",
+          "Feats Skill Focus (Mechanics), Skill Focus (Use Computer), Weapon"
+        ],
+        "Skills": [
+          "Skills Knowledge (social sciences) +15, Knowledge (technology) +15,",
+          "Skills Mechanics +13, Pilot +7, Use Computer +13"
+        ],
+        "Systems": [
+          "Systems hovering locomotion, heuristic processor, 2 tool appendages,",
+          "Systems wheeled locomotion, magnetic feet, heuristic processor, 5 tool"
+        ],
+        "Possessions": [
+          "Possessions planetary infrastructure management software",
+          "Possessions stun ray (as blaster pistol set to stun), astrogation"
+        ],
+        "Availability": [
+          "Availability Military; Cost 60,000",
+          "Availability Licensed; Cost 3,500 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 82,
+        "pdfPage1Based": 83,
+        "sourceImage": "work/kotor_pdf_review/printed_p82.png",
+        "fieldValues": {
+          "/identity/printedName": "T3-Series Utility Droid",
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 2,
+          "/abilities/perceptionPrinted": 3,
+          "/defenses/reflex": 12,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 3500,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 4
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-004",
+      "printedName": "GE3-Series Protocol Droid",
+      "printedPage": 83,
+      "pdfPage1Based": 84,
+      "txtAnchorLine1Based": 7866,
+      "txtWindowEnd1Based": 7956,
+      "txtWindowSha256": "49796a437af3159d27f358678da6910d79091c7f3dad45fab8cb62f8e621ebed",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 10 (flat-footed 9}, Fort 10, Will 11"
+        ],
+        "hp": [
+          "hp 5; Threshold 9"
+        ],
+        "Init": [
+          "Init +0; Senses Perception +2"
+        ],
+        "Speed": [
+          "Speed 6 squares (walking)"
+        ],
+        "Melee": [
+          "Melee unarmed +0 (1d3-1)}"
+        ],
+        "Abilities": [
+          "Abilities Str 8, Dex 8, Con —, Int 13, Wis 12, Cha 15"
+        ],
+        "Feats": [
+          "Feats Skill Focus (Knowledge [bureaucracy]}, Skill Focus (Knowledge"
+        ],
+        "Skills": [
+          "Skills Knowledge (bureaucracy) +12, Knowledge (galactic lore} +12,"
+        ],
+        "Systems": [
+          "Systems walking locomotion, basic processor, translator unit (DC 10), 2"
+        ],
+        "Possessions": [
+          "Possessions audio recorder, comlink"
+        ],
+        "Availability": [
+          "Availability Licensed; Cost 2,500"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 83,
+        "pdfPage1Based": 84,
+        "sourceImage": "work/kotor_pdf_review/printed_p83.png",
+        "fieldValues": {
+          "/identity/printedName": "GE3-Series Protocol Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 3,
+          "/abilities/initiativePrinted": 0,
+          "/abilities/perceptionPrinted": 2,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 9,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 2500,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-005",
+      "printedName": "GG-Series Hospitality Droid",
+      "printedPage": 84,
+      "pdfPage1Based": 85,
+      "txtAnchorLine1Based": 7957,
+      "txtWindowEnd1Based": 8032,
+      "txtWindowSha256": "16f6a87581bcf7447e2ef683b5b6c033cb592b4adcacf2c5a843d34be3302b12",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 12 (flat-footed 10), Fort 9, Will 11"
+        ],
+        "hp": [
+          "hp 5; Threshold 9"
+        ],
+        "Init": [
+          "Init +3; Senses Perception +7"
+        ],
+        "Speed": [
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee unarmed +0 (1d3-1)"
+        ],
+        "Abilities": [
+          "Abilities Str 8, Dex 13, Con —, int 10, Wis 12, Cha 15"
+        ],
+        "Feats": [
+          "Feats Skill Focus (Persuasion), Skill Training (Knowledge [bureaucracy]),"
+        ],
+        "Skills": [
+          "Skills Knowledge (bureaucracy) +6, Knowledge (galactic lore) +6,"
+        ],
+        "Systems": [
+          "Systems walking locomotion, basic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions comlink"
+        ],
+        "Availability": [
+          "Availability Licensed; Cost 4,000"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 84,
+        "pdfPage1Based": 85,
+        "sourceImage": "work/kotor_pdf_review/printed_p84.png",
+        "fieldValues": {
+          "/identity/printedName": "GG-Series Hospitality Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 3,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 7,
+          "/defenses/reflex": 12,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 4000,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-006",
+      "printedName": "HK-24 Series Assassin Droid",
+      "printedPage": 84,
+      "pdfPage1Based": 85,
+      "txtAnchorLine1Based": 8033,
+      "txtWindowEnd1Based": 8096,
+      "txtWindowSha256": "7d382afea0f5a85ab89c9af49189d66252d18b8c7f925cd776ed1be09831b37a",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 22 (flat-footed 19], Fort 19, Will 16"
+        ],
+        "hp": [
+          "hp 43; Threshold 19"
+        ],
+        "Init": [
+          "Init +12; Senses low-light vision, Perception +8"
+        ],
+        "Speed": [
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee unarmed +11 (1d3+4)"
+        ],
+        "Ranged": [
+          "Ranged blaster rifle +13 (3d8+4) or",
+          "Ranged blaster rifle +11 (4d8+4) with Rapid Shot or"
+        ],
+        "Abilities": [
+          "Abilities Str 14, Dex 17, Con —, Int 10, Wis 12, Cha 13"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Point Blank Shot, Power Blast,"
+        ],
+        "Talents": [
+          "Talents Devastating Attack (rifles), Tough as Nails, Weapon Specialization"
+        ],
+        "Skills": [
+          "Skills Initiative +12, Persuasion +11"
+        ],
+        "Systems": [
+          "Systems walking locomotion, heuristic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions blaster rifle, durasteel battle armor"
+        ],
+        "Availability": [
+          "Availability Illegal, Rare: Cost Not available for sale (estimated value"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 84,
+        "pdfPage1Based": 85,
+        "sourceImage": "work/kotor_pdf_review/printed_p84.png",
+        "fieldValues": {
+          "/identity/printedName": "HK-24 Series Assassin Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 7,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 12,
+          "/abilities/perceptionPrinted": 8,
+          "/defenses/reflex": 22,
+          "/defenses/flatFootedReflex": 19,
+          "/defenses/fortitude": 19,
+          "/defenses/will": 16,
+          "/durability/hitPoints": 43,
+          "/durability/damageThreshold": 19,
+          "/economics/estimatedValueCredits": 24000,
+          "/economics/forSale": false,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 17,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-007",
+      "printedName": "Independent HK-Series Droid",
+      "printedPage": 85,
+      "pdfPage1Based": 86,
+      "txtAnchorLine1Based": 8097,
+      "txtWindowEnd1Based": 8138,
+      "txtWindowSha256": "27122e5d4220188b550a32e20d29b97cc7572b8c49f4059d3d4acf612cb48b6b",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 18 (flat-footed 15), Fort 15, Will 12"
+        ],
+        "hp": [
+          "hp 30; Threshold 15"
+        ],
+        "Init": [
+          "Init +8; Senses low-light vision, Perception +8"
+        ],
+        "Speed": [
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee unarmed +3 (1d3+2)"
+        ],
+        "Ranged": [
+          "Ranged blaster rifle +5 (3d8+2)"
+        ],
+        "Abilities": [
+          "Abilities Str 14, Dex 17, Con —, Int 10, Wis 12, Cha 10"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Weapon Focus (rifles), Weapon"
+        ],
+        "Talents": [
+          "Talents Tough as Nails"
+        ],
+        "Skills": [
+          "Skills Initiative +8, Perception +8, Use Computer +5"
+        ],
+        "Systems": [
+          "Systems walking locomotion, heuristic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions blaster rifle, durasteel battle armor, comlink"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 85,
+        "pdfPage1Based": 86,
+        "sourceImage": "work/kotor_pdf_review/printed_p85.png",
+        "fieldValues": {
+          "/identity/printedName": "Independent HK-Series Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 8,
+          "/abilities/perceptionPrinted": 8,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 30,
+          "/durability/damageThreshold": 15,
+          "/pcConstruction/heroEligibility": "conditional"
+        },
+        "fieldComparisonCount": 15,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-008",
+      "printedName": "HK-50 Series Assassin Droid",
+      "printedPage": 85,
+      "pdfPage1Based": 86,
+      "txtAnchorLine1Based": 8139,
+      "txtWindowEnd1Based": 8231,
+      "txtWindowSha256": "d4d1a9f1ec19d353ddd0d1d6bd3817e11324eadc5510d813e389571e2f00b0ed",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 26 (flat-footed 22), Fort 26, Will 21"
+        ],
+        "hp": [
+          "hp 75; DR 2; Threshold 26"
+        ],
+        "Init": [
+          "Init +15; Senses Jow-light vision, Perception +11"
+        ],
+        "Speed": [
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee unarmed +16 (1d4+7)"
+        ],
+        "Ranged": [
+          "Ranged blaster rifle +19 (3d8+7) or",
+          "Ranged blaster rifle +17 (5d8+7) with Burst Fire or"
+        ],
+        "Abilities": [
+          "Abilities Str 15, Dex 17, Con —, Int 12, Wis 13, Cha 13"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Burst Fire, Careful Shot, Martial"
+        ],
+        "Talents": [
+          "Talents Controlled Burst, Devastating Attack (rifles), Greater Weapon"
+        ],
+        "Skills": [
+          "Skills Initiative +15, Persuasion +14"
+        ],
+        "Systems": [
+          "Systems walking locomotion, heuristic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions blaster rifle, durasteel battle armor"
+        ],
+        "Availability": [
+          "Availability Illegal, Rare; Cost Not available for sale (estimated value"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 85,
+        "pdfPage1Based": 86,
+        "sourceImage": "work/kotor_pdf_review/printed_p85.png",
+        "fieldValues": {
+          "/identity/printedName": "HK-50 Series Assassin Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 12,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 15,
+          "/abilities/perceptionPrinted": 11,
+          "/defenses/reflex": 26,
+          "/defenses/flatFootedReflex": 22,
+          "/defenses/fortitude": 26,
+          "/defenses/will": 21,
+          "/durability/hitPoints": 75,
+          "/durability/damageThreshold": 26,
+          "/defenses/damageReduction": 2,
+          "/economics/estimatedValueCredits": 33000,
+          "/economics/forSale": false
+        },
+        "fieldComparisonCount": 17,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6,
+      "crossPageHeroEligibilityEvidence": {
+        "printedPage": 84,
+        "pdfPage1Based": 85,
+        "value": "prohibited",
+        "sourceImage": "work/kotor_pdf_review/printed_p84.png",
+        "note": "Hero prohibition confirmed in preceding narrative page; deliberately not counted as a same-statblock-page field."
+      }
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-009",
+      "printedName": "Juggernaut War Droid",
+      "printedPage": 86,
+      "pdfPage1Based": 87,
+      "txtAnchorLine1Based": 8232,
+      "txtWindowEnd1Based": 8301,
+      "txtWindowSha256": "380d54a198f72882190e8bc7c694cfc38777689ddc3627d7542550dadc16819c",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 20 (flat-footed 17), Fort 16, Will 14"
+        ],
+        "hp": [
+          "hp 26; Threshold 16"
+        ],
+        "Init": [
+          "Init +12; Senses Perception +6"
+        ],
+        "Speed": [
+          "Speed 6 squares (fly, walk, or swim)"
+        ],
+        "Melee": [
+          "Melee unarmed +8 (1d3+3)"
+        ],
+        "Ranged": [
+          "Ranged pulse-wave rifle +10 (3d8+3) or",
+          "Ranged heavy sonic pistol +9 (2d8+1) or"
+        ],
+        "Abilities": [
+          "Abilities Str 15, Dex 16, Con —-, Int 10, Wis 14, Cha 11"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Charging Fire, Coordinated Attack,"
+        ],
+        "Talents": [
+          "Talents Weapon Specialization (rifles)"
+        ],
+        "Skills": [
+          "Skills Initiative +12"
+        ],
+        "Systems": [
+          "Systems walking locomotion, basic processor, 2 hand appendages, 2 tool"
+        ],
+        "Possessions": [
+          "Possessions pulse-wave rifle, shatter beam (as heavy blaster pistol, deals"
+        ],
+        "Availability": [
+          "Availability Military; Cost 20,000 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 86,
+        "pdfPage1Based": 87,
+        "sourceImage": "work/kotor_pdf_review/printed_p86.png",
+        "fieldValues": {
+          "/identity/printedName": "Juggernaut War Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 4,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 12,
+          "/abilities/perceptionPrinted": 6,
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 17,
+          "/defenses/fortitude": 16,
+          "/defenses/will": 14,
+          "/durability/hitPoints": 26,
+          "/durability/damageThreshold": 16,
+          "/economics/newCredits": 20000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-010",
+      "printedName": "K-X12 Probe Droid",
+      "printedPage": 86,
+      "pdfPage1Based": 87,
+      "txtAnchorLine1Based": 8302,
+      "txtWindowEnd1Based": 8368,
+      "txtWindowSha256": "6dd7cb1f86f28ab8f2f2937930bec44201c99f9adbbe14b10ea9e0c42d0537d0",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 17 (flat-footed 15), Fort 13, Will 16"
+        ],
+        "hp": [
+          "hp 12; Threshold 13"
+        ],
+        "Init": [
+          "Init +4; Senses low-light vision, Perception +17 (can reroll, must take"
+        ],
+        "Speed": [
+          "Speed 4 squares (fly)"
+        ],
+        "Melee": [
+          "Melee unarmed +1 (1d3-1)"
+        ],
+        "Ranged": [
+          "Ranged blaster pistol +4 (3d6)",
+          "Ranged self-destruct system +5 (4d6, 2-square splash)"
+        ],
+        "Abilities": [
+          "Abilities Str 8, Dex 15, Con —, Int 13, Wis 16, Cha 9"
+        ],
+        "Feats": [
+          "Feats Improved Defenses, Skill Focus (Perception), Skill Focus (Stealth),"
+        ],
+        "Talents": [
+          "Talents Acute Senses"
+        ],
+        "Skills": [
+          "Skills Perception +17 (can reroll, must take second result), Stealth +14,"
+        ],
+        "Systems": [
+          "Systems hovering locomotion, basic processor, 3 claw appendages, 1 tool"
+        ],
+        "Possessions": [
+          "Possessions blaster pistol, holorecorder"
+        ],
+        "Availability": [
+          "Availability Restricted; Cost 6,000 credits"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 86,
+        "pdfPage1Based": 87,
+        "sourceImage": "work/kotor_pdf_review/printed_p86.png",
+        "fieldValues": {
+          "/identity/printedName": "K-X12 Probe Droid",
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 2,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 17,
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 16,
+          "/durability/hitPoints": 12,
+          "/durability/damageThreshold": 13,
+          "/economics/newCredits": 6000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 4
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-011",
+      "printedName": "Municipal Patrol Droid Mark I",
+      "printedPage": 87,
+      "pdfPage1Based": 88,
+      "txtAnchorLine1Based": 8369,
+      "txtWindowEnd1Based": 8376,
+      "txtWindowSha256": "e1c9501eb4952a2311866693e605ae6e0518fb98ed0acaa642cc0b628e920286",
+      "ocrSelectedFieldCandidates": {
+        "Init": [
+          "Init +11; Senses Perception +10"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 87,
+        "pdfPage1Based": 88,
+        "sourceImage": "work/kotor_pdf_review/printed_p87.png",
+        "fieldValues": {
+          "/identity/printedName": "Municipal Patrol Droid Mark I",
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 2,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 11,
+          "/abilities/perceptionPrinted": 10,
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 12,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 12,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 4700,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-012",
+      "printedName": "Devastator War Droid",
+      "printedPage": 87,
+      "pdfPage1Based": 88,
+      "txtAnchorLine1Based": 8377,
+      "txtWindowEnd1Based": 8521,
+      "txtWindowSha256": "c2ce96049f2d973c74dd8dbb1335fc397e41d8ea57bbb4a1410eaca3f3280eb3",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 15 (flat-footed 12), Fort 9, Will 13",
+          "Defenses Ref 18 (flat-footed 15), Fort 16, Will 13"
+        ],
+        "hp": [
+          "hp 12; Threshold 9",
+          "hp 46; Threshold 16"
+        ],
+        "Init": [
+          "Init +13; Senses Perception +11"
+        ],
+        "Speed": [
+          "Speed 6 squares (fly)",
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee unarmed +10 (1d3+3)"
+        ],
+        "Ranged": [
+          "Ranged blaster pistol +8 (3d6) or",
+          "Ranged blaster pistol +3 (3d6) and"
+        ],
+        "Abilities": [
+          "Abilities Str 6, Dex 17, Con —, Int 12, Wis 14, Cha 9",
+          "Abilities Str 14, Dex 16, Con —, Int 12, Wis 13, Cha 9"
+        ],
+        "Feats": [
+          "Feats Dual Weapon Mastery I, Improved Defenses, Skill Training",
+          "Feats Armor Proficiency (light), Point Blank Shot, Rapid Shot, Toughness,"
+        ],
+        "Talents": [
+          "Talents Indomitable"
+        ],
+        "Skills": [
+          "Skills Acrobatics +11, Initiative +11, Perception +10, Use Computer +9",
+          "Skills Initiative +13, Perception +11"
+        ],
+        "Systems": [
+          "Systems hovering locomotion, basic processor, 2 tool mounts",
+          "Systems walking locomotion, basic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions 2 blaster pistols",
+          "Possessions blaster rifle, durasteel shell"
+        ],
+        "Availability": [
+          "Availability Restricted; Cost 4,700",
+          "Availability Military; Cost 12,000"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 87,
+        "pdfPage1Based": 88,
+        "sourceImage": "work/kotor_pdf_review/printed_p87.png",
+        "fieldValues": {
+          "/identity/printedName": "Devastator War Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 5,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 13,
+          "/abilities/perceptionPrinted": 11,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 16,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 46,
+          "/durability/damageThreshold": 16,
+          "/economics/newCredits": 12000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-013",
+      "printedName": "Sentinel Droid",
+      "printedPage": 88,
+      "pdfPage1Based": 89,
+      "txtAnchorLine1Based": 8522,
+      "txtWindowEnd1Based": 8591,
+      "txtWindowSha256": "9cc4713a42f0effccff6076b5ee19b06031abb2c2f74c99ce859c28bee84d054",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 16 [flat-footed 14], Fort 13, Will 10"
+        ],
+        "hp": [
+          "hp 8; Threshold 13"
+        ],
+        "Init": [
+          "Init +8; Senses Perception +1"
+        ],
+        "Speed": [
+          "Speed 6 squares (walking}"
+        ],
+        "Melee": [
+          "Melee unarmed +5 (1d3+3)"
+        ],
+        "Ranged": [
+          "Ranged blaster rifle +4 (3d8) or",
+          "Ranged blaster rifle +2 (4d8) with Rapid Shot"
+        ],
+        "Abilities": [
+          "Abilities Str 16, Dex 15, Con —, Int 10, Wis 11, Cha 9"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light), Rapid Shot, Weapon Proficiency (pistols,"
+        ],
+        "Skills": [
+          "Skills Initiative +8"
+        ],
+        "Systems": [
+          "Systems walking locomotion, basic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions blaster rifle, durasteel shell"
+        ],
+        "Availability": [
+          "Availability Restricted; Cost 2,400"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 88,
+        "pdfPage1Based": 89,
+        "sourceImage": "work/kotor_pdf_review/printed_p88.png",
+        "fieldValues": {
+          "/identity/printedName": "Sentinel Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 8,
+          "/abilities/perceptionPrinted": 1,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 8,
+          "/durability/damageThreshold": 13,
+          "/economics/newCredits": 2400,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-014",
+      "printedName": "S6-Series Security/Maintenance Droid",
+      "printedPage": 88,
+      "pdfPage1Based": 89,
+      "txtAnchorLine1Based": 8592,
+      "txtWindowEnd1Based": 8648,
+      "txtWindowSha256": "48eb3d2ae30d6ce8d511f33ca05820563cf02a89f00f460ed7b6e78b0c3f0cf4",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 20 (flat-footed 15), Fort 7, Will 12"
+        ],
+        "hp": [
+          "hp 5; Threshold 7"
+        ],
+        "Init": [
+          "Init +6; Senses low-light vision, Perception +15"
+        ],
+        "Speed": [
+          "Speed 9 squares (fly)"
+        ],
+        "Abilities": [
+          "Abilities Str 4, Dex 20, Con —, Int 13, Wis 15, Cha 6"
+        ],
+        "Feats": [
+          "Feats Skill Focus (Mechanics), Skill Focus (Perception), Skill Focus (Use"
+        ],
+        "Skills": [
+          "Skills Mechanics +12, Perception +15, Use Computer +12"
+        ],
+        "Systems": [
+          "Systems flying locomotion, basic processor, 2 tool appendages, improved"
+        ],
+        "Possessions": [
+          "Possessions security camera, tool kit"
+        ],
+        "Availability": [
+          "Availability Licensed; Cost 2,000"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 88,
+        "pdfPage1Based": 89,
+        "sourceImage": "work/kotor_pdf_review/printed_p88.png",
+        "fieldValues": {
+          "/identity/printedName": "S6-Series Security/Maintenance Droid",
+          "/classification/size": "Diminutive",
+          "/challenge/challengeLevel": 0,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 5,
+          "/abilities/initiativePrinted": 6,
+          "/abilities/perceptionPrinted": 15,
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 7,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 7,
+          "/economics/newCredits": 2000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 9
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-015",
+      "printedName": "T1 Bulk Loader Droid",
+      "printedPage": 88,
+      "pdfPage1Based": 89,
+      "txtAnchorLine1Based": 8649,
+      "txtWindowEnd1Based": 8707,
+      "txtWindowSha256": "ca797b0d584b0fb22ea8ae65f4fceee3eaa16c333efdc7875372a22c26bfa852",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 17 (flat-footed 17), Fort 17, Will 10"
+        ],
+        "hp": [
+          "hp 15; Threshold 22"
+        ],
+        "Init": [
+          "Init +1; Senses Perception +1"
+        ],
+        "Speed": [
+          "Speed 8 squares"
+        ],
+        "Melee": [
+          "Melee unarmed +8 (1d4+7)"
+        ],
+        "Abilities": [
+          "Abilities Str 24, Dex 10, Con —, Int 6, Wis 10, Cha 8"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Skill Focus (Endurance), Weapon"
+        ],
+        "Skills": [
+          "Skills Endurance +11"
+        ],
+        "Systems": [
+          "Systems walking locomotion, basic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions duranium armor plating"
+        ],
+        "Availability": [
+          "Availability Licensed; Cost 6,000"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 88,
+        "pdfPage1Based": 89,
+        "sourceImage": "work/kotor_pdf_review/printed_p88.png",
+        "fieldValues": {
+          "/identity/printedName": "T1 Bulk Loader Droid",
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 1,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 5,
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 1,
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 17,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 15,
+          "/durability/damageThreshold": 22,
+          "/economics/newCredits": 6000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 8
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-016",
+      "printedName": "R-8009 Utility Droid",
+      "printedPage": 89,
+      "pdfPage1Based": 90,
+      "txtAnchorLine1Based": 8708,
+      "txtWindowEnd1Based": 16670,
+      "txtWindowSha256": "83c842cfdeb0516c66ac71f538faab72fbaa721253467f39dcd89a2fdbf8f0e6",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 10 (flat-footed 10), Fort 9, Will 10"
+        ],
+        "hp": [
+          "hp 4; Threshold 9"
+        ],
+        "Init": [
+          "Init -2; Senses Perception +5"
+        ],
+        "Speed": [
+          "Speed 4 squares"
+        ],
+        "Abilities": [
+          "Abilities Str 8, Dex 8, Con —, Int 4, Wis 10, Cha 6"
+        ],
+        "Feats": [
+          "Feats Skill Training (Knowledge [technology]), Skill Training (Mechanics),"
+        ],
+        "Skills": [
+          "Skills Knowledge (technology) +2, Mechanics +2, Perception +5,"
+        ],
+        "Systems": [
+          "Systems hovering locomotion, basic processor, 4 tool appendages"
+        ],
+        "Availability": [
+          "Availability Licensed; Cost 800"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 89,
+        "pdfPage1Based": 90,
+        "sourceImage": "work/kotor_pdf_review/printed_p89.png",
+        "fieldValues": {
+          "/identity/printedName": "R-8009 Utility Droid",
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 5,
+          "/abilities/initiativePrinted": -2,
+          "/abilities/perceptionPrinted": 5,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 4,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 800,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 4
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-017",
+      "printedName": "Mark I Assault Droid",
+      "printedPage": 165,
+      "pdfPage1Based": 166,
+      "txtAnchorLine1Based": 16671,
+      "txtWindowEnd1Based": 16704,
+      "txtWindowSha256": "919525483ea3185d18bd59a3521b124048855bef0a9b92cbca31531722402fc9",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 20 (flat-footed 18), Fort 12, Will 12"
+        ],
+        "hp": [
+          "hp 30; SR 10; Threshold 12"
+        ],
+        "Init": [
+          "Init +8; Senses Perception +13"
+        ],
+        "Speed": [
+          "Speed 4 squares"
+        ],
+        "Melee": [
+          "Melee claw +11 (144+2)"
+        ],
+        "Ranged": [
+          "Ranged blaster rifle +12 (3d8) or",
+          "Ranged blaster rifle +10 (3¢8) and"
+        ],
+        "Abilities": [
+          "Abilities Str 15, Dex 15, Con -, Int 8, Wis 14, Cha 6"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Dual Weapon Mastery I, Dual"
+        ],
+        "Skills": [
+          "Skills Perception +13"
+        ],
+        "Systems": [
+          "Systems basic processor, walking locomotion, 3 tool mounts, 2 claw"
+        ],
+        "Possessions": [
+          "Possessions blaster rifle (2), flamethrower, duranium plating, shield"
+        ],
+        "Availability": [
+          "Availability Military; Cost 14,910"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 165,
+        "pdfPage1Based": 166,
+        "sourceImage": "work/kotor_pdf_review/printed_p165.png",
+        "fieldValues": {
+          "/identity/printedName": "Mark I Assault Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 6,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 8,
+          "/abilities/perceptionPrinted": 13,
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 30,
+          "/durability/damageThreshold": 12,
+          "/defenses/shieldRating": 10,
+          "/economics/newCredits": 14910,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 17,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 4
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-018",
+      "printedName": "Mark IV Assault Droid",
+      "printedPage": 165,
+      "pdfPage1Based": 166,
+      "txtAnchorLine1Based": 16705,
+      "txtWindowEnd1Based": 20758,
+      "txtWindowSha256": "d35c4c40ebda0290885f2f8f445edc318b7177b249b8723e572a8f1d5329d6ce",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 19 (flat-footed 18), Fort 14, Will 12"
+        ],
+        "hp": [
+          "hp 52; SR 10; Threshold 19"
+        ],
+        "Init": [
+          "Init +12; Senses Perception +12"
+        ],
+        "Speed": [
+          "Speed 6 squares"
+        ],
+        "Ranged": [
+          "Ranged double blaster cannon +11 (4012, 1-square splash)"
+        ],
+        "Abilities": [
+          "Abilities Str 16, Dex 13, Con -, Int 8, Wis 12, Cha 6"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency [light, medium), Improved Defenses, Logic"
+        ],
+        "Skills": [
+          "Skills Initiative +12, Perception +12"
+        ],
+        "Systems": [
+          "Systems basic processor, walking locomotion, tool mount"
+        ],
+        "Possessions": [
+          "Possessions double blaster cannon, duranium plating, shield generator (SR"
+        ],
+        "Availability": [
+          "Availability Military; Cost 16,270"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 165,
+        "pdfPage1Based": 166,
+        "sourceImage": "work/kotor_pdf_review/printed_p165.png",
+        "fieldValues": {
+          "/identity/printedName": "Mark IV Assault Droid",
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 6,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 12,
+          "/abilities/perceptionPrinted": 12,
+          "/defenses/reflex": 19,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 14,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 52,
+          "/durability/damageThreshold": 19,
+          "/defenses/shieldRating": 10,
+          "/economics/newCredits": 16270,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 17,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-019",
+      "printedName": "Basilisk War Droid",
+      "printedPage": 203,
+      "pdfPage1Based": 204,
+      "txtAnchorLine1Based": 20759,
+      "txtWindowEnd1Based": 21650,
+      "txtWindowSha256": "60d5d3d462a27fa543353991455d76d729c46b1021e0bf9e2081f32c34bbf2ea",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 13 (flat-footed 11), Fort 19; +3 armor"
+        ],
+        "hp": [
+          "hp 70; DR 5; Threshold 29"
+        ],
+        "Init": [
+          "Init +6; Senses Perception +11"
+        ],
+        "Speed": [
+          "Speed fly 12 squares (max. velocity 550 km/h), fly 3 squares (starship"
+        ],
+        "Melee": [
+          "Melee claws +11 (see below) or"
+        ],
+        "Ranged": [
+          "Ranged light laser cannons +4* (see below) or",
+          "Ranged light concussion missile launcher +4” (see below) or"
+        ],
+        "Abilities": [
+          "Abilities Str 28, Dex 15, Con —, Int 14"
+        ],
+        "Skills": [
+          "Skills* Initiative +6, Mechanics +6, Perception +11, Pilot +6,"
+        ],
+        "Availability": [
+          "Availability Military, Rare; Cost Not available for sale [estimated value"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 203,
+        "pdfPage1Based": 204,
+        "sourceImage": "work/kotor_pdf_review/printed_p203.png",
+        "fieldValues": {
+          "/identity/printedName": "Basilisk War Droid",
+          "/classification/size": "Huge",
+          "/challenge/challengeLevel": 6,
+          "/classification/statblockFormat": "vehicle",
+          "/classification/primaryActorAuthority": "vehicle"
+        },
+        "fieldComparisonCount": 5,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "vehiclePrintedStatblock": {
+        "reflex": 13,
+        "flatFootedReflex": 11,
+        "fortitude": 19,
+        "hitPoints": 70,
+        "damageReduction": 5,
+        "threshold": 29,
+        "flySquares": 12,
+        "starshipScaleFlySquares": 3,
+        "maximumKmh": 550,
+        "crew": "1 (skilled, droid brain)",
+        "passengers": 1,
+        "payload": "4 concussion missiles, 2 space mines",
+        "availability": "Military, Rare",
+        "estimatedValueCredits": 70000,
+        "note": "Vehicle engine only, no droid-actor stat grant or attack permissions."
+      },
+      "visuallyObservedSpeedSquares": null
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-020",
+      "printedName": "GO-TO (Dark Wars)",
+      "printedPage": 212,
+      "pdfPage1Based": 213,
+      "txtAnchorLine1Based": 21651,
+      "txtWindowEnd1Based": 21767,
+      "txtWindowSha256": "6b0339f080ad4ad418c19fa457159e44a82dec92b507789dd87944fe178356f7",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 25 (flat-footed 24), Fort 19, Will 24",
+          "Defenses Ref 18 (flat-footed 16), Fort 9, Will 12"
+        ],
+        "hp": [
+          "hp 34; Threshold 19",
+          "hp 28; SR 10; Threshold 9"
+        ],
+        "Init": [
+          "Init +7; Senses low-light vision, Perception +6"
+        ],
+        "Speed": [
+          "Speed 4 squares",
+          "Speed 4 squares (fly)"
+        ],
+        "Melee": [
+          "Melee by weapon -1 (nonproficient with all weapons)",
+          "Melee electroshock probe +4 (1d8 ion)"
+        ],
+        "Ranged": [
+          "Ranged by weapon +1 (nonproficient with all weapons)",
+          "Ranged integrated blaster pistol +9 (3d6+5) or"
+        ],
+        "Abilities": [
+          "Abilities Str 8, Dex 12, Con 10, Int 16, Wis 13, Cha 17",
+          "Abilities Str 6, Dex 16, Con —, Int 16, Wis 11, Cha 14"
+        ],
+        "Feats": [
+          "Feats Improved Defenses, Melee Defenses, Point Blank Shot, Quick",
+          "Feats Deadeye, Improved Defenses, Point Blank Shot, Power Blast, Precise"
+        ],
+        "Talents": [
+          "Talents Attract Student, Disruptive, Fool's Luck, Knack, Lucky Stop",
+          "Talents Gimmick, Master Slicer, Trace"
+        ],
+        "Skills": [
+          "Skills Deception +17, Gather Information +17, Knowledge (bureaucracy)",
+          "Skills Knowledge (social sciences) +17, Knowledge (technology) +17,"
+        ],
+        "Systems": [
+          "Systems hovering locomotion, heuristic processor, 2 tool appendages,"
+        ],
+        "Possessions": [
+          "Possessions 4 credit chips, datapad, video recorder, winning smile",
+          "Possessions integrated blaster (treat as blaster pistol), planetary"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 212,
+        "pdfPage1Based": 213,
+        "sourceImage": "work/kotor_pdf_review/printed_p212.png",
+        "fieldValues": {
+          "/identity/printedName": "GO-TO (Dark Wars)",
+          "/classification/size": "Tiny",
+          "/challenge/challengeLevel": 6,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 7,
+          "/abilities/perceptionPrinted": 6,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 28,
+          "/durability/damageThreshold": 9,
+          "/defenses/shieldRating": 10
+        },
+        "fieldComparisonCount": 15,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 4
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-021",
+      "printedName": "HK-47 (Jedi Civil War)",
+      "printedPage": 213,
+      "pdfPage1Based": 214,
+      "txtAnchorLine1Based": 21768,
+      "txtWindowEnd1Based": 22221,
+      "txtWindowSha256": "6db8a33ebe8c167194e66bb8b323928716cc4a23176a3ffd297f5c37fd88a3d4",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 24 (flat-footed 21), Fort 23, Will 20"
+        ],
+        "hp": [
+          "hp 76; DR 1; Threshold 23"
+        ],
+        "Init": [
+          "Init +11; Senses darkvision; Perception +12"
+        ],
+        "Speed": [
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee unarmed +12 (1d6+7)"
+        ],
+        "Ranged": [
+          "Ranged heavy blaster rifle +12 (3d10+6) or",
+          "Ranged heavy blaster rifle +10 (3d10+6) with Controlled Burst"
+        ],
+        "Abilities": [
+          "Abilities Str 16, Dex 14, Con —, Int 14, Wis 12, Cha 10"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Exotic Weapon Proficiency"
+        ],
+        "Talents": [
+          "Talents Armored Defenses, Controlled Burst, Tough as Nails, Weapon"
+        ],
+        "Skills": [
+          "Skills Initiative +11, Knowledge (tactics) +11, Mechanics +11, Perception"
+        ],
+        "Systems": [
+          "Systems walking locomotion, heuristic processor, 2 hand appendages,"
+        ],
+        "Possessions": [
+          "Possessions durasteel battle armor, heavy blaster rifle, flamethrower"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 213,
+        "pdfPage1Based": 214,
+        "sourceImage": "work/kotor_pdf_review/printed_p213.png",
+        "fieldValues": {
+          "/identity/printedName": "HK-47 (Jedi Civil War)",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 9,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 11,
+          "/abilities/perceptionPrinted": 12,
+          "/defenses/reflex": 24,
+          "/defenses/flatFootedReflex": 21,
+          "/defenses/fortitude": 23,
+          "/defenses/will": 20,
+          "/durability/hitPoints": 76,
+          "/durability/damageThreshold": 23,
+          "/defenses/damageReduction": 1
+        },
+        "fieldComparisonCount": 15,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-022",
+      "printedName": "T3-M4 (Jedi Civil War)",
+      "printedPage": 216,
+      "pdfPage1Based": 217,
+      "txtAnchorLine1Based": 22222,
+      "txtWindowEnd1Based": 23054,
+      "txtWindowSha256": "133c495f6ab49fbfa00938c61a4e575198e065c07ee5c1c7287a7011ef95121a",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 21 (flat-footed 11), Fort 15, Will 18",
+          "Defenses Ref 17 (flat-footed 16), Fort 20, Will 14"
+        ],
+        "hp": [
+          "hp 26; Threshold 15",
+          "hp 87; Threshold 20"
+        ],
+        "Init": [
+          "Init +2; Senses darkvision, Perception +3",
+          "Init +8; Senses Perception +7 (can reroll, must take second result)"
+        ],
+        "Speed": [
+          "Speed 4 squares",
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee electroshock probe +4 (1d8+2 ion)",
+          "Melee unarmed +8 (1d4+7) or"
+        ],
+        "Ranged": [
+          "Ranged stun ray +6 (3d6+3 stun) or",
+          "Ranged integrated laser pistol +6 (3d6+3)"
+        ],
+        "Abilities": [
+          "Abilities Str 8, Dex 13, Con —, Int 16, Wis 12, Cha 7"
+        ],
+        "Feats": [
+          "Feats Dodge, Gearhead, Logic Upgrade: Tactician, Point Blank Shot,"
+        ],
+        "Talents": [
+          "Talents Gimmick, Master Slicer, Knack"
+        ],
+        "Skills": [
+          "Skills Deception +7, Mechanics +17, Perception +10, Pilot +10, Use"
+        ],
+        "Systems": [
+          "Systems wheeled Jocomotion, magnetic feet, heuristic processor, 5 tool"
+        ],
+        "Possessions": [
+          "Possessions integrated blaster pistol (stun ray when set to stun),"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 216,
+        "pdfPage1Based": 217,
+        "sourceImage": "work/kotor_pdf_review/printed_p216.png",
+        "fieldValues": {
+          "/identity/printedName": "T3-M4 (Jedi Civil War)",
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 6,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 2,
+          "/abilities/perceptionPrinted": 3,
+          "/defenses/reflex": 21,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 18,
+          "/durability/hitPoints": 26,
+          "/durability/damageThreshold": 15
+        },
+        "fieldComparisonCount": 14,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 4
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-023",
+      "printedName": "Krath War Droid",
+      "printedPage": 222,
+      "pdfPage1Based": 223,
+      "txtAnchorLine1Based": 23055,
+      "txtWindowEnd1Based": 23119,
+      "txtWindowSha256": "4e7fbfa4c876410dec91e3c80c656c3a8fd963cc35ba58a4e6820aa3801701cf",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 22 (flat-footed 19), Fort 20, Will 14"
+        ],
+        "hp": [
+          "hp 26; Threshold 20"
+        ],
+        "Init": [
+          "Init +7; Senses Perception +5"
+        ],
+        "Speed": [
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee short sword +13 (1d6+8 } or",
+          "Melee short sword +11 (2d6+8 )"
+        ],
+        "Ranged": [
+          "Ranged pulse-wave pistol +11 (3d6+1 ) or",
+          "Ranged pulse-wave pistol +9 (44641 }"
+        ],
+        "Abilities": [
+          "Abilities Str 20, Dex 16, Con —, Int 6, Wis 12, Cha 6"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Rapid Shot, Rapid Strike, Weapon"
+        ],
+        "Talents": [
+          "Talents Devastating Attack (simple weapons), Weapon Specialization"
+        ],
+        "Systems": [
+          "Systems basic processor, walking locomotion, 2 hand appendages"
+        ],
+        "Possessions": [
+          "Possessions short sword, pulse-wave pistol, durasteel battle armor,"
+        ],
+        "Availability": [
+          "Availability Licensed; Cost 11,000"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 222,
+        "pdfPage1Based": 223,
+        "sourceImage": "work/kotor_pdf_review/printed_p222.png",
+        "fieldValues": {
+          "/identity/printedName": "Krath War Droid",
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 5,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 7,
+          "/abilities/perceptionPrinted": 5,
+          "/defenses/reflex": 22,
+          "/defenses/flatFootedReflex": 19,
+          "/defenses/fortitude": 20,
+          "/defenses/will": 14,
+          "/durability/hitPoints": 26,
+          "/durability/damageThreshold": 20,
+          "/economics/newCredits": 11000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 16,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 6
+    },
+    {
+      "sourceEntryKey": "KOTOR-DROID-024",
+      "printedName": "Rakatan Guardian Droid",
+      "printedPage": 223,
+      "pdfPage1Based": 224,
+      "txtAnchorLine1Based": 23120,
+      "txtWindowEnd1Based": 23363,
+      "txtWindowSha256": "4ecb5ff0f7d8ece1b082c10a26bdfdd0d8e9092400e0864c9955b90c05dd7ce5",
+      "ocrSelectedFieldCandidates": {
+        "Defenses": [
+          "Defenses Ref 19 (flat-footed 17), Fort 10, Will 11",
+          "Defenses Ref 14 (flat-footed 14), Fort 12, Will 10"
+        ],
+        "hp": [
+          "hp 38; Threshold 10",
+          "hp 18; Threshold 12"
+        ],
+        "Init": [
+          "Init +9; Senses darkvision, Perception +15",
+          "Init +2; Senses Perception +1"
+        ],
+        "Speed": [
+          "Speed 8 squares",
+          "Speed 6 squares"
+        ],
+        "Melee": [
+          "Melee 2 claws +5 (1d3+4) and",
+          "Melee 2 claws +5 (1d4+4) and"
+        ],
+        "Ranged": [
+          "Ranged blaster rifle +13 {3d8) or",
+          "Ranged flamethrower +13 (3d6) or"
+        ],
+        "Abilities": [
+          "Abilities Str 10, Dex 14, Con —, Int 14, Wis 12, Cha 8",
+          "Abilities Str 14, Dex 10, Con 12, Int 2, Wis 9, Cha 8"
+        ],
+        "Feats": [
+          "Feats Armor Proficiency (light, medium), Exotic Weapon Proficiency",
+          "Feats Bantha Rush, Improved Defenses"
+        ],
+        "Skills": [
+          "Skills Endurance +12, Mechanics +14, Perception +15, Survival +13",
+          "Skills Jump +9"
+        ],
+        "Systems": [
+          "Systems walking locomotion, heuristic processor, darkvision, improved"
+        ],
+        "Possessions": [
+          "Possessions integrated weaponry (treat as blaster rifle, flamethrower, and"
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "printedPage": 223,
+        "pdfPage1Based": 224,
+        "sourceImage": "work/kotor_pdf_review/printed_p223.png",
+        "fieldValues": {
+          "/identity/printedName": "Rakatan Guardian Droid",
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 5,
+          "/classification/statblockFormat": "droid-actor",
+          "/classification/primaryActorAuthority": "droid",
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 9,
+          "/abilities/perceptionPrinted": 15,
+          "/defenses/reflex": 19,
+          "/defenses/flatFootedReflex": 17,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 38,
+          "/durability/damageThreshold": 10
+        },
+        "fieldComparisonCount": 14,
+        "limitations": "Selected statblock fields only. Numeric speed not counted as exact, primary weapon and component claims blocked."
+      },
+      "warnings": [
+        "Source TXT may interleave printed columns; candidates are not mechanically authoritative."
+      ],
+      "visuallyObservedSpeedSquares": 8
+    }
+  ]
+}

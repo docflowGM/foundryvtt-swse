@@ -1,0 +1,78 @@
+{
+  "schema": "swse.droid.unknown.census-parity/0.1",
+  "authority": "Published census identities checked against printed PDF.",
+  "claims": [
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-001",
+      "printedName": "AS23 Aerial Survey Droid",
+      "printedPageStart": 43,
+      "printedPageEnd": 43,
+      "txtLine1Based": 4206,
+      "publishedDegree": 3,
+      "size": "Small",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-002",
+      "printedName": "DSH-3 Probe Droid",
+      "printedPageStart": 44,
+      "printedPageEnd": 44,
+      "txtLine1Based": 4305,
+      "publishedDegree": 4,
+      "size": "Small",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-003",
+      "printedName": "F1 Exploration Droid",
+      "printedPageStart": 44,
+      "printedPageEnd": 45,
+      "txtLine1Based": 4407,
+      "publishedDegree": 5,
+      "size": "Small",
+      "challengeLevel": 3,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-004",
+      "printedName": "MULE Droid",
+      "printedPageStart": 45,
+      "printedPageEnd": 46,
+      "txtLine1Based": 4520,
+      "publishedDegree": 5,
+      "size": "Medium",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-005",
+      "printedName": "Wanderer Scout Surveyor Droid",
+      "printedPageStart": 46,
+      "printedPageEnd": 47,
+      "txtLine1Based": 4663,
+      "publishedDegree": 5,
+      "size": "Medium",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-006",
+      "printedName": "WED-20 Treadwell",
+      "printedPageStart": 47,
+      "printedPageEnd": 47,
+      "txtLine1Based": 4771,
+      "publishedDegree": 1,
+      "size": "Small",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    }
+  ]
+}

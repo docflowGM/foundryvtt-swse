@@ -1,0 +1,625 @@
+{
+  "schema": "swse.droid.catalog.keep-source-review/0.2",
+  "sprint": "KEEP-002",
+  "date": "2026-11-02",
+  "sourceBook": "Star Wars Saga Edition Core Rulebook",
+  "tableSources": [
+    "Core p.187 Table 11-2",
+    "Core pp.194-195 Table 11-5",
+    "Core pp.193,197 mechanic paragraphs"
+  ],
+  "factorAuthorityPacket": "data/audits/droids/component-core-cost-factor-audit.json",
+  "sourceRepoBlobs": {
+    "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+    "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+  },
+  "summary": {
+    "sourceFactRows": 9,
+    "coreKeepFactRowsAcrossBatches": 19,
+    "cumulativeIndividualSourceFactRowsAcrossSprints": 46,
+    "pricingAuthorityFactorRows": 9,
+    "pricingAuthorityMismatches": 7,
+    "hardenedVariants": 4,
+    "shieldVariants": 4,
+    "fullMechanicalCertificates": 0,
+    "productionChanges": 0,
+    "applicationParityTests": 0,
+    "foundryRuntimeTests": 0
+  },
+  "records": [
+    {
+      "id": "basic-processor",
+      "name": "Basic Processor",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 187,
+          "pdfPage1Based": 188,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verification": "rendered PDF page visually reviewed"
+        }
+      ],
+      "sourceTable": {
+        "separatelyListedInTable11_5": false,
+        "creditCost": "NOT_SEPARATELY_PRINTED",
+        "weight": "NOT_SEPARATELY_PRINTED"
+      },
+      "host": {
+        "factoryBaseline": "Every droid has at least a Basic Processor"
+      },
+      "mechanic": {
+        "trainedOnlyRule": "Cannot use untrained skills except Acrobatics, Climb, Jump, Perception",
+        "noUnproficientWeapons": true,
+        "stockModelPC": "Core p.187 allows stock PC of Small/Medium size to install Basic or Heuristic in place of Remote processor"
+      },
+      "comparison": {
+        "rawStandaloneCredits": 0,
+        "rawStandaloneWeightKg": 5,
+        "rawRestriction": "PC droids cannot use this",
+        "issue": "Broader than published stock-model PC rule; separate custom heroic mode"
+      },
+      "issues": [
+        "BASIC_PC_MODE_GATE_WRONG",
+        "BASIC_STANDALONE_WEIGHT_UNPROVEN"
+      ],
+      "auditId": "KEEP-002-001",
+      "sourceVerified": true,
+      "productionDefinitionCertified": false,
+      "applicationParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "productionChanged": false
+    },
+    {
+      "id": "hardened-systems-x2",
+      "name": "Hardened Systems x2",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 187,
+          "pdfPage1Based": 188,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "rendered PDF page visually reviewed"
+        }
+      ],
+      "sourceTable": {
+        "creditsPerCostFactor": 1000,
+        "kgPerCostFactor": 100,
+        "availability": "Military"
+      },
+      "host": {
+        "minimumSize": "large",
+        "sameTierExclusive": true
+      },
+      "mechanic": {
+        "multiplier": 2,
+        "appliesTo": "size-based EXTRA hit points and size bonus to damage threshold",
+        "baseBySize": {
+          "large": {
+            "hp": 10,
+            "threshold": 5
+          },
+          "huge": {
+            "hp": 20,
+            "threshold": 10
+          },
+          "gargantuan": {
+            "hp": 50,
+            "threshold": 20
+          },
+          "colossal": {
+            "hp": 100,
+            "threshold": 50
+          }
+        },
+        "derivedHugeEffect": {
+          "hp": 40,
+          "threshold": 20
+        }
+      },
+      "comparison": {
+        "rawFlatLargeBenefit": {
+          "hp": 20,
+          "threshold": 10
+        },
+        "overlayFlatAllSizeBenefit": {
+          "hp": 20,
+          "threshold": 10
+        },
+        "rawChargenFlag": "NOT available at chargen",
+        "publishedGlobalChargenBan": "NOT_ESTABLISHED"
+      },
+      "issues": [
+        "FIXED_OVERLAY_INSTEAD_OF_SIZE_DERIVED",
+        "CHARGEN_RESTRICTION_UNPROVEN",
+        "COST_FACTOR_CROSS_APP_CONFLICT"
+      ],
+      "auditId": "KEEP-002-002",
+      "sourceVerified": true,
+      "productionDefinitionCertified": false,
+      "applicationParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "productionChanged": false
+    },
+    {
+      "id": "hardened-systems-x3",
+      "name": "Hardened Systems x3",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 187,
+          "pdfPage1Based": 188,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "rendered PDF page visually reviewed"
+        }
+      ],
+      "sourceTable": {
+        "creditsPerCostFactor": 2500,
+        "kgPerCostFactor": 250,
+        "availability": "Military"
+      },
+      "host": {
+        "minimumSize": "large",
+        "sameTierExclusive": true
+      },
+      "mechanic": {
+        "multiplier": 3,
+        "appliesTo": "size-based EXTRA hit points and size bonus to damage threshold",
+        "baseBySize": {
+          "large": {
+            "hp": 10,
+            "threshold": 5
+          },
+          "huge": {
+            "hp": 20,
+            "threshold": 10
+          },
+          "gargantuan": {
+            "hp": 50,
+            "threshold": 20
+          },
+          "colossal": {
+            "hp": 100,
+            "threshold": 50
+          }
+        },
+        "derivedHugeEffect": {
+          "hp": 60,
+          "threshold": 30
+        }
+      },
+      "comparison": {
+        "rawFlatLargeBenefit": {
+          "hp": 30,
+          "threshold": 15
+        },
+        "overlayFlatAllSizeBenefit": {
+          "hp": 30,
+          "threshold": 15
+        },
+        "rawChargenFlag": "NOT available at chargen",
+        "publishedGlobalChargenBan": "NOT_ESTABLISHED"
+      },
+      "issues": [
+        "FIXED_OVERLAY_INSTEAD_OF_SIZE_DERIVED",
+        "CHARGEN_RESTRICTION_UNPROVEN",
+        "COST_FACTOR_CROSS_APP_CONFLICT"
+      ],
+      "auditId": "KEEP-002-003",
+      "sourceVerified": true,
+      "productionDefinitionCertified": false,
+      "applicationParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "productionChanged": false
+    },
+    {
+      "id": "hardened-systems-x4",
+      "name": "Hardened Systems x4",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 187,
+          "pdfPage1Based": 188,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "rendered PDF page visually reviewed"
+        }
+      ],
+      "sourceTable": {
+        "creditsPerCostFactor": 4000,
+        "kgPerCostFactor": 400,
+        "availability": "Military"
+      },
+      "host": {
+        "minimumSize": "large",
+        "sameTierExclusive": true
+      },
+      "mechanic": {
+        "multiplier": 4,
+        "appliesTo": "size-based EXTRA hit points and size bonus to damage threshold",
+        "baseBySize": {
+          "large": {
+            "hp": 10,
+            "threshold": 5
+          },
+          "huge": {
+            "hp": 20,
+            "threshold": 10
+          },
+          "gargantuan": {
+            "hp": 50,
+            "threshold": 20
+          },
+          "colossal": {
+            "hp": 100,
+            "threshold": 50
+          }
+        },
+        "derivedHugeEffect": {
+          "hp": 80,
+          "threshold": 40
+        }
+      },
+      "comparison": {
+        "rawFlatLargeBenefit": {
+          "hp": 40,
+          "threshold": 20
+        },
+        "overlayFlatAllSizeBenefit": {
+          "hp": 40,
+          "threshold": 20
+        },
+        "rawChargenFlag": "NOT available at chargen",
+        "publishedGlobalChargenBan": "NOT_ESTABLISHED"
+      },
+      "issues": [
+        "FIXED_OVERLAY_INSTEAD_OF_SIZE_DERIVED",
+        "CHARGEN_RESTRICTION_UNPROVEN",
+        "COST_FACTOR_CROSS_APP_CONFLICT"
+      ],
+      "auditId": "KEEP-002-004",
+      "sourceVerified": true,
+      "productionDefinitionCertified": false,
+      "applicationParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "productionChanged": false
+    },
+    {
+      "id": "hardened-systems-x5",
+      "name": "Hardened Systems x5",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 187,
+          "pdfPage1Based": 188,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verification": "rendered PDF page visually reviewed"
+        }
+      ],
+      "sourceTable": {
+        "creditsPerCostFactor": 6250,
+        "kgPerCostFactor": 650,
+        "availability": "Military"
+      },
+      "host": {
+        "minimumSize": "large",
+        "sameTierExclusive": true
+      },
+      "mechanic": {
+        "multiplier": 5,
+        "appliesTo": "size-based EXTRA hit points and size bonus to damage threshold",
+        "baseBySize": {
+          "large": {
+            "hp": 10,
+            "threshold": 5
+          },
+          "huge": {
+            "hp": 20,
+            "threshold": 10
+          },
+          "gargantuan": {
+            "hp": 50,
+            "threshold": 20
+          },
+          "colossal": {
+            "hp": 100,
+            "threshold": 50
+          }
+        },
+        "derivedHugeEffect": {
+          "hp": 100,
+          "threshold": 50
+        }
+      },
+      "comparison": {
+        "rawFlatLargeBenefit": {
+          "hp": 50,
+          "threshold": 25
+        },
+        "overlayFlatAllSizeBenefit": {
+          "hp": 50,
+          "threshold": 25
+        },
+        "rawChargenFlag": "NOT available at chargen",
+        "publishedGlobalChargenBan": "NOT_ESTABLISHED"
+      },
+      "issues": [
+        "FIXED_OVERLAY_INSTEAD_OF_SIZE_DERIVED",
+        "CHARGEN_RESTRICTION_UNPROVEN",
+        "COST_FACTOR_CROSS_APP_CONFLICT"
+      ],
+      "auditId": "KEEP-002-005",
+      "sourceVerified": true,
+      "productionDefinitionCertified": false,
+      "applicationParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "productionChanged": false
+    },
+    {
+      "id": "sr5-shield-generator",
+      "name": "Shield Generator, SR 5",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 197,
+          "pdfPage1Based": 198,
+          "verification": "rendered PDF page visually reviewed"
+        }
+      ],
+      "sourceTable": {
+        "creditsPerCostFactor": 2500,
+        "kgPerCostFactor": 10,
+        "availability": "Military"
+      },
+      "host": {
+        "minimumSizeExplicit": null,
+        "sourceStatus": "NO_SPECIFIC_SR5_MINIMUM_PRINTED"
+      },
+      "mechanic": {
+        "normalShieldRating": 5,
+        "damage": "Reduce damage by current SR; when incoming damage equals/exceeds current SR, decrease SR by 5",
+        "restore": {
+          "swiftActions": 3,
+          "maySpanConsecutiveRounds": true,
+          "enduranceDC": 20,
+          "restoresSR": 5,
+          "maxSR": 5
+        }
+      },
+      "comparison": {
+        "numericCostFormulaInRawCatalog": "aligns if using proper published factor",
+        "sharedFactorTable": "WRONG_7_OF_9",
+        "currentSRRuntimeState": "NOT_TESTED"
+      },
+      "issues": [
+        "COST_FACTOR_CROSS_APP_CONFLICT",
+        "SHIELD_STATE_UNTESTED",
+        "UNPRINTED_SR5_MINIMUM"
+      ],
+      "auditId": "KEEP-002-006",
+      "sourceVerified": true,
+      "productionDefinitionCertified": false,
+      "applicationParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "productionChanged": false
+    },
+    {
+      "id": "sr10-shield-generator",
+      "name": "Shield Generator, SR 10",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 197,
+          "pdfPage1Based": 198,
+          "verification": "rendered PDF page visually reviewed"
+        }
+      ],
+      "sourceTable": {
+        "creditsPerCostFactor": 5000,
+        "kgPerCostFactor": 20,
+        "availability": "Military"
+      },
+      "host": {
+        "minimumSizeExplicit": "small",
+        "sourceStatus": "SOURCE_VERIFIED_MINIMUM"
+      },
+      "mechanic": {
+        "normalShieldRating": 10,
+        "damage": "Reduce damage by current SR; when incoming damage equals/exceeds current SR, decrease SR by 5",
+        "restore": {
+          "swiftActions": 3,
+          "maySpanConsecutiveRounds": true,
+          "enduranceDC": 20,
+          "restoresSR": 5,
+          "maxSR": 10
+        }
+      },
+      "comparison": {
+        "numericCostFormulaInRawCatalog": "aligns if using proper published factor",
+        "sharedFactorTable": "WRONG_7_OF_9",
+        "currentSRRuntimeState": "NOT_TESTED"
+      },
+      "issues": [
+        "COST_FACTOR_CROSS_APP_CONFLICT",
+        "SHIELD_STATE_UNTESTED"
+      ],
+      "auditId": "KEEP-002-007",
+      "sourceVerified": true,
+      "productionDefinitionCertified": false,
+      "applicationParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "productionChanged": false
+    },
+    {
+      "id": "sr15-shield-generator",
+      "name": "Shield Generator, SR 15",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 197,
+          "pdfPage1Based": 198,
+          "verification": "rendered PDF page visually reviewed"
+        }
+      ],
+      "sourceTable": {
+        "creditsPerCostFactor": 7500,
+        "kgPerCostFactor": 30,
+        "availability": "Military"
+      },
+      "host": {
+        "minimumSizeExplicit": "medium",
+        "sourceStatus": "SOURCE_VERIFIED_MINIMUM"
+      },
+      "mechanic": {
+        "normalShieldRating": 15,
+        "damage": "Reduce damage by current SR; when incoming damage equals/exceeds current SR, decrease SR by 5",
+        "restore": {
+          "swiftActions": 3,
+          "maySpanConsecutiveRounds": true,
+          "enduranceDC": 20,
+          "restoresSR": 5,
+          "maxSR": 15
+        }
+      },
+      "comparison": {
+        "numericCostFormulaInRawCatalog": "aligns if using proper published factor",
+        "sharedFactorTable": "WRONG_7_OF_9",
+        "currentSRRuntimeState": "NOT_TESTED"
+      },
+      "issues": [
+        "COST_FACTOR_CROSS_APP_CONFLICT",
+        "SHIELD_STATE_UNTESTED"
+      ],
+      "auditId": "KEEP-002-008",
+      "sourceVerified": true,
+      "productionDefinitionCertified": false,
+      "applicationParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "productionChanged": false
+    },
+    {
+      "id": "sr20-shield-generator",
+      "name": "Shield Generator, SR 20",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "rendered PDF page visually reviewed"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 197,
+          "pdfPage1Based": 198,
+          "verification": "rendered PDF page visually reviewed"
+        }
+      ],
+      "sourceTable": {
+        "creditsPerCostFactor": 10000,
+        "kgPerCostFactor": 40,
+        "availability": "Military"
+      },
+      "host": {
+        "minimumSizeExplicit": "large",
+        "sourceStatus": "SOURCE_VERIFIED_MINIMUM"
+      },
+      "mechanic": {
+        "normalShieldRating": 20,
+        "damage": "Reduce damage by current SR; when incoming damage equals/exceeds current SR, decrease SR by 5",
+        "restore": {
+          "swiftActions": 3,
+          "maySpanConsecutiveRounds": true,
+          "enduranceDC": 20,
+          "restoresSR": 5,
+          "maxSR": 20
+        }
+      },
+      "comparison": {
+        "numericCostFormulaInRawCatalog": "aligns if using proper published factor",
+        "sharedFactorTable": "WRONG_7_OF_9",
+        "currentSRRuntimeState": "NOT_TESTED"
+      },
+      "issues": [
+        "COST_FACTOR_CROSS_APP_CONFLICT",
+        "SHIELD_STATE_UNTESTED"
+      ],
+      "auditId": "KEEP-002-009",
+      "sourceVerified": true,
+      "productionDefinitionCertified": false,
+      "applicationParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "productionChanged": false
+    }
+  ],
+  "notes": [
+    "9 source fact rows are NOT nine new canonical identities; variants are counted individually.",
+    "Source says hardened tiers are Large or greater and Military, not universally barred from all PC modes.",
+    "SR5 specific min size not found in the inspected text; do not infer eligibility for all sizes.",
+    "The printed cost factor is published authority; this packet does not change code."
+  ]
+}

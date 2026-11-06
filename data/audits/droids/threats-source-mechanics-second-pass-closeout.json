@@ -1,0 +1,108 @@
+{
+  "schema": "swse.droids.threats.source-mechanics-second-pass-closeout/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "sourceBook": "Threats of the Galaxy",
+  "sourcePdf": "SAGA EDITION - Threats of the Galaxy.pdf",
+  "sourceTextAid": "Threats of the Galaxy_djvu.txt",
+  "scope": "Full published model statblock and adjacent narrative source-mechanical second-pass review completed for 29/29 source identities, printed pp134–160; no mechanical certificate or V13 execution authority established.",
+  "sourceEvidence": {
+    "renderedPrintedPages": [
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      141,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158,
+      159,
+      160
+    ],
+    "pdfPageOffset1Based": 1,
+    "visualMethod": "Rendered image-only PDF pages inspected and matched to frozen source IDs; uploaded TXT used as searchable aid, not substituted for printed text.",
+    "selectedFieldOriginalAuditReceipts": 314
+  },
+  "totals": {
+    "sourceIdentities": 29,
+    "deepSourceReviewed": 29,
+    "individualDroidActors": 29,
+    "sourceSystemInstancesOrLabels": 282,
+    "possessionEntries": 80,
+    "groupedFeatClaims": 172,
+    "groupedTalentClaims": 51,
+    "printedSkillTotals": 129,
+    "sourceOnlyModelConstraints": 118,
+    "preexistingSourceConditionalClaims": 10,
+    "sourceOnlyPrintedAttackGroups": 60,
+    "newlyDocumentedUnresolvedSourceDiscrepancies": 1,
+    "strictMechanicalCertificates": 0
+  },
+  "batches": [
+    "001-006",
+    "007-012",
+    "013-018",
+    "019-024",
+    "025-029"
+  ],
+  "sourceAmbiguities": [
+    {
+      "ruleId": "THREATS-013-PLASMA-WEAPON-NAME",
+      "model": "GRZ-6B Demolitions Droid",
+      "location": "p144",
+      "problem": "Printed attack names plasma cannon while Possessions name plasma torch (heavy blaster rifle equivalent).",
+      "resolutionStatus": "unresolved"
+    }
+  ],
+  "otherOutstandingBoundaries": [
+    "ASN-121 security scan electronic-only observation versus living sight",
+    "VX finite missile ownership and light concussion launcher separately published item",
+    "R3/R4/R5/R7 different factory astrogation buffer and internal storage",
+    "R2-R printed Basic not known and data/buffer separate",
+    "B3 remote receiver plus backup processor versus B3-A heuristic and secondary battery",
+    "Pistoeka discord missile is starship weapon/deployment, not factory droid attack",
+    "EVS implosion wrecking ball limited to reach and objects/vehicles",
+    "DRK-1 six-grenade finite payload",
+    "Replica Droid generic model versus Guri named person and separate printed species sidebar",
+    "Mark IV no stock attack weapon",
+    "SD-6 DR3, Controlled Burst and Delay Damage",
+    "Sith Warbot Speed 6 unspecified mode; Sith sword Dark Side/Force Point usage conditional",
+    "PK Worker one unassigned feat, printed Mechanic singular"
+  ],
+  "integrity": {
+    "all29FrozenKeysPreserved": true,
+    "all29HaveReviewCheckpoint": true,
+    "allRecordsStillPartial": true,
+    "allPrintedAttackGroupsSourceOnly": true,
+    "allConditionalSourceClaimsCited": true,
+    "oneRecordedDiscrepancyStillUnresolved": true,
+    "actorAuthorityUnchanged": true,
+    "zeroRuntimePromotions": true,
+    "zeroProductionChanges": true
+  },
+  "notPerformed": [
+    "Authoritative full JSON Schema validation in repository",
+    "Exact canonical feat/talent/skill identity and class-advancement certification",
+    "Equipment component/mount/weapon/ammunition authority reconciliation",
+    "Source contradiction arbitration",
+    "Foundry V13 runtime testing"
+  ],
+  "next": "Fourth priority book Knights of the Old Republic Campaign Guide; maintain separate strict mechanical certificate queue for SGD/CLONE/THREATS."
+}

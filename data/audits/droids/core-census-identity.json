@@ -1,0 +1,162 @@
+{
+  "schema": "swse.droid.core.census-parity/0.1",
+  "authority": "Read-only upstream publication census cross-checked to printed PDF, with printed corrections recorded locally.",
+  "claims": [
+    {
+      "sourceEntryKey": "CORE-DROID-001",
+      "printedName": "2-1B Medical Droid",
+      "printedPageStart": 197,
+      "printedPageEnd": 197,
+      "txtLine1Based": 18637,
+      "publishedDegree": 1,
+      "size": "Medium",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-002",
+      "printedName": "R2 Series Astromech Droid",
+      "printedPageStart": 198,
+      "printedPageEnd": 198,
+      "txtLine1Based": 18706,
+      "publishedDegree": 2,
+      "size": "Small",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-003",
+      "printedName": "3PO Series Protocol Droid",
+      "printedPageStart": 198,
+      "printedPageEnd": 198,
+      "txtLine1Based": 18777,
+      "publishedDegree": 3,
+      "size": "Medium",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-004",
+      "printedName": "B1 Series Battle Droid",
+      "printedPageStart": 199,
+      "printedPageEnd": 199,
+      "txtLine1Based": 18837,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-005",
+      "printedName": "B2 Series Super Battle Droid",
+      "printedPageStart": 199,
+      "printedPageEnd": 199,
+      "txtLine1Based": 18884,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 2,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-006",
+      "printedName": "Droideka Series Destroyer Droid",
+      "printedPageStart": 200,
+      "printedPageEnd": 200,
+      "txtLine1Based": 18968,
+      "publishedDegree": 4,
+      "size": "Large",
+      "challengeLevel": 4,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-007",
+      "printedName": "Dwarf Spider Droid",
+      "printedPageStart": 200,
+      "printedPageEnd": 201,
+      "txtLine1Based": 19032,
+      "publishedDegree": 4,
+      "size": "Large",
+      "challengeLevel": 3,
+      "kind": "model",
+      "heroEligibility": "unset"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-008",
+      "printedName": "Crab Droid Scout",
+      "printedPageStart": 201,
+      "printedPageEnd": 201,
+      "txtLine1Based": 19082,
+      "publishedDegree": 4,
+      "size": "Large",
+      "challengeLevel": 4,
+      "kind": "model",
+      "heroEligibility": "unset"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-009",
+      "printedName": "IG-100 Series MagnaGuard",
+      "printedPageStart": 201,
+      "printedPageEnd": 202,
+      "txtLine1Based": 19147,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 6,
+      "kind": "model",
+      "heroEligibility": "unset"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-010",
+      "printedName": "Viper Series Probe Droid",
+      "printedPageStart": 202,
+      "printedPageEnd": 203,
+      "txtLine1Based": 19224,
+      "publishedDegree": 4,
+      "size": "Large",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-011",
+      "printedName": "ASP Series Labor Droid",
+      "printedPageStart": 203,
+      "printedPageEnd": 203,
+      "txtLine1Based": 19301,
+      "publishedDegree": 5,
+      "size": "Medium",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-012",
+      "printedName": "R2-D2 (Episode VI)",
+      "printedPageStart": 267,
+      "printedPageEnd": 267,
+      "txtLine1Based": 25872,
+      "publishedDegree": 2,
+      "size": "Small",
+      "challengeLevel": 6,
+      "kind": "named",
+      "heroEligibility": "unset"
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-013",
+      "printedName": "C-3PO (Episode VI)",
+      "printedPageStart": 267,
+      "printedPageEnd": 268,
+      "txtLine1Based": 25942,
+      "publishedDegree": 3,
+      "size": "Medium",
+      "challengeLevel": 5,
+      "kind": "named",
+      "heroEligibility": "unset"
+    }
+  ]
+}

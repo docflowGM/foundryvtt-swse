@@ -75,6 +75,7 @@ function isPrimaryProcessor(def) {
 function droidPartEntry(def, actor, extra = {}) {
   const hydrated = hydrateDroidPart(def, { actor, installedIds: Array.from(collectInstalledDroidPartIds(actor)) });
   const cost = computeDroidPartCost(actor, hydrated, extra);
+  const quoteBlocked = hydrated.quoteStatus !== 'OK' || !Number.isFinite(cost) || cost < 0;
   return {
     id: normalizeDroidPartId(hydrated.ruleId ?? hydrated.id),
     name: hydrated.name,
@@ -84,9 +85,12 @@ function droidPartEntry(def, actor, extra = {}) {
     slot: hydrated.slot || def?.slot || '',
     sourcePath: def?.sourcePath ?? '',
     installed: collectInstalledDroidPartIds(actor).has(normalizeDroidPartId(hydrated.ruleId ?? hydrated.id)),
-    compatible: true,
+    compatible: !quoteBlocked,
+    blockingReason: quoteBlocked ? (hydrated.quoteBlockingReason || 'Component has no verified purchase quote') : null,
+    quoteStatus: hydrated.quoteStatus,
     cost,
-    resale: Math.floor(cost * 0.5),
+    weight: hydrated.weight,
+    resale: quoteBlocked ? null : Math.floor(cost * 0.5),
     availability: hydrated.availability ?? '-',
     prerequisites: [...(hydrated.prerequisiteIds ?? []), ...(hydrated.prerequisiteAnyIds ?? [])],
     modifiers: hydrated.modifiers ?? [],
@@ -278,6 +282,9 @@ export class DroidCustomizationEngine {
         };
       }
       const cost = this.#computeSystemCost(actor, systemDef);
+      if (!Number.isFinite(cost) || cost < 0) {
+        return { success: false, error: `No valid source quote for ${systemDef.name}`, blockingReason: 'Unresolved droid component price' };
+      }
       totalAddCost += cost;
       addedSystems.push({ id: normalizeDroidPartId(systemId), name: systemDef.name, cost, category: candidate.category, slot: candidate.slot });
     }
@@ -291,6 +298,9 @@ export class DroidCustomizationEngine {
 
       const removed = droidPartEntry(systemDef, actor);
       const resale = this.#computeSystemResale(actor, systemDef);
+      if (!Number.isFinite(resale) || resale < 0) {
+        return { success: false, error: `No valid resale quote for ${systemDef.name}`, blockingReason: 'Unresolved droid component price' };
+      }
       totalRemoveSale += resale;
       removedSystems.push({ id: normalizeDroidPartId(systemId), name: systemDef.name, resale, category: removed.category, slot: removed.slot });
     }
@@ -608,7 +618,7 @@ export class DroidCustomizationEngine {
    */
   static #computeSystemResale(actor, systemDef) {
     const purchaseCost = this.#computeSystemCost(actor, systemDef);
-    return Math.floor(purchaseCost * 0.5);
+    return Number.isFinite(purchaseCost) && purchaseCost >= 0 ? Math.floor(purchaseCost * 0.5) : null;
   }
 
   /**

@@ -1,0 +1,589 @@
+{
+  "schema": "swse.droids.v2.component-migration-acceptance/0.1",
+  "date": "2026-11-03",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "purpose": "Implementation-ready cross-app contract, NO production authorization, NO code changes.",
+  "codeSnapshots": [
+    {
+      "path": "scripts/data/droid-part-schema.js",
+      "sha": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+      "hazard": "getDroidCostFactor deviates from source in seven sizes; computeDroidPartCost/Weight can default to zero and callbacks use one cost factor"
+    },
+    {
+      "path": "scripts/engine/progression/droids/droid-trait-rules.js",
+      "sha": "cc408d12d09a12c071bb1a9a9256b05accc05cae",
+      "hazard": "DROID_SIZE_PACKAGES has only Tiny-Colossal; Fine/Diminutive fall back to Medium rather than canonical size factor"
+    },
+    {
+      "path": "scripts/apps/progression-framework/steps/droid-builder-step.js",
+      "sha": "27181f3ccbe574f21d23eed6a4bc5bb334e0cb1d",
+      "hazard": "Chargen locomotion cost uses raw DROID_SYSTEMS formula and progression size factor rather than canonical shared quote"
+    },
+    {
+      "path": "scripts/engine/customization/droid-customization-engine.js",
+      "sha": "31928dfc33d1c59df114384d9850f6a1cc29dccb",
+      "hazard": "Garage relies on schema computeDroidPartCost and droidSystems draft plus installedSystems"
+    },
+    {
+      "path": "scripts/apps/store/store-checkout.js",
+      "sha": "f33274a8d4b9a53304ebe388686d088da48a908a",
+      "hazard": "Store purchase must use same quote and atomic debit/install authority"
+    },
+    {
+      "path": "scripts/apps/progression-framework/steps/follower-steps/follower-droid-builder-step.js",
+      "sha": "34c7b8d879408ec2dc066aa6df4249fb6c3fda07",
+      "hazard": "Follower droid chassis selection must not bypass source host and cost gates"
+    }
+  ],
+  "sourceAuthorities": [
+    "data/audits/droids/droid-component-official-errata-authority-001.json",
+    "data/audits/droids/droid-component-sgd-errata-host-002.json",
+    "data/audits/droids/droid-component-mechanical-hold-triage-001.json",
+    "data/audits/droids/component-mechanical-certification-ledger.json"
+  ],
+  "proposedQuoteInputs": [
+    "canonicalId",
+    "sourceVariant",
+    "size",
+    "operationPhase",
+    "selectedHost",
+    "selectedInstalledShieldRating",
+    "selectedAppendage",
+    "actualSpeed",
+    "locomotionSlotOrdinal",
+    "legalPurchaser",
+    "physicalEquipmentOwner",
+    "creditContext",
+    "sourceRuleVersion"
+  ],
+  "proposedQuoteOutputs": [
+    "OK|BLOCKED|NEEDS_SOURCE_ADJUDICATION",
+    "creditsOrNull",
+    "kgOrUnlisted",
+    "priceFactor",
+    "weightFactor",
+    "physicalHostClass",
+    "installedSystemEligibility",
+    "sourceProof",
+    "blockingReasons",
+    "resourceActionContracts"
+  ],
+  "blockingPolicy": "Missing price/weight/host proof, source HOLD, incompatible variant or unresolved factory restriction fails closed without fabricated free price or partial Store credit mutation.",
+  "counts": {
+    "scenarioSpecs": 26,
+    "executedApplicationChecks": 0,
+    "executedFoundryChecks": 0,
+    "productionChanges": 0
+  },
+  "cases": [
+    {
+      "id": "F01",
+      "kind": "FACTOR_PRICE_FINE",
+      "input": {
+        "size": "fine"
+      },
+      "expected": {
+        "costFactor": 20
+      },
+      "explanation": "Do not default Fine to Medium when trait package unavailable",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F02",
+      "kind": "FACTOR_PRICE_DIMINUTIVE",
+      "input": {
+        "size": "diminutive"
+      },
+      "expected": {
+        "costFactor": 10
+      },
+      "explanation": "Do not default Diminutive to Medium",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F03",
+      "kind": "FACTOR_PRICE_TINY",
+      "input": {
+        "size": "tiny"
+      },
+      "expected": {
+        "costFactor": 5,
+        "accessoryWeightFactor": 0.4
+      },
+      "explanation": "One source size authority, two independent factors",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F04",
+      "kind": "FACTOR_PRICE_SMALL",
+      "input": {
+        "size": "small"
+      },
+      "expected": {
+        "costFactor": 2,
+        "accessoryWeightFactor": 1
+      },
+      "explanation": "Errata weight factor not reused for credits",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F05",
+      "kind": "FACTOR_MEDIUM_LARGE",
+      "input": {
+        "size": "medium/large"
+      },
+      "expected": {
+        "mediumPriceFactor": 1,
+        "mediumWeightFactor": 1,
+        "largePriceFactor": 2,
+        "largeWeightFactor": 2
+      },
+      "explanation": "Explicit category-specific weight policy even when values coincide",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F06",
+      "kind": "SMALL_SR5_GENERATOR",
+      "input": {
+        "size": "small",
+        "part": "Shield Generator, SR 5"
+      },
+      "expected": {
+        "priceCredits": 5000,
+        "weightKg": 10,
+        "host": "INTEGRATED_SYSTEM"
+      },
+      "explanation": "Core source price and corrected errata weight",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F07",
+      "kind": "TINY_PLASTEEL",
+      "input": {
+        "size": "tiny",
+        "part": "Plasteel Shell"
+      },
+      "expected": {
+        "priceCredits": 2000,
+        "weightKg": 0.8,
+        "host": "INTEGRATED_ARMOR"
+      },
+      "explanation": "Built-in armor classified as accessory weight",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F08",
+      "kind": "TINY_COURIER",
+      "input": {
+        "size": "tiny",
+        "part": "Courier Compartments"
+      },
+      "expected": {
+        "priceCredits": 200,
+        "weightKg": 0.8,
+        "host": "INTEGRATED_STORAGE"
+      },
+      "explanation": "Price flat even though accessory weight is factor multiplied",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F09",
+      "kind": "SMALL_UNDERWATER",
+      "input": {
+        "size": "small",
+        "part": "Underwater Drive",
+        "speed": 6
+      },
+      "expected": {
+        "priceCredits": 1440,
+        "weightKg": 20,
+        "host": "LOCOMOTION_ADDON"
+      },
+      "explanation": "Do not apply accessory errata to printed Locomotion subsection",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F10",
+      "kind": "SMALL_ELECTRIC_GRID",
+      "input": {
+        "size": "small",
+        "part": "Electric Defense Grid"
+      },
+      "expected": {
+        "priceCredits": 6000,
+        "weightKg": 100,
+        "host": "ARMOR_OR_SHELL_INTEGRATED"
+      },
+      "explanation": "Printed 5-damage retaliation remains a separate battle action contract",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F11",
+      "kind": "SMALL_SHIELD_EXPANSION",
+      "input": {
+        "size": "small",
+        "part": "Shield Expansion Module",
+        "installedShieldSr": 5
+      },
+      "expected": {
+        "priceCredits": 500,
+        "weightKg": 10,
+        "prerequisite": "INSTALLED_SHIELD_GENERATOR"
+      },
+      "explanation": "Source SR must be actual selected installed shield, not implicit SR5 for other tiers",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F12",
+      "kind": "SMALL_MICRO_SHIELD_APPENDAGE",
+      "input": {
+        "size": "small",
+        "part": "Micro Shield",
+        "variant": "appendage-attached"
+      },
+      "expected": {
+        "priceCredits": 1200,
+        "weightKg": 10,
+        "ledger": "POSSESSION_NOT_INSTALLED_SYSTEM"
+      },
+      "explanation": "Accessory weight can be determined while item is not chassis integrated",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F13",
+      "kind": "MICRO_SHIELD_HANDHELD",
+      "input": {
+        "size": "small",
+        "part": "Micro Shield",
+        "variant": "handheld"
+      },
+      "expected": {
+        "priceCredits": 400,
+        "weightKg": "SOURCE_UNLISTED",
+        "ledger": "POSSESSION",
+        "quote": "BLOCK_IF_WEIGHT_REQUIRED"
+      },
+      "explanation": "No borrowed installed variant mass; separate actor item ownership",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F14",
+      "kind": "SILENCE_BUBBLE_HOST",
+      "input": {
+        "size": "small",
+        "part": "Silence-Bubble Generator"
+      },
+      "expected": {
+        "priceCredits": 3500,
+        "weightKg": 20,
+        "installedSystems": "BLOCK_UNLESS_HOST_AUTHORIZED"
+      },
+      "explanation": "Numeric mass known while chassis location unspecified",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F15",
+      "kind": "SYNCHRONIZED_FIRE_ERRATA",
+      "input": {
+        "part": "Synchronized Fire Circuits",
+        "aidAnotherSuccess": true,
+        "sharedRemoteProcessor": true
+      },
+      "expected": {
+        "totalAidBonus": 5,
+        "source": "OFFICIAL_CORE_ERRATA"
+      },
+      "explanation": "No regression to base-book pre-errata +4",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F16",
+      "kind": "REMOTE_RECEIVER_OFFSET",
+      "input": {
+        "part": "Remote Receiver",
+        "constructionCredits": 2000
+      },
+      "expected": {
+        "constructionCreditsAfterDiscount": 1500,
+        "storeCashBack": false
+      },
+      "explanation": "Negative source amount is a construction offset, not purchase cash-out",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F17",
+      "kind": "PERSONALITY_DOWNLOADER_CUSTOM",
+      "input": {
+        "part": "Personality Downloader",
+        "selectedBuild": null
+      },
+      "expected": {
+        "status": "BLOCK_EXACT_PRICE",
+        "minimumCredits": 5000
+      },
+      "explanation": "Custom 5000+ is not a guaranteed final price",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F18",
+      "kind": "ROCKET_ARM_SOURCE_CONFLICT",
+      "input": {
+        "part": "Rocket Arm",
+        "selectedAppendageBase": 50
+      },
+      "expected": {
+        "status": "BLOCK_SOURCE_PRICE_CONFLICT"
+      },
+      "explanation": "Prose 2000 vs x4 appendage cost remains HOLD without adjudication",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F19",
+      "kind": "UNRECOGNIZED_PART",
+      "input": {
+        "part": "Nonexistent Core/SGD part"
+      },
+      "expected": {
+        "status": "NOT_FOUND_BLOCKED",
+        "numericCost": null
+      },
+      "explanation": "No null/unknown source part may quote zero and install",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F20",
+      "kind": "EXTERNAL_STATIONS",
+      "input": {
+        "part": "Droid Battle Station"
+      },
+      "expected": {
+        "ledger": "SHIP_OR_FACILITY_NOT_DROID_CHASSIS"
+      },
+      "explanation": "External infrastructure never enters droid installedSystems",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F21",
+      "kind": "CHARGEN_STARTING_WEIGHT",
+      "input": {
+        "operation": "INITIAL_BUILD",
+        "part": "Plasteel Shell",
+        "size": "small"
+      },
+      "expected": {
+        "installedPhysicalKg": 2,
+        "carryingCapacityAddedKg": 0
+      },
+      "explanation": "Starting component actual weight is distinct from carrying-capacity exclusion",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F22",
+      "kind": "POSTCREATION_WEIGHT",
+      "input": {
+        "operation": "POST_CREATION_INSTALL",
+        "part": "Plasteel Shell",
+        "size": "small"
+      },
+      "expected": {
+        "installedPhysicalKg": 2,
+        "carryingCapacityAddedKg": 2
+      },
+      "explanation": "Postcreation installed changes affect real weight and encumbrance",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F23",
+      "kind": "STORE_TRANSACTION_ATOMICITY",
+      "input": {
+        "operation": "BUY_INSTALL",
+        "creditBalance": 100,
+        "legalQuoteCredits": 200
+      },
+      "expected": {
+        "status": "INSUFFICIENT_CREDITS",
+        "creditDebit": 0,
+        "partsInstalled": 0
+      },
+      "explanation": "Failed transaction may not partially update ledger",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F24",
+      "kind": "CROSS_APP_PARITY",
+      "input": {
+        "part": "Electric Defense Grid",
+        "size": "small",
+        "scenario": "identical selected configuration"
+      },
+      "expected": {
+        "garageCredits": 6000,
+        "chargenCredits": 6000,
+        "followerCredits": 6000,
+        "storeCredits": 6000
+      },
+      "explanation": "Single source quote kernel; authorization may differ by app context but arithmetic may not",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F25",
+      "kind": "INSTALLED_VS_DRAFT",
+      "input": {
+        "actorState": {
+          "system.droidSystems": "draft",
+          "system.installedSystems": "owned"
+        }
+      },
+      "expected": {
+        "postCreationAuthority": "system.installedSystems",
+        "noDoubleGrant": true
+      },
+      "explanation": "Do not treat draft, stock NPC props or compendium equipment as duplicate installed systems",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    },
+    {
+      "id": "F26",
+      "kind": "ERRATA_AND_HOLD_PRECEDENCE",
+      "input": {
+        "legacyPublishedRecord": "pre-errata",
+        "sourceHold": true
+      },
+      "expected": {
+        "authority": "official errata overrides original Core text",
+        "priceStatus": "BLOCK_UNRESOLVED_SOURCE_HOLD"
+      },
+      "explanation": "Old 99 base-book passes do not override errata or outstanding 23 HOLDs",
+      "sourceTestStatus": "SPECIFICATION_ONLY",
+      "garage": "NOT_TESTED",
+      "chargen": "NOT_TESTED",
+      "follower": "NOT_TESTED",
+      "store": "NOT_TESTED",
+      "foundryV13": "NOT_TESTED"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "bookId": "CORE",
+  "sourceEntries": 13,
+  "pdfVisualReviews": 13,
+  "directComparedFields": 263,
+  "mechanicallyCertified": 0,
+  "semanticValidation": "PASS",
+  "fullUpstreamJsonSchema202012Validated": false,
+  "foundryV13RuntimeCertified": false,
+  "scope": "Selected field review, not entire mechanical source field or narrative certification."
+}

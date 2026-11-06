@@ -1,0 +1,822 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "GOI",
+  "book": "Galaxy of Intrigue",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "Galaxy of Intrigue.pdf",
+  "scope": "Selected PDF fields and source-only constraints; not import-ready.",
+  "expectedPublicationClaims": 8,
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GOI-DROID-001",
+        "printedName": "5-BT Threat Analysis Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "bookId": "GOI",
+        "printedPageStart": 72,
+        "printedPageEnd": 72,
+        "pdfPageStart1Based": 73,
+        "textLineAnchor1Based": 6833,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 1,
+        "size": "Tiny",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 13,
+        "perceptionPrinted": 15
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 14,
+        "flatFootedReflex": 12,
+        "fortitude": 7,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 7,
+        "damageThreshold": 7
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 17490
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "External warning bracelet or earbud is not necessarily an installed chassis system."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "GOI-DROID-001-BOUNDARY-1",
+            "statement": "External warning bracelet or earbud is not necessarily an installed chassis system.",
+            "scope": "GOI-DROID-001",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "GOI-DROID-001"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "GOI-DROID-001:pdf-p72",
+          "GOI-DROID-001:txt-line-6833"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GOI-DROID-002",
+        "printedName": "NR-1100 Slicer Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "bookId": "GOI",
+        "printedPageStart": 72,
+        "printedPageEnd": 73,
+        "pdfPageStart1Based": 73,
+        "textLineAnchor1Based": 6897,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 3,
+        "perceptionPrinted": 7
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 16,
+        "fortitude": 11,
+        "will": 15
+      },
+      "durability": {
+        "hitPoints": 25,
+        "damageThreshold": 11
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (hovering)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 16430
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Narrative calls model unarmed; printed statblock has a ranged blaster attack and a blaster possession: unresolved source discrepancy.",
+          "Self-destruct is a conditional printed action, not unconditional attack availability."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified.",
+        "sourceContradictions": [
+          {
+            "issueId": "GOI-NR1100-UNARMED-VS-BLASTER",
+            "fieldPointers": [
+              "/combat/attackGroups",
+              "/equipment/weapons"
+            ],
+            "statements": [
+              {
+                "book": "Galaxy of Intrigue",
+                "page": 72,
+                "citationLabel": "Narrative unarmed vs statblock blaster",
+                "verifiedBy": "pdf-visual",
+                "sourceEntryKey": "GOI-DROID-002"
+              }
+            ],
+            "resolutionStatus": "unresolved"
+          }
+        ]
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "GOI-DROID-002-BOUNDARY-1",
+            "statement": "Narrative calls model unarmed; printed statblock has a ranged blaster attack and a blaster possession: unresolved source discrepancy.",
+            "scope": "GOI-DROID-002",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "GOI-DROID-002"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "GOI-DROID-002-BOUNDARY-2",
+            "statement": "Self-destruct is a conditional printed action, not unconditional attack availability.",
+            "scope": "GOI-DROID-002",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "page": 72,
+              "pdfPage1Based": 73,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "GOI-DROID-002"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "GOI-DROID-002:pdf-p72",
+          "GOI-DROID-002:txt-line-6897"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GOI-DROID-003",
+        "printedName": "3D-4 Administrative Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "bookId": "GOI",
+        "printedPageStart": 73,
+        "printedPageEnd": 73,
+        "pdfPageStart1Based": 74,
+        "textLineAnchor1Based": 6961,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 0,
+        "perceptionPrinted": 0
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 10,
+        "flatFootedReflex": 10,
+        "fortitude": 9,
+        "will": 10
+      },
+      "durability": {
+        "hitPoints": 2,
+        "damageThreshold": 9
+      },
+      "movement": {
+        "speedLineRaw": "6 squares (walking)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 7320
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Narrative says stock chassis unarmed, but shown example possesses a concealed hold-out blaster. Factory baseline cannot inherit it automatically."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "GOI-DROID-003-BOUNDARY-1",
+            "statement": "Narrative says stock chassis unarmed, but shown example possesses a concealed hold-out blaster. Factory baseline cannot inherit it automatically.",
+            "scope": "GOI-DROID-003",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "page": 73,
+              "pdfPage1Based": 74,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "GOI-DROID-003"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "GOI-DROID-003:pdf-p73",
+          "GOI-DROID-003:txt-line-6961"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GOI-DROID-004",
+        "printedName": "M4-Series Messenger Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "bookId": "GOI",
+        "printedPageStart": 74,
+        "printedPageEnd": 74,
+        "pdfPageStart1Based": 75,
+        "textLineAnchor1Based": 7026,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Diminutive",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null,
+        "initiativePrinted": 9,
+        "perceptionPrinted": 13
+      },
+      "progression": {},
+      "defenses": {
+        "reflex": 18,
+        "flatFootedReflex": 15,
+        "fortitude": 7,
+        "will": 12
+      },
+      "durability": {
+        "hitPoints": 4,
+        "damageThreshold": 7
+      },
+      "movement": {
+        "speedLineRaw": "9 squares (flying)"
+      },
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {
+        "newCredits": 88000
+      },
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Blaster licensing changes if weapon retained; do not assume weapon remains installed for every sale."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "GOI-DROID-004-BOUNDARY-1",
+            "statement": "Blaster licensing changes if weapon retained; do not assume weapon remains installed for every sale.",
+            "scope": "GOI-DROID-004",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "GOI-DROID-004"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "GOI-DROID-004:pdf-p74",
+          "GOI-DROID-004:txt-line-7026"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GOI-DROID-005",
+        "printedName": "FIII Footman Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "bookId": "GOI",
+        "printedPageStart": 74,
+        "printedPageEnd": 74,
+        "pdfPageStart1Based": 75,
+        "textLineAnchor1Based": 7034,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 9
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Footman glyph varies across OCR (FIII/Fill); keep original source identity and do not create Fidelis/Solis separate statblocks."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "GOI-DROID-005-BOUNDARY-1",
+            "statement": "Footman glyph varies across OCR (FIII/Fill); keep original source identity and do not create Fidelis/Solis separate statblocks.",
+            "scope": "GOI-DROID-005",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "page": 74,
+              "pdfPage1Based": 75,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "GOI-DROID-005"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "GOI-DROID-005:pdf-p74",
+          "GOI-DROID-005:txt-line-7034"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GOI-DROID-006",
+        "printedName": "BL-Series Battle Legionnaire",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "bookId": "GOI",
+        "printedPageStart": 75,
+        "printedPageEnd": 75,
+        "pdfPageStart1Based": 76,
+        "textLineAnchor1Based": 7129,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 3
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Rail cannon/blaster cannon treatment is model-specific; no mount inferred."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "GOI-DROID-006-BOUNDARY-1",
+            "statement": "Rail cannon/blaster cannon treatment is model-specific; no mount inferred.",
+            "scope": "GOI-DROID-006",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "page": 75,
+              "pdfPage1Based": 76,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "GOI-DROID-006"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "GOI-DROID-006:pdf-p75",
+          "GOI-DROID-006:txt-line-7129"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GOI-DROID-007",
+        "printedName": "B4J4 Security Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "bookId": "GOI",
+        "printedPageStart": 75,
+        "printedPageEnd": 75,
+        "pdfPageStart1Based": 76,
+        "textLineAnchor1Based": 7155,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 2
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "prohibited"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Two pistol possessions do not grant a second executable attack."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "GOI-DROID-007-BOUNDARY-1",
+            "statement": "Two pistol possessions do not grant a second executable attack.",
+            "scope": "GOI-DROID-007",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "page": 75,
+              "pdfPage1Based": 76,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "GOI-DROID-007"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "GOI-DROID-007:pdf-p75",
+          "GOI-DROID-007:txt-line-7155"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "GOI-DROID-008",
+        "printedName": "MRD-39B Assassin Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Galaxy of Intrigue",
+        "bookId": "GOI",
+        "printedPageStart": 208,
+        "printedPageEnd": 208,
+        "pdfPageStart1Based": 209,
+        "textLineAnchor1Based": 19790,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 4,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Self-destruct splash and tactical HP trigger must be kept source-scoped; stability legs and claw appendages are separate counts."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "GOI-DROID-008-BOUNDARY-1",
+            "statement": "Self-destruct splash and tactical HP trigger must be kept source-scoped; stability legs and claw appendages are separate counts.",
+            "scope": "GOI-DROID-008",
+            "source": {
+              "book": "Galaxy of Intrigue",
+              "page": 208,
+              "pdfPage1Based": 209,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "GOI-DROID-008"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "GOI-DROID-008:pdf-p208",
+          "GOI-DROID-008:txt-line-19790"
+        ]
+      }
+    }
+  ]
+}

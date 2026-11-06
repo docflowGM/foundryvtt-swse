@@ -1,0 +1,149 @@
+{
+  "schema": "swse.droids.clone.combat-feat-scope-pass/0.1",
+  "date": "2026-11-02",
+  "sourceBook": "Clone Wars Campaign Guide",
+  "scope": "Add visually sourced grouped printed feat/talent and skills lines to 16 Separatist droid entries, preserving alternate model scope and non-certification",
+  "totals": {
+    "records": 16,
+    "featGroups": 112,
+    "talentGroups": 27,
+    "skillEntries": 35,
+    "conditionalVariantFeats": 3
+  },
+  "records": [
+    {
+      "id": "CLONE-DROID-018",
+      "page": 188,
+      "featGroups": 8,
+      "talentGroups": 2,
+      "skillEntries": 1,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-019",
+      "page": 189,
+      "featGroups": 9,
+      "talentGroups": 5,
+      "skillEntries": 2,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-020",
+      "page": 190,
+      "featGroups": 6,
+      "talentGroups": 2,
+      "skillEntries": 2,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-021",
+      "page": 190,
+      "featGroups": 6,
+      "talentGroups": 2,
+      "skillEntries": 1,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-022",
+      "page": 191,
+      "featGroups": 5,
+      "talentGroups": 0,
+      "skillEntries": 1,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-023",
+      "page": 192,
+      "featGroups": 7,
+      "talentGroups": 2,
+      "skillEntries": 1,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-024",
+      "page": 192,
+      "featGroups": 8,
+      "talentGroups": 2,
+      "skillEntries": 4,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-025",
+      "page": 193,
+      "featGroups": 4,
+      "talentGroups": 0,
+      "skillEntries": 2,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-026",
+      "page": 193,
+      "featGroups": 7,
+      "talentGroups": 3,
+      "skillEntries": 3,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-027",
+      "page": 194,
+      "featGroups": 13,
+      "talentGroups": 6,
+      "skillEntries": 3,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-028",
+      "page": 194,
+      "featGroups": 7,
+      "talentGroups": 0,
+      "skillEntries": 3,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-029",
+      "page": 195,
+      "featGroups": 6,
+      "talentGroups": 0,
+      "skillEntries": 2,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-030",
+      "page": 196,
+      "featGroups": 6,
+      "talentGroups": 0,
+      "skillEntries": 2,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-031",
+      "page": 196,
+      "featGroups": 5,
+      "talentGroups": 0,
+      "skillEntries": 3,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-032",
+      "page": 197,
+      "featGroups": 7,
+      "talentGroups": 3,
+      "skillEntries": 3,
+      "sourceStatus": "source-only"
+    },
+    {
+      "id": "CLONE-DROID-033",
+      "page": 198,
+      "featGroups": 8,
+      "talentGroups": 0,
+      "skillEntries": 2,
+      "sourceStatus": "source-only"
+    }
+  ],
+  "limitations": [
+    "A printed group such as Weapon Proficiency (pistols, rifles) is one printed line-group claim, not automatically one canonical registry item or freely granted feats.",
+    "Double Attack or lightsaber defenses must resolve separately to exact canonical identities, choice instances and legal level progression.",
+    "OOM commander/Pilot source alternatives are mutually scoped; neither belongs to generic OOM factory simultaneously.",
+    "No production mutations, code automation or runtime certification."
+  ]
+}

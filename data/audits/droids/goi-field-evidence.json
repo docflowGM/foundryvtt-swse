@@ -1,0 +1,267 @@
+{
+  "schema": "swse.droid.goi.source-evidence/0.1",
+  "sourceBook": "Galaxy of Intrigue",
+  "sourcePdf": "Galaxy of Intrigue.pdf",
+  "sourcePdfSha256": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+  "sourceTxt": "Galaxy of Intrigue_djvu.txt",
+  "sourceTxtSha256": "ec030043d3ea366297d40d92fd32d96b99b0cc70357570f24f6d9c482e32f201",
+  "records": [
+    {
+      "sourceEntryKey": "GOI-DROID-001",
+      "printedName": "5-BT Threat Analysis Droid",
+      "printedPage": 72,
+      "pdfPage1Based": 73,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6833,
+      "txtWindowSha256": "db2769431339899c5f6d8bf13babc3cb9fd3595aff8c1030846dddf723315f01",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/goi_pdf_review/printed_p72.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "5-BT Threat Analysis Droid",
+          "/publication/printedPageStart": 72,
+          "/publication/printedPageEnd": 72,
+          "/classification/size": "Tiny",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 1,
+          "/pcConstruction/heroEligibility": "allowed",
+          "/abilities/initiativePrinted": 13,
+          "/abilities/perceptionPrinted": 15,
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 12,
+          "/defenses/fortitude": 7,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 7,
+          "/economics/newCredits": 17490,
+          "/movement/speedLineRaw": "6 squares (hovering)"
+        },
+        "fieldComparisonCount": 17,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "External warning bracelet or earbud is not necessarily an installed chassis system."
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-002",
+      "printedName": "NR-1100 Slicer Droid",
+      "printedPage": 72,
+      "pdfPage1Based": 73,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6897,
+      "txtWindowSha256": "43bed540f57611fd64b303b8601d461ba26b302c36cc4ea5e8d0c4413f778402",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/goi_pdf_review/printed_p72.png",
+        "extraVisualSourcePages": [
+          73
+        ],
+        "fieldValues": {
+          "/identity/printedName": "NR-1100 Slicer Droid",
+          "/publication/printedPageStart": 72,
+          "/publication/printedPageEnd": 73,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 3,
+          "/classification/publishedDegree": 2,
+          "/pcConstruction/heroEligibility": "prohibited",
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 7,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 11,
+          "/defenses/will": 15,
+          "/durability/hitPoints": 25,
+          "/durability/damageThreshold": 11,
+          "/economics/newCredits": 16430,
+          "/movement/speedLineRaw": "6 squares (hovering)"
+        },
+        "fieldComparisonCount": 17,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Narrative calls model unarmed; printed statblock has a ranged blaster attack and a blaster possession: unresolved source discrepancy.",
+        "Self-destruct is a conditional printed action, not unconditional attack availability."
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-003",
+      "printedName": "3D-4 Administrative Droid",
+      "printedPage": 73,
+      "pdfPage1Based": 74,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 6961,
+      "txtWindowSha256": "15d41612a2b2b55e5f73c3f429a8b57b25d464ab692b514e8a4d86c8741826e8",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/goi_pdf_review/printed_p73.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "3D-4 Administrative Droid",
+          "/publication/printedPageStart": 73,
+          "/publication/printedPageEnd": 73,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 3,
+          "/pcConstruction/heroEligibility": "allowed",
+          "/abilities/initiativePrinted": 0,
+          "/abilities/perceptionPrinted": 0,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 2,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 7320,
+          "/movement/speedLineRaw": "6 squares (walking)"
+        },
+        "fieldComparisonCount": 17,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Narrative says stock chassis unarmed, but shown example possesses a concealed hold-out blaster. Factory baseline cannot inherit it automatically."
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-004",
+      "printedName": "M4-Series Messenger Droid",
+      "printedPage": 74,
+      "pdfPage1Based": 75,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 7026,
+      "txtWindowSha256": "746bda23c9a73e61de48cb9623c48fa13dc69088d2fdf147b64eaa396d3bfabc",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/goi_pdf_review/printed_p74.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "M4-Series Messenger Droid",
+          "/publication/printedPageStart": 74,
+          "/publication/printedPageEnd": 74,
+          "/classification/size": "Diminutive",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 3,
+          "/abilities/initiativePrinted": 9,
+          "/abilities/perceptionPrinted": 13,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 7,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 4,
+          "/durability/damageThreshold": 7,
+          "/economics/newCredits": 88000,
+          "/movement/speedLineRaw": "9 squares (flying)"
+        },
+        "fieldComparisonCount": 16,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Blaster licensing changes if weapon retained; do not assume weapon remains installed for every sale."
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-005",
+      "printedName": "FIII Footman Droid",
+      "printedPage": 74,
+      "pdfPage1Based": 75,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 7034,
+      "txtWindowSha256": "055d876aad1287b51f08ed37dec0c9fcfa844199cc2be225d854ee2fb42298de",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/goi_pdf_review/printed_p74.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "FIII Footman Droid",
+          "/publication/printedPageStart": 74,
+          "/publication/printedPageEnd": 74,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 9,
+          "/classification/publishedDegree": 4,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 7,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Footman glyph varies across OCR (FIII/Fill); keep original source identity and do not create Fidelis/Solis separate statblocks."
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-006",
+      "printedName": "BL-Series Battle Legionnaire",
+      "printedPage": 75,
+      "pdfPage1Based": 76,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 7129,
+      "txtWindowSha256": "4fe6ce7a34b874c31cafc109470f421c1698a68f1bbb4fbf0701e6f85cfbb50a",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/goi_pdf_review/printed_p75.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "BL-Series Battle Legionnaire",
+          "/publication/printedPageStart": 75,
+          "/publication/printedPageEnd": 75,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 3,
+          "/classification/publishedDegree": 4,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 7,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Rail cannon/blaster cannon treatment is model-specific; no mount inferred."
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-007",
+      "printedName": "B4J4 Security Droid",
+      "printedPage": 75,
+      "pdfPage1Based": 76,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 7155,
+      "txtWindowSha256": "36bcafd5c4a84543bc73d99f8420507127fdb62baec24e4a580058d29b0d94c6",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/goi_pdf_review/printed_p75.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "B4J4 Security Droid",
+          "/publication/printedPageStart": 75,
+          "/publication/printedPageEnd": 75,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 2,
+          "/classification/publishedDegree": 4,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 7,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Two pistol possessions do not grant a second executable attack."
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-008",
+      "printedName": "MRD-39B Assassin Droid",
+      "printedPage": 208,
+      "pdfPage1Based": 209,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19790,
+      "txtWindowSha256": "63f0160d6d0a9392f4437ff5643f643085b045b379acdec2ddbd2922e30a77a7",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/goi_pdf_review/printed_p208.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "MRD-39B Assassin Droid",
+          "/publication/printedPageStart": 208,
+          "/publication/printedPageEnd": 208,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 6,
+          "/classification/publishedDegree": 4
+        },
+        "fieldComparisonCount": 6,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Self-destruct splash and tactical HP trigger must be kept source-scoped; stability legs and claw appendages are separate counts."
+      ]
+    }
+  ]
+}

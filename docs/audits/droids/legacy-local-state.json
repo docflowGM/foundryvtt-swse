@@ -1,0 +1,11 @@
+{
+  "bookId": "LEGACY",
+  "draftEntries": 12,
+  "selectedPdfReviewed": 12,
+  "comparisons": 251,
+  "mechanicallyCertified": 0,
+  "runtimeVerified": 0,
+  "status": "IN_PROGRESS_SOURCE_REVIEW_ONLY",
+  "githubWrites": false,
+  "publishedAuditScope": "selected-field-source-review-only"
+}

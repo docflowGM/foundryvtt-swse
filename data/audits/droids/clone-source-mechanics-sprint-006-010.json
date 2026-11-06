@@ -1,0 +1,93 @@
+{
+  "schema": "swse.droids.clone.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "sourceBook": "Clone Wars Campaign Guide",
+  "scope": "Records 006–010, printed pp.69-71, PDF pp.70-72; primary-source visual review and source-only claims",
+  "records": [
+    {
+      "id": "CLONE-DROID-006",
+      "name": "P2 Series Astromech Droid",
+      "p": 69,
+      "pdfPage": 70,
+      "components": 17,
+      "possessions": 6,
+      "featInstances": 3,
+      "talents": 0,
+      "conflict": null,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-007",
+      "name": "Serv-O-Droid Pit Droid",
+      "p": 70,
+      "pdfPage": 71,
+      "components": 4,
+      "possessions": 0,
+      "featInstances": 4,
+      "talents": 0,
+      "conflict": null,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-008",
+      "name": "5YQ Protocol Droid",
+      "p": 70,
+      "pdfPage": 71,
+      "components": 7,
+      "possessions": 1,
+      "featInstances": 4,
+      "talents": 0,
+      "conflict": null,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-009",
+      "name": "BCA-11/X Training Droid",
+      "p": 71,
+      "pdfPage": 72,
+      "components": 6,
+      "possessions": 1,
+      "featInstances": 6,
+      "talents": 1,
+      "conflict": "CLONE-009-CLAW-APPENDAGE-OMISSION",
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-010",
+      "name": "IG-86 Sentinel Droid",
+      "p": 71,
+      "pdfPage": 72,
+      "components": 5,
+      "possessions": 2,
+      "featInstances": 6,
+      "talents": 1,
+      "conflict": "CLONE-010-BLASTER-CARBINE-RIFLE-CONFLICT",
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "counts": {
+    "models": 5,
+    "installed": 39,
+    "appendages": 14,
+    "possessions": 10,
+    "feats": 23,
+    "talents": 2,
+    "skills": 19,
+    "constraints": 18,
+    "variants": 1,
+    "unresolvedDiscrepancies": 2,
+    "detailedModels": 10,
+    "bookIdentities": 40,
+    "mechanicallyCertified": 0
+  },
+  "checks": {
+    "sourceVisualReviewed": true,
+    "sourceOnly": true,
+    "all40IdsPreserved": true,
+    "noAttackPromotion": true,
+    "fullJsonSchema": "NOT RUN",
+    "runtime": "NOT RUN"
+  },
+  "next": "Clone Wars 011–013 and B1 squad distinct actor authority."
+}

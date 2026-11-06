@@ -1,0 +1,35 @@
+{
+  "schema": "swse.droid.sotg.selected-pdf-visual/0.1",
+  "sourceBook": "Starships of the Galaxy",
+  "manualVisualReviews": 3,
+  "directFieldComparisons": 15,
+  "sourcePdfHash": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+  "method": "Printed PDF page images, primary text where available, selected values only.",
+  "scope": "Selected printed-page facts, not mechanically certified fields.",
+  "items": [
+    {
+      "sourceEntryKey": "SOTG-DROID-001",
+      "printedName": "Baktoid Armor Workshop Vulture-class Starfighter",
+      "printedPage": 78,
+      "verifiedFieldCount": 5,
+      "sourceImage": "work/sotg_pdf_review/printed_p78.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-002",
+      "printedName": "Phlac-Arphocc Automata Industries Droid Tri-Fighter",
+      "printedPage": 79,
+      "verifiedFieldCount": 5,
+      "sourceImage": "work/sotg_pdf_review/printed_p79.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-003",
+      "printedName": "Haor Chall Engineering Scarab-class Starfighter",
+      "printedPage": 79,
+      "verifiedFieldCount": 5,
+      "sourceImage": "work/sotg_pdf_review/printed_p79.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "swse.droid.goi.selected-pdf-visual/0.1",
+  "sourceBook": "Galaxy of Intrigue",
+  "manualVisualReviews": 8,
+  "directFieldComparisons": 94,
+  "sourcePdfHash": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21",
+  "method": "Printed PDF page images, primary text where available, selected values only.",
+  "scope": "Selected printed-page facts, not mechanically certified fields.",
+  "items": [
+    {
+      "sourceEntryKey": "GOI-DROID-001",
+      "printedName": "5-BT Threat Analysis Droid",
+      "printedPage": 72,
+      "verifiedFieldCount": 17,
+      "sourceImage": "work/goi_pdf_review/printed_p72.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-002",
+      "printedName": "NR-1100 Slicer Droid",
+      "printedPage": 72,
+      "verifiedFieldCount": 17,
+      "sourceImage": "work/goi_pdf_review/printed_p72.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-003",
+      "printedName": "3D-4 Administrative Droid",
+      "printedPage": 73,
+      "verifiedFieldCount": 17,
+      "sourceImage": "work/goi_pdf_review/printed_p73.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-004",
+      "printedName": "M4-Series Messenger Droid",
+      "printedPage": 74,
+      "verifiedFieldCount": 16,
+      "sourceImage": "work/goi_pdf_review/printed_p74.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-005",
+      "printedName": "FIII Footman Droid",
+      "printedPage": 74,
+      "verifiedFieldCount": 7,
+      "sourceImage": "work/goi_pdf_review/printed_p74.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-006",
+      "printedName": "BL-Series Battle Legionnaire",
+      "printedPage": 75,
+      "verifiedFieldCount": 7,
+      "sourceImage": "work/goi_pdf_review/printed_p75.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-007",
+      "printedName": "B4J4 Security Droid",
+      "printedPage": 75,
+      "verifiedFieldCount": 7,
+      "sourceImage": "work/goi_pdf_review/printed_p75.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-008",
+      "printedName": "MRD-39B Assassin Droid",
+      "printedPage": 208,
+      "verifiedFieldCount": 6,
+      "sourceImage": "work/goi_pdf_review/printed_p208.png",
+      "scope": "Selected first-page PDF review, not mechanical certification."
+    }
+  ]
+}

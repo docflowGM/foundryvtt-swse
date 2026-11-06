@@ -1,0 +1,382 @@
+{
+  "schema": "swse.droid.catalog.source-fact-review/0.1",
+  "book": "Scavenger's Guide to Droids",
+  "date": "2026-11-02",
+  "intent": "First dedicated source-mechanics certification packet for Garage/chargen/Store droid components; audit only; not a runtime or release certificate.",
+  "authorityBaseline": "docs/audits/item-canonicalization-rolling-authority.md Phase 0-3H",
+  "sourcePrintedPagesReviewed": [
+    55,
+    58,
+    59,
+    62
+  ],
+  "recordCount": 8,
+  "sourceFactSetsVerified": 8,
+  "existingRegistryItems": 4,
+  "missingRegistryItems": 4,
+  "completeEndToEndCertifications": 0,
+  "runtimeCertified": 0,
+  "productionRegistryEdits": 0,
+  "mutatedCode": false,
+  "records": [
+    {
+      "id": "COMP-SGD-001",
+      "name": "Scomp Link",
+      "canonicalId": "scomp-link",
+      "repoLocation": "RAW_OVERLAY only",
+      "registryRepresentation": "present-overlay-only",
+      "category": "data-interface",
+      "table": {
+        "priceCredits": 100,
+        "weightKg": 1,
+        "availability": "-"
+      },
+      "benefit": {
+        "useComputerEquipmentBonus": 2,
+        "task": "Access Information",
+        "condition": "Computer attitude is helpful or friendly"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "review": "rendered PDF visual verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "review": "rendered PDF visual verified"
+        }
+      ],
+      "sourceFactsStatus": "pdf-verified",
+      "endToEndCertification": "blocked",
+      "findings": [
+        {
+          "id": "SDC-SCOMP-PRICE",
+          "type": "BUG_CONFIRMED_STATIC",
+          "detail": "scomp-link is overlay-only with no source price; getDroidPartDefinition emits null cost; computeDroidPartCost falls back to zero instead of the printed 100 credits. No runtime pricing test executed."
+        }
+      ]
+    },
+    {
+      "id": "COMP-SGD-002",
+      "name": "YV Sensor Package",
+      "canonicalId": "yv-sensor-package",
+      "repoLocation": "DROID_SYSTEMS + RAW_OVERLAY",
+      "registryRepresentation": "present",
+      "category": "sensor",
+      "table": {
+        "priceCredits": 1000,
+        "weightKg": 3,
+        "availability": "Military"
+      },
+      "benefit": {
+        "perceptionBonus": 10,
+        "target": "Detect Yuuzhan Vong, including disguised by ooglith masquer",
+        "rangeSquaresMax": 12,
+        "lineOfSightRequired": true,
+        "stackingType": "not printed on SGD p62"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "review": "rendered PDF visual verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "review": "rendered PDF visual verified"
+        }
+      ],
+      "sourceFactsStatus": "pdf-verified",
+      "endToEndCertification": "blocked",
+      "findings": [
+        {
+          "id": "SDC-YV-CHARGEN",
+          "type": "UNPROVEN_CODE_RESTRICTION",
+          "detail": "Raw catalog says NOT available at chargen, while cited printed entries establish Military availability and permission to install on other droids, not a general chargen prohibition; requires wider rules review before authorizing or removing the restriction."
+        },
+        {
+          "id": "SDC-YV-CONSUMER",
+          "type": "RUNTIME_EFFECT_NOT_TESTED",
+          "detail": "Overlay's +10 modifier requires verified range, target and line-of-sight gates; source description alone is not executable proof."
+        }
+      ]
+    },
+    {
+      "id": "COMP-SGD-003",
+      "name": "Sensor Booster",
+      "canonicalId": "sensor-booster",
+      "repoLocation": "DROID_SYSTEMS",
+      "registryRepresentation": "present",
+      "category": "sensor",
+      "table": {
+        "priceCredits": 200,
+        "weightKg": 5,
+        "availability": "-"
+      },
+      "benefit": {
+        "sensorRangeKmMax": 2,
+        "requiresInstalled": "Sensor Pack"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "review": "rendered PDF visual verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "review": "rendered PDF visual verified"
+        }
+      ],
+      "sourceFactsStatus": "pdf-verified",
+      "endToEndCertification": "blocked",
+      "findings": [
+        {
+          "id": "SDC-SENSOR-PACK-COMPAT",
+          "type": "PREREQUISITE_SCOPE_UNRESOLVED",
+          "detail": "Registry also allows Improved Sensor Package. Printed SGD p62 says sensor pack installed; verify canonical equivalence before separately certifying this exception."
+        }
+      ]
+    },
+    {
+      "id": "COMP-SGD-004",
+      "name": "Sensor Countermeasure Package",
+      "canonicalId": "sensor-countermeasure-package",
+      "repoLocation": "DROID_SYSTEMS + RAW_OVERLAY",
+      "registryRepresentation": "present",
+      "category": "sensor",
+      "table": {
+        "priceCredits": 1000,
+        "weightKg": 2,
+        "availability": "-"
+      },
+      "benefit": {
+        "check": "Use Computer",
+        "opposedBy": "Detection Perception",
+        "successPredicate": "Use Computer result >= sensing Perception result",
+        "sensorRestriction": "Nonvisual sensors only",
+        "effect": "Undetected by that sensor check",
+        "actionCost": "not stated in this paragraph"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "review": "rendered PDF visual verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "review": "rendered PDF visual verified"
+        }
+      ],
+      "sourceFactsStatus": "pdf-verified",
+      "endToEndCertification": "blocked",
+      "findings": [
+        {
+          "id": "SDC-COUNTERMEASURE-RUNTIME",
+          "type": "RUNTIME_EFFECT_NOT_TESTED",
+          "detail": "Overlay exposes a zero-value modifier with opposedBy perception; actual contest resolution and nonvisual gating must be confirmed. Do not turn into blanket Stealth bonus."
+        }
+      ]
+    },
+    {
+      "id": "COMP-SGD-005",
+      "name": "Silence-Bubble Generator",
+      "canonicalId": null,
+      "proposedId": "silence-bubble-generator",
+      "repoLocation": "absent from DROID_SYSTEMS and RAW_OVERLAY",
+      "registryRepresentation": "missing",
+      "category": "accessory",
+      "table": {
+        "priceCredits": 3500,
+        "weightFormula": "20 * costFactor kg",
+        "availability": "Licensed"
+      },
+      "benefit": {
+        "activationAction": "standard",
+        "radiusSquares": 3,
+        "target": "Outside listener attempting to hear sound inside bubble",
+        "perceptionPenalty": -10
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "review": "rendered PDF visual verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "review": "rendered PDF visual verified"
+        }
+      ],
+      "sourceFactsStatus": "pdf-verified",
+      "endToEndCertification": "blocked",
+      "findings": [
+        {
+          "id": "SDC-SILENCE-MISSING",
+          "type": "MISSING_CANONICAL_REGISTRY",
+          "detail": "Missing as identified by 0-3H and live source check. Do not invent component Item or runtime aura without approved authority."
+        }
+      ]
+    },
+    {
+      "id": "COMP-SGD-006",
+      "name": "Repulsorcam",
+      "canonicalId": null,
+      "proposedId": "repulsorcam",
+      "repoLocation": "absent from DROID_SYSTEMS and RAW_OVERLAY",
+      "registryRepresentation": "missing",
+      "category": "sensor/accessory",
+      "table": {
+        "priceCredits": 1000,
+        "weightKg": 20,
+        "availability": "-"
+      },
+      "benefit": {
+        "detachmentRangeSquaresMax": 12,
+        "recordingDurationHours": 2,
+        "detachedSpeedSquares": 4,
+        "detachedReflexDefense": 16,
+        "detachedFortitudeDefense": 10,
+        "energyCellDurationHours": 4,
+        "separateRechargerExtraCredits": 150
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "review": "rendered PDF visual verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "review": "rendered PDF visual verified"
+        }
+      ],
+      "sourceFactsStatus": "pdf-verified",
+      "endToEndCertification": "blocked",
+      "findings": [
+        {
+          "id": "SDC-REPULSORCAM-MISSING",
+          "type": "MISSING_CANONICAL_REGISTRY",
+          "detail": "Detached mobile device needs separate host/item/resource and movement authority; text review does not create a free independent combatant."
+        }
+      ]
+    },
+    {
+      "id": "COMP-SGD-007",
+      "name": "Antitheft Comlink Locator",
+      "canonicalId": null,
+      "proposedId": "antitheft-comlink-locator",
+      "repoLocation": "absent from DROID_SYSTEMS and RAW_OVERLAY",
+      "registryRepresentation": "missing",
+      "category": "communications",
+      "table": {
+        "priceCredits": 100,
+        "weightKg": 0.5,
+        "availability": "-"
+      },
+      "benefit": {
+        "signalRecipient": "Master's comlink",
+        "signalContent": "Distress signal with no information payload",
+        "covert": true,
+        "trackable": true,
+        "transmitsUntil": "Droid is destroyed, including after deactivation",
+        "activationCost": "not stated in paragraph"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "review": "rendered PDF visual verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "review": "rendered PDF visual verified"
+        }
+      ],
+      "sourceFactsStatus": "pdf-verified",
+      "endToEndCertification": "blocked",
+      "findings": [
+        {
+          "id": "SDC-ANTITHEFT-MISSING",
+          "type": "MISSING_CANONICAL_REGISTRY",
+          "detail": "Missing from both catalogs. Must respect owner comlink pairing and signal/trace limitations before action automation."
+        }
+      ]
+    },
+    {
+      "id": "COMP-SGD-008",
+      "name": "Collapsible Construction",
+      "canonicalId": null,
+      "proposedId": "collapsible-construction",
+      "repoLocation": "absent from DROID_SYSTEMS and RAW_OVERLAY",
+      "registryRepresentation": "missing",
+      "category": "chassis-modification",
+      "table": {
+        "priceFormula": "2000 * costFactor credits",
+        "weightFormula": "10 * costFactor kg",
+        "availability": "-"
+      },
+      "benefit": {
+        "shutdownEffect": "Reduce effective Size category by one while the droid is shut down and compacted",
+        "brainState": "standby",
+        "reactivationAction": "standard",
+        "combatSizeBenefitWhileActive": false
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "review": "rendered PDF visual verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "review": "rendered PDF visual verified"
+        }
+      ],
+      "sourceFactsStatus": "pdf-verified",
+      "endToEndCertification": "blocked",
+      "findings": [
+        {
+          "id": "SDC-COLLAPSIBLE-MISSING",
+          "type": "MISSING_CANONICAL_REGISTRY",
+          "detail": "Missing from both catalogs. No standing Small combat-size/defense benefit while active is established by the printed text."
+        }
+      ]
+    }
+  ],
+  "mandatoryAcceptance": [
+    "Source identity and rule provenance",
+    "Required price, multiplier, weight and availability",
+    "Restrictions, installation and size/degree prerequisites",
+    "Equipment Item versus structural system ownership",
+    "Action/trigger/resource predicates and modifier scope",
+    "Garage/chargen/Store quote parity and approved legal outcomes",
+    "V2 post-merge actor behavior (Claude runtime responsibility)"
+  ]
+}

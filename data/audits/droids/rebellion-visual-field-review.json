@@ -1,0 +1,146 @@
+{
+  "schema": "swse.droid.rebellion.selected-pdf-visual/0.1",
+  "sourceBook": "Rebellion Era Campaign Guide",
+  "manualVisualReviews": 15,
+  "directFieldComparisons": 325,
+  "sourcePdfHash": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+  "method": "Rendered and visually inspected printed pp52-57,110,127-130,143-144; fields transcribed from pages. Source rules are non-executable.",
+  "scope": "Selected fields only; no complete mechanical, PC creation or runtime certification.",
+  "items": [
+    {
+      "sourceEntryKey": "REBELLION-DROID-001",
+      "printedName": "FX-7 Medical Droid",
+      "printedPage": 53,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p53.png",
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-002",
+      "printedName": "R4-Series Agromech Droid",
+      "printedPage": 53,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p53.png",
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-003",
+      "printedName": "WED Treadwell Repair Droid",
+      "printedPage": 54,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p54.png",
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-004",
+      "printedName": "LOM-Series Protocol Droid",
+      "printedPage": 55,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p55.png",
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-005",
+      "printedName": "BT-16 Perimeter Security Droid",
+      "printedPage": 55,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p55.png",
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-006",
+      "printedName": "RHTC-560 Hunter Trainer",
+      "printedPage": 57,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p57.png",
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-007",
+      "printedName": "HT Drone",
+      "printedPage": 57,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p57.png",
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-008",
+      "printedName": "LV-38 Spotter/Probe Droid",
+      "printedPage": 110,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/rebellion_pdf_review/printed_p110.png",
+      "heroEligibility": null,
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-009",
+      "printedName": "Imperial Espionage Droid",
+      "printedPage": 127,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p127.png",
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-010",
+      "printedName": "Dark Trooper Phase I",
+      "printedPage": 128,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p128.png",
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-011",
+      "printedName": "Dark Trooper Phase II",
+      "printedPage": 128,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p128.png",
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-012",
+      "printedName": "Dark Trooper Phase III",
+      "printedPage": 129,
+      "verifiedFieldCount": 23,
+      "sourceImage": "work/rebellion_pdf_review/printed_p129.png",
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-013",
+      "printedName": "Imperial City Maintenance Droid",
+      "printedPage": 130,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/rebellion_pdf_review/printed_p130.png",
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-014",
+      "printedName": "4-LOM",
+      "printedPage": 143,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/rebellion_pdf_review/printed_p143.png",
+      "heroEligibility": null,
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-015",
+      "printedName": "IG-88",
+      "printedPage": 144,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/rebellion_pdf_review/printed_p144.png",
+      "heroEligibility": null,
+      "scope": "selected-first-page-fields"
+    }
+  ]
+}

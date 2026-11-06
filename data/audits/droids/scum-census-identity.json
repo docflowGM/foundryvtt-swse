@@ -1,0 +1,66 @@
+{
+  "schema": "swse.droid.scum.census-parity/0.1",
+  "authority": "Published census identities checked against printed PDF.",
+  "claims": [
+    {
+      "sourceEntryKey": "SCUM-DROID-001",
+      "printedName": "Industrial Automaton K-Series Spaceport Control Droid",
+      "printedPageStart": 96,
+      "printedPageEnd": 96,
+      "txtLine1Based": 6551,
+      "publishedDegree": 3,
+      "size": "Medium",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-002",
+      "printedName": "Industrial Automaton RX-Series Pilot Droid",
+      "printedPageStart": 96,
+      "printedPageEnd": 96,
+      "txtLine1Based": 6584,
+      "publishedDegree": 2,
+      "size": "Medium",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-003",
+      "printedName": "Roche 11-17 Series Mining Droid",
+      "printedPageStart": 156,
+      "printedPageEnd": 156,
+      "txtLine1Based": 11406,
+      "publishedDegree": 5,
+      "size": "Small",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "unset"
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-004",
+      "printedName": "Roche 8D8 Smelting Operator Droid",
+      "printedPageStart": 157,
+      "printedPageEnd": 157,
+      "txtLine1Based": 11470,
+      "publishedDegree": 5,
+      "size": "Medium",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "unset"
+    },
+    {
+      "sourceEntryKey": "SCUM-DROID-005",
+      "printedName": "Roche J9 Worker Drone",
+      "printedPageStart": 157,
+      "printedPageEnd": 157,
+      "txtLine1Based": 11491,
+      "publishedDegree": 3,
+      "size": "Medium",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "unset"
+    }
+  ]
+}

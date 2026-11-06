@@ -1,0 +1,937 @@
+{
+  "schema": "swse.droid.sgd.review-backlog/0.1",
+  "status": "LOCAL_ONLY_NONCERTIFIED",
+  "sourceBook": "SGD",
+  "sourcePdfName": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "sourcePdfSha256": "bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361",
+  "nextPrintPageNotYetVisuallyInspected": null,
+  "categories": {
+    "SELECTED_FIELDS_PDF_VERIFIED": 46,
+    "LAYOUT_ONLY_NO_FIELD_CERT": 0,
+    "OCR_ONLY": 0
+  },
+  "models": [
+    {
+      "listingId": "SGD-DROID-001",
+      "name": "8D Smelter Droid",
+      "printedPage": 68,
+      "pdfPage1Based": 69,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 3,
+      "draftFeatPhrases": 4,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-002",
+      "name": "A9G-Series Archive Droid",
+      "printedPage": 70,
+      "pdfPage1Based": 71,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 2,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-003",
+      "name": "AD-Series Weapons Maintenance Droid",
+      "printedPage": 72,
+      "pdfPage1Based": 73,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 1,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-004",
+      "name": "Annihilator Droid",
+      "printedPage": 74,
+      "pdfPage1Based": 75,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 7,
+      "draftFeatPhrases": 14,
+      "draftTalentPhrases": 4,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-005",
+      "name": "BLX Labor Droid",
+      "printedPage": 76,
+      "pdfPage1Based": 77,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-006",
+      "name": "Colicoid Infiltrator-Series Droid",
+      "printedPage": 78,
+      "pdfPage1Based": 79,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 3,
+      "draftFeatPhrases": 6,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-007",
+      "name": "CZ-Series Secretary Droid",
+      "printedPage": 80,
+      "pdfPage1Based": 81,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-008",
+      "name": "DP-2 Probe Droid",
+      "printedPage": 82,
+      "pdfPage1Based": 83,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 8,
+      "sourceStatblockFormat": "vehicle-scale-droid",
+      "draftAttackExpressions": 0,
+      "draftFeatPhrases": 0,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [
+        "No printed degree in primary heading; do not infer from protocol view."
+      ],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-009",
+      "name": "Droideka Mark II",
+      "printedPage": 84,
+      "pdfPage1Based": 85,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 9,
+      "draftFeatPhrases": 11,
+      "draftTalentPhrases": 2,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-010",
+      "name": "DT-16 \"Destructor\" Battle Droid",
+      "printedPage": 86,
+      "pdfPage1Based": 87,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 4,
+      "draftFeatPhrases": 5,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-011",
+      "name": "Duelist Elite Training Droid",
+      "printedPage": 88,
+      "pdfPage1Based": 89,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 1,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-012",
+      "name": "E522 Assassin Droid",
+      "printedPage": 90,
+      "pdfPage1Based": 91,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 7,
+      "draftFeatPhrases": 5,
+      "draftTalentPhrases": 4,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-013",
+      "name": "EI-9 Network Security Droid",
+      "printedPage": 92,
+      "pdfPage1Based": 93,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 11,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 3,
+      "draftFeatPhrases": 10,
+      "draftTalentPhrases": 4,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-014",
+      "name": "EV-Series Supervisor Droid",
+      "printedPage": 94,
+      "pdfPage1Based": 95,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 5,
+      "draftTalentPhrases": 2,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-015",
+      "name": "FLTCH-Series Battle Droid",
+      "printedPage": 96,
+      "pdfPage1Based": 97,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 4,
+      "draftFeatPhrases": 6,
+      "draftTalentPhrases": 2,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-016",
+      "name": "G2 Repair Droid",
+      "printedPage": 98,
+      "pdfPage1Based": 99,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 1,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-017",
+      "name": "GD16-Series Pilot Droid",
+      "printedPage": 100,
+      "pdfPage1Based": 101,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 6,
+      "draftTalentPhrases": 3,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-018",
+      "name": "GX1-Series Battle Droid",
+      "printedPage": 102,
+      "pdfPage1Based": 103,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 3,
+      "draftFeatPhrases": 8,
+      "draftTalentPhrases": 3,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-019",
+      "name": "GY-I Information Analysis Droid",
+      "printedPage": 104,
+      "pdfPage1Based": 105,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 1,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-020",
+      "name": "H-1ME Battle Mechanic Droid",
+      "printedPage": 106,
+      "pdfPage1Based": 107,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 2,
+      "draftTalentPhrases": 1,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-021",
+      "name": "HK-77 Assassin Droid",
+      "printedPage": 108,
+      "pdfPage1Based": 109,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 3,
+      "draftFeatPhrases": 6,
+      "draftTalentPhrases": 2,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-022",
+      "name": "HKB-3 Hunter-Killer Droid",
+      "printedPage": 110,
+      "pdfPage1Based": 111,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 3,
+      "draftFeatPhrases": 7,
+      "draftTalentPhrases": 3,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-023",
+      "name": "KM1 Mining Droid",
+      "printedPage": 112,
+      "pdfPage1Based": 113,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 4,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-024",
+      "name": "M38 Explorer Droid",
+      "printedPage": 114,
+      "pdfPage1Based": 115,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 1,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-025",
+      "name": "MEV-Series Medical Evacuation Droid",
+      "printedPage": 116,
+      "pdfPage1Based": 117,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 5,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-026",
+      "name": "MK-Series Maintenance Droid",
+      "printedPage": 118,
+      "pdfPage1Based": 119,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 1,
+      "draftFeatPhrases": 5,
+      "draftTalentPhrases": 1,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-027",
+      "name": "Model 88-Series Administration Droid",
+      "printedPage": 120,
+      "pdfPage1Based": 121,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 9,
+      "draftTalentPhrases": 2,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-028",
+      "name": "PG-5 Gunnery Droid",
+      "printedPage": 122,
+      "pdfPage1Based": 123,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-029",
+      "name": "PLNK-Series Power Droid",
+      "printedPage": 124,
+      "pdfPage1Based": 125,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-030",
+      "name": "RO-D-Series Droid",
+      "printedPage": 126,
+      "pdfPage1Based": 127,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 4,
+      "draftFeatPhrases": 7,
+      "draftTalentPhrases": 2,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-031",
+      "name": "R8-Series Astromech Droid",
+      "printedPage": 128,
+      "pdfPage1Based": 129,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 2,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-032",
+      "name": "RWW-Series Protocol Droid",
+      "printedPage": 130,
+      "pdfPage1Based": 131,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 2,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-033",
+      "name": "RX-Series Pilot Droid",
+      "printedPage": 132,
+      "pdfPage1Based": 133,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 4,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-034",
+      "name": "S19 Astromech Droid",
+      "printedPage": 134,
+      "pdfPage1Based": 135,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 2,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-035",
+      "name": "SD-9-Series Battle Droid",
+      "printedPage": 136,
+      "pdfPage1Based": 137,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 5,
+      "draftFeatPhrases": 10,
+      "draftTalentPhrases": 8,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-036",
+      "name": "SD-X-Series Stealth Battle Droid",
+      "printedPage": 138,
+      "pdfPage1Based": 139,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 3,
+      "draftFeatPhrases": 8,
+      "draftTalentPhrases": 5,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-037",
+      "name": "LEP-Series Service Droid",
+      "printedPage": 140,
+      "pdfPage1Based": 141,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 2,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-038",
+      "name": "Shadow Droid",
+      "printedPage": 142,
+      "pdfPage1Based": 143,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 5,
+      "draftFeatPhrases": 7,
+      "draftTalentPhrases": 3,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-039",
+      "name": "Colicoid T4 Turret Droid",
+      "printedPage": 144,
+      "pdfPage1Based": 145,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 6,
+      "draftFeatPhrases": 7,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-040",
+      "name": "TC-SC Infiltration Droid",
+      "printedPage": 146,
+      "pdfPage1Based": 147,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 1,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-041",
+      "name": "TT-8L Gatekeeper Droid",
+      "printedPage": 148,
+      "pdfPage1Based": 149,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 1,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-042",
+      "name": "V2-Series Commando Droid",
+      "printedPage": 150,
+      "pdfPage1Based": 151,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 2,
+      "draftTalentPhrases": 1,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-043",
+      "name": "V6-Series Pilot Droid",
+      "printedPage": 152,
+      "pdfPage1Based": 153,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 2,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-044",
+      "name": "X-1 Viper Droid",
+      "printedPage": 154,
+      "pdfPage1Based": 155,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 5,
+      "draftFeatPhrases": 9,
+      "draftTalentPhrases": 2,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-045",
+      "name": "XLT-014 Labor Droid",
+      "printedPage": 156,
+      "pdfPage1Based": 157,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 2,
+      "draftFeatPhrases": 3,
+      "draftTalentPhrases": 0,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    },
+    {
+      "listingId": "SGD-DROID-046",
+      "name": "YVH-Series Battle Droid",
+      "printedPage": 158,
+      "pdfPage1Based": 159,
+      "reviewStatus": "SELECTED_FIELDS_PDF_VERIFIED",
+      "visualNumericFieldsVerified": 18,
+      "sourceStatblockFormat": "droid-actor",
+      "draftAttackExpressions": 4,
+      "draftFeatPhrases": 6,
+      "draftTalentPhrases": 6,
+      "ocrWarnings": [],
+      "pendingIndependentChecks": [
+        "PDF page layout and full field review",
+        "exact feat/talent provenance",
+        "component and weapon mounts",
+        "conditional mechanics",
+        "PC eligibility and permissions"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,694 @@
+{
+  "schema": "swse.droid.rebellion.source-evidence/0.1",
+  "sourceBook": "Rebellion Era Campaign Guide",
+  "sourcePdf": "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf",
+  "sourcePdfSha256": "60248fe2cb17e40c3245b28e99722ac858b2762cb21560170058ceeb30d8fee8",
+  "sourceTxt": "Rebellion Era Campaign Guide_djvu.txt",
+  "sourceTxtSha256": "36320e330519ad7a3d49f224b1cf41739ee59f0dc55a7217a2e0f2af17edea39",
+  "records": [
+    {
+      "sourceEntryKey": "REBELLION-DROID-001",
+      "printedName": "FX-7 Medical Droid",
+      "printedPage": 53,
+      "printedPageEnd": 53,
+      "pdfPage1Based": 54,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p53.png",
+        "fieldValues": {
+          "/identity/printedName": "FX-7 Medical Droid",
+          "/publication/printedPageStart": 53,
+          "/classification/publishedDegree": 1,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/movement/speedLineRaw": "0 (stationary)",
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 5,
+          "/abilities/str": 9,
+          "/abilities/dex": 10,
+          "/abilities/int": 15,
+          "/abilities/wis": 14,
+          "/abilities/cha": 9,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 3800,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [
+          52
+        ],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 4659,
+      "txtWindowEnd1Based": 4784,
+      "txtWindowSha256": "7e80cecffad64598d67ee7d57ef251bee69066386e8f29589ff6f9168018eb5c",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-002",
+      "printedName": "R4-Series Agromech Droid",
+      "printedPage": 53,
+      "printedPageEnd": 54,
+      "pdfPage1Based": 54,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p53.png",
+        "fieldValues": {
+          "/identity/printedName": "R4-Series Agromech Droid",
+          "/publication/printedPageStart": 53,
+          "/classification/publishedDegree": 2,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/movement/speedLineRaw": "6 squares (wheeled)",
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 3,
+          "/abilities/str": 7,
+          "/abilities/dex": 16,
+          "/abilities/int": 15,
+          "/abilities/wis": 10,
+          "/abilities/cha": 7,
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 8,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 8,
+          "/economics/newCredits": 2500,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 4736,
+      "txtWindowEnd1Based": 4861,
+      "txtWindowSha256": "00739841a9939413bd5dadbbc6c9f5f71b24f68860cf7c5b02b0c51142c02e0e",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-003",
+      "printedName": "WED Treadwell Repair Droid",
+      "printedPage": 54,
+      "printedPageEnd": 54,
+      "pdfPage1Based": 55,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p54.png",
+        "fieldValues": {
+          "/identity/printedName": "WED Treadwell Repair Droid",
+          "/publication/printedPageStart": 54,
+          "/classification/publishedDegree": 2,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/movement/speedLineRaw": "6 squares (tracked)",
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 6,
+          "/abilities/str": 7,
+          "/abilities/dex": 16,
+          "/abilities/int": 13,
+          "/abilities/wis": 10,
+          "/abilities/cha": 7,
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 8,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 8,
+          "/economics/newCredits": 3000,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 4803,
+      "txtWindowEnd1Based": 4928,
+      "txtWindowSha256": "7b91a6c32b1b2b152099edba58f4758cdd1bbce00c7136acb37c2b9b4490b254",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-004",
+      "printedName": "LOM-Series Protocol Droid",
+      "printedPage": 55,
+      "printedPageEnd": 55,
+      "pdfPage1Based": 56,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p55.png",
+        "fieldValues": {
+          "/identity/printedName": "LOM-Series Protocol Droid",
+          "/publication/printedPageStart": 55,
+          "/classification/publishedDegree": 3,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/progression/classLineRaw": "nonheroic 1",
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/abilities/initiativePrinted": 0,
+          "/abilities/perceptionPrinted": 0,
+          "/abilities/str": 8,
+          "/abilities/dex": 11,
+          "/abilities/int": 13,
+          "/abilities/wis": 11,
+          "/abilities/cha": 15,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 2,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 2000,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 4916,
+      "txtWindowEnd1Based": 5041,
+      "txtWindowSha256": "6c746b5b72ffc009de7afa05e4f0dccda8a91ccd36757189f76caffb42098a42",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-005",
+      "printedName": "BT-16 Perimeter Security Droid",
+      "printedPage": 55,
+      "printedPageEnd": 56,
+      "pdfPage1Based": 56,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p55.png",
+        "fieldValues": {
+          "/identity/printedName": "BT-16 Perimeter Security Droid",
+          "/publication/printedPageStart": 55,
+          "/classification/publishedDegree": 4,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 5,
+          "/progression/classLineRaw": "nonheroic 6/scout 3",
+          "/movement/speedLineRaw": "6 squares",
+          "/abilities/initiativePrinted": 6,
+          "/abilities/perceptionPrinted": 18,
+          "/abilities/str": 20,
+          "/abilities/dex": 14,
+          "/abilities/int": 9,
+          "/abilities/wis": 14,
+          "/abilities/cha": 10,
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 20,
+          "/defenses/will": 16,
+          "/durability/hitPoints": 39,
+          "/durability/damageThreshold": 25,
+          "/economics/newCredits": 4100,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [
+          56
+        ],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 4906,
+      "txtWindowEnd1Based": 5031,
+      "txtWindowSha256": "5fd50df59b91fc78ae588b5b8a39736f2ab69f90f4af3e91ffbf0bcb8246cf07",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-006",
+      "printedName": "RHTC-560 Hunter Trainer",
+      "printedPage": 57,
+      "printedPageEnd": 57,
+      "pdfPage1Based": 58,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p57.png",
+        "fieldValues": {
+          "/identity/printedName": "RHTC-560 Hunter Trainer",
+          "/publication/printedPageStart": 57,
+          "/classification/publishedDegree": 4,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 6,
+          "/progression/classLineRaw": "soldier 6",
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/abilities/initiativePrinted": 10,
+          "/abilities/perceptionPrinted": 11,
+          "/abilities/str": 13,
+          "/abilities/dex": 14,
+          "/abilities/int": 14,
+          "/abilities/wis": 13,
+          "/abilities/cha": 10,
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 19,
+          "/defenses/will": 17,
+          "/durability/hitPoints": 47,
+          "/durability/damageThreshold": 19,
+          "/economics/newCredits": 5000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [
+          56
+        ],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 5016,
+      "txtWindowEnd1Based": 5141,
+      "txtWindowSha256": "371233895d579f539582e28602321e2f9a7a011be0910f1835590b407012538c",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-007",
+      "printedName": "HT Drone",
+      "printedPage": 57,
+      "printedPageEnd": 57,
+      "pdfPage1Based": 58,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p57.png",
+        "fieldValues": {
+          "/identity/printedName": "HT Drone",
+          "/publication/printedPageStart": 57,
+          "/classification/publishedDegree": 4,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/progression/classLineRaw": "scout 1",
+          "/movement/speedLineRaw": "6 squares (hovering), 4 squares (walking)",
+          "/abilities/initiativePrinted": 8,
+          "/abilities/perceptionPrinted": 9,
+          "/abilities/str": 10,
+          "/abilities/dex": 16,
+          "/abilities/int": 12,
+          "/abilities/wis": 15,
+          "/abilities/cha": 11,
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 24,
+          "/durability/damageThreshold": 11,
+          "/economics/newCredits": 2000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [
+          56
+        ],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 5066,
+      "txtWindowEnd1Based": 5191,
+      "txtWindowSha256": "15da07d02c8a4f1544c52a15ebbf37b3e1102dc361491861fd6038674fb96821",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-008",
+      "printedName": "LV-38 Spotter/Probe Droid",
+      "printedPage": 110,
+      "printedPageEnd": 110,
+      "pdfPage1Based": 111,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p110.png",
+        "fieldValues": {
+          "/identity/printedName": "LV-38 Spotter/Probe Droid",
+          "/publication/printedPageStart": 110,
+          "/classification/publishedDegree": 4,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 3,
+          "/progression/classLineRaw": "nonheroic 1/scout 3",
+          "/movement/speedLineRaw": "6 squares (hovering)",
+          "/abilities/initiativePrinted": 11,
+          "/abilities/perceptionPrinted": 16,
+          "/abilities/str": 8,
+          "/abilities/dex": 18,
+          "/abilities/int": 14,
+          "/abilities/wis": 14,
+          "/abilities/cha": 8,
+          "/defenses/reflex": 21,
+          "/defenses/flatFootedReflex": 17,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 14,
+          "/durability/hitPoints": 16,
+          "/durability/damageThreshold": 13
+        },
+        "fieldComparisonCount": 20,
+        "extraVisualSourcePages": [],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 10368,
+      "txtWindowEnd1Based": 10493,
+      "txtWindowSha256": "35657e723286db0c6648ab682c923358a07f3254dd279586d63c463bda09f904",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-009",
+      "printedName": "Imperial Espionage Droid",
+      "printedPage": 127,
+      "printedPageEnd": 127,
+      "pdfPage1Based": 128,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p127.png",
+        "fieldValues": {
+          "/identity/printedName": "Imperial Espionage Droid",
+          "/publication/printedPageStart": 127,
+          "/classification/publishedDegree": 3,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/progression/classLineRaw": "nonheroic 3",
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/abilities/initiativePrinted": 0,
+          "/abilities/perceptionPrinted": 8,
+          "/abilities/str": 8,
+          "/abilities/dex": 9,
+          "/abilities/int": 13,
+          "/abilities/wis": 14,
+          "/abilities/cha": 15,
+          "/defenses/reflex": 9,
+          "/defenses/flatFootedReflex": 9,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 6,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 5000,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 12090,
+      "txtWindowEnd1Based": 12215,
+      "txtWindowSha256": "fa15aa82d07bb588247367b8747c9a3be456cf155e9283d1447cfba555e3e361",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-010",
+      "printedName": "Dark Trooper Phase I",
+      "printedPage": 128,
+      "printedPageEnd": 128,
+      "pdfPage1Based": 129,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p128.png",
+        "fieldValues": {
+          "/identity/printedName": "Dark Trooper Phase I",
+          "/publication/printedPageStart": 128,
+          "/classification/publishedDegree": 4,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 2,
+          "/progression/classLineRaw": "nonheroic 6",
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 10,
+          "/abilities/str": 14,
+          "/abilities/dex": 12,
+          "/abilities/int": 10,
+          "/abilities/wis": 10,
+          "/abilities/cha": 6,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 17,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 18,
+          "/durability/damageThreshold": 12,
+          "/economics/newCredits": 10000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 12165,
+      "txtWindowEnd1Based": 12290,
+      "txtWindowSha256": "826e638ab11b68bc19448b741b6b4e4b29abd7ca1c9539e8aed666e17aee8024",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-011",
+      "printedName": "Dark Trooper Phase II",
+      "printedPage": 128,
+      "printedPageEnd": 129,
+      "pdfPage1Based": 129,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p128.png",
+        "fieldValues": {
+          "/identity/printedName": "Dark Trooper Phase II",
+          "/publication/printedPageStart": 128,
+          "/classification/publishedDegree": 4,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 5,
+          "/progression/classLineRaw": "nonheroic 6/soldier 2",
+          "/movement/speedLineRaw": "6 squares (walking), fly 6 squares (jet pack)",
+          "/abilities/initiativePrinted": 5,
+          "/abilities/perceptionPrinted": 11,
+          "/abilities/str": 16,
+          "/abilities/dex": 12,
+          "/abilities/int": 10,
+          "/abilities/wis": 10,
+          "/abilities/cha": 6,
+          "/defenses/reflex": 21,
+          "/defenses/flatFootedReflex": 20,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 39,
+          "/durability/damageThreshold": 22,
+          "/economics/newCredits": 50000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [
+          129
+        ],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 12219,
+      "txtWindowEnd1Based": 12344,
+      "txtWindowSha256": "746d849b35db6d84eb1c1c51dc1bab2b93fb0537a4082b9d7b1ed68accbab077",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-012",
+      "printedName": "Dark Trooper Phase III",
+      "printedPage": 129,
+      "printedPageEnd": 129,
+      "pdfPage1Based": 130,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p129.png",
+        "fieldValues": {
+          "/identity/printedName": "Dark Trooper Phase III",
+          "/publication/printedPageStart": 129,
+          "/classification/publishedDegree": 4,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 8,
+          "/progression/classLineRaw": "nonheroic 6/soldier 5",
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/abilities/initiativePrinted": 5,
+          "/abilities/perceptionPrinted": 12,
+          "/abilities/str": 18,
+          "/abilities/dex": 10,
+          "/abilities/int": 10,
+          "/abilities/wis": 10,
+          "/abilities/cha": 6,
+          "/defenses/reflex": 22,
+          "/defenses/flatFootedReflex": 22,
+          "/defenses/fortitude": 21,
+          "/defenses/will": 15,
+          "/durability/hitPoints": 56,
+          "/durability/damageThreshold": 26,
+          "/economics/newCredits": 85000,
+          "/defenses/shieldRating": 20,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 23,
+        "extraVisualSourcePages": [],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 12322,
+      "txtWindowEnd1Based": 12447,
+      "txtWindowSha256": "4521fa571d246c25889a4a0b28aa5d11d3117faccdc592b4650f59b5660f4cf6",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-013",
+      "printedName": "Imperial City Maintenance Droid",
+      "printedPage": 130,
+      "printedPageEnd": 130,
+      "pdfPage1Based": 131,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p130.png",
+        "fieldValues": {
+          "/identity/printedName": "Imperial City Maintenance Droid",
+          "/publication/printedPageStart": 130,
+          "/classification/publishedDegree": 5,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/progression/classLineRaw": "nonheroic 1",
+          "/movement/speedLineRaw": "4 squares (tracked)",
+          "/abilities/initiativePrinted": -1,
+          "/abilities/perceptionPrinted": -1,
+          "/abilities/str": 8,
+          "/abilities/dex": 8,
+          "/abilities/int": 10,
+          "/abilities/wis": 8,
+          "/abilities/cha": 6,
+          "/defenses/reflex": 9,
+          "/defenses/flatFootedReflex": 9,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 9,
+          "/durability/hitPoints": 3,
+          "/durability/damageThreshold": 14,
+          "/economics/newCredits": 500,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 22,
+        "extraVisualSourcePages": [],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 12469,
+      "txtWindowEnd1Based": 12594,
+      "txtWindowSha256": "9493aea5e52cd4e8c782860f783fa8ea07611fba38246b1a0c90d3b4e8585296",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-014",
+      "printedName": "4-LOM",
+      "printedPage": 143,
+      "printedPageEnd": 143,
+      "pdfPage1Based": 144,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p143.png",
+        "fieldValues": {
+          "/identity/printedName": "4-LOM",
+          "/publication/printedPageStart": 143,
+          "/classification/publishedDegree": 3,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 12,
+          "/progression/classLineRaw": "nonheroic 1/noble 1/scoundrel 5/scout 3/bounty hunter 3",
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/abilities/initiativePrinted": 7,
+          "/abilities/perceptionPrinted": 12,
+          "/abilities/str": 10,
+          "/abilities/dex": 12,
+          "/abilities/int": 16,
+          "/abilities/wis": 12,
+          "/abilities/cha": 15,
+          "/defenses/reflex": 27,
+          "/defenses/flatFootedReflex": 26,
+          "/defenses/fortitude": 24,
+          "/defenses/will": 25,
+          "/durability/hitPoints": 54,
+          "/durability/damageThreshold": 24
+        },
+        "fieldComparisonCount": 20,
+        "extraVisualSourcePages": [
+          54
+        ],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 13711,
+      "txtWindowEnd1Based": 13836,
+      "txtWindowSha256": "db905329ab47f47f24630c48e8e0dc491d24a02955f64ff55e58e7d95468578a",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    },
+    {
+      "sourceEntryKey": "REBELLION-DROID-015",
+      "printedName": "IG-88",
+      "printedPage": 144,
+      "printedPageEnd": 144,
+      "pdfPage1Based": 145,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/rebellion_pdf_review/printed_p144.png",
+        "fieldValues": {
+          "/identity/printedName": "IG-88",
+          "/publication/printedPageStart": 144,
+          "/classification/publishedDegree": 4,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 14,
+          "/progression/classLineRaw": "scout 4/soldier 5/scoundrel 1/bounty hunter 4",
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/abilities/initiativePrinted": 15,
+          "/abilities/perceptionPrinted": 16,
+          "/abilities/str": 17,
+          "/abilities/dex": 17,
+          "/abilities/int": 16,
+          "/abilities/wis": 14,
+          "/abilities/cha": 12,
+          "/defenses/reflex": 31,
+          "/defenses/flatFootedReflex": 28,
+          "/defenses/fortitude": 29,
+          "/defenses/will": 28,
+          "/durability/hitPoints": 91,
+          "/durability/damageThreshold": 29
+        },
+        "fieldComparisonCount": 20,
+        "extraVisualSourcePages": [
+          143
+        ],
+        "scope": "Source fields selected for visual transcription, not complete mechanical certification."
+      },
+      "txtAnchorLine1Based": 13829,
+      "txtWindowEnd1Based": 13954,
+      "txtWindowSha256": "c8f5e492e2bcbd7d5e373dcaadf2554cdf4b84b0fb799452352967e0e602ba65",
+      "warnings": [
+        "OCR source is an index only; may mix columns, omit glyphs and cross adjacent headings.",
+        "Do not infer an enabled feat, talent, weapon mount, possession, movement action or PC creation route from printed statblock."
+      ]
+    }
+  ]
+}

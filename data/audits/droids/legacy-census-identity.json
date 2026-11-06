@@ -1,0 +1,150 @@
+{
+  "schema": "swse.droid.legacy.census-parity/0.1",
+  "authority": "Read-only upstream publication census cross-checked to printed PDF, with printed corrections recorded locally.",
+  "claims": [
+    {
+      "sourceEntryKey": "LEGACY-DROID-001",
+      "printedName": "PI-Series Medical Assistant Droid",
+      "printedPageStart": 69,
+      "printedPageEnd": 69,
+      "txtLine1Based": 6089,
+      "publishedDegree": 1,
+      "size": "Small",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-002",
+      "printedName": "3Z3 Medical Droid",
+      "printedPageStart": 70,
+      "printedPageEnd": 70,
+      "txtLine1Based": 6175,
+      "publishedDegree": 1,
+      "size": "Medium",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-003",
+      "printedName": "BL-39 Interrogator Droid",
+      "printedPageStart": 71,
+      "printedPageEnd": 71,
+      "txtLine1Based": 6244,
+      "publishedDegree": 1,
+      "size": "Small",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-004",
+      "printedName": "FEG-Series Pilot Droid",
+      "printedPageStart": 71,
+      "printedPageEnd": 71,
+      "txtLine1Based": 6328,
+      "publishedDegree": 2,
+      "size": "Medium",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-005",
+      "printedName": "Holocam Droid",
+      "printedPageStart": 72,
+      "printedPageEnd": 72,
+      "txtLine1Based": 6399,
+      "publishedDegree": 2,
+      "size": "Tiny",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-006",
+      "printedName": "Roving Eye Observation Droid",
+      "printedPageStart": 73,
+      "printedPageEnd": 73,
+      "txtLine1Based": 6479,
+      "publishedDegree": 2,
+      "size": "Diminutive",
+      "challengeLevel": 0,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-007",
+      "printedName": "Z65 Patrol Droid",
+      "printedPageStart": 74,
+      "printedPageEnd": 74,
+      "txtLine1Based": 6524,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 3,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-008",
+      "printedName": "LV8-Series Guard Droid",
+      "printedPageStart": 74,
+      "printedPageEnd": 74,
+      "txtLine1Based": 6622,
+      "publishedDegree": null,
+      "size": "Medium",
+      "challengeLevel": 4,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-009",
+      "printedName": "Aggressor-Series Battle Droid",
+      "printedPageStart": 75,
+      "printedPageEnd": 75,
+      "txtLine1Based": 6688,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-010",
+      "printedName": "IX-6 Heavy Combat Droid",
+      "printedPageStart": 76,
+      "printedPageEnd": 76,
+      "txtLine1Based": 6780,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 5,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-011",
+      "printedName": "LON-29 Battle Droid Commander",
+      "printedPageStart": 76,
+      "printedPageEnd": 77,
+      "txtLine1Based": 6861,
+      "publishedDegree": 4,
+      "size": "Medium",
+      "challengeLevel": 6,
+      "kind": "model",
+      "heroEligibility": "prohibited"
+    },
+    {
+      "sourceEntryKey": "LEGACY-DROID-012",
+      "printedName": "HV-7 Loading Droid",
+      "printedPageStart": 77,
+      "printedPageEnd": 77,
+      "txtLine1Based": 6953,
+      "publishedDegree": 5,
+      "size": "Small",
+      "challengeLevel": 1,
+      "kind": "model",
+      "heroEligibility": "allowed"
+    }
+  ]
+}

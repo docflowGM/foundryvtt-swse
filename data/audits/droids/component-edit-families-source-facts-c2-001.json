@@ -1,0 +1,464 @@
+{
+  "schema": "swse.droids.catalog.edit-variant-source-facts/0.1",
+  "sprint": "C2-001",
+  "date": "2026-11-02",
+  "bookSources": [
+    "Star Wars Saga Edition Core Rulebook",
+    "Scavenger's Guide to Droids"
+  ],
+  "sourceVerification": "Relevant printed pages visually inspected against rendered PDF; use texts solely as search index.",
+  "backlog": "data/audits/droids/component-canonical-migration-backlog.json",
+  "records": [
+    {
+      "id": "C-C2-001",
+      "backlogId": "SGD-CAT-EDIT-001",
+      "canonicalPrintedName": "Remote Processor",
+      "legacyIds": [
+        "remote"
+      ],
+      "legacyNames": [
+        "Remote Processor (External)"
+      ],
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 191,
+          "pdfPage1Based": 192,
+          "verification": "rendered PDF visually verified"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "rendered PDF visually verified"
+        }
+      ],
+      "canonicalCount": 1,
+      "sourceVariants": [
+        {
+          "rangeKm": 5,
+          "priceCredits": 1000,
+          "weightKg": 10,
+          "availability": "-"
+        },
+        {
+          "rangeKm": 50,
+          "priceCredits": 10000,
+          "weightKg": 100,
+          "availability": "-"
+        },
+        {
+          "rangeKm": 500,
+          "priceCredits": 100000,
+          "weightKg": 1000,
+          "availability": "Military"
+        },
+        {
+          "rangeKm": 5000,
+          "priceCredits": 1000000,
+          "weightKg": 10000,
+          "availability": "Military"
+        }
+      ],
+      "mechanics": {
+        "primaryProcessorLocation": "outside the droid; controls a remote receiver/drone",
+        "receiver": "Remote Receiver is a distinct installed component",
+        "remoteDexPenalty": -2,
+        "remoteReceiver": {
+          "costCredits": -500,
+          "weightKg": 1,
+          "onlyOnDroidWithoutInternalProcessor": true,
+          "connectsToOneRemoteProcessorAtATime": true,
+          "changeController": {
+            "skill": "Mechanics",
+            "dc": 20,
+            "toolKitRequired": true
+          }
+        },
+        "rangeGate": "Operate only within selected installed remote processor's range"
+      },
+      "comparison": {
+        "idAliasMismatch": true,
+        "liveVariantNumbers": "match the four listed remote range options in DROID_SYSTEMS",
+        "needSeparateExternalProcessorAndReceiver": true
+      },
+      "migrationProposal": "Preserve existing 'remote' and receiver references as migration aliases; canonical name and typed distance options. Remote transmitter ownership is not droid installed receiver.",
+      "identityVerified": true,
+      "sourceFactsPdfVerified": true,
+      "completeMechanicalCertified": false,
+      "productionMigrated": false,
+      "appsTested": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "C-C2-002",
+      "backlogId": "SGD-CAT-EDIT-002",
+      "canonicalPrintedName": "Secondary Battery",
+      "legacyIds": [
+        "battery-backup"
+      ],
+      "legacyNames": [
+        "Battery Backup System"
+      ],
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "rendered PDF visually verified"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "verification": "rendered PDF visually verified"
+        }
+      ],
+      "canonicalCount": 1,
+      "table": {
+        "credits": 400,
+        "weightKg": 4,
+        "availability": "-"
+      },
+      "mechanics": {
+        "operatingHoursWithBattery": 200,
+        "normalHoursWithoutBattery": 100,
+        "role": "secondary/redundant power"
+      },
+      "comparison": {
+        "legacyCostCredits": 100,
+        "legacyWeightKg": 2,
+        "priceMismatch": true,
+        "weightMismatch": true,
+        "critical": "Existing backup battery description is much weaker than printed duration rule"
+      },
+      "migrationProposal": "Reconcile battery-backup alias with canonical Secondary Battery and duration behavior; do not conflate separate Backup Processor.",
+      "identityVerified": true,
+      "sourceFactsPdfVerified": true,
+      "completeMechanicalCertified": false,
+      "productionMigrated": false,
+      "appsTested": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "C-C2-003",
+      "backlogId": "SGD-CAT-EDIT-003",
+      "canonicalPrintedName": "Translator Unit",
+      "legacyIds": [
+        "basic-translator",
+        "advanced-translator",
+        "universal-translator"
+      ],
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "verification": "rendered PDF visually verified"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 197,
+          "pdfPage1Based": 198,
+          "verification": "rendered PDF visually verified"
+        }
+      ],
+      "canonicalCount": 1,
+      "sourceVariants": [
+        {
+          "languageIdentificationDC": 20,
+          "priceCredits": 200,
+          "weightKg": 1,
+          "availability": "-"
+        },
+        {
+          "languageIdentificationDC": 15,
+          "priceCredits": 500,
+          "weightKg": 2,
+          "availability": "-"
+        },
+        {
+          "languageIdentificationDC": 10,
+          "priceCredits": 1000,
+          "weightKg": 4,
+          "availability": "-"
+        },
+        {
+          "languageIdentificationDC": 5,
+          "priceCredits": 2000,
+          "weightKg": 8,
+          "availability": "-"
+        }
+      ],
+      "mechanics": {
+        "firstEncounterUnknownCommunication": "Intelligence check against chosen translator database DC",
+        "communicationForms": "Multiple languages including nonverbal",
+        "higherTierHasLowerDC": true
+      },
+      "comparison": {
+        "liveVariants": [
+          {
+            "id": "basic-translator",
+            "dc": 10,
+            "credits": 100,
+            "weightKg": 1
+          },
+          {
+            "id": "advanced-translator",
+            "dc": 15,
+            "credits": 250,
+            "weightKg": 1
+          },
+          {
+            "id": "universal-translator",
+            "dc": 20,
+            "credits": 500,
+            "weightKg": 2,
+            "availability": "Restricted"
+          }
+        ],
+        "sourceVsLiveMismatch": "Printed four DC tiers; current three labels/prices/weights and Restricted flag do not match. Lower DC is stronger printed variant."
+      },
+      "migrationProposal": "ONE canonical Translator Unit identity, four typed DC variants. Existing three aliases require explicit remap based on chosen source tier, never silent name-based conversion.",
+      "identityVerified": true,
+      "sourceFactsPdfVerified": true,
+      "completeMechanicalCertified": false,
+      "productionMigrated": false,
+      "appsTested": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "C-C2-004",
+      "backlogId": "SGD-CAT-EDIT-004",
+      "canonicalPrintedName": "Projectile Hand",
+      "legacyIds": [
+        "projectile-appendage"
+      ],
+      "legacyNames": [
+        "Projectile Appendage"
+      ],
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 52,
+          "pdfPage1Based": 53,
+          "verification": "rendered PDF visually verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "rendered PDF visually verified"
+        }
+      ],
+      "canonicalCount": 1,
+      "sourceVariants": [
+        {
+          "name": "Basic tension-spring",
+          "descriptionPriceCredits": 250,
+          "tablePriceFormula": "appendage cost * 2",
+          "tableWeightFormula": "2 * cost factor (table weight column)",
+          "availability": "Licensed"
+        }
+      ],
+      "mechanics": {
+        "weaponType": "Ranged simple weapon",
+        "lethalStatus": "Nonlethal",
+        "damage": "2d8",
+        "rangedDisarmMaxSquares": 6,
+        "requires": "Projectile hand or similar projectile appendage"
+      },
+      "comparison": {
+        "liveBaseCostCredits": 250,
+        "liveAvailability": "-",
+        "liveWeaponStatsAvailability": "Licensed",
+        "liveCostMismatchWithTableFormula": "Unresolved dual published 250 install vs appendage-cost-x2 listing; cannot assert absolute price",
+        "liveWeaponData": "2d8 and 6-square disarm concept represented"
+      },
+      "migrationProposal": "Do not normalize to generic ranged weapon or declare 250 total cost without resolving prose/table relationship. Maintain alias and hand mount logic; separate weapon-use permission.",
+      "identityVerified": true,
+      "sourceFactsPdfVerified": true,
+      "completeMechanicalCertified": false,
+      "productionMigrated": false,
+      "appsTested": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "C-C2-005",
+      "backlogId": "SGD-CAT-EDIT-005",
+      "canonicalPrintedName": "Laminanium Plating",
+      "legacyIds": [
+        "laminanium-plating",
+        "laminanium-heavy-plating"
+      ],
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 54,
+          "pdfPage1Based": 55,
+          "verification": "rendered PDF visually verified"
+        }
+      ],
+      "canonicalCount": 1,
+      "sourceVariants": [
+        {
+          "armorClass": "light",
+          "priceFormulaCredits": "3000 * cost factor",
+          "weightFormulaKg": "15 * cost factor",
+          "armorCheckPenalty": -2,
+          "armorBonusReflex": 4,
+          "maxDexBonus": 3,
+          "availability": "Military"
+        },
+        {
+          "armorClass": "heavy",
+          "priceFormulaCredits": "20000 * cost factor",
+          "weightFormulaKg": "15 * cost factor",
+          "armorCheckPenalty": -10,
+          "armorBonusReflex": 12,
+          "maxDexBonus": 2,
+          "availability": "Military, Rare",
+          "heavyArmorRunMultiplier": 3
+        }
+      ],
+      "mechanics": {
+        "fortitudeEquipmentBonus": 2,
+        "flavor": "Self-repairing Qellan alloy seals damage",
+        "passiveHitPointRecovery": "No numeric or timed HP regeneration benefit printed here"
+      },
+      "comparison": {
+        "liveLightHeavyNumericRows": "Core table numeric values largely represented by two live objects",
+        "identityMismatch": "Separate live IDs should be typed variants of one published identity",
+        "unsafeInference": "Do not infer regeneration in HP or DR from alloy narrative"
+      },
+      "migrationProposal": "Canonical Laminanium Plating identity with light/heavy variants, preserving both old IDs as aliases/variant bindings.",
+      "identityVerified": true,
+      "sourceFactsPdfVerified": true,
+      "completeMechanicalCertified": false,
+      "productionMigrated": false,
+      "appsTested": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "C-C2-006",
+      "backlogId": "SGD-CAT-EDIT-006",
+      "canonicalPrintedName": "Communications Countermeasure System",
+      "legacyIds": [
+        "communications-countermeasures"
+      ],
+      "legacyNames": [
+        "Communications Countermeasures"
+      ],
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 56,
+          "pdfPage1Based": 57,
+          "verification": "rendered PDF visually verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "rendered PDF visually verified"
+        }
+      ],
+      "canonicalCount": 1,
+      "table": {
+        "credits": 1000,
+        "weightKg": 3,
+        "availability": "Restricted"
+      },
+      "mechanics": {
+        "bonus": 5,
+        "bonusType": "equipment",
+        "skill": "Use Computer",
+        "scope": "Checks made to overcome communications jamming",
+        "methods": "broadcast multiple frequencies to counter interference"
+      },
+      "comparison": {
+        "liveNameAliasMismatch": true,
+        "sourceNumsAndEffect": "Current DROID_SYSTEMS 1000 credits/3kg/Restricted/+5 mostly agrees",
+        "unsupportedChargenRestriction": "Raw component restrictions include 'Typically unavailable at chargen' not proven by these printed rules"
+      },
+      "migrationProposal": "Canonical name and alias; preserve the scoped jamming modifier, do not apply to all Use Computer checks. Review chargen gate separately.",
+      "identityVerified": true,
+      "sourceFactsPdfVerified": true,
+      "completeMechanicalCertified": false,
+      "productionMigrated": false,
+      "appsTested": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "C-C2-007",
+      "backlogId": "SGD-CAT-EDIT-007",
+      "canonicalPrintedName": "Weapon Detector",
+      "legacyIds": [
+        "weapon-detector-package"
+      ],
+      "legacyNames": [
+        "Weapon-Detector Package"
+      ],
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "rendered PDF visually verified"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "rendered PDF visually verified"
+        }
+      ],
+      "canonicalCount": 1,
+      "table": {
+        "credits": 1500,
+        "weightKg": 5,
+        "availability": "Licensed"
+      },
+      "mechanics": {
+        "effect": "Add droid Intelligence modifier to Perception checks made to Search for weapons",
+        "possibleSensors": "Receiver for inactive vibroweapons; residue analysis on blasters",
+        "bonusType": "additional ability modifier; not unconditional equipment +INT on all Perception"
+      },
+      "comparison": {
+        "liveSourceNumbers": "1500 credits, 5 kg, Licensed correct",
+        "liveModifierScope": "searchWeapons target matches source concept",
+        "nameAliasMismatch": true
+      },
+      "migrationProposal": "Rename/alias to canonical printed Weapon Detector and verify the scoped Perception search rule in actual sheet/roll consumers.",
+      "identityVerified": true,
+      "sourceFactsPdfVerified": true,
+      "completeMechanicalCertified": false,
+      "productionMigrated": false,
+      "appsTested": false,
+      "foundryRuntimeCertified": false
+    }
+  ],
+  "counts": {
+    "editFamiliesReviewed": 7,
+    "editFamiliesTotal": 7,
+    "sourceVerifiedFamilies": 7,
+    "fullMechanicalCertifications": 0,
+    "productionEdits": 0,
+    "applicationParityCertifications": 0,
+    "foundryRuntimeCertifications": 0,
+    "confirmedNumericRuntimeMismatchFamilies": 2,
+    "printedPriceReconciliationBlockers": 1
+  },
+  "sourceCorrectionReference": {
+    "sprint": "002",
+    "identity": "Courier Compartments",
+    "printedPage": 56,
+    "correction": "Arm OR leg; printed four locations torso/arm/leg/head. Removes false fourth-location ambiguity."
+  },
+  "notes": [
+    "Source-fact review does not certify every action or price pathway.",
+    "Variants are one printed identity with purchase choices, not synonyms for arbitrary products.",
+    "All existing actor ID aliases stay until explicit migration proof.",
+    "No production registry or actor data changed."
+  ]
+}

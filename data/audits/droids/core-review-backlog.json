@@ -1,0 +1,149 @@
+{
+  "bookId": "CORE",
+  "mechanicallyCertified": 0,
+  "items": [
+    {
+      "sourceEntryKey": "CORE-DROID-001",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-002",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-003",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-004",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-005",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-006",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-007",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-008",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-009",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-010",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-011",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-012",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-013",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Canonical feat and talent identity/provenance",
+        "Installed vs possessions component inventory and weapon mount legality",
+        "Detailed source-rule/secondary-page reconciliation",
+        "Full upstream JSON Schema validation",
+        "Foundry V13 runtime verification"
+      ]
+    }
+  ]
+}

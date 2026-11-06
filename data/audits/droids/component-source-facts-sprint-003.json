@@ -1,0 +1,847 @@
+{
+  "schema": "swse.droids.catalog.source-facts/0.3",
+  "book": "Scavenger's Guide to Droids",
+  "sprint": "003",
+  "date": "2026-11-02",
+  "scope": "Finish source-fact review of all remaining missing ADD entries without converting site/ship stations into droid installed components",
+  "sourceDoc": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "sourceEdition": "First printing November 2009",
+  "pagesVisuallyReviewed": {
+    "printed": [
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64
+    ],
+    "pdfPage1Based": [
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65
+    ]
+  },
+  "frozenCensus": "data/audits/droids/component-canonical-migration-backlog.json",
+  "priorPackets": [
+    "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+    "data/audits/droids/component-source-facts-sprint-002.json"
+  ],
+  "summary": {
+    "newEntries": 11,
+    "sourceFactsPdfReviewedThisSprint": 11,
+    "publishedMissingAddIdentitiesTotal": 23,
+    "missingAddPreviouslyPdfReviewed": 12,
+    "publishedMissingAddSourceReviewedNow": 23,
+    "publishedMissingAddStillUnreviewed": 0,
+    "sourceFactSetsCumulative": 27,
+    "sourceEvidenceConflictsNew": 0,
+    "printedRuleUnderspecificationPresent": true,
+    "stationOrSocketAssets": 4,
+    "externalMaintenanceEquipmentFromSprint002": 1,
+    "droidRentalControlAttachment": 1,
+    "garageBodyInstallCandidatesWithinThisSprint": 6,
+    "strictMechanicalCertifications": 0,
+    "productionCatalogChanges": 0,
+    "applicationParityTests": 0,
+    "foundryRuntimeCertifications": 0
+  },
+  "records": [
+    {
+      "backlogId": "SGD-CAT-ADD-011",
+      "id": "C-S003-001",
+      "name": "Holographic Game System",
+      "proposedId": "holographic-game-system",
+      "hostClass": "DROID_INSTALLED_CANDIDATE",
+      "table": {
+        "credits": 300,
+        "weightKg": 3,
+        "availability": "-"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "role": "accessory table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "gamesProvided": 15,
+        "additionalGamesSupported": 10,
+        "additionalGamesInstallationCheck": {
+          "skill": "Use Computer",
+          "dc": 15
+        },
+        "separatelyRequired": "Droid holoprojector, sold separately",
+        "operation": "Droid plays or runs projected game"
+      },
+      "blockers": [
+        "Do not treat the 300-credit game system as including the separate holoprojector.",
+        "The source does not specify a fixed game-addition time, game purchase price or general holo-projector permissions."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-012",
+      "id": "C-S003-002",
+      "name": "Interference Generator",
+      "proposedId": "interference-generator",
+      "hostClass": "DROID_INSTALLED_CANDIDATE",
+      "table": {
+        "credits": 2500,
+        "weightKg": 1,
+        "availability": "Restricted"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "role": "accessory table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "basicInterferesWith": [
+          "bugs",
+          "microphones",
+          "other audio recording/listening devices"
+        ],
+        "deluxeAdds": [
+          "video recording",
+          "holographic recording"
+        ],
+        "coverage": "All squares adjacent to the droid",
+        "counterCheck": {
+          "dc": 30,
+          "skills": [
+            "Perception",
+            "Use Computer"
+          ],
+          "effect": "Retrieve scattered words or phrases from affected targets' conversation or recording"
+        },
+        "deluxePriceCredits": null,
+        "activationAction": "not specified"
+      },
+      "blockers": [
+        "Deluxe version price and weight not stated; do not invent cost multiplier.",
+        "This is a scoped recording/eavesdropping rule, not a global -30 Stealth bonus or undetectability aura.",
+        "No stated independent active duration, action or power consumption."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-013",
+      "id": "C-S003-003",
+      "name": "Remote Viewer",
+      "proposedId": "remote-viewer",
+      "hostClass": "DROID_DETACHABLE_DEVICE_CANDIDATE",
+      "table": {
+        "credits": 1000,
+        "weightKg": 20,
+        "availability": "-"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "role": "accessory table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "installation": "External, concealed or sensor-looking droid mounted unit",
+        "mayDetach": true,
+        "detachedDevice": {
+          "sensorTypes": [
+            "visual",
+            "audio"
+          ],
+          "maximumDistanceSquares": 12,
+          "speedSquares": 4,
+          "reflexDefense": 18,
+          "fortitudeDefense": 12,
+          "runTimeMinutes": 30,
+          "rechargeTimeHours": 1
+        }
+      },
+      "blockers": [
+        "Separate object state, device position, control and timed recharging need an authoritative implementation host.",
+        "No action cost for detaching or moving the device is given in this paragraph.",
+        "No free autonomous attacking/turn-taking should be inferred."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-014",
+      "id": "C-S003-004",
+      "name": "Rental Restraining Bolt",
+      "proposedId": "rental-restraining-bolt",
+      "hostClass": "EXTERNAL_DROID_CONTROL_ATTACHMENT",
+      "table": {
+        "credits": 10,
+        "weightKg": 0.5,
+        "availability": "-"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "role": "accessory table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "base": "Acts like standard restraining bolt with added credit reader",
+        "creditDepositRequired": true,
+        "creditToDurationRate": "not specified",
+        "activation": "Active for a specified time after credits deposited; deactivates after time expires; reactivates only after sufficient new deposit"
+      },
+      "blockers": [
+        "Standard restraining bolt rights and effects must be source-linked separately; no general owner authority is granted by this single paragraph.",
+        "Per-credit rental rate, rental interval and arbitrary shutdown rights are not printed.",
+        "External rental/control device is not a conventional chassis upgrade."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-017",
+      "id": "C-S003-005",
+      "name": "Space-Beacon Launcher",
+      "proposedId": "space-beacon-launcher",
+      "hostClass": "DROID_INSTALLED_CANDIDATE",
+      "table": {
+        "credits": 5000,
+        "weightKg": 10,
+        "availability": "-"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "role": "accessory table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "purpose": "Droid deploys space beacons while in flight",
+        "includedBeaconCount": "not explicitly established by the printed cost",
+        "baseCapacityBeacons": 12,
+        "maxCapacityBeacons": 24,
+        "extraCapacity": {
+          "priceIncrementFractionOfBase": 0.1,
+          "perAdditionalBeaconSlot": true,
+          "formula": "5000 * (1 + 0.1 * (capacity - 12)) for integer capacity 12..24",
+          "provisionalInterpretation": "A linear increase from base launcher price, not proof that beacon ammunition is free"
+        },
+        "beaconDimensionsMeters": 0.25,
+        "beaconCommunication": "Can transmit across whole star system unless nebula gases or jamming obstruct",
+        "locateBeacon": {
+          "skill": "Use Computer",
+          "dc": 10,
+          "requires": "ship sensor system"
+        }
+      },
+      "blockers": [
+        "Actual individual beacon purchase/ammunition price not verified; increased capacity does not imply supplied ammunition.",
+        "Source provides no loading, firing or deployment action cost.",
+        "The space-launcher statement does not grant ordinary droid weapon-mount attack permissions."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-018",
+      "id": "C-S003-006",
+      "name": "Video Screen",
+      "proposedId": "video-screen",
+      "hostClass": "DROID_INSTALLED_CANDIDATE",
+      "table": {
+        "creditsFormula": "1 credit * screen area in square millimeters",
+        "weightFormulaKg": "1 + (0.01 * screen area in square millimeters)",
+        "availability": "-"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "role": "accessory table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "display": [
+          "text",
+          "translations",
+          "diagnostics",
+          "programming",
+          "pictures",
+          "other information"
+        ],
+        "printedSizeRange": "50mm to 500mm",
+        "pricingBasis": "square millimeters"
+      },
+      "blockers": [
+        "The printed 50mm-to-500mm size is a linear dimension; the book does not specify width, height, shape or area calculation for every selectable screen.",
+        "Do not substitute 50*50 or 500*500 as a mandatory price; require independently specified screen area.",
+        "Potentially high formula weights are the printed values, not an opportunity to silently normalize them."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-019",
+      "id": "C-S003-007",
+      "name": "Voice-Print Command Lock",
+      "proposedId": "voice-print-command-lock",
+      "hostClass": "DROID_INSTALLED_CANDIDATE",
+      "table": {
+        "credits": 400,
+        "weightKg": 1,
+        "availability": "-"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "role": "accessory table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "restriction": "Droid obeys commands issued from its registered master voice only",
+        "recordedVoiceCanCommand": true,
+        "recordingCheck": {
+          "skill": "Use Computer",
+          "opposedTo": "droid Will Defense + 5",
+          "context": "attempt to make droid obey recorded master's voice"
+        },
+        "changeMasterProcedure": "not described"
+      },
+      "blockers": [
+        "Don't automatically treat a recorded voice as an unconditional permission to issue orders.",
+        "Reprogramming, authorized reassignment and ownership are not established by this paragraph.",
+        "Must reconcile with separate restraining-bolt / owner-command / mind-control authorities."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-020",
+      "id": "C-S003-008",
+      "name": "Droid Battle Station",
+      "proposedId": "droid-battle-station",
+      "hostClass": "FACILITY_OR_STARSHIP_STATION_NOT_DROID_BODY",
+      "table": {
+        "priceFormulaCredits": "50000 per 100 droids",
+        "weightKg": 5000,
+        "availability": "Military"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "role": "stations table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "contains": "Droid Command Station functionality",
+        "operator": "Character operating station",
+        "onInstallation": "Select two talents from Droid Commander prestige class",
+        "talentUse": "Operator may use selected talents as though possessed while operating station",
+        "usageAuthority": "Usage limits calculated per station, not per operator; swapping operators does not restore uses",
+        "duplicateTalentRule": "Droid commanders cannot exceed uses for duplicated talents"
+      },
+      "blockers": [
+        "Not a chassis-installed part; needs starship/facility station authority, operator access, control pool and usage state.",
+        "Pricing tiers and capacity boundaries beyond printed per-100-droids formula need interpretation; no automated rounding assumed.",
+        "Source rules for each selected Droid Commander talent must be separately validated before granting executable actions."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-021",
+      "id": "C-S003-009",
+      "name": "Droid Command Station",
+      "proposedId": "droid-command-station",
+      "hostClass": "FACILITY_OR_STARSHIP_STATION_NOT_DROID_BODY",
+      "table": {
+        "credits": 10000,
+        "weightKg": 1000,
+        "availability": "Licensed"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "role": "stations table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "role": "initial description",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 64,
+          "pdfPage1Based": 65,
+          "role": "continuation of command functions",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "operator": "Droid or organic overseer",
+        "droidPoolConnection": "Pool droid must have comlink, integrated comlink, or remote processor",
+        "access": "Proper password or code cylinder",
+        "stationIntelligence": "14 or starship Intelligence, whichever is greater",
+        "stationWillDefense": 15,
+        "functions": [
+          {
+            "type": "issue_command",
+            "check": "No check for familiar task / associated trained skill; unusual task may require Use Computer at GM discretion",
+            "equipmentBonuses": {
+              "skills": [
+                "Use Computer",
+                "Persuasion",
+                "Perception"
+              ],
+              "value": 10,
+              "scope": "checks against the commanded droid"
+            }
+          },
+          {
+            "type": "coordinate_aid",
+            "useComputerDC": 15,
+            "effect": "Each assisting droid contributes +3 rather than +2 and automatically succeeds in aid checks"
+          },
+          {
+            "type": "locate_pool_droid",
+            "useComputerDC": 5,
+            "precondition": "Droid has tracking device or trackable restraining bolt; within station operational range (typically vessel or facility)"
+          },
+          {
+            "type": "status",
+            "check": "none",
+            "observes": [
+              "hit points",
+              "condition track position",
+              "systems and accessories"
+            ]
+          },
+          {
+            "type": "reprogram",
+            "ruleReference": "Core Rulebook p.192; either remote or direct connection"
+          },
+          {
+            "type": "translate_binary",
+            "check": "none"
+          }
+        ]
+      },
+      "blockers": [
+        "Facility or starship station, not installed actor component; no global droid control at arbitrary planetary range.",
+        "The printed +10 scope is checks against a droid in the pool, not every Use Computer check anywhere.",
+        "Never let locate reveal an untracked droid or one beyond station range.",
+        "Remote reprogramming must respect Core rules and permission state."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-022",
+      "id": "C-S003-010",
+      "name": "Droid Recharge Station",
+      "proposedId": "droid-recharge-station",
+      "hostClass": "FACILITY_OR_STARSHIP_STATION_NOT_DROID_BODY",
+      "table": {
+        "credits": 4000,
+        "weightKg": 500,
+        "availability": "-"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "role": "stations table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 64,
+          "pdfPage1Based": 65,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "publicPricePerRechargeCredits": 20,
+        "rechargeTimeHours": 1,
+        "requiresOutsidePower": true,
+        "diagnostic": {
+          "skill": "Use Computer",
+          "dc": 10,
+          "results": [
+            "hit points",
+            "condition track",
+            "systems",
+            "appendages",
+            "tools"
+          ]
+        },
+        "shipboardFunction": "Droids parked in it secured for travel",
+        "modelRestriction": "Universal to droids up to size (typically Small, Medium or Large), or purpose-built for a degree/model"
+      },
+      "blockers": [
+        "External station requires site power and compatible host/model; cannot be installed as body system.",
+        "Service fee 20 credits must not be confused with buying 4000-credit station.",
+        "Source does not describe universal instant healing or repair of hit points."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-023",
+      "id": "C-S003-011",
+      "name": "Droid Socket",
+      "proposedId": "droid-socket",
+      "hostClass": "VEHICLE_OR_STARSHIP_SOCKET_NOT_DROID_BODY",
+      "table": {
+        "credits": 10000,
+        "weightKg": 1000,
+        "availability": "Military",
+        "factoryNote": "Usually included in the cost of the vehicle"
+      },
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "role": "stations table",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 64,
+          "pdfPage1Based": 65,
+          "role": "descriptive rule",
+          "verification": "PDF page rendered and visually inspected 2026-11-02"
+        }
+      ],
+      "mechanics": {
+        "compatibleDroid": "Astromech droids only",
+        "vehicleHost": "Snub fighters, some shuttles/airspeeders; typically designed and installed as original equipment, aftermarket possible",
+        "allowed": [
+          {
+            "function": "pilot_or_copilot",
+            "condition": "Pilot permission, except when pilot is unconscious"
+          },
+          {
+            "function": "operate_shields",
+            "ruleReference": "Core Rulebook p.172"
+          },
+          {
+            "function": "reroute_power",
+            "ruleReference": "Core Rulebook p.172"
+          },
+          {
+            "function": "repair",
+            "limits": "Limited Mechanics checks to jury-rig/repair ship as GM decides"
+          },
+          {
+            "function": "use_computer",
+            "interface": "Ship system via integrated scomp link"
+          },
+          {
+            "function": "operate_comms_sensors"
+          },
+          {
+            "function": "operate_hyperdrive",
+            "conditions": "Ship has hyperdrive; coordinates in astrogation buffer; Use Computer skill"
+          },
+          {
+            "function": "pilot_droid_ejection",
+            "condition": "Pilot express permission",
+            "ejectionSpeedSquares": 12
+          }
+        ],
+        "prohibitedUnlessPilotOverride": [
+          "activate_or_fire_weapons",
+          "jump_to_hyperspace_without_approval"
+        ],
+        "optionalFeature": "Astromech self-loading device (not on all ships)"
+      },
+      "blockers": [
+        "The installed asset is owned by vehicle/starship, not the astromech's chassis ledger.",
+        "No implicit grant of weapons, ejection rights, or unauthorized hyperspace operation.",
+        "Vehicle actor operational and permission rules need independent Foundry acceptance."
+      ],
+      "sourceFactsStatus": "PDF_VISUAL_VERIFIED",
+      "identityStatus": "CANONICAL_PRINTED_IDENTITY",
+      "productionMigrationStatus": "NOT_CREATED",
+      "completeMechanicalCertification": false,
+      "garageParityCertified": false,
+      "chargenParityCertified": false,
+      "followerParityCertified": false,
+      "storeParityCertified": false,
+      "foundryRuntimeCertified": false,
+      "registryComparison": {
+        "droidSystemsNameOrSlugPresent": false,
+        "droidPartSchemaNameOrSlugPresent": false,
+        "codeSourceBlobShas": {
+          "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+          "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+        },
+        "method": "Exact printed names and candidate normalized slugs searched; other fuzzy/alias concepts not asserted absent"
+      }
+    }
+  ],
+  "guardrails": [
+    "SOURCE_FACT_REVIEW_ONLY; no new part becomes legal or executable just by appearing in this packet",
+    "Garage/chargen/Store installation rights never inferred from station table rows",
+    "No station or socket in system.installedSystems for a PC droid",
+    "No uncited screen dimensions, deluxe cost, rental fee, or beacon ammo prices inferred",
+    "Do not replace component V2 authority with a new app-local registry",
+    "Live catalog remains unchanged"
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "schema": "swse.droids.threats.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "bookId": "THREATS",
+  "scope": "Printed pp.150-155 (PDF pp.151-156) droid statblocks, narrative, separate replica species sidebar.",
+  "records": [
+    {
+      "id": "THREATS-DROID-019",
+      "name": "M-3PO Series Military Protocol Droid",
+      "page": 150,
+      "components": 8,
+      "featGroups": 3,
+      "talentGroups": 0,
+      "constraintIds": [
+        "THREATS-DROID-019-CONSTRAINT-ADMINISTRATION-NOT-COMBAT",
+        "THREATS-DROID-019-CONSTRAINT-TRANSLATOR-AND-RECORDER",
+        "THREATS-DROID-019-CONSTRAINT-NOT-3PO-SERIES-CLONE",
+        "THREATS-DROID-019-CONSTRAINT-HERO-ALLOWED"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-020",
+      "name": "TC Series Protocol Droid",
+      "page": 151,
+      "components": 6,
+      "featGroups": 3,
+      "talentGroups": 1,
+      "constraintIds": [
+        "THREATS-DROID-020-CONSTRAINT-COORDINATE-TALENT-SCOPE",
+        "THREATS-DROID-020-CONSTRAINT-TRANSLATOR-DC5",
+        "THREATS-DROID-020-CONSTRAINT-NOBLE-ONE-NOT-STARTING-GRANT",
+        "THREATS-DROID-020-CONSTRAINT-HERO-ALLOWED"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-021",
+      "name": "Replica Droid",
+      "page": 152,
+      "components": 8,
+      "featGroups": 5,
+      "talentGroups": 2,
+      "constraintIds": [
+        "THREATS-DROID-021-CONSTRAINT-GENERIC-VS-NAMED",
+        "THREATS-DROID-021-CONSTRAINT-SPECIES-RULE-SIDEBAR-SEPARATE",
+        "THREATS-DROID-021-CONSTRAINT-PERCEPTION-REROLL-KEEP-SECOND",
+        "THREATS-DROID-021-CONSTRAINT-COMLINK-POSSESSION-UNUSUAL",
+        "THREATS-DROID-021-CONSTRAINT-HERO-ALLOWED"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-022",
+      "name": "Guri",
+      "page": 153,
+      "components": 11,
+      "featGroups": 6,
+      "talentGroups": 5,
+      "constraintIds": [
+        "THREATS-DROID-022-CONSTRAINT-NAMED-CHARACTER-NOT-FACTORY",
+        "THREATS-DROID-022-CONSTRAINT-SPECIES-TRAITS-ARE-OTHER-IDENTITY",
+        "THREATS-DROID-022-CONSTRAINT-COMLINK-POSSESSION",
+        "THREATS-DROID-022-CONSTRAINT-HERO-PERMISSION-UNSTATED"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-023",
+      "name": "WSB-15 Sabotage Droid",
+      "page": 154,
+      "components": 12,
+      "featGroups": 12,
+      "talentGroups": 3,
+      "constraintIds": [
+        "THREATS-DROID-023-CONSTRAINT-WED15-DISGUISE-IS-NOT-IDENTITY",
+        "THREATS-DROID-023-CONSTRAINT-SELF-DESTRUCT-SOURCE-ONLY",
+        "THREATS-DROID-023-CONSTRAINT-PLASMA-CUTTER-POSSESSION",
+        "THREATS-DROID-023-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "THREATS-DROID-024",
+      "name": "501-Z Police/Security Droid",
+      "page": 155,
+      "components": 8,
+      "featGroups": 11,
+      "talentGroups": 6,
+      "constraintIds": [
+        "THREATS-DROID-024-CONSTRAINT-STUN-ONLY-FACTORY",
+        "THREATS-DROID-024-CONSTRAINT-PERCEPTION-KEEP-SECOND",
+        "THREATS-DROID-024-CONSTRAINT-HARM-WAY-AND-BATTLE-ANALYSIS-GATES",
+        "THREATS-DROID-024-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "totals": {
+    "models": 6,
+    "components": 53,
+    "appendages": 18,
+    "possessions": 14,
+    "feats": 40,
+    "talents": 17,
+    "skills": 40,
+    "constraints": 25,
+    "attacks": 11,
+    "namedIndividuals": 1,
+    "sourceDeepReviewed": 24,
+    "bookIdentities": 29,
+    "certified": 0
+  },
+  "boundaries": {
+    "genericReplicaDistinctFromGuri": true,
+    "speciesRulesSidebarNotNewPublicationIdentity": true,
+    "allSourceOnly": true,
+    "all29Preserved": true,
+    "noProductionRuntimeChange": true,
+    "fullSchemaNotRun": true
+  },
+  "next": "THREATS-DROID-025–029 printed pp.156–160 and book closeout"
+}
