@@ -91,4 +91,41 @@ async function droidWithTwoHands() {
   for (const row of rows) assert.ok(!/inst-/.test(row.name), `opaque key leaked into the label: ${row.name}`);
 }
 
+// 5. Wave 2A: NO droid raw-ledger fallback. An unrecognized (unidentified) key that the engine
+// cannot validate fails closed: error surfaced, ledger/mirror/credits untouched, nothing mutated.
+{
+  resetFakeActorEngine();
+  const d = makeFakeDroid({
+    installedSystems: { 'totally-unknown-widget': { id: 'totally-unknown-widget', installedAt: 1 }, 'plasteel-shell': { id: 'plasteel-shell', installedAt: 2 } },
+    droidSystems: { accessories: [{ id: 'totally-unknown-widget' }] }
+  });
+  const before = JSON.stringify(d.system);
+  await assert.rejects(() => UpgradeService.removeUpgrade({ actor: d, itemId: ITEM_ID, upgradeIndex: 0 }), /Unknown system|not currently installed|cannot/i);
+  assert.equal(JSON.stringify(d.system), before, 'ledger, mirror and credits are untouched');
+  assert.equal(d.system.credits, 10000, 'no resale credited');
+  assert.equal(fakeActorEngineCallLog.length, 0, 'no ActorEngine mutation at all');
+}
+
+// 6. A stale index (entry already gone) is still a harmless no-op, and a vehicle-actor index is untouched by this path.
+{
+  resetFakeActorEngine();
+  const d = makeFakeDroid();
+  const r = await UpgradeService.removeUpgrade({ actor: d, itemId: ITEM_ID, upgradeIndex: 5 });
+  assert.equal(r.success, true);
+  assert.equal(fakeActorEngineCallLog.length, 0);
+}
+
+// 7. Valid removal still pays resale exactly once (credits move only through the engine's transaction).
+{
+  resetFakeActorEngine();
+  const d = makeFakeDroid();
+  await DroidCustomizationEngine.applyDroidCustomization(d, { add: ['claw'] }, { idSource: seq('cccccc03') });
+  const credits = d.system.credits;
+  const r = await UpgradeService.removeUpgrade({ actor: d, itemId: ITEM_ID, upgradeIndex: 0 });
+  assert.equal(r.success, true);
+  assert.ok(d.system.credits > credits, 'resale credited by the transaction');
+  assert.equal(listLedgerInstances(d.system.installedSystems).instances.length, 0);
+  assert.deepEqual(auditAppendageMirror(d.system.installedSystems, d.system.droidSystems), []);
+}
+
 console.log('Droid Gate C-1 Workshop removal tests passed.');

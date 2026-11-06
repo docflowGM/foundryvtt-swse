@@ -68,7 +68,8 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { checkApprovedHandlerCalls, checkHandlerDispatch, hasServiceCall } from './lib/droid-explicit-action-sites.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -78,14 +79,19 @@ const STRICT = process.argv.includes('--strict');
 
 const RECONCILIATION_SERVICE = path.join(ROOT, 'scripts/domain/droids/droid-converted-system-reconciliation-service.js');
 const RECONCILIATION_CLASSIFIER = path.join(ROOT, 'scripts/domain/droids/droid-converted-system-reconciliation-classifier.js');
-const CHARACTER_SHEET = path.join(ROOT, 'scripts/sheets/v2/character-sheet.js');
+const DROID_SHEET = path.join(ROOT, 'scripts/sheets/v2/droid-actor-sheet.js');
+const SHEET_DISPATCH = path.join(ROOT, 'scripts/sheets/v2/character-like-sheet.js');
+const RECONCILE_HANDLERS = ['_reconcileDroidSystems', '_rollbackDroidReconciliation'];
+const RECONCILE_CALLS = ['applyReconciliation', 'rollbackReconciliation'];
 const CONTEXT_BUILDER = path.join(ROOT, 'scripts/sheets/v2/droid-sheet/context-builder.js');
 const MODE_ADAPTER = path.join(ROOT, 'scripts/actors/droid/droid-mode-adapter.js');
 const MODIFIER_ENGINE = path.join(ROOT, 'scripts/engine/effects/modifiers/ModifierEngine.js');
 const CUSTOMIZATION_ENGINE = path.join(ROOT, 'scripts/engine/customization/droid-customization-engine.js');
 
-// Files allowed to call applyReconciliation()/rollbackReconciliation().
-const RECONCILE_CALL_ALLOWLIST = new Set([CHARACTER_SHEET, RECONCILIATION_SERVICE]);
+// applyReconciliation()/rollbackReconciliation() may be CALLED only inside the
+// named, confirmation-gated handlers of the live droid sheet (verified
+// structurally by tools/lib/droid-explicit-action-sites.mjs); the service file
+// itself is the definition site. No whole-file allowance exists for a sheet.
 
 // Files allowed to write flags.swse.stockDroidReconciliation.
 const RECONCILIATION_FLAG_WRITE_ALLOWLIST = new Set([RECONCILIATION_SERVICE]);
@@ -126,8 +132,24 @@ function main() {
   for (const file of files) {
     if (file === RECONCILIATION_SERVICE) continue; // definition site
     const source = read(file);
-    if (reconcileCallPattern.test(source) && !RECONCILE_CALL_ALLOWLIST.has(file)) {
-      violations.push({ check: '1: no automatic reconciliation', file: path.relative(ROOT, file), detail: 'calls applyReconciliation()/rollbackReconciliation() outside the approved explicit-action call site' });
+    const rel = path.relative(ROOT, file);
+    if (hasServiceCall(source, RECONCILE_CALLS)) {
+      if (file === DROID_SHEET) {
+        for (const problem of checkApprovedHandlerCalls(source, { callNames: RECONCILE_CALLS, approvedMethods: RECONCILE_HANDLERS }).problems) {
+          violations.push({ check: '1: no automatic reconciliation', file: rel, detail: problem });
+        }
+      } else {
+        violations.push({ check: '1: no automatic reconciliation', file: rel, detail: 'calls applyReconciliation()/rollbackReconciliation() outside the approved explicit-action handlers' });
+      }
+    }
+    if (RECONCILE_HANDLERS.some(name => source.includes(`${name}(`)) && file !== DROID_SHEET) {
+      if (file === SHEET_DISPATCH) {
+        for (const problem of checkHandlerDispatch(source, RECONCILE_HANDLERS).problems) {
+          violations.push({ check: '1: no automatic reconciliation', file: rel, detail: problem });
+        }
+      } else {
+        violations.push({ check: '1: no automatic reconciliation', file: rel, detail: 'invokes a reconciliation handler outside the delegated click dispatch' });
+      }
     }
   }
   if (CONTEXT_BUILDER && fs.existsSync(CONTEXT_BUILDER)) {
@@ -254,4 +276,4 @@ function main() {
   process.exit(STRICT ? 1 : 0);
 }
 
-main();
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) main();

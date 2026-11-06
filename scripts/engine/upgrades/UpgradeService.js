@@ -705,15 +705,15 @@ export class UpgradeService {
   }
 
   static async removeUpgrade({ actor, itemId, upgradeIndex }) {
-    // Droid actor system removal — PHASE 2: route through
-    // DroidCustomizationEngine so removal also refunds resale credit,
+    // Droid actor system removal: routed through DroidCustomizationEngine, the
+    // single installation authority, so removal also refunds resale credit,
     // updates the system.droidSystems mirror, and deletes any embedded Item
-    // representing the same canonical part (previously none of that
-    // happened for a Workshop-driven removal). Falls back to a raw ledger
-    // delete only if the stored key does not resolve against the canonical
-    // registry at all (e.g. malformed/legacy data pre-dating Phase 1) so a
-    // GM can still clear an entry that DroidCustomizationEngine itself
-    // cannot make sense of.
+    // representing the same canonical part. There is NO fallback writer: when
+    // the engine cannot validate a removal (unknown key, ambiguous or invalid
+    // instance, a host with fitted parts, inconsistent records...) the Workshop
+    // fails closed with the engine's reason and leaves the ledger, the mirror
+    // and credits untouched. A GM repairs malformed data through the
+    // reconciliation / drift-repair services, not by a raw ledger delete.
     if (itemId?.startsWith('droid-actor-')) {
       const ledger = actor.system?.installedSystems ?? {};
       const keys = Object.keys(ledger);
@@ -721,9 +721,7 @@ export class UpgradeService {
       if (targetId === undefined) return { success: true };
 
       // GATE C-1: a physical appendage is addressed by its own part id and
-      // instance id (its ledger key is opaque and names no part). An
-      // identified instance is NEVER raw-deleted: that would orphan its
-      // droidSystems mirror row, so a refusal is reported instead.
+      // instance id (its ledger key is opaque and names no part).
       const targetEntry = ledger[targetId];
       const identified = targetEntry && typeof targetEntry === 'object' && targetEntry.instanceId
         ? { id: targetEntry.id, instanceId: targetEntry.instanceId }
@@ -731,13 +729,7 @@ export class UpgradeService {
 
       const result = await DroidCustomizationEngine.applyDroidCustomization(actor, { remove: [identified ?? targetId] });
       if (result.success) return { success: true };
-      if (identified) throw new Error(result.error || `Failed to remove ${identified.id}`);
-
-      swseLogger.warn(`[UpgradeService] Droid system "${targetId}" did not resolve through DroidCustomizationEngine (${result.error}); falling back to raw ledger removal.`);
-      const installedSystems = { ...(actor.system?.installedSystems ?? {}) };
-      delete installedSystems[targetId];
-      await ActorEngine.applyMutationPlan(actor, { set: { 'system.installedSystems': installedSystems } });
-      return { success: true };
+      throw new Error(result.error || `Failed to remove ${identified?.id ?? targetId}`);
     }
 
     // Vehicle actor system removal (unchanged — out of scope for droid
