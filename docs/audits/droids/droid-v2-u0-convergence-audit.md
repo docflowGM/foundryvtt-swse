@@ -282,3 +282,12 @@ The probe uses the shim's fake ActorEngine, so wallet deltas prove the engine's 
 ## Owner ruling and F7 closure (clean-break convergence branch)
 
 Owner confirmed: no active users / no legacy Droid Actors to preserve; clean-break convergence authorized; F7 policy: **only confirmed `system.installedSystems` records authorize post-creation Garage removal and resale; no historical mirror exception, no automatic reconciliation.** F7 is closed on `feature/v2-unified-clean-break-convergence` (this audit PR #1116 stays the read-only record). The probe now reports the post-fix behavior (all unconfirmed-evidence cases refused).
+
+## Clean-break stage 2 (F1 / F2) - semantic changes recorded
+
+Owner-authorized (no legacy-Actor compatibility). Intentional behavior changes:
+1. **Droid identity** is `scripts/domain/droids/droid-rules-profile.js` (pure; dimensions independent; contradictory signals fail closed). `ModifierEngine` Source 7 and `follower-droid-garage-hotfix.js` delegate to it.
+2. **F1:** an `npc`-typed droid follower now receives droid-component modifiers, but ONLY for hardware confirmed in `system.installedSystems`; mirror-only, Item-only and legacy-mod components never contribute for profile-only droids. Stock-statblock suppression (`shouldSuppressComponentModifiers`) is unchanged. PC-type droids keep their existing resolver semantics; making their modifiers confirmed-ledger-only is a follow-up (stock-statblock droids rely on mirror evidence today, so it needs its own stage).
+3. **F2:** feat/talent droid-system prerequisites (`scripts/domain/droids/droid-part-schema.js`) read confirmed ledger components for completed actors and the explicit draft for creation; the synthetic Heuristic Processor, `droidSystems`-presence/species guessing, mirror and Item evidence are removed. A requirement that names a specific part (e.g. "Heuristic Processor") is now matched by that part's identity: previously a Basic Processor satisfied it via the shared alias `primary` (a defect, now covered by a test).
+4. Replaced the C-3A test assertion that pinned "no component modifiers for npc-typed followers".
+Not changed: F3 (zero-HP), the Store/pack convergence, the 194-record pack, Garage UI. Not Foundry-tested.

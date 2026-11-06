@@ -2,6 +2,7 @@ import { CustomizationBayApp } from '/systems/foundryvtt-swse/scripts/apps/custo
 import { DroidCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/droid-customization-engine.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { resolveDroidRulesProfile } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 
 const REGISTERED = Symbol.for('swse.followerDroidGarage.registered.v1');
 const APP_PATCHED = Symbol.for('swse.followerDroidGarage.appPatched.v1');
@@ -9,16 +10,12 @@ const ENGINE_PATCHED = Symbol.for('swse.followerDroidGarage.enginePatched.v1');
 const TRANSACTION_PATCHED = Symbol.for('swse.followerDroidGarage.transactionPatched.v1');
 
 function isFollowerDroid(actor) {
+  // Droid identity and follower status come from the shared rules profile
+  // (fail-closed on contradictory signals); this patch only scopes itself to
+  // `npc`-typed actors, which is what the compatibility proxy impersonates.
   if (!actor || actor.type !== 'npc') return false;
-  const follower = actor.system?.isFollower === true
-    || actor.system?.progression?.isFollower === true
-    || actor.flags?.swse?.follower?.isFollower === true
-    || actor.system?.npcProfile?.kind === 'follower';
-  const droid = actor.system?.isDroid === true
-    || actor.system?.progression?.droidConfig?.isDroid === true
-    || actor.system?.progression?.followerChoices?.droidConfig?.isDroid === true
-    || actor.flags?.['foundryvtt-swse']?.isDroid === true;
-  return follower && droid;
+  const profile = resolveDroidRulesProfile(actor);
+  return profile.follower.isFollower && profile.droidRules.isDroid;
 }
 
 function resolveWalletActor(assetActor) {
