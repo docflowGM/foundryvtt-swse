@@ -9,7 +9,12 @@ const RETIRED = [
   ['scripts/governance/mutation/mutation-router.js', 'MutationRouter'],
   ['scripts/engine/store/store-transaction-engine.js', 'StoreTransactionEngine'],
   ['scripts/domain/vehicles/vehicle-transaction-service.js', 'VehicleTransactionService'],
-  ['scripts/patches/follower-droid-garage-hotfix.js', 'registerFollowerDroidGarageHotfix']
+  ['scripts/patches/follower-droid-garage-hotfix.js', 'registerFollowerDroidGarageHotfix'],
+  ['scripts/apps/progression-framework/shell/mutation-coordinator.js', 'MutationCoordinator'],
+  ['scripts/apps/progression-framework/shell/mutation-plan.js', null], // generic name 'MutationPlan' is used elsewhere: import check only
+  ['scripts/engine/core/UpdatePipeline.js', 'UpdatePipeline'],
+  ['scripts/engine/core/commands/ActorCommands.js', 'ActorCommands'],
+  ['scripts/engine/core/ProgressionStatePersistence.js', 'ProgressionStatePersistence']
 ];
 for (const [file] of RETIRED) assert.equal(fs.existsSync(file), false, `${file} must stay deleted`);
 
@@ -30,7 +35,7 @@ for (const file of live) {
     assert.equal(importRe.test(text), false, `${file} still imports ${base}`);
     // a runtime reference to the symbol (not a comment line)
     const code = text.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
-    assert.equal(new RegExp(`\\b${symbol}\\b`).test(code), false, `${file} references ${symbol}`);
+    if (symbol) assert.equal(new RegExp(`\\b${symbol}\\b`).test(code), false, `${file} references ${symbol}`);
   }
 }
 console.log('Step 1 retired mutation-surface tests passed.');
