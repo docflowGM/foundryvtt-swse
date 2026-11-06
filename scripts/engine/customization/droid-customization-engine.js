@@ -23,7 +23,8 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
-import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId, resolveDroidPartQuoteDetailed } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { evaluateInstallationEligibility } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-eligibility.js';
 import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
 import {
   appendageMirrorBucket, auditAppendageMirror, dependentsOfInstance, findInstance, instancesOfPart, isPhysicalAppendageDefinition,
@@ -135,11 +136,23 @@ function isPrimaryProcessor(def) {
 
 function droidPartEntry(def, actor, extra = {}) {
   // `selectedAppendage` is a quote/prerequisite INPUT (Gate A typed host), not
-  // part data: it is forwarded to the shared authority and never spread into
-  // the returned entry or the ledger payload.
-  const { selectedAppendage = null, ...entryExtra } = extra;
+  // part data, and `restrictions` are already-established engine restrictions
+  // for the eligibility decision; neither is spread into the returned entry or
+  // the ledger payload.
+  const { selectedAppendage = null, restrictions = [], ...entryExtra } = extra;
   const hydrated = hydrateDroidPart(def, { actor, installedIds: Array.from(collectInstalledDroidPartIds(actor)), selectedAppendage });
-  const cost = computeDroidPartCost(actor, hydrated, { selectedAppendage });
+  // GATE C-2: a price is not an installation permit. Quote and eligibility are
+  // separate results; `compatible` now means ELIGIBLE (source clearance +
+  // confirmed-evidence prerequisites + exact quote + no pending host ruling +
+  // no established restriction), never merely "has a price".
+  const staged = resolveDroidPartQuoteDetailed(actor, hydrated, { selectedAppendage });
+  const cost = staged.quote.credits;
+  const eligibility = evaluateInstallationEligibility({
+    componentId: normalizeDroidPartId(hydrated.ruleId ?? hydrated.id),
+    stages: staged.stages,
+    quote: staged.quote,
+    restrictions
+  });
   const quoteBlocked = hydrated.quoteStatus !== 'OK' || !Number.isFinite(cost) || cost < 0;
   return {
     id: normalizeDroidPartId(hydrated.ruleId ?? hydrated.id),
@@ -150,8 +163,9 @@ function droidPartEntry(def, actor, extra = {}) {
     slot: hydrated.slot || def?.slot || '',
     sourcePath: def?.sourcePath ?? '',
     installed: collectInstalledDroidPartIds(actor).has(normalizeDroidPartId(hydrated.ruleId ?? hydrated.id)),
-    compatible: !quoteBlocked,
-    blockingReason: quoteBlocked ? (hydrated.quoteBlockingReason || 'Component has no verified purchase quote') : null,
+    compatible: eligibility.installable,
+    eligibility,
+    blockingReason: eligibility.reasons[0]?.message ?? null,
     quoteStatus: hydrated.quoteStatus,
     cost,
     weight: hydrated.weight,
@@ -379,7 +393,15 @@ export class DroidCustomizationEngine {
     const systems = [];
 
     for (const def of getAllDroidPartDefinitions()) {
-      const entry = droidPartEntry(def, actor);
+      // An already-installed primary processor is an ESTABLISHED restriction on
+      // a second primary; a backup slot lifts exactly that restriction and
+      // nothing else (source HOLD, unmet prerequisites, unresolved quote and
+      // pending host rulings still block).
+      const restrictions = [];
+      if (isPrimaryProcessor(def) && hasPrimaryProcessor && !backupSlot && !installed.has(normalizeDroidPartId(def.id))) {
+        restrictions.push({ code: 'PRIMARY_PROCESSOR_PRESENT', message: 'A primary processor is already installed. Install a Backup Processor before purchasing a second inactive processor.' });
+      }
+      const entry = droidPartEntry(def, actor, { restrictions });
       entry.installed = installed.has(entry.id);
       if (isPhysicalAppendageDefinition(def)) {
         // Core p.190: any number of appendages. Owning one does not make the
@@ -387,13 +409,8 @@ export class DroidCustomizationEngine {
         entry.instanceCount = collectInstalledComponents(actor).filter(c => c.canonicalId === entry.id).length;
         entry.installed = false;
       }
-      if (isPrimaryProcessor(def) && hasPrimaryProcessor && !entry.installed && !backupSlot) {
-        entry.compatible = false;
-        entry.blockingReason = 'A primary processor is already installed. Install a Backup Processor before purchasing a second inactive processor.';
-      }
       if (isPrimaryProcessor(def) && backupSlot && !entry.installed) {
         entry.slot = entry.slot || 'processor.backup';
-        entry.compatible = true;
         entry.note = 'Can be installed in the backup processor slot; only one processor is active at a time.';
       }
       systems.push(entry);
@@ -462,8 +479,8 @@ export class DroidCustomizationEngine {
       const quoteOptions = { selectedAppendage: hostResolution.selectedAppendage };
 
       const candidate = droidPartEntry(systemDef, actor, quoteOptions);
-      if (candidate.compatible === false) {
-        return { success: false, error: candidate.blockingReason || `${candidate.name} is not compatible with this droid`, blockingReason: 'System incompatible' };
+      if (candidate.compatible !== true) {
+        return { success: false, error: candidate.blockingReason || `${candidate.name} is not eligible for installation on this droid`, blockingReason: 'System incompatible', eligibility: candidate.eligibility };
       }
       if (isPrimaryProcessor(systemDef) && actor.system?.droidSystems?.processor?.id && !hasBackupProcessorSlot(actor)) {
         return {
