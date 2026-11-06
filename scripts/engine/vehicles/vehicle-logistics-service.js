@@ -12,6 +12,7 @@
  *   gmConfigureFuel / gmSetOccupants / gmSetConsumables -> GM configuration (never labeled published).
  * Docking and routine maintenance are GM-administered reference information only: no charging, no state.
  */
+import { verifyStoredPaths } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-postcondition.js';
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
@@ -131,6 +132,7 @@ export class VehicleLogisticsService {
       try {
         tx = await TransactionEngine.executeAssetCustomizationTransaction({
           actor: ownerActor, assetActor: vehicle, cost: q.cost, resaleCredit: 0, assetMutationPlan: { set: { [`flags.swse.${LOGISTICS_FLAG}`]: next } },
+          verifyAsset: verifyStoredPaths({ [`flags.swse.${LOGISTICS_FLAG}`]: next }),
           reason: `Buy ${q.days} ${resource === 'fuel' ? 'fuel-day(s)' : 'day(s) of consumables'} for ${vehicle.name}`,
           audit: { kind: `vehicle-${resource}-purchase`, days: q.days, unitPrice: q.unitPrice, occupants: q.occupants ?? null }
         });

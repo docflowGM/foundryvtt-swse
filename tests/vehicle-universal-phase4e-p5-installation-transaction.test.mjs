@@ -99,6 +99,25 @@ test('postcondition: a charged install whose ledger/jobs flags did not persist i
   } finally { p.restore(); VehicleInstallationService.rules = L.DEFAULT_VEHICLE_INSTALLATION_RULES; }
 });
 
+test('postcondition: an uninstall whose ledger write did not persist keeps the hardware and does not keep the refund', async () => {
+  const { vehicle, owner } = world();
+  let p = patchEngines(); VehicleInstallationService.rules = fixtureRules;
+  try {
+    const inst = await VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+    assert.equal(inst.success, true, JSON.stringify(inst));
+    const ledgerNow = vehicle.flags.swse.vehicleInstallations;
+    const installId = (Array.isArray(ledgerNow) ? ledgerNow : ledgerNow?.entries ?? [])[0]?.installId;
+    assert.ok(installId, 'installed entry has an id');
+    p.restore();
+    const creditsBefore = owner.system.credits;
+    p = patchEngines({ dropFlags: true });
+    const r = await VehicleInstallationService.uninstall({ ownerActor: owner, vehicle, installId });
+    assert.equal(r.success, false, JSON.stringify(r));
+    assert.match(r.error ?? '', /postcondition failed/);
+    assert.equal(owner.system.credits, creditsBefore, 'no refund survives an unpersisted removal');
+  } finally { p.restore(); VehicleInstallationService.rules = L.DEFAULT_VEHICLE_INSTALLATION_RULES; }
+});
+
 test('denied plans write nothing and charge nothing', async () => {
   const { vehicle, owner } = world();
   const p = patchEngines();

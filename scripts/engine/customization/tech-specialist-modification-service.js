@@ -1,3 +1,4 @@
+import { verifyStoredPaths, canonicalEqual } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-postcondition.js';
 import { resolveAssetOwnerId } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -743,7 +744,7 @@ export class TechSpecialistModificationService {
       };
       if (signatureSecond && previousActiveTrait) applyTraitSystemUpdatesToActor(set, subject, TRAIT_BY_ID.get(previousActiveTrait.traitId), -1);
       applyTraitSystemUpdatesToActor(set, subject, trait, 1);
-      tx = await TransactionEngine.executeAssetCustomizationTransaction({ actor: payer, assetActor: subject, assetMutationPlan: { set }, cost, transactionContext: 'owned-customization', reason: `${trait.name} modification`, audit: { techSpecialist: { traitId: trait.id, traitName: trait.name, success: true, rollTotal: roll.total, dc } } }, { source: 'TechSpecialistModificationService.success', validate: true, rederive: true });
+      tx = await TransactionEngine.executeAssetCustomizationTransaction({ actor: payer, assetActor: subject, assetMutationPlan: { set }, verifyAsset: verifyStoredPaths(Object.fromEntries(Object.entries(set).filter(([k]) => k.startsWith('flags.')))), cost, transactionContext: 'owned-customization', reason: `${trait.name} modification`, audit: { techSpecialist: { traitId: trait.id, traitName: trait.name, success: true, rollTotal: roll.total, dc } } }, { source: 'TechSpecialistModificationService.success', validate: true, rederive: true });
     } else {
       const update = itemUpdateBase(subject);
       update[`flags.${FLAG_SCOPE}.${TECH_FLAG}.traits`] = nextTraits;
@@ -751,11 +752,11 @@ export class TechSpecialistModificationService {
       update[`flags.${FLAG_SCOPE}.${TECH_FLAG}.lastModifiedBy`] = actor.id;
       if (signatureSecond && previousActiveTrait) applyTraitSystemUpdatesToItem(update, subject, TRAIT_BY_ID.get(previousActiveTrait.traitId), -1);
       applyTraitSystemUpdatesToItem(update, subject, trait, 1);
-      tx = await TransactionEngine.executeMutationTransaction({ actor: payer, mutationPlan: { update: { items: [update] } }, cost, transactionContext: 'owned-customization', audit: { itemId: getItemId(subject), itemName: subject.name, techSpecialist: { traitId: trait.id, traitName: trait.name, success: true, rollTotal: roll.total, dc } } }, { source: 'TechSpecialistModificationService.success', validate: true, rederive: true });
+      tx = await TransactionEngine.executeMutationTransaction({ actor: payer, mutationPlan: { update: { items: [update] } }, verify: (fresh) => { const stored = fresh?.items?.get?.(getItemId(subject))?.flags?.[FLAG_SCOPE]?.[TECH_FLAG]; return (canonicalEqual(stored?.traits, nextTraits) && (stored?.activeTraitId ?? null) === (activeId ?? null)) ? { ok: true } : { ok: false, reason: 'the Tech Specialist modification was not persisted on the item' }; }, cost, transactionContext: 'owned-customization', audit: { itemId: getItemId(subject), itemName: subject.name, techSpecialist: { traitId: trait.id, traitName: trait.name, success: true, rollTotal: roll.total, dc } } }, { source: 'TechSpecialistModificationService.success', validate: true, rederive: true });
     }
     if (!tx.success) {
       ui.notifications.error(`Tech Specialist transaction failed: ${tx.error}`);
-      return { success: false, error: tx.error };
+      return { success: false, error: tx.error, ...(tx.verificationFailed ? { verificationFailed: true } : {}), ...(tx.rolledBack ? { rolledBack: true } : {}), ...(tx.rollbackFailed ? { rollbackFailed: true } : {}), ...(tx.indeterminate ? { indeterminate: true } : {}) };
     }
     ui.notifications.info(`${trait.name} installed on ${subject.name}.`);
     return { success: true, transaction: tx, trait: record };
