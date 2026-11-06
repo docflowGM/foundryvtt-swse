@@ -955,7 +955,10 @@ export class TransactionEngine {
       resaleCredit = 0,
       reason = '',
       transactionContext = 'owned-customization',
-      audit = {}
+      audit = {},
+      // Optional domain postcondition: (assetActor, walletActor) => {ok, reason}|Promise. A failed or throwing
+      // verdict rolls both actors back through the same verified restore as any mechanical failure.
+      verifyAsset = null
     } = context;
 
     const {
@@ -1124,6 +1127,18 @@ export class TransactionEngine {
         return { success: false, indeterminate: true, transactionId, error: `Customization could not be verified: expected ${creditsAfter} credits after the charge, found ${observedWallet}. Check the actor's credits and the asset before retrying.`, evidence: { creditsBefore, expectedCredits: creditsAfter, observedCredits: observedWallet } };
       }
 
+      // Domain postcondition (e.g. the intended installation ledger actually persisted). A charge alone is not success.
+      if (typeof verifyAsset === 'function') {
+        let verdict;
+        try { verdict = await verifyAsset(targetAsset, walletActor); }
+        catch (verifyError) { verdict = { ok: false, reason: `verification threw: ${verifyError?.message ?? verifyError}` }; }
+        if (!verdict?.ok) {
+          const failure = new Error(`Customization postcondition failed: ${verdict?.reason ?? 'the intended state was not observed'}`);
+          failure.verificationFailed = true;
+          throw failure;
+        }
+      }
+
       // Owner ruling Q4 (TI-2): completion hooks are non-transactional. Once the customization is mechanically committed and verified, a failing listener
       // is reported as `presentationError` and never reverses it (no snapshot restore). Mechanical / persistence failures above still roll back both actors.
       const presentationError = this.#emitCommitted('swseAssetCustomizationTransactionComplete', () => ({
@@ -1159,11 +1174,11 @@ export class TransactionEngine {
         if (walletSnapshot) {restores.push(await this.#restoreVerified(walletActor, walletSnapshot));}
         if (restores.some((r) => !r.restored)) {
           swseLogger.error('TransactionEngine: Asset customization rollback failed', { transactionId, error: restores.find((r) => !r.restored)?.error?.message });
-          return { success: false, transactionId, rollbackFailed: true, error: `Asset customization failed and rollback failed: ${error.message}` };
+          return { success: false, transactionId, rollbackFailed: true, ...(error.verificationFailed ? { verificationFailed: true } : {}), error: `Asset customization failed and rollback failed: ${error.message}` };
         }
       }
 
-      return { success: false, transactionId, error: error.message };
+      return { success: false, transactionId, ...(error.verificationFailed ? { verificationFailed: true, rolledBack: true } : {}), error: error.message };
     } finally {
       this._mutationLocks.delete(lockKey);
     }

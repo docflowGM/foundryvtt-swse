@@ -212,7 +212,16 @@ export class VehicleInstallationService {
     let tx;
     try {
       tx = await TransactionEngine.executeAssetCustomizationTransaction({
-        actor: ownerActor, assetActor: vehicle, cost, resaleCredit: 0, assetMutationPlan: { set }, reason, audit
+        actor: ownerActor, assetActor: vehicle, cost, resaleCredit: 0, assetMutationPlan: { set }, reason, audit,
+        // A charge is not success: the jobs store (and ledger, when written) actually stored on the vehicle must be
+        // what this commit intended, otherwise both actors are restored by the transaction's verified rollback.
+        verifyAsset: (asset) => {
+          for (const [path, intended] of Object.entries(set)) {
+            const stored = path.split('.').reduce((node, key) => (node == null ? undefined : node[key]), asset);
+            if (JSON.stringify(stored ?? null) !== JSON.stringify(intended ?? null)) return { ok: false, reason: `${path} was not persisted as intended` };
+          }
+          return { ok: true };
+        }
       });
     } finally { clearLedgerWrite(vehicle.id); }
     return tx;

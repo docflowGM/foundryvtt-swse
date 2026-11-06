@@ -24,6 +24,7 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
 import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId, resolveDroidPartQuoteDetailed, collectInstalledComponentEvidence, findConfirmedHostInstance } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { verifyDroidLedgerMatchesIntent, verifyItemsDeleted } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-postcondition.js';
 import { authorizePayer } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { evaluateInstallationEligibility } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-eligibility.js';
@@ -729,6 +730,11 @@ export class DroidCustomizationEngine {
         resaleCredit: Math.max(0, -netCost),
         transactionContext: 'owned-customization',
         reason: 'Droid customization',
+        // The charge is not success: the intended ledger must actually be on the asset afterwards.
+        verifyAsset: (asset) => {
+          const ledger = verifyDroidLedgerMatchesIntent(asset?.system?.installedSystems, installedSystems);
+          return ledger.ok ? verifyItemsDeleted(asset, itemIdsToDelete) : ledger;
+        },
         audit: {
           source: 'droid-customization',
           systemsAdded: appliedAdded,
@@ -739,7 +745,13 @@ export class DroidCustomizationEngine {
       }, { source: 'DroidCustomizationEngine.applyDroidCustomization', validate: true, rederive: true });
 
       if (!txn?.success) {
-        return { success: false, error: txn?.error ?? 'Customization transaction failed' };
+        // Keep the commerce authority's honest outcome (verification failure, verified rollback, failed
+        // rollback, indeterminate, refusal) instead of flattening it into a bare error string.
+        const outcome = {};
+        for (const flag of ['verificationFailed', 'rolledBack', 'rollbackFailed', 'indeterminate', 'refused']) {
+          if (txn?.[flag] !== undefined) outcome[flag] = txn[flag];
+        }
+        return { success: false, error: txn?.error ?? 'Customization transaction failed', ...outcome };
       }
 
       return {
