@@ -68,7 +68,7 @@ test('REAL RECORDS: the printed Payload line is attached to the group; the one u
 
 test('COVERAGE NEVER REGRESSES: the canonical executable count is unchanged and GM configuration is still reported apart', () => {
   const c = JSON.parse(readFileSync('data/audits/vehicles/stock-weapon-coverage.json', 'utf8'));
-  assert.equal(c.totals.offlineExecutableGroups, 530, '528 + the two finite-ammunition groups whose printed payload, launcher and launcher count establish a complete family');
+  assert.equal(c.totals.offlineExecutableGroups, 539, '528 + the two finite-ammunition groups whose printed payload, launcher and launcher count establish a complete family + nine tractor-beam groups whose grapple modifier is printed in a spelling the gate now reads (p58)');
   assert.equal(c.totals.groups, 846);
   assert.ok(c.totals.gmConfigurableGroups >= 90);
   assert.equal(c.totals.liveVerifiedVehicles, 0);

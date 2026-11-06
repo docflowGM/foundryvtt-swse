@@ -4,13 +4,13 @@
  "totals": {
   "vehicles": 429,
   "groups": 846,
-  "sourceVerifiedGroups": 769,
-  "offlineExecutableGroups": 530,
+  "sourceVerifiedGroups": 781,
+  "offlineExecutableGroups": 539,
   "vehiclesWithOfflineExecutableGroup": 332,
-  "vehiclesAllGroupsExecutable": 170,
+  "vehiclesAllGroupsExecutable": 174,
   "outcomes": {
-   "SOURCE_EVIDENCE_REQUIRED": 95,
-   "CANONICAL_EXECUTABLE": 530,
+   "SOURCE_EVIDENCE_REQUIRED": 86,
+   "CANONICAL_EXECUTABLE": 539,
    "IMPLEMENTATION_REQUIRED": 164,
    "RULES_DECISION_REQUIRED": 57
   },
@@ -18,24 +18,24 @@
   "armedRecordGapVehicles": 4,
   "armedVehicles": 391,
   "armedVehiclesWithExecutableGroup": 332,
-  "armedVehiclesFullyExecutable": 170,
+  "armedVehiclesFullyExecutable": 174,
   "gmConfigurableGroups": 102,
-  "gmBatteryConfigurableGroups": 201,
+  "gmBatteryConfigurableGroups": 207,
   "liveVerifiedVehicles": 0
  },
  "batteries": {
   "printedBatteryGroups": 274,
   "weaponCountPrinted": 2,
-  "executableGroups": 202,
+  "executableGroups": 208,
   "fullBatteryExecutable": 1,
-  "independentWeaponExecutable": 202,
-  "independentWeaponOnly": 201,
+  "independentWeaponExecutable": 208,
+  "independentWeaponOnly": 207,
   "bothModes": 1
  },
  "kinds": {
   "weapon-battery": {
    "groups": 274,
-   "executable": 202
+   "executable": 208
   },
   "fire-linked": {
    "groups": 18,
@@ -75,10 +75,10 @@
   "STOCK_AMMUNITION_LIMITED_UNTRACKED": 167,
   "STOCK_AMMUNITION_PAYLOAD_NOT_PRINTED": 94,
   "STOCK_LAUNCHER_IDENTITY_NOT_ESTABLISHED": 80,
-  "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED": 71,
+  "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED": 65,
   "STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED": 64,
   "STOCK_RANGE_TABLE_NOT_IDENTIFIED": 47,
-  "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD": 43,
+  "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD": 30,
   "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA": 29,
   "STOCK_EVIDENCE_UNMODELED": 26,
   "STOCK_SPECIAL_ATTACK_NOTATION_UNMODELED": 22,
@@ -112,13 +112,13 @@
   "Force Unleashed Campaign Guide": {
    "vehicles": 34,
    "groups": 58,
-   "executableGroups": 37,
+   "executableGroups": 39,
    "vehiclesWithExecutable": 29
   },
   "Galaxy at War": {
    "vehicles": 11,
    "groups": 17,
-   "executableGroups": 11,
+   "executableGroups": 13,
    "vehiclesWithExecutable": 7
   },
   "Galaxy of Intrigue": {
@@ -166,7 +166,7 @@
   "Starships of the Galaxy": {
    "vehicles": 105,
    "groups": 258,
-   "executableGroups": 182,
+   "executableGroups": 187,
    "vehiclesWithExecutable": 97
   },
   "Threats of the Galaxy": {
@@ -6896,7 +6896,7 @@
    "category": "capital-ship",
    "size": "Colossal (cruiser)",
    "groupCount": 4,
-   "sourceVerifiedGroups": 3,
+   "sourceVerifiedGroups": 4,
    "offlineExecutableGroups": 1,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
@@ -7020,7 +7020,7 @@
      "groupKey": "fucg-gladiator-class-star-destroyer-attack-4",
      "label": "tractor beam battery",
      "printedAttackTotal": 8,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [
@@ -7030,7 +7030,7 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
+     "sourceVerified": true,
      "offlineExecutable": false,
      "liveVerified": false,
      "itemReadiness": "NOT_ARMED",
@@ -7046,7 +7046,6 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ],
@@ -7465,9 +7464,9 @@
    "category": "capital-ship",
    "size": "Colossal (cruiser)",
    "groupCount": 2,
-   "sourceVerifiedGroups": 1,
-   "offlineExecutableGroups": 1,
-   "status": "OFFLINE_EXECUTABLE_PARTIAL",
+   "sourceVerifiedGroups": 2,
+   "offlineExecutableGroups": 2,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -7509,7 +7508,7 @@
      "groupKey": "fucg-neutron-star-bulk-cruiser-attack-2",
      "label": "tractor beam",
      "printedAttackTotal": 4,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [],
@@ -7517,19 +7516,19 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "executableModes": [
+      "single"
      ],
-     "outcome": "SOURCE_EVIDENCE_REQUIRED"
+     "capitalShipPenaltyApplies": true,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE"
     }
    ]
   },
@@ -8178,8 +8177,8 @@
    "category": "capital-ship",
    "size": "Colossal (cruiser)",
    "groupCount": 6,
-   "sourceVerifiedGroups": 5,
-   "offlineExecutableGroups": 4,
+   "sourceVerifiedGroups": 6,
+   "offlineExecutableGroups": 5,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
@@ -8318,7 +8317,7 @@
      "groupKey": "fucg-venator-class-star-destroyer-attack-5",
      "label": "tractor beam battery",
      "printedAttackTotal": 9,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [
@@ -8328,26 +8327,25 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "battery": {
       "gunners": 3,
       "weaponCount": null,
       "fullBattery": false,
       "independentWeapon": true
      },
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-      "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
+     "executableModes": [
+      "independent-weapon"
      ],
-     "outcome": "SOURCE_EVIDENCE_REQUIRED",
+     "capitalShipPenaltyApplies": true,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE",
      "gmBatteryConfigurable": true
     },
     {
@@ -8394,7 +8392,7 @@
    "category": "capital-ship",
    "size": "Colossal (cruiser)",
    "groupCount": 4,
-   "sourceVerifiedGroups": 3,
+   "sourceVerifiedGroups": 4,
    "offlineExecutableGroups": 2,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
@@ -8516,7 +8514,7 @@
      "groupKey": "fucg-victory-i-class-star-destroyer-attack-4",
      "label": "tractor beam battery",
      "printedAttackTotal": 14,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [
@@ -8526,7 +8524,7 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
+     "sourceVerified": true,
      "offlineExecutable": false,
      "liveVerified": false,
      "itemReadiness": "NOT_ARMED",
@@ -8542,7 +8540,6 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ],
@@ -8614,9 +8611,9 @@
    "category": "capital-ship",
    "size": "Colossal (frigate)",
    "groupCount": 4,
-   "sourceVerifiedGroups": 3,
-   "offlineExecutableGroups": 3,
-   "status": "OFFLINE_EXECUTABLE_PARTIAL",
+   "sourceVerifiedGroups": 4,
+   "offlineExecutableGroups": 4,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -8729,7 +8726,7 @@
      "groupKey": "gaw-corona-class-armed-transport-source-attack-4",
      "label": "tractor beam battery",
      "printedAttackTotal": 10,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [
@@ -8739,26 +8736,25 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "battery": {
       "gunners": 4,
       "weaponCount": null,
       "fullBattery": false,
       "independentWeapon": true
      },
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-      "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
+     "executableModes": [
+      "independent-weapon"
      ],
-     "outcome": "SOURCE_EVIDENCE_REQUIRED",
+     "capitalShipPenaltyApplies": true,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE",
      "gmBatteryConfigurable": true
     }
    ]
@@ -8969,8 +8965,8 @@
    "category": "space-transport",
    "size": "Colossal",
    "groupCount": 4,
-   "sourceVerifiedGroups": 3,
-   "offlineExecutableGroups": 2,
+   "sourceVerifiedGroups": 4,
+   "offlineExecutableGroups": 3,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
@@ -9066,7 +9062,7 @@
      "groupKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser-source-attack-4",
      "label": "tractor beam",
      "printedAttackTotal": 1,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [],
@@ -9074,19 +9070,19 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "pilot",
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "pilot station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "executableModes": [
+      "single"
      ],
-     "outcome": "SOURCE_EVIDENCE_REQUIRED"
+     "capitalShipPenaltyApplies": false,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE"
     }
    ]
   },
@@ -9657,7 +9653,7 @@
      "groupKey": "jatm-chu-unthor-source-attack-1",
      "label": "tractor beam battery",
      "printedAttackTotal": 8,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [],
@@ -9675,7 +9671,6 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_OPERATOR_IS_A_STATION_BATTERY",
       "STOCK_GROUP_IS_A_WEAPON_BATTERY"
      ],
@@ -22617,8 +22612,8 @@
    "category": "space-station",
    "size": "Colossal (station)",
    "groupCount": 6,
-   "sourceVerifiedGroups": 5,
-   "offlineExecutableGroups": 4,
+   "sourceVerifiedGroups": 6,
+   "offlineExecutableGroups": 5,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
@@ -22796,7 +22791,7 @@
      "groupKey": "sotg-eclipse-group-6",
      "label": "tractor beam battery",
      "printedAttackTotal": 15,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [
@@ -22806,26 +22801,25 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "battery": {
       "gunners": 5,
       "weaponCount": null,
       "fullBattery": false,
       "independentWeapon": true
      },
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-      "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
+     "executableModes": [
+      "independent-weapon"
      ],
-     "outcome": "SOURCE_EVIDENCE_REQUIRED",
+     "capitalShipPenaltyApplies": true,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE",
      "gmBatteryConfigurable": true
     }
    ]
@@ -22893,8 +22887,8 @@
    "category": "space-station",
    "size": "Colossal (station)",
    "groupCount": 5,
-   "sourceVerifiedGroups": 4,
-   "offlineExecutableGroups": 3,
+   "sourceVerifiedGroups": 5,
+   "offlineExecutableGroups": 4,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
@@ -23008,7 +23002,7 @@
      "groupKey": "sotg-fondor-shipyards-super-star-destroyer-group-4",
      "label": "tractor beam battery",
      "printedAttackTotal": 15,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [
@@ -23018,26 +23012,25 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "battery": {
       "gunners": 5,
       "weaponCount": null,
       "fullBattery": false,
       "independentWeapon": true
      },
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-      "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
+     "executableModes": [
+      "independent-weapon"
      ],
-     "outcome": "SOURCE_EVIDENCE_REQUIRED",
+     "capitalShipPenaltyApplies": true,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE",
      "gmBatteryConfigurable": true
     },
     {
@@ -25736,9 +25729,9 @@
    "category": "capital-ship",
    "size": "Colossal (frigate)",
    "groupCount": 3,
-   "sourceVerifiedGroups": 2,
-   "offlineExecutableGroups": 2,
-   "status": "OFFLINE_EXECUTABLE_PARTIAL",
+   "sourceVerifiedGroups": 3,
+   "offlineExecutableGroups": 3,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -25815,7 +25808,7 @@
      "groupKey": "sotg-kuat-drive-yards-nebulon-b-frigate-group-3",
      "label": "tractor beam",
      "printedAttackTotal": 4,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [],
@@ -25823,19 +25816,19 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD"
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
+     "executableModes": [
+      "single"
      ],
-     "outcome": "SOURCE_EVIDENCE_REQUIRED"
+     "capitalShipPenaltyApplies": true,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE"
     }
    ]
   },
@@ -26306,9 +26299,9 @@
    "category": "capital-ship",
    "size": "Colossal (frigate)",
    "groupCount": 4,
-   "sourceVerifiedGroups": 3,
-   "offlineExecutableGroups": 3,
-   "status": "OFFLINE_EXECUTABLE_PARTIAL",
+   "sourceVerifiedGroups": 4,
+   "offlineExecutableGroups": 4,
+   "status": "OFFLINE_EXECUTABLE_ALL_GROUPS",
    "liveVerified": false,
    "groups": [
     {
@@ -26421,7 +26414,7 @@
      "groupKey": "sotg-loronar-corporation-strike-class-medium-cruiser-group-4",
      "label": "tractor beam battery",
      "printedAttackTotal": 13,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [
@@ -26431,26 +26424,25 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "battery": {
       "gunners": 5,
       "weaponCount": null,
       "fullBattery": false,
       "independentWeapon": true
      },
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-      "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
+     "executableModes": [
+      "independent-weapon"
      ],
-     "outcome": "SOURCE_EVIDENCE_REQUIRED",
+     "capitalShipPenaltyApplies": true,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE",
      "gmBatteryConfigurable": true
     }
    ]
@@ -26463,8 +26455,8 @@
    "category": "space-station",
    "size": "Colossal (station)",
    "groupCount": 6,
-   "sourceVerifiedGroups": 5,
-   "offlineExecutableGroups": 4,
+   "sourceVerifiedGroups": 6,
+   "offlineExecutableGroups": 5,
    "status": "OFFLINE_EXECUTABLE_PARTIAL",
    "liveVerified": false,
    "groups": [
@@ -26613,7 +26605,7 @@
      "groupKey": "sotg-lusankya-group-5",
      "label": "tractor beam battery",
      "printedAttackTotal": 15,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [
@@ -26623,26 +26615,25 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
-     "offlineExecutable": false,
+     "sourceVerified": true,
+     "offlineExecutable": true,
      "liveVerified": false,
-     "itemReadiness": "NOT_ARMED",
-     "crewReadiness": "NOT_APPLICABLE",
-     "attackReadiness": "REFUSED",
-     "damageReadiness": "REFUSED",
+     "itemReadiness": "ARMED_AT_IMPORT",
+     "crewReadiness": "gunner station (generic or assigned crew)",
+     "attackReadiness": "OFFLINE_EXECUTABLE",
+     "damageReadiness": "OFFLINE_EXECUTABLE",
      "battery": {
       "gunners": 5,
       "weaponCount": null,
       "fullBattery": false,
       "independentWeapon": true
      },
-     "executableModes": [],
-     "capitalShipPenaltyApplies": false,
-     "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
-      "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED"
+     "executableModes": [
+      "independent-weapon"
      ],
-     "outcome": "SOURCE_EVIDENCE_REQUIRED",
+     "capitalShipPenaltyApplies": true,
+     "refusals": [],
+     "outcome": "CANONICAL_EXECUTABLE",
      "gmBatteryConfigurable": true
     },
     {
@@ -27266,7 +27257,7 @@
    "category": "capital-ship",
    "size": "Colossal (cruiser)",
    "groupCount": 5,
-   "sourceVerifiedGroups": 4,
+   "sourceVerifiedGroups": 5,
    "offlineExecutableGroups": 0,
    "status": "NO_EXECUTABLE_STOCK_GROUP",
    "liveVerified": false,
@@ -27384,7 +27375,7 @@
      "groupKey": "sotg-nebula-class-star-destroyer-group-4",
      "label": "tractor beam battery",
      "printedAttackTotal": 16,
-     "printedDamage": null,
+     "printedDamage": "",
      "damageType": null,
      "payloadCount": null,
      "kinds": [
@@ -27394,7 +27385,7 @@
      "scaleRestriction": null,
      "area": null,
      "operator": "gunner",
-     "sourceVerified": false,
+     "sourceVerified": true,
      "offlineExecutable": false,
      "liveVerified": false,
      "itemReadiness": "NOT_ARMED",
@@ -27410,7 +27401,6 @@
      "executableModes": [],
      "capitalShipPenaltyApplies": false,
      "refusals": [
-      "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD",
       "STOCK_BATTERY_WEAPON_COUNT_NOT_STATED",
       "STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA"
      ],

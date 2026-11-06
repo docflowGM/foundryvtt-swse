@@ -132,7 +132,10 @@ export function parseStockFiringGroup(group, { gmWeaponCount = null, recordPaylo
   // A tractor beam deals no damage ("Instead of damaging a vehicle's hit points, tractor beams prevent a vehicle from escaping", Core, Tractor
   // Beams): a printed designation that names a tractor beam AND a damage line that prints none is the source stating there is no damage.
   const tractorDesignation = rangeSlugFromPrintedDesignation(group?.label) === 'tractor-beams';
-  const printsNoDamage = /(?:printed damage|published damage|damage)\s*:?\s*(?:—|–|none|n\/a)(?![\w])/i.test(notes) || (!/damage/i.test(notes));
+  // A tractor beam prints a grapple modifier where other weapons print dice. The records write that one fact in four spellings: "damage: — (grapple +N)",
+  // "damage - (grapple +N)" (ASCII hyphen), "damage grapple +N" and "damage: none". Only the DAMAGE TERM position is read, and only for a tractor designation
+  // (see tractorDesignation below); a hyphen that begins a number (a flat damage penalty) is not the dash.
+  const printsNoDamage = /(?:printed damage|published damage|damage)\s*:?\s*(?:—|–|-(?=\s|\()|none|n\/a|grapple\s*[+-]?\d+)(?![\w])/i.test(notes) || (!/damage/i.test(notes));
   if (!d && tractorDesignation && printsNoDamage) { out.damage = { dice: 0, die: 0, bonus: 0, multiplier: 1, formula: null, raw: '', suffix: '', none: true }; out.tractorBeam = true;
     const g = /grapple\s*([+-]\d+)/i.exec(notes); if (g) out.tractorGrapple = Number(g[1]); }
   else if (!d) reasons.push('STOCK_DAMAGE_NOT_PRINTED_IN_RECORD');

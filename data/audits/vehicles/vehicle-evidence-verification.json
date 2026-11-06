@@ -74,7 +74,7 @@
     "groups": 57,
     "vehiclesGainingAnyGroup": 57,
     "vehiclesGainingFirstExecutableGroup": 3,
-    "vehiclesBecomingFullyExecutable": 50
+    "vehiclesBecomingFullyExecutable": 52
    }
   },
   "publishedRules": [
@@ -4376,8 +4376,8 @@
   },
   "unlock": {
    "ifEveryPrintedTotalAccepted": {
-    "groups": 18,
-    "vehiclesGainingAnyGroup": 7,
+    "groups": 21,
+    "vehiclesGainingAnyGroup": 8,
     "vehiclesGainingFirstExecutableGroup": 4,
     "vehiclesBecomingFullyExecutable": 2
    },
@@ -4388,8 +4388,8 @@
     "vehiclesBecomingFullyExecutable": 0
    },
    "needingARulingAfterSourceCorrection": {
-    "groups": 8,
-    "vehiclesGainingAnyGroup": 4,
+    "groups": 11,
+    "vehiclesGainingAnyGroup": 5,
     "vehiclesGainingFirstExecutableGroup": 2,
     "vehiclesBecomingFullyExecutable": 2
    }
@@ -4584,9 +4584,7 @@
      "residualUsingTextValues": 1
     },
     "crewQuality": "skilled",
-    "otherBlockingCauses": [
-     "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-    ]
+    "otherBlockingCauses": []
    },
    {
     "groupKey": "fucg-victory-i-class-star-destroyer-attack-4",
@@ -4612,9 +4610,7 @@
      "residualUsingTextValues": 4
     },
     "crewQuality": "skilled",
-    "otherBlockingCauses": [
-     "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-    ]
+    "otherBlockingCauses": []
    },
    {
     "groupKey": "kotor-shaadlar-type-troopship-printed-attack-3",
@@ -5094,9 +5090,7 @@
      "residualUsingTextValues": -1
     },
     "crewQuality": "expert",
-    "otherBlockingCauses": [
-     "STOCK_DAMAGE_NOT_PRINTED_IN_RECORD|C"
-    ]
+    "otherBlockingCauses": []
    },
    {
     "groupKey": "sotg-nebula-class-star-destroyer-group-5",
@@ -5423,15 +5417,15 @@
    "ARC_SILENT_IN_TEXT": 12,
    "PAYLOAD_LINE_IN_TEXT_NOT_IN_RECORD": 11,
    "LABEL_EMBEDS_PRINTED_LINE": 16,
-   "EXISTING_MECHANIC_NOT_CONNECTED": 56,
+   "EXISTING_MECHANIC_NOT_CONNECTED": 43,
    "PAYLOAD_PRESENT_BUT_NOT_ATTRIBUTABLE": 66
   },
-  "groupsAffected": 133,
+  "groupsAffected": 121,
   "wouldRunIfRepairedAndNothingElseRemained": {
-   "groups": 41,
-   "vehiclesGainingAnyGroup": 34,
+   "groups": 32,
+   "vehiclesGainingAnyGroup": 25,
    "vehiclesGainingFirstExecutableGroup": 16,
-   "vehiclesBecomingFullyExecutable": 19,
+   "vehiclesBecomingFullyExecutable": 15,
    "note": "conditional on the PDF confirming each proposed correction"
   },
   "defects": [
@@ -6174,28 +6168,6 @@
    },
    {
     "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "fucg-gladiator-class-star-destroyer-attack-4",
-    "vehicleKey": "fucg-gladiator-class-star-destroyer",
-    "vehicle": "Gladiator-class Star Destroyer",
-    "book": "Force Unleashed Campaign Guide",
-    "printedPage": 208,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "fucg-neutron-star-bulk-cruiser-attack-2",
-    "vehicleKey": "fucg-neutron-star-bulk-cruiser",
-    "vehicle": "Neutron Star Bulk Cruiser",
-    "book": "Force Unleashed Campaign Guide",
-    "printedPage": 121,
-    "label": "tractor beam",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
     "groupKey": "fucg-sentinel-class-landing-shuttle-attack-3",
     "vehicleKey": "fucg-sentinel-class-landing-shuttle",
     "vehicle": "Sentinel-class Landing Shuttle",
@@ -6228,17 +6200,6 @@
     "proposedCorrection": "attribute the entry to the group only if the book prints which launcher uses it; otherwise leave for a ruling or GM allocation"
    },
    {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "fucg-venator-class-star-destroyer-attack-5",
-    "vehicleKey": "fucg-venator-class-star-destroyer",
-    "vehicle": "Venator-class Star Destroyer",
-    "book": "Force Unleashed Campaign Guide",
-    "printedPage": 210,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
     "kind": "PAYLOAD_PRESENT_BUT_NOT_ATTRIBUTABLE",
     "groupKey": "fucg-victory-i-class-star-destroyer-attack-3",
     "vehicleKey": "fucg-victory-i-class-star-destroyer",
@@ -6250,28 +6211,6 @@
     "proposedCorrection": "attribute the entry to the group only if the book prints which launcher uses it; otherwise leave for a ruling or GM allocation"
    },
    {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "fucg-victory-i-class-star-destroyer-attack-4",
-    "vehicleKey": "fucg-victory-i-class-star-destroyer",
-    "vehicle": "Victory I-class Star Destroyer",
-    "book": "Force Unleashed Campaign Guide",
-    "printedPage": 211,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "gaw-corona-class-armed-transport-source-attack-4",
-    "vehicleKey": "gaw-corona-class-armed-transport",
-    "vehicle": "Corona-class Armed Transport",
-    "book": "Galaxy at War",
-    "printedPage": 67,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
     "kind": "PAYLOAD_PRESENT_BUT_NOT_ATTRIBUTABLE",
     "groupKey": "gaw-ground-armored-tank-source-attack-2",
     "vehicleKey": "gaw-ground-armored-tank",
@@ -6281,17 +6220,6 @@
     "label": "missile launchers",
     "finding": "record carries 24 missiles; the group label (\"missile launchers\") is not matched by exactly one entry",
     "proposedCorrection": "attribute the entry to the group only if the book prints which launcher uses it; otherwise leave for a ruling or GM allocation"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser-source-attack-4",
-    "vehicleKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
-    "vehicle": "Koensayr ILH-KK Citadel-class Cruiser",
-    "book": "Galaxy at War",
-    "printedPage": 192,
-    "label": "tractor beam",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
    },
    {
     "kind": "PAYLOAD_PRESENT_BUT_NOT_ATTRIBUTABLE",
@@ -6380,17 +6308,6 @@
     "label": "point-defense laser battery",
     "finding": "The record marks the group a weapon battery but the printed operator line does not match the battery form the gate understands (\"N gunners\" / \"battery (N gunners)\").",
     "proposedCorrection": "confirm the printed fact in the PDF and repair the record"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "jatm-chu-unthor-source-attack-1",
-    "vehicleKey": "jatm-chu-unthor",
-    "vehicle": "Chu'unthor",
-    "book": "Jedi Academy Training Manual",
-    "printedPage": 151,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
    },
    {
     "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
@@ -6998,28 +6915,6 @@
     "proposedCorrection": "attribute the entry to the group only if the book prints which launcher uses it; otherwise leave for a ruling or GM allocation"
    },
    {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "sotg-eclipse-group-6",
-    "vehicleKey": "sotg-eclipse",
-    "vehicle": "Eclipse",
-    "book": "Starships of the Galaxy",
-    "printedPage": 139,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "sotg-fondor-shipyards-super-star-destroyer-group-4",
-    "vehicleKey": "sotg-fondor-shipyards-super-star-destroyer",
-    "vehicle": "Fondor Shipyards Super Star Destroyer",
-    "book": "Starships of the Galaxy",
-    "printedPage": 136,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
     "kind": "PAYLOAD_PRESENT_BUT_NOT_ATTRIBUTABLE",
     "groupKey": "sotg-koensayr-manufacturing-btl-58-k-wing-group-5",
     "vehicleKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
@@ -7029,50 +6924,6 @@
     "label": "shieldbuster torpedoes",
     "finding": "record carries 18 protonTorpedoes / 4 concussionMissiles / 6 plasmaTorpedoes; the group label (\"shieldbuster torpedoes\") is not matched by exactly one entry",
     "proposedCorrection": "attribute the entry to the group only if the book prints which launcher uses it; otherwise leave for a ruling or GM allocation"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "sotg-kuat-drive-yards-nebulon-b-frigate-group-3",
-    "vehicleKey": "sotg-kuat-drive-yards-nebulon-b-frigate",
-    "vehicle": "Kuat Drive Yards Nebulon-B Frigate",
-    "book": "Starships of the Galaxy",
-    "printedPage": 120,
-    "label": "tractor beam",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "sotg-loronar-corporation-strike-class-medium-cruiser-group-4",
-    "vehicleKey": "sotg-loronar-corporation-strike-class-medium-cruiser",
-    "vehicle": "Loronar Corporation Strike-class Medium Cruiser",
-    "book": "Starships of the Galaxy",
-    "printedPage": 135,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "sotg-lusankya-group-5",
-    "vehicleKey": "sotg-lusankya",
-    "vehicle": "Lusankya",
-    "book": "Starships of the Galaxy",
-    "printedPage": 138,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
-   },
-   {
-    "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
-    "groupKey": "sotg-nebula-class-star-destroyer-group-4",
-    "vehicleKey": "sotg-nebula-class-star-destroyer",
-    "vehicle": "Nebula-class Star Destroyer",
-    "book": "Starships of the Galaxy",
-    "printedPage": 119,
-    "label": "tractor beam battery",
-    "finding": "A tractor beam group whose notes print a grapple modifier instead of a damage figure. The mechanic is built; only the notation variant is unread.",
-    "proposedCorrection": "engineering: connect the existing mechanic"
    },
    {
     "kind": "EXISTING_MECHANIC_NOT_CONNECTED",
@@ -7631,7 +7482,7 @@
       "groups": 41,
       "vehiclesGainingAnyGroup": 41,
       "vehiclesGainingFirstExecutableGroup": 0,
-      "vehiclesBecomingFullyExecutable": 37
+      "vehiclesBecomingFullyExecutable": 38
      }
     },
     {
@@ -7712,7 +7563,7 @@
     "Not applicable: these are printed figures, not omissions."
    ],
    "needsRuling": [
-    "15 groups whose printed total stays unexplained after the correction (8 would run with no other blocker), plus the Eclipse's conflicting +7 header / +15 row."
+    "15 groups whose printed total stays unexplained after the correction (11 would run with no other blocker), plus the Eclipse's conflicting +7 header / +15 row."
    ],
    "options": [
     {
@@ -7724,8 +7575,8 @@
      "option": 2,
      "text": "Accept the verified printed total as the published generic-crew modifier and record the unexplained residual (labelled \"printed-authority\", not \"reconciled\"). It does not transfer to assigned characters, whose modifier is computed from their own Base Attack and Intelligence.",
      "unlock": {
-      "groups": 8,
-      "vehiclesGainingAnyGroup": 4,
+      "groups": 11,
+      "vehiclesGainingAnyGroup": 5,
       "vehiclesGainingFirstExecutableGroup": 2,
       "vehiclesBecomingFullyExecutable": 2
      }

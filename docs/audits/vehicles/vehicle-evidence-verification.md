@@ -20,7 +20,7 @@ Table 10-2 itself is an image in the corpus, so V100-02 could not be advanced fr
 
 ### Defects that need no ruling
 
-The text pass found **133 blocked groups with an extraction or integration defect** (arc silent in text: 12; payload line in text not in record: 11; label embeds printed line: 16; existing mechanic not connected: 56; payload present but not attributable: 66). If every proposed correction were confirmed in the PDF and nothing else remained, **41 groups** would run (16 vehicles gain a first executable weapon; 19 become fully executable). Conditional; no record was changed.
+The text pass found **121 blocked groups with an extraction or integration defect** (arc silent in text: 12; payload line in text not in record: 11; label embeds printed line: 16; existing mechanic not connected: 43; payload present but not attributable: 66). If every proposed correction were confirmed in the PDF and nothing else remained, **32 groups** would run (16 vehicles gain a first executable weapon; 15 become fully executable). Conditional; no record was changed.
 
 Wider record-vs-text scan of 319 located statblocks: Base Atk differs on **8** vehicles and Intelligence on **10**. A difference can be an OCR error in the text as easily as a record error (for example Int 4 vs 14), so each is a PDF check, not a correction:
 
@@ -76,7 +76,7 @@ Wider record-vs-text scan of 319 located statblocks: Base Atk differs on **8** v
 
 | Option | Description | Conditional unlock |
 |---|---|---|
-| 1 | Project convention STOCK_POOL: the printed Payload is the pool (no magazine, no reload) for stock groups whose launcher count the source does not print. Executes, but is labelled a project convention, never canonical. | 41 groups; 0 vehicles gain a first executable weapon; 37 vehicles become fully executable |
+| 1 | Project convention STOCK_POOL: the printed Payload is the pool (no magazine, no reload) for stock groups whose launcher count the source does not print. Executes, but is labelled a project convention, never canonical. | 41 groups; 0 vehicles gain a first executable weapon; 38 vehicles become fully executable |
 | 2 | Keep requiring a launcher count (source-printed or GM-certified). No change; these groups stay GM-configured. | no canonical unlock |
 | 3 | Both: canonical where a count is printed after the PDF check, STOCK_POOL convention where the source is silent, GM configuration otherwise. | canonical share = the two source-research rows above; convention share = the silent row |
 
@@ -138,14 +138,14 @@ Consequences: Options 2 and 3 only make the range lookup resolve; 39 of the 46 g
 
 **4. Requires a project-owner ruling**
 
-- 15 groups whose printed total stays unexplained after the correction (8 would run with no other blocker), plus the Eclipse's conflicting +7 header / +15 row.
+- 15 groups whose printed total stays unexplained after the correction (11 would run with no other blocker), plus the Eclipse's conflicting +7 header / +15 row.
 
 **5-6. Options, consequences and conditional unlock (after verification)**
 
 | Option | Description | Conditional unlock |
 |---|---|---|
 | 1 | Keep refusing unreconciled printed totals. | no canonical unlock |
-| 2 | Accept the verified printed total as the published generic-crew modifier and record the unexplained residual (labelled "printed-authority", not "reconciled"). It does not transfer to assigned characters, whose modifier is computed from their own Base Attack and Intelligence. | 8 groups; 2 vehicles gain a first executable weapon; 2 vehicles become fully executable |
+| 2 | Accept the verified printed total as the published generic-crew modifier and record the unexplained residual (labelled "printed-authority", not "reconciled"). It does not transfer to assigned characters, whose modifier is computed from their own Base Attack and Intelligence. | 11 groups; 2 vehicles gain a first executable weapon; 2 vehicles become fully executable |
 
 Consequences: Option 2 makes the book's number authoritative without an explaining rule; it must stay labelled so a later rule can replace it.
 
@@ -401,7 +401,7 @@ Residual = printed delta minus battery assistance 2(N-1). "With text values" rep
 - arc silent in text: 12
 - payload line in text not in record: 11
 - label embeds printed line: 16
-- existing mechanic not connected: 56
+- existing mechanic not connected: 43
 - payload present but not attributable: 66
 
 The proposed correction for each is in the JSON (`extractionDefects.defects[]`). The mechanically parsed label decompositions:
