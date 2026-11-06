@@ -278,3 +278,7 @@ Local checks run: `node --check` on both tools; probe executed (results above). 
 ### H. Known limits of this addendum
 
 The probe uses the shim's fake ActorEngine, so wallet deltas prove the engine's returned mutation and net cost, not a live Foundry wallet. Case 6 (repeat) is shown as the second request on the same actor. Legacy `droidSystems.mods` and malformed mirror variants were not probed.
+
+## Owner ruling and F7 closure (clean-break convergence branch)
+
+Owner confirmed: no active users / no legacy Droid Actors to preserve; clean-break convergence authorized; F7 policy: **only confirmed `system.installedSystems` records authorize post-creation Garage removal and resale; no historical mirror exception, no automatic reconciliation.** F7 is closed on `feature/v2-unified-clean-break-convergence` (this audit PR #1116 stays the read-only record). The probe now reports the post-fix behavior (all unconfirmed-evidence cases refused).

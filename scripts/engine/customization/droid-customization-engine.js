@@ -68,6 +68,18 @@ function collectInstalledComponents(actor) {
   return resolution.components.filter(c => c.installed);
 }
 
+/**
+ * CONFIRMED hardware: components whose deciding (highest-precedence) evidence
+ * is a well-formed, installed `system.installedSystems` ledger record. This is
+ * the ONLY evidence that may authorize a removal or a resale credit. Mirror
+ * (`system.droidSystems`), embedded-Item and legacy-mod evidence only means the
+ * hardware is PRESENT: it still blocks a duplicate purchase (see
+ * collectInstalledComponents) but is never sellable (U-0 finding F7).
+ */
+function collectConfirmedComponents(actor) {
+  return collectInstalledComponents(actor).filter(c => c.primarySource?.kind === 'installedLedger');
+}
+
 function collectInstalledDroidPartIds(actor) {
   return new Set(collectInstalledComponents(actor).map(c => c.canonicalId));
 }
@@ -262,6 +274,7 @@ function normalizeDroidCustomizationChangeSet(actor, changeSet = {}) {
 
   const components = collectInstalledComponents(actor);
   const installed = new Set(components.map(c => c.canonicalId));
+  const confirmed = new Set(collectConfirmedComponents(actor).map(c => c.canonicalId));
   const ledger = actor?.system?.installedSystems ?? {};
 
   const singletonAdds = new Map();
@@ -291,8 +304,13 @@ function normalizeDroidCustomizationChangeSet(actor, changeSet = {}) {
       }
       target = { id, instanceId: instance.instanceId, ledgerKey: instance.ledgerKey, hostInstanceId: instance.hostInstanceId };
     } else {
-      if (!installed.has(id)) {
-        return fail(`${humanize(id)} is not currently installed and cannot be removed.`, 'Not installed');
+      if (!confirmed.has(id)) {
+        // F7: present-but-unconfirmed hardware (mirror/Item/legacy only) is
+        // never removable and never earns resale; the Garage does not
+        // manufacture installation records to allow it.
+        return installed.has(id)
+          ? fail(`${humanize(id)} is present on this droid but has no confirmed installation record, so it cannot be removed or sold.`, 'Not confirmed installed')
+          : fail(`${humanize(id)} is not currently installed and cannot be removed.`, 'Not installed');
       }
       const instances = instancesOfPart(ledger, id).filter(i => normalizeDroidPartId(i.partId) === id);
       const unidentified = components.some(c => c.canonicalId === id && !c.instanceId);
