@@ -1,0 +1,295 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "SOTG",
+  "book": "Starships of the Galaxy",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+  "scope": "Selected PDF fields and source-only constraints; not import-ready.",
+  "expectedPublicationClaims": 3,
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SOTG-DROID-001",
+        "printedName": "Baktoid Armor Workshop Vulture-class Starfighter",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Starships of the Galaxy",
+        "bookId": "SOTG",
+        "printedPageStart": 78,
+        "printedPageEnd": 78,
+        "pdfPageStart1Based": 79,
+        "textLineAnchor1Based": 7405,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "publishedDegree": null,
+        "size": "Huge",
+        "rawSize": "Huge starfighter/ground vehicle (walker)",
+        "ruleEntityNature": "vehicle-format-droid",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "starship-scale-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 7
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Model has dual vehicle walker/flight movement; independent droid brain is an optional retrofit, not default.",
+          "Missile and laser rows are vehicle attack groups, not certified individual mount rights."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/classification/publishedDegree": "not-applicable",
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "SOTG-DROID-001-BOUNDARY-1",
+            "statement": "Model has dual vehicle walker/flight movement; independent droid brain is an optional retrofit, not default.",
+            "scope": "SOTG-DROID-001",
+            "source": {
+              "book": "Starships of the Galaxy",
+              "page": 78,
+              "pdfPage1Based": 79,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SOTG-DROID-001"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SOTG-DROID-001-BOUNDARY-2",
+            "statement": "Missile and laser rows are vehicle attack groups, not certified individual mount rights.",
+            "scope": "SOTG-DROID-001",
+            "source": {
+              "book": "Starships of the Galaxy",
+              "page": 78,
+              "pdfPage1Based": 79,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SOTG-DROID-001"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "SOTG-DROID-001:pdf-p78",
+          "SOTG-DROID-001:txt-line-7405"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SOTG-DROID-002",
+        "printedName": "Phlac-Arphocc Automata Industries Droid Tri-Fighter",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Starships of the Galaxy",
+        "bookId": "SOTG",
+        "printedPageStart": 79,
+        "printedPageEnd": 79,
+        "pdfPageStart1Based": 80,
+        "textLineAnchor1Based": 7515,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "publishedDegree": null,
+        "size": "Huge",
+        "rawSize": "Huge starfighter",
+        "ruleEntityNature": "vehicle-format-droid",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "starship-scale-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 9
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Three light laser cannons printed as one attack-group label, not proof of three independently firing mounts."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/classification/publishedDegree": "not-applicable",
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "SOTG-DROID-002-BOUNDARY-1",
+            "statement": "Three light laser cannons printed as one attack-group label, not proof of three independently firing mounts.",
+            "scope": "SOTG-DROID-002",
+            "source": {
+              "book": "Starships of the Galaxy",
+              "page": 79,
+              "pdfPage1Based": 80,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SOTG-DROID-002"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "SOTG-DROID-002:pdf-p79",
+          "SOTG-DROID-002:txt-line-7515"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SOTG-DROID-003",
+        "printedName": "Haor Chall Engineering Scarab-class Starfighter",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Starships of the Galaxy",
+        "bookId": "SOTG",
+        "printedPageStart": 79,
+        "printedPageEnd": 79,
+        "pdfPageStart1Based": 80,
+        "textLineAnchor1Based": 7566,
+        "publicationKind": "vehicle-format-droid"
+      },
+      "classification": {
+        "publishedDegree": null,
+        "size": "Huge",
+        "rawSize": "Huge starfighter",
+        "ruleEntityNature": "vehicle-format-droid",
+        "statblockFormat": "vehicle",
+        "sourceStatblockFormat": "starship-scale-droid",
+        "primaryActorAuthority": "vehicle"
+      },
+      "challenge": {
+        "challengeLevel": 6
+      },
+      "geometry": {},
+      "abilities": {},
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Printed SR20 belongs to starfighter vehicle authority; no unprinted payload or weapon mounts."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/classification/publishedDegree": "not-applicable",
+        "/pcConstruction/heroEligibility": "not-applicable"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "SOTG-DROID-003-BOUNDARY-1",
+            "statement": "Printed SR20 belongs to starfighter vehicle authority; no unprinted payload or weapon mounts.",
+            "scope": "SOTG-DROID-003",
+            "source": {
+              "book": "Starships of the Galaxy",
+              "page": 79,
+              "pdfPage1Based": 80,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SOTG-DROID-003"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "SOTG-DROID-003:pdf-p79",
+          "SOTG-DROID-003:txt-line-7566"
+        ]
+      }
+    }
+  ]
+}

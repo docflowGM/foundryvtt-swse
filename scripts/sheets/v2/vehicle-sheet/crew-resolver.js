@@ -206,19 +206,27 @@ function stationState(station, positions, facts, ownedActors) {
     crew,
     skills,
     skillSummary: skills.labels.length ? skills.labels.join(" / ") : EMPTY,
-    fallback: !assigned ? label(facts.crewQuality, "Crew quality fallback") : null
+    fallback: !assigned ? label(facts.crewQuality, "Crew quality not stated") : null
   };
 }
 
 export function resolveVehicleCrewStations({ system = {}, category = {}, weapons = {}, settings = {} } = {}) {
   const vehicle = object(system);
   const positions = object(vehicle.crewPositions);
-  const ownedActors = array(vehicle.ownedActors);
-  const crewTotal = numberOrNull(vehicle.crew);
+  // Source-backed vehicles: the printed complement is the published crew count (never
+  // parsed from display text or defaulted), crew quality is the published one or
+  // unknown, and the legacy ownedActors station fallback is not consulted.
+  const sourced = typeof vehicle.vehicleSourceEntryKey === "string" && vehicle.vehicleSourceEntryKey !== "";
+  const ownedActors = sourced ? [] : array(vehicle.ownedActors);
+  const crewTotal = sourced
+    ? (Number.isFinite(vehicle.vehicleCrewCount) ? vehicle.vehicleCrewCount : null)
+    : numberOrNull(vehicle.crew);
   const passengerTotal = numberOrNull(vehicle.passengers);
   const baseStations = [...BASE_STATIONS, ...weaponStations(vehicle, weapons), ...customStations(vehicle)];
   const facts = {
-    crewQuality: firstPresent(vehicle.crewQuality, vehicle.crew_quality, "standard"),
+    crewQuality: sourced
+      ? firstPresent(vehicle.vehicleCrewQuality)
+      : firstPresent(vehicle.crewQuality, vehicle.crew_quality, "standard"),
     hasShields: hasResource(vehicle, "shields", "shield", "sr"),
     hasSubsystems: Boolean(vehicle.subsystems || vehicle.systems || vehicle.power),
     enhancedEngineer: Boolean(settings.enhancedEngineer),

@@ -1,0 +1,19 @@
+{
+  "schema": "swse.droid.threats.local-validation/0.1",
+  "status": "PASS",
+  "scope": "LOCAL_TYPED_SEMANTIC_AND_SELECTED_PDF_FIELD_CHECKS_ONLY",
+  "errors": [],
+  "counts": {
+    "publicationClaims": 29,
+    "selectedFieldVisualReviews": 29,
+    "directFieldComparisons": 314,
+    "replicaModelAndNamedIndividual": 2,
+    "standardDroids": 27,
+    "confirmedHeroEligibilityStatements": 24,
+    "mechanicallyCertified": 0
+  },
+  "fullUpstreamJsonSchema202012Validated": false,
+  "foundryRuntimeCertified": false,
+  "sha256Ledger": "efee706b75b9ac55e9f5370bb2a6db53751208f9abae58d837976d5bec0a75ef",
+  "limitations": "Selected printed first-page statistics only; TXT remains search index; full official JSON Schema 2020-12 and V13 execution gates outstanding."
+}

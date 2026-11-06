@@ -1,0 +1,195 @@
+{
+  "schema": "swse.droids.sgd.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "bookId": "SGD",
+  "scope": "Second detailed source-mechanical pass SGD 026-030, printed pages 118-127; non-runtime source evidence only.",
+  "sourcePdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "sourcePdfReview": {
+    "printedPages": [
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127
+    ],
+    "pdfPages1Based": [
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128
+    ],
+    "method": "Rendered pages inspected visually; extracted text used as searchable aid."
+  },
+  "records": [
+    {
+      "sourceEntryKey": "SGD-DROID-026",
+      "printedName": "MK-Series Maintenance Droid",
+      "pages": [
+        118,
+        119
+      ],
+      "actions": [
+        "SGD-DROID-026-ACTION-ISSUE-ROUTINE-COMMAND",
+        "SGD-DROID-026-ACTION-JURY-RIG-REPAIRS",
+        "SGD-DROID-026-ACTION-SHAKE-IT-OFF"
+      ],
+      "variants": [
+        "SGD-DROID-026-VARIANT-SABOTEUR"
+      ],
+      "constraints": [
+        "SGD-DROID-026-CONSTRAINT-PRINTED-DEGREE-CONFLICT",
+        "SGD-DROID-026-CONSTRAINT-TOOL-KIT-APPENDAGES",
+        "SGD-DROID-026-CONSTRAINT-LATERAL-THINKER-FORCE-POINT"
+      ],
+      "additionalConflicts": [],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-027",
+      "printedName": "Model 88-Series Administration Droid",
+      "pages": [
+        120,
+        121
+      ],
+      "actions": [
+        "SGD-DROID-027-ACTION-IMPROVE-ACCESS",
+        "SGD-DROID-027-ACTION-ISSUE-ROUTINE-COMMAND",
+        "SGD-DROID-027-ACTION-SUPERIOR-ANALYSIS",
+        "SGD-DROID-027-ACTION-TIMELY-OBSERVATION"
+      ],
+      "variants": [
+        "SGD-DROID-027-VARIANT-GAMBLERS-FRIEND",
+        "SGD-DROID-027-VARIANT-INDUSTRIAL-SPY"
+      ],
+      "constraints": [
+        "SGD-DROID-027-CONSTRAINT-HEROIC-DEGREE-OVERRIDE",
+        "SGD-DROID-027-CONSTRAINT-ANALYSIS-FAILURE-TRIGGER",
+        "SGD-DROID-027-CONSTRAINT-GAMBLERS-SIGHT"
+      ],
+      "additionalConflicts": [],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-028",
+      "printedName": "PG-5 Gunnery Droid",
+      "pages": [
+        122,
+        123
+      ],
+      "actions": [
+        "SGD-DROID-028-ACTION-BATTERY-FIRE",
+        "SGD-DROID-028-ACTION-IMPROVE-ACCESS",
+        "SGD-DROID-028-ACTION-JURY-RIG",
+        "SGD-DROID-028-ACTION-RECHARGE-SHIELDS",
+        "SGD-DROID-028-ACTION-SENSOR-SWEEP"
+      ],
+      "variants": [
+        "SGD-DROID-028-VARIANT-FIRE-CONTROL-SYSTEM",
+        "SGD-DROID-028-VARIANT-MECHANICS-ASSISTANT",
+        "SGD-DROID-028-VARIANT-SECURITY-SYSTEM"
+      ],
+      "constraints": [
+        "SGD-DROID-028-CONSTRAINT-BATTERY-FIRE-VEHICLE-BOUND",
+        "SGD-DROID-028-CONSTRAINT-FIRST-ENCOUNTER-REPAIR",
+        "SGD-DROID-028-CONSTRAINT-FIRE-CONTROL-REPLACES-TRAIT"
+      ],
+      "additionalConflicts": [],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-029",
+      "printedName": "PLNK-Series Power Droid",
+      "pages": [
+        124,
+        125
+      ],
+      "actions": [
+        "SGD-DROID-029-ACTION-AMMO-SOURCE",
+        "SGD-DROID-029-ACTION-FAILSAFE-WITHDRAWAL",
+        "SGD-DROID-029-ACTION-POWER-CHARGE",
+        "SGD-DROID-029-ACTION-RECHARGE-SHIELDS",
+        "SGD-DROID-029-ACTION-REGULATE-POWER"
+      ],
+      "variants": [
+        "SGD-DROID-029-VARIANT-OBSERVATION-PLUNK",
+        "SGD-DROID-029-VARIANT-SUPERCHARGER"
+      ],
+      "constraints": [
+        "SGD-DROID-029-CONSTRAINT-SHIELD-RESTORATION-CONFLICT",
+        "SGD-DROID-029-CONSTRAINT-EXTERNAL-POWER-RESOURCE",
+        "SGD-DROID-029-CONSTRAINT-SUPERCHARGER-WEAR",
+        "SGD-DROID-029-CONSTRAINT-HERO-PROHIBITION"
+      ],
+      "additionalConflicts": [
+        "SGD-029-RECHARGE-SHIELDS-RATING-CONFLICT"
+      ],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-030",
+      "printedName": "RO-D-Series Droid",
+      "pages": [
+        126,
+        127
+      ],
+      "actions": [
+        "SGD-DROID-030-ACTION-INSTANT-HELP",
+        "SGD-DROID-030-ACTION-PIN",
+        "SGD-DROID-030-ACTION-QUICK-FIX",
+        "SGD-DROID-030-ACTION-STUN-BATON"
+      ],
+      "variants": [
+        "SGD-DROID-030-VARIANT-ESCAPE-CAPSULE",
+        "SGD-DROID-030-VARIANT-ONE-DROID-BAND"
+      ],
+      "constraints": [
+        "SGD-DROID-030-CONSTRAINT-QUICK-FIX-COST-CONFLICT",
+        "SGD-DROID-030-CONSTRAINT-ESCAPE-CAPSULE-PHYSICAL",
+        "SGD-DROID-030-CONSTRAINT-CARRIED-VS-INSTALLED"
+      ],
+      "additionalConflicts": [
+        "SGD-030-QUICK-FIX-ACTION-CONFLICT"
+      ],
+      "mechanicalStatus": "partial",
+      "runtimeStatus": "not-tested"
+    }
+  ],
+  "totals": {
+    "models": 5,
+    "protocolActions": 21,
+    "optionalVariants": 10,
+    "constraints": 16,
+    "heroicRoutes": 4,
+    "newUnresolvedConflicts": 2,
+    "sourceHydrated": 46,
+    "strictMechanicalCertifications": 0,
+    "printedDegreeConflictPreserved": 1
+  },
+  "checks": {
+    "identityNamePageParity": "PASS",
+    "sourceOnlyClaimPresence": "PASS",
+    "newClaimCitationPagePresence": "PASS",
+    "preservedMKDegreeConflict": "PASS",
+    "allPrintedAttacksSourceOnly": "PASS",
+    "strictCertifiedZero": "PASS",
+    "originalPythonDraft202012": "NOT RUN",
+    "foundryRuntime": "NOT RUN",
+    "productionMutations": 0
+  },
+  "next": "SGD-DROID-031–035 published source-mechanical second pass; pending canonical identity/weapon/mount, resource, feat and talent certification."
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "swse.droid.local.crossbook-regression-2026-10-29/0.1",
+  "scope": "This run, five local semantic validators PASS; mutation suites older than GAW are not all re-run to completion. No upstream schema or live Foundry tests.",
+  "semanticValidators": {
+    "sgd": "PASS",
+    "clone": "PASS",
+    "threats": "PASS",
+    "kotor": "PASS",
+    "gaw": "PASS"
+  },
+  "mutationRegressionTests": {
+    "sgd": {
+      "passed": 14,
+      "total": 14,
+      "rerunThisCheckpoint": true
+    },
+    "clone": {
+      "passed": 22,
+      "total": 22,
+      "rerunThisCheckpoint": true
+    },
+    "threats": {
+      "priorCheckpointPassed": 17,
+      "rerunThisCheckpoint": "INCOMPLETE_TIMEOUT"
+    },
+    "kotor": {
+      "priorCheckpointPassed": 26,
+      "rerunThisCheckpoint": "NOT_RUN_AFTER_TIMEOUT"
+    },
+    "gaw": {
+      "passed": 38,
+      "total": 38,
+      "rerunThisCheckpoint": true
+    }
+  },
+  "fullUpstreamJsonSchema202012Validated": false,
+  "foundryV13RuntimeCertified": false,
+  "gitHubWriteAuthorization": false,
+  "validatedSourceClaims": 161,
+  "selectedPdfFieldReviews": 161,
+  "independentlyMechanicallyCertifiedClaims": 0
+}

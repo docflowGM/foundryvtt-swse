@@ -641,8 +641,8 @@ export class HomeSurfaceService {
   }
 
   static _buildVehicleAppTiles(actor, holonetSummary) {
-    const hullValue = asNumber(actor?.system?.hull?.value, asNumber(actor?.system?.hp?.value, 0));
-    const hullMax = asNumber(actor?.system?.hull?.max, asNumber(actor?.system?.hp?.max, 0));
+    const hullValue = asNumber(actor?.system?.hp?.value, asNumber(actor?.system?.hull?.value, 0));
+    const hullMax = asNumber(actor?.system?.hp?.max, asNumber(actor?.system?.hull?.max, 0));
     const shieldValue = asNumber(actor?.system?.shields?.value, asNumber(actor?.system?.shield?.value, 0));
     const cargoItems = asArray(actor?.items).filter(item => String(item?.type ?? '').toLowerCase() === 'equipment');
     const crewEntries = asArray(actor?.system?.crew?.members ?? actor?.system?.crewMembers ?? actor?.system?.ownedActors);
@@ -1120,8 +1120,8 @@ export class HomeSurfaceService {
       const classDisplay = vehicleSystemLabel(actor);
       const species = vehicleRoleLabel(actor);
       const affiliation = actor.system?.manufacturer || actor.system?.owner || actor.system?.affiliation || 'Independent Vessel';
-      const hpCurrent = asNumber(actor.system?.hull?.value, asNumber(actor.system?.hp?.value, asNumber(actor.system?.hitPoints?.value, 0)));
-      const hpMax = asNumber(actor.system?.hull?.max, asNumber(actor.system?.hp?.max, asNumber(actor.system?.hitPoints?.max, 0)));
+      const hpCurrent = asNumber(actor.system?.hp?.value, asNumber(actor.system?.hitPoints?.value, asNumber(actor.system?.hull?.value, 0)));
+      const hpMax = asNumber(actor.system?.hp?.max, asNumber(actor.system?.hitPoints?.max, asNumber(actor.system?.hull?.max, 0)));
       const hpPercent = hpMax > 0 ? Math.max(0, Math.min(100, (hpCurrent / hpMax) * 100)) : 0;
       const fpCurrent = asNumber(actor.system?.shields?.value, asNumber(actor.system?.shield?.value, 0));
       const fpMax = asNumber(actor.system?.shields?.max, asNumber(actor.system?.shield?.max, 0));

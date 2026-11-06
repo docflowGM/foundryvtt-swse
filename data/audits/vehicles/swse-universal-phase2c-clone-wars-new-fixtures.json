@@ -1,0 +1,1313 @@
+{
+  "schema": "swse.vehicle.universal.phase2c.new-source-fixtures.v1",
+  "source": "Clone Wars Campaign Guide",
+  "basis": "Printed original PDF pages 138, 163-170, 198-203, 219-220 cross-referenced against DJVU text",
+  "authority": "Printed statblocks, not inferred actor defaults; alternate configurations remain one publication identity",
+  "records": [
+    {
+      "c": 1,
+      "init": 11,
+      "per": 5,
+      "ref": 17,
+      "ff": 10,
+      "fort": 13,
+      "ar": 1,
+      "hp": 30,
+      "dr": 5,
+      "dt": 18,
+      "mv": 12,
+      "km": 800,
+      "sp": [
+        1,
+        1
+      ],
+      "bab": 0,
+      "grp": 8,
+      "ab": [
+        16,
+        24,
+        14
+      ],
+      "crew": "1 (normal)",
+      "pass": 0,
+      "cargo": "3 kg",
+      "cons": "none",
+      "price": 10000,
+      "used": 2000,
+      "skills": "Initiative +11, Mechanics +5, Perception +5, Pilot +11",
+      "note": "Drop-deployment panel: pilot may drop from vehicle while it switches to autopilot; requires rule typing.",
+      "weapons": [],
+      "sourceEntryKey": "cw-daystar-dc0052-intergalactic-speeder",
+      "printedPage": 138,
+      "pdfPhysicalPage": 139,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 10,
+      "init": 7,
+      "per": 8,
+      "ref": 15,
+      "ff": 14,
+      "fort": 23,
+      "ar": 9,
+      "hp": 180,
+      "dr": 15,
+      "dt": 43,
+      "mv": 6,
+      "km": 60,
+      "sp": [
+        4,
+        4
+      ],
+      "bab": 5,
+      "grp": 33,
+      "ab": [
+        36,
+        12,
+        14
+      ],
+      "crew": "3 (expert)",
+      "pass": 0,
+      "cargo": "200 kg",
+      "cons": "2 days",
+      "price": "not-for-sale",
+      "skills": "Initiative +4, Mechanics +8, Perception +8, Pilot +4, Use Computer +8",
+      "payload": "50 mass-driver microprojectiles",
+      "ranged": "mass-driver cannon +7 AND heavy blaster cannon +7 AND medium laser cannon +9",
+      "weapons": [
+        [
+          "mass-driver cannon",
+          "gunner",
+          7,
+          "6d10x2"
+        ],
+        [
+          "heavy blaster cannon",
+          "gunner",
+          7,
+          "5d10x2; +2 autofire"
+        ],
+        [
+          "medium laser cannon",
+          "pilot",
+          9,
+          "3d10x2; +4 autofire"
+        ]
+      ],
+      "note": "Init header +7 differs from printed Initiative skill +4; preserve both.",
+      "sourceEntryKey": "cw-all-terrain-attack-pod-at-ap",
+      "printedPage": 163,
+      "pdfPhysicalPage": 164,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 6,
+      "init": 8,
+      "per": 8,
+      "ref": 14,
+      "ff": 13,
+      "fort": 18,
+      "ar": 4,
+      "hp": 80,
+      "dr": 5,
+      "sr": 5,
+      "dt": 22,
+      "mv": 4,
+      "km": 25,
+      "sp": [
+        2,
+        2
+      ],
+      "bab": 5,
+      "grp": 12,
+      "ab": [
+        26,
+        12,
+        12
+      ],
+      "crew": "1 (expert)",
+      "pass": 0,
+      "cargo": "12 kg",
+      "cons": "2 days",
+      "price": 14700,
+      "used": 2200,
+      "skills": "Initiative +8, Mechanics +8, Perception +8, Pilot +8, Use Computer +8",
+      "payload": "18 proton grenades",
+      "ranged": "double laser cannon +8 OR twin proton grenade launchers +8",
+      "weapons": [
+        [
+          "double laser cannon",
+          "pilot",
+          6,
+          "4d10x2; +1 autofire"
+        ],
+        [
+          "twin proton grenade launchers",
+          "pilot",
+          6,
+          "8d6; expend 2 grenades; 4-square burst"
+        ]
+      ],
+      "note": "Printed ranged header +8 but individual weapon rows +6; retain both.",
+      "sourceEntryKey": "cw-all-terrain-experimental-transport-at-xt",
+      "printedPage": 163,
+      "pdfPhysicalPage": 164,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 5,
+      "init": 8,
+      "per": 6,
+      "ref": 16,
+      "ff": 13,
+      "fort": 16,
+      "ar": 4,
+      "hp": 60,
+      "dr": 5,
+      "dt": 21,
+      "mv": 8,
+      "km": 70,
+      "sp": [
+        2,
+        2
+      ],
+      "bab": 2,
+      "grp": 13,
+      "ab": [
+        22,
+        16,
+        12
+      ],
+      "crew": "1 (skilled)",
+      "pass": 0,
+      "cargo": "20 kg",
+      "cons": "1 day",
+      "price": 40000,
+      "used": 24000,
+      "skills": "Initiative +8, Mechanics +6, Perception +6, Pilot +8, Use Computer +6",
+      "ranged": "repeating blaster cannon +5",
+      "weapons": [
+        [
+          "repeating blaster cannon",
+          "pilot",
+          5,
+          "3d10x2; autofire +0"
+        ]
+      ],
+      "note": "Civilian/police grenade mortar variant described but not a second complete statblock.",
+      "sourceEntryKey": "cw-all-terrain-recon-transport-at-rt",
+      "printedPage": 164,
+      "pdfPhysicalPage": 165,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 12,
+      "init": 3,
+      "per": 8,
+      "ref": 14,
+      "ff": 14,
+      "fort": 26,
+      "ar": 9,
+      "hp": 240,
+      "dr": 15,
+      "dt": 46,
+      "mv": 4,
+      "climb": 2,
+      "km": 60,
+      "sp": [
+        6,
+        4
+      ],
+      "bab": 5,
+      "grp": 41,
+      "ab": [
+        42,
+        10,
+        14
+      ],
+      "crew": "7 (expert)",
+      "pass": 38,
+      "cargo": "10 tons",
+      "cons": "15 days",
+      "price": "not-for-sale",
+      "skills": "Initiative +3, Mechanics +8, Perception +8, Pilot +3, Use Computer +8",
+      "payload": "48 heavy concussion warheads",
+      "ranged": "rail cannon +7 AND 6 medium laser cannons +7",
+      "weapons": [
+        [
+          "rail cannon",
+          "gunner",
+          7,
+          "5d10x5, heavy concussion warhead"
+        ],
+        [
+          "medium laser cannons",
+          "gunners",
+          7,
+          "2d10x2; +2 autofire"
+        ]
+      ],
+      "note": "DR 30 against ion damage, otherwise DR 15; magnetic grapplers allow climb; 6 printed laser cannon attack rows not proof of six physical mounts.",
+      "sourceEntryKey": "cw-all-terrain-tactical-enforcer-at-te",
+      "printedPage": 165,
+      "pdfPhysicalPage": 166,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 5,
+      "init": 11,
+      "per": 8,
+      "ref": 14,
+      "ff": 10,
+      "fort": 14,
+      "ar": 1,
+      "hp": 45,
+      "dr": 5,
+      "dt": 19,
+      "mv": 12,
+      "km": 520,
+      "sp": [
+        2,
+        2
+      ],
+      "bab": 5,
+      "grp": 14,
+      "ab": [
+        19,
+        18,
+        12
+      ],
+      "crew": "1 (expert)",
+      "pass": 1,
+      "cargo": "5 kg",
+      "cons": "none",
+      "price": 8300,
+      "used": 1550,
+      "skills": "Initiative +11, Perception +8, Pilot +11",
+      "ranged": "twin light blaster cannons +8",
+      "weapons": [
+        [
+          "twin light blaster cannons",
+          "pilot",
+          8,
+          "5d10; +3 autofire"
+        ]
+      ],
+      "note": "Can operate at high altitude in atmospheric escort.",
+      "sourceEntryKey": "cw-barc-speeder",
+      "printedPage": 165,
+      "pdfPhysicalPage": 166,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 7,
+      "init": 8,
+      "per": 8,
+      "ref": 13,
+      "ff": 11,
+      "fort": 15,
+      "ar": 3,
+      "hp": 50,
+      "dr": 10,
+      "dt": 25,
+      "mv": 8,
+      "km": 100,
+      "sp": [
+        2,
+        2
+      ],
+      "bab": 5,
+      "grp": 15,
+      "ab": [
+        20,
+        14,
+        12
+      ],
+      "crew": "2 (expert)",
+      "pass": 0,
+      "cargo": "55 kg",
+      "cons": "1 day",
+      "price": 11600,
+      "used": 2880,
+      "skills": "Initiative +8, Perception +8, Pilot +8",
+      "ranged": "twin blaster cannons +8 AND twin blaster cannons +6",
+      "weapons": [
+        [
+          "twin blaster cannons",
+          "pilot",
+          8,
+          "4d10x2; +3 autofire"
+        ],
+        [
+          "twin blaster cannons",
+          "gunner",
+          6,
+          "4d10x2; +1 autofire"
+        ]
+      ],
+      "sourceEntryKey": "cw-infantry-support-speeder-platform",
+      "printedPage": 166,
+      "pdfPhysicalPage": 167,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 8,
+      "init": -1,
+      "per": 8,
+      "ref": 14,
+      "ff": 13,
+      "fort": 25,
+      "ar": 13,
+      "hp": 150,
+      "dr": 15,
+      "sr": 15,
+      "dt": 75,
+      "mv": 12,
+      "star": 3,
+      "km": 620,
+      "sp": [
+        6,
+        6
+      ],
+      "bab": 5,
+      "grp": 40,
+      "ab": [
+        40,
+        12,
+        15
+      ],
+      "crew": "1 (expert)",
+      "pass": 0,
+      "cargo": "40 tons",
+      "cons": "3 days",
+      "price": 58000,
+      "used": 42000,
+      "skills": "Initiative -1, Mechanics +8, Perception +8, Pilot -1, Use Computer +8",
+      "ranged": "light laser cannons +9",
+      "weapons": [
+        [
+          "light laser cannons",
+          "pilot",
+          9,
+          "3d10x2; +4 autofire"
+        ]
+      ],
+      "note": "Carried configuration: 1 AT-TE OR 4 AT-XTs OR 1 Republic troop transport OR 1 TX-130 OR 1 forward command center; cargo clamp release as move action.",
+      "sourceEntryKey": "cw-laat-c-carrier",
+      "printedPage": 167,
+      "pdfPhysicalPage": 168,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 4,
+      "init": 6,
+      "per": 6,
+      "ref": 13,
+      "ff": 11,
+      "fort": 15,
+      "ar": 3,
+      "hp": 50,
+      "dr": 5,
+      "dt": 25,
+      "mv": 10,
+      "km": 800,
+      "sp": [
+        3,
+        3
+      ],
+      "bab": 2,
+      "grp": 17,
+      "ab": [
+        20,
+        14,
+        12
+      ],
+      "crew": "2 (skilled)",
+      "pass": 4,
+      "cargo": "1 ton",
+      "cons": "1 day",
+      "price": 24000,
+      "used": 5100,
+      "skills": "Initiative +6, Perception +6, Pilot +6",
+      "weapons": [],
+      "note": "Medical troop transport; no weapon row printed.",
+      "sourceEntryKey": "cw-medlifter-troop-transport",
+      "printedPage": 167,
+      "pdfPhysicalPage": 168,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 8,
+      "init": 0,
+      "per": 8,
+      "ref": 12,
+      "ff": 10,
+      "fort": 22,
+      "ar": 10,
+      "hp": 120,
+      "dr": 15,
+      "dt": 72,
+      "mv": 12,
+      "km": 580,
+      "sp": [
+        6,
+        6
+      ],
+      "bab": 5,
+      "grp": 37,
+      "ab": [
+        34,
+        14,
+        16
+      ],
+      "crew": "2 (expert)",
+      "pass": 12,
+      "cargo": "3 tons",
+      "cons": "3 days",
+      "price": 42000,
+      "used": 10200,
+      "skills": "Initiative +0, Mechanics +8, Perception +8, Pilot +0",
+      "payload": "12 missiles",
+      "ranged": "laser cannons +10 AND missile launcher +8",
+      "weapons": [
+        [
+          "laser cannons",
+          "pilot",
+          10,
+          "4d10; +5 autofire"
+        ],
+        [
+          "missile launcher",
+          "gunner",
+          8,
+          "6d6, 2-square splash"
+        ]
+      ],
+      "sourceEntryKey": "cw-republic-troop-transport",
+      "printedPage": 168,
+      "pdfPhysicalPage": 169,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 16,
+      "init": -2,
+      "per": 8,
+      "ref": 15,
+      "ff": 15,
+      "fort": 32,
+      "ar": 15,
+      "hp": 360,
+      "dr": 20,
+      "dt": 82,
+      "mv": 4,
+      "km": 35,
+      "sp": [
+        12,
+        12
+      ],
+      "bab": 5,
+      "grp": 47,
+      "ab": [
+        54,
+        10,
+        14
+      ],
+      "crew": "25 (expert)",
+      "pass": 30,
+      "cargo": "500 kg",
+      "cons": "1 week",
+      "price": "not-for-sale",
+      "skills": "Initiative -2, Perception +8, Pilot -2",
+      "payload": "48 concussion missiles (SPHA-C only)",
+      "ranged": "SPHA-T heavy turbolaser +7 OR SPHA-I heavy ion cannon +7 OR SPHA-V heavy laser cannon +7 OR SPHA-C heavy missile launcher +7 OR SPHA-M heavy mass-driver cannon +7; 12 repeating blaster cannons +2 in each configuration",
+      "weapons": [
+        [
+          "SPHA-T heavy turbolaser",
+          "gunner",
+          7,
+          "7d10x5"
+        ],
+        [
+          "SPHA-I heavy ion cannon",
+          "gunner",
+          7,
+          "3d10x5 ion"
+        ],
+        [
+          "SPHA-V heavy laser cannon",
+          "gunner",
+          7,
+          "5d10x2"
+        ],
+        [
+          "SPHA-C heavy missile launcher",
+          "gunner",
+          7,
+          "9d10x5"
+        ],
+        [
+          "SPHA-M mass-driver cannon",
+          "gunner",
+          7,
+          "7d10x2"
+        ],
+        [
+          "heavy repeating blaster cannons",
+          "gunners",
+          2,
+          "3d10; autofire only"
+        ]
+      ],
+      "note": "Single source statblock, five mutually exclusive primary gun configurations; do not combine as simultaneous five mounts.",
+      "sourceEntryKey": "cw-self-propelled-heavy-artillery",
+      "printedPage": 168,
+      "pdfPhysicalPage": 169,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 7,
+      "init": 7,
+      "per": 5,
+      "ref": 17,
+      "ff": 13,
+      "fort": 21,
+      "ar": 5,
+      "hp": 120,
+      "dr": 5,
+      "sr": 5,
+      "dt": 31,
+      "mv": 8,
+      "km": 200,
+      "sp": [
+        3,
+        3
+      ],
+      "bab": 0,
+      "grp": 21,
+      "ab": [
+        33,
+        18,
+        14
+      ],
+      "crew": "3 plus optional astromech (normal)",
+      "pass": 2,
+      "cargo": "750 kg",
+      "cons": "1 day",
+      "price": "not-for-sale",
+      "skills": "Initiative +7, Mechanics +5 (+12 with astromech), Perception +5, Pilot +7, Use Computer +5 (+12 with astromech)",
+      "payload": "16 missiles",
+      "ranged": "laser cannons +3 AND twin laser cannons +1 AND missile launcher +1; optional composite beam cannon +1",
+      "weapons": [
+        [
+          "laser cannons",
+          "pilot",
+          3,
+          "5d10x2"
+        ],
+        [
+          "twin medium laser cannons",
+          "copilot",
+          1,
+          "5d10; -4 autofire"
+        ],
+        [
+          "missile launcher",
+          "copilot/gunner",
+          1,
+          "8d6, 4-square splash"
+        ],
+        [
+          "composite beam cannon",
+          "gunner",
+          1,
+          "8d10"
+        ]
+      ],
+      "note": "Optional astromech and later turret/composite beam cannon are alternative configurations; not simultaneous stock defaults.",
+      "sourceEntryKey": "cw-tx-130t-saber-class-fighter-tank",
+      "printedPage": 169,
+      "pdfPhysicalPage": 170,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 6,
+      "init": -2,
+      "per": 8,
+      "ref": 10,
+      "ff": 8,
+      "fort": 19,
+      "ar": 10,
+      "hp": 200,
+      "dr": 15,
+      "dt": 69,
+      "mv": 4,
+      "climb": 2,
+      "km": 45,
+      "sp": [
+        8,
+        12
+      ],
+      "bab": 5,
+      "grp": 34,
+      "ab": [
+        28,
+        10,
+        12
+      ],
+      "crew": "6 (expert)",
+      "pass": 20,
+      "cargo": "26 tons",
+      "cons": "1 week",
+      "price": "not-for-sale",
+      "skills": "Initiative -2, Mechanics +8, Perception +8, Pilot -2",
+      "ranged": "heavy laser cannon +8 OR bomblet generator +8, with 2 medium laser cannons +6 and 4 heavy repeating blasters +1",
+      "weapons": [
+        [
+          "heavy laser cannon",
+          "pilot",
+          8,
+          "6d10x2, 2-square splash"
+        ],
+        [
+          "medium laser cannons",
+          "gunners",
+          6,
+          "4d10x2"
+        ],
+        [
+          "heavy repeating blasters",
+          "gunners",
+          1,
+          "3d10; autofire only"
+        ],
+        [
+          "bomblet generator",
+          "pilot",
+          6,
+          "4d6 ion"
+        ]
+      ],
+      "note": "Bomblet generator requires stationary full round; printed ranged +8 vs dedicated generator row +6. Repulsorlifts traction climb.",
+      "sourceEntryKey": "cw-unstable-terrain-artillery-transport-ut-at",
+      "printedPage": 170,
+      "pdfPhysicalPage": 171,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 10,
+      "init": 6,
+      "per": 5,
+      "ref": 17,
+      "ff": 14,
+      "fort": 23,
+      "ar": 6,
+      "hp": 175,
+      "dr": 10,
+      "dt": 33,
+      "mv": 8,
+      "km": 130,
+      "sp": [
+        3,
+        3
+      ],
+      "bab": 2,
+      "grp": 25,
+      "ab": [
+        36,
+        17,
+        14
+      ],
+      "crew": "droid brain (expert)",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "none",
+      "price": 17500,
+      "used": 11000,
+      "skills": "Initiative +6, Perception +5, Pilot +6",
+      "payload": "24 missiles",
+      "ranged": "medium laser cannons +6 OR missile launchers +6",
+      "weapons": [
+        [
+          "medium laser cannons",
+          "pilot",
+          6,
+          "4d10x2"
+        ],
+        [
+          "missile launchers",
+          "pilot",
+          6,
+          "8d6, 4-square splash"
+        ]
+      ],
+      "sourceEntryKey": "cw-ground-armored-tank",
+      "printedPage": 198,
+      "pdfPhysicalPage": 199,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 12,
+      "init": 5,
+      "per": 6,
+      "ref": 13,
+      "ff": 11,
+      "fort": 19,
+      "ar": 3,
+      "hp": 60,
+      "dr": 10,
+      "dt": 29,
+      "mv": 8,
+      "km": 45,
+      "sp": [
+        3,
+        3
+      ],
+      "bab": 2,
+      "grp": 21,
+      "ab": [
+        29,
+        15,
+        13
+      ],
+      "crew": "droid brain (skilled)",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "none",
+      "price": 60000,
+      "skills": "Initiative +5, Perception +6, Pilot +5",
+      "payload": "30 \"hailfire\" missiles",
+      "ranged": "missile launchers +5 OR laser cannon +5",
+      "weapons": [
+        [
+          "missile launchers",
+          "pilot",
+          5,
+          "6d10x2, 4-square splash"
+        ],
+        [
+          "laser cannon",
+          "pilot",
+          5,
+          "4d10x2"
+        ]
+      ],
+      "note": "Fire-linked missile launchers; anti-missile guidance system described.",
+      "sourceEntryKey": "cw-ig-227-hailfire-class-droid-tank",
+      "printedPage": 199,
+      "pdfPhysicalPage": 200,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 9,
+      "init": 6,
+      "per": 5,
+      "ref": 14,
+      "ff": 11,
+      "fort": 17,
+      "ar": 3,
+      "hp": 75,
+      "dr": 10,
+      "dt": 27,
+      "mv": 12,
+      "km": 160,
+      "sp": [
+        3,
+        3
+      ],
+      "bab": 0,
+      "grp": 17,
+      "ab": [
+        25,
+        16,
+        12
+      ],
+      "crew": "droid brain (normal)",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "none",
+      "price": 22000,
+      "skills": "Initiative +6, Perception +5, Pilot +6",
+      "payload": "12 torpedoes",
+      "ranged": "laser cannons +3 OR torpedo launchers +3",
+      "weapons": [
+        [
+          "laser cannons",
+          "pilot",
+          3,
+          "4d10x2"
+        ],
+        [
+          "torpedo launchers",
+          "pilot",
+          3,
+          "8d6, 4-square burst"
+        ]
+      ],
+      "note": "Water vehicle, swim 12; no spacecraft mobility inferred from name.",
+      "sourceEntryKey": "cw-manta-droid-subfighter",
+      "printedPage": 200,
+      "pdfPhysicalPage": 201,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 6,
+      "init": -5,
+      "per": 5,
+      "ref": 10,
+      "ff": 10,
+      "fort": 26,
+      "ar": 10,
+      "hp": 240,
+      "dr": 20,
+      "dt": 76,
+      "mv": 6,
+      "km": 35,
+      "sp": [
+        6,
+        6
+      ],
+      "bab": 0,
+      "grp": 36,
+      "ab": [
+        42,
+        10,
+        14
+      ],
+      "crew": "4 OOM-Series battle droids (normal)",
+      "pass": 112,
+      "cargo": "12 tons",
+      "cons": "none",
+      "price": 138000,
+      "used": 80000,
+      "skills": "Initiative -5, Perception +5, Pilot -5",
+      "ranged": "2 twin blaster cannons +2",
+      "weapons": [
+        [
+          "twin blaster cannons",
+          "gunner",
+          2,
+          "3d10x2"
+        ]
+      ],
+      "note": "Alternative compressed capacity 112 B1-Series droids OR 20 droidekas. Multi-Utility Transport variant prose is not a separate printed vehicle statblock.",
+      "sourceEntryKey": "cw-multi-troop-transport",
+      "printedPage": 200,
+      "pdfPhysicalPage": 201,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 7,
+      "init": 5,
+      "per": 6,
+      "ref": 14,
+      "ff": 13,
+      "fort": 17,
+      "ar": 5,
+      "hp": 70,
+      "dr": 10,
+      "dt": 27,
+      "mv": 8,
+      "km": 50,
+      "sp": [
+        3,
+        3
+      ],
+      "bab": 2,
+      "grp": 19,
+      "ab": [
+        24,
+        12,
+        14
+      ],
+      "crew": "droid brain (skilled)",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "none",
+      "price": 70000,
+      "skills": "Initiative +5, Perception +6, Pilot +5",
+      "ranged": "laser cannon +6 AND heavy repeating blaster -1",
+      "weapons": [
+        [
+          "laser cannon",
+          "pilot",
+          6,
+          "5d10"
+        ],
+        [
+          "heavy repeating blaster",
+          "pilot",
+          -1,
+          "3d10, autofire only"
+        ]
+      ],
+      "note": "Critical hit with damage >= threshold immobilizes until repaired; source printed speed 8 squares/max 50 km/h.",
+      "sourceEntryKey": "cw-og-9-homing-spider-droid",
+      "printedPage": 201,
+      "pdfPhysicalPage": 202,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 14,
+      "init": 5,
+      "per": 6,
+      "ref": 14,
+      "ff": 13,
+      "fort": 20,
+      "ar": 5,
+      "hp": 120,
+      "dr": 15,
+      "dt": 30,
+      "mv": 6,
+      "km": 50,
+      "sp": [
+        3,
+        3
+      ],
+      "bab": 2,
+      "grp": 22,
+      "ab": [
+        30,
+        12,
+        12
+      ],
+      "crew": "droid brain (skilled)",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "none",
+      "price": 49000,
+      "skills": "Initiative +5, Perception +6, Pilot +5",
+      "payload": "48 thermal detonators, 12 concussion missiles, 4 homing missiles, 2 dumbfire torpedoes",
+      "ranged": "ion cannons +5 AND heavy repeating blaster +0 AND missile launcher +5",
+      "weapons": [
+        [
+          "ion cannons",
+          "pilot",
+          5,
+          "4d10x2 ion"
+        ],
+        [
+          "heavy repeating blaster",
+          "pilot",
+          0,
+          "3d10, autofire only"
+        ],
+        [
+          "missile launcher",
+          "pilot",
+          3,
+          "8d6 thermal burst OR 7d10x2 concussion OR 6d10x2 homing OR 9d10x2 dumbfire"
+        ]
+      ],
+      "note": "Missile launcher main ranged +5 vs weapon row +3; preserve both source claims.",
+      "sourceEntryKey": "cw-persuader-class-droid-enforcer",
+      "printedPage": 201,
+      "pdfPhysicalPage": 202,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 2,
+      "init": 8,
+      "per": 6,
+      "ref": 14,
+      "ff": 11,
+      "fort": 11,
+      "ar": 2,
+      "hp": 15,
+      "dt": 16,
+      "mv": 12,
+      "km": 400,
+      "sp": [
+        2,
+        2
+      ],
+      "bab": 2,
+      "grp": 8,
+      "ab": [
+        13,
+        16,
+        10
+      ],
+      "crew": "1 (skilled)",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "none",
+      "price": 2500,
+      "skills": "Initiative +8, Perception +6, Pilot +8",
+      "ranged": "twin blaster cannons +4",
+      "weapons": [
+        [
+          "twin blaster cannons",
+          "pilot",
+          4,
+          "4d10"
+        ]
+      ],
+      "note": "Source prints no DR; do not assume zero or derive from vehicle size.",
+      "sourceEntryKey": "cw-single-trooper-aerial-platform",
+      "printedPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 4,
+      "init": -3,
+      "per": 6,
+      "ref": 9,
+      "ff": 8,
+      "fort": 20,
+      "ar": 8,
+      "hp": 120,
+      "dr": 10,
+      "dt": 70,
+      "mv": 6,
+      "km": 50,
+      "sp": [
+        6,
+        6
+      ],
+      "bab": 2,
+      "grp": 32,
+      "ab": [
+        30,
+        12,
+        12
+      ],
+      "crew": "2 OOM-Series pilot battle droids (skilled)",
+      "pass": 112,
+      "cargo": "4 tons",
+      "cons": "none",
+      "price": 37000,
+      "skills": "Initiative -3, Mechanics +6, Perception +6, Pilot -3",
+      "weapons": [],
+      "note": "Unarmed troop carrier. 112 B1-Series droid passengers; distinguish from MTT.",
+      "sourceEntryKey": "cw-trade-federation-troop-carrier",
+      "printedPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 9,
+      "init": 2,
+      "per": 6,
+      "ref": 14,
+      "ff": 13,
+      "fort": 22,
+      "ar": 8,
+      "hp": 160,
+      "dr": 15,
+      "dt": 32,
+      "mv": 8,
+      "climb": 4,
+      "km": 50,
+      "sp": [
+        4,
+        4
+      ],
+      "bab": 2,
+      "grp": 29,
+      "ab": [
+        34,
+        12,
+        14
+      ],
+      "crew": "droid brain (skilled)",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "none",
+      "price": 100000,
+      "skills": "Initiative +2, Perception +6, Pilot +2",
+      "payload": "48 heavy ordnance shells",
+      "ranged": "3 heavy ordnance launchers +4",
+      "weapons": [
+        [
+          "heavy ordnance launcher",
+          "gunner",
+          4,
+          "5d10x5, 4-square burst"
+        ]
+      ],
+      "sourceEntryKey": "cw-tri-droid",
+      "printedPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 3,
+      "init": 10,
+      "per": 8,
+      "ref": 16,
+      "ff": 13,
+      "fort": 15,
+      "ar": 4,
+      "hp": 50,
+      "dr": 5,
+      "dt": 20,
+      "mv": 10,
+      "walk": 6,
+      "km": 330,
+      "sp": [
+        2,
+        2
+      ],
+      "bab": 5,
+      "grp": 15,
+      "ab": [
+        20,
+        16,
+        14
+      ],
+      "crew": "1 (expert)",
+      "pass": 1,
+      "cargo": "10 kg",
+      "cons": "none",
+      "price": 15000,
+      "skills": "Initiative +10, Perception +8, Pilot +10",
+      "weapons": [],
+      "note": "Wheel bike has alternate walking speed 6 squares; no stock weapon.",
+      "sourceEntryKey": "cw-tsmeu-6-personal-wheel-bike",
+      "printedPage": 203,
+      "pdfPhysicalPage": 204,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 5,
+      "init": 10,
+      "per": 8,
+      "ref": 16,
+      "ff": 13,
+      "fort": 15,
+      "ar": 4,
+      "hp": 50,
+      "dr": 5,
+      "dt": 20,
+      "mv": 10,
+      "walk": 6,
+      "km": 330,
+      "sp": [
+        2,
+        2
+      ],
+      "bab": 5,
+      "grp": 15,
+      "ab": [
+        20,
+        16,
+        14
+      ],
+      "crew": "1 (expert)",
+      "pass": 0,
+      "cargo": "5 kg",
+      "cons": "none",
+      "price": "not-for-sale",
+      "skills": "Initiative +10, Perception +8, Pilot +10",
+      "ranged": "double laser cannon +9",
+      "weapons": [
+        [
+          "double laser cannon",
+          "pilot",
+          9,
+          "5d10, +4 autofire"
+        ]
+      ],
+      "note": "Independent printed named modified Tsmeu-6; passenger seat replaced by weapon.",
+      "sourceEntryKey": "cw-grievous-wheel-bike-modified-tsmeu-6",
+      "printedPage": 203,
+      "pdfPhysicalPage": 204,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 3,
+      "init": 5,
+      "per": 5,
+      "ref": 13,
+      "ff": 11,
+      "fort": 16,
+      "ar": 3,
+      "hp": 60,
+      "dr": 5,
+      "dt": 36,
+      "mv": 12,
+      "star": 3,
+      "km": 370,
+      "sp": [
+        4,
+        4
+      ],
+      "bab": 0,
+      "grp": 31,
+      "ab": [
+        22,
+        14,
+        14
+      ],
+      "crew": "2 (normal)",
+      "pass": 2,
+      "cargo": "50 kg",
+      "cons": "3 days",
+      "price": 12125,
+      "used": 2700,
+      "skills": "Initiative +5, Mechanics +5, Perception +5, Pilot +5",
+      "ranged": "blaster cannon +2",
+      "weapons": [
+        [
+          "blaster cannon",
+          "gunner",
+          2,
+          "3d10, -3 autofire"
+        ]
+      ],
+      "note": "Printed narrative 370 km/h over water; OCR copy has conflicting 270; original PDF printed p219 confirms 370.",
+      "sourceEntryKey": "cw-oevvaor-jet-catamaran",
+      "printedPage": 219,
+      "pdfPhysicalPage": 220,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    },
+    {
+      "c": 4,
+      "init": 11,
+      "per": 8,
+      "ref": 14,
+      "ff": 10,
+      "fort": 14,
+      "ar": 1,
+      "hp": 40,
+      "dr": 5,
+      "dt": 29,
+      "mv": 12,
+      "star": 3,
+      "km": 310,
+      "sp": [
+        3,
+        3
+      ],
+      "bab": 2,
+      "grp": 20,
+      "ab": [
+        18,
+        16,
+        16
+      ],
+      "crew": "2 (skilled)",
+      "pass": 0,
+      "cargo": "3 kg",
+      "cons": "1 day",
+      "price": 14750,
+      "used": 3200,
+      "skills": "Initiative +11, Mechanics +8, Perception +8, Pilot +9",
+      "ranged": "laser cannon tail-gun +7",
+      "weapons": [
+        [
+          "laser cannon tail-gun",
+          "gunner",
+          5,
+          "4d10, +0 autofire"
+        ]
+      ],
+      "note": "Printed ranged header +7 but actual tail-gun attack +5. Preserve printed discrepancy.",
+      "sourceEntryKey": "cw-raddaugh-gnasp-fluttercraft",
+      "printedPage": 220,
+      "pdfPhysicalPage": 221,
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6"
+    }
+  ]
+}

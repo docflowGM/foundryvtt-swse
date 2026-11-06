@@ -1,0 +1,35 @@
+{
+  "schema": "swse.vehicle.phase2b.mount-backlog.v0.1",
+  "sourceBook": "Threats of the Galaxy",
+  "sourcePdfSha256": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+  "counts": {
+    "sourceReviewedEntries": 1,
+    "attackGroupRows": 1,
+    "strictCertificates": 0
+  },
+  "records": [
+    {
+      "sourceEntryKey": "tog-cec-vcx-350-light-freighter",
+      "printedName": "CEC VCX-350 Light Freighter",
+      "printedPage": 89,
+      "reviewStatus": "PDF_VERIFIED",
+      "strictCertified": false,
+      "weaponAttackGroups": [
+        {
+          "label": "laser cannons",
+          "station": "pilot or gunner",
+          "attackBonus": 4,
+          "damage": "4d10x2",
+          "printedMultiplicity": 1,
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPage": 89
+        }
+      ],
+      "hardwareEvidenceStatus": "PDF_VERIFIED_PARTIAL",
+      "blockingIssues": [
+        "Independent physical weapon mounts, firing arcs and battery composition not proven from statblock."
+      ]
+    }
+  ]
+}

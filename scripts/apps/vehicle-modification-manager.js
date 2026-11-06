@@ -1,6 +1,10 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
+ * @deprecated Phase 4E P3: no remaining runtime consumer. It loads data/stock-ships.json
+ * (not a stock authority) and treats unknown EP as 0. Candidate for deletion with its data
+ * once macro compatibility is confirmed.
+ *
  * Vehicle Modification Manager
  * Handles loading, calculating, and managing starship modifications
  */
@@ -273,10 +277,11 @@ export class VehicleModificationManager {
    * @param {boolean} isNonstandard - Whether this is a nonstandard modification
    * @returns {number} - The emplacement points required
    */
-  static calculateEmplacementPoints(modification, _isNonstandard = false) {
-    // Store construction uses the real unusedEmplacementPoints pool.
-    // Nonstandard systems are a cost multiplier only; they do not double EP.
-    return this.getEmplacementPoints(modification);
+  static calculateEmplacementPoints(modification, isNonstandard = false) {
+    // SotG p. 39: a nonstandard modification requires TWICE the normal emplacement points (and costs 5x).
+    // Deprecated: the certified engine is scripts/domain/vehicles/vehicle-modification-rules.js.
+    const ep = this.getEmplacementPoints(modification);
+    return isNonstandard ? ep * 2 : ep;
   }
 
   /**

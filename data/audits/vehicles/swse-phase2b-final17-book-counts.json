@@ -1,0 +1,67 @@
+{
+  "schema": "swse.vehicle.phase2b.final17.counts.v0.1",
+  "phase1RecordCount": 316,
+  "previousSourceReviewedCount": 299,
+  "newSourceReviewedCount": 17,
+  "finalSourceReviewedCount": 316,
+  "identityCandidatesOutsidePhase1": [
+    "Tenloss Corporation Hornet-class Interceptor",
+    "Deep-X Explorer"
+  ],
+  "allSourceReviewedIsStrictCertified": false,
+  "newStrictCertificates": 0,
+  "phase1GitBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+  "referenceBranchHeadAtStart": "49fabf107f287b8147a59b75a9dd09e49ed7426f",
+  "books": [
+    {
+      "book": "Core Rulebook",
+      "slug": "core-rulebook",
+      "reviewed": 10,
+      "new": 4,
+      "attackRows": 22,
+      "discoveries": 36,
+      "conflicts": 2,
+      "sha": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9"
+    },
+    {
+      "book": "Galaxy at War",
+      "slug": "galaxy-at-war",
+      "reviewed": 5,
+      "new": 5,
+      "attackRows": 13,
+      "discoveries": 18,
+      "conflicts": 1,
+      "sha": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a"
+    },
+    {
+      "book": "Galaxy of Intrigue",
+      "slug": "galaxy-of-intrigue",
+      "reviewed": 6,
+      "new": 6,
+      "attackRows": 9,
+      "discoveries": 23,
+      "conflicts": 2,
+      "sha": "c43531ac33c6e6bd84c18ff8e26a472dc8ef95ebb46948beb3beb29be384da21"
+    },
+    {
+      "book": "Jedi Academy Training Manual",
+      "slug": "jedi-academy-training-manual",
+      "reviewed": 1,
+      "new": 1,
+      "attackRows": 1,
+      "discoveries": 4,
+      "conflicts": 0,
+      "sha": "c4dce616776949aa0501b8932012b82d6fd1cd1c27e9646f0a772ab596b4cea9"
+    },
+    {
+      "book": "Threats of the Galaxy",
+      "slug": "threats-of-the-galaxy",
+      "reviewed": 1,
+      "new": 1,
+      "attackRows": 1,
+      "discoveries": 3,
+      "conflicts": 0,
+      "sha": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f"
+    }
+  ]
+}

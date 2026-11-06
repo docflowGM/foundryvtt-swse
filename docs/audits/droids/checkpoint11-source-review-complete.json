@@ -1,0 +1,57 @@
+{
+  "checkpoint": "11",
+  "scope": "ALL_FOURTEEN_BOOKS_SELECTED_SOURCE_FIELDS_REVIEWED__NOT_MECHANICALLY_CERTIFIED",
+  "sourceBooks": 14,
+  "sourceBooksWithPublishedDroidClaims": 13,
+  "zeroClaimBooks": [
+    "JATM"
+  ],
+  "sourcePublicationClaims": 234,
+  "sourceRecordsDrafted": 234,
+  "selectedFieldPdfReviews": 234,
+  "directSelectedPdfFieldComparisons": 3615,
+  "independentMechanicalCertifications": 0,
+  "foundryRuntimeCertified": false,
+  "upstreamUniversalJsonSchemaValidated": false,
+  "bookCounts": {
+    "sgd": 46,
+    "clone": 40,
+    "threats": 29,
+    "kotor": 24,
+    "gaw": 22,
+    "rebellion": 15,
+    "core": 13,
+    "legacy": 12,
+    "force": 11,
+    "goi": 8,
+    "unknown": 6,
+    "scum": 5,
+    "sotg": 3
+  },
+  "perBookSelectedChecks": {
+    "sgd": 811,
+    "clone": 528,
+    "threats": 314,
+    "kotor": 369,
+    "gaw": 285,
+    "rebellion": 325,
+    "core": 263,
+    "legacy": 251,
+    "force": 229,
+    "goi": 94,
+    "unknown": 99,
+    "scum": 32,
+    "sotg": 15
+  },
+  "remainingSourceReviewQueue": 0,
+  "blockingWork": [
+    "Full printed mechanical fields and adjacent narrative pages",
+    "feat/talent canonical IDs and prerequisites",
+    "physical mount and installation rights",
+    "model-specific PC construction/hero eligibility",
+    "official upstream JSON Schema validator",
+    "Foundry V13 runtime execution and tests"
+  ],
+  "productionPackMutations": false,
+  "gitPushRequestedByOwner": true
+}

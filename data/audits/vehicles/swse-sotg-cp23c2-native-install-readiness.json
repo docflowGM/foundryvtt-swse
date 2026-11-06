@@ -1,0 +1,301 @@
+{
+  "schema": "swse.vehicle.sotg.cp23c2.native-import-readiness.v1",
+  "phase": "CP23-C2-READONLY-AUTHENTICATED-INSTALLATION-PREFLIGHT",
+  "sourceDraftPath": "data/audits/vehicles/swse-sotg-cp23b-isolated-source-actor-proposals.json",
+  "sourceDraftGitBlob": "a9170481f9c0bb34fe31741b7194ac54e2933501",
+  "parityAnchorPath": "data/audits/vehicles/swse-sotg-cp23c-source-draft-parity-anchors.json",
+  "parityAnchorGitBlob": "062daf6070534b1bdf40688db5cbce44f6cc091d",
+  "registeredPackRequired": "foundryvtt-swse.sotg-cp23b-isolated-proposals",
+  "registeredPackIsPresentInSystemManifest": false,
+  "sourceIdentityCount": 15,
+  "approvedRules": 15,
+  "issueableGMReceipts": 0,
+  "installedNativeActorsCertified": 0,
+  "trustedPhysicalWeaponGroups": 0,
+  "stockAttackPermissions": 0,
+  "completeCP23C2": false,
+  "ownerApprovalNeededForDeployment": true,
+  "transientGameplayPaths": [
+    "system.hp.value",
+    "system.hp.temp",
+    "system.shields.value"
+  ],
+  "neverTreatAsProof": [
+    "Actor.flags",
+    "Actor.system.stockSourceEntryKey",
+    "packDocument.name",
+    "legacyPackId",
+    "unregisteredCP23BDraftParity",
+    "userProvidedProvenance"
+  ],
+  "records": [
+    {
+      "queuePosition": 1,
+      "sourceEntryKey": "sotg-advanced-v-19-torrent-starfighter",
+      "decisionId": "SOTG-CP21-D01",
+      "draftId": "sotgcp23b0000001",
+      "immutableDraftFingerprintFnv64": "743c1283d898ea22",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 2,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 2,
+      "sourceEntryKey": "sotg-recusant-class-light-destroyer",
+      "decisionId": "SOTG-CP21-D02",
+      "draftId": "sotgcp23b0000002",
+      "immutableDraftFingerprintFnv64": "0d660e8e8547dad1",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 5,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 3,
+      "sourceEntryKey": "sotg-kuat-drive-yards-pellaeon-class-star-destroyer",
+      "decisionId": "SOTG-CP21-D03",
+      "draftId": "sotgcp23b0000003",
+      "immutableDraftFingerprintFnv64": "78b66ba41bc03139",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 5,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 4,
+      "sourceEntryKey": "sotg-immobilizer-418-interdictor-class-heavy-cruiser",
+      "decisionId": "SOTG-CP21-D04",
+      "draftId": "sotgcp23b0000004",
+      "immutableDraftFingerprintFnv64": "b4cd5b7fbfe22603",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 2,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 5,
+      "sourceEntryKey": "sotg-junker-tye-wing",
+      "decisionId": "SOTG-CP21-D05",
+      "draftId": "sotgcp23b0000005",
+      "immutableDraftFingerprintFnv64": "439c4d7f168f9fca",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 1,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 6,
+      "sourceEntryKey": "sotg-koensayr-manufacturing-btl-58-k-wing",
+      "decisionId": "SOTG-CP21-D06",
+      "draftId": "sotgcp23b0000006",
+      "immutableDraftFingerprintFnv64": "70b5f2fea84768ce",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 5,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 7,
+      "sourceEntryKey": "sotg-sienar-technologies-marauder-corvette",
+      "decisionId": "SOTG-CP21-D07",
+      "draftId": "sotgcp23b0000007",
+      "immutableDraftFingerprintFnv64": "0cc8b3468eeda81f",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 2,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 8,
+      "sourceEntryKey": "sotg-mon-calamari-star-defender",
+      "decisionId": "SOTG-CP21-D08",
+      "draftId": "sotgcp23b0000008",
+      "immutableDraftFingerprintFnv64": "eb9e05c99b9a1cfb",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 6,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 9,
+      "sourceEntryKey": "sotg-eclipse",
+      "decisionId": "SOTG-CP21-D09",
+      "draftId": "sotgcp23b0000009",
+      "immutableDraftFingerprintFnv64": "b14f5a1023a44822",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 6,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 10,
+      "sourceEntryKey": "sotg-theta-class-shuttle",
+      "decisionId": "SOTG-CP21-D10",
+      "draftId": "sotgcp23b0000010",
+      "immutableDraftFingerprintFnv64": "903fb0735a0a92dc",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 2,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 11,
+      "sourceEntryKey": "sotg-sienar-fleet-systems-tie-bomber",
+      "decisionId": "SOTG-CP21-D11",
+      "draftId": "sotgcp23b0000011",
+      "immutableDraftFingerprintFnv64": "07ce9a194a3166f4",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 2,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 12,
+      "sourceEntryKey": "sotg-incom-t-65xj3-x-wing-starfighter",
+      "decisionId": "SOTG-CP21-D12",
+      "draftId": "sotgcp23b0000012",
+      "immutableDraftFingerprintFnv64": "d869c82a4a28cabd",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 2,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 13,
+      "sourceEntryKey": "sotg-incom-subpro-arc-170-starfighter",
+      "decisionId": "SOTG-CP21-D13",
+      "draftId": "sotgcp23b0000013",
+      "immutableDraftFingerprintFnv64": "1ffda9c8e43a0a80",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 3,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 14,
+      "sourceEntryKey": "sotg-alliance-a-wing-starfighter",
+      "decisionId": "SOTG-CP21-D14",
+      "draftId": "sotgcp23b0000014",
+      "immutableDraftFingerprintFnv64": "a5b7a18aab123af4",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 3,
+      "stockAttackAuthorized": false
+    },
+    {
+      "queuePosition": 15,
+      "sourceEntryKey": "sotg-baudo-class-star-yacht",
+      "decisionId": "SOTG-CP21-D15",
+      "draftId": "sotgcp23b0000015",
+      "immutableDraftFingerprintFnv64": "3b25eb365e891bb5",
+      "supportedTransientGameplayPaths": [
+        "system.hp.value",
+        "system.hp.temp",
+        "system.shields.value"
+      ],
+      "configurationKeysRemainImmutable": true,
+      "registeredPackProvenance": "NOT_REGISTERED",
+      "worldImportResult": "NOT_EXECUTED",
+      "GMOwnedReceipt": "NOT_ISSUED",
+      "unresolvedPhysicalMounts": 1,
+      "stockAttackAuthorized": false
+    }
+  ]
+}

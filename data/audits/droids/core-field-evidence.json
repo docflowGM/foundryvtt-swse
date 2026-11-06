@@ -1,0 +1,550 @@
+{
+  "schema": "swse.droid.core.source-evidence/0.1",
+  "sourceBook": "Saga Edition Core Rulebook",
+  "sourcePdf": "Star Wars Saga Edition.pdf",
+  "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+  "sourceTxt": "Core Rulebook_djvu.txt",
+  "sourceTxtSha256": "54c817eac7d40a2b1465e5e95a7ba75d46f162de80f039cceffb758dc7fa91c7",
+  "records": [
+    {
+      "sourceEntryKey": "CORE-DROID-001",
+      "printedName": "2-1B Medical Droid",
+      "printedPage": 197,
+      "pdfPage1Based": 198,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 18637,
+      "txtWindowSha256": "366908e92e6361ecf590d0e4c9873238e03124c97fb3a214cfd0bab428ba1bfa",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p197.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "2-1B Medical Droid",
+          "/publication/printedPageStart": 197,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 1,
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 5,
+          "/abilities/str": 8,
+          "/abilities/dex": 11,
+          "/abilities/int": 14,
+          "/abilities/wis": 15,
+          "/abilities/cha": 9,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 9,
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-002",
+      "printedName": "R2 Series Astromech Droid",
+      "printedPage": 198,
+      "pdfPage1Based": 199,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 18706,
+      "txtWindowSha256": "079af28d45e0813c12751fc4376b421a3f3656da8ae2616d00617823bc64658f",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p198.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "R2 Series Astromech Droid",
+          "/publication/printedPageStart": 198,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 3,
+          "/abilities/str": 9,
+          "/abilities/dex": 14,
+          "/abilities/int": 15,
+          "/abilities/wis": 10,
+          "/abilities/cha": 7,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 8,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 8,
+          "/movement/speedLineRaw": "6 squares (wheeled), 4 squares (walking), 9 squares (flying)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-003",
+      "printedName": "3PO Series Protocol Droid",
+      "printedPage": 198,
+      "pdfPage1Based": 199,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 18777,
+      "txtWindowSha256": "b36e1ae22008f9d643bb095a13add3bfabbd7b33833d6e5ab73f9e6e1590840d",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p198.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "3PO Series Protocol Droid",
+          "/publication/printedPageStart": 198,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 3,
+          "/abilities/initiativePrinted": -1,
+          "/abilities/perceptionPrinted": 1,
+          "/progression/classLineRaw": "nonheroic 1",
+          "/defenses/reflex": 9,
+          "/defenses/flatFootedReflex": 9,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 2,
+          "/durability/damageThreshold": 9,
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 16,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-004",
+      "printedName": "B1 Series Battle Droid",
+      "printedPage": 199,
+      "pdfPage1Based": 200,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 18837,
+      "txtWindowSha256": "ae22a2a049b1192e7f4e8003fc169635f1f6a18d20b3d2e3e53b88c25cc01ee4",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p199.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "B1 Series Battle Droid",
+          "/publication/printedPageStart": 199,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 0,
+          "/abilities/perceptionPrinted": 6,
+          "/abilities/str": 13,
+          "/abilities/dex": 9,
+          "/abilities/int": 9,
+          "/abilities/wis": 10,
+          "/abilities/cha": 10,
+          "/progression/classLineRaw": "nonheroic 3",
+          "/defenses/reflex": 9,
+          "/defenses/flatFootedReflex": 9,
+          "/defenses/fortitude": 11,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 10,
+          "/durability/damageThreshold": 11,
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "B1 model is explicitly prohibited as a droid hero (printed p199).",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-005",
+      "printedName": "B2 Series Super Battle Droid",
+      "printedPage": 199,
+      "pdfPage1Based": 200,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 18884,
+      "txtWindowSha256": "2d4dcb6c07463d755212d5d7b2d7220798d3a250d82490d7978cd7e895a46226",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p199.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "B2 Series Super Battle Droid",
+          "/publication/printedPageStart": 199,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 2,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 8,
+          "/abilities/str": 14,
+          "/abilities/dex": 11,
+          "/abilities/int": 10,
+          "/abilities/wis": 11,
+          "/abilities/cha": 7,
+          "/progression/classLineRaw": "nonheroic 6",
+          "/defenses/reflex": 12,
+          "/defenses/flatFootedReflex": 12,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 21,
+          "/durability/damageThreshold": 12,
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "B2 is explicitly permitted as a droid hero (printed p199), unlike B1.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-006",
+      "printedName": "Droideka Series Destroyer Droid",
+      "printedPage": 200,
+      "pdfPage1Based": 201,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 18968,
+      "txtWindowSha256": "b5cd27da06b98f92fe977a02abdfeff2148788231345d18af3769a084d9e14f3",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p200.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Droideka Series Destroyer Droid",
+          "/publication/printedPageStart": 200,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 4,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 8,
+          "/abilities/perceptionPrinted": 13,
+          "/abilities/str": 16,
+          "/abilities/dex": 14,
+          "/abilities/int": 8,
+          "/abilities/wis": 14,
+          "/abilities/cha": 7,
+          "/progression/classLineRaw": "nonheroic 12",
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 10,
+          "/defenses/shieldRating": 20,
+          "/durability/hitPoints": 40,
+          "/durability/damageThreshold": 18,
+          "/movement/speedLineRaw": "2 squares (walking), 10 squares (wheeled)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 22,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Printed CL 4, upstream census CL 6: retain disagreement; printed p200 controls source record.",
+        "SR 20 and wheeled mode are source facts, not executed shield or transformation.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-007",
+      "printedName": "Dwarf Spider Droid",
+      "printedPage": 200,
+      "pdfPage1Based": 201,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19032,
+      "txtWindowSha256": "bdaf54be852dd1c10aca4203e1e018bd52794c137cf8a8501b519a78b7572466",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p200.png",
+        "extraVisualSourcePages": [
+          201
+        ],
+        "fieldValues": {
+          "/identity/printedName": "Dwarf Spider Droid",
+          "/publication/printedPageStart": 200,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 3,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 12,
+          "/abilities/str": 22,
+          "/abilities/dex": 9,
+          "/abilities/int": 10,
+          "/abilities/wis": 12,
+          "/abilities/cha": 8,
+          "/progression/classLineRaw": "nonheroic 9",
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 13,
+          "/defenses/fortitude": 16,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 32,
+          "/durability/damageThreshold": 26,
+          "/movement/speedLineRaw": "8 squares (walking)"
+        },
+        "fieldComparisonCount": 20,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Printed CL 3, census value absent. Statblock starts printed p200 and continues p201.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-008",
+      "printedName": "Crab Droid Scout",
+      "printedPage": 201,
+      "pdfPage1Based": 202,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19082,
+      "txtWindowSha256": "aadba602cd68b3c63b8660a5b49340c3152c1d69b9d077f739822cf9f054c676",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p201.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Crab Droid Scout",
+          "/publication/printedPageStart": 201,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 4,
+          "/classification/publishedDegree": 4,
+          "/abilities/perceptionPrinted": 13,
+          "/abilities/str": 24,
+          "/abilities/dex": 9,
+          "/abilities/int": 10,
+          "/abilities/wis": 14,
+          "/abilities/cha": 8,
+          "/progression/classLineRaw": "nonheroic 12",
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 80,
+          "/durability/damageThreshold": 42,
+          "/movement/speedLineRaw": "6 squares (walking), climb 3 squares"
+        },
+        "fieldComparisonCount": 19,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-009",
+      "printedName": "IG-100 Series MagnaGuard",
+      "printedPage": 201,
+      "pdfPage1Based": 202,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19147,
+      "txtWindowSha256": "86c845bb188e23c2009fe541c187b716244b3e33d5514dd0df10b896c668a5ee",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p201.png",
+        "extraVisualSourcePages": [
+          202
+        ],
+        "fieldValues": {
+          "/identity/printedName": "IG-100 Series MagnaGuard",
+          "/publication/printedPageStart": 201,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 6,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 9,
+          "/abilities/perceptionPrinted": 12,
+          "/abilities/str": 13,
+          "/abilities/dex": 13,
+          "/abilities/int": 14,
+          "/abilities/wis": 14,
+          "/abilities/cha": 10,
+          "/progression/classLineRaw": "soldier 6",
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 18,
+          "/durability/hitPoints": 53,
+          "/durability/damageThreshold": 17,
+          "/movement/speedLineRaw": "6 squares (walking)"
+        },
+        "fieldComparisonCount": 20,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "IG-100 printed CL 6, census value absent. Statblock continues on p202.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-010",
+      "printedName": "Viper Series Probe Droid",
+      "printedPage": 202,
+      "pdfPage1Based": 203,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19224,
+      "txtWindowSha256": "423c57546f1028c3dafb7ca9583ae90f9ce9fd2481438977dac80b0f92266ec6",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p202.png",
+        "extraVisualSourcePages": [
+          203
+        ],
+        "fieldValues": {
+          "/identity/printedName": "Viper Series Probe Droid",
+          "/publication/printedPageStart": 202,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 6,
+          "/abilities/perceptionPrinted": 9,
+          "/abilities/str": 18,
+          "/abilities/dex": 12,
+          "/abilities/int": 12,
+          "/abilities/wis": 15,
+          "/abilities/cha": 11,
+          "/progression/classLineRaw": "scout 1",
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 13,
+          "/defenses/fortitude": 14,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 34,
+          "/durability/damageThreshold": 19,
+          "/movement/speedLineRaw": "6 squares (hovering)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Viper printed CL 1, census value absent; its statblock continues onto printed p203.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-011",
+      "printedName": "ASP Series Labor Droid",
+      "printedPage": 203,
+      "pdfPage1Based": 204,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19301,
+      "txtWindowSha256": "f3f0413c6a1a64a9e86cf6fe8cb60b149e6257a931baf4526ab05b7ae059af8d",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p203.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "ASP Series Labor Droid",
+          "/publication/printedPageStart": 203,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 5,
+          "/abilities/initiativePrinted": 2,
+          "/abilities/perceptionPrinted": 1,
+          "/abilities/str": 17,
+          "/abilities/dex": 12,
+          "/abilities/int": 6,
+          "/abilities/wis": 11,
+          "/abilities/cha": 5,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 13,
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-012",
+      "printedName": "R2-D2 (Episode VI)",
+      "printedPage": 267,
+      "pdfPage1Based": 268,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 25872,
+      "txtWindowSha256": "52caab4a5612c648d4c045eb318539d0317f55573d34899b4fd2e41fc37196ef",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p267.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "R2-D2 (Episode VI)",
+          "/publication/printedPageStart": 267,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 6,
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 6,
+          "/abilities/str": 8,
+          "/abilities/dex": 16,
+          "/abilities/int": 16,
+          "/abilities/wis": 10,
+          "/abilities/cha": 7,
+          "/progression/classLineRaw": "nonheroic 2/scoundrel 6",
+          "/defenses/reflex": 23,
+          "/defenses/flatFootedReflex": 20,
+          "/defenses/fortitude": 16,
+          "/defenses/will": 18,
+          "/durability/hitPoints": 34,
+          "/durability/damageThreshold": 16,
+          "/movement/speedLineRaw": "4 squares (wheeled), 1 square (walking), 6 squares (flying)"
+        },
+        "fieldComparisonCount": 20,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Named R2-D2 is not the stock R2 starting profile.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-013",
+      "printedName": "C-3PO (Episode VI)",
+      "printedPage": 267,
+      "pdfPage1Based": 268,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 25942,
+      "txtWindowSha256": "20addc041b2009a1f8e43006af747384ee7c9f734f4a796bed8b85a22d982806",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/core_pdf_review/printed_p267.png",
+        "extraVisualSourcePages": [
+          268
+        ],
+        "fieldValues": {
+          "/identity/printedName": "C-3PO (Episode VI)",
+          "/publication/printedPageStart": 267,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 5,
+          "/classification/publishedDegree": 3,
+          "/abilities/initiativePrinted": -1,
+          "/abilities/perceptionPrinted": 0,
+          "/abilities/str": 8,
+          "/abilities/dex": 9,
+          "/abilities/int": 12,
+          "/abilities/wis": 12,
+          "/abilities/cha": 16,
+          "/progression/classLineRaw": "nonheroic 1/noble 5",
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 19,
+          "/durability/hitPoints": 26,
+          "/durability/damageThreshold": 15,
+          "/movement/speedLineRaw": "6 squares (walking)"
+        },
+        "fieldComparisonCount": 20,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Named C-3PO continues onto printed p268 and is not the stock 3PO starting profile.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    }
+  ]
+}

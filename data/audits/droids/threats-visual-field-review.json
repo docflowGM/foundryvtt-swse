@@ -1,0 +1,243 @@
+{
+  "schema": "swse.droid.threats.selected-pdf-visual/0.1",
+  "sourceBook": "Threats of the Galaxy",
+  "manualVisualReviews": 29,
+  "directFieldComparisons": 314,
+  "method": "Rendered image of every statblock printed page (134-160), manual selected-field comparison to source TXT; TXT cannot substitute for visual.",
+  "sourcePdfHash": "63e62aa5acca70469b22a957c4e72a0a099d57fa99f7023a915ed5f584d1d62f",
+  "scope": "Only fieldValues pointers in each record are visually checked. Other OCR excerpts remain provisional.",
+  "items": [
+    {
+      "sourceEntryKey": "THREATS-DROID-001",
+      "printedName": "VX Series Artillery Droid",
+      "printedPage": 134,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-002",
+      "printedName": "ASN-121 Assassin Droid",
+      "printedPage": 135,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-003",
+      "printedName": "R3 Series Astromech Droid",
+      "printedPage": 136,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-004",
+      "printedName": "R4 Series Astromech Droid",
+      "printedPage": 137,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-005",
+      "printedName": "R5 Series Astromech Droid",
+      "printedPage": 138,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-006",
+      "printedName": "R7 Series Astromech Droid",
+      "printedPage": 138,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-007",
+      "printedName": "R2-R Series Reconnaissance Astromech Droid",
+      "printedPage": 139,
+      "verifiedFieldCount": 10,
+      "heroEligibility": null,
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-008",
+      "printedName": "B3 Series Ultra Battle Droid",
+      "printedPage": 140,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-009",
+      "printedName": "B3-A Series Ultra Battle Droid",
+      "printedPage": 141,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-010",
+      "printedName": "IG Series Battle Droid",
+      "printedPage": 141,
+      "verifiedFieldCount": 10,
+      "heroEligibility": null,
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-011",
+      "printedName": "Pistoeka Buzz Droid",
+      "printedPage": 142,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-012",
+      "printedName": "EVS Construction Droid",
+      "printedPage": 143,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-013",
+      "printedName": "GRZ-6B Demolitions Droid",
+      "printedPage": 144,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-014",
+      "printedName": "3PX Espionage Droid",
+      "printedPage": 145,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-015",
+      "printedName": "TO-D Interrogation Droid",
+      "printedPage": 146,
+      "verifiedFieldCount": 10,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-016",
+      "printedName": "GH-7 Medical Droid",
+      "printedPage": 147,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-017",
+      "printedName": "EG-6 Series Power Droid",
+      "printedPage": 148,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-018",
+      "printedName": "DRK-1 Probe Droid",
+      "printedPage": 149,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-019",
+      "printedName": "M-3PO Series Military Protocol Droid",
+      "printedPage": 150,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-020",
+      "printedName": "TC Series Protocol Droid",
+      "printedPage": 151,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-021",
+      "printedName": "Replica Droid",
+      "printedPage": 152,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-022",
+      "printedName": "Guri",
+      "printedPage": 153,
+      "verifiedFieldCount": 10,
+      "heroEligibility": null,
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-023",
+      "printedName": "WSB-15 Sabotage Droid",
+      "printedPage": 154,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-024",
+      "printedName": "501-Z Police/Security Droid",
+      "printedPage": 155,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-025",
+      "printedName": "Mark VII Inquisitor Series Seeker Droid",
+      "printedPage": 156,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-026",
+      "printedName": "Imperial Mark IV Series Sentry Droid",
+      "printedPage": 157,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "prohibited",
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-027",
+      "printedName": "SD-6 Hulk Infantry Droid",
+      "printedPage": 158,
+      "verifiedFieldCount": 11,
+      "heroEligibility": null,
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-028",
+      "printedName": "Sith Elite Warbot",
+      "printedPage": 159,
+      "verifiedFieldCount": 10,
+      "heroEligibility": null,
+      "scope": "selected-first-page-fields"
+    },
+    {
+      "sourceEntryKey": "THREATS-DROID-029",
+      "printedName": "PK Worker Droid",
+      "printedPage": 160,
+      "verifiedFieldCount": 11,
+      "heroEligibility": "allowed",
+      "scope": "selected-first-page-fields"
+    }
+  ]
+}

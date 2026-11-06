@@ -1,0 +1,1733 @@
+{
+  "schema": "swse.vehicle.p6b.deferred-work.v1",
+  "purpose": "Side bucket for P6B work that could not be implemented safely. Most items concern components that are not certified and stay fail-closed (not installable / not executable). A few concern components that ARE certified and installable where only additional functionality is deferred (P6B-D-009 sensor arrays: no Intelligence consumer; P6B-D-017 hangar bays and cryogenic chambers: no occupancy roster; P6B-D-021/022 custom-design limits). Rendered to docs/audits/vehicles/p6b-deferred-work.md by tools/audits/vehicles/build-p6b-deferred-work.mjs.",
+  "categories": [
+    "RULES_DECISION_REQUIRED",
+    "SOURCE_EVIDENCE_MISSING",
+    "ENGINEERING_COMPLEXITY",
+    "LIVE_RUNTIME_PENDING",
+    "NONCRITICAL_DEFECT",
+    "DEPENDENCY_BLOCKED"
+  ],
+  "severities": [
+    "BLOCKING",
+    "IMPORTANT",
+    "MINOR"
+  ],
+  "items": [
+    {
+      "id": "P6B-D-001",
+      "workstream": "P6B-1",
+      "component": "reinforced-bulkheads-10, reinforced-bulkheads-20, reinforced-bulkheads-30",
+      "source": "Starships of the Galaxy pp. 43-44",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Hit points increase by a percentage; the book gives no rounding rule, and it is unruled whether the percentage applies to printed HP only or also to other HP increases.",
+      "missing": "Rounding direction and percentage basis.",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6-01"
+      ],
+      "options": [
+        "round down (Core general rounding)",
+        "round to nearest",
+        "percentage of printed HP only vs current maximum"
+      ],
+      "impact": "3 rows stay SOURCE_VERIFIED and not installable.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Owner rules on V-P6-01; the effect is a one-line hp kind in the effects registry once ruled."
+    },
+    {
+      "id": "P6B-D-002",
+      "workstream": "P6B-1",
+      "component": "sublight-drive-1 .. sublight-drive-6",
+      "source": "Starships of the Galaxy p. 41, Table 3-3",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Every published hull already has a sublight speed; installing a drive is a replacement, which is unruled (same question as shields/hyperdrives). The 'military vessels only' clause for the fastest drives has no hull 'military' attribute in canonical data.",
+      "missing": "Replacement rule (refund, EP of the old drive); a source-backed military-hull classification.",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6-02"
+      ],
+      "options": [
+        "replacement frees the old drive's EP",
+        "replacement keeps the old EP consumed",
+        "replacement not allowed on stock hulls"
+      ],
+      "impact": "6 rows stay SOURCE_VERIFIED and not installable; starship-scale speed is never changed by the Shipyard.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Owner rules on V-P6-02; then decide how a hull is classified as military (data field) before enabling the fastest drives."
+    },
+    {
+      "id": "P6B-D-003",
+      "workstream": "P6B-1",
+      "component": "jamming-suite, jamming-array",
+      "source": "Starships of the Galaxy p. 43",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "The rule is printed clearly, but applying it needs an effect on ANOTHER vehicle: a swift action that picks a target within 6 starship squares, a per-target size-based penalty on Use Computer (communications/sensors) and on fire control (not reducing the Intelligence modifier below +0), and an opposed Use Computer check. None of these consumers exists: no starship-scale range measurement, no cross-actor temporary condition store, and fire control is not used by any executable weapon (V-P2-04).",
+      "missing": "Cross-vehicle temporary effect state, starship-scale range check, opposed-check flow, fire-control penalty consumer.",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6-05",
+        "V-P2-04"
+      ],
+      "options": [],
+      "impact": "2 rows stay SOURCE_VERIFIED and not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Build after weapon execution (V-P2-04) exists, using the combat ActiveEffect path for the target condition."
+    },
+    {
+      "id": "P6B-D-004",
+      "workstream": "P6B-1",
+      "component": "combat-thrusters",
+      "source": "Starships of the Galaxy p. 41",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Effects are 'treated as one size smaller when targeted by capital-ship weapons' and 'treated as a starfighter for dogfighting and starship combat maneuvers'. The system has no dogfight eligibility check, no starship-maneuver eligibility by size, and no executable capital-ship weapon targeting.",
+      "missing": "Dogfight / starship maneuver eligibility consumer; capital-weapon targeting (blocked by V-P2-04).",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6-05",
+        "V-P2-04"
+      ],
+      "options": [],
+      "impact": "Row stays SOURCE_VERIFIED and not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Implement as a size-category override read by the dogfight and capital-weapon targeting code once those exist."
+    },
+    {
+      "id": "P6B-D-005",
+      "workstream": "P6B-1",
+      "component": "navicomputer-limited",
+      "source": "Starships of the Galaxy p. 41",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "The printed text says only that it stores two jumps' worth of information. It does not state whether it grants the navicomputer's +5 astrogation bonus, or what happens on a third jump.",
+      "missing": "Bonus value (if any) and the consequence of exceeding two stored jumps.",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-01"
+      ],
+      "options": [
+        "no astrogation bonus; storage limit only",
+        "same +5 as a standard navicomputer while within its two stored jumps"
+      ],
+      "impact": "Row stays SOURCE_VERIFIED and not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Owner rules on V-P6B-01."
+    },
+    {
+      "id": "P6B-D-006",
+      "workstream": "P6B-1",
+      "component": "navicomputer (training clause)",
+      "source": "Starships of the Galaxy p. 41",
+      "status": "NONCRITICAL_DEFECT",
+      "reason": "The +5 bonus is integrated. Any trained-only gate for astrogation in the skill roller is not vehicle-aware, so a navicomputer clause about untrained astrogation has no consumer; the roll is never blocked by the vehicle code either way.",
+      "missing": "A trained-only check consumer for Use Computer (astrogate) that can see the vehicle.",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6-05"
+      ],
+      "options": [],
+      "impact": "No incorrect mechanic: the bonus applies; the training permission is not enforced either way.",
+      "severity": "MINOR",
+      "recommendedAction": "Wire when the skill roller gains trained-only enforcement for skill uses."
+    },
+    {
+      "id": "P6B-D-007",
+      "workstream": "P6B-1",
+      "component": "com-jammers",
+      "source": "legacy catalog row (effectVerification UNVERIFIED)",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "The row's effect text is legacy and unverified; the census does not match it to a printed SotG row.",
+      "missing": "A printed source for the component and its effect.",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "impact": "Row stays reference-only; not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Locate a printed source or retire the legacy row."
+    },
+    {
+      "id": "P6B-D-008",
+      "workstream": "P6B-1",
+      "component": "all 51 offline-integrated effects (P6B-0..3); P6B-0 environment and Pilot check; custom-ship effects",
+      "source": "-",
+      "status": "LIVE_RUNTIME_PENDING",
+      "reason": "Verified offline (Node tests with Handlebars). Foundry V13 runtime is not available in this environment.",
+      "missing": "Live V13 session run of docs/audits/vehicles/p6a-final-acceptance-report.md checklist plus the P6B items in docs/audits/vehicles/p6b-sprint-report.md (recharge shields restores 10 with regenerating shields; SLAM speed Pilot check; astrogation and sensor roll bonuses; cargo-pod Dex effects; a custom ship using installed systems in combat).",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "impact": "Status stays OFFLINE_INTEGRATED_LIVE_PENDING; nothing is marked LIVE_RUNTIME_VERIFIED.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Run the live checklist in a V13 world."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P2-04"
+      ],
+      "options": [],
+      "id": "P6B-D-009",
+      "component": "sensor-array-2, sensor-array-4, sensor-array-6",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Installed and certified: the effective Intelligence score and modifier are computed and shown. No runtime consumer reads a vehicle's Intelligence yet (vehicle weapon attack rolls are disabled under V-P2-04; printed crew skill modifiers are not recomputed from Intelligence).",
+      "missing": "A vehicle attack-roll consumer (fire control) and a source-backed rule for which checks use the vehicle Intelligence modifier.",
+      "impact": "Ledger status EXPOSED_NOT_APPLIED (mechanicallyApplied false) while installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Read getEffectiveVehicleDerived().intelligence in P6B-3 weapon attack resolution once V-P2-04 is resolved."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-02"
+      ],
+      "options": [],
+      "id": "P6B-D-010",
+      "component": "cargo pods / extended range on hulls with annotated or unknown printed quantities; smuggler compartments",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "V-P6B-02 resolved the unit conversions (owner ruling 2026-11-02): 398 of 429 hulls now have a convertible cargo value and 393 a convertible consumables duration. The remaining hulls print annotated, missing or unusual quantities (e.g. \"70 tons (15 tons on shuttle-only models)\", \"2 days (1 week with booster ring)\", \"hours\", \"unlimited\"); these are refused individually, never guessed (listed in annotatedCargo / annotatedConsumables). Smuggler compartments stay deferred: the printed text caps hidden cargo at 5% of the original cargo but does not say whether hidden space reduces normal cargo.",
+      "missing": "Which value of an annotated quantity applies; whether smuggler compartment space is carved out of normal cargo.",
+      "impact": "Planner refuses with CARGO_QUANTITY_ANNOTATED_UNRULED / CARGO_UNKNOWN (31 hulls) or CONSUMABLES_UNIT_CONVERSION_UNRULED / CONSUMABLES_UNKNOWN (36 hulls).",
+      "severity": "MINOR",
+      "recommendedAction": "Rule per annotated identity only if a player needs one of these hulls; otherwise leave refused.",
+      "annotatedCargo": [
+        {
+          "key": "core-at-st",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "core-droid-tri-fighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "core-vulture-class-droid-starfighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-azure-angel",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-delta-7-aethersprite-interceptor-high-maneuver-variant",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-delta-7-aethersprite-interceptor-high-speed-variant",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-ground-armored-tank",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-hyena-class-bomber",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-ig-227-hailfire-class-droid-tank",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-manta-droid-subfighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-og-9-homing-spider-droid",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-persuader-class-droid-enforcer",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-single-trooper-aerial-platform",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "cw-tri-droid",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "fucg-at-ct",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "fucg-at-kt",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "gaw-ground-armored-tank",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "kotor-star-forge-manufacture-herald-class-shuttle",
+          "printed": "70 tons (15 tons on shuttle-only models)",
+          "reason": "CARGO_QUANTITY_ANNOTATED_UNRULED"
+        },
+        {
+          "key": "le-all-terrain-riot-control-transport-at-rct",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "re-assassin-class-corvette",
+          "printed": "2,100 tons maximum (1,500 typical)",
+          "reason": "CARGO_QUANTITY_ANNOTATED_UNRULED"
+        },
+        {
+          "key": "re-tie-scout",
+          "printed": "25 tons (150 tons civilian)",
+          "reason": "CARGO_QUANTITY_ANNOTATED_UNRULED"
+        },
+        {
+          "key": "sotg-baktoid-armor-workshop-vulture-class-starfighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-delta-7-aethersprite-light-interceptor",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-escape-pod",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-haor-chall-engineering-scarab-class-starfighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-phlac-arphocc-automata-industries-droid-tri-fighter",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        },
+        {
+          "key": "sotg-sienar-fleet-systems-tie-bomber",
+          "printed": "15 tons, bomb bay",
+          "reason": "CARGO_QUANTITY_ANNOTATED_UNRULED"
+        },
+        {
+          "key": "ur-all-terrain-roller",
+          "printed": null,
+          "reason": "CARGO_UNKNOWN"
+        }
+      ],
+      "annotatedConsumables": [
+        {
+          "key": "core-eta-2-actis-interceptor",
+          "printed": "2 days (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "cw-barc-speeder",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-daystar-dc0052-intergalactic-speeder",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-delta-7-aethersprite-interceptor-high-maneuver-variant",
+          "printed": "none (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-delta-7-aethersprite-interceptor-high-speed-variant",
+          "printed": "none (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-eta-2-actis-interceptor-heavy-defenses-variant",
+          "printed": "2 days (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "cw-eta-2-actis-interceptor-high-maneuver-variant",
+          "printed": "2 days (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "cw-grievous-wheel-bike-modified-tsmeu-6",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-ground-armored-tank",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-ig-227-hailfire-class-droid-tank",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-manta-droid-subfighter",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-multi-troop-transport",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-og-9-homing-spider-droid",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-persuader-class-droid-enforcer",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-single-trooper-aerial-platform",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-soulless-one-modified-belbullab-22",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-trade-federation-troop-carrier",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-tri-droid",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "cw-tsmeu-6-personal-wheel-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "gaw-drop-pod",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "gaw-ground-armored-tank",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "gaw-t8-loading-vehicle",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "goi-republic-engineering-corporation-ferret-class-reconnaissance-vessel",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "goi-republic-engineering-corporation-prowler-class-reconnaissance-vessel",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "le-model-67-shrieker-speeder-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "le-quickfire-speeder-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "le-veltiss-2-airspeeder",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "re-tie-experimental-m2",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "re-tie-experimental-m3",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "sav-starforge-station",
+          "printed": "unlimited",
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "sotg-delta-7-aethersprite-light-interceptor",
+          "printed": "none (1 week with booster ring)",
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "sotg-feethan-ottraw-scalable-industries-mankvim-814-light-interceptor",
+          "printed": "2 hours",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "sotg-kuat-systems-engineering-alpha-3-nimbus-v-wing-starfighter",
+          "printed": "15 hours",
+          "reason": "CONSUMABLES_UNIT_CONVERSION_UNRULED"
+        },
+        {
+          "key": "tog-bloodfin-razalon-fc-20-speeder-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "tog-modified-r-2000-raptor-speeder-bike",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        },
+        {
+          "key": "tog-nebulon-q-swoop",
+          "printed": null,
+          "reason": "CONSUMABLES_UNKNOWN"
+        }
+      ]
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-05"
+      ],
+      "options": [
+        "prose restriction",
+        "table restriction with a fractional-bay rounding rule"
+      ],
+      "id": "P6B-D-011",
+      "component": "escape-pod-small, escape-pod-large",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Checked against the SotG text: the prose restricts small lifeboats to Colossal (frigate)+ and large lifeboats to Colossal (cruiser)+ (where the per-bay counts cost modifier/50 and /100 are whole numbers), while the catalog table cells are one size smaller. This is a conflict inside the book.",
+      "missing": "Which restriction governs.",
+      "impact": "Not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Owner rules on V-P6B-05; then a per-bay capacity effect like hangar bays."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-06"
+      ],
+      "options": [
+        "cost modifier",
+        "absolute size modifier"
+      ],
+      "id": "P6B-D-012",
+      "component": "passenger-seating, passenger-quarters, medical-suite",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Checked against the SotG text: the printed formulas really do say \"starship's size modifier\" (negative for starships), so the catalog paraphrase is faithful and the book itself is defective here.",
+      "missing": "How to read \"size modifier\" in these two formulas.",
+      "impact": "Not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Owner rules on V-P6B-06."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-03"
+      ],
+      "options": [
+        "round down the reduction (crew rounds up)",
+        "round the remaining crew down",
+        "round to nearest"
+      ],
+      "id": "P6B-D-013",
+      "component": "slave-circuits-basic, slave-circuits-advanced, slave-circuits-recall",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Crew requirement is reduced by 1/3 or 2/3 (never below 1); the rounding of fractional crew is not stated. Recall circuits also need a summon action and an untrained-crew override with no consumer.",
+      "missing": "Rounding rule for crew reduction; recall action consumer.",
+      "impact": "Not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Owner rules on V-P6B-03."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-014",
+      "component": "droid-repair-team",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Automatic deployment when the ship moves down the condition track, a +13 Mechanics jury-rig of 1 step, and a 25% destruction chance when damage exceeds SR. This automates condition-track and damage application (runtime-risky) and depends on the Core jury-rig DC and duration, which the accessory text does not restate.",
+      "missing": "Condition-track change hook for vehicles with a safe automation path; Core jury-rig DC/duration reference.",
+      "impact": "Not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Implement as a GM-prompted (not automatic) roll first, after live testing of vehicle condition track."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-015",
+      "component": "cargo-jettison, transponders (IFF, masked, disguised x3), cloaking (hibridium, stygium), docking clamps, holonet/hyper transceivers, luxury upgrades",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Action or narrative components with no consumer: no cargo-bay inventory to jettison; no sensor identification/IFF model; no concealment/Stealth consumer for starship combat; no docking state; communications are narrative; luxury maintenance and crew-quality step changes would require recomputing printed statblocks. Masked/disguised transponders also have special installation-failure outcomes (sublight engines destroyed) not modeled by the installation job.",
+      "missing": "Consumers listed; installation-failure side effects for transponders.",
+      "impact": "Not installable; shown as reference only.",
+      "severity": "MINOR",
+      "recommendedAction": "Revisit per component when the consuming system exists; transceivers could be enabled as narrative capabilities if the owner wants installable non-mechanical components."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-016",
+      "component": "25 legacy accessory rows with UNVERIFIED effect text (amphibious seals, auxiliary generators, baffled drive, hidden cargo, holding cells, sensor baffling/decoy/mask, workshop, etc.)",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "P6A verified the printed cost/EP of these Scum and Villainy p. 58 rows from the PDF, but their effect strings are legacy text. The repository OCR of the Scum and Villainy descriptions is largely unreadable, so the effects cannot be verified from it. A readable fragment suggests Personalized Controls grants +1 (one crew position), not the legacy \"+2 to Pilot checks\", so the legacy strings must not be trusted.",
+      "missing": "PDF wording of each Scum and Villainy accessory description.",
+      "impact": "Reference only; not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "PDF prose review of Scum and Villainy (accessory descriptions near p. 58); replace legacy effect strings before any of these rows is certified."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-017",
+      "component": "hangar bays / cryogenic chambers (contents)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Capacity is computed and shown; nothing assigns carried craft or stasis occupants against it (carriedCraft is printed data only).",
+      "missing": "A carried-craft/occupant assignment model.",
+      "impact": "Capacity is informational; no over-capacity enforcement.",
+      "severity": "MINOR",
+      "recommendedAction": "Add when a hangar roster UI is built."
+    },
+    {
+      "workstream": "P6B-2",
+      "source": "Starships of the Galaxy pp. 48-53 (Accessories)",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-018",
+      "component": "cargo pods (detachable option)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "A pod may be made detachable to act as an escape pod for five times the cost; the Shipyard has no purchase-option mechanism.",
+      "missing": "Catalog purchase options with cost multipliers.",
+      "impact": "Only fixed pods can be installed.",
+      "severity": "MINOR",
+      "recommendedAction": "Add an option field to catalog rows and the quote."
+    },
+    {
+      "workstream": "P6B-3",
+      "ownerRulingNeeded": false,
+      "options": [],
+      "id": "P6B-D-019",
+      "component": "remaining weapon systems, launchers and ammunition (laser cannons light/medium/heavy are certified and executable since the weapon slice)",
+      "source": "Starships of the Galaxy pp. 44-48; Core Rulebook vehicle combat",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "V-P2-04 is resolved (GM-certified mounts). The light, medium and heavy laser cannons now run end to end (certified spec, GM mount, sealed executable entry, owned Item, preflight, vehicle attack math, Core damage formula). Every other weapon row stays uncertified until its own rules are covered: see P6B-D-023..031. Launchers/ammunition still need loading and expenditure authorities.",
+      "missing": "Firing-arc policy (V-P2-04); launcher capacity and cost basis (V-P6A-03); armor-piercing missile price (V-P6A-02); triple cannon (V-P6A-01); weapon attack/damage consumer certification.",
+      "linkedDecisions": [
+        "V-P2-04",
+        "V-P6A-01",
+        "V-P6A-02",
+        "V-P6A-03",
+        "V-P6A-04"
+      ],
+      "impact": "Weapons, launchers and ammunition are reference-only; sealed ledger entries keep executable:false; the attack preflight keeps blocking.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Owner rules on V-P2-04 and V-P6A-03 first (they unlock the most); then certify weapon rows one family at a time (lasers, ion, missiles) with mount, arc, ammunition and attack tests."
+    },
+    {
+      "workstream": "P6B-3",
+      "ownerRulingNeeded": false,
+      "options": [],
+      "id": "P6B-D-020",
+      "component": "printed stock payloads (e.g. \"Printed payload: 6 proton torpedoes\")",
+      "source": "published statblocks (capacity.storageNotes)",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Stock ordnance counts exist only as printed notes. Converting them into a magazine with expenditure needs the attack execution path (P6B-D-019).",
+      "missing": "Executable stock attack groups.",
+      "linkedDecisions": [
+        "V-P2-04"
+      ],
+      "impact": "Payload stays visible as printed text; never decremented.",
+      "severity": "MINOR",
+      "recommendedAction": "Parse into a read-only magazine view when stock attacks become executable."
+    },
+    {
+      "workstream": "P6B-3",
+      "ownerRulingNeeded": false,
+      "options": [],
+      "id": "P6B-D-021",
+      "component": "custom ships: cargo-dependent and consumables-dependent accessories",
+      "source": "Starships of the Galaxy p. 52 (stock frames)",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "A stock frame includes no cargo space, so cargo pods and extended range have no printed base on a custom design; the planner refuses them (CARGO_UNIT_NOT_TONS / CONSUMABLES_UNIT_CONVERSION_UNRULED) rather than inventing one. Custom ships otherwise use the same effects authority as published hulls (P6B-3).",
+      "missing": "A cargo/consumables base for custom designs (frame table values are listed, but the stock-frame rule says the frame includes no cargo space), and V-P6B-02 for unit conversions.",
+      "linkedDecisions": [
+        "V-P6B-02"
+      ],
+      "impact": "Those accessories are not installable on custom designs.",
+      "severity": "MINOR",
+      "recommendedAction": "Decide whether the frame table cargo/consumables apply to a constructed ship."
+    },
+    {
+      "workstream": "P6B-3",
+      "ownerRulingNeeded": false,
+      "options": [],
+      "id": "P6B-D-022",
+      "component": "custom ships: speed and movement effects",
+      "source": "stock frames (speed printed as \"16/4\")",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Frame speed is stored as printed text; custom ships keep their own system speed fields, so atmospheric thrusters on a custom design have no structured fly mode to modify (the planner refuses NO_ATMOSPHERIC_FLIGHT_MODE).",
+      "missing": "Structured speed modes for stock frames.",
+      "linkedDecisions": [],
+      "impact": "Atmospheric thrusters not installable on custom designs.",
+      "severity": "MINOR",
+      "recommendedAction": "Parse frame speed into character/starship speed modes in the frame builder."
+    },
+    {
+      "workstream": "P6B-W",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-023",
+      "component": "turbolasers and capital-scale (x5) weapons",
+      "source": "Core Rulebook, Vehicle Combat (Capital Ships); SotG p. 45 (point-defense)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "The Core -20 against targets smaller than Colossal is implemented (vehicle-capital-penalty.js, in the vehicle attack math) and weapons may now be installed on frigate-size and larger hulls. Turbolasers stay uncertified: capital-scale (x5) damage against smaller-scale targets and their starship-scale ranges have not been verified end to end (the Core range cells are unreadable in the OCR). Update: 4 capital-ship single-gunner turbolaser groups on Colossal (cruiser) hulls (Munificent, Recusant, Venator, Rendili) are executable with the -20 applied once; the statblock vs-smaller figure (printed - 20 in 105 of 107 cases) is verified as a consistency check.",
+      "missing": "Verified starship-scale range cells and capital-scale damage application for turbolasers.",
+      "impact": "Turbolasers (light/medium/heavy, Hapan triple ion) are reference-only.",
+      "severity": "MINOR",
+      "recommendedAction": "PDF check of Table 10-2 turbolaser range cells and of damage application of x5 weapons to non-capital targets, then certify."
+    },
+    {
+      "workstream": "P6B-W",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-024",
+      "component": "pilot +2 for weapons not covered by the sealed installation path",
+      "source": "Core Rulebook, Vehicle Combat (attack modifiers)",
+      "status": "NONCRITICAL_DEFECT",
+      "reason": "Core Rulebook printed p. 171 (owner-verified): +2 attack bonus for a character trained in Pilot with a vehicle weapon crewed by the pilot. Implemented in the vehicle attack math for certified installed weapons whose sealed mount operator is the pilot, fired by the vehicle's assigned, Pilot-trained pilot-station Actor. NOT applied to abstract crew (no evidence the printed totals omit it) or to stock/printed attack groups and legacy weapons (their pilot-crewed designation is not authoritative).",
+      "missing": "Authoritative pilot-crewed designation for stock printed attacks.",
+      "impact": "Named pilots firing pilot-crewed weapons may be 2 low; abstract crew unaffected.",
+      "severity": "MINOR",
+      "recommendedAction": "Revisit when stock attack groups become executable."
+    },
+    {
+      "workstream": "P6B-W",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-025",
+      "component": "blaster-cannon-light/medium/heavy, autoblaster",
+      "source": "Core Rulebook Table 10-2; SotG pp. 44-47",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "Blaster cannon rows are PDF-verified (damage, EP, cost, availability). The starship-scale range cells of Core Table 10-2 are unreadable in the OCR. No weapon's maximum range is enforced today (range penalties follow the band the attacker states, P6B-D-027), so range cells do not change any certified calculation; the blaster's shorter range is therefore a documented limitation, not a guess.",
+      "missing": "Table 10-2 blaster cannon starship-scale ranges from the PDF.",
+      "impact": "Blaster cannons not installable.",
+      "severity": "MINOR",
+      "recommendedAction": "Confirm the range row; then certify like laser cannons."
+    },
+    {
+      "workstream": "P6B-W",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-026",
+      "component": "ion cannons (light/medium/heavy, Hapan triple)",
+      "source": "Core Rulebook, ion damage; SotG p. 47",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "The damage formula resolves (e.g. 3d10 x 2, type ion), but ion damage against vehicles (shields, condition track, no hit point loss rules) has not been verified end to end in the damage application path.",
+      "missing": "Verified ion-vs-vehicle damage application tests.",
+      "impact": "Ion cannons not installable.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Audit the ion branch of damage application for vehicle targets, then certify."
+    },
+    {
+      "workstream": "P6B-W",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-027",
+      "component": "vehicle weapon range bands",
+      "source": "Core Rulebook Table 10-2",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Range penalties (0/-2/-5/-10) are applied from the attack's range band, which the attacker supplies; the band is not derived from token distance and scale (character vs starship).",
+      "missing": "Scale context and distance-to-band derivation per weapon family.",
+      "impact": "An attack without a stated band takes no range penalty.",
+      "severity": "MINOR",
+      "recommendedAction": "Derive the band from token distance once a scene scale setting exists."
+    },
+    {
+      "workstream": "P6B-W",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-028",
+      "component": "player-requested weapon mounts",
+      "source": "V-P2-04 owner ruling",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "The Shipyard asks a GM for the mount (key, arc, operator, reason) when a GM begins or instantly installs a certified weapon. A player cannot propose a mount for later GM approval; a player selecting a weapon is refused with WEAPON_MOUNT_UNCERTIFIED and must ask the GM to begin the work.",
+      "missing": "A proposed-mount state on installation jobs with a GM approve step.",
+      "impact": "Weapon installation work is started by the GM.",
+      "severity": "MINOR",
+      "recommendedAction": "Add mount proposals to jobs if players need to queue weapon work themselves."
+    },
+    {
+      "workstream": "P6B-W",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6B-04"
+      ],
+      "options": [],
+      "id": "P6B-D-029",
+      "component": "vehicle weapon damage types (laser cannons)",
+      "source": "SotG Table 3-5; Core vehicle weapons",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "Only ion weapons print a damage type. Laser cannon damage is left untyped (a name-based \"energy\" guess is not used).",
+      "missing": "A printed damage type for laser cannons, if any.",
+      "impact": "Type-dependent DR/resistances do not see laser damage as energy.",
+      "severity": "MINOR",
+      "recommendedAction": "Decide whether starship laser damage is typed."
+    },
+    {
+      "workstream": "P6B-W",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-030",
+      "component": "copilot as weapon operator",
+      "source": "Core Rulebook (vehicle weapons operated by pilot/copilot or gunner)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "The attack-time crew station authority resolves only pilot and gunner stations, so mounts are limited to those operators.",
+      "missing": "A copilot station in vehicle-crew-station-evidence.",
+      "impact": "Copilot-operated mounts cannot be certified.",
+      "severity": "MINOR",
+      "recommendedAction": "Add the copilot station to the crew authority."
+    },
+    {
+      "workstream": "P6B-W",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-031",
+      "component": "weapon mount key uniqueness across pending jobs",
+      "source": "-",
+      "status": "NONCRITICAL_DEFECT",
+      "reason": "The planner refuses a mount key already used by an INSTALLED weapon; two pending jobs could still reserve the same key until one completes (the second then fails at completion only if re-planned).",
+      "missing": "Mount-key reservation for pending jobs.",
+      "impact": "A GM could start two jobs on one hardpoint.",
+      "severity": "MINOR",
+      "recommendedAction": "Pass pending-job mount keys into the planner like reserved EP."
+    },
+    {
+      "id": "P6B-D-032",
+      "workstream": "P6B-W",
+      "component": "launchers: loading, expenditure and capacity expansion",
+      "source": "Starships of the Galaxy pp. 45-46",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Standard capacities are now recorded from the printed text (vehicle-launcher-capacity.js). Loading and expending ammunition need a launcher attack path (missiles and torpedoes also carry special rules: splash, penetration, shieldbuster SR loss) and a magazine authority; capacity expansion needs V-P6A-03 (EP and cost basis).",
+      "missing": "Launcher attack/ammunition authorities; V-P6A-03 for expansion.",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6A-03"
+      ],
+      "options": [],
+      "impact": "Launchers and ammunition are not installable; capacity is reference data only.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Build the magazine authority on top of the existing AmmoSystem once one launcher family is certified for attack."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-033",
+      "component": "published stock groups whose printed attack total is not explained by a published rule (336 groups, mostly batteries)",
+      "source": "canonical records, armament.firingGroups",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "Investigated across 836 groups and 12 books. A printed total is the generic crew's complete attack modifier. It equals crew Base Attack + vehicle Int in 272 groups (delta 0), and exceeds it by exactly +2 on pilot-crewed groups in 231 of 313 cases (the Core p. 171 trained-Pilot rule; Core Rulebook statblocks omit it, later books include it, and the same crew quality prints both, so it is a per-statblock convention). Weapon batteries add +2 per gunner beyond the first (2 gunners +2, 3 +4, 4 +6, 5 +8, 6 +10; 85-98% of each size), matching the SotG fighter-group sentence \"+2 on attacks per additional vehicle ... as a weapon battery\"; the Core p. 170 battery text itself is unreadable in the OCR. Accepted and executable: delta 0, and +2 on pilot-crewed groups (260 groups after P6C-2A: laser/blaster/mass-driver cannons, plain or xN damage); the printed total is applied ONCE and its components are shown as included, never added again. Still unexplained: about 50 non-battery groups (mostly burst-fire / autofire modes and isolated cases, e.g. -5 printed on \"Burst Fire mode\" groups) and the battery groups, which also need the battery damage rules.",
+      "missing": "Core p. 170 weapon battery text (PDF); the source of the residual single-operator deltas.",
+      "impact": "Batteries and about 50 single-operator groups stay refused (STOCK_ATTACK_TOTAL_UNEXPLAINED_DELTA).",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Read Core p. 170 from the PDF, then design the battery model (P6B-D-034) with the +2 per additional gunner rule."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-034",
+      "component": "published stock weapon batteries and multi-gunner stations (291 groups)",
+      "source": "canonical records",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Capital-ship batteries are operated by several gunners with a battery size and autofire/fire-linked rules that no vehicle mechanic consumes. They are refused rather than treated as one cannon.",
+      "missing": "A battery model (members, gunners, linked fire).",
+      "impact": "Capital-ship stock weapons are reference-only.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Design the battery model on top of the stock group authority once single-weapon groups are live-verified."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-035",
+      "component": "published stock groups with capital-scale (x5 or other) multipliers (192 groups) and turbolasers",
+      "source": "canonical records; Core vehicle damage",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Weapon damage x multiplier is the Core rule, but capital-scale damage against smaller-scale targets and starship-scale ranges are not verified end to end, so only the x2 multiplier is executable.",
+      "missing": "Verified capital-scale damage application and range cells.",
+      "impact": "Capital weapons reference-only.",
+      "severity": "MINOR",
+      "recommendedAction": "Verify with the same PDF check as turbolasers (P6B-D-023).",
+      "resolution": "Multipliers other than x2 (x5, x10, ...) are applied exactly as printed through the one damage composition authority (P6C-2A); the groups that remain refused are blocked by batteries, ion, ammunition or other mechanics, not by the multiplier."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6A-03"
+      ],
+      "options": [],
+      "id": "P6B-D-036",
+      "component": "published stock splash, ion and ammunition-limited groups (torpedoes, missiles, ion cannons; 71 splash + 71 ion groups)",
+      "source": "canonical records",
+      "status": "DEPENDENCY_BLOCKED",
+      "reason": "Splash/area groups need the area-attack path and a finite-payload magazine. Ion groups: the damage engine only partly models ion (threshold type flag and an ion-shielding cap); the Core vehicle ion rule text is garbled in the OCR (half the ion damage to hit points, plus condition-track effects for droids and vehicles), so ion-versus-vehicle application cannot be verified from the repository. Finite-ammunition groups (missiles, torpedoes, rockets, mines, bombs, grenades, launchers) and ion-labelled groups are denied by wording (STOCK_AMMUNITION_LIMITED_UNTRACKED, STOCK_DAMAGE_ION_UNVERIFIED) so they cannot fire without a magazine authority.",
+      "missing": "Core p. 168-169 ion damage text (PDF) and an ion-versus-vehicle damage test; area attack integration; magazine authority.",
+      "impact": "X-wing proton torpedoes stay reference-only; its laser cannons fire.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Build the magazine authority first (one launcher family), then splash."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-037",
+      "component": "published stock groups whose firing arc is stated but not interpreted, or never reviewed",
+      "source": "canonical records, fieldStates armament.firingArcs",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "After the V-P6C-01 ruling: 12 groups sit on records with no arc evidence at all (e.g. AAT-1) and 5 groups state arcs the system cannot interpret (turret, articulated, axial keel, flank-mounted turrets). A fixed-forward / forward-firing statement is enforced. The earlier count of 345 unreviewed groups was inflated by reading only one of the two field-state key styles in the canonical records.",
+      "missing": "Arc review for the 12 records; interpretation of turret / articulated / flank arcs.",
+      "impact": "17 groups not executable for arc reasons.",
+      "severity": "MINOR",
+      "recommendedAction": "Review the 12 records; decide how turret arcs are modelled."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-038",
+      "component": "legacy abstract-crew attack tier table (CREW_QUALITY_BONUS) for actors that are not source-backed or constructed",
+      "source": "docs/audits/rolling-system-alignment-phase-4.md",
+      "status": "NONCRITICAL_DEFECT",
+      "reason": "The tier table (normal 2, skilled 5, expert 8, ace 10) was an unsourced stand-in (the Phase 4 audit says so) and disagrees with the published crew Base Attack in the corpus (Core: skilled +2, expert +5, ace +10). Source-backed and constructed ships now use their verified crew Base Attack; only legacy/unrecorded vehicles still use the table (and the crew skill router for non-attack checks).",
+      "missing": "A decision on whether to retire the legacy table for legacy actors.",
+      "impact": "Legacy vehicle attacks only.",
+      "severity": "MINOR",
+      "recommendedAction": "Replace with the Core crew quality attack column when legacy vehicles are migrated."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-039",
+      "component": "point-defense weapon modification (catalog row \"point-defense\", +4,000 credits)",
+      "source": "Starships of the Galaxy p. 45",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Point-defense is a modification OF an installed weapon (exempting it from the capital-ship penalty), not a weapon. The Shipyard has no weapon-modification model, so no weapon can be classified point-defense; stock groups labelled point-defense are refused rather than inferred.",
+      "missing": "A weapon-modification (modifier) model on installations.",
+      "impact": "Capital ships cannot field point-defense weapons yet.",
+      "severity": "MINOR",
+      "recommendedAction": "Add modifier entries targeting an installed weapon to the sealed ledger."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-040",
+      "component": "published stock groups printing a damage dice expression with no multiplier (52 groups; 20 blocked by this alone)",
+      "source": "canonical records",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "Core says vehicle weapon damage is dice x the listed multiplier, but groups printing plain dice (e.g. \"5d10\") mix character-scale weapons and autofire/burst values. Treating them as x1 vehicle damage could be wrong, so they are refused (STOCK_DAMAGE_NO_MULTIPLIER).",
+      "missing": "Whether a plain dice expression on a vehicle statblock is character-scale damage and how it applies to vehicle targets.",
+      "impact": "Mostly ground vehicles (speeders, droids).",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Check the Core scale rules in the PDF and a handful of statblocks, then decide the x1 treatment.",
+      "resolution": "Owner ruling 2026-11-03: an omitted multiplier is x1 and neither invalidates a vehicle weapon nor makes it a personal weapon (Core vehicle examples print plain 4d10/5d10). Implemented in vehicle-stock-weapon-groups.js (P6C-2A)."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-041",
+      "component": "published stock groups with droid, remote or ambiguous operators",
+      "source": "canonical records; vehicle-crew-station-evidence.js",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "The attack-time crew authority resolves pilot, copilot and gunner stations (copilot added). Droid brains, \"virtual droid gunner\", \"remote pilot\", \"2 gunners\" and ambiguous \"pilot or gunner\" operators have no defined crew model.",
+      "missing": "Copilot station in the attack crew authority; droid operator semantics.",
+      "impact": "36 groups refused.",
+      "severity": "MINOR",
+      "recommendedAction": "Add the copilot station to the crew authority first; leave droid and ambiguous operators refused until defined."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-02"
+      ],
+      "options": [
+        "(a) when only gunners are printed, the identical-weapon count equals the printed gunner count",
+        "(b) the weapon count stays unestablished until a source prints it (current behavior)"
+      ],
+      "id": "P6B-D-042",
+      "component": "published weapon batteries that print gunners but not the number of identical weapons: FULL-BATTERY mode only (independent-weapon mode is implemented)",
+      "source": "canonical records (armament.firingGroups hardwareCount); Core Rulebook p. 170 (owner-verified)",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "Core p. 170 caps extra hits by the identical weapons actually participating. A battery statblock prints \"battery (N gunners)\"; only Krayt's Honor and the Rendili Light Corvette also print the number of weapons. Owner direction 2026-11-03 (V-P6C-02): the weapon count and the gunner count are independent and neither is inferred from the other; the equality requirement written in 2B was an invented restriction and is removed. A battery's weapons may fire independently without battery assistance (Core p. 170), which needs only the printed gunner count: that independent-weapon mode is executable for 64 printed batteries (63 of them independent-only). Full-battery mode (assistance + margin hits) still needs a printed weapon count.",
+      "missing": "The number of identical weapons of a published battery whose source states only gunners.",
+      "impact": "Full-battery execution exists for 1 printed battery (Krayt's Honor turbolaser battery); the other printed batteries run as one independent weapon where every other gate passes.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Full-battery mode for the rest needs a source that prints the weapon count. No code path infers it.",
+      "resolution": "Owner direction 2026-11-03: do not guess the weapon count; support independent single-weapon firing. Implemented in vehicle-weapon-battery.js, vehicle-stock-weapon-groups.js (modes), vehicle-stock-weapon-items.js (one Item per mode)."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-043",
+      "component": "weapon batteries crewed by named gunners (assisting roster)",
+      "source": "vehicle-crew-actor-authority.js; vehicle-crew-station-evidence.js; Core p. 170",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Crew assignment holds one actor per station key (gunner, gunner-2, ...). Nothing says which gunner stations belong to which battery, so the assisting gunners of a battery cannot be established. A named gunner on a battery is refused (BATTERY_ASSIGNED_CREW_ROSTER_UNMODELED) rather than inferred from a displayed bonus. The pure arithmetic exists and is tested (resolveBatteryAttackTotal, crew 'assigned').",
+      "missing": "A binding from a battery weapon to its assisting gunner stations, validated against the existing crew assignment authority (distinct actors, real stations).",
+      "impact": "Named-gunner crews cannot fire published batteries; the generic published crew can.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Add a roster binding that references existing crew stations, then wire resolveBatteryAttackTotal('assigned') into the named-gunner attack math."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-03"
+      ],
+      "options": [],
+      "id": "P6B-D-044",
+      "component": "battery aiding another battery: ordinary single-aid case IMPLEMENTED; multiple assisting batteries/stacking and a sheet button remain",
+      "source": "Core Rulebook p. 170 (owner-verified)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Core p. 170 (Aid Another, PUBLISHED_RULE): a standard action benefiting the ally's next attack roll. Implemented in vehicle-battery-aid.js and vehicle-battery-aid-service.js: the standard action through ActionEconomyConsumption, the aid attack against Reflex Defense 10 through the attack outcome resolver, +2 per complete pair of the assisting battery's weapons, one pending aid per aided battery, applied by the attack ledger to that battery's next attack roll and consumed once (idempotent), no margin hits from the aid. Not done: stacking of several assisting batteries (SOURCE_UNRESOLVED, refused), and the vehicle-sheet button that calls VehicleBatteryAidService.perform (the service is callable; no UI action is wired yet).",
+      "missing": "Stacking rules for several assisting batteries; a sheet action wired to the service.",
+      "impact": "Needs two full batteries on the same or allied vehicles: the published corpus has exactly one (Krayt's Honor turbolaser battery), so no published ship can use it yet; tests use a synthetic two-battery fixture.",
+      "severity": "MINOR",
+      "recommendedAction": "Wire a sheet action; revisit stacking only if the sources state it.",
+      "resolution": "Owner addendum 2026-11-04: timing is the published Aid Another rule; ordinary case implemented."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-04"
+      ],
+      "options": [],
+      "id": "P6B-D-045",
+      "component": "ion damage: ordering with shield rating / damage reduction and 0 HP + threshold (resolved by approved project interpretation)",
+      "source": "Core Rulebook pp. 159-160 (owner-verified); damage-resolution-engine.js; damage-packet-rules.js",
+      "status": "NONCRITICAL_DEFECT",
+      "reason": "Resolved 2026-11-04 as PROJECT_INTERPRETATION V-P6C-04 (owner addendum): vulnerability -> shield rating -> damage reduction -> kept full amount -> HP halving -> threshold on the kept amount; at 0 HP the specific ion disable outcome governs the general destroy outcome for an ion-only hit. Implemented in damage-packet-rules.js and damage-resolution-engine.js; the damage type stays ion for every target and only the ion special effects are switched off for an ordinary organic. Hits that exercise an interpretation report it in result.projectInterpretations.",
+      "missing": "Nothing blocking. Remaining limits: prostheses are recognized only through owned equipment tagged cybernetic + prosthesis; the ion baseline and the optional double-threshold house rule combine as the larger.",
+      "impact": "None on readiness; the decision matrix (docs/audits/vehicles/ion-damage-decision-matrix.md) pins the adopted outputs.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Revisit only if the owner changes the interpretation: the p27 DECISION MATRIX test fails first.",
+      "resolution": "Owner addendum 2026-11-04: approved sequencing and specific-over-general at 0 HP (PROJECT_INTERPRETATION)."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-05"
+      ],
+      "options": [],
+      "id": "P6B-D-046",
+      "component": "R-28 \"medium ion cannons\" damage typing (Legacy Era Campaign Guide p. 85); AAT-1 vulnerability is implemented",
+      "source": "canonical records core-aat-1 (text.mechanicalNotes), le-r-28-starfighter",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "AAT-1 (Core p. 176): implemented as PROJECT_INTERPRETATION V-P6C-05 through damage-vulnerability-authority.js (x2 on the incoming ion damage before shield rating, damage reduction and halving). R-28: the statblock prints `Medium ion cannons (pilot) Atk +7, Dmg 6d10x2` with no ion type, while the narrative calls 'the fire-linked ion cannons' the ship's 'nonlethal munitions'. The canonical group evidence does not type the damage and canonical records are not edited.",
+      "missing": "A source-evidence amendment that types the R-28 group's damage as ion (not a name match).",
+      "impact": "The R-28 medium ion cannons stay refused (STOCK_DAMAGE_ION_UNVERIFIED).",
+      "severity": "MINOR",
+      "recommendedAction": "Owner decision to amend the canonical evidence for this one group, or leave it refused.",
+      "resolution": "AAT-1 part resolved 2026-11-04 (owner addendum, PROJECT_INTERPRETATION)."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-047",
+      "component": "guided missile and torpedo lock-on: core IMPLEMENTED; automatic turn trigger, sheet actions and interception targeting remain",
+      "source": "Core Rulebook, Vehicles: Missiles and Torpedoes",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "PUBLISHED_RULE (Core, Missiles and Torpedoes) implemented in vehicle-guided-projectile.js and vehicle-projectile-service.js, wired into rollAttack: an AIMED guided launch that MISSES leaves one persistent projectile on the launching vehicle (target, launcher, attack bonus, 10 HP, Reflex 30); its single follow-up attack (rollOptions.guidedFollowUp) uses the same bonus with -5, costs no ammunition and no action, must keep its target and launcher, is due on a later round of the same combat, and ends the projectile (hit) or self-destructs it (second miss); no retries; interception (Reflex 30, 10 HP) shoots it down. Not done: nothing triggers the follow-up automatically at the attacker's next turn (a caller passes guidedFollowUp), no sheet button/chat prompt, the readied-action cost of intercepting is the caller's, and attacking a projectile is not wired into target selection (VehicleProjectileService.intercept is an API).",
+      "missing": "A turn-change prompt and sheet/chat actions for the follow-up and interception.",
+      "impact": "No published group can use it yet (no complete launcher family exists); proven on a digest-verified synthetic fixture.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Wire a combat-turn prompt and a sheet action to the services.",
+      "resolution": "Owner addendum 2026-11-04 (PUBLISHED_RULE, no extra ammunition for the follow-up)."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-048",
+      "component": "area and splash damage: ordinary splash at STARSHIP scale IMPLEMENTED (single target); character-scale multi-target area and explicit starship-scale areas remain",
+      "source": "Core Rulebook (Splash; Area Attacks); canonical group evidence (splash, area*)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "PUBLISHED_RULE (Core, Vehicle Combat): area attacks, including splash and burst-radius weapons, resolve as an attack on a single target in starship scale unless the weapon is specifically listed with a starship-scale area attack. Implemented: vehicle-encounter-scale.js (vehicles-only = starship scale), the gate reads an ordinary N-square splash/burst as an area attached to the group, and the attack preflight resolves it before any cost. Still refused: character-scale encounters (the multi-target engine does not exist) and explicit starship-scale areas (the Subjugator's ion pulse cannons, with hit/miss/recharge riders). WE-3 (2026-11-04, V-P6C-07 resolved): the area-attack miss rule now applies to these single-target resolutions: a miss deals half damage, a hit full.",
+      "missing": "Target enumeration by radius, per-target attack rolls, Evasion, cover and line of effect at character scale; the explicit starship-scale area mechanics.",
+      "impact": "3 non-ammunition groups run at starship scale only; ordinary splash on finite-ammunition launchers is ready when their ammunition is.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Extend the canonical area-attack authority to vehicle weapons at character scale.",
+      "resolution": "Owner addendum 2026-11-04 (PUBLISHED_RULE)."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-06"
+      ],
+      "options": [],
+      "id": "P6B-D-049",
+      "component": "finite ammunition ledger: IMPLEMENTED; 18 groups wait for a GM-certified allocation; reload action cost not inferred",
+      "source": "Core Rulebook (Payload line); Starships of the Galaxy pp. 45-46; ammo-system.js",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "vehicle-ammunition-ledger.js / vehicle-ammunition-service.js: payload, capacity, loaded, reserve and expended are separate, conservation payload = loaded + reserve + expended is validated at every use (a hand-edited ledger is refused), spending is atomic and idempotent per attack id and refunded when the attack fails, a refused attack spends nothing, the guided follow-up spends nothing, and the ledger does not depend on the optional blaster-charge setting. Initial loading (PROJECT_INTERPRETATION): loaded = min(payload, capacity), reserve = payload - loaded, for a verified single launcher only. Reload is a GM operation that moves reserve to loaded without creating ammunition and invents no action cost. 24 groups print a payload; none has a verified single launcher, so 0 are complete. 18 have payload + an exactly-designated launcher but an unverified launcher count (STOCK_LAUNCHER_ALLOCATION_NOT_CERTIFIED): they are NOT armed and NOT counted, because arming an Item that cannot fire until a GM certifies it needs a sheet action that does not exist. WE-L1 (2026-11-04): AFTERMARKET launchers (proton torpedo; light, medium, heavy concussion) are a complete, tested family: the ledger lives on the vehicle under a guarded flag keyed by installation id, ammunition is bought per unit in one TransactionEngine transaction with the ledger, arrives in reserve, and the sheet offers Buy ammunition and the GM reload.",
+      "missing": "For STOCK groups: arming allocation-pending launchers and a GM sheet action to certify their allocation; source-printed payloads for the 145 groups without one. (Aftermarket launchers have both sheet actions.)",
+      "impact": "0 published launcher groups executable.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Add the GM allocation/reload sheet actions, then arm allocation-pending launchers.",
+      "resolution": "Owner addendum 2026-11-04 (PROJECT_INTERPRETATION for initial loading and the GM reload)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-10",
+        "V-P6C-11"
+      ],
+      "options": [],
+      "id": "P6B-D-050",
+      "component": "weapon configurations: double, triple, quad, fire-linked, optional fire link, cannon enhancements",
+      "source": "Starships of the Galaxy, Weapon Systems and Table 3-5 (p. 47)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "V-P6C-10/V-P6C-11 are resolved (owner rulings 2026-11-04): configured price = base price x the printed multiplier (a total, not a surcharge), extra dice before the vehicle multiplier, alternatives within a group, nothing stacks automatically, enhancements never on turbolasers. The weapon-option mechanism built for point defense (an option sealed into the entry, priced and EP-adjusted through a derived catalog entry) is the carrier.",
+      "missing": "A multiplier price kind in the derived entry, extra dice in the certified damage, eligibility per configuration, and tests per configuration through purchase, install, fire and removal.",
+      "impact": "Aftermarket double/triple/quad/fire-linked/enhanced weapons cannot be bought.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Implement double, triple, quad, fire-linked 2 and 4 (energy weapons) and the enhancements one at a time (WE-4)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-07",
+        "V-P6C-08",
+        "V-P6C-09"
+      ],
+      "options": [],
+      "id": "P6B-D-051",
+      "component": "autofire (starship-scale single-target mode), autoblaster and Burst Fire",
+      "source": "Core Rulebook, Special Combat Rules: Autofire and Vehicle Combat: Scale; Starships of the Galaxy, Cannon Double/Quad and Fire-Linked Weapons (Autofire)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "V-P6C-07 (miss damage), V-P6C-08 (Burst Fire applies to autofire-capable vehicle weapons, extra dice before the multiplier) and V-P6C-09 (the autoblaster grants autofire to a single-mounted blaster cannon) are resolved. Remaining: the swift-action autofire mode, the -5 attack, Burst Fire with verified feat evidence, the autoblaster configuration.",
+      "missing": "Autofire mode switch and the Burst Fire combat option for vehicle weapons (WE-5), the autoblaster (WE-6).",
+      "impact": "No autofire for any vehicle weapon.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Build the established part after P6B-D-050; keep the three questions in the register."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-052",
+      "component": "point-defense weapon modification: aftermarket option IMPLEMENTED; stock classification and point-defense ranges remain",
+      "source": "Starships of the Galaxy, Weapon Systems: Point-Defense Weapon; Table 3-5; Core Rulebook p. 170",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "WE-PD (2026-11-04): the printed modification (+4,000 credits per weapon, 0 extra EP, Restricted, Colossal or larger only; blaster cannons, laser cannons and light ion cannons only) is an OPTION chosen when an eligible weapon is bought, sealed into the weapon's ledger entry; it removes the Core -20 capital-ship penalty against targets smaller than Colossal through the certified specification (never a name or an Item field). The price is printed as an addition per weapon, so it needed no ruling. 60 stock groups labelled point-defense stay refused: a statblock label is not evidence of the modification (STOCK_POINT_DEFENSE_CLASSIFICATION_UNVERIFIED). The Table 10-2 point-defense range row is recorded on the option but unused until range-band resolution exists (P6B-D-053). GM exceptions to \"normally\" are not implemented. ACCELERATED (2026-11-04): a statblock designation that PRINTS 'point-defense' (not the notes, not another word) is now the source stating the fact: such stock groups use the point-defense Table 10-2 row and take no capital-ship penalty (18 groups unlocked).",
+      "missing": "Stock point-defense classification from structured evidence; point-defense range bands (P6B-D-053); the Hapan triple ion cannon, which acts like a point-defense weapon.",
+      "impact": "Aftermarket point defense works; stock point-defense groups are not executable.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Resolve with range-band resolution; keep the stock gate name-blind."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-053",
+      "component": "vehicle weapon range-band resolution: IMPLEMENTED (WE-2) for every vehicle-managed weapon",
+      "source": "Core Rulebook, Vehicles, Table 10-2: Vehicle Weapon Ranges; data/vehicle-weapon-ranges.json",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "The attack math applies the Core range modifier (0 / -2 / -5 / -10) from a caller-supplied rangeBand; no code resolves the attacker-target distance to a Table 10-2 band for a vehicle weapon, so attacks made from the sheet carry no range modifier. Every promoted weapon names its Table 10-2 row (rangeSlug). WE-2 (2026-11-04): rollAttack resolves the band from the distance between the attacking vehicle's token and the target's token (footprints counted, square or gridless scenes), at the encounter's scale, in the weapon's Table 10-2 row (RangeEngine + data/vehicle-weapon-ranges.json), before any cost; the Core penalties 0/-2/-5/-10 come from the single getRangePenalty authority; a caller-supplied band, distance or explicit penalty is overwritten; an unresolved distance, grid, scale or table and a target beyond long range are refused. Custom designs' legacy weapons (not vehicle-managed) keep the caller-supplied band.",
+      "missing": "Distance in squares at the encounter's scale, the band lookup per weapon family, and the decision how distance between large fighting spaces is measured.",
+      "impact": "Range penalties never apply unless a macro supplies the band.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Resolve the band from token distance at the encounter scale; document the measurement convention.",
+      "resolution": "Implemented in vehicle-weapon-range.js, vehicle-attack-range.js and rollAttack; tested in tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs (exact boundaries of every Table 10-2 row, both scales, footprints, grid sizes/units, refusals, no override). Five stock groups whose designation names no Table 10-2 row (two mass-driver cannons, 'double lasers', the Proton beam cannon, volcano cannons) are no longer executable; stock executable groups 351 -> 346."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-07"
+      ],
+      "options": [],
+      "id": "P6B-D-054",
+      "component": "shieldbuster torpedoes, space mines and ion bombs",
+      "source": "Starships of the Galaxy, Weapon Systems and Table 3-5",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Shieldbusters halve damage against anything but shields and remove 10 SR (not 5) when an attack exceeds SR; mines are deployed as a swift action, persist in a square, can be noticed (Stealth +5, Perception reaction, Use Computer reaction), are IFF-immune or command-detonated, and detonate as an area attack on every ship entering; ion bombs work only in an atmosphere at -5, may target the square beneath the ship and deal 5d10 ion damage in a 10-square radius. None is a plain direct-fire missile.",
+      "missing": "The shield rule in the damage engine, a persistent mine record with detection and detonation, the bomb atmosphere gate, launcher installation and ammunition rows for each.",
+      "impact": "Three launcher families cannot be bought or fired.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Implement as separate slices (priority 8)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-055",
+      "component": "vehicle tractor beams",
+      "source": "Core Rulebook, Vehicles: Tractor Beams (cited at p. 174 by Starships of the Galaxy); Starships of the Galaxy Table 3-5",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Not a damage attack: hit on equal or exceeding Reflex, then an opposed grapple check; a grabbed target of the beam vehicle's size or smaller cannot move and loses its Dexterity bonus to Reflex; each round another opposed grapple check to hold, pull up to 10 squares (1 at starship scale) or lose the target; leaving range breaks the hold. 58 stock groups are refused.",
+      "missing": "A persistent grab record, the opposed grapple check on vehicles, forced movement, and the range break.",
+      "impact": "No tractor beam can be fired or bought.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Implement as its own slice (priority 9); never model it with hit-point damage."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-056",
+      "component": "gravity well projectors",
+      "source": "Starships of the Galaxy, Weapon Systems: Gravity Well Projectors; Table 3-5",
+      "status": "ENGINEERING_COMPLEXITY",
+      "reason": "Not a damage attack: the operator chooses a 4x4-square (starship scale) area in range and attacks Reflex Defense 10; on success the area becomes a hyperspace interdiction field and a starship starting its turn in it may not activate its hyperdrive that turn.",
+      "missing": "A persistent field record, area placement, and a hyperdrive-activation gate.",
+      "impact": "No gravity well projector can be fired or bought.",
+      "severity": "IMPORTANT",
+      "recommendedAction": "Implement as its own slice (priority 10)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6A-03",
+        "V-P6C-06"
+      ],
+      "options": [],
+      "id": "P6B-D-057",
+      "component": "launcher capacity expansion and the remaining launcher kinds",
+      "source": "Starships of the Galaxy, Weapon Systems (launcher capacities); Table 3-5",
+      "status": "RULES_DECISION_REQUIRED",
+      "reason": "Extra launcher capacity (+20% / +25% per additional unit up to the printed maximum) is unusable until the emplacement-point effect and the base of the percentage are ruled (V-P6A-03); the shieldbuster, mine, bomb, discord and gravity-mine launchers are not promoted; reload remains a GM operation (V-P6C-06).",
+      "missing": "A ruling on capacity expansion; the launcher kinds depend on P6B-D-054.",
+      "impact": "Launchers carry their standard capacity only.",
+      "severity": "MINOR",
+      "recommendedAction": "Hold until V-P6A-03 is ruled."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-058",
+      "component": "source-specific special weapons without a printed table row",
+      "source": "Clone Wars Campaign Guide (mass-driver, rail, composite beam, proton grenade); Rebellion Era Campaign Guide (flak pod); statblock-only equipment",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "reason": "These catalog rows have text descriptions but no printed price, EP or availability row (or appear only inside statblocks); their numbers came from statblocks. They cannot be priced or installed, and each needs its own verified mechanic (for example the composite beam cannon ignores 5 points of SR; the flak pod is an area attack at starship scale with half damage on a miss).",
+      "missing": "A reconciled printed source row (or an owner decision to sell them) and an individually verified mechanic per weapon.",
+      "impact": "Stock groups run only where they are plain damage; none is purchasable.",
+      "severity": "MINOR",
+      "recommendedAction": "Reconcile each against its printed source, then implement individually (priority 11)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-08"
+      ],
+      "options": [],
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "severity": "IMPORTANT",
+      "id": "P6B-D-059",
+      "component": "Autofire capability of stock weapon groups",
+      "source": "Starships of the Galaxy autofire-capable list; stock statblock 'autofire' figures",
+      "reason": "Autofire/Burst Fire now execute for installed autofire-capable weapons (double, quad, fire-linked, autoblaster options). A stock group carries no sealed capability, and the printed statblock autofire figures are not a verified capability record, so stock autofire and burst are refused (AUTOFIRE_CAPABILITY_NOT_ESTABLISHED).",
+      "missing": "A verified per-group autofire capability (or evidence that the plain laser cannon / light ion cannon / light turbolaser rows are themselves autofire-capable) and the meaning of the printed autofire totals.",
+      "impact": "Stock vehicles cannot autofire or burst; installed ones can.",
+      "recommendedAction": "Reconcile the capability list against each canonical group, then set it in the group assessment.",
+      "resolution": "Stock autofire capability is established by the record's own structured evidence: a printed autofire attack figure equal to the printed attack total less 5 (111+ executable groups). Groups with a different or no figure stay single-fire only. Implemented in vehicle-stock-weapon-groups.js (autofireCapable)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-08"
+      ],
+      "options": [],
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "IMPORTANT",
+      "id": "P6B-D-060",
+      "component": "Swift-action switch to autofire mode",
+      "source": "Core Rulebook, Special Combat Rules: Autofire",
+      "reason": "Autofire is requested per attack; the swift action to set the weapon to autofire is not charged and the mode is not persisted, the same as the character attack path.",
+      "missing": "A persisted per-weapon mode and a swift-action spend through the action economy.",
+      "impact": "Autofire costs no swift action.",
+      "recommendedAction": "Persist the mode on the Item flag and spend 'swift' through ActionEconomyConsumption.",
+      "resolution": "Implemented: VehicleFireModeService.setMode spends a swift action through ActionEconomyConsumption for the switch TO autofire and persists the mode through ActorEngine. Following FireStateStore's established convention (only the switch to the published costly form is priced), switching back is free; no cost is invented."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-08"
+      ],
+      "options": [],
+      "status": "DEPENDENCY_BLOCKED",
+      "severity": "IMPORTANT",
+      "id": "P6B-D-061",
+      "component": "Burst Fire by an operator other than the named gunner; autofire plus battery",
+      "source": "Core Rulebook (Burst Fire feat, weapon batteries)",
+      "reason": "Burst Fire reads the named gunner actor's feat; a pilot-operated weapon with a named pilot and a battery weapon carrying burst dice are refused.",
+      "missing": "Operator resolution for pilot-fired weapons and a published rule for burst dice on a battery.",
+      "impact": "Those combinations are refused, not guessed.",
+      "recommendedAction": "Extend after the operator model batch."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-08"
+      ],
+      "options": [],
+      "id": "P6B-D-062",
+      "component": "Sheet control for the autofire mode switch",
+      "source": "Core Rulebook, Autofire",
+      "status": "LIVE_RUNTIME_PENDING",
+      "severity": "MINOR",
+      "reason": "The mode switch is available as a service (VehicleFireModeService); no vehicle-sheet button calls it yet, and the sheet has no battery-aid button either.",
+      "missing": "A sheet action on autofire-capable weapon rows and live Foundry verification.",
+      "impact": "Players cannot switch the mode from the sheet until wired.",
+      "recommendedAction": "Add one weapon-row toggle next to the existing weapon actions.",
+      "resolution": "Implemented: the V2 vehicle sheet lists autofire-capable weapons with Set to autofire / Set to single fire (VehicleFireModeService, swift action). Live Foundry verification pending."
+    },
+    {
+      "workstream": "STOCK-GROUPS",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-02"
+      ],
+      "options": [],
+      "id": "P6B-D-063",
+      "component": "Weapon-battery groups whose operator prints \"N gunners\" (no word \"battery\") and printed alternative / automated operators",
+      "source": "Canonical vehicle records (firing groups with groupKind weapon-battery, batteryMembershipStatus printed)",
+      "status": "NONCRITICAL_DEFECT",
+      "severity": "MINOR",
+      "reason": "170 printed weapon-battery groups were refused only because the operator line read \"6 gunners\" instead of \"battery (6 gunners)\". The record's own classification marks them printed batteries and the gunner count is printed. They now run in the existing independent-weapon mode (no weapon count is inferred). Operators printed as alternatives (\"pilot or gunner\") or as droid / automated systems are parsed once and enforced at the station evidence.",
+      "missing": "Owner confirmation that the record's printed-battery classification is the authority (this was implemented under the existing battery ruling V-P6C-02; revert is one regex).",
+      "impact": "+120 executable stock groups (379 to 499) depend on it.",
+      "recommendedAction": "None: approved.",
+      "resolution": "OWNER APPROVED 2026-11-04. A printed 'N gunners' operator on a group the record independently establishes as a published weapon battery is accepted; the gunner count only removes the assistance bonus of an independently fired weapon; the number of identical weapons is never inferred; full-battery execution requires a source-backed weapon count; an ordinary multi-gunner station is never a battery without independent evidence; unreconciled attack totals stay rejected."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-13"
+      ],
+      "options": [],
+      "id": "P6B-D-064",
+      "component": "Shieldbuster torpedoes",
+      "source": "Starships of the Galaxy, Shieldbuster Torpedoes",
+      "status": "RULES_DECISION_REQUIRED",
+      "severity": "IMPORTANT",
+      "reason": "Half-damage ordering against a shielded target is ambiguous in the printed sentence.",
+      "missing": "Ruling V-P6C-13.",
+      "impact": "Shieldbuster launcher and stock groups.",
+      "recommendedAction": "Implement after the ruling (SR loss -10 is a one-line change in the shield resolver context).",
+      "resolution": "OWNER INTERPRETATION V-P6C-13 implemented through the shared shield resolver (SR -10) and mitigation manager (hull halving before DR); the certified aftermarket launcher exists. Stock shieldbuster groups still need payload/launcher allocation (GM configuration path)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-14"
+      ],
+      "options": [],
+      "id": "P6B-D-065",
+      "component": "Gravity well projectors",
+      "source": "Starships of the Galaxy, Gravity Well Projectors",
+      "status": "RULES_DECISION_REQUIRED",
+      "severity": "IMPORTANT",
+      "reason": "The interdiction field has no printed duration.",
+      "missing": "Ruling V-P6C-14 plus a persistent field object.",
+      "impact": "Gravity well stock groups and catalog row.",
+      "recommendedAction": "Implement the attack and the field once a duration is ruled.",
+      "resolution": "Implemented (V-P6C-14, project convention): certified damage-less aftermarket projector; area attack vs Reflex 10 through the vehicle attack pipeline and the shared range authority; on a hit a GM-managed scene field (active until a GM deactivates/removes it); a starship starting its turn in an active field receives a turn-long ActiveEffect via ActorEngine, using the existing combat turn hook. No hyperdrive activation action exists in the system yet: isHyperdriveInterdicted() is the query it must consult. Stock gravity-well groups (3) still carry other blockers."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-066",
+      "component": "Space mines",
+      "source": "Starships of the Galaxy, Space Mines",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "IMPORTANT",
+      "reason": "Published rules are complete (swift-action deployment, area attack on entry, full on hit and half on miss, IFF and command detonation, Perception/Use Computer reaction to notice) but require a persistent deployed object, a movement-entry hook and reactions.",
+      "missing": "A battlefield-object store and a token-movement hook; live Foundry runtime.",
+      "impact": "Mine launcher and mine rows.",
+      "recommendedAction": "Build the object store after the persistence design is settled.",
+      "resolution": "Implemented: certified standard and heavy mine launchers (six mines each); GM-client deployment as a swift action paid by the station's operator, one unit of the launcher ledger, recorded on the Scene through the single vehicle Scene writer; proximity detonation through the registered updateToken hook; area attack against Reflex of every starship in the square through the shared damage pipeline (full on a hit, half on a miss); IFF exemption; command detonation; heavy -20 against targets smaller than Colossal. Not automated: the notice reaction (V-P6C-15); the advanced mine (no launcher row); movement path crossings (only the destination footprint is tested)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-067",
+      "component": "Tractor beams: targets larger than the beam vehicle, docking clamps",
+      "source": "Core Rulebook p.174, Tractor Beams (readable in the owner-inspected scan)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "IMPORTANT",
+      "reason": "Stock tractor beams (28 groups) now run through weapon-control-effects / GrappleStateEngine: attack vs Reflex, opposed grapple with the beam's printed grapple bonus, grabbed state, per-turn opposed maintenance, move intent (10 squares / 1 starship square), range break through the vehicle range authority. Remaining: the aftermarket tractor beam (no damage-less certified weapon spec), a target LARGER than the beam's vehicle (keeps its Dexterity bonus, moves freely, and the tractoring ship may pull itself toward it), and docking clamps. UPDATE: the aftermarket tractor beam is now a certified damage-less weapon (same control adapter).",
+      "missing": "A damage-less certified weapon specification; the pull-self-toward-larger-target movement; docking clamps.",
+      "impact": "Aftermarket catalog row; large-target and boarding cases.",
+      "recommendedAction": "Extend the declaration with a larger-target mode; add the damage-less spec."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-16"
+      ],
+      "options": [],
+      "id": "P6B-D-068",
+      "component": "Ion bombs",
+      "source": "Starships of the Galaxy, Ion Bombs",
+      "status": "RULES_DECISION_REQUIRED",
+      "severity": "IMPORTANT",
+      "reason": "Range/target of a dropped bomb is not defined (Table 10-2 has no bomb row; 'may target a square directly beneath the ship'). See V-P6C-16.",
+      "missing": "A scene atmosphere setting and printed payload counts.",
+      "impact": "Ion bomb rows.",
+      "recommendedAction": "Add the scene setting, then reuse the launcher ammunition family."
+    },
+    {
+      "workstream": "CONVERGENCE",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-069",
+      "component": "Legacy SWSEVehicleWeapons module (missile lock-on, homing, battery fire, arcs)",
+      "source": "scripts/combat/systems/vehicle/vehicle-weapons.js",
+      "status": "NONCRITICAL_DEFECT",
+      "severity": "MINOR",
+      "reason": "A pre-refactor module that duplicates mechanics now owned by shared authorities (guided projectile follow-up, battery attack, firing arcs, range). It has no importers (its window global never registers) and its own header says it is unused. It is classified C (deprecated, unreferenced) but four pinned audits/tools (phase2-vehicle-attack-alignment, attack-outcome-wiring, phase2-legacy-facade-delegation, check-attack-outcome-ssot) read its source as a legacy facade, so it is not deleted inside this PR.",
+      "missing": "A pruning change that removes the module together with those four pins.",
+      "impact": "None at runtime; it is a misleading duplicate.",
+      "recommendedAction": "Delete the module and update the four pins in a dedicated prune PR.",
+      "resolution": "Retired: SWSEVehicleWeapons (and the equally unreachable SWSEVehicleCore) were verified unreachable from index.js by static and dynamic import analysis, had no macro/pack/template references, and were deleted. The four pinned audits now assert their absence."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-06"
+      ],
+      "options": [],
+      "id": "P6B-D-070",
+      "component": "GM-configured stock launchers: groups with other blockers, battery launchers, configuration edit",
+      "source": "Owner direction 2026-11-04 (GM-configured ammunition path)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "MINOR",
+      "reason": "97 stock groups are blocked ONLY by missing ammunition facts and can now be completed by a GM configuration (GM_CONFIGURED_EXECUTABLE, reported apart from the 528 canonical groups). The other ammunition-limited groups also carry non-ammunition blockers (unrecognised range table, arc, damage, battery) and stay unresolved. Launcher batteries are not configurable. A configuration cannot be edited in place (remove and re-create), because removing it also removes the launcher Item and its ledger.",
+      "missing": "Fire-linked launcher ammunition (one unit per linked launcher) and in-place reconfiguration with ledger reconciliation.",
+      "impact": "Edge cases only.",
+      "recommendedAction": "Add reconfiguration with conservation checks if table use demands it."
+    },
+    {
+      "workstream": "BATTERIES",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-02"
+      ],
+      "options": [],
+      "id": "P6B-D-071",
+      "component": "Named-gunner rosters for multi-gunner batteries",
+      "source": "Core Rulebook p.170; canonical battery groups",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "IMPORTANT",
+      "reason": "Full-battery mode now runs for 201 printed batteries once a GM certifies the participating-weapon count (GM_CONFIGURED_EXECUTABLE, apart from canonical coverage; the count is never inferred from the gunners). A battery is still operated by its GENERIC crew: the crew model keeps one actor per station (crewPositions.gunner), so N named gunners of one battery cannot be represented, and an attack with a named actor on a battery station is refused rather than approximated.",
+      "missing": "A per-station roster (N gunners) in the crew assignment authority and the Aid Another rule for named assisting gunners.",
+      "impact": "Named gunners cannot crew a capital-ship battery; abstract crews and the independent-weapon mode are unaffected.",
+      "recommendedAction": "Extend the crew assignment authority with a gunner roster before touching battery attack math."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-14"
+      ],
+      "options": [],
+      "id": "P6B-D-072",
+      "component": "Hyperdrive activation consumer for gravity-well interdiction",
+      "source": "Starships of the Galaxy, Gravity Well Projectors",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "IMPORTANT",
+      "reason": "The interdiction field, its turn-start effect and the sheet display are implemented, but the system has no hyperdrive activation action, so nothing refuses a jump. Inventing an activation action is not an interdiction correction.",
+      "missing": "A hyperdrive activation (jump) action that consults isHyperdriveInterdicted before it spends anything.",
+      "impact": "The sheet shows the interdiction; a GM must honor it at the table until an activation action exists.",
+      "recommendedAction": "When a hyperdrive/astrogation activation flow is built, call isHyperdriveInterdicted (domain/vehicles/vehicle-interdiction-field.js) before any cost."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-15"
+      ],
+      "options": [],
+      "id": "P6B-D-073",
+      "component": "Space mine path crossings",
+      "source": "Starships of the Galaxy, Space Mines",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "MINOR",
+      "reason": "A proximity mine detonates for the destination footprint of a moved token; squares crossed during a multi-square move are not tested (a token update carries only its destination).",
+      "missing": "A path (ruler/waypoints) for each move so every square entered can be tested in order.",
+      "impact": "A ship that moves THROUGH a mined square without ending its move there does not trigger it; the GM can detonate or remove mines manually.",
+      "recommendedAction": "Use the movement path once the movement tracking authority exposes per-move waypoints.",
+      "resolution": "Resolved (owner ruling V-P6C-15, 2026-11-05): a move's entered squares come from Foundry's recorded movement path (options._movement waypoints) when it establishes straight or exact-diagonal runs of whole cells; otherwise only the destination footprint is tested and the GM records a crossing explicitly (adjudicateEntry). A pending entry opens the notice-reaction window before any detonation; the atomic claim prevents duplicates. The recorded-path reader follows Foundry V13's movement data and is not live-verified."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-19"
+      ],
+      "options": [],
+      "id": "P6B-D-074",
+      "component": "GM reconciliation tool for an indeterminate Party Fund ammunition settlement",
+      "source": "project workflow (V-P6C-19)",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "MINOR",
+      "reason": "If a Party Fund debit succeeded, delivery failed and the fund restore could not be proven, the request is preserved as indeterminate and never retried; there is no one-click resolution.",
+      "missing": "A GM reconcile action (confirm delivered / confirm not delivered) that closes the request after the Party Fund ledger and the vehicle reserve are checked.",
+      "impact": "Rare; the GM reconciles by hand against the Party Fund ledger entry carrying the request id.",
+      "recommendedAction": "Add the reconcile action to the GM approvals surface if it ever occurs."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-18"
+      ],
+      "options": [],
+      "id": "P6B-D-075",
+      "component": "Stock launcher groups with a verified single launcher (initial ammunition rule has no canonical group yet)",
+      "source": "canonical records",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "severity": "MINOR",
+      "reason": "No published stock group carries a verified single launcher, so every stock launcher is GM-configured and the initial-ammunition rule currently applies to GM allocations and to synthetic complete families.",
+      "missing": "A printed launcher count for stock launcher groups.",
+      "impact": "None for play: the GM allocates stock launchers deliberately; the rule applies automatically to any complete family.",
+      "recommendedAction": "Review the sources of the 18 allocation-required groups."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-076",
+      "component": "Fuel-tank capacity is not published",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "SOURCE_EVIDENCE_MISSING",
+      "severity": "MINOR",
+      "reason": "The book prices and consumes fuel-days but prints no tank capacity, and it must not be derived from Consumables.",
+      "missing": "A published fuel capacity per ship.",
+      "impact": "Fuel purchasing is disabled until a GM configures a tank (labeled GM_CONFIGURED).",
+      "recommendedAction": "Configure per ship; revisit if a source prints capacities."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-077",
+      "component": "Maintenance readiness has no hyperjump record",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "ENGINEERING_COMPLEXITY",
+      "severity": "MINOR",
+      "reason": "Routine maintenance depends on a count of hyperspace jumps; the system records none and none was fabricated.",
+      "missing": "A reliable jump record (hyperdrive activation flow).",
+      "impact": "Maintenance is a GM-administered reference rule and cost.",
+      "recommendedAction": "Count jumps when a hyperdrive activation action exists (P6B-D-072)."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-078",
+      "component": "Docking, maintenance and simplified upkeep billing are GM administered",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "DEPENDENCY_BLOCKED",
+      "severity": "MINOR",
+      "reason": "Owner directive: no automatic billing, player checkout or persistence for these yet.",
+      "missing": "A dedicated GM Holopad logistics application.",
+      "impact": "Reference prices shown read-only on the sheet; the GM charges them by hand.",
+      "recommendedAction": "The logistics service exposes governed operations a future GM interface can reuse."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-079",
+      "component": "Consumables are not depleted by campaign time",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "DEPENDENCY_BLOCKED",
+      "severity": "MINOR",
+      "reason": "No dependable campaign clock exists; a sheet render must never consume supplies.",
+      "missing": "An authoritative time/event source for depletion.",
+      "impact": "The GM adjusts the remaining supply (gmSetConsumables).",
+      "recommendedAction": "Wire to a campaign clock if one is introduced."
+    },
+    {
+      "workstream": "WEAPON-ECOSYSTEM",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [
+        "V-P6C-20"
+      ],
+      "options": [],
+      "id": "P6B-D-080",
+      "component": "Existing vehicles need a GM to initialize supplies",
+      "source": "Starships of the Galaxy, printed p. 14",
+      "status": "NONCRITICAL_DEFECT",
+      "severity": "MINOR",
+      "reason": "Initialization runs once when a vehicle is created; vehicles that existed before get no hidden refill.",
+      "missing": "-",
+      "impact": "A GM presses Initialize supplies (full printed endurance) once per older vehicle.",
+      "recommendedAction": "None; this is the no-silent-refill rule."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": true,
+      "linkedDecisions": [
+        "V-P6C-21"
+      ],
+      "options": [],
+      "id": "P6B-D-081",
+      "component": "Stock launcher groups whose only missing fact is the launcher count (63 groups, 63 vehicles)",
+      "source": "statblock Payload lines (armament.carriedPayloads); SotG pp. 45-46",
+      "status": "RULES_DECISION_REQUIRED",
+      "severity": "IMPORTANT",
+      "reason": "Payload and exact launcher identity are now reconciled from the records; the statblocks print no launcher count, and whether a printed Payload alone is a canonical pool is the owner's question V-P6C-21.",
+      "missing": "A ruling (V-P6C-21) or a printed launcher count.",
+      "impact": "These groups stay GM_CONFIGURED_EXECUTABLE only (never counted as canonical).",
+      "recommendedAction": "Owner decision V-P6C-21."
+    },
+    {
+      "workstream": "STOCK",
+      "ownerRulingNeeded": false,
+      "linkedDecisions": [],
+      "options": [],
+      "id": "P6B-D-082",
+      "component": "Armed vehicles whose canonical record has no firing group although the statblock prints one (4 vehicles)",
+      "source": "cw-bc-714-luxury-transport (double laser cannon), cw-sheathipede-class-shuttle (microtractor-pressor), goi-corona-limited-luxury-groundspeeder (4 heavy laser cannons), ur-landing-sphere (6 turbolaser batteries)",
+      "status": "NONCRITICAL_DEFECT",
+      "severity": "IMPORTANT",
+      "reason": "unarmed-vehicle-certification.json classifies them ARMED_RECORD_GAP from the printed statblock (they stay in the armed denominator).",
+      "missing": "The firing groups in the canonical records (a data repair through the errata path, reviewed against the PDF).",
+      "impact": "4 armed vehicles have no stock weapon at all.",
+      "recommendedAction": "Repair the four records through the errata migration after PDF review."
+    }
+  ]
+}

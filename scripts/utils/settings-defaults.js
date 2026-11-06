@@ -270,5 +270,6 @@ export const SETTINGS_DEFAULTS = {
     enableEnhancedEngineer: false,
     enableEnhancedPilot: false,
     enableEnhancedCommander: false,
-    enableVehicleTurnController: false
+    enableVehicleTurnController: false,
+    initialVehicleAmmunitionIncluded: true
   };

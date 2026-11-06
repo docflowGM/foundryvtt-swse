@@ -1,0 +1,160 @@
+{
+  "schema": "swse.vehicle.universal.phase1i.jedi-academy-training-manual.v1",
+  "status": "PHASE1_I_JEDI_ACADEMY_TRAINING_MANUAL_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Jedi Academy Training Manual",
+  "sourcePdfSha256": "c4dce616776949aa0501b8932012b82d6fd1cd1c27e9646f0a772ab596b4cea9",
+  "sourceFiles": {
+    "pdf": "SW Saga - Jedi Academy Training Manual (optimized).pdf",
+    "text": "Jedi Academy Training Manual_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 1,
+    "newOtherVehiclePublicationClaims": 0,
+    "allBookVehiclePublicationClaims": 1,
+    "inheritedClassifications": {
+      "capital-ship": 1
+    },
+    "newVehicleClassifications": {},
+    "cumulativeKnownUniversalPublicationClaims": 383
+  },
+  "process": {
+    "discoveryMethod": "Independently searched the complete DJVU TXT (593,597 chars) for vehicle-type lines, statblock identity markers, transportation names, starfighters and references to ships. The uploaded primary PDF has 161 scanned physical pages with no selectable text layer. Rendered all 161 pages as eleven labeled 16-page contact sheets and visually checked book layout/statblock sections; rendered the original Chu'unthor statblock on printed p151 at 1.7x for direct primary-PDF type/identity/page confirmation. Preserved its existing Phase2B source review unchanged.",
+    "bookSectionsSwept": [
+      "Contents and Introduction",
+      "Chapter I: Power of the Force (Force Pilot and other vehicle-related powers)",
+      "Chapter II: Philosophy",
+      "Chapter III: Equipment & Artifacts (including beckon call and starship slave circuits)",
+      "Chapter IV: Affiliated Programs (including Aing-Tii living starships)",
+      "Chapter V: Instructors and Alumni (including Jedi pilots)",
+      "Chapter VI: Dangers of Study (NPC and creature statblocks)",
+      "Chapter VII: Studying Abroad (Chu'unthor, facilities, sites and other Jedi academies)",
+      "Back cover"
+    ],
+    "primaryPdfPagesConfirmed": [
+      151
+    ],
+    "printedPdfMapping": "Physical PDF p152 contains printed p151, with independent 'Chu'unthor CL 15' statblock.",
+    "visualReviewScope": "Whole-book contact-sheet survey of all 161 physical pages, plus high-resolution render of printed p151; fully searchable DJVU text swept independently.",
+    "exhaustivenessCaveat": "The source PDF contains only raster images; the DJVU text is an auxiliary discovery layer. Whole-book contact-sheet inspection supports no additional identifiable vehicle statblocks, but cannot absolutely exclude an image-obscured exceptional format.",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "identityDecisions": [
+    {
+      "subject": "Chu'unthor",
+      "printedPage": 151,
+      "status": "REUSE_EXISTING_PUBLICATION_SHIP",
+      "reason": "Only independently printed CL 15 vehicle statblock in this book, already in the 318 approved spacecraft baseline and canonical ships; printed 'Colossal (station) capital ship' is a moving ship with starship-scale Speed, not an additional independent stationary installation claim."
+    },
+    {
+      "subject": "Chu'unthor's various carried shuttlecraft",
+      "printedPage": 151,
+      "status": "EXCLUDE_UNSPECIFIED_CARRIED_CRAFT",
+      "reason": "Its equipment lists 'Carried Craft various shuttlecraft'; the source does not provide separate identity/statblocks for those craft."
+    },
+    {
+      "subject": "Aing-Tii living starships",
+      "printedPages": [
+        72,
+        73
+      ],
+      "status": "EXCLUDE_NARRATIVE_ONLY",
+      "reason": "Force tradition character-building description references flying aboard living ships but does not print a vehicle statblock."
+    },
+    {
+      "subject": "Jedi starfighter missions and pilots",
+      "printedPages": [
+        99,
+        100
+      ],
+      "status": "EXCLUDE_NARRATIVE_ONLY",
+      "reason": "Individual Jedi backstories mention starfighters and pilot service without introducing a distinct vehicle statblock."
+    },
+    {
+      "subject": "Force Pilot, Fold Space, and Spatial Integrity vehicle abilities",
+      "printedPages": [
+        20,
+        24,
+        89
+      ],
+      "status": "EXCLUDE_PLAYER_RULES_NOT_VEHICLES",
+      "reason": "Force powers, techniques and talents referencing vehicles are character rules, not vehicle publication identities."
+    },
+    {
+      "subject": "Beckon Call and starship slave circuits",
+      "printedPage": 53,
+      "status": "EXCLUDE_EQUIPMENT_NOT_VEHICLES",
+      "reason": "Ship-remote accessory describes summoning an existing starship, not a separately printed ship or speeder model."
+    },
+    {
+      "subject": "Holocron gatekeepers, Jedi instructors, Sith, creatures and monsters",
+      "printedPages": [
+        65,
+        66,
+        94,
+        114,
+        132,
+        147
+      ],
+      "status": "EXCLUDE_NONVEHICLE_ACTOR_STATBLOCKS",
+      "reason": "Statblocks in these sections identify characters, gatekeepers or creatures rather than vehicles; no additional vehicle-type header identified."
+    },
+    {
+      "subject": "Jedi temples, academies and places of study",
+      "printedPages": [
+        152,
+        153,
+        154,
+        155
+      ],
+      "status": "EXCLUDE_INSTALLATION_DESCRIPTIONS",
+      "reason": "Site/location descriptions are not independently printed vehicle statblocks; Chu'unthor itself is the single independently statted moving capital ship."
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "jatm-chu-unthor",
+      "printedName": "Chu'unthor",
+      "printedTypeLine": "Colossal (station) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (station) capital ship",
+        "secondaryCategories": [
+          "station-configured-ship",
+          "mobile-jedi-academy"
+        ]
+      },
+      "sourceBook": "Jedi Academy Training Manual",
+      "printedStatblockStartPage": 151,
+      "pdfPhysicalPage": 152,
+      "sourceSection": "Chapter VII: Studying Abroad > Places in the Light > Chu'unthor",
+      "provenance": {
+        "sourcePdfSha256": "c4dce616776949aa0501b8932012b82d6fd1cd1c27e9646f0a772ab596b4cea9",
+        "sourceFile": "SW Saga - Jedi Academy Training Manual (optimized).pdf",
+        "canonicalSource": "data/canonical/vehicles/ships.json",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-jedi-academy-training-manual-book-source-closure-ledger.json",
+        "sourceEvidence": {
+          "sourceBook": "Jedi Academy Training Manual",
+          "sourcePDF": "SW Saga - Jedi Academy Training Manual (optimized).pdf",
+          "printedPages": [
+            151
+          ],
+          "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; one-based physical PDF ordinal = printed page + 1",
+          "phase1PrintedPage": 151,
+          "pdfVisualCheckForThisCheckpoint": true,
+          "pdfSha256": "c4dce616776949aa0501b8932012b82d6fd1cd1c27e9646f0a772ab596b4cea9",
+          "navigationOnlyTxtFile": "Jedi Academy Training Manual_djvu.txt"
+        }
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "newVehicleEntries": [],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-J Legacy Era Campaign Guide"
+}

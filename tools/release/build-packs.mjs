@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Build the V13 LevelDB compendium packs declared in system.json from the committed legacy NeDB sources (`packs/<name>.db`).
+ * Build the V13 LevelDB packs declared in system.json. Canonical vehicles are generated from the 429-record SSOT; other packs use committed NeDB sources.
  *
  *   npm ci --prefix tools/release          # once: installs the pinned @foundryvtt/foundryvtt-cli (classic-level)
  *   node tools/release/build-packs.mjs --out build/release/foundryvtt-swse [--only <pack-name>]
@@ -20,6 +20,8 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { planPacks, parseNedb, prepareDocuments, expectedReadBack, EMBEDDED } from './pack-sources.mjs';
+import { buildUniversalVehiclePackSources } from '../build-universal-vehicle-pack-sources.mjs';
+import { UNIVERSAL_VEHICLE_PACK_NAMES } from '../../scripts/domain/vehicles/universal-vehicle-pack-registry.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../..');
@@ -62,6 +64,11 @@ export async function buildPacks({ out, only = null, log = console.log } = {}) {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'system.json'), 'utf8'));
   const { packs, problems } = planPacks(manifest);
   if (problems.length) throw new Error(`manifest: ${problems.join('; ')}`);
+  const declaredVehicles=packs.filter(p=>p.type==='Actor'&&p.name.startsWith('vehicles')).map(p=>p.name);
+  if(declaredVehicles.length!==UNIVERSAL_VEHICLE_PACK_NAMES.length ||
+     declaredVehicles.some(x=>!UNIVERSAL_VEHICLE_PACK_NAMES.includes(x)))
+    throw new Error('vehicle manifest does not match 11-pack canonical registry');
+  const vehicleSources=buildUniversalVehiclePackSources(root);
   const selected = only ? packs.filter((p) => p.name === only) : packs;
   if (only && !selected.length) throw new Error(`no declared pack named ${only}`);
   const { compilePack, ClassicLevel } = await loadTools();
@@ -69,12 +76,15 @@ export async function buildPacks({ out, only = null, log = console.log } = {}) {
   const report = [];
   try {
     for (const pack of selected) {
-      const sourcePath = path.join(root, pack.source);
-      if (!fs.existsSync(sourcePath)) throw new Error(`${pack.name}: source ${pack.source} is missing`);
-      const sourceBytes = fs.readFileSync(sourcePath);
-      const replay = parseNedb(sourceBytes.toString('utf8'));
-      const expected = prepareDocuments(replay.docs, pack.collection);
-      if (replay.problems.length || expected.problems.length) throw new Error(`${pack.name}: ${[...replay.problems, ...expected.problems].slice(0, 5).join('; ')}`);
+      // Canonical vehicle Actors are generated from the single 429-record
+      // source authority. NEVER read their stale legacy packs/*.db files.
+      const vehicleDocs=vehicleSources.output.get(pack.name);
+      const sourcePath=vehicleDocs?null:path.join(root,pack.source);
+      const sourceBytes=vehicleDocs?null:fs.readFileSync(sourcePath);
+      const replay=vehicleDocs?{docs:vehicleDocs,problems:[]}:parseNedb(sourceBytes.toString('utf8'));
+      const expected=prepareDocuments(replay.docs,pack.collection);
+      if(replay.problems.length||expected.problems.length)
+        throw new Error(`${pack.name}: ${[...replay.problems,...expected.problems].slice(0,5).join('; ')}`);
 
       const json = path.join(work, pack.name);
       fs.mkdirSync(json, { recursive: true });
@@ -97,7 +107,8 @@ export async function buildPacks({ out, only = null, log = console.log } = {}) {
       } finally { await db.close(); }
       // LevelDB's informational text logs carry timestamps; they are not data and are dropped so the artifact does not vary between builds
       for (const f of ['LOG', 'LOG.old']) fs.rmSync(path.join(target, f), { force: true });
-      if (!fs.existsSync(sourcePath) || !fs.readFileSync(sourcePath).equals(sourceBytes)) throw new Error(`${pack.name}: the committed source changed during the build`);
+      if(sourceBytes && (!fs.existsSync(sourcePath)||!fs.readFileSync(sourcePath).equals(sourceBytes)))
+        throw new Error(`${pack.name}: the committed source changed during the build`);
       report.push({ name: pack.name, path: pack.path, documents: replay.docs.length, keys: expected.keys.size, synthesizedIds: expected.synthesized });
       log?.(`  ${pack.path}: ${replay.docs.length} documents, ${expected.keys.size} keys${expected.synthesized ? `, ${expected.synthesized} embedded ids synthesized` : ''} -- verified`);
     }

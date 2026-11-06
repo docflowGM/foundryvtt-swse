@@ -2,12 +2,18 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { UNIVERSAL_VEHICLE_PACK_NAMES } from '../scripts/domain/vehicles/universal-vehicle-pack-registry.js';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '..');
 const manifestPath = path.join(repoRoot, 'system.json');
 const gitAttributesPath = path.join(repoRoot, '.gitattributes');
 const errors = [];
+let vehiclePackSources = null;
+async function getVehiclePackSources() {
+  vehiclePackSources ??= (await import('./build-universal-vehicle-pack-sources.mjs')).buildUniversalVehiclePackSources(repoRoot);
+  return vehiclePackSources;
+}
 const contentGaps = [];
 
 let manifest;
@@ -120,6 +126,17 @@ for (const pack of packs) {
   // branch, which is noise rather than a signal.
   const absolutePackPath = path.join(repoRoot, pack.path);
   const absoluteSourcePath = `${absolutePackPath}.db`;
+  // The eleven canonical vehicle Actor packs are generated at build time from the 429-record
+  // SSOT (tools/release/build-packs.mjs); no committed per-pack source file exists for them
+  // (legacy .db files under the same names are historical evidence, not their source).
+  const generatedFromVehicleSsot = UNIVERSAL_VEHICLE_PACK_NAMES.includes(pack.name) &&
+    fs.existsSync(path.join(repoRoot, 'data/canonical/vehicles/vehicles.json'));
+  if (generatedFromVehicleSsot) {
+    const generated = (await getVehiclePackSources()).output.get(pack.name);
+    if (!Array.isArray(generated) || generated.length === 0)
+      errors.push(`Canonical vehicle pack ${pack.name} generates no documents from data/canonical/vehicles/vehicles.json`);
+    continue;
+  }
   if (!fs.existsSync(absolutePackPath) && !fs.existsSync(absoluteSourcePath)) {
     errors.push(`Declared pack has neither a compiled directory (${pack.path}) nor a source file (${pack.path}.db)`);
     continue;

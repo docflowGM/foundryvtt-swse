@@ -1,0 +1,304 @@
+{{!-- Read-only schema panel (P0-P5). Source: schemaView (vehicle-schema-view-model.js). No form inputs:
+      ledger, construction record and provenance are changed only through governed services. --}}
+<section class="swse-vehicle-panel swse-vehicle-schema-panel" data-vehicle-origin="{{view.origin}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Vehicle Record</h3>
+    <span class="swse-vehicle-mini-badge">{{view.identity.badge}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    {{#unless view.identity.published}}
+      <div><span>Call Sign</span><strong>{{view.identity.callSign}}</strong></div>
+      <div><span>Origin</span><strong>{{view.identity.sourceLabel}}</strong></div>
+      {{#if view.identity.stockFrame}}<div><span>Stock Frame</span><strong>{{view.identity.stockFrame}}</strong></div>{{/if}}
+    {{/unless}}
+    {{#each view.reasons}}<div class="swse-vehicle-warning" data-reason="{{this}}"><span>Notice</span><strong>{{this}}</strong></div>{{/each}}
+  </div>
+</section>
+
+{{#if view.construction}}
+<section class="swse-vehicle-panel swse-vehicle-construction-panel" data-approval="{{view.construction.approvalStatus}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Construction</h3>
+    <span class="swse-vehicle-mini-badge">{{view.construction.statusLabel}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    <div><span>Authorship</span><strong>{{view.construction.rulesLabel}}</strong></div>
+    <div><span>Frame</span><strong>{{view.construction.frame}} ({{view.construction.frameClass}})</strong></div>
+    <div><span>Crew Quality</span><strong>{{view.construction.crewQualityLabel}}</strong></div>
+    <div><span>Base Frame Cost</span><strong>{{view.construction.baseFrameCreditsLabel}}</strong></div>
+    <div><span>System Costs</span><strong>{{view.construction.systemCreditsLabel}}</strong></div>
+    <div><span>Total Cost</span><strong>{{view.construction.totalCreditsLabel}}</strong></div>
+    <div><span>Design Time</span><strong>{{view.construction.designTimeLabel}}</strong></div>
+    <div><span>Mechanics DC</span><strong>{{view.construction.mechanicsDCLabel}}</strong></div>
+    {{#each view.construction.outstanding}}<div class="swse-vehicle-warning"><span>Outstanding</span><strong>{{this}}</strong></div>{{/each}}
+  </div>
+</section>
+{{/if}}
+
+<section class="swse-vehicle-panel swse-vehicle-ep-panel" data-ep-state="{{view.ep.state}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Emplacement Points</h3>
+    <span class="swse-vehicle-mini-badge">{{view.ep.state}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    <div><span>Status</span><strong>{{view.ep.label}}</strong></div>
+    {{#if view.ep.nonstandardCount}}<div><span>Nonstandard Installs</span><strong>{{view.ep.nonstandardCount}} (EP x2, cost x5)</strong></div>{{/if}}
+  </div>
+</section>
+
+<section class="swse-vehicle-panel swse-vehicle-installed-panel" data-certification="{{view.installed.certification}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Certified Installed Systems</h3>
+    <span class="swse-vehicle-mini-badge">{{view.installed.count}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body">
+    {{#each view.installed.entries}}
+      <div class="swse-vehicle-installed-row" data-install-id="{{installId}}">
+        <strong>{{name}}</strong> <em>{{category}}</em> — {{certification}}{{#if source}} ({{source}}){{/if}}
+        · EP {{epCost}} · {{priceCredits}} cr · {{standard}} · {{effectLabel}}
+        {{#if weapon}}· {{mountLabel}} · {{weaponLabel}}{{/if}}
+      </div>
+    {{else}}
+      <p>No certified installations.</p>
+    {{/each}}
+    {{#if view.installed.rejected}}<p class="swse-vehicle-warning">{{view.installed.rejected}} ledger entr{{#if (eq view.installed.rejected 1)}}y{{else}}ies{{/if}} failed verification and are ignored.</p>{{/if}}
+    {{#if view.installed.uncertifiedWeaponItems}}<p>{{view.installed.uncertifiedWeaponItems}} weapon item(s) are not certified and cannot fire.</p>{{/if}}
+  </div>
+</section>
+
+<section class="swse-vehicle-panel swse-vehicle-effective-panel">
+  <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Effective Statistics</h3></header>
+  <div class="swse-vehicle-panel-body">
+    {{#each view.effective}}
+      <div class="swse-vehicle-stat-row" data-stat="{{label}}">
+        <span>{{label}}</span> Base <strong>{{baseLabel}}</strong> · Modifications <em>{{modification}}</em>
+        · Effective <strong>{{effectiveLabel}}</strong>{{#if availableLabel}} · <em>available in atmosphere: {{availableLabel}}</em>{{/if}}{{#if hasCurrent}} · Current <strong>{{currentLabel}}</strong>{{/if}}
+      </div>
+    {{/each}}
+  </div>
+</section>
+
+{{#if view.shipyard.supported}}
+<section class="swse-vehicle-panel swse-vehicle-shipyard-jobs-panel" data-reserved-ep="{{view.shipyard.reservedEp}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Installation Work</h3>
+    <span class="swse-vehicle-mini-badge">{{view.shipyard.activeJobs.length}} pending</span>
+  </header>
+  <div class="swse-vehicle-panel-body">
+    {{#each view.shipyard.jobs}}
+      <div class="swse-vehicle-job-row" data-job-id="{{jobId}}" data-job-status="{{status}}">
+        <strong>{{name}}</strong> — {{status}} (attempt {{attemptNumber}})
+        · Mechanics DC {{dc}}{{#if mechanicsBonus}} (+{{mechanicsBonus}} retry bonus){{/if}}
+        · Work {{daysLogged}} / {{daysRequired}} days ({{remainingDays}} remaining)
+        · Paid {{creditsPaid}} cr · EP reserved {{epReserved}}
+        {{#if wasted}}· Lost {{wasted.credits}} cr and {{wasted.days}} days{{/if}}
+        {{#if completion}}· Completed by {{completion.mode}}{{#if completion.reason}} ({{completion.reason}}){{/if}}{{/if}}
+        {{#if canRetry}}<em>Retry: {{retryCredits}} cr and {{retryDays}} days, +{{retryBonus}} on the check.</em>{{/if}}
+        {{#if canRestart}}<em>Total failure: starting again is a new, fully charged attempt.</em>{{/if}}
+        {{#if ../view.shipyard.canAct}}
+          <span class="swse-vehicle-job-actions">
+            {{#if canRecordCheck}}<button type="button" data-shipyard-action="record-check" data-job-id="{{jobId}}">Roll Mechanics check</button>{{/if}}
+            {{#if canRetry}}<button type="button" data-shipyard-action="retry-job" data-job-id="{{jobId}}">Pay for retry</button>{{/if}}
+            {{#if ../view.shipyard.isGM}}
+              {{#if active}}<button type="button" data-shipyard-action="log-days" data-job-id="{{jobId}}">Log work days</button>
+              <button type="button" data-shipyard-action="gm-complete" data-job-id="{{jobId}}">GM: mark completed</button>{{/if}}
+            {{/if}}
+          </span>
+        {{/if}}
+      </div>
+    {{else}}
+      <p>No installation work in progress.</p>
+    {{/each}}
+    {{#if view.shipyard.rejected}}<p class="swse-vehicle-warning">{{view.shipyard.rejected}} job record(s) failed verification; new work is blocked.</p>{{/if}}
+    {{#if view.shipyard.hasLaunchers}}
+      <div class="swse-vehicle-launchers">
+        {{#each view.shipyard.launchers}}
+          <div class="swse-vehicle-launcher-row" data-install-id="{{installId}}">
+            <strong>{{name}}</strong> — loaded {{loaded}} / {{capacity}} · reserve {{reserve}} · expended {{expended}} · bought {{bought}} · {{unitPrice}} cr each
+            {{#if ../view.shipyard.canAct}}
+              <button type="button" data-shipyard-action="buy-ammunition" data-install-id="{{installId}}">Buy ammunition</button>
+              {{#if canReload}}<button type="button" data-shipyard-action="gm-reload" data-install-id="{{installId}}">GM: load from reserve</button>{{/if}}
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
+    {{#if view.shipyard.canAct}}
+      {{#if view.shipyard.hasOptions}}
+      <div class="swse-vehicle-job-start">
+        <select data-shipyard-select="catalog">
+          {{#each view.shipyard.options}}<option value="{{id}}">{{name}} — {{category}} — EP {{ep}}{{#if requiresGmMount}} — GM certifies mount{{/if}}</option>{{/each}}
+        </select>
+        {{#if view.shipyard.hasWeaponOptions}}
+        <select data-shipyard-select="option" title="A weapon option is chosen when the weapon is bought">
+          <option value="">No weapon option</option>
+          {{#each view.shipyard.weaponOptions}}<option value="{{id}}">{{name}} ({{priceLabel}})</option>{{/each}}
+        </select>
+        {{/if}}
+        <button type="button" data-shipyard-action="start-job">Begin installation</button>
+        {{#if view.shipyard.isGM}}<button type="button" data-shipyard-action="gm-instant">GM: install instantly</button>{{/if}}
+        <button type="button" data-shipyard-action="resync-weapons" title="Repairs the weapon items from the installation records; costs nothing">Resync weapons</button>
+      </div>
+      {{else}}
+      <p>No certified modifications are installable on this vehicle.</p>
+      {{/if}}
+    {{/if}}
+  </div>
+</section>
+{{/if}}
+
+{{#if view.logistics}}
+<section class="swse-vehicle-panel swse-vehicle-logistics-panel">
+  <header><h3>Ship Logistics</h3></header>
+  <div class="swse-vehicle-logistics-row swse-vehicle-logistics-fuel">
+    <strong>Fuel</strong>
+    <span>{{view.logistics.fuel.label}}</span>
+    {{#if view.logistics.fuel.capacity}}<div class="swse-vehicle-resource-bar" role="progressbar" aria-label="Fuel"><span style="width: {{view.logistics.fuel.percent}}%"></span></div>{{/if}}
+    <small>{{view.logistics.fuel.priceLabel}}{{#if view.logistics.fuel.capacityBasis}} · capacity: GM-configured{{/if}} · {{view.logistics.fuel.source}}</small>
+    <small>One fuel-day is spent by: {{#each view.logistics.fuel.consumption}}{{this}}{{#unless @last}}; {{/unless}}{{/each}}.</small>
+    <button type="button" data-weapon-action="buy-fuel" {{#unless view.logistics.fuel.canBuy}}disabled title="{{view.logistics.fuel.disabledReason}}"{{/unless}}>Buy Fuel</button>
+    {{#if view.logistics.isGM}}
+      <button type="button" data-weapon-action="logistics-config-fuel">Configure tank (GM)</button>
+      <button type="button" data-weapon-action="logistics-fuel-event">Record fuel use (GM)</button>
+    {{/if}}
+  </div>
+  <div class="swse-vehicle-logistics-row swse-vehicle-logistics-consumables">
+    <strong>Consumables / Life Support</strong>
+    <span>{{view.logistics.consumables.label}}</span>
+    {{#if view.logistics.consumables.maxDays}}<div class="swse-vehicle-resource-bar" role="progressbar" aria-label="Consumables"><span style="width: {{view.logistics.consumables.percent}}%"></span></div>{{/if}}
+    <small>Printed: {{view.logistics.consumables.printed}} · maximum {{view.logistics.consumables.maxDays}} days{{#if view.logistics.consumables.maxBasis}} ({{view.logistics.consumables.maxBasis}}){{/if}}</small>
+    <small>{{view.logistics.consumables.rateLabel}} · living occupants counted: {{view.logistics.consumables.occupants}} ({{view.logistics.consumables.occupantsBasis}})</small>
+    <button type="button" data-weapon-action="buy-supplies" {{#unless view.logistics.consumables.canBuy}}disabled title="{{view.logistics.consumables.disabledReason}}"{{/unless}}>Buy Supplies</button>
+    {{#if view.logistics.isGM}}
+      {{#unless view.logistics.consumables.initialized}}<button type="button" data-weapon-action="logistics-init">Initialize supplies (GM)</button>{{/unless}}
+      <button type="button" data-weapon-action="logistics-occupants">Living occupants (GM)</button>
+      <button type="button" data-weapon-action="logistics-consumables">Adjust remaining (GM)</button>
+    {{/if}}
+  </div>
+  <div class="swse-vehicle-logistics-row swse-vehicle-logistics-reference">
+    <strong>Docking and Maintenance</strong> <em>GM Administered</em>
+    <small>{{view.logistics.docking.label}} ({{view.logistics.docking.source}})</small>
+    <small>{{view.logistics.maintenance.label}}. {{view.logistics.maintenance.consequence}}</small>
+    <small>Simplified upkeep ({{view.logistics.simplified.source}}): {{view.logistics.simplified.perMonth}} cr/month covers these expenses instead of itemizing them; it is never charged in addition.</small>
+  </div>
+</section>
+{{/if}}
+{{#if view.weaponOps.hasAmmoRows}}
+<section class="swse-vehicle-panel swse-vehicle-ammo-config-panel">
+  <header><h3>Launcher ammunition (GM)</h3></header>
+  <p><small>These stock launchers lack printed ammunition facts. A GM can supply them here; the result is labelled GM-configured and is not canonical source data.</small></p>
+  {{#each view.weaponOps.ammoRows}}
+    <div class="swse-vehicle-ammo-config-row" data-group-key="{{groupKey}}">
+      <strong>{{label}}</strong> — {{stateLabel}}{{#if summary}} · {{summary}}{{/if}}
+      {{#if isConfigured}}<button type="button" data-weapon-action="ammo-config-clear" data-item-id="{{groupKey}}">Remove configuration</button>
+      {{else}}<button type="button" data-weapon-action="ammo-config" data-item-id="{{groupKey}}">Configure</button>{{/if}}
+    </div>
+  {{/each}}
+</section>
+{{/if}}
+{{#if view.weaponOps.hasBatteryRows}}
+<section class="swse-vehicle-panel swse-vehicle-battery-config-panel">
+  <header><h3>Weapon batteries (GM)</h3></header>
+  {{#each view.weaponOps.batteryRows}}
+    <div class="swse-vehicle-battery-config-row" data-group-key="{{groupKey}}"><strong>{{label}}</strong> ({{gunners}} gunners) — {{stateLabel}}
+      {{#if configured}}<button type="button" data-weapon-action="battery-config-clear" data-item-id="{{groupKey}}">Remove</button>
+      {{else}}<button type="button" data-weapon-action="battery-config" data-item-id="{{groupKey}}">Certify weapon count</button>{{/if}}</div>
+  {{/each}}
+</section>
+{{/if}}
+{{#if view.weaponOps.hasGrantRows}}
+<section class="swse-vehicle-panel swse-vehicle-ammo-grant-panel">
+  <header><h3>Starting ammunition (GM)</h3></header>
+  {{#each view.weaponOps.grantRows}}
+    <div class="swse-vehicle-ammo-grant"><strong>{{name}}</strong> started without its published ammunition.
+      <button type="button" data-weapon-action="ammo-grant" data-item-id="{{itemId}}">Grant {{room}} published round(s), no charge</button></div>
+  {{/each}}
+  <p><small>House rule "Initial Vehicle Ammunition Included" is off or this vehicle was created under it: the GM can allocate the published starting ammunition without a credit transaction (never more than the published payload). Players buy ammunition with the Buy Ammunition buttons on the Combat tab.</small></p>
+</section>
+{{/if}}
+{{#if view.weaponOps.hasBombRacks}}
+<section class="swse-vehicle-panel swse-vehicle-bomb-panel">
+  <header><h3>Ion bombs</h3></header>
+  {{#each view.weaponOps.bombRacks}}
+    <div class="swse-vehicle-bomb-rack"><strong>{{name}}</strong>
+      {{#if canDrop}}<button type="button" data-weapon-action="ion-bomb-drop" data-item-id="{{itemId}}">Drop an ion bomb on the square beneath the ship (standard action)</button>{{else}}<small>The GM drops bombs (they damage other actors).</small>{{/if}}</div>
+  {{/each}}
+  <p><small>Atmosphere only (the GM-set vehicle environment); -5 attack; 5d10 ion damage in a 10-square radius; only the square directly beneath the ship may be targeted (owner decision V-P6C-16). The 10 squares are the Scene's grid squares.</small></p>
+</section>
+{{/if}}
+{{#if view.weaponOps.hasMineLaunchers}}
+<section class="swse-vehicle-panel swse-vehicle-mine-panel">
+  <header><h3>Space mines</h3></header>
+  {{#each view.weaponOps.mineLaunchers}}
+    <div class="swse-vehicle-mine-launcher"><strong>{{name}}</strong>
+      {{#if canDeploy}}<button type="button" data-weapon-action="mine-deploy" data-item-id="{{itemId}}">Deploy a mine here (swift action)</button>{{else}}<small>The GM deploys mines (a Scene write).</small>{{/if}}</div>
+  {{/each}}
+  {{#each view.weaponOps.mines}}
+    <div class="swse-vehicle-mine" data-mine-id="{{id}}">{{typeLabel}} at {{squareLabel}}{{#if isCommand}} — command-detonated{{/if}}
+      {{#if isCommand}}<button type="button" data-weapon-action="mine-detonate" data-item-id="{{id}}">Detonate</button>{{/if}}
+      <button type="button" data-weapon-action="mine-remove" data-item-id="{{id}}">Remove</button>
+      <small>({{detectionLabel}})</small>
+      <button type="button" data-weapon-action="mine-adjudicate" data-item-id="{{id}}">Record a crossing (selected ship)</button>
+      {{#each pendingList}}
+        <div class="swse-vehicle-mine-entry">{{name}} is entering this square — {{status}}{{#if crossing}} (path not recorded){{/if}}
+          <button type="button" data-weapon-action="mine-notice-pilot" data-item-id="{{../id}}" data-actor-id="{{actorId}}">Pilot: Perception</button>
+          <button type="button" data-weapon-action="mine-notice-operator" data-item-id="{{../id}}" data-actor-id="{{actorId}}">Operator (selected token): Use Computer</button>
+          <button type="button" data-weapon-action="mine-resolve" data-item-id="{{../id}}" data-actor-id="{{actorId}}">Resolve entry</button>
+        </div>
+      {{/each}}</div>
+  {{/each}}
+  <p><small>A ship entering a mine's square opens a reaction window: the pilot (Perception) and a system operator (Use Computer) may try to notice the mine against its stored DC (1d20 + 5 rolled at deployment; owner decision V-P6C-15), then the GM resolves the entry. A move without a recorded path is adjudicated by the GM.</small></p>
+</section>
+{{/if}}
+{{#if view.weaponOps.hasGravityWeapons}}
+<section class="swse-vehicle-panel swse-vehicle-interdiction-panel">
+  <header><h3>Gravity well projectors</h3></header>
+  {{#each view.weaponOps.gravityWeapons}}
+    <div class="swse-vehicle-gravity-row"><strong>{{name}}</strong>
+      {{#if canProject}}<button type="button" data-weapon-action="gravity-project" data-item-id="{{itemId}}">Project (attack vs Reflex 10)</button>{{else}}<small>The GM places the field.</small>{{/if}}</div>
+  {{/each}}
+  {{#if view.weaponOps.hasFields}}
+    <p><small>Interdiction fields on this scene stay active until a GM deactivates or removes them (project convention V-P6C-14; the source prints no duration).</small></p>
+    {{#each view.weaponOps.fields}}
+      <div class="swse-vehicle-interdiction-field" data-field-id="{{id}}">{{areaLabel}} — {{stateLabel}}
+        <button type="button" data-weapon-action="interdiction-toggle" data-item-id="{{id}}">{{toggleLabel}}</button>
+        <button type="button" data-weapon-action="interdiction-remove" data-item-id="{{id}}">Remove</button></div>
+    {{/each}}
+  {{/if}}
+</section>
+{{/if}}
+{{#if view.weaponOps.hasFireModes}}
+<section class="swse-vehicle-panel swse-vehicle-weapon-ops-panel">
+  <header><h3>Firing modes</h3></header>
+  {{#each view.weaponOps.fireModes}}
+    <div class="swse-vehicle-firemode-row" data-item-id="{{itemId}}">
+      <strong>{{name}}</strong> — {{modeLabel}} · {{cost}}
+      {{#if canSwitchToAutofire}}<button type="button" data-weapon-action="fire-mode-autofire" data-item-id="{{itemId}}">Set to autofire</button>{{/if}}
+      {{#if canSwitchToSingle}}<button type="button" data-weapon-action="fire-mode-single" data-item-id="{{itemId}}">Set to single fire</button>{{/if}}
+      {{#if disabledReason}}<small>{{disabledReason}}</small>{{/if}}
+      <small>{{burstNote}}</small>
+    </div>
+  {{/each}}
+</section>
+{{/if}}
+{{#if view.operating}}
+<section class="swse-vehicle-panel swse-vehicle-operating-panel" data-environment="{{view.operating.environment}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">Operating Context</h3>
+    <span class="swse-vehicle-mini-badge">{{view.operating.environmentLabel}}</span>
+  </header>
+  <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
+    <div><span>Environment</span><strong>{{view.operating.environmentLabel}}</strong></div>
+    <div><span>Pilot (generic crew)</span><strong>{{view.operating.genericCrewPilotLabel}}</strong></div>
+    <div><span>Vehicle modifier for a crew pilot</span><strong>{{view.operating.crewPilotVehicleModifierLabel}}</strong></div>
+    {{#if view.operating.canAct}}<div><button type="button" data-vehicle-action="pilot-check">Pilot check</button></div>{{/if}}
+    {{#if view.operating.isGM}}
+      <div class="swse-vehicle-environment-actions">
+        <button type="button" data-vehicle-environment="atmosphere">GM: in atmosphere</button>
+        <button type="button" data-vehicle-environment="space">GM: in space</button>
+        <button type="button" data-vehicle-environment="unknown">GM: unknown</button>
+      </div>
+    {{/if}}
+  </div>
+</section>
+{{/if}}

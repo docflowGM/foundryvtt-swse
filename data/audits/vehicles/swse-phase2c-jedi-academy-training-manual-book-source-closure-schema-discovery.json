@@ -1,0 +1,61 @@
+{
+  "schema": "swse.vehicle.phase2c.schema-discovery.v0.1",
+  "sourceBook": "Jedi Academy Training Manual",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "jedi-academy-training-manual-001",
+      "sourceEntryKey": "jatm-chu-unthor",
+      "ship": "Chu'unthor",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        151
+      ],
+      "sourceDerivedIssue": "Printed attack-group rows do not identify physical mounts, arcs, individual barrel counts or battery placements.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "jedi-academy-training-manual-002",
+      "sourceEntryKey": "jatm-chu-unthor",
+      "ship": "Chu'unthor",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        151
+      ],
+      "sourceDerivedIssue": "Colossal station capital ship: speed fly 1 starship square; do not recast as conventional transport or combat frigate.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "jedi-academy-training-manual-003",
+      "sourceEntryKey": "jatm-chu-unthor",
+      "ship": "Chu'unthor",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        151
+      ],
+      "sourceDerivedIssue": "Printed blanket -20 against targets smaller than Colossal; detailed +8 becomes -12 for those targets.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "jedi-academy-training-manual-004",
+      "sourceEntryKey": "jatm-chu-unthor",
+      "ship": "Chu'unthor",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        151
+      ],
+      "sourceDerivedIssue": "Carried craft various shuttlecraft; narrative mentions docking infrastructure, not a certified number of hangars.",
+      "requiresFollowup": true
+    }
+  ],
+  "additionalStatblockIdentityCandidates": [],
+  "counts": {
+    "discoveryCases": 4
+  },
+  "scopeGuardrails": [
+    "No production pack or schema changes",
+    "Source review is distinct from strict mechanical certification",
+    "No unverified firing arcs, physical mounts, or editorial corrections"
+  ]
+}

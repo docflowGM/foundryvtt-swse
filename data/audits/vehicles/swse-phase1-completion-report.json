@@ -1,0 +1,96 @@
+{
+  "status": "PHASE1_ENUMERATED_SHIP_PAGES_COMPLETE",
+  "sourcebooks": 14,
+  "ship_publication_entries": 316,
+  "first_five_preserved": 251,
+  "final_nine_appended": 65,
+  "unverified_ship_page_assignments": 0,
+  "two_new_Galaxy_of_Intrigue_ships": [
+    "Ferret-class Reconnaissance Vessel",
+    "Prowler-class Reconnaissance Vessel"
+  ],
+  "name_correction": {
+    "book": "Unknown Regions",
+    "from": "Drexi",
+    "to": "Drexl",
+    "printed_page": 52
+  },
+  "scope_limits": [
+    "ship-only, not ground/air/droid-vehicle universal coverage",
+    "whole-book independent exhaustive discovery not asserted",
+    "cross-book identity reconciliation pending",
+    "mechanical hydration not performed"
+  ],
+  "counts_by_book": [
+    {
+      "book": "Starships of the Galaxy",
+      "entries": 104,
+      "distinct_pages": 97
+    },
+    {
+      "book": "Clone Wars Campaign Guide",
+      "entries": 41,
+      "distinct_pages": 28
+    },
+    {
+      "book": "Legacy Era Campaign Guide",
+      "entries": 39,
+      "distinct_pages": 28
+    },
+    {
+      "book": "Rebellion Era Campaign Guide",
+      "entries": 35,
+      "distinct_pages": 23
+    },
+    {
+      "book": "Knights of the Old Republic Campaign Guide",
+      "entries": 32,
+      "distinct_pages": 22
+    },
+    {
+      "book": "Force Unleashed Campaign Guide",
+      "entries": 19,
+      "distinct_pages": 14
+    },
+    {
+      "book": "Unknown Regions",
+      "entries": 12,
+      "distinct_pages": 9
+    },
+    {
+      "book": "Scum and Villainy",
+      "entries": 11,
+      "distinct_pages": 7
+    },
+    {
+      "book": "Core Rulebook",
+      "entries": 10,
+      "distinct_pages": 6
+    },
+    {
+      "book": "Galaxy at War",
+      "entries": 5,
+      "distinct_pages": 4
+    },
+    {
+      "book": "Galaxy of Intrigue",
+      "entries": 6,
+      "distinct_pages": 5
+    },
+    {
+      "book": "Jedi Academy Training Manual",
+      "entries": 1,
+      "distinct_pages": 1
+    },
+    {
+      "book": "Scavenger's Guide to Droids",
+      "entries": 0,
+      "distinct_pages": 0
+    },
+    {
+      "book": "Threats of the Galaxy",
+      "entries": 1,
+      "distinct_pages": 1
+    }
+  ]
+}

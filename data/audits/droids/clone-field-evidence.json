@@ -1,0 +1,2249 @@
+{
+  "schema": "swse.droid.clone.source-text-evidence/0.1",
+  "book": "Clone Wars Campaign Guide",
+  "sourceTxt": "Clone Wars Campaign Guide_djvu.txt",
+  "sourceTxtSha256": "f6862e9650f89b158d14dd6bafc9db733c561dd2d35bfe9c133f00bdf6b93277",
+  "sourcePdf": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+  "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+  "records": [
+    {
+      "sourceEntryKey": "CLONE-DROID-001",
+      "printedName": "DD-13 Medical Assistant Droid",
+      "printedPage": 66,
+      "pdfPage1Based": 67,
+      "textAnchor1Based": 5673,
+      "textWindowRange1Based": [
+        5673,
+        5729
+      ],
+      "textWindowSha256": "ee6b4efe7e3d8851e6e837a72d5dbb96e68eab8dd3491d47ce9ef0dcaff60834",
+      "ocrSelectedFields": {
+        "Init": "Init +1 ; Senses iow-light vision, Perception +10",
+        "Languages": "Languages Basic, Binary, 2 unassigned",
+        "Defenses": "Defenses Ref 10 (flat-footed 10), Fort 9, Will 12",
+        "hp": "hp 8; Threshold 9",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee unarmed +1 (144-1)",
+        "Base Atk": "Base Atk +2; Grp +t",
+        "Abilities": "Abilities Str 9, Dex 11, Con —, lint 15, Wis 14, Cha 8",
+        "Feats": "Feats Cybernetic Surgery, Skill Focus (Knowledge (life sciences), Treat",
+        "Skills": "Skills Knowledge (life sciences) +13 , Perception +10 , Treat Injury +13 ,",
+        "Systems": "Systems walking locomotion, basic processor, 2 claw appendages,",
+        "Possessions": "Possessions surgery kit",
+        "Availability": "Availability Licensed; Cost 4,950 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 66,
+        "pdfPage1Based": 67,
+        "fieldValues": {
+          "/challenge/challengeLevel": 1,
+          "/classification/size": "Medium",
+          "/abilities/str": 9,
+          "/abilities/dex": 11,
+          "/abilities/int": 15,
+          "/abilities/wis": 14,
+          "/abilities/cha": 8,
+          "/abilities/con": null,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 8,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 4150,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "EW-3 droids can be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed prohibited"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-002",
+      "printedName": "EW-3 Midwife Droid",
+      "printedPage": 67,
+      "pdfPage1Based": 68,
+      "textAnchor1Based": 5730,
+      "textWindowRange1Based": [
+        5730,
+        5777
+      ],
+      "textWindowSha256": "2edb242b23cf6a6c288c2a5f4487887978c0fa0ed9201f41d14b9fe786cc4be5",
+      "ocrSelectedFields": {
+        "Init": "Init +1 ; Senses low-light vision, Perception +5",
+        "Languages": "Languages Basic, Binary, 1 unassigned",
+        "Defenses": "Defenses Ref 10 {flat-footed 10), Fort 10, Will 12",
+        "hp": "hp 6; Threshold 10",
+        "Speed": "Speed 6 squares (hovering)",
+        "Melee": "Melee unarmed +1 (1d3)",
+        "Base Atk": "Base Atk +1; Grp +1",
+        "Abilities": "Abilities Str 10, Dex 10, Con —, Int 12, Wis 14, Cha 13",
+        "Feats": "Feats Skill Focus (Knowledge [life sciences}, Knowledge [social sciences])",
+        "Skills": "Skills Knowledge (life sciences) +12 , Knowledge (social sciences) +12,",
+        "Systems": "Systems hovering locomotion, heuristic processor, 2 toal appendages,",
+        "Availability": "Availability Licensed; Cost 5,870 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 67,
+        "pdfPage1Based": 68,
+        "fieldValues": {
+          "/challenge/challengeLevel": 0,
+          "/classification/size": "Medium",
+          "/abilities/str": 10,
+          "/abilities/dex": 10,
+          "/abilities/int": 12,
+          "/abilities/wis": 14,
+          "/abilities/cha": 13,
+          "/abilities/con": null,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 6,
+          "/durability/damageThreshold": 10,
+          "/economics/newCredits": 5870,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-003",
+      "printedName": "IM-6 Medical Droid",
+      "printedPage": 67,
+      "pdfPage1Based": 68,
+      "textAnchor1Based": 5778,
+      "textWindowRange1Based": [
+        5778,
+        5861
+      ],
+      "textWindowSha256": "2d64d80787e06a2d11e176d7eadf79cb848a3099498b9abc7ead8da8631ebca8",
+      "ocrSelectedFields": {
+        "Init": "Init +8; Senses Perception +5",
+        "Languages": "Languages Basic, Binary, 2 unassigned",
+        "Defenses": "Defenses Ref 13 (flat-footed 11), Fort 10, Will 12",
+        "hp": "hp 7; Threshold 12",
+        "Speed": "Speed 6 squares (hovering)",
+        "Melee": "Melee unarmed +2 (142)",
+        "Base Atk": "Base Atk +2; Grp -2 ra",
+        "Abilities": "Abilities Str 10, Dex 14, Con =, Int 14, Wis 14, Cha 13",
+        "Feats": "Feats Cybernetic Surgery, Skill Focus (Knowledge [life sciences], Treat",
+        "Skills": "Skills Initiative +8, Knowledge (tife sciences) +13, Perception +5,",
+        "Systems": "Systems hovering locomotion, internal eomlink, heuristic processor,",
+        "Possessions": "Possessions surgery kit, medpac reservoir (equivalent of 5 medpacs}",
+        "Availability": "Availability Licensed; Cost 11,800 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 67,
+        "pdfPage1Based": 68,
+        "fieldValues": {
+          "/challenge/challengeLevel": 1,
+          "/classification/size": "Small",
+          "/abilities/str": 10,
+          "/abilities/dex": 14,
+          "/abilities/int": 14,
+          "/abilities/wis": 14,
+          "/abilities/cha": 13,
+          "/abilities/con": null,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 12,
+          "/economics/newCredits": 11800,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "SP-4 analysis droids can be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-004",
+      "printedName": "SP-4 Analysis Droid",
+      "printedPage": 68,
+      "pdfPage1Based": 69,
+      "textAnchor1Based": 5862,
+      "textWindowRange1Based": [
+        5862,
+        5954
+      ],
+      "textWindowSha256": "615d3cdc32c444ba718a034cb4f1f944d907fdadce9bb277c296e5072fbe3244",
+      "ocrSelectedFields": {
+        "Init": "Init +1; Senses darkvision, Perception +10",
+        "Languages": "Languages Basic, Binary, 2 unassigned",
+        "Defenses": "Defenses Ref 11 (flat-footed 11), Fort 9, Will 12",
+        "hp": "hp 8; Threshold 9",
+        "Speed": "Speed 4 squares",
+        "Melee": "Melee unarmed +1 (1d2-1)",
+        "Ranged": "Ranged by weapon +2",
+        "Base Atk": "Base Atk +2; Grp -4",
+        "Abilities": "Abilities Str 8, Dex 10, Con —, Int 15, Wis 14, Cha 12",
+        "Feats": "Feats Skill Focus (Knowledge [galactic lore]), Skill Focus (Use Computer),",
+        "Skills": "Skills Gather Information +7, Knowledge (bureaucracy) +8, Knowledge",
+        "Systems": "Systems walking locomotion, 2 hand appendages, heuristic processor,",
+        "Availability": "Availability Licensed: Cost 3,100"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 68,
+        "pdfPage1Based": 69,
+        "fieldValues": {
+          "/challenge/challengeLevel": 1,
+          "/classification/size": "Small",
+          "/abilities/str": 8,
+          "/abilities/dex": 10,
+          "/abilities/int": 15,
+          "/abilities/wis": 14,
+          "/abilities/cha": 12,
+          "/abilities/con": null,
+          "/defenses/reflex": 11,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 8,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 3100,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-005",
+      "printedName": "LE Series Repair Droid",
+      "printedPage": 69,
+      "pdfPage1Based": 70,
+      "textAnchor1Based": 5955,
+      "textWindowRange1Based": [
+        5955,
+        6012
+      ],
+      "textWindowSha256": "cae8df3dd0b3124e8614b21fd8f2b424fd2780c1d510895e8bc45ac067985ab0",
+      "ocrSelectedFields": {
+        "Init": "Init +0 ; Senses low-light vision; Perception +4",
+        "Languages": "Languages Basic, Binary, 1 unassigned",
+        "Defenses": "Defenses Ref 13 (",
+        "hp": "hp 7; Threshold 10",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee unarmed +2 (103)",
+        "Base Atk": "Base Atk +2; Grp +2",
+        "Abilities": "Abilities Str 10, Dex 8, Con --, Int 13, Wis 12, Cha 12",
+        "Feats": "Feats Armor Proficiency (light), Skill Focus (Mechanics), Skill Training",
+        "Skills": "Skills Knowledge (bureaucracy) +7 . Knowledge (technology) +7,",
+        "Systems": "Systems walking locomotion, heuristic processor, 2 hand appendages,",
+        "Possessions": "Possessions holoprojectar, halorecorder",
+        "Availability": "Availability Licensed; Cost 6,000 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 69,
+        "pdfPage1Based": 70,
+        "fieldValues": {
+          "/challenge/challengeLevel": 1,
+          "/classification/size": "Medium",
+          "/abilities/str": 10,
+          "/abilities/dex": 8,
+          "/abilities/int": 13,
+          "/abilities/wis": 12,
+          "/abilities/cha": 12,
+          "/abilities/con": null,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 13,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 10,
+          "/economics/newCredits": 6000,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "P2 Series astramech draiis can be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-006",
+      "printedName": "P2 Series Astromech Droid",
+      "printedPage": 69,
+      "pdfPage1Based": 70,
+      "textAnchor1Based": 6013,
+      "textWindowRange1Based": [
+        6013,
+        6082
+      ],
+      "textWindowSha256": "3d15fc2da7f2e6c89865ffe412e3f61b85415cb4523f23c9e221103dbaa10ff0",
+      "ocrSelectedFields": {
+        "Init": "Init -1 ; Senses darkvision; Perception +6",
+        "Languages": "Languages Basic (understand only), Binary, 2 unassigned",
+        "Defenses": "Defenses Ref 9 (flat-footed 9), Fort 12, Will 9",
+        "hp": "hp 5; Threshold 12",
+        "Speed": "Speed 8 squares (wheeled), 2 squares (walking)",
+        "Melee": "Melee unarmed +2 (1d4+2)",
+        "Base Atk": "Base Atk +0; Grp +2",
+        "Abilities": "Abilities Str 15, Dex 9, Con —, Int 14, Wis 8, Cha 10",
+        "Feats": "Feats Skill Focus (Mechanics, Use Computer), Skill Training (Perception)",
+        "Skills": "Skills Mechanics +12 , Perception +4 , Pilot +4, Use Computer +12",
+        "Systems": "Systems wheeled locomotion, walking locomotion, magnetic feet,",
+        "Possessions": "Possessions astrogation buffer (storage device, 4 memory units}, circular",
+        "Availability": "Availability Licensed; Cost 4,200 credits (used)"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 69,
+        "pdfPage1Based": 70,
+        "fieldValues": {
+          "/challenge/challengeLevel": 0,
+          "/classification/size": "Medium",
+          "/abilities/str": 15,
+          "/abilities/dex": 9,
+          "/abilities/int": 14,
+          "/abilities/wis": 8,
+          "/abilities/cha": 10,
+          "/abilities/con": null,
+          "/defenses/reflex": 9,
+          "/defenses/flatFootedReflex": 9,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 9,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 12,
+          "/economics/newCredits": 4200,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Pit droids can be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-007",
+      "printedName": "Serv-O-Droid Pit Droid",
+      "printedPage": 70,
+      "pdfPage1Based": 71,
+      "textAnchor1Based": 6083,
+      "textWindowRange1Based": [
+        6083,
+        6156
+      ],
+      "textWindowSha256": "91fa2e0c94718f82105741d681b439242a449ae9c11df91dc9d7b9e4816024a3",
+      "ocrSelectedFields": {
+        "Init": "Init +3; Senses Perception +0",
+        "Languages": "Languages Basic (understand only). Binary",
+        "Defenses": "Defenses Ref 13 (flat-footed 11), Fort 12, Will 9",
+        "hp": "hp 5; Threshold 12",
+        "Speed": "Speed 4 squares",
+        "Melee": "Melee unarmed +3 (14242)",
+        "Ranged": "Ranged by weapon +3",
+        "Base Atk": "Base Atk +1; Grp -2",
+        "Abilities": "Abilities Str 15, Dex 14, Can —, Int 10, Wis 8, Cha 12",
+        "Feats": "Feats Skill Focus (Mechanics), Skill Training (Mechanics), Skill Training",
+        "Skills": "Skills Knowledge (techrology) +6, Mechanies +11, Pilot +8,",
+        "Systems": "Systems walking locomotion, 2 hand appendages, basic processor",
+        "Availability": "Availability Licensed; Cast 1,300"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 70,
+        "pdfPage1Based": 71,
+        "fieldValues": {
+          "/challenge/challengeLevel": 0,
+          "/classification/size": "Small",
+          "/abilities/str": 15,
+          "/abilities/dex": 14,
+          "/abilities/int": 10,
+          "/abilities/wis": 8,
+          "/abilities/cha": 12,
+          "/abilities/con": null,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 9,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 12,
+          "/economics/newCredits": 1300,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "5Y0O protocol droids can be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-008",
+      "printedName": "5YQ Protocol Droid",
+      "printedPage": 70,
+      "pdfPage1Based": 71,
+      "textAnchor1Based": 6157,
+      "textWindowRange1Based": [
+        6157,
+        6213
+      ],
+      "textWindowSha256": "c6628a3bcf8036bb35bb17c5d66f229706148e433415b015326ea96295b565fd",
+      "ocrSelectedFields": {
+        "Init": "Init +0; Senses Perception +6",
+        "Languages": "Languages Basic, Binary, 3 unassigned",
+        "Defenses": "Defenses Ref 10 (flat-footed 10), Fort 9, Will 11",
+        "hp": "hp 2; Threshold 3",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee unarmed -1 (103-1)",
+        "Base Atk": "Base Atk +0; Grp -1",
+        "Abilities": "Abilities Str 8, Dex 10, Con —, Int 12, Wis 12, Cha 14",
+        "Feats": "Feats Linguist, Skill Focus (Persuasion), Skill Training (Knowledge",
+        "Skills": "Skills Initiative +0, Knowledge (bureaucracy) +6, Knowledge (galactic",
+        "Systems": "Systems walking locomotion, basic processor, translator unit (DC 10},",
+        "Possessions": "Possessions audio recorder",
+        "Availability": "Availability Licensed; Cost 1,460 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 70,
+        "pdfPage1Based": 71,
+        "fieldValues": {
+          "/challenge/challengeLevel": 0,
+          "/classification/size": "Medium",
+          "/abilities/str": 8,
+          "/abilities/dex": 10,
+          "/abilities/int": 12,
+          "/abilities/wis": 12,
+          "/abilities/cha": 14,
+          "/abilities/con": null,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 2,
+          "/durability/damageThreshold": 6,
+          "/economics/newCredits": 1460,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "BCA-11/X training droids can't be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-009",
+      "printedName": "BCA-11/X Training Droid",
+      "printedPage": 71,
+      "pdfPage1Based": 72,
+      "textAnchor1Based": 6214,
+      "textWindowRange1Based": [
+        6214,
+        6240
+      ],
+      "textWindowSha256": "75bca6b33fd45567242ecc0d3cd5dca64b189e5daf5802d74c3edaf883c7e985",
+      "ocrSelectedFields": {
+        "Init": "Init +9; Senses low-light, Perception +4",
+        "Languages": "Languages Basic, Binary"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 71,
+        "pdfPage1Based": 72,
+        "fieldValues": {
+          "/challenge/challengeLevel": 2,
+          "/classification/size": "Medium",
+          "/abilities/str": 13,
+          "/abilities/dex": 14,
+          "/abilities/int": 9,
+          "/abilities/wis": 11,
+          "/abilities/cha": 8,
+          "/abilities/con": null,
+          "/defenses/reflex": 20,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 17,
+          "/durability/damageThreshold": 13,
+          "/economics/newCredits": 5860,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "IG-86 sentinel! droids can be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed prohibited"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-010",
+      "printedName": "IG-86 Sentinel Droid",
+      "printedPage": 71,
+      "pdfPage1Based": 72,
+      "textAnchor1Based": 6241,
+      "textWindowRange1Based": [
+        6241,
+        6389
+      ],
+      "textWindowSha256": "767364cf49e912869e598cffcc371553bdcade2a5b5c7d1e237690792ea92564",
+      "ocrSelectedFields": {
+        "Init": "Init +7; Senses Perception +6",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 20 (flat-footed 18), Fort 13, Will 11; +7 armar",
+        "hp": "hp 17; DR 5 {lightsabers only); Threshold 13",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee claw +4 (1d4+1)",
+        "Ranged": "Ranged blaster carbine +6 (3d8+2)",
+        "Base Atk": "Base Atk +3; Grp +5",
+        "Abilities": "Abilities Str 13, Dex 14, Con =, Int 9, Wis 11, Cha 8",
+        "Talents": "Talents Weapon Specialization (rifles)",
+        "Feats": "Feats Armor Proficiency (light, medium), Coordinated Attack, Toughness,",
+        "Skills": "Skills Initiative +9, Perception +4",
+        "Systems": "Systems walking locomotion, basic processor, improved sensor package,",
+        "Possessions": "Possessions blaster carbine",
+        "Availability": "Availability Restricted; Cost 7,800"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 71,
+        "pdfPage1Based": 72,
+        "fieldValues": {
+          "/challenge/challengeLevel": 1,
+          "/classification/size": "Medium",
+          "/abilities/str": 14,
+          "/abilities/dex": 15,
+          "/abilities/int": 10,
+          "/abilities/wis": 12,
+          "/abilities/cha": 8,
+          "/abilities/con": null,
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 30,
+          "/durability/damageThreshold": 15,
+          "/economics/newCredits": 7800,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "CLL-6 droids can't be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-011",
+      "printedName": "CLL-6 Binary Load Lifter",
+      "printedPage": 72,
+      "pdfPage1Based": 73,
+      "textAnchor1Based": 6390,
+      "textWindowRange1Based": [
+        6390,
+        6433
+      ],
+      "textWindowSha256": "c6dae3f3c1972c531f2a38ef788c9374c2f25c81ac57aacdcc79819e1bc21aa6",
+      "ocrSelectedFields": {
+        "Init": "Init +0 ; Senses Perception +10",
+        "Languages": "Languages Basic (understand only), Binary",
+        "Defenses": "Defenses Ref 9 (flat-footed 3), Fart 19, Will 10",
+        "hp": "hp 23: Threshold 19",
+        "Speed": "Speed 8 squares (waiking)",
+        "Melee": "Melee unarmed +9 (14449)",
+        "Base Atk": "Base Atk +0; Grp +14",
+        "Abilities": "Abilities Str 28, Dex 10, Con —, Int 8, Wis 10, Cha 5",
+        "Feats": "Feats Skill Focus (Endurance, Perception), Skill Training (Perception)",
+        "Skills": "Skills Endurance +19 , Perception +10",
+        "Systems": "Systems walking locomotion, basic processar, 2 toal appendages",
+        "Availability": "Availability Licensed; Cost 4,200 credits (used)"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 72,
+        "pdfPage1Based": 73,
+        "fieldValues": {
+          "/challenge/challengeLevel": 1,
+          "/classification/size": "Large",
+          "/abilities/str": 28,
+          "/abilities/dex": 10,
+          "/abilities/int": 8,
+          "/abilities/wis": 10,
+          "/abilities/cha": 5,
+          "/abilities/con": null,
+          "/defenses/reflex": 9,
+          "/defenses/flatFootedReflex": 9,
+          "/defenses/fortitude": 19,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 23,
+          "/durability/damageThreshold": 19,
+          "/economics/newCredits": 4200,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "FA-5 valet droids can be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed prohibited"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-012",
+      "printedName": "FA-5 Valet Droid",
+      "printedPage": 72,
+      "pdfPage1Based": 73,
+      "textAnchor1Based": 6434,
+      "textWindowRange1Based": [
+        6434,
+        6482
+      ],
+      "textWindowSha256": "673f9f2870888c3c94c5ab840da213e5d29de75a469d5e8b50b8a4d0b9991bbc",
+      "ocrSelectedFields": {
+        "Init": "Init +2; Senses Perception +3",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 12 (flat-footed 10), Fort 11, Will 10",
+        "hp": "hp 3; Threshold 10",
+        "Speed": "Speed 6 squares",
+        "Melee": "Melee unarmed +1 (16341)",
+        "Ranged": "Ranged by weapon +2",
+        "Base Atk": "Base Atk +0; Grp +2",
+        "Abilities": "Abilities Str 12, Dex 15, Con —, Int 10, Wis 10, Cha 12",
+        "Feats": "Feats Skill Focus (Endurance), Skill Training (Pilot), 2 unassigned",
+        "Skills": "Skills Endurance +10, Pilot +12",
+        "Systems": "Systems walking locomotion, 2 hand appendages, basic processor,",
+        "Availability": "Availability Licensed; Cost 1,100"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 72,
+        "pdfPage1Based": 73,
+        "fieldValues": {
+          "/challenge/challengeLevel": 0,
+          "/classification/size": "Medium",
+          "/abilities/str": 12,
+          "/abilities/dex": 15,
+          "/abilities/int": 10,
+          "/abilities/wis": 10,
+          "/abilities/cha": 12,
+          "/abilities/con": null,
+          "/defenses/reflex": 12,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 11,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 3,
+          "/durability/damageThreshold": 10,
+          "/economics/newCredits": 1100,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "\\\\W-37 pincer loader droids can't be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-013",
+      "printedName": "IW-37 Pincer Loader Droid",
+      "printedPage": 73,
+      "pdfPage1Based": 74,
+      "textAnchor1Based": 6483,
+      "textWindowRange1Based": [
+        6483,
+        8395
+      ],
+      "textWindowSha256": "e958ac03ffdcbd5bbc127f0dc9337d1c3a33b2355a3617159a833c9cd4d15fa3",
+      "ocrSelectedFields": {
+        "Init": "Init +7; Senses Perception +6",
+        "Languages": "Languages Binary",
+        "Defenses": "Defenses Ref 15 (flat-footed 15), Fort 17, Will 10",
+        "hp": "hp 11; Threshold 22",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee 2 claws +10 (1d6+7)",
+        "Ranged": "Ranged laser cannon +1 (see below)",
+        "Base Atk": "Base Atk +3; Grp 415",
+        "Abilities": "Abilities Str 24, Dex 11, Con —, Int @, Wis 8, Cha 6",
+        "Feats": "Feats Armor Proficiency (light), Improved Damage Threshold, Pin,",
+        "Skills": "Skills Initiative +7, Perception +6",
+        "Systems": "Systems walking locomation, basic processor, 2 claw appendages,",
+        "Possessions": "Possessions durastecl shell",
+        "Availability": "Availability Licensed; Cost 8,000 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 73,
+        "pdfPage1Based": 74,
+        "fieldValues": {
+          "/challenge/challengeLevel": 1,
+          "/classification/size": "Large",
+          "/abilities/str": 24,
+          "/abilities/dex": 11,
+          "/abilities/int": 8,
+          "/abilities/wis": 8,
+          "/abilities/cha": 6,
+          "/abilities/con": null,
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 11,
+          "/durability/damageThreshold": 22,
+          "/economics/newCredits": 8000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed prohibited"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-014",
+      "printedName": "B1-Series Battle Droid Squad",
+      "printedPage": 95,
+      "pdfPage1Based": 96,
+      "textAnchor1Based": 8396,
+      "textWindowRange1Based": [
+        8396,
+        15306
+      ],
+      "textWindowSha256": "f96f88172d4b268e11ada085e0454d604dc1b8464181ce33c05220da44253f06",
+      "ocrSelectedFields": {},
+      "sourceFormat": "squad",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 94,
+        "pdfPage1Based": 95,
+        "fieldValues": {
+          "/challenge/challengeLevel": 3,
+          "/classification/size": "Large"
+        },
+        "sourceOnlyPrintedValues": {
+          "reflex": 8,
+          "flatFootedReflex": 8,
+          "fortitude": 11,
+          "will": 11,
+          "hitPoints": 20,
+          "damageThreshold": 21
+        },
+        "fieldComparisonCount": 2,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "FX-6 medical assistance draids can be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": null
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-015",
+      "printedName": "FX-6 Medical Assistance Droid",
+      "printedPage": 160,
+      "pdfPage1Based": 161,
+      "textAnchor1Based": 15307,
+      "textWindowRange1Based": [
+        15307,
+        15366
+      ],
+      "textWindowSha256": "2ebc3e960e563e4061e503f08caaaff4ed6be9586f97f37481d1449772f8ea85",
+      "ocrSelectedFields": {
+        "Init": "Init <1; Senses low-light vision, Perception +10",
+        "Languages": "Languages Basic, Binary, 2 unassigned",
+        "Defenses": "Defenses Ref 12 (flat-footed 12), Fort 9, Will 12; +2 armor",
+        "hp": "hp 7; Threshald 9",
+        "Speed": "Speed 2 squares (tracked)",
+        "Melee": "Melee instrument +1 (12-1)",
+        "Base Atk": "Base Atk +2; Grp +2",
+        "Abilities": "Abilities Str 8, Dex 11, Con —, int 14, Wis 15, Cha 9",
+        "Feats": "Feats Cybernetic Surgery, Skill Focus (Treat Injury), Skill Training",
+        "Skills": "Skills Knowledge (life sciences) +8, Knowledge (technology) +8,",
+        "Systems": "Systems tracked locomation, heuristic processor, 6 instruments,",
+        "Possessions": "Possessions medical kit",
+        "Availability": "Availability Licensed; Cost 4,300 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 160,
+        "pdfPage1Based": 161,
+        "fieldValues": {
+          "/challenge/challengeLevel": 1,
+          "/classification/size": "Medium",
+          "/abilities/str": 8,
+          "/abilities/dex": 11,
+          "/abilities/int": 14,
+          "/abilities/wis": 15,
+          "/abilities/cha": 9,
+          "/abilities/con": null,
+          "/defenses/reflex": 12,
+          "/defenses/flatFootedReflex": 12,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 7,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 4300,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending",
+        "statblockContinuationPages": [
+          160,
+          161
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "FA-4 pilot droids can be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-016",
+      "printedName": "FA-4 Pilot Droid",
+      "printedPage": 161,
+      "pdfPage1Based": 162,
+      "textAnchor1Based": 15367,
+      "textWindowRange1Based": [
+        15367,
+        15507
+      ],
+      "textWindowSha256": "29c895f3eb81cc52be16cbf15264f7c632a107cd6c58692710188a0ffd0caa72",
+      "ocrSelectedFields": {
+        "Init": "Init +13; Senses darkvision, low-light vision, Perception +4",
+        "Languages": "Languages Basic, Binary, 2 unassigned",
+        "Defenses": "Defenses Ref 13 (flat-footed 11), Fort 5, Will 11; Vehicular Combat",
+        "hp": "hp 5; Threshold 9",
+        "Speed": "Speed 4 squares (wheeled)",
+        "Melee": "Melee hand +0 (142-1)",
+        "Base Atk": "Base Atk +1; Grp -2",
+        "Abilities": "Abilities Str 8, Dex 15, Con —, Int 14, Wis 12, Cha 7",
+        "Feats": "Feats Skill Focus (Initiative, Pilot, Use Computer), Vehicular Combat",
+        "Skills": "Skills Initiative +13, Perception +4, Pilot +13, Use Computer +13",
+        "Systems": "Systems wheeled locomotion, magnetic feet, 2 hands, improved sensor",
+        "Possessions": "Possessions astrogation buffer (storage device, 10 memory units)",
+        "Availability": "Availability Licensed; Cost 4,200 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 161,
+        "pdfPage1Based": 162,
+        "fieldValues": {
+          "/challenge/challengeLevel": 0,
+          "/classification/size": "Small",
+          "/abilities/str": 8,
+          "/abilities/dex": 15,
+          "/abilities/int": 14,
+          "/abilities/wis": 12,
+          "/abilities/cha": 7,
+          "/abilities/con": null,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 4200,
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Marksman-H combat remotes can't be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed allowed"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-017",
+      "printedName": "Marksman-H Combat Remote",
+      "printedPage": 162,
+      "pdfPage1Based": 163,
+      "textAnchor1Based": 15508,
+      "textWindowRange1Based": [
+        15508,
+        18086
+      ],
+      "textWindowSha256": "e629f3fac4cf198ee7d822afe419918e91f5a6b8244afd9e88c04e8c1cf5689b",
+      "ocrSelectedFields": {
+        "Init": "Init +10; Senses Perceotion +1",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 19 (flat-footed 15), Fort 6, Will 10",
+        "hp": "hp 5; Threshold 6",
+        "Speed": "Speed 1 square (hovering)",
+        "Melee": "Melee electro-staff +3 (2d6+2)",
+        "Ranged": "Ranged light blaster +5 (1d4 stun)",
+        "Base Atk": "Base Atk +1; Grp -18",
+        "Abilities": "Abilities Str 3, Dex 18, Can —, Int 10, Wis 11, Cha 6",
+        "Talents": "Talents Devastating Attack (pistols)",
+        "Feats": "Feats Dodge, Point Blank Shot, Weapan Focus (pistols),",
+        "Skills": "Skills Initiative +10",
+        "Systems": "Systems hovering locomotion, basic processor, weapon mount (stabilized)",
+        "Possessions": "Possessions light blaster",
+        "Availability": "Availability Military; Cost not available for sale"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 162,
+        "pdfPage1Based": 163,
+        "fieldValues": {
+          "/challenge/challengeLevel": 0,
+          "/classification/size": "Diminutive",
+          "/abilities/str": 3,
+          "/abilities/dex": 18,
+          "/abilities/int": 10,
+          "/abilities/wis": 11,
+          "/abilities/cha": 6,
+          "/abilities/con": null,
+          "/defenses/reflex": 19,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 6,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 6,
+          "/economics/newCredits": 350,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Advanced dwarf spider droids can't be played as droid heroes.",
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed prohibited"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-018",
+      "printedName": "A-DSD Advanced Dwarf Spider Droid",
+      "printedPage": 188,
+      "pdfPage1Based": 189,
+      "textAnchor1Based": 18087,
+      "textWindowRange1Based": [
+        18087,
+        18168
+      ],
+      "textWindowSha256": "db3fe5cd2f9b79fdb852eb1d5d10b4fd099b39f5498c9d4b6028f3fe702100e8",
+      "ocrSelectedFields": {
+        "Init": "Init +10; Senses low-light vision, darkvision, Perception +7",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 14 (flat-footed 14), 18 (flat-footed 18), Fort 31, Will 12: +7",
+        "hp": "hp 59; Threshold 46",
+        "Speed": "Speed 8 squares (walking)",
+        "Melee": "Melee claw +12! (148414)",
+        "Ranged": "Ranged blaster cannon +7 (3d12+1, 1-square splash) or",
+        "Base Atk": "Base Atk +9; Grp +27",
+        "Abilities": "Abilities Str 26, Dex 7, Con —, lint 9, Wis 9, Cha 7",
+        "Talents": "Talents Armored Defense, Juggernaut",
+        "Feats": "Feats Armor Proficiency (light, medium), Double Attack, Point Blank Shot,",
+        "Skills": "Skills Initiative +9 :",
+        "Systems": "Systems walking locomotion, basic processor, claw, improved sensar",
+        "Possessions": "Possessions blaster cannan, fire-linked missile launchers, 36 frag missiles,",
+        "Availability": "Availability Military; Cost 25,000 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 188,
+        "pdfPage1Based": 189,
+        "fieldValues": {
+          "/challenge/challengeLevel": 6,
+          "/classification/size": "Huge",
+          "/abilities/str": 26,
+          "/abilities/dex": 7,
+          "/abilities/int": 9,
+          "/abilities/wis": 9,
+          "/abilities/cha": 7,
+          "/abilities/con": null,
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 31,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 59,
+          "/durability/damageThreshold": 46,
+          "/economics/newCredits": 25000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {
+          "reflexWithLegShields": 18,
+          "flatFootedReflexWithLegShields": 18
+        },
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification",
+        "statblockContinuationPages": [
+          188,
+          189
+        ]
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "A-Series assassin droids can't be played as droid heroes.",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-019",
+      "printedName": "A-Series Assassin Droid",
+      "printedPage": 189,
+      "pdfPage1Based": 190,
+      "textAnchor1Based": 18169,
+      "textWindowRange1Based": [
+        18169,
+        18259
+      ],
+      "textWindowSha256": "f3c0a1995d3836532be6a0e7760ca17b5cfc4ea9f7a1b60b1ae32f58616eae36",
+      "ocrSelectedFields": {
+        "Init": "Init +14; Senses low-light vision, darkvision; Perception +14",
+        "Languages": "Languages Basic, Binary, 1 unassigned",
+        "Defenses": "Defenses Ref 26 (flat-footed 24), Fort 27, Will 19; +3 armor",
+        "hp": "hp 67; DR 1; Threshold 27",
+        "Speed": "Speed 6 squares (walking), 8 squares (wheeled)",
+        "Melee": "Melee finger blades +15 (1d6+6) or",
+        "Ranged": "Ranged wrist blaster +15 (3d8+4) or",
+        "Base Atk": "Base Atk +13; Grp 415",
+        "Abilities": "Abilities Str 14, Dex 14, Con —, Int 12, Wis 11, Cha 11",
+        "Talents": "Talents Armored Defense, Exotic Weapon Mastery, Improved Armor",
+        "Feats": "Feats Armor Proficiency (light, medium), Coordinated Attack, Double",
+        "Skills": "Skills Initiative +14, Perception +14",
+        "Systems": "Systems walking lacomotion, heuristic processor, improved sensor",
+        "Possessions": "Possessions wrist blasters (as blaster rifle), finger blades, quadanium",
+        "Availability": "Availability Illegal; Cost 14,000 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 189,
+        "pdfPage1Based": 190,
+        "fieldValues": {
+          "/challenge/challengeLevel": 11,
+          "/classification/size": "Medium",
+          "/abilities/str": 14,
+          "/abilities/dex": 14,
+          "/abilities/int": 12,
+          "/abilities/wis": 11,
+          "/abilities/cha": 11,
+          "/abilities/con": null,
+          "/defenses/reflex": 26,
+          "/defenses/flatFootedReflex": 24,
+          "/defenses/fortitude": 27,
+          "/defenses/will": 19,
+          "/durability/hitPoints": 67,
+          "/durability/damageThreshold": 27,
+          "/economics/newCredits": 14000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Air battle droids can't be played as droid heroes.",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-020",
+      "printedName": "B1-A Series Air Battle Droid",
+      "printedPage": 190,
+      "pdfPage1Based": 191,
+      "textAnchor1Based": 18260,
+      "textWindowRange1Based": [
+        18260,
+        18267
+      ],
+      "textWindowSha256": "c9dab6aff69f01e5fa3616288591b548a1e90bc914c68bcfda7f2c3c11132f5b",
+      "ocrSelectedFields": {},
+      "sourceFormat": "actor",
+      "warnings": [
+        "OCR two-column or short text window: manual separation required",
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required.",
+        "Two-column p190 reconstructed from printed visual columns, not interleaved TXT. Initial OCR attack parsing is not trusted."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 190,
+        "pdfPage1Based": 191,
+        "fieldValues": {
+          "/challenge/challengeLevel": 4,
+          "/classification/size": "Medium",
+          "/abilities/str": 13,
+          "/abilities/dex": 13,
+          "/abilities/int": 9,
+          "/abilities/wis": 10,
+          "/abilities/cha": 10,
+          "/abilities/con": null,
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 16,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 24,
+          "/durability/damageThreshold": 16,
+          "/economics/newCredits": 2100,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-021",
+      "printedName": "Battle Droid Assassin",
+      "printedPage": 190,
+      "pdfPage1Based": 191,
+      "textAnchor1Based": 18268,
+      "textWindowRange1Based": [
+        18268,
+        18396
+      ],
+      "textWindowSha256": "f86c04da82df75d21972fdf3d1733a6d7b987f0fbb1596311fc10049a9840551",
+      "ocrSelectedFields": {},
+      "sourceFormat": "actor",
+      "warnings": [
+        "OCR two-column or short text window: manual separation required",
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required.",
+        "Two-column p190 reconstructed from printed visual columns, not interleaved TXT. Initial OCR attack parsing is not trusted."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 190,
+        "pdfPage1Based": 191,
+        "fieldValues": {
+          "/challenge/challengeLevel": 4,
+          "/classification/size": "Medium",
+          "/abilities/str": 13,
+          "/abilities/dex": 13,
+          "/abilities/int": 10,
+          "/abilities/wis": 10,
+          "/abilities/cha": 9,
+          "/abilities/con": null,
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 14,
+          "/defenses/fortitude": 16,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 24,
+          "/durability/damageThreshold": 16,
+          "/economics/newCredits": 6460,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Battle droid assassirs can’t be played as droid heroes.",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-022",
+      "printedName": "Cold Assault Battle Droid",
+      "printedPage": 191,
+      "pdfPage1Based": 192,
+      "textAnchor1Based": 18397,
+      "textWindowRange1Based": [
+        18397,
+        18478
+      ],
+      "textWindowSha256": "5c2ad2c0ec65d830875851b84536b3b082d2cacf803ddf87cc6a0285c6bfc74b",
+      "ocrSelectedFields": {
+        "Init": "Init +2; Senses Perception +8",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 10 (fiat-foated 10), Fort 14, Will 10; +2 armor",
+        "hp": "hp 31; Threshold 19",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee unarmed +8 (id3+4)",
+        "Ranged": "Ranged heavy diaster rifle +3 (3010) or",
+        "Base Atk": "Base Atk +4; Grp +13",
+        "Abilities": "Abilities Str 18, Dex 9, Con —, Int 10, Wis 11, Cha 7",
+        "Feats": "Feats Armor Proficiency (light). Charging Fire, Rapid Shot, Touginness,",
+        "Skills": "Skills Perception +8",
+        "Systems": "Systems walking locomotion, remote receiver, backup processor,",
+        "Possessions": "Possessions heavy blaster rifle",
+        "Availability": "Availability Military; Cost 5,500 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 191,
+        "pdfPage1Based": 192,
+        "fieldValues": {
+          "/challenge/challengeLevel": 2,
+          "/classification/size": "Large",
+          "/abilities/str": 18,
+          "/abilities/dex": 9,
+          "/abilities/int": 10,
+          "/abilities/wis": 11,
+          "/abilities/cha": 7,
+          "/abilities/con": null,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 14,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 31,
+          "/durability/damageThreshold": 19,
+          "/economics/newCredits": 5500,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Cartosis battle droids can't be played as droid heroes",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-023",
+      "printedName": "C-B3 Cortosis Battle Droid",
+      "printedPage": 192,
+      "pdfPage1Based": 193,
+      "textAnchor1Based": 18479,
+      "textWindowRange1Based": [
+        18479,
+        18558
+      ],
+      "textWindowSha256": "93ad0a4db0bb1e52da73ec0c3523adab9674f5992c093cef3c69f5fdaf4155b2",
+      "ocrSelectedFields": {
+        "Init": "Init +4; Senses Perception +9",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 19 (flat-footed 19}, Fort 17, Will 13; +8 armor",
+        "hp": "hp 40; DR 5 (lightsabers only); Threshold 17",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee unarmed +9 (1¢343)",
+        "Ranged": "Ranged wrist blaster +7 (34841, devastating 5, penetrating 5) or",
+        "Base Atk": "Base Atk +7; Grp +9",
+        "Abilities": "Abilities Str 14, Dex 11, Con —, Int 10, Wis 15, Cha 7",
+        "Talents": "Talents Devastating Attack (rifles), Penetrating Attack (rifles)",
+        "Feats": "Feats Armor Proficiency (light, medium), Burst Fire, Charging Fire, Dual",
+        "Skills": "Skills Perception +9",
+        "Systems": "Systems walking locomotion, remote receiver, backup processor.",
+        "Possessions": "Possessions 2 wrist blasters (as blaster rifle)",
+        "Availability": "Availability Military; Cost 25,000 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 192,
+        "pdfPage1Based": 193,
+        "fieldValues": {
+          "/challenge/challengeLevel": 5,
+          "/classification/size": "Medium",
+          "/abilities/str": 14,
+          "/abilities/dex": 11,
+          "/abilities/int": 10,
+          "/abilities/wis": 11,
+          "/abilities/cha": 7,
+          "/abilities/con": null,
+          "/defenses/reflex": 19,
+          "/defenses/flatFootedReflex": 19,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 40,
+          "/durability/damageThreshold": 17,
+          "/economics/newCredits": 25000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {
+          "lightsaberOnlyDamageReduction": 5
+        },
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Droid commandos can't be played as droid heroes.",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-024",
+      "printedName": "Droid Commando",
+      "printedPage": 192,
+      "pdfPage1Based": 193,
+      "textAnchor1Based": 18559,
+      "textWindowRange1Based": [
+        18559,
+        18627
+      ],
+      "textWindowSha256": "bdd950c3f62cec88cc42d6b30067fa7b8edfd10ded3df50d9cf03d8cd5ad0d9c",
+      "ocrSelectedFields": {
+        "Init": "Init +13; Senses low-light vision, Perception +13",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 19 (flat-footed 16), Fort 17, Will 18",
+        "hp": "hp 37; Threshold 17",
+        "Speed": "Speed 6 squares",
+        "Melee": "Melee unarmed +8 (103+2) .",
+        "Ranged": "Ranged blaster rifle +12 (34842)",
+        "Base Atk": "Base Atk +8; Grp +11",
+        "Abilities": "Abilities Str 10, Dex 16, Con =, Int 14, Wis 16, Cha 8",
+        "Talents": "Talents Battle Analysis, Cover Fire",
+        "Feats": "Feats Coordinated Attack, Improved Defenses, Paint Blank Shot, Precise",
+        "Skills": "Skills Initiative +13, Knowledge (tactics) +12, Perception +13, Stealth +13",
+        "Systems": "Systems walking locomotion, 2 hand appendages, heuristic processor,",
+        "Possessions": "Possessions blaster rific, ciecttobinoculars",
+        "Availability": "Availability Military; Cost 17,900"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 192,
+        "pdfPage1Based": 193,
+        "fieldValues": {
+          "/challenge/challengeLevel": 6,
+          "/classification/size": "Medium",
+          "/abilities/str": 10,
+          "/abilities/dex": 16,
+          "/abilities/int": 14,
+          "/abilities/wis": 16,
+          "/abilities/cha": 8,
+          "/abilities/con": null,
+          "/defenses/reflex": 19,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 18,
+          "/durability/hitPoints": 37,
+          "/durability/damageThreshold": 17,
+          "/economics/newCredits": 17900,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "IG lancer combat droids can’t be played as droid heroes,",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-025",
+      "printedName": "IG Lancer Combat Droid",
+      "printedPage": 193,
+      "pdfPage1Based": 194,
+      "textAnchor1Based": 18628,
+      "textWindowRange1Based": [
+        18628,
+        18687
+      ],
+      "textWindowSha256": "898e343137a8a0a8e0aa972c87125aaf2dc05a8141b28ad8dc589d6d9c027359",
+      "ocrSelectedFields": {
+        "Init": "Init +11; Senses Perception +3",
+        "Languages": "Languages Binary ie",
+        "Defenses": "Defenses Ref 13 (flat-footed 10), Fort #2, Will 10",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee energy lance +6 (2d8+4)",
+        "Base Atk": "Base Atk +4: Grp +6",
+        "Abilities": "Abilities Str 14, Dex 16, Con —, Int 13, Wis 10, Cha 8",
+        "Feats": "Feats Power Attack, Powerful Charge, Running Attack, Weapon",
+        "Skills": "Skills Initiative +11, Pilot 411",
+        "Systems": "Systems walking locomotion, remote receiver, 2 hand appendages,",
+        "Possessions": "Possessions energy lance (as force pike, +1 square reach)",
+        "Availability": "Availability Military; Cost 2,700 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 193,
+        "pdfPage1Based": 194,
+        "fieldValues": {
+          "/challenge/challengeLevel": 2,
+          "/classification/size": "Medium",
+          "/abilities/str": 14,
+          "/abilities/dex": 16,
+          "/abilities/int": 13,
+          "/abilities/wis": 10,
+          "/abilities/cha": 8,
+          "/abilities/con": null,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 15,
+          "/durability/damageThreshold": 12,
+          "/economics/newCredits": 2700,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "1G-110 lightsaber draids can't be played as droid heroes. Although these",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-026",
+      "printedName": "IG-110 Lightsaber Droid",
+      "printedPage": 193,
+      "pdfPage1Based": 194,
+      "textAnchor1Based": 18688,
+      "textWindowRange1Based": [
+        18688,
+        18777
+      ],
+      "textWindowSha256": "07964fd36981a86c3767875092353f44891314f9e91719751bf2d1d6e1602927",
+      "ocrSelectedFields": {
+        "Languages": "Languages Basic, Binary _",
+        "Defenses": "Defenses Ref 21 (fiat-footed 18, Lightsaber Defense 23), Fort 20, Wilt 18",
+        "hp": "hp 58; Threshold 20",
+        "Speed": "Speed 6 squares",
+        "Melee": "Melee tightsaber +10 (2d848) or",
+        "Base Atk": "Base Atk +6; Grp +9",
+        "Abilities": "Abilities Str 15, Dex 16, Con =, lint 10, Wis 12, Cha &",
+        "Talents": "Talents Lightsaber Defense (2), Melee Smash, Weapon Specialization",
+        "Feats": "Feats Armor Proficiency (light, medium), Dual Weapon Mastery |, Dual",
+        "Skills": "Skills Initiative +41, Mechanies +8, Perception +9",
+        "Systems": "Systems walking locomotion, magnetic feet, heuristic processor, 2 hand",
+        "Possessions": "Possessions 2 lightsabers, quadanium armor",
+        "Availability": "Availability Military; Cost 27,000 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 193,
+        "pdfPage1Based": 194,
+        "fieldValues": {
+          "/challenge/challengeLevel": 6,
+          "/classification/size": "Medium",
+          "/abilities/str": 15,
+          "/abilities/dex": 16,
+          "/abilities/int": 10,
+          "/abilities/wis": 12,
+          "/abilities/cha": 8,
+          "/abilities/con": null,
+          "/defenses/reflex": 21,
+          "/defenses/flatFootedReflex": 18,
+          "/defenses/fortitude": 20,
+          "/defenses/will": 18,
+          "/durability/hitPoints": 58,
+          "/durability/damageThreshold": 20,
+          "/economics/newCredits": 27000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "JK-13 security droids can’t be played as droid heroes.",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-027",
+      "printedName": "JK-13 Security Droid",
+      "printedPage": 194,
+      "pdfPage1Based": 195,
+      "textAnchor1Based": 18778,
+      "textWindowRange1Based": [
+        18778,
+        18868
+      ],
+      "textWindowSha256": "a38590821bcc8837eb6b9b5768070acc1ed2a2e0132ea4a06bfa1041e08c322f",
+      "ocrSelectedFields": {
+        "Init": "Init +13; Senses low-light, Use the Force +11",
+        "Languages": "Languages Binary",
+        "Defenses": "Defenses Ref 24 (flat-footed 22), Fort 29, Will 23; Dodge",
+        "hp": "hp 120; SR 20; Threshold 44",
+        "Speed": "Speed 8 squares (walking), climb 4 squares, Runining Attack",
+        "Melee": "Melee stun tentacles +161 (1d4+9, devastating 5) or",
+        "Base Atk": "Base Atk +12; Grp +20 :",
+        "Abilities": "Abilities Str 17, Dex 14, Con —, Int 10, Wis 13, Cha 11",
+        "Talents": "Talents Devastating Attack (stun tentacles), Expert Grappler, Force",
+        "Feats": "Feats Armor Proficiency (light, medium), Combat Reflexes, Dodge, Double",
+        "Skills": "Skills Endurance +11, Initiative +13, Use the Force +11",
+        "Systems": "Systems walking locomotion (extra legs), climbing claws, organic",
+        "Possessions": "Possessions stun tentacles",
+        "Availability": "Availability lllega!; Cost 50,000 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 194,
+        "pdfPage1Based": 195,
+        "fieldValues": {
+          "/challenge/challengeLevel": 12,
+          "/classification/size": "Large",
+          "/abilities/str": 17,
+          "/abilities/dex": 14,
+          "/abilities/int": 10,
+          "/abilities/wis": 13,
+          "/abilities/cha": 11,
+          "/abilities/con": null,
+          "/defenses/reflex": 24,
+          "/defenses/flatFootedReflex": 22,
+          "/defenses/fortitude": 29,
+          "/defenses/will": 23,
+          "/durability/hitPoints": 120,
+          "/durability/damageThreshold": 44,
+          "/economics/newCredits": 50000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {
+          "shieldRating": 20
+        },
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Assault crab droids can't be played as droid heroes.",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-028",
+      "printedName": "LM-432 Assault Crab Droid",
+      "printedPage": 194,
+      "pdfPage1Based": 195,
+      "textAnchor1Based": 18869,
+      "textWindowRange1Based": [
+        18869,
+        18947
+      ],
+      "textWindowSha256": "e737fc36341d275ba31f7c5622e088707fbff64249f9699d16a44bf4086e96e0",
+      "ocrSelectedFields": {
+        "Init": "Init +5; Senses Perception +13",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 16 (flat-footed 16), Fort 21, Will 12; +10 armor",
+        "hp": "hp 145; Threshold 71",
+        "Speed": "Speed 6 squares (walking), climb 3 squares",
+        "Melee": "Melee claw +141 (148421) with Power Attack",
+        "Ranged": "Ranged blaster cannon +11 (3d12, 2x2 area) or",
+        "Base Atk": "Base Atk +13; Grp +34",
+        "Abilities": "Abilities Str 32, Dex 7, Con =, Int 10, Wis 14, Cha 8",
+        "Feats": "Feats Armor Proficiency (light, medium, heavy), Cleave, Crush, Pin, Power",
+        "Skills": "Skills Climb +20 (can reroll, can take 10 when threatened),",
+        "Systems": "Systems walking locomation (extra legs), climbing claws, heuristic",
+        "Possessions": "Possessions blaster cannon, jét sprayer (including 100-liter water tank)",
+        "Availability": "Availability Military; Cost 40,000 credits a"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 194,
+        "pdfPage1Based": 195,
+        "fieldValues": {
+          "/challenge/challengeLevel": 6,
+          "/classification/size": "Huge",
+          "/abilities/str": 32,
+          "/abilities/dex": 7,
+          "/abilities/int": 10,
+          "/abilities/wis": 14,
+          "/abilities/cha": 8,
+          "/abilities/con": null,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 21,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 145,
+          "/durability/damageThreshold": 71,
+          "/economics/newCredits": 40000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-029",
+      "printedName": "LR-57 Combat Droid",
+      "printedPage": 195,
+      "pdfPage1Based": 196,
+      "textAnchor1Based": 18948,
+      "textWindowRange1Based": [
+        18948,
+        19034
+      ],
+      "textWindowSha256": "35c12a97bc3b7a8ae8b3e702e4a4fce824b8d58a6acf6ceb05e1fafc8619c908",
+      "ocrSelectedFields": {
+        "Init": "Init +5; Senses low-light vision, Perception +18",
+        "Languages": "Languages Binary",
+        "Defenses": "Defenses Ref 16 (flat-footed 15), Fort 17, Will 12; +6 armar",
+        "hp": "hp 33; Threshold 22",
+        "Speed": "Speed 8 squares",
+        "Ranged": "Ranged double heavy blaster rifle +7 (4410) or",
+        "Base Atk": "Base Atk +6; Grp +18",
+        "Abilities": "Abilities Str 24, Dex 12, Con --, int 16, Wis 15, Cha 8",
+        "Feats": "Feats Armor Proficiency (light), Burst Fire, Skill Focus {Perception}, Skill Va",
+        "Skills": "Skills Perception 418, Stealth +10",
+        "Systems": "Systems walking locomotion, basic processor, remote receiver, 2 tool",
+        "Possessions": "Possessions double heavy blaster rifle, durasteel plating (+6 armor)",
+        "Availability": "Availability Military; Cost 16,000 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 195,
+        "pdfPage1Based": 196,
+        "fieldValues": {
+          "/challenge/challengeLevel": 3,
+          "/classification/size": "Large",
+          "/abilities/str": 24,
+          "/abilities/dex": 12,
+          "/abilities/int": 10,
+          "/abilities/wis": 15,
+          "/abilities/cha": 8,
+          "/abilities/con": null,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 33,
+          "/durability/damageThreshold": 22,
+          "/economics/newCredits": 16000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Octuptarra combat tri-droids can't be played as droid heroes.",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-030",
+      "printedName": "Octuptarra Combat Tri-Droid",
+      "printedPage": 196,
+      "pdfPage1Based": 197,
+      "textAnchor1Based": 19035,
+      "textWindowRange1Based": [
+        19035,
+        19103
+      ],
+      "textWindowSha256": "08e26137ba4a31d230ca6833c1990686d87ecc9a8bf2bc635b6cde218315af01",
+      "ocrSelectedFields": {
+        "Init": "Init +15; Senses low-light vision, Perception +5",
+        "Languages": "Languages Binary",
+        "Defenses": "Defenses Ref 10 (flat-footed 9), Fort 12, Will 9",
+        "hp": "hp 32; Threshold 17",
+        "Speed": "Speed 6 squares (walking), climb 3 squares",
+        "Ranged": "Ranged laser turret +7 (348) or",
+        "Base Atk": "Base Atk +6; Grp +13",
+        "Abilities": "Abilities Str 14, Dex 13, Con —, lint 11, Wis 8, Cha 7",
+        "Feats": "Feats Burst Fire, Double Attack, Rapid Shot, Running Attack, Skill Focus",
+        "Skills": "Skills Initiative +15, Stealth +0",
+        "Systems": "Systems walking locomotion, magnetic feet, basic pracessor, inte-nai",
+        "Possessions": "Possessions 3 laser turrets",
+        "Availability": "Availability Military; Cost 2,500 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 196,
+        "pdfPage1Based": 197,
+        "fieldValues": {
+          "/challenge/challengeLevel": 3,
+          "/classification/size": "Large",
+          "/abilities/str": 14,
+          "/abilities/dex": 13,
+          "/abilities/int": 11,
+          "/abilities/wis": 8,
+          "/abilities/cha": 7,
+          "/abilities/con": null,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 9,
+          "/defenses/fortitude": 12,
+          "/defenses/will": 9,
+          "/durability/hitPoints": 32,
+          "/durability/damageThreshold": 17,
+          "/economics/newCredits": 2500,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {
+          "virusBurst": "Persistent condition-track attack, not ordinary damage"
+        },
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "OOM-Series battle droids can't be played as droid heroes.",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-031",
+      "printedName": "OOM-Series Battle Droid",
+      "printedPage": 196,
+      "pdfPage1Based": 197,
+      "textAnchor1Based": 19104,
+      "textWindowRange1Based": [
+        19104,
+        19174
+      ],
+      "textWindowSha256": "39087c37c74f1ba389a92a4ede90d454b059aa67005e8c353fb2eb4639adebff",
+      "ocrSelectedFields": {
+        "Init": "Init +3; Senses Perception +7",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 10 (flat-footed 10), Fort 11, Will 10",
+        "hp": "hp 21; Threshold 11",
+        "Speed": "Speed 6 squares (walking)",
+        "Melee": "Melee unarmed +5 (1d341)",
+        "Ranged": "Ranged blaster carbine +4 (348)",
+        "Base Atk": "Base Atk +4; Grp +5",
+        "Abilities": "Abilities Str 12, Dex 12, Con —, int 11, Wis 9, Cha 9",
+        "Feats": "Feats Toughness, Weapon Proficiency (pistols, rifles, heavy weapons,",
+        "Skills": "Skills Perception +7, plus Knowledge (tactics)2 +5 or Pilot3 +5",
+        "Systems": "Systems walking locomotion, remote receiver, 2 hand appendages,",
+        "Possessions": "Possessions blaster carbine, electrobinoculars2, personal holoprojector2",
+        "Availability": "Availability Military; Cost 900 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 196,
+        "pdfPage1Based": 197,
+        "fieldValues": {
+          "/challenge/challengeLevel": 2,
+          "/classification/size": "Medium",
+          "/abilities/str": 12,
+          "/abilities/dex": 11,
+          "/abilities/int": 11,
+          "/abilities/wis": 9,
+          "/abilities/cha": 9,
+          "/abilities/con": null,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 11,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 21,
+          "/durability/damageThreshold": 11,
+          "/economics/newCredits": 900,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Spelunker probe droids can't be played as droid heroes,",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-032",
+      "printedName": "Spelunker Probe Droid",
+      "printedPage": 197,
+      "pdfPage1Based": 198,
+      "textAnchor1Based": 19175,
+      "textWindowRange1Based": [
+        19175,
+        19250
+      ],
+      "textWindowSha256": "f69b8f58890c05ffb0123faa609a7884e8eff63b7f15926ed58ffec659a2e91c",
+      "ocrSelectedFields": {
+        "Init": "Init +10; Senses low-light vision, Perception +11",
+        "Defenses": "Defenses Ref 18 (flat-footed 17), Fort 17, Will 15",
+        "hp": "hp 30; Threshold 17",
+        "Speed": "Speed 6 squares (walking), climb 3 squares",
+        "Melee": "Melee claw +6 [1d4+3) or",
+        "Ranged": "Ranged laser cannons +1 (3d8+2) with autofire or",
+        "Base Atk": "Base Atk +5; Grp +6",
+        "Abilities": "Abilities Str 13, Dex 13, Con —, Int 12, Wis 10, Cha 8 <",
+        "Talents": "Talents Acute Senses, Hidden Movement, Improved Stealth",
+        "Feats": "Feats Armor Proficiency (light), Burst Fire, Point Blank Shot, Precise",
+        "Skills": "Skills Climb +10, Perception +11 (can reroll), Stealth +15 (can reroll)",
+        "Systems": "Systems walking locomotion (extra legs), basic processor, claw (climbing",
+        "Possessions": "Possessions laser cannon (as light repeating blaster), minelayer, 24 frag",
+        "Availability": "Availability Military; Cost 15,750 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 197,
+        "pdfPage1Based": 198,
+        "fieldValues": {
+          "/challenge/challengeLevel": 6,
+          "/classification/size": "Medium",
+          "/abilities/str": 13,
+          "/abilities/dex": 13,
+          "/abilities/int": 12,
+          "/abilities/wis": 10,
+          "/abilities/cha": 9,
+          "/abilities/con": null,
+          "/defenses/reflex": 18,
+          "/defenses/flatFootedReflex": 17,
+          "/defenses/fortitude": 17,
+          "/defenses/will": 15,
+          "/durability/hitPoints": 30,
+          "/durability/damageThreshold": 17,
+          "/economics/newCredits": 15750,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": "Uitra droidekas can’t be played as droid heroes.",
+      "verifiedEligibility": "source-printed prohibited",
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-033",
+      "printedName": "Ultra Droideka",
+      "printedPage": 198,
+      "pdfPage1Based": 199,
+      "textAnchor1Based": 19251,
+      "textWindowRange1Based": [
+        19251,
+        19328
+      ],
+      "textWindowSha256": "e0f5116fee4ed2b85677762eda868aecf77b21acc2c3ae7a41f7fe3666dc6e91",
+      "ocrSelectedFields": {
+        "Init": "init +10; Senses Perception +15",
+        "Languages": "Languages Basic, Binary",
+        "Defenses": "Defenses Ref 17 (flat-footed 15), Fort 20, Will 13; +6 armor",
+        "hp": "hp 60; SR 20; Threshold 29",
+        "Speed": "Speed 3 squares (walking), 12 squares (wheeled)",
+        "Ranged": "Ranged heavy repeating blaster +10 (3412) with autofire or",
+        "Base Atk": "Base Atk +12; Grp +31",
+        "Abilities": "Abilities Str 28, Dex 15, Con —, Int &, Wis 14, Cha 7",
+        "Feats": "Feats Armor Proficiency (light), Burst Fire, Dual Weapon Mastery }, Dual",
+        "Skills": "Skills Perception +15, Stealth +0",
+        "Systems": "Systems walking locomotion, wheeled locomotion (exclusive), remote",
+        "Possessions": "Possessions 2 heavy repeating blasters (treat as E-web repeating",
+        "Availability": "Availability Military; Cost 29,000 credits"
+      },
+      "sourceFormat": "actor",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 198,
+        "pdfPage1Based": 199,
+        "fieldValues": {
+          "/challenge/challengeLevel": 6,
+          "/classification/size": "Huge",
+          "/abilities/str": 28,
+          "/abilities/dex": 15,
+          "/abilities/int": 8,
+          "/abilities/wis": 14,
+          "/abilities/cha": 7,
+          "/abilities/con": null,
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 15,
+          "/defenses/fortitude": 20,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 60,
+          "/durability/damageThreshold": 29,
+          "/economics/newCredits": 29000,
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "sourceOnlyPrintedValues": {},
+        "fieldComparisonCount": 16,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": "source-printed prohibited"
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-034",
+      "printedName": "Ground Armored Tank",
+      "printedPage": 198,
+      "pdfPage1Based": 199,
+      "textAnchor1Based": 19329,
+      "textWindowRange1Based": [
+        19329,
+        19394
+      ],
+      "textWindowSha256": "d3fb862f266f54d9f357cce8fb5572d2fe283582e50896b75350741807af5497",
+      "ocrSelectedFields": {},
+      "sourceFormat": "vehicle",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 198,
+        "pdfPage1Based": 199,
+        "fieldValues": {
+          "/challenge/challengeLevel": 10,
+          "/classification/size": "Huge"
+        },
+        "sourceOnlyPrintedValues": {
+          "hitPoints": 175,
+          "damageReduction": 10,
+          "newCredits": 17500,
+          "usedCredits": 11000
+        },
+        "fieldComparisonCount": 2,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": null
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-035",
+      "printedName": "IG-227 Hailfire-class Droid Tank",
+      "printedPage": 199,
+      "pdfPage1Based": 200,
+      "textAnchor1Based": 19395,
+      "textWindowRange1Based": [
+        19395,
+        19474
+      ],
+      "textWindowSha256": "d812b83f08b112ae4c4d7a4d7075ad03f8f65f7818e3f5b9dc2fea1a2443c276",
+      "ocrSelectedFields": {},
+      "sourceFormat": "vehicle",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required.",
+        "Printed vehicle HP/DR/weapon facts are sidecar vehicle-only values, not individual droid actor traits."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 199,
+        "pdfPage1Based": 200,
+        "fieldValues": {
+          "/challenge/challengeLevel": 12,
+          "/classification/size": "Huge"
+        },
+        "sourceOnlyPrintedValues": {
+          "reflex": 13,
+          "flatFootedReflex": 11,
+          "fortitude": 19,
+          "hitPoints": 60,
+          "damageReduction": 10,
+          "damageThreshold": 29,
+          "newCredits": 60000,
+          "crew": "droid brain (skilled)",
+          "weaponPayloadNotes": "30 hailfire missiles; missile launchers and laser cannon"
+        },
+        "fieldComparisonCount": 2,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-036",
+      "printedName": "Manta Droid Subfighter",
+      "printedPage": 200,
+      "pdfPage1Based": 201,
+      "textAnchor1Based": 19475,
+      "textWindowRange1Based": [
+        19475,
+        19614
+      ],
+      "textWindowSha256": "12ad71c32012becf32fc1039fae809a0abb5c652738347c650ac1c1c61e77fc5",
+      "ocrSelectedFields": {},
+      "sourceFormat": "vehicle",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required.",
+        "Printed vehicle HP/DR/weapon facts are sidecar vehicle-only values, not individual droid actor traits."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 200,
+        "pdfPage1Based": 201,
+        "fieldValues": {
+          "/challenge/challengeLevel": 9,
+          "/classification/size": "Huge"
+        },
+        "sourceOnlyPrintedValues": {
+          "reflex": 14,
+          "flatFootedReflex": 11,
+          "fortitude": 17,
+          "hitPoints": 75,
+          "damageReduction": 10,
+          "damageThreshold": 27,
+          "newCredits": 22000,
+          "crew": "droid brain (normal)",
+          "weaponPayloadNotes": "12 torpedoes; laser cannons and torpedo launchers"
+        },
+        "fieldComparisonCount": 2,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-037",
+      "printedName": "OG-9 Homing Spider Droid",
+      "printedPage": 201,
+      "pdfPage1Based": 202,
+      "textAnchor1Based": 19615,
+      "textWindowRange1Based": [
+        19615,
+        19661
+      ],
+      "textWindowSha256": "52d35ec4baa9808a8a9cf1d6150135f8ad655ab9a021e84f25e43704bf3a8675",
+      "ocrSelectedFields": {},
+      "sourceFormat": "vehicle",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required.",
+        "Printed vehicle HP/DR/weapon facts are sidecar vehicle-only values, not individual droid actor traits."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 201,
+        "pdfPage1Based": 202,
+        "fieldValues": {
+          "/challenge/challengeLevel": 7,
+          "/classification/size": "Huge"
+        },
+        "sourceOnlyPrintedValues": {
+          "reflex": 14,
+          "flatFootedReflex": 13,
+          "fortitude": 17,
+          "hitPoints": 70,
+          "damageReduction": 10,
+          "damageThreshold": 27,
+          "newCredits": 70000,
+          "crew": "droid brain (skilled)",
+          "weaponPayloadNotes": "laser cannon and heavy repeating blaster; 3x3 space"
+        },
+        "fieldComparisonCount": 2,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-038",
+      "printedName": "Persuader-class Droid Enforcer",
+      "printedPage": 201,
+      "pdfPage1Based": 202,
+      "textAnchor1Based": 19662,
+      "textWindowRange1Based": [
+        19662,
+        19824
+      ],
+      "textWindowSha256": "889d23a8e41875f2b068a8aa559310f174ec7e67e0d8275f07035ad1d1411e02",
+      "ocrSelectedFields": {},
+      "sourceFormat": "vehicle",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required.",
+        "Printed vehicle HP/DR/weapon facts are sidecar vehicle-only values, not individual droid actor traits."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 201,
+        "pdfPage1Based": 202,
+        "fieldValues": {
+          "/challenge/challengeLevel": 14,
+          "/classification/size": "Huge"
+        },
+        "sourceOnlyPrintedValues": {
+          "reflex": 14,
+          "flatFootedReflex": 13,
+          "fortitude": 20,
+          "hitPoints": 120,
+          "damageReduction": 15,
+          "damageThreshold": 30,
+          "newCredits": 49000,
+          "crew": "droid brain (skilled)",
+          "weaponPayloadNotes": "48 thermal detonators, 12 concussion missiles, 4 homing missiles, 2 dumbfire torpedoes"
+        },
+        "fieldComparisonCount": 2,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-039",
+      "printedName": "Tri-Droid",
+      "printedPage": 202,
+      "pdfPage1Based": 203,
+      "textAnchor1Based": 19825,
+      "textWindowRange1Based": [
+        19825,
+        20482
+      ],
+      "textWindowSha256": "2ce110fbe2646a2c8b08c76fc8579d05e9653aa6f9cd1b3652b1d422fecf5a0d",
+      "ocrSelectedFields": {},
+      "sourceFormat": "vehicle",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required.",
+        "Printed vehicle HP/DR/weapon facts are sidecar vehicle-only values, not individual droid actor traits."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 202,
+        "pdfPage1Based": 203,
+        "fieldValues": {
+          "/challenge/challengeLevel": 9,
+          "/classification/size": "Gargantuan"
+        },
+        "sourceOnlyPrintedValues": {
+          "reflex": 14,
+          "flatFootedReflex": 13,
+          "fortitude": 22,
+          "hitPoints": 160,
+          "damageReduction": 15,
+          "damageThreshold": 32,
+          "newCredits": 100000,
+          "crew": "droid brain (skilled)",
+          "weaponPayloadNotes": "48 heavy ordnance shells; gunner-controlled launcher"
+        },
+        "fieldComparisonCount": 2,
+        "inspectionScope": "Selected visible PDF fields; no runtime rights, mount, complete mechanical certification"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true
+    },
+    {
+      "sourceEntryKey": "CLONE-DROID-040",
+      "printedName": "Hyena-class Bomber",
+      "printedPage": 208,
+      "pdfPage1Based": 209,
+      "textAnchor1Based": 20483,
+      "textWindowRange1Based": [
+        20483,
+        20763
+      ],
+      "textWindowSha256": "41ec24332211851ab8d6958d11152d733cdfc541115bb7e1df94aad788dce2ea",
+      "ocrSelectedFields": {},
+      "sourceFormat": "starship",
+      "warnings": [
+        "Unassigned TXT eligibility candidate is NOT validated to belong to this model; PDF direct reading required."
+      ],
+      "pdfVisualFieldChecks": {
+        "printedPage": 208,
+        "pdfPage1Based": 209,
+        "fieldValues": {
+          "/challenge/challengeLevel": 7,
+          "/classification/size": "Huge"
+        },
+        "sourceOnlyPrintedValues": {
+          "hitPoints": 70,
+          "damageReduction": 5,
+          "newCredits": 23000
+        },
+        "fieldComparisonCount": 2,
+        "inspectionScope": "Selected visible source fields only; full mechanical source certification pending"
+      },
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtEligibilityStatementUnassignedCandidate": null,
+      "pdfVisualLayoutChecked": true,
+      "verifiedEligibility": null
+    }
+  ]
+}

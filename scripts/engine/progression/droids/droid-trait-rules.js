@@ -1,3 +1,4 @@
+import { getDroidPriceFactor } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-component-quote-authority.js';
 /**
  * ============================================
  * FILE: scripts/engine/progression/droids/droid-trait-rules.js
@@ -283,7 +284,7 @@ export const DROID_SIZE_PACKAGES = {
     hitPointAdjustment: -20,
     damageThresholdBonus: -10,
     carryingMultiplier: 0.01,
-    costFactor: 5,
+    costFactor: getDroidPriceFactor('tiny'),
     defaultLocomotion: 'walking',
     baseSpeed: 4
   },
@@ -294,7 +295,7 @@ export const DROID_SIZE_PACKAGES = {
     hitPointAdjustment: 0,
     damageThresholdBonus: 0,
     carryingMultiplier: 0.75,
-    costFactor: 2,
+    costFactor: getDroidPriceFactor('small'),
     defaultLocomotion: 'tracked',
     baseSpeed: 4
   },
@@ -305,7 +306,7 @@ export const DROID_SIZE_PACKAGES = {
     hitPointAdjustment: 0,
     damageThresholdBonus: 0,
     carryingMultiplier: 1,
-    costFactor: 1,
+    costFactor: getDroidPriceFactor('medium'),
     defaultLocomotion: 'walking',
     baseSpeed: 6
   },
@@ -316,7 +317,7 @@ export const DROID_SIZE_PACKAGES = {
     hitPointAdjustment: 10,
     damageThresholdBonus: 5,
     carryingMultiplier: 2,
-    costFactor: 2,
+    costFactor: getDroidPriceFactor('large'),
     defaultLocomotion: 'walking',
     baseSpeed: 8
   },
@@ -327,7 +328,7 @@ export const DROID_SIZE_PACKAGES = {
     hitPointAdjustment: 20,
     damageThresholdBonus: 10,
     carryingMultiplier: 5,
-    costFactor: 5,
+    costFactor: getDroidPriceFactor('huge'),
     defaultLocomotion: 'walking',
     baseSpeed: 8
   },
@@ -338,7 +339,7 @@ export const DROID_SIZE_PACKAGES = {
     hitPointAdjustment: 50,
     damageThresholdBonus: 20,
     carryingMultiplier: 10,
-    costFactor: 10,
+    costFactor: getDroidPriceFactor('gargantuan'),
     defaultLocomotion: 'walking',
     baseSpeed: 8
   },
@@ -349,7 +350,7 @@ export const DROID_SIZE_PACKAGES = {
     hitPointAdjustment: 100,
     damageThresholdBonus: 50,
     carryingMultiplier: 20,
-    costFactor: 20,
+    costFactor: getDroidPriceFactor('colossal'),
     defaultLocomotion: 'walking',
     baseSpeed: 8
   }
@@ -373,7 +374,7 @@ export function getDroidSizeAbilityMods(size) {
  * Get cost factor for a size
  */
 export function getDroidSizeCostFactor(size) {
-  return getDroidSizePackage(size).costFactor;
+  return getDroidPriceFactor(size);
 }
 
 /**

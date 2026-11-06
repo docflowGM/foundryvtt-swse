@@ -1,0 +1,104 @@
+{
+  "schema": "swse.vehicle.sotg.cp18.owner-approved-two-layer-certification-policy.v1",
+  "id": "SOTG-CP18-D01",
+  "decision": "APPROVED",
+  "approvalSource": "OWNER_EXPLICIT_CHAT_INSTRUCTION_2026-10-18",
+  "approvedOn": "2026-10-18",
+  "scope": "STARSHIPS_OF_THE_GALAXY_PUBLICATION_SPECIFIC_SOURCE_CLAIMS_ONLY",
+  "reconcilesWith": [
+    "P2C-D01",
+    "P2C-D02",
+    "P2C-D03"
+  ],
+  "sourceAuthority": "ORIGINAL_STARSHIPS_OF_THE_GALAXY_PRINTED_PDF_AND_APPROVED_ERRATA",
+  "baselineBranch": "audit/sotg-strict-certification-cp17",
+  "baselineCommit": "e90f0ae04a7c3ebc0a42221e624f8e568fa295d7",
+  "strictCertificateHistory": "PRESERVE_PREVIOUS_FOUR_UNCHANGED",
+  "tierNames": [
+    "SOURCE_FIDELITY",
+    "PHYSICAL_MOUNT_AND_AUTOMATED_STOCK_COMBAT"
+  ],
+  "certificationLevels": {
+    "SOURCE_FIDELITY": {
+      "meaning": "An individually verified faithful representation of published stats and immediate narrative, including typed and located source silence, ambiguities, conflicts and explicit absences.",
+      "possibleWithVerifiedSourceSilence": true,
+      "requires": [
+        "Exact stable publication-source identity and printed page",
+        "Primary PDF close-read for statblock and applicable adjacent prose",
+        "All printed attack-group/source fields preserved without numeric derivation",
+        "Every source-silent mandatory value explicitly typed as SOURCE_SILENT_CONFIRMED with page scope",
+        "Missing historical keys distinguished from source-confirmed silence",
+        "Published conflicts retained with separate alternatives and provenance",
+        "Schema-compatible lossless evidence mapping and a passed per-ship validator"
+      ],
+      "doesNotGrant": [
+        "PHYSICAL_MOUNT_AND_AUTOMATED_STOCK_COMBAT",
+        "GM scoped override",
+        "Foundry operational import",
+        "Production hydration"
+      ],
+      "statusAtCp18": "NOT_NEWLY_CERTIFIED"
+    },
+    "PHYSICAL_MOUNT_AND_AUTOMATED_STOCK_COMBAT": {
+      "meaning": "Independent physical-mount/automation eligibility certificate for specific installed configuration and attack operation; never derived from source fidelity alone.",
+      "requires": [
+        "SOURCE_FIDELITY",
+        "Resolved certified physical mount identity and installed configuration",
+        "Supported attack-group-to-physical-mount relationship",
+        "Resolved required firing geometry and per-attack applicable crew/gunner station",
+        "All target, operation, damage and battery semantics needed by runtime satisfied",
+        "Authority retained through trusted actor import and mutation-invalidating provenance",
+        "Foundry V13 live proof of implementation before operational authorization"
+      ],
+      "forbids": [
+        "Guessing physical barrels from attack groups",
+        "Treating an unprinted arc as forward/360 degree",
+        "Inferring battery members from stated number of batteries",
+        "Treating magazine payload as launcher count",
+        "Setting 0, None, false, [] or null as a substitute for missing evidence",
+        "Automated stock attack permission from uncertified ship",
+        "GM override transforming a sourcebook claim into a canonical certificate"
+      ],
+      "statusAtCp18": "EXISTING_FOUR_SOURCE_CERTIFICATES_ONLY; ZERO_NEW_RUNTIME_TRUST"
+    }
+  },
+  "evidenceStatePolicy": {
+    "PRINTED_VALUE": "Known nonzero numeric/text/boolean value exactly retained; interpretation remains separately gated.",
+    "PRINTED_ZERO": "Known numeric zero as recorded, not absence.",
+    "EXPLICIT_NONE": "Only when an exact verified explicit absence/none is recorded by the printed source; keep raw token.",
+    "SOURCE_SILENT_CONFIRMED": "Primary close-read affirmatively verified book omission; never equivalent to null/zero/no weapon.",
+    "KEY_NOT_STORED": "Field absent from historic ledger; unknown evidence status, not source silence.",
+    "RECORDED_NULL_UNRESOLVED": "Null stored in source ledger; require source annotation before asserting source silent or explicit none.",
+    "RECORDED_DESCRIPTIVE_TEXT": "Captured qualified narration (including partial arc evidence); preserve exact raw text without treating it as geometric automation.",
+    "PUBLISHED_CONFLICT": "Conflicting published values retained with provenance; no chosen numeric default without published errata or separately approved owner ruling.",
+    "NOT_REVIEWED": "Source not verified: cannot classify as SOURCE_SILENT_CONFIRMED.",
+    "CONFIGURATION_CONDITIONAL": "The fact applies only to named configuration/variant; explicit scope required."
+  },
+  "semanticBoundaries": {
+    "explicitNoneVsZero": "PRESERVE_DISTINCT",
+    "nullVsMissing": "PRESERVE_DISTINCT",
+    "sourceSilentVsNotReviewed": "PRESERVE_DISTINCT",
+    "publishedAttackGroupIsPhysicalMount": false,
+    "sourceSilentGeometryProvidesArc": false,
+    "publishedBatteryCountProvesWeaponsPerBattery": false,
+    "rawObservedTextPreserved": true,
+    "fieldSpecificEvidenceRequired": true,
+    "unreviewedPromotionBlocked": true
+  },
+  "implementationBoundaries": {
+    "cp16LedgerImmutable": true,
+    "cp17BaselineImmutable": true,
+    "discovery155Unchanged": true,
+    "v05UniversalSchemaStatus": "DRAFT_NOT_FROZEN",
+    "v06UniversalSchemaStatus": "NOT_YET_IMPLEMENTED_OR_FROZEN",
+    "cp18EvidenceEnvelopeStatus": "DRAFT_CANDIDATE_ONLY_NOT_A_PRODUCTION_VEHICLE_SCHEMA",
+    "sourceFidelityCertificatesNewlyGranted": 0,
+    "physicalCertificatesNewlyGranted": 0,
+    "trustedStockWeaponGroupsNewlyGranted": 0,
+    "productionHydrationAuthorized": false,
+    "foundryRuntimeMutationAuthorized": false,
+    "vehicleCombatIntegrationTouched": false,
+    "pureModifiedRefactorTouched": false,
+    "rule": "Approval authorizes the certification standard, not bulk award of certificates or production schema freeze."
+  }
+}

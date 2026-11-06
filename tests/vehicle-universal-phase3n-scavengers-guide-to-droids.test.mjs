@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const j=p=>JSON.parse(readFileSync('data/audits/vehicles/'+p,'utf8'));
+const s=j('swse-universal-phase2n-scavengers-guide-to-droids-staged.json');
+const l=j('swse-universal-phase1n-scavengers-guide-to-droids.json');
+const q=j('swse-universal-phase3-source-pdf-qa-queue.json');
+const r=s.records[0];
+test('all 48 primary-PDF field-QA identities closed and accounted once',()=>{
+ assert.equal(q.records.length,48);
+ assert.equal(new Set(q.records.map(r=>r.sourceEntryKey)).size,48);
+ assert.deepEqual(q.pdfFieldQA,{total:48,verified:48,pending:0});
+ assert.ok(q.records.every(r=>r.status==='pdf-field-verified'&&r.strictMechanicalCertification==='not-certified'));
+ assert.equal(s.records.length,1);assert.equal(l.newVehicleEntries.length,1);
+ assert.equal(l.existingSpacecraft.length,0);
+ assert.equal(s.sourcePdfSha256,'bd72d74278b812dab95a6ee9d0aef730afec4feb9c37daef59bc733842489361');
+ assert.equal(s.summary.groups,2);
+});
+test('DP-2 hybrid original PDF source attack separation retains melee and two ranged lines',()=>{
+ assert.equal(r.identity.sourceEntryKey,'sgtd-dp-2-probe-droid');
+ assert.equal(r.challenge.cl,6);
+ assert.deepEqual([r.defenses.reflex,r.durability.hitPoints,r.movement.maxVelocityKmh,r.crew.crewCount,r.capacity.cargo.value,r.economics.priceNew.amountCredits],[12,40,575,0,15,36500]);
+ assert.equal(r.armament.firingGroups.length,2);
+ assert.deepEqual(r.armament.firingGroups.map(g=>g.label),['Blaster cannon','Space beacon launcher']);
+ assert.deepEqual(r.armament.firingGroups.map(g=>g.attackBonusPrinted),[2,2]);
+ assert.equal(r.armament.carriedPayloads[0].value,16);
+ assert.match(r.combat.meleeAttackLine,/claw \+4/);
+ assert.match(r.combat.rangedAttackLine,/blaster cannon \+2/);
+ assert.equal(r.rules.reviewStatus,'partial-source-probe');
+ assert.equal(r.fieldStates['/rules/strictMechanicalCertification'],'not-yet-reviewed');
+ assert.equal(Object.hasOwn(r.armament,'weaponMounts'),false);
+ assert.ok(r.armament.firingGroups.every(x=>x.mountKeys?.length===0));
+});

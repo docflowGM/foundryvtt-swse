@@ -1,0 +1,46 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const j=p=>JSON.parse(readFileSync('data/audits/vehicles/'+p,'utf8'));
+const s=j('swse-universal-phase2d-kotor-staged.json');
+const l=j('swse-universal-phase1d-knights-of-the-old-republic.json');
+const qa=j('swse-universal-phase3-targeted-exceptions.json');
+const id='kotor-basilisk-war-droid';
+const r=s.records.find(x=>x.identity.sourceEntryKey===id);
+const c=qa.cases.find(x=>x.id==='P3R-KOTOR-BASILISK');
+test('Basilisk retains one publication vehicle-droid claim in existing 39-record KOTOR ledger',()=>{
+ assert.ok(r);assert.ok(c);
+ assert.equal(s.records.length,39);
+ assert.equal(l.sourceBook,'Knights of the Old Republic Campaign Guide');
+ assert.equal(l.existingSpacecraft.length,32);
+ assert.equal(l.newVehicleEntries.length,7);
+ assert.equal(l.newVehicleEntries.filter(x=>x.sourceEntryKey===id).length,1);
+ assert.equal(r.publication.page,203);
+ assert.equal(r.publication.printedTypeLine,'Huge air vehicle (droid)');
+ assert.equal(c.sourcePdfSha256,'fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419');
+});
+test('Basilisk printed passenger, four source ranged groups, melee attack and conditional pilot override stay distinct',()=>{
+ assert.equal(r.challenge.cl,6);
+ assert.deepEqual(r.classification.mobilityDomains,['air','space']);
+ assert.equal(r.crew.crewCount,1);
+ assert.match(r.crew.crewDescriptor,/droid brain/);
+ assert.equal(r.capacity.passengerCount,1);
+ assert.equal(r.movement.speedModes.find(x=>x.scale==='character').squaresPerMove,12);
+ assert.equal(r.movement.speedModes.find(x=>x.scale==='starship').squaresPerMove,3);
+ assert.equal(r.armament.firingGroups.length,4);
+ assert.deepEqual(r.armament.firingGroups.map(x=>x.attackBonusPrinted),[4,4,4,5]);
+ assert.deepEqual(r.armament.carriedPayloads.map(x=>x.value),[4,2]);
+ assert.match(r.combat.meleeAttackLine,/claws \+11/);
+ assert.match(r.exceptions.specialRules[0].summary,/passenger may substitute/);
+ assert.equal(c.printedFacts.pilotAttackOverridesConditional,true);
+});
+test('Basilisk source facts do not certify physical mounted weapons or executable droid actions',()=>{
+ assert.equal(c.sourceReconciliation,'verified-single-vehicle-droid-claim');
+ assert.equal(c.allowExecutableAttacks,false);
+ assert.equal(r.rules.reviewStatus,'partial-source-probe');
+ assert.equal(r.fieldStates['/rules/strictMechanicalCertification'],'not-yet-reviewed');
+ assert.equal(Object.hasOwn(r.armament,'weaponMounts'),false);
+ assert.ok(r.armament.firingGroups.every(x=>x.mountKeys.length===0));
+ assert.equal(s.productionPacksChanged,false);
+ assert.equal(s.generatedActorsChanged,false);
+});

@@ -1,0 +1,675 @@
+{
+  "schema": "swse.droid.catalog.sgd-keep-source-facts/0.1",
+  "sprint": "KEEP-004",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "sourceBook": "Scavenger's Guide to Droids",
+  "sourcePdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "sourceMethod": "Printed PDF pages 52-60 (PDF pages 53-61) reviewed visually, including Table 3-2. OCR used only to navigate.",
+  "sourceCodeBlobs": {
+    "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+    "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+  },
+  "counts": {
+    "newSourceFactRows": 12,
+    "previousSourceFactRows": 62,
+    "cumulativeSourceFactRows": 74,
+    "keepTrackRows": 47,
+    "overlayOnlyMissingPrice": 4,
+    "printedPriceConflicts": 2,
+    "findings": 17,
+    "fullMechanicalCertifications": 0,
+    "productionChanges": 0,
+    "applicationParityTests": 0,
+    "foundryRuntimeCertifications": 0
+  },
+  "records": [
+    {
+      "evidenceId": "SGD-KEEP-004-001",
+      "id": "gyroscopic-stabilizers",
+      "name": "Gyroscopic Stabilizers",
+      "host": "locomotion-enhancement",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 52,
+          "pdfPage1Based": 53,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "2 * costFactor * speedSquares^2",
+        "weightText": "4 * costFactor kg",
+        "availability": "-",
+        "effect": "+5 stability vs knocked prone; stacks with Extra Legs"
+      },
+      "repository": {
+        "catalogLayer": "RAW_AND_OVERLAY",
+        "comparison": "Cost formula present, published weight absent in raw catalog",
+        "primaryIssue": "WEIGHT_MISSING"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-002",
+      "id": "magnetic-hands",
+      "name": "Magnetic Hands",
+      "host": "appendage-enhancement",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 52,
+          "pdfPage1Based": 53,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "2 * selected appendage cost",
+        "weightText": "2 * costFactor kg",
+        "availability": "-",
+        "effect": "With Magnetic Feet +2 Climb on spacecraft hull and +5 defenses vs being knocked off; hands unavailable while active"
+      },
+      "repository": {
+        "catalogLayer": "RAW_AND_OVERLAY",
+        "comparison": "Raw 200*CF price, not relative to chosen appendage (Medium Hand 50 => published table 100 vs raw 200)",
+        "primaryIssue": "HOST_BASE_PRICE"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-003",
+      "id": "quick-release-coupling",
+      "name": "Quick-Release Coupling",
+      "host": "appendage-or-tool-pair",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 52,
+          "pdfPage1Based": 53,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 53,
+          "pdfPage1Based": 54,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "tool 10*CF; appendage 50*CF",
+        "weightText": "tool 2*CF kg; appendage 5*CF kg",
+        "availability": "-",
+        "effect": "Tool swap two standard actions, appendage swap two full-round actions; matching both ends, incompatible sizes; own swap requires extra manipulator, no Mechanics check"
+      },
+      "repository": {
+        "catalogLayer": "RAW_ONLY",
+        "comparison": "Two price/weight variants appear in raw, physical constraints not validated",
+        "primaryIssue": "PAIR_AND_ACTION_GATES"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-004",
+      "id": "remote-limb-control",
+      "name": "Remote Limb Control",
+      "host": "detachable-appendage",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 53,
+          "pdfPage1Based": 54,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "prose basic 1500 / deluxe 6000; table 2 * appendage cost",
+        "weightText": "table dash (weight not specified)",
+        "availability": "Restricted",
+        "effect": "Basic single limb, hover up to 6 squares, range 24 squares; Deluxe up to max(1, 1+Int modifier) simultaneous"
+      },
+      "repository": {
+        "catalogLayer": "RAW_ONLY",
+        "comparison": "Published prose/table price conflict. Raw variant 1/2 kg weights appear only inside cost array, not established by table",
+        "primaryIssue": "SOURCE_PRICE_CONFLICT"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-005",
+      "id": "rocket-arm",
+      "name": "Rocket Arm",
+      "host": "weapon-appendage",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 53,
+          "pdfPage1Based": 54,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "prose 2000; table 4 * appendage cost",
+        "weightText": "2 * costFactor kg",
+        "availability": "Illegal",
+        "effect": "DC20 Mechanics installation, failure might detonate; ranged heavy weapon 3d8, 1-square splash"
+      },
+      "repository": {
+        "catalogLayer": "RAW_AND_OVERLAY",
+        "comparison": "Published price conflict; raw weapon profile asserts unsupported independent 1d8 splash damage",
+        "primaryIssue": "SOURCE_PRICE_CONFLICT"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-006",
+      "id": "specialized-subprocessor",
+      "name": "Specialized Subprocessor",
+      "host": "processor-enhancement",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 53,
+          "pdfPage1Based": 54,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 54,
+          "pdfPage1Based": 55,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "1000",
+        "weightText": "2 kg",
+        "availability": "-",
+        "effect": "Maximum one per droid; one extra swift per turn for chosen skill-related actions only"
+      },
+      "repository": {
+        "catalogLayer": "RAW_AND_OVERLAY",
+        "comparison": "Source price/weight matches, action resource not verified",
+        "primaryIssue": "ACTION_RESOURCE_NOT_TESTED"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-007",
+      "id": "tactician-battle-computer",
+      "name": "Tactician Battle Computer",
+      "host": "processor-and-transceiver",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 54,
+          "pdfPage1Based": 55,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "5000",
+        "weightText": "10 kg",
+        "availability": "Restricted",
+        "effect": "Standard-action analysis grants +2 on next eligible ranged attack to max(1, Int mod) allies; expires next turn; wrong weapon disables until DC20 Mechanics"
+      },
+      "repository": {
+        "catalogLayer": "RAW_AND_OVERLAY",
+        "comparison": "Raw availability '-' conflicts with printed Restricted",
+        "primaryIssue": "AVAILABILITY_MISMATCH"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-008",
+      "id": "audio-enhancers",
+      "name": "Audio Enhancers",
+      "host": "sensor",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "2000",
+        "weightText": "1 kg",
+        "availability": "-",
+        "effect": "Reroll Perception and take higher when eavesdropping/listening for distant or ambient sound; not general Perception"
+      },
+      "repository": {
+        "catalogLayer": "OVERLAY_ONLY",
+        "comparison": "No raw source cost or weight; shared default quote may be 0. Overlay rerollFailed may narrow printed trigger",
+        "primaryIssue": "OVERLAY_ONLY_NO_COST"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-009",
+      "id": "audio-radial-stunner",
+      "name": "Audio-Radial Stunner",
+      "host": "adjacent-condition-device",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "5000",
+        "weightText": "3 kg",
+        "availability": "Restricted",
+        "effect": "Standard action activates through end droid's next turn; each adjacent creature at START of its turn DC20 Endurance or -1 condition step"
+      },
+      "repository": {
+        "catalogLayer": "OVERLAY_ONLY",
+        "comparison": "No raw source price/weight; turn-start action behavior not executed",
+        "primaryIssue": "OVERLAY_ONLY_NO_COST"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-010",
+      "id": "automap",
+      "name": "Automap",
+      "host": "sensor-mapping",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "1000",
+        "weightText": "2 kg",
+        "availability": "-",
+        "effect": "12-square area, cannot see through walls or closed doors; linked satellite or ship required for global coordinates"
+      },
+      "repository": {
+        "catalogLayer": "OVERLAY_ONLY",
+        "comparison": "No raw source price/weight; obstruction behavior not executed",
+        "primaryIssue": "OVERLAY_ONLY_NO_COST"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-011",
+      "id": "blaster-recharge-interface",
+      "name": "Blaster Recharge Interface",
+      "host": "hand-mounted-accessory",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 55,
+          "pdfPage1Based": 56,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "300",
+        "weightText": "1 kg",
+        "availability": "Licensed",
+        "effect": "Swift action refill standard blaster power pack; droid loses HP equal to blaster damage die type (3d8 => 8 HP)"
+      },
+      "repository": {
+        "catalogLayer": "OVERLAY_ONLY",
+        "comparison": "No raw source price/weight; HP debit and pack charge not executed",
+        "primaryIssue": "OVERLAY_ONLY_NO_COST"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    },
+    {
+      "evidenceId": "SGD-KEEP-004-012",
+      "id": "multifunction-apparatus",
+      "name": "Multifunction Apparatus",
+      "host": "appendage-mount",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "Rendered PDF visual review 2026-11-02"
+        }
+      ],
+      "published": {
+        "priceText": "80 * costFactor",
+        "weightText": "15 * costFactor kg",
+        "availability": "-",
+        "effect": "Mounts up to 3 tools/weapons on one appendage, only one active; change by swift action"
+      },
+      "repository": {
+        "catalogLayer": "RAW_AND_OVERLAY",
+        "comparison": "Raw Tool-only base restriction not established by this paragraph",
+        "primaryIssue": "UNVERIFIED_BASE_GATE"
+      },
+      "certification": {
+        "identity": true,
+        "publishedFactsReviewed": true,
+        "completeMechanical": false,
+        "productionMigrated": false,
+        "applicationParity": false,
+        "foundryRuntime": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "SGD-K004-PRICE-CONFLICT",
+      "status": "UNRESOLVED_PRINTED_CONFLICT",
+      "severity": "BLOCKER",
+      "ids": [
+        "remote-limb-control",
+        "rocket-arm"
+      ],
+      "detail": "Printed prose gives fixed edition prices; Table 3-2 instead bases cost on chosen appendage. No price selected for runtime."
+    },
+    {
+      "id": "SGD-K004-OVERLAY-COST",
+      "status": "STATIC_GAP",
+      "severity": "HIGH",
+      "ids": [
+        "audio-enhancers",
+        "audio-radial-stunner",
+        "automap",
+        "blaster-recharge-interface"
+      ],
+      "detail": "Four priced published parts are overlay-only; default shared cost can return zero, unconfirmed as actual completed purchase."
+    },
+    {
+      "id": "SGD-K004-MAGNETIC-PRICE",
+      "status": "STATIC_MISMATCH",
+      "severity": "HIGH",
+      "ids": [
+        "magnetic-hands"
+      ],
+      "detail": "Published twice actual selected appendage price, raw fixed 200 x size cost factor."
+    },
+    {
+      "id": "SGD-K004-GYRO-WEIGHT",
+      "status": "STATIC_MISMATCH",
+      "severity": "HIGH",
+      "ids": [
+        "gyroscopic-stabilizers"
+      ],
+      "detail": "Printed 4 x CF kg omitted from raw system weight."
+    },
+    {
+      "id": "SGD-K004-TACTICIAN-AVAIL",
+      "status": "STATIC_MISMATCH",
+      "severity": "HIGH",
+      "ids": [
+        "tactician-battle-computer"
+      ],
+      "detail": "Printed Restricted, raw availability '-'; source must control availability."
+    },
+    {
+      "id": "SGD-K004-ROCKET-SPLASH",
+      "status": "UNSUPPORTED_NUMERIC_RULE",
+      "severity": "MEDIUM",
+      "ids": [
+        "rocket-arm"
+      ],
+      "detail": "Printed 3d8 detonation + 1-square splash. Raw additional 1d8 splash value not substantiated."
+    },
+    {
+      "id": "SGD-K004-QUICK-RELEASE",
+      "status": "UNTESTED_PHYSICAL_AND_ACTION_RULE",
+      "severity": "MEDIUM",
+      "ids": [
+        "quick-release-coupling"
+      ],
+      "detail": "Matching couplings, same size type, extra manipulator for self-swaps; two standard or two full-round actions."
+    },
+    {
+      "id": "SGD-K004-REMOTE-LIMB-WEIGHT",
+      "status": "SOURCE_WEIGHT_UNVERIFIED",
+      "severity": "MEDIUM",
+      "ids": [
+        "remote-limb-control"
+      ],
+      "detail": "Printed dash; raw version 1kg/2kg appears inside source.cost variant records."
+    },
+    {
+      "id": "SGD-K004-STUNNER-TIMING",
+      "status": "RUNTIME_UNTESTED",
+      "severity": "HIGH",
+      "ids": [
+        "audio-radial-stunner"
+      ],
+      "detail": "Trigger is start of each adjacent creature's turn during active period, not activation instant."
+    },
+    {
+      "id": "SGD-K004-AUDIO-REROLL",
+      "status": "SOURCE_SCOPE_GAP",
+      "severity": "MEDIUM",
+      "ids": [
+        "audio-enhancers"
+      ],
+      "detail": "Printed allows reroll when listening for distant/ambient sound, while overlay says rerollFailed; applicability must not be narrowed unjustifiably."
+    },
+    {
+      "id": "SGD-K004-BLASTER-HP",
+      "status": "RUNTIME_UNTESTED",
+      "severity": "HIGH",
+      "ids": [
+        "blaster-recharge-interface"
+      ],
+      "detail": "Swift recharge costs HP equal to damage die type; mutation/rollback not proven."
+    },
+    {
+      "id": "SGD-K004-AUTOMAP-WALLS",
+      "status": "RUNTIME_UNTESTED",
+      "severity": "MEDIUM",
+      "ids": [
+        "automap"
+      ],
+      "detail": "Cannot scan through solid walls/closed doors; linked coordinates conditional."
+    },
+    {
+      "id": "SGD-K004-SUBPROCESSOR-ACTIONS",
+      "status": "RUNTIME_UNTESTED",
+      "severity": "MEDIUM",
+      "ids": [
+        "specialized-subprocessor"
+      ],
+      "detail": "Exactly one skill-scoped extra swift per turn with one subprocessor maximum."
+    },
+    {
+      "id": "SGD-K004-TACTICIAN-TRANSCEIVER",
+      "status": "RUNTIME_UNTESTED",
+      "severity": "HIGH",
+      "ids": [
+        "tactician-battle-computer"
+      ],
+      "detail": "Matched weapon transceivers and restart DC20 requirement; not permanent +2."
+    },
+    {
+      "id": "SGD-K004-MULTIFUNCTION-BASE",
+      "status": "SOURCE_RESTRICTION_UNVERIFIED",
+      "severity": "MEDIUM",
+      "ids": [
+        "multifunction-apparatus"
+      ],
+      "detail": "Raw Tool-only base restriction not established by inspected p60 passage."
+    },
+    {
+      "id": "SGD-K004-MAGNETIC-HAND-USE",
+      "status": "RUNTIME_UNTESTED",
+      "severity": "MEDIUM",
+      "ids": [
+        "magnetic-hands"
+      ],
+      "detail": "Hands cannot be used to attack or manipulate while active."
+    },
+    {
+      "id": "SGD-K004-SOURCE_VARIANTS",
+      "status": "RUNTIME_UNTESTED",
+      "severity": "MEDIUM",
+      "ids": [
+        "quick-release-coupling",
+        "remote-limb-control"
+      ],
+      "detail": "Variant-specific physical host and prices need authoritative deterministic selection."
+    }
+  ],
+  "guardrails": [
+    "Source-fact rows are not distinct full certificates",
+    "Do not guess price when published prose/table disagree",
+    "Do not claim default zero quote is a proven customer purchase",
+    "No production code or Foundry test performed",
+    "Stay separate from 234 stock-droid statblock stream"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "checkpoint":"SWSE-Vehicle-Phase2C-CP4",
+  "mode":"PARTIAL_PRODUCTION_GUARDRAILS_NOT_FULL_ATTACK_PIPELINE",
+  "approvedDecisionIds":["P2C-D01","P2C-D02","P2C-D03"],
+  "historicalCensus":316,
+  "correctedOverlayCensus":318,
+  "newSourceClaimMutations":0,
+  "newMechanicalCertificates":0,
+  "executedLocalTests":{"cp3ExistingPolicy":19,"cp4NewPureRuntime":12,"total":31},
+  "fullRepositorySourceGuardTestsPrepared":2,
+  "productionDataModified":false,
+  "runtimeAttackRouterIntegrationComplete":false,
+  "shieldLegacyFactoryMigrationComplete":false
+}

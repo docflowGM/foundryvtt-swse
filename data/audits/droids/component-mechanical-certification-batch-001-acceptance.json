@@ -1,0 +1,843 @@
+{
+  "schema": "swse.droids.mechanical-batch-acceptance/0.1",
+  "batch": "MECH-001",
+  "date": "2026-11-02",
+  "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-001.json",
+  "factorsVerifiedAgainst": {
+    "book": "Star Wars Saga Edition Core Rulebook",
+    "printedPage": 187,
+    "map": [
+      {
+        "name": "fine",
+        "ratio": 20
+      },
+      {
+        "name": "diminutive",
+        "ratio": 10
+      },
+      {
+        "name": "tiny",
+        "ratio": 5
+      },
+      {
+        "name": "small",
+        "ratio": 2
+      },
+      {
+        "name": "medium",
+        "ratio": 1
+      },
+      {
+        "name": "large",
+        "ratio": 2
+      },
+      {
+        "name": "huge",
+        "ratio": 5
+      },
+      {
+        "name": "gargantuan",
+        "ratio": 10
+      },
+      {
+        "name": "colossal",
+        "ratio": 20
+      }
+    ]
+  },
+  "counts": {
+    "expectedCases": 25,
+    "verifiedStaticCases": 25,
+    "appTestsExecuted": 0,
+    "foundryTestsExecuted": 0
+  },
+  "fixtures": [
+    {
+      "id": "MECH001-droid-plasteel-shell",
+      "componentId": "droid-plasteel-shell",
+      "name": "Plasteel Shell",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 400,
+        "baseKg": 2,
+        "reflexArmorBonus": 2,
+        "maxDex": 5,
+        "armorClass": "light",
+        "availability": "-",
+        "smallPriceCredits": 800,
+        "hugePriceCredits": 2000,
+        "smallWeightKg": 4,
+        "hugeWeightKg": 10
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-quadanium-shell",
+      "componentId": "droid-quadanium-shell",
+      "name": "Quadanium Shell",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 900,
+        "baseKg": 3,
+        "reflexArmorBonus": 3,
+        "maxDex": 4,
+        "armorClass": "light",
+        "availability": "-",
+        "smallPriceCredits": 1800,
+        "hugePriceCredits": 4500,
+        "smallWeightKg": 6,
+        "hugeWeightKg": 15
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-durasteel-shell",
+      "componentId": "droid-durasteel-shell",
+      "name": "Durasteel Shell",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 1600,
+        "baseKg": 8,
+        "reflexArmorBonus": 4,
+        "maxDex": 4,
+        "armorClass": "light",
+        "availability": "-",
+        "smallPriceCredits": 3200,
+        "hugePriceCredits": 8000,
+        "smallWeightKg": 16,
+        "hugeWeightKg": 40
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-quadanium-plating",
+      "componentId": "droid-quadanium-plating",
+      "name": "Quadanium Plating",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 2500,
+        "baseKg": 10,
+        "reflexArmorBonus": 5,
+        "maxDex": 3,
+        "armorClass": "light",
+        "availability": "Licensed",
+        "smallPriceCredits": 5000,
+        "hugePriceCredits": 12500,
+        "smallWeightKg": 20,
+        "hugeWeightKg": 50
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-durasteel-plating",
+      "componentId": "droid-durasteel-plating",
+      "name": "Durasteel Plating",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 3600,
+        "baseKg": 12,
+        "reflexArmorBonus": 6,
+        "maxDex": 3,
+        "armorClass": "light",
+        "availability": "Licensed",
+        "smallPriceCredits": 7200,
+        "hugePriceCredits": 18000,
+        "smallWeightKg": 24,
+        "hugeWeightKg": 60
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-quadanium-battle-armor",
+      "componentId": "droid-quadanium-battle-armor",
+      "name": "Quadanium Battle Armor",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 4900,
+        "baseKg": 7,
+        "reflexArmorBonus": 7,
+        "maxDex": 3,
+        "armorClass": "medium",
+        "availability": "Restricted",
+        "smallPriceCredits": 9800,
+        "hugePriceCredits": 24500,
+        "smallWeightKg": 14,
+        "hugeWeightKg": 35
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-duranium-plating",
+      "componentId": "droid-duranium-plating",
+      "name": "Duranium Plating",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 6400,
+        "baseKg": 16,
+        "reflexArmorBonus": 8,
+        "maxDex": 2,
+        "armorClass": "medium",
+        "availability": "Restricted",
+        "smallPriceCredits": 12800,
+        "hugePriceCredits": 32000,
+        "smallWeightKg": 32,
+        "hugeWeightKg": 80
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-durasteel-battle-armor",
+      "componentId": "droid-durasteel-battle-armor",
+      "name": "Durasteel Battle Armor",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 9600,
+        "baseKg": 8,
+        "reflexArmorBonus": 8,
+        "maxDex": 3,
+        "armorClass": "medium",
+        "availability": "Restricted",
+        "smallPriceCredits": 19200,
+        "hugePriceCredits": 48000,
+        "smallWeightKg": 16,
+        "hugeWeightKg": 40
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-mandalorian-steel-shell",
+      "componentId": "droid-mandalorian-steel-shell",
+      "name": "Mandalorian Steel Shell",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 8100,
+        "baseKg": 9,
+        "reflexArmorBonus": 9,
+        "maxDex": 3,
+        "armorClass": "heavy",
+        "availability": "Military, Rare",
+        "smallPriceCredits": 16200,
+        "hugePriceCredits": 40500,
+        "smallWeightKg": 18,
+        "hugeWeightKg": 45
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-duranium-battle-armor",
+      "componentId": "droid-duranium-battle-armor",
+      "name": "Duranium Battle Armor",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 10000,
+        "baseKg": 10,
+        "reflexArmorBonus": 10,
+        "maxDex": 2,
+        "armorClass": "heavy",
+        "availability": "Military",
+        "smallPriceCredits": 20000,
+        "hugePriceCredits": 50000,
+        "smallWeightKg": 20,
+        "hugeWeightKg": 50
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-neutronium-plating",
+      "componentId": "droid-neutronium-plating",
+      "name": "Neutronium Plating",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 12100,
+        "baseKg": 20,
+        "reflexArmorBonus": 11,
+        "maxDex": 1,
+        "armorClass": "heavy",
+        "availability": "Military",
+        "smallPriceCredits": 24200,
+        "hugePriceCredits": 60500,
+        "smallWeightKg": 40,
+        "hugeWeightKg": 100
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-duravlex-shell",
+      "componentId": "droid-duravlex-shell",
+      "name": "Duravlex Shell",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 1000,
+        "baseKg": 10,
+        "reflexArmorBonus": 4,
+        "maxDex": 3,
+        "armorClass": "light",
+        "availability": "Licensed",
+        "smallPriceCredits": 2000,
+        "hugePriceCredits": 5000,
+        "smallWeightKg": 20,
+        "hugeWeightKg": 50
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-crystadurium-plating",
+      "componentId": "droid-crystadurium-plating",
+      "name": "Crystadurium Plating",
+      "ruleKind": "ARMOR",
+      "expected": {
+        "baseCredits": 50000,
+        "baseKg": 30,
+        "reflexArmorBonus": 10,
+        "maxDex": 2,
+        "armorClass": "heavy",
+        "availability": "Military, Rare",
+        "smallPriceCredits": 100000,
+        "hugePriceCredits": 250000,
+        "smallWeightKg": 60,
+        "hugeWeightKg": 150
+      },
+      "tests": [
+        "source table numbers",
+        "correct droid size factor",
+        "nonstacking with worn armor",
+        "proficiency ACP and heavy-run behavior",
+        "special bonus only if name matches"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-probe",
+      "componentId": "droid-probe",
+      "name": "Probe",
+      "ruleKind": "APPENDAGE",
+      "expected": {
+        "baseCredits": 2,
+        "baseKg": 0.5,
+        "nineSizeUnarmedDamage": [
+          null,
+          null,
+          null,
+          null,
+          "1",
+          "1d2",
+          "1d3",
+          "1d4",
+          "1d6"
+        ],
+        "smallPriceCredits": 4,
+        "hugePriceCredits": 10
+      },
+      "tests": [
+        "Table 11-4 full nine-size damage",
+        "Table 11-5 price and mass",
+        "no free extra attacks",
+        "appropriate manipulation caveat"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-instrument",
+      "componentId": "droid-instrument",
+      "name": "Instrument",
+      "ruleKind": "APPENDAGE",
+      "expected": {
+        "baseCredits": 5,
+        "baseKg": 1,
+        "nineSizeUnarmedDamage": [
+          null,
+          null,
+          null,
+          "1",
+          "1d2",
+          "1d3",
+          "1d4",
+          "1d6",
+          "1d8"
+        ],
+        "smallPriceCredits": 10,
+        "hugePriceCredits": 25
+      },
+      "tests": [
+        "Table 11-4 full nine-size damage",
+        "Table 11-5 price and mass",
+        "no free extra attacks",
+        "appropriate manipulation caveat"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-tool",
+      "componentId": "droid-tool",
+      "name": "Tool",
+      "ruleKind": "APPENDAGE",
+      "expected": {
+        "baseCredits": 10,
+        "baseKg": 2,
+        "nineSizeUnarmedDamage": [
+          null,
+          null,
+          "1",
+          "1d2",
+          "1d3",
+          "1d4",
+          "1d6",
+          "1d8",
+          "2d6"
+        ],
+        "smallPriceCredits": 20,
+        "hugePriceCredits": 50
+      },
+      "tests": [
+        "Table 11-4 full nine-size damage",
+        "Table 11-5 price and mass",
+        "no free extra attacks",
+        "appropriate manipulation caveat"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-claw",
+      "componentId": "droid-claw",
+      "name": "Claw",
+      "ruleKind": "APPENDAGE",
+      "expected": {
+        "baseCredits": 20,
+        "baseKg": 5,
+        "nineSizeUnarmedDamage": [
+          null,
+          "1",
+          "1d2",
+          "1d3",
+          "1d4",
+          "1d6",
+          "1d8",
+          "2d6",
+          "2d8"
+        ],
+        "smallPriceCredits": 40,
+        "hugePriceCredits": 100
+      },
+      "tests": [
+        "Table 11-4 full nine-size damage",
+        "Table 11-5 price and mass",
+        "no free extra attacks",
+        "appropriate manipulation caveat"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-hand",
+      "componentId": "droid-hand",
+      "name": "Hand",
+      "ruleKind": "APPENDAGE",
+      "expected": {
+        "baseCredits": 50,
+        "baseKg": 5,
+        "nineSizeUnarmedDamage": [
+          null,
+          null,
+          "1",
+          "1d2",
+          "1d3",
+          "1d4",
+          "1d6",
+          "1d8",
+          "2d6"
+        ],
+        "smallPriceCredits": 100,
+        "hugePriceCredits": 250
+      },
+      "tests": [
+        "Table 11-4 full nine-size damage",
+        "Table 11-5 price and mass",
+        "no free extra attacks",
+        "appropriate manipulation caveat"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-improved-sensor-package",
+      "componentId": "droid-improved-sensor-package",
+      "name": "Improved Sensor Package",
+      "ruleKind": "FIXED",
+      "expected": {
+        "credits": 200,
+        "kg": 2.5,
+        "availability": "-"
+      },
+      "tests": [
+        "source price and mass",
+        "correct installation DC and duration",
+        "scoped effect and source caveats"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-darkvision",
+      "componentId": "droid-darkvision",
+      "name": "Darkvision",
+      "ruleKind": "FIXED",
+      "expected": {
+        "credits": 150,
+        "kg": 1.5,
+        "availability": "-"
+      },
+      "tests": [
+        "source price and mass",
+        "correct installation DC and duration",
+        "scoped effect and source caveats"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-internal-comlink",
+      "componentId": "droid-internal-comlink",
+      "name": "Internal Comlink",
+      "ruleKind": "FIXED",
+      "expected": {
+        "credits": 250,
+        "kg": 0.1,
+        "availability": "-"
+      },
+      "tests": [
+        "source price and mass",
+        "correct installation DC and duration",
+        "scoped effect and source caveats"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-vocabulator",
+      "componentId": "droid-vocabulator",
+      "name": "Vocabulator",
+      "ruleKind": "FIXED",
+      "expected": {
+        "credits": 50,
+        "kg": 0.5,
+        "availability": "-"
+      },
+      "tests": [
+        "source price and mass",
+        "correct installation DC and duration",
+        "scoped effect and source caveats"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-heuristic-processor",
+      "componentId": "droid-heuristic-processor",
+      "name": "Heuristic Processor",
+      "ruleKind": "FIXED",
+      "expected": {
+        "credits": 2000,
+        "kg": 5,
+        "availability": "-"
+      },
+      "tests": [
+        "source price and mass",
+        "correct installation DC and duration",
+        "scoped effect and source caveats"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-credit-reader",
+      "componentId": "droid-credit-reader",
+      "name": "Credit Reader",
+      "ruleKind": "FIXED",
+      "expected": {
+        "credits": 50,
+        "kg": 1,
+        "availability": "Licensed"
+      },
+      "tests": [
+        "source price and mass",
+        "correct installation DC and duration",
+        "scoped effect and source caveats"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    },
+    {
+      "id": "MECH001-droid-remote-starship-starter",
+      "componentId": "droid-remote-starship-starter",
+      "name": "Remote Starship Starter",
+      "ruleKind": "FIXED",
+      "expected": {
+        "credits": 50,
+        "kg": 2,
+        "availability": "-"
+      },
+      "tests": [
+        "source price and mass",
+        "correct installation DC and duration",
+        "scoped effect and source caveats"
+      ],
+      "executionStatus": {
+        "sourceFixtureChecked": "STATIC_VALUES_VERIFIED_AGAINST_RENDERED_PDF",
+        "garage": "NOT_EXECUTED",
+        "chargen": "NOT_EXECUTED",
+        "follower": "NOT_EXECUTED",
+        "store": "NOT_EXECUTED",
+        "foundryV13": "NOT_EXECUTED"
+      }
+    }
+  ],
+  "notes": [
+    "Independent source-table expected values: not generated from current record price fields",
+    "These are printed-rule regression expectations, not executed application tests",
+    "No production catalog change"
+  ]
+}

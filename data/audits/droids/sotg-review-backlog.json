@@ -1,0 +1,42 @@
+{
+  "bookId": "SOTG",
+  "mechanicallyCertified": 0,
+  "items": [
+    {
+      "sourceEntryKey": "SOTG-DROID-001",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-002",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-003",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3278 @@
+{
+  "schema": "swse.vehicle.phase2b.source-close-read.v0.1",
+  "sourceBook": "Force Unleashed Campaign Guide",
+  "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+  "phase1ProvenanceBlobSha": "21f2178eb6a610d3b52ecdc8549f93724c77fbc4",
+  "branchAtInitialization": "audit/vehicle-phase-0-1-canonical-foundation",
+  "branchHeadAtInitialization": "49fabf107f287b8147a59b75a9dd09e49ed7426f",
+  "countPolicy": "Publication-specific primary-source close read, not full-field and physical-mount strict mechanical certification.",
+  "stateSemantics": {
+    "PDF_VERIFIED": "Source fact visually checked against printed PDF",
+    "SOURCE_SILENT_CONFIRMED": "Field not explicitly printed; no default implied",
+    "SOURCE_CONFLICT_PRESERVED": "Conflicting printed source fields preserved without silent resolution",
+    "SCHEMA_INCOMPATIBLE": "Source mechanic not representable by current schema",
+    "NOT_REVIEWED": "Primary-source read outstanding"
+  },
+  "fieldGroups": [
+    "printedTypeLine",
+    "challenge",
+    "initiativeSenses",
+    "defenses",
+    "durability",
+    "speed",
+    "rangedAttack",
+    "meleeAttack",
+    "fightingSpace",
+    "baseAttack",
+    "attackOptions",
+    "abilities",
+    "skills",
+    "crew",
+    "capacity",
+    "payload",
+    "hyperdrive",
+    "cost",
+    "weaponAttackProfile"
+  ],
+  "counts": {
+    "publicationShipClaims": 19,
+    "primaryPdfCloseReads": 19,
+    "primaryPdfCloseReadsOutstanding": 0,
+    "strictFullFieldAndPhysicalWeaponMountCertificates": 0,
+    "strictCertificatesOutstanding": 19,
+    "attackGroupRowsReviewed": 41,
+    "sourceConflictRecordCount": 5,
+    "phase1PageMappingDiscrepancyCount": 0
+  },
+  "bookCloseout": {
+    "status": "PRIMARY_PDF_SOURCE_REVIEW_COMPLETE_NOT_MECHANICALLY_CERTIFIED",
+    "sourcePrintedPageRanges": [
+      [
+        114,
+        121
+      ],
+      [
+        204,
+        211
+      ]
+    ],
+    "sourceBookClaimScope": "19 published CL ship statblocks only; variants with narrative-only changes stay under parent identities."
+  },
+  "entries": [
+    {
+      "sourceEntryKey": "fucg-a-7-hunter-interceptor",
+      "printedName": "A-7 Hunter Interceptor",
+      "printedStatblockStartPage": 204,
+      "phase1SectionStartPage": 204,
+      "phase1PdfPhysicalPage": 205,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        204
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Huge starfighter",
+        "cl": 6,
+        "initiative": 8,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 12,
+          "fortitude": 22,
+          "armorBonus": 4,
+          "shieldRating": null
+        },
+        "durability": {
+          "hitPoints": 60,
+          "damageReduction": 10,
+          "threshold": 32
+        },
+        "movement": {
+          "printed": "Speed fly 16 squares (max. velocity 1,200 km/h), fly 5 squares (starship scale)",
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 5
+        },
+        "combat": {
+          "ranged": "Ranged laser cannons +4 (see below)",
+          "fightingSpace": "Fighting Space 3x3 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 24,
+          "attackOptions": "Atk Options autofire (laser cannons)"
+        },
+        "abilities": {
+          "strength": 34,
+          "dexterity": 18,
+          "constitution": null,
+          "intelligence": 14
+        },
+        "skills": "Skills Initiative +8, Mechanics +6, Perception +6, Pilot +8",
+        "crewAndPassengers": "Crew 1 (skilled); Passengers none",
+        "cargoConsumablesCraft": "Cargo 55 kg; Consumables 1 day; Carried Craft none",
+        "payload": null,
+        "hyperdrive": "Hyperdrive none",
+        "economics": "Availability Military: Cost 80,000 (45,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +8; Senses Perception +6",
+          "Defenses": "Defenses Ref 16 (flat-footed 12), Fort 22; +4 armor",
+          "hp": "hp 60; DR 10; Threshold 32",
+          "Speed": "Speed fly 16 squares (max. velocity 1,200 km/h), fly 5 squares (starship scale)",
+          "Ranged": "Ranged laser cannons +4 (see below)",
+          "Fighting Space": "Fighting Space 3x3 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +24",
+          "Atk Options": "Atk Options autofire (laser cannons)",
+          "Abilities": "Abilities Str 34, Dex 18, Con —, Int 14",
+          "Skills": "Skills Initiative +8, Mechanics +6, Perception +6, Pilot +8",
+          "Crew": "Crew 1 (skilled); Passengers none",
+          "Cargo": "Cargo 55 kg; Consumables 1 day; Carried Craft none",
+          "Payload": null,
+          "Hyperdrive": "Hyperdrive none",
+          "Availability": "Availability Military: Cost 80,000 (45,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "sourcePage": 204,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "sourcePrintedPages": [
+            204
+          ],
+          "category": "SOURCE_SILENCE",
+          "finding": "No SR or hyperdrive; do not substitute TIE Prototype shields or hyperdrive."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          204
+        ],
+        "statblockLocation": "printed p.204",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "SOURCE_SILENT_CONFIRMED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-escort-carrier",
+      "printedName": "Escort Carrier",
+      "printedStatblockStartPage": 207,
+      "phase1SectionStartPage": 207,
+      "phase1PdfPhysicalPage": 208,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        207,
+        208
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal (frigate) capital ship",
+        "cl": 14,
+        "initiative": -3,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 13,
+          "flatFootedReflex": 11,
+          "fortitude": 34,
+          "armorBonus": 11,
+          "shieldRating": 30
+        },
+        "durability": {
+          "hitPoints": 660,
+          "damageReduction": 15,
+          "threshold": 134
+        },
+        "movement": {
+          "printed": "Speed fly 2 squares (starship scale}",
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 2
+        },
+        "combat": {
+          "ranged": "Ranged point defense double laser cannon battery +13 (see below) and medium concussion missiles +5 (see below)",
+          "fightingSpace": "Fighting Space 1 square (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 46,
+          "attackOptions": null
+        },
+        "abilities": {
+          "strength": 58,
+          "dexterity": 14,
+          "constitution": null,
+          "intelligence": 16
+        },
+        "skills": "Skills Initiative -3, Mechanics +5, Perception +5, Pilot -3, Use Computer +5",
+        "crewAndPassengers": "Crew 3,505 (skilled); Passengers 800 (troops)",
+        "cargoConsumablesCraft": "Cargo 5,000 tons; Consumables 1 year; Carried Craft 72 TIE fighters, 6 shuttles (Lambda-, Sentinel-, or Theta-class)",
+        "payload": "Payload 60 medium concussion missiles",
+        "hyperdrive": "Hyperdrive x1 (backup x8), navicomputer",
+        "economics": "Availability Military; Cost not available for sale (estimated value 3,500,000)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init -3; Senses Perception +5",
+          "Defenses": "Defenses Ref 13 (flat-footed 11), Fort 34; +11 armor",
+          "hp": "hp 660; DR 15; SR 30; Threshold 134",
+          "Speed": "Speed fly 2 squares (starship scale}",
+          "Ranged": "Ranged point defense double laser cannon battery +13 (see below) and medium concussion missiles +5 (see below)",
+          "Fighting Space": "Fighting Space 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +46",
+          "Atk Options": null,
+          "Abilities": "Abilities Str 58, Dex 14, Con —, Int 16",
+          "Skills": "Skills Initiative -3, Mechanics +5, Perception +5, Pilot -3, Use Computer +5",
+          "Crew": "Crew 3,505 (skilled); Passengers 800 (troops)",
+          "Cargo": "Cargo 5,000 tons; Consumables 1 year; Carried Craft 72 TIE fighters, 6 shuttles (Lambda-, Sentinel-, or Theta-class)",
+          "Payload": "Payload 60 medium concussion missiles",
+          "Hyperdrive": "Hyperdrive x1 (backup x8), navicomputer",
+          "Availability": "Availability Military; Cost not available for sale (estimated value 3,500,000)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "point-defense double laser cannon battery",
+          "station": "5 gunners",
+          "attackBonus": 13,
+          "damage": "3d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 207,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 5,
+          "damage": "6d10x2, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 207,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            208
+          ],
+          "category": "TACTICAL_FIRE",
+          "finding": "Tactical Fire (standard action, forgo all attacks): allied starfighters beginning turns in adjacent squares gain +1 speed square until beginning of next turn."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            207
+          ],
+          "category": "HANGAR_PAYLOAD",
+          "finding": "Carried craft include 72 TIE fighters and 6 Lambda/Sentinel/Theta shuttles; 60 missile payload."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          207,
+          208
+        ],
+        "statblockLocation": "printed p.207",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-gladiator-class-star-destroyer",
+      "printedName": "Gladiator-class Star Destroyer",
+      "printedStatblockStartPage": 208,
+      "phase1SectionStartPage": 208,
+      "phase1PdfPhysicalPage": 209,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        208,
+        209
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "issue": "3 published source discrepancy/discrepancies require independent resolution policy."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 16,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 15,
+          "flatFootedReflex": 13,
+          "fortitude": 51,
+          "armorBonus": 13,
+          "shieldRating": 120
+        },
+        "durability": {
+          "hitPoints": 1500,
+          "damageReduction": 20,
+          "threshold": 251
+        },
+        "movement": {
+          "printed": "Speed fly 2 squares (starship scale)",
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 2
+        },
+        "combat": {
+          "ranged": "Ranged 5 light turbolaser batteries +13* (see below) and 2 point defense laser cannon batteries +13 (see below) and 2 medium concussion missile batteries +13* (see below) and 3 tractor beam batteries +5* (see below)",
+          "fightingSpace": "Fighting Space 2x2 (starship scale); Cover total (crew)",
+          "baseAttackBonus": 2,
+          "grappleBonus": 63,
+          "attackOptions": "Atk Options autofire (point defense laser cannons)"
+        },
+        "abilities": {
+          "strength": 92,
+          "dexterity": 14,
+          "constitution": null,
+          "intelligence": 16
+        },
+        "skills": "Skills Initiative -2, Mechanics +6, Perception +6, Pilot -2, Use Computer +6",
+        "crewAndPassengers": "Crew 1,255 (skilled); Passengers 1,200 (troops)",
+        "cargoConsumablesCraft": "Cargo 6,000 tons; Consumables 2 years; Carried Craft 24 starfighters",
+        "payload": "Payload 300 medium concussion missiles",
+        "hyperdrive": "Hyperdrive x1 (backup x8), navicomputer",
+        "economics": "Availability Military; Cost not available for sale (black market value 34,000,000)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init -2; Senses Perception +6",
+          "Defenses": "Defenses Ref 15 [flat-footed 13), Fort 51; +13 armor",
+          "hp": "hp 1,500; DR 20; SR 120; Threshold 251",
+          "Speed": "Speed fly 2 squares (starship scale)",
+          "Ranged": "Ranged 5 light turbolaser batteries +13* (see below) and 2 point defense laser cannon batteries +13 (see below) and 2 medium concussion missile batteries +13* (see below) and 3 tractor beam batteries +5* (see below)",
+          "Fighting Space": "Fighting Space 2x2 (starship scale); Cover total (crew)",
+          "Base Atk": "Base Atk +2; Grp +63",
+          "Atk Options": "Atk Options autofire (point defense laser cannons)",
+          "Abilities": "Abilities Str 92, Dex 14, Con —, Int 16",
+          "Skills": "Skills Initiative -2, Mechanics +6, Perception +6, Pilot -2, Use Computer +6",
+          "Crew": "Crew 1,255 (skilled); Passengers 1,200 (troops)",
+          "Cargo": "Cargo 6,000 tons; Consumables 2 years; Carried Craft 24 starfighters",
+          "Payload": "Payload 300 medium concussion missiles",
+          "Hyperdrive": "Hyperdrive x1 (backup x8), navicomputer",
+          "Availability": "Availability Military; Cost not available for sale (black market value 34,000,000)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "light turbolaser battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "damage": "4d10x5",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 208,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "point-defense laser cannon battery",
+          "station": "5 gunners",
+          "attackBonus": 13,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 8,
+          "sourcePage": 208,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "medium concussion missile battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "damage": "8d10x2, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 208,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "2 gunners",
+          "attackBonus": 8,
+          "damage": "grapple +63",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 208,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            209
+          ],
+          "category": "TACTICAL_FIRE",
+          "finding": "Tactical Fire: standard action forgo attacks; allied starships attacking targets in 2-square-radius area gain +2 on attack rolls."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            209
+          ],
+          "category": "NARRATIVE_VARIANT",
+          "finding": "Broadside-class is narrative hull derivative with eight missile tube batteries and 1,200 payload but no separate complete CL statblock; do not introduce a new ship identity."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            208
+          ],
+          "category": "SOURCE_CONFLICT",
+          "finding": "Printed Ranged line attack bonuses differ from three weapon rows; both must be retained."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          208,
+          209
+        ],
+        "statblockLocation": "printed p.208",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": [
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "field": "light turbolaser attack bonus",
+          "printedFirstValue": "Ranged 5 light turbolaser batteries +13",
+          "printedSecondValue": "Light turbolaser battery Atk +14",
+          "issue": "main ranged versus detailed weapon row",
+          "sourcePrintedPages": [
+            208
+          ],
+          "resolution": "RETAIN_BOTH_PENDING_AUTHORITY_POLICY"
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "field": "medium missile attack bonus",
+          "printedFirstValue": "Ranged 2 medium concussion missile batteries +13",
+          "printedSecondValue": "Medium concussion missile battery Atk +14",
+          "issue": "main ranged versus detailed weapon row",
+          "sourcePrintedPages": [
+            208
+          ],
+          "resolution": "RETAIN_BOTH_PENDING_AUTHORITY_POLICY"
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "field": "tractor attack bonus",
+          "printedFirstValue": "Ranged 3 tractor beam batteries +5",
+          "printedSecondValue": "Tractor beam battery Atk +8",
+          "issue": "main ranged versus detailed weapon row",
+          "sourcePrintedPages": [
+            208
+          ],
+          "resolution": "RETAIN_BOTH_PENDING_AUTHORITY_POLICY"
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-guardian-class-light-cruiser",
+      "printedName": "Guardian-class Light Cruiser",
+      "printedStatblockStartPage": 205,
+      "phase1SectionStartPage": 205,
+      "phase1PdfPhysicalPage": 206,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        205
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 11,
+        "initiative": -2,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 19,
+          "flatFootedReflex": 16,
+          "fortitude": 38,
+          "armorBonus": 16,
+          "shieldRating": 120
+        },
+        "durability": {
+          "hitPoints": 300,
+          "damageReduction": 15,
+          "threshold": 88
+        },
+        "movement": {
+          "printed": "Speed fly 3 squares (starship scale)",
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 3
+        },
+        "combat": {
+          "ranged": "Ranged laser cannon battery +11 (see below)",
+          "fightingSpace": "Fighting Space 12x12 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 50,
+          "attackOptions": null
+        },
+        "abilities": {
+          "strength": 66,
+          "dexterity": 16,
+          "constitution": null,
+          "intelligence": 16
+        },
+        "skills": "Skills Initiative -2, Mechanics +5, Perception +5, Pilot -2, Use Computer +5",
+        "crewAndPassengers": "Crew 8 (skilled); Passengers 6 (prisoners)",
+        "cargoConsumablesCraft": "Cargo 200 tons; Consumables 3 months; Carried Craft none",
+        "payload": null,
+        "hyperdrive": "Hyperdrive x1 (backup x10}, navicomputer",
+        "economics": "Availability Military; Cost not available for sale (estimated value 800,000)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init -2; Senses Perception +5",
+          "Defenses": "Defenses Ref 19 (flat-footed 16), Fort 38; +16 armor",
+          "hp": "hp 300; DR 15; SR 120; Threshold 88",
+          "Speed": "Speed fly 3 squares (starship scale)",
+          "Ranged": "Ranged laser cannon battery +11 (see below)",
+          "Fighting Space": "Fighting Space 12x12 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +50",
+          "Atk Options": null,
+          "Abilities": "Abilities Str 66, Dex 16, Con —, Int 16",
+          "Skills": "Skills Initiative -2, Mechanics +5, Perception +5, Pilot -2, Use Computer +5",
+          "Crew": "Crew 8 (skilled); Passengers 6 (prisoners)",
+          "Cargo": "Cargo 200 tons; Consumables 3 months; Carried Craft none",
+          "Payload": null,
+          "Hyperdrive": "Hyperdrive x1 (backup x10}, navicomputer",
+          "Availability": "Availability Military; Cost not available for sale (estimated value 800,000)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannon battery",
+          "station": "4 gunners",
+          "attackBonus": 11,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 205,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            205
+          ],
+          "category": "TYPE_AND_STATION",
+          "finding": "Despite light-cruiser name, the printed type is Colossal space transport; laser battery details include 4 gunners, not 4 verified batteries."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          205
+        ],
+        "statblockLocation": "printed p.205",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-h-60-tempest-bomber",
+      "printedName": "H-60 Tempest Bomber",
+      "printedStatblockStartPage": 114,
+      "phase1SectionStartPage": 114,
+      "phase1PdfPhysicalPage": 115,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        114
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 7,
+        "initiative": 4,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 15,
+          "flatFootedReflex": 13,
+          "fortitude": 28,
+          "armorBonus": 8,
+          "shieldRating": 25
+        },
+        "durability": {
+          "hitPoints": 160,
+          "damageReduction": 10,
+          "threshold": 48
+        },
+        "movement": {
+          "printed": "Speed fly 15 squares (max. velocity 950 km/h), fly 4 squares (starship scale)",
+          "characterScaleFlySquares": 15,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "Ranged laser cannons +3 (see below) and medium concussion missiles +3 (see below)",
+          "fightingSpace": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 0,
+          "grappleBonus": 33,
+          "attackOptions": "Atk Options autofire (laser cannons)"
+        },
+        "abilities": {
+          "strength": 46,
+          "dexterity": 14,
+          "constitution": null,
+          "intelligence": 16
+        },
+        "skills": "Skills Initiative +4, Mechanics +5, Perception +5, Pilot +4, Use Computer +5",
+        "crewAndPassengers": "Crew 4 (normal); Passengers none",
+        "cargoConsumablesCraft": "Cargo 110 kg; Consumables 2 weeks; Carried Craft none",
+        "payload": "Payload 20 medium concussion missiles",
+        "hyperdrive": "Hyperdrive none",
+        "economics": "Availability Restricted; Cost 175,000 (125,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +4; Senses Perception +5",
+          "Defenses": "Defenses Ref 15 (flat-footed 13), Fort 28; +8 armor",
+          "hp": "hp 160; DR 10; SR 25; Threshold 48",
+          "Speed": "Speed fly 15 squares (max. velocity 950 km/h), fly 4 squares (starship scale)",
+          "Ranged": "Ranged laser cannons +3 (see below) and medium concussion missiles +3 (see below)",
+          "Fighting Space": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +0: Grp +33",
+          "Atk Options": "Atk Options autofire (laser cannons)",
+          "Abilities": "Abilities Str 46, Dex 14, Con —, Int 16",
+          "Skills": "Skills Initiative +4, Mechanics +5, Perception +5, Pilot +4, Use Computer +5",
+          "Crew": "Crew 4 (normal); Passengers none",
+          "Cargo": "Cargo 110 kg; Consumables 2 weeks; Carried Craft none",
+          "Payload": "Payload 20 medium concussion missiles",
+          "Hyperdrive": "Hyperdrive none",
+          "Availability": "Availability Restricted; Cost 175,000 (125,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 3,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -2,
+          "sourcePage": 114,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 3,
+          "damage": "9d10x2, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 114,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            114
+          ],
+          "category": "LINKED_WEAPON_CONFIGURATION",
+          "finding": "Two cockpit stations, four-person crew; missile launchers can fire linked at 9d10x2 or individually at 8d10x2 using one payload missile."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            114
+          ],
+          "category": "UPGRADE_OPTION",
+          "finding": "No stock hyperdrive; aftermarket hyperdrive is described separately."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          114
+        ],
+        "statblockLocation": "printed p.114",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "PDF_VERIFIED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-hwk-290",
+      "printedName": "HWK-290",
+      "printedStatblockStartPage": 118,
+      "phase1SectionStartPage": 118,
+      "phase1PdfPhysicalPage": 119,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        118
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "issue": "1 published source discrepancy/discrepancies require independent resolution policy."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 9,
+        "initiative": 0,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 17,
+          "flatFootedReflex": 12,
+          "fortitude": 28,
+          "armorBonus": 12,
+          "shieldRating": null
+        },
+        "durability": {
+          "hitPoints": 160,
+          "damageReduction": 15,
+          "threshold": 78
+        },
+        "movement": {
+          "printed": "Speed fly 12 squares (max. velocity 800 km/h), fly 3 squares (starship scale)",
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 3
+        },
+        "combat": {
+          "ranged": "Ranged 2 blaster cannons +2 (see below)",
+          "fightingSpace": "Fighting Space 1 square (starship scale); Cover total",
+          "baseAttackBonus": 0,
+          "grappleBonus": 38,
+          "attackOptions": null
+        },
+        "abilities": {
+          "strength": 46,
+          "dexterity": 20,
+          "constitution": null,
+          "intelligence": 14
+        },
+        "skills": "Skills Initiative +0, Mechanics +5, Perception +5, Pilot +0, Use Computer +5",
+        "crewAndPassengers": "Crew 2 (normal); Passengers 6",
+        "cargoConsumablesCraft": "Cargo 150 tons; Consumables 6 months; Carried Craft none",
+        "payload": null,
+        "hyperdrive": "Hyperdrive x2, navicomputer",
+        "economics": "Availability Licensed; Cost 135,000 (55,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +0; Senses Perception +5",
+          "Defenses": "Defenses Ref 17 (flat-footed 12), Fort 28; +12 armor",
+          "hp": "hp 160; DR 15; Threshold 78",
+          "Speed": "Speed fly 12 squares (max. velocity 800 km/h), fly 3 squares (starship scale)",
+          "Ranged": "Ranged 2 blaster cannons +2 (see below)",
+          "Fighting Space": "Fighting Space 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +0; Grp +38",
+          "Atk Options": null,
+          "Abilities": "Abilities Str 46, Dex 20, Con —, Int 14",
+          "Skills": "Skills Initiative +0, Mechanics +5, Perception +5, Pilot +0, Use Computer +5",
+          "Crew": "Crew 2 (normal); Passengers 6",
+          "Cargo": "Cargo 150 tons; Consumables 6 moths; Carried Craft none",
+          "Payload": null,
+          "Hyperdrive": "Hyperdrive x2, navicomputer",
+          "Availability": "Availability Licensed; Cost 135,000 (55,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "blaster cannons",
+          "station": "pilot or gunner",
+          "attackBonus": 4,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 118,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            118
+          ],
+          "category": "CONFIGURATION",
+          "finding": "Stock HWK has NO armaments; printed statblock instead includes two sets of retrofitted blaster cannons. The published equipped profile must not be confused with stock."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            118
+          ],
+          "category": "SOURCE_CONFLICT",
+          "finding": "Main Ranged +2 and blaster detail +4 are printed as different attack bonuses; do not choose one."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            118
+          ],
+          "category": "NARRATIVE_VARIANT",
+          "finding": "Moldy Crow mentioned narratively as heavier modified ship; no separate published CL here."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          118
+        ],
+        "statblockLocation": "printed p.118",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "SOURCE_SILENT_CONFIRMED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": [
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "field": "blaster cannon attack bonus",
+          "printedFirstValue": "Ranged 2 blaster cannons +2",
+          "printedSecondValue": "Blaster cannons (pilot, gunner) Atk +4",
+          "issue": "main ranged versus detailed weapon row",
+          "sourcePrintedPages": [
+            118
+          ],
+          "resolution": "RETAIN_BOTH_PENDING_AUTHORITY_POLICY"
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-m3-a-scyk-fighter",
+      "printedName": "M3-A Scyk Fighter",
+      "printedStatblockStartPage": 115,
+      "phase1SectionStartPage": 115,
+      "phase1PdfPhysicalPage": 116,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        115
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 7,
+        "initiative": 4,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 17,
+          "flatFootedReflex": 13,
+          "fortitude": 27,
+          "armorBonus": 8,
+          "shieldRating": 20
+        },
+        "durability": {
+          "hitPoints": 130,
+          "damageReduction": 10,
+          "threshold": 47
+        },
+        "movement": {
+          "printed": "Speed fly 15 squares (max. velocity 950 km/h), fly 4 squares (starship scale)",
+          "characterScaleFlySquares": 15,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "Ranged laser cannons +1 (see below)",
+          "fightingSpace": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 0,
+          "grappleBonus": 32,
+          "attackOptions": null
+        },
+        "abilities": {
+          "strength": 44,
+          "dexterity": 18,
+          "constitution": null,
+          "intelligence": 12
+        },
+        "skills": "Skills Initiative +4, Mechanics +5, Perception +5, Pilot +4, Use Computer +5",
+        "crewAndPassengers": "Crew 1 (normal); Passengers none",
+        "cargoConsumablesCraft": "Cargo 110 kg; Consumables 2 weeks; Carried Craft none",
+        "payload": null,
+        "hyperdrive": "Hyperdrive x2",
+        "economics": "Availability Restricted; Cost 75,000 (35,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +4; Senses Perception +5",
+          "Defenses": "Defenses Ref 17 (flat-footed 13), Fort 27; +8 armor",
+          "hp": "hp 130; DR 10; SR 20; Threshold 47",
+          "Speed": "Speed fly 15 squares (max. velocity 950 km/h), fly 4 squares (starship scale)",
+          "Ranged": "Ranged laser cannons +1 (see below)",
+          "Fighting Space": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +0; Grp +32",
+          "Atk Options": null,
+          "Abilities": "Abilities Str 44, Dex 18, Con —, Int 12",
+          "Skills": "Skills Initiative +4, Mechanics +5, Perception +5, Pilot +4, Use Computer +5",
+          "Crew": "Crew 1 (normal); Passengers none",
+          "Cargo": "Cargo 110 kg; Consumables 2 weeks; Carried Craft none",
+          "Payload": null,
+          "Hyperdrive": "Hyperdrive x2",
+          "Availability": "Availability Restricted; Cost 75,000 (35,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 1,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 115,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            115
+          ],
+          "category": "MODULAR_WEAPONS",
+          "finding": "Stock has one laser mount; alternatives include ion, missile or torpedo launcher with six-missile payload if configured. These are NOT simultaneous stock weapons."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            115
+          ],
+          "category": "ASTROGATION_DEPENDENCY",
+          "finding": "x2 hyperdrive but lacks navicomputer and astromech interface; requires external hyperspace computations."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          115
+        ],
+        "statblockLocation": "printed p.115",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "PDF_VERIFIED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-maka-eekai-l4000-transport",
+      "printedName": "Maka-Eekai L4000 Transport",
+      "printedStatblockStartPage": 120,
+      "phase1SectionStartPage": 120,
+      "phase1PdfPhysicalPage": 121,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        120
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal space transport",
+        "cl": 9,
+        "initiative": -2,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 15,
+          "flatFootedReflex": 12,
+          "fortitude": 31,
+          "armorBonus": 12,
+          "shieldRating": 20
+        },
+        "durability": {
+          "hitPoints": 200,
+          "damageReduction": 15,
+          "threshold": 81
+        },
+        "movement": {
+          "printed": "Speed fly 12 squares (max. velocity 800 km/h}, fly 2 squares (starship scale)",
+          "characterScaleFlySquares": 12,
+          "starshipScaleFlySquares": 2
+        },
+        "combat": {
+          "ranged": "Ranged double laser cannons +4 (see below)",
+          "fightingSpace": "Fighting Space 1 square (starship scale); Cover total",
+          "baseAttackBonus": 0,
+          "grappleBonus": 41,
+          "attackOptions": "Atk Options autofire (double laser cannons)"
+        },
+        "abilities": {
+          "strength": 52,
+          "dexterity": 16,
+          "constitution": null,
+          "intelligence": 18
+        },
+        "skills": "Skills Initiative -2, Mechanics +5, Perception +5, Pilot -2, Use Computer +5",
+        "crewAndPassengers": "Crew 4 (normal); Passengers 9",
+        "cargoConsumablesCraft": "Cargo 410 tons; Consumables 6 months; Carried Craft none",
+        "payload": null,
+        "hyperdrive": "Hyperdrive x2 (backup x12), navicomputer",
+        "economics": "Availability Licensed; Cost 180,000 (85,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init -2; Senses Perception +5",
+          "Defenses": "Defenses Ref 15 (flat-footed 12), Fort 31; +12 armor",
+          "hp": "hp 200; DR 15; SR 20; Threshold 81",
+          "Speed": "Speed fly 12 squares (max. velocity 800 km/h}, fly 2 squares (starship scale)",
+          "Ranged": "Ranged double laser cannons +4 (see below)",
+          "Fighting Space": "Fighting Space 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +0; Grp +41",
+          "Atk Options": "Atk Options autofire (double laser cannons)",
+          "Abilities": "Abilities Str 52, Dex 16, Con —, Int 18",
+          "Skills": "Skills Initiative -2, Mechanics +5, Perception +5, Pilot -2, Use Computer +5",
+          "Crew": "Crew 4 (normal); Passengers 9",
+          "Cargo": "Cargo 410 tons; Consumables 6 months; Carried Craft none",
+          "Payload": null,
+          "Hyperdrive": "Hyperdrive x2 (backup x12), navicomputer",
+          "Availability": "Availability Licensed; Cost 180,000 (85,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "double laser cannons",
+          "station": "gunner",
+          "attackBonus": 4,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "sourcePage": 120,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            120
+          ],
+          "category": "PHYSICAL_MOUNT_TOPOLOGY",
+          "finding": "Stock is two double laser cannons in port/starboard turrets; printed detail is one firing-group row with gunner."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            120
+          ],
+          "category": "CONFIGURATION",
+          "finding": "Cargo/passenger conversion: every +1 passenger uses 10 tons of cargo, up to 40 passengers; source permits stock passenger mixes."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            120
+          ],
+          "category": "OPTIONAL_WEAPON",
+          "finding": "Optional aft boom linked laser cannon ball turret is NOT part of the printed statblock."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          120
+        ],
+        "statblockLocation": "printed p.120",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "PDF_VERIFIED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-neutron-star-bulk-cruiser",
+      "printedName": "Neutron Star Bulk Cruiser",
+      "printedStatblockStartPage": 121,
+      "phase1SectionStartPage": 121,
+      "phase1PdfPhysicalPage": 122,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        121
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 16,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 13,
+          "flatFootedReflex": 12,
+          "fortitude": 51,
+          "armorBonus": 11,
+          "shieldRating": 100
+        },
+        "durability": {
+          "hitPoints": 1400,
+          "damageReduction": 20,
+          "threshold": 251
+        },
+        "movement": {
+          "printed": "Speed fly 1 square (starship scale)",
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 1
+        },
+        "combat": {
+          "ranged": "Ranged 5 heavy quad laser cannon batteries +14* (see below) and 2 tractor beams +4* (see below) and",
+          "fightingSpace": "Fighting Space 2x2 (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 68,
+          "attackOptions": "Atk Options autofire (neavy quad laser cannons)"
+        },
+        "abilities": {
+          "strength": 92,
+          "dexterity": 14,
+          "constitution": null,
+          "intelligence": 14
+        },
+        "skills": "Skills Initiative -2, Mechanics +6, Perception +6, Pilot -2, Use Computer +6",
+        "crewAndPassengers": "Crew 2,050 (skilled); Passengers 200 (troops)",
+        "cargoConsumablesCraft": "Cargo 5,000 tons; Consumables 1 year; Carried Craft 36 starfighters, 2 space transports",
+        "payload": null,
+        "hyperdrive": "Hyperdrive x2 (backup x12), navicomputer",
+        "economics": "Availability Military; Cost 5,000,000 (2,500,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init -2; Senses Perception +6",
+          "Defenses": "Defenses Ref 13 (flat-footed 12), Fort 51; +11 armor",
+          "hp": "hp 1,400; DR 20; SR 100; Threshold 251",
+          "Speed": "Speed fly 1 square (starship scale)",
+          "Ranged": "Ranged 5 heavy quad laser cannon batteries +14* (see below) and 2 tractor beams +4* (see below) and",
+          "Fighting Space": "Fighting Space 2x2 (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +68",
+          "Atk Options": "Atk Options autofire (neavy quad laser cannons)",
+          "Abilities": "Abilities Str 92, Dex 14, Con —, Int 14",
+          "Skills": "Skills Initiative -2, Mechanics +6, Perception +6, Pilot -2, Use Computer +6",
+          "Crew": "Crew 2,050 (skilled); Passengers 200 (troops)",
+          "Cargo": "Cargo 5,000 tons; Consumables 1 year; Carried Craft 36 starfighters, 2 space transports",
+          "Payload": null,
+          "Hyperdrive": "Hyperdrive x2 (backup x12), navicomputer",
+          "Availability": "Availability Military; Cost 5,000,000 (2,500,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy quad laser cannon battery",
+          "station": "6 gunners",
+          "attackBonus": 14,
+          "damage": "4d10x5",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 9,
+          "sourcePage": 121,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "tractor beam",
+          "station": "gunner",
+          "attackBonus": 4,
+          "damage": "grapple +68",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 121,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            121
+          ],
+          "category": "TACTICAL_FIRE",
+          "finding": "Tactical Fire: standard action forgo attacks, allied Gargantuan-or-smaller ships in 2-square-radius area gain +2 Reflex Defense."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            121
+          ],
+          "category": "HARDWARE_VS_ATTACK_GROUP",
+          "finding": "Five printed heavy quad cannon BATTERIES and two tractor BEAMS, but group rows number two; per-battery firing arcs and composition not specified."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          121
+        ],
+        "statblockLocation": "printed p.121",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-novasword-space-superiority-fighter",
+      "printedName": "NovaSword Space Superiority Fighter",
+      "printedStatblockStartPage": 115,
+      "phase1SectionStartPage": 115,
+      "phase1PdfPhysicalPage": 116,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        115
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 7,
+        "initiative": 7,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 18,
+          "flatFootedReflex": 12,
+          "fortitude": 26,
+          "armorBonus": 7,
+          "shieldRating": 15
+        },
+        "durability": {
+          "hitPoints": 110,
+          "damageReduction": 10,
+          "threshold": 46
+        },
+        "movement": {
+          "printed": "Speed fly 16 squares (max. velocity 1,000 km/h), fly 4 squares (starship scale)",
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "Ranged laser cannons +5 (see below) or | Ranged medium concussion missiles +5 (see below)",
+          "fightingSpace": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 31,
+          "attackOptions": null
+        },
+        "abilities": {
+          "strength": 42,
+          "dexterity": 22,
+          "constitution": null,
+          "intelligence": 16
+        },
+        "skills": "Skills Initiative +7, Mechanics +6, Perception +6, Pilot +7, Use Computer +6",
+        "crewAndPassengers": "Crew 1 (skilled); Passengers 1",
+        "cargoConsumablesCraft": "Cargo 110 kg; Consumables 4 weeks; Carried Craft none",
+        "payload": "Payload 3 medium concussion missiles",
+        "hyperdrive": "Hyperdrive x2, navicomputer",
+        "economics": "Availability Restricted: Cost 145,000 (65,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +7; Senses Perception +6",
+          "Defenses": "Defenses Ref 18 (flat-footed 12), Fort 26; +7 armor",
+          "hp": "hp 110; DR 10; SR 15; Threshold 46",
+          "Speed": "Speed fly 16 squares (max. velocity 1,000 km/h), fly 4 squares (starship scale)",
+          "Ranged": "Ranged laser cannons +5 (see below) or | Ranged medium concussion missiles +5 (see below)",
+          "Fighting Space": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +31",
+          "Atk Options": null,
+          "Abilities": "Abilities Str 42, Dex 22, Con —, Int 16",
+          "Skills": "Skills Initiative +7, Mechanics +6, Perception +6, Pilot +7, Use Computer +6",
+          "Crew": "‘Crew 1 (skilled); Passengers 1",
+          "Cargo": "Cargo 110 kg; Consumables 4 weeks; Carried Craft none",
+          "Payload": "Payload 3 medium concussion missiles",
+          "Hyperdrive": "Hyperdrive x2, navicomputer",
+          "Availability": "Availability Restricted: Cost 145,000 (65,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 115,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 5,
+          "damage": "8d10x2, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 115,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            115
+          ],
+          "category": "CREW_ASSIGNMENT",
+          "finding": "One skilled crew with one additional passenger or copilot/commander/observer; extra seat is not a gunner station."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            115
+          ],
+          "category": "ATTACK_MODE",
+          "finding": "Laser and medium concussion missile attacks are alternatives controlled by pilot."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          115
+        ],
+        "statblockLocation": "printed p.115",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-r-41-starchaser",
+      "printedName": "R-41 Starchaser",
+      "printedStatblockStartPage": 116,
+      "phase1SectionStartPage": 116,
+      "phase1PdfPhysicalPage": 117,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        116
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 9,
+        "initiative": 6,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 11,
+          "fortitude": 24,
+          "armorBonus": 6,
+          "shieldRating": 20
+        },
+        "durability": {
+          "hitPoints": 100,
+          "damageReduction": 10,
+          "threshold": 44
+        },
+        "movement": {
+          "printed": "Speed fly 16 squares (max. velocity 1,050 km/h), fly 4 squares (starship scale)",
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "Ranged laser cannons +6 (see below) or | Ranged ion cannon +6 (see below) or | Ranged medium concussion missiles +6 (see below)",
+          "fightingSpace": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 29,
+          "attackOptions": null
+        },
+        "abilities": {
+          "strength": 38,
+          "dexterity": 20,
+          "constitution": null,
+          "intelligence": 18
+        },
+        "skills": "Skills Initiative +6, Mechanics +6, Perception +6, Pilot +6, Use Computer +6",
+        "crewAndPassengers": "Crew 1 (skilled); Passengers 1",
+        "cargoConsumablesCraft": "Cargo 110 kg; Consumables 2 weeks; Carried Craft none",
+        "payload": "Payload 2 medium concussion missiles",
+        "hyperdrive": "Hyperdrive x2, navicomputer",
+        "economics": "Availability Restricted; Cost 115,000 (55,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +6; Senses Perception +6",
+          "Defenses": "Defenses Ref 16 (flat-footed 11), Fort 24; +6 armor",
+          "hp": "hp 100; DR 10; SR 20; Threshold 44",
+          "Speed": "Speed fly 16 squares (max. velocity 1,050 km/h), fly 4 squares (starship scale)",
+          "Ranged": "Ranged laser cannons +6 (see below) or | Ranged ion cannon +6 (see below) or | Ranged medium concussion missiles +6 (see below)",
+          "Fighting Space": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +29",
+          "Atk Options": null,
+          "Abilities": "Abilities Str 38, Dex 20, Con —, Int 18",
+          "Skills": "Skills Initiative +6, Mechanics +6, Perception +6, Pilot +6, Use Computer +6",
+          "Crew": "Crew 1 (skilled); Passengers 1",
+          "Cargo": "Cargo 110 kg; Consumables 2 weeks; Carried Craft none",
+          "Payload": "Payload 2 medium concussion missiles",
+          "Hyperdrive": "Hyperdrive x2, navicomputer",
+          "Availability": "Availability Restricted; Cost 115,000 (55,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "5d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 116,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "ion cannon",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "3d10x2 ion",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 116,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 6,
+          "damage": "8d10x2, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 116,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            116
+          ],
+          "category": "NARRATIVE_VARIANT",
+          "finding": "R-42 two-seat version has one gunner seat; separate named variant has no complete independent statblock, so retain under R-41 narrative only."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            116
+          ],
+          "category": "ATTACK_MODE",
+          "finding": "Pilot-operated laser, ion and medium concussion missile attacks are alternatives."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          116
+        ],
+        "statblockLocation": "printed p.116",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-rogue-shadow",
+      "printedName": "Rogue Shadow",
+      "printedStatblockStartPage": 206,
+      "phase1SectionStartPage": 206,
+      "phase1PdfPhysicalPage": 207,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        206
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal* space transport",
+        "cl": 12,
+        "initiative": 8,
+        "sensesPerception": 12,
+        "defenses": {
+          "reflex": 17,
+          "flatFootedReflex": 11,
+          "fortitude": 25,
+          "armorBonus": 11,
+          "shieldRating": 40
+        },
+        "durability": {
+          "hitPoints": 110,
+          "damageReduction": 15,
+          "threshold": 75
+        },
+        "movement": {
+          "printed": "Speed fly 16 squares (max. velocity 1,350 km/h}, fly 6 squares (starship scale)",
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 6
+        },
+        "combat": {
+          "ranged": "Ranged laser cannons +15 (see below)",
+          "fightingSpace": "Fighting Space 12x12 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 10,
+          "grappleBonus": 45,
+          "attackOptions": "Atk Options autofire (laser cannons)"
+        },
+        "abilities": {
+          "strength": 40,
+          "dexterity": 22,
+          "constitution": null,
+          "intelligence": 20
+        },
+        "skills": "Skills Initiative +8, Mechanics +12, Perception +12, Pilot +8, Stealth +12 (total concealment when cloaking device active), Use Computer +12 (+17 when using sensors)",
+        "crewAndPassengers": "Crew 1 (ace); Passengers 8",
+        "cargoConsumablesCraft": "Cargo 15 tons; Consumables 1 year; Carried Craft none",
+        "payload": null,
+        "hyperdrive": "Hyperdrive x.5, navicomputer",
+        "economics": "Availability Unique; Cost not available for sale",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +8; Senses Perception +12",
+          "Defenses": "Defenses Ref 17 (flat-footed 11), Fort 25; +11 armor",
+          "hp": "hp 110; DR 15; SR 40; Threshold 75",
+          "Speed": "Speed fly 16 squares (max. velocity 1,350 km/h}, fly 6 squares (starship scale)",
+          "Ranged": "Ranged laser cannons +15 (see below)",
+          "Fighting Space": "Fighting Space 12x12 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +10; Grp +45",
+          "Atk Options": "Atk Options autofire (laser cannons)",
+          "Abilities": "Abilities Str 40, Dex 22, Con —, Int 20",
+          "Skills": "Skills Initiative +8, Mechanics +12, Perception +12, Pilot +8, Stealth +12 (total concealment when cloaking device active), Use Computer +12 {417 when using sensors)",
+          "Crew": "Crew 1 (ace); Passengers 8",
+          "Cargo": "Cargo 15 tons; Consumables 1 year; Carried Craft none",
+          "Payload": null,
+          "Hyperdrive": "Hyperdrive x.5, navicomputer",
+          "Availability": "Availability Unique; Cost not available for sale"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 15,
+          "damage": "7d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 10,
+          "sourcePage": 206,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            206
+          ],
+          "category": "CLOAK_AND_SENSORS",
+          "finding": "Stygium cloak grants total concealment when activated; +5 equipment bonus on Perception and Use Computer sensor checks is conditional."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            206
+          ],
+          "category": "CONDITIONAL_SCALE",
+          "finding": "Printed Colossal* transport is treated as Gargantuan starfighter only for capital-weapon targeting, dogfighting and starship maneuvers."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            206
+          ],
+          "category": "SENSOR_SKILL",
+          "finding": "Published sensor Use Computer +17 is conditional, not an always-on skill modifier."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          206
+        ],
+        "statblockLocation": "printed p.206",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-sentinel-class-landing-shuttle",
+      "printedName": "Sentinel-class Landing Shuttle",
+      "printedStatblockStartPage": 207,
+      "phase1SectionStartPage": 207,
+      "phase1PdfPhysicalPage": 208,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        207
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 10,
+        "initiative": 5,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 21,
+          "flatFootedReflex": 16,
+          "fortitude": 26,
+          "armorBonus": 11,
+          "shieldRating": 50
+        },
+        "durability": {
+          "hitPoints": 120,
+          "damageReduction": 10,
+          "threshold": 49
+        },
+        "movement": {
+          "printed": "Speed fly 16 squares (max. velocity 1,000 km/h), fly 5 squares (starship scale)",
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 5
+        },
+        "combat": {
+          "ranged": "Ranged 4 linked sets of laser cannons +4 (see below) and ion cannon +4 or | Ranged 2 medium concussion missiles +4 and 2 repeating blaster cannons -1",
+          "fightingSpace": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 33,
+          "attackOptions": "Atk Options autofire (laser cannons, repeating blaster cannons)"
+        },
+        "abilities": {
+          "strength": 42,
+          "dexterity": 20,
+          "constitution": null,
+          "intelligence": 14
+        },
+        "skills": "Skills Initiative +5, Mechanics +6, Perception +6, Pilot +5, Use Computer +6",
+        "crewAndPassengers": "Crew 6 (skilled); Passengers 54 (troops)",
+        "cargoConsumablesCraft": "Cargo 180 tons; Consumables 1 month; Carried Craft up to 36 light ground vehicles",
+        "payload": "Payload 8 medium concussion missiles",
+        "hyperdrive": "Hyperdrive x1 (backup x10), navicomputer",
+        "economics": "Availability Restricted; Cost 240,000",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +5; Senses Perception +5",
+          "Defenses": "Defenses Ref 21 (flat-footed 16), Fort 26; +11 armor",
+          "hp": "hp 120; DR 10; SR 50; Threshold 49",
+          "Speed": "Speed fly 16 squares (max. velocity 1,000 km/h), fly 5 squares (starship scale)",
+          "Ranged": "Ranged 4 linked sets of laser cannons +4 (see below) and ion cannon +4 or | Ranged 2 medium concussion missiles +4 and 2 repeating blaster cannons -1",
+          "Fighting Space": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +33",
+          "Atk Options": "Atk Options autofire (laser cannons, repeating blaster cannons)",
+          "Abilities": "Abilities Str 42, Dex 20, Con —, Int 14",
+          "Skills": "Skills Initiative +5, Mechanics +6, Perception +6, Pilot +5, Use Computer +6",
+          "Crew": "Crew 6 (skilled); Passengers 54 (troops)",
+          "Cargo": "Cargo 180 tons; Consumables 1 month; Carried Craft up to 36 light ground vehicles",
+          "Payload": "Payload 8 medium concussion missiles",
+          "Hyperdrive": "Hyperdrive x1 (backup x10), navicomputer",
+          "Availability": "Availability Restricted; Cost 240,000"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "gunner",
+          "attackBonus": 4,
+          "damage": "6d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "sourcePage": 207,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "ion cannon",
+          "station": "copilot",
+          "attackBonus": 4,
+          "damage": "4d10x2 ion",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 207,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "2 gunners",
+          "attackBonus": 4,
+          "damage": "8d10x2, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 207,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "repeating blaster cannons",
+          "station": "2 gunners",
+          "attackBonus": -1,
+          "damage": "3d8x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "sourcePage": 207,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            207
+          ],
+          "category": "ATTACK_BUNDLE",
+          "finding": "Main attack line has alternative attack bundles: laser+ion OR 2 missiles+repeating blasters; avoid automating all four firing groups simultaneously."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            207
+          ],
+          "category": "MOUNT_TOPOLOGY",
+          "finding": "Printed 4 linked laser sets, 2 missile gunners and 2 blaster gunners must not be collapsed into 4 guns; physical turret/arcs not fully specified."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            207
+          ],
+          "category": "CAPACITY",
+          "finding": "Up to 36 light ground vehicles and 54 troop passengers; cargo/passenger/craft capacities not interchangeable without rule."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          207
+        ],
+        "statblockLocation": "printed p.207",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-tartan-class-patrol-cruiser",
+      "printedName": "Tartan-class Patrol Cruiser",
+      "printedStatblockStartPage": 209,
+      "phase1SectionStartPage": 209,
+      "phase1PdfPhysicalPage": 210,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        209
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal (frigate) capital ship",
+        "cl": 15,
+        "initiative": -2,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 11,
+          "fortitude": 35,
+          "armorBonus": 11,
+          "shieldRating": 90
+        },
+        "durability": {
+          "hitPoints": 870,
+          "damageReduction": 15,
+          "threshold": 135
+        },
+        "movement": {
+          "printed": "Speed fly 4 squares {starship scale)",
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "Ranged 2 point-defense laser cannon batteries +14 (see below)",
+          "fightingSpace": "Fighting Space 1 square (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 47,
+          "attackOptions": null
+        },
+        "abilities": {
+          "strength": 61,
+          "dexterity": 16,
+          "constitution": null,
+          "intelligence": 18
+        },
+        "skills": "Skills Initiative -2, Mechanics +5, Perception +5, Pilot -2, Use Computer +5",
+        "crewAndPassengers": "Crew 70 (skilled) Passengers 50 (troops)",
+        "cargoConsumablesCraft": "Cargo 1,000 tons; Consumables 1 year; Carried Craft none",
+        "payload": null,
+        "hyperdrive": "Hyperdrive x2, (backup x12), navicomputer",
+        "economics": "Availability Military; Cost not available for sale (estimated value 4,200,000)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init -2; Senses Perception +5",
+          "Defenses": "Defenses Ref 14 (flat-footed 11), Fort 35; +11 armor",
+          "hp": "hp 870; DR 15; SR 90; Threshold 135",
+          "Speed": "Speed fly 4 squares {starship scale)",
+          "Ranged": "Ranged 2 point-defense laser cannon batteries +14 (see below)",
+          "Fighting Space": "Fighting Space 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +47",
+          "Atk Options": null,
+          "Abilities": "Abilities Str 61, Dex 16, Con —, Int 18",
+          "Skills": "Skills Initiative -2, Mechanics +5, Perception +5, Pilot -2, Use Computer +5",
+          "Crew": "Crew 70 (skilled) Passengers 50 (troops)",
+          "Cargo": "Cargo 1,000 tons; Consumables 1 year; Carried Craft none",
+          "Payload": null,
+          "Hyperdrive": "Hyperdrive x2, (backup x12), navicomputer",
+          "Availability": "Availability Military; Cost not available for sale (estimated value 4,200,000)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "point-defense laser cannon battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "damage": "6d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 209,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            209
+          ],
+          "category": "ACTION_ECONOMY",
+          "finding": "Power transfer/recharge shields each need one less swift action (typically two) than normal."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            209
+          ],
+          "category": "TACTICAL_FIRE",
+          "finding": "Tactical Fire: standard action forgo attacks; enemy starfighter DR is halved (round down) while in adjacent tactical-fire squares."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          209
+        ],
+        "statblockLocation": "printed p.209",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-tie-prototype",
+      "printedName": "TIE Prototype",
+      "printedStatblockStartPage": 205,
+      "phase1SectionStartPage": 205,
+      "phase1PdfPhysicalPage": 206,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        205
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Huge starfighter",
+        "cl": 6,
+        "initiative": 8,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 16,
+          "flatFootedReflex": 12,
+          "fortitude": 22,
+          "armorBonus": 4,
+          "shieldRating": 10
+        },
+        "durability": {
+          "hitPoints": 60,
+          "damageReduction": 10,
+          "threshold": 32
+        },
+        "movement": {
+          "printed": "Speed fly 16 squares (max. velocity 1,200 km/h), fly 5 squares (starship scale)",
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 5
+        },
+        "combat": {
+          "ranged": "Ranged laser cannons +4 (see below) or 2 medium concussion missiles +4 (see below)",
+          "fightingSpace": "Fighting Space 3x3 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 24,
+          "attackOptions": "Atk Options autofire (laser cannons)"
+        },
+        "abilities": {
+          "strength": 34,
+          "dexterity": 18,
+          "constitution": null,
+          "intelligence": 14
+        },
+        "skills": "Skills Initiative +8, Mechanics +6, Perception +6, Pilot +8",
+        "crewAndPassengers": "Crew 1 (skilled); Passengers none",
+        "cargoConsumablesCraft": "Cargo 65 kg; Consumables 2 weeks; Carried Craft none",
+        "payload": "Payload 2 medium concussion missiles",
+        "hyperdrive": "Hyperdrive x2, limited navicomputer (2-jump memory)",
+        "economics": "Availability Military; Cost 130,000 (75,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +8; Senses Perception +6",
+          "Defenses": "Defenses Ref 16 (flat-footed 12), Fort 22: +4 armor",
+          "hp": "hp 60; DR 10; SR 10; Threshold 32",
+          "Speed": "Speed fly 16 squares (max. velocity 1,200 km/h), fly 5 squares (starship scale)",
+          "Ranged": "Ranged laser cannons +4 (see below) or 2 medium concussion missiles +4 (see below)",
+          "Fighting Space": "Fighting Space 3x3 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +24",
+          "Atk Options": "Atk Options autofire (laser cannons)",
+          "Abilities": "Abilities Str 34, Dex 18, Con —, Int 14",
+          "Skills": "Skills Initiative +8, Mechanics +6, Perception +6, Pilot +8",
+          "Crew": "Crew 1 (skilled); Passengers none",
+          "Cargo": "Cargo 65 kg; Consumables 2 weeks; Carried Craft none",
+          "Payload": "Payload 2 medium concussion missiles",
+          "Hyperdrive": "Hyperdrive x2, limited navicomputer (2-jump memory)",
+          "Availability": "Availability Military; Cost 130,000 (75,000 used}"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -1,
+          "sourcePage": 205,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "pilot",
+          "attackBonus": 4,
+          "damage": "8d10x2, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 205,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            205
+          ],
+          "category": "MODEL_IDENTITY",
+          "finding": "Unlike later stock TIE, prototype carries SR10, x2 hyperdrive with 2-jump memory and 2 medium missiles; do not merge with production TIE."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          205
+        ],
+        "statblockLocation": "printed p.205",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-toscan-8-q",
+      "printedName": "Toscan 8-Q",
+      "printedStatblockStartPage": 116,
+      "phase1SectionStartPage": 116,
+      "phase1PdfPhysicalPage": 117,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        116,
+        117
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        },
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "issue": "1 published source discrepancy/discrepancies require independent resolution policy."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 8,
+        "initiative": 1,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 15,
+          "flatFootedReflex": 12,
+          "fortitude": 27,
+          "armorBonus": 7,
+          "shieldRating": 10
+        },
+        "durability": {
+          "hitPoints": 120,
+          "damageReduction": 10,
+          "threshold": 47
+        },
+        "movement": {
+          "printed": "Speed fly 14 squares (max. velocity 850 km/h), fly 4 squares (starship . scale)",
+          "characterScaleFlySquares": 14,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "Ranged laser cannons +2 (see below) and medium concussion missiles +2 (see below)",
+          "fightingSpace": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 0,
+          "grappleBonus": 32,
+          "attackOptions": "Atk Options autofire (laser cannons)"
+        },
+        "abilities": {
+          "strength": 44,
+          "dexterity": 16,
+          "constitution": null,
+          "intelligence": 14
+        },
+        "skills": "Skills Initiative +3, Mechanics +5, Perception +5, Pilot +3, Use Computer +5",
+        "crewAndPassengers": "Crew 2 (normal); Passengers 3",
+        "cargoConsumablesCraft": "Cargo 440 kg; Consumables 4 weeks; Carried Craft none",
+        "payload": "Payload 12 medium concussion missiles",
+        "hyperdrive": "Hyperdrive x1, navicomputer",
+        "economics": "Availability Licensed; Cost 180,000 (40,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +1; Senses Perception +5",
+          "Defenses": "Defenses Ref 15 (flat-footed 12), Fort 27; +7 armor",
+          "hp": "hp 120; DR 10; SR 10; Threshold 47",
+          "Speed": "Speed fly 14 squares (max. velocity 850 km/h), fly 4 squares (starship . scale)",
+          "Ranged": "Ranged laser cannons +2 (see below) and medium concussion missiles +2 (see below)",
+          "Fighting Space": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +0; Grp +32",
+          "Atk Options": "Atk Options autofire (laser cannons)",
+          "Abilities": "Abilities Str 44, Dex 16, Con —, Int 14",
+          "Skills": "Skills Initiative +3, Mechanics +5, Perception +5, Pilot +3, Use Computer +5",
+          "Crew": "Crew 2 (normal); Passengers 3",
+          "Cargo": "Cargo 440 kg; Consumables 4 weeks; Carried Craft none",
+          "Payload": "Payload 12 medium concussion missiles",
+          "Hyperdrive": "Hyperdrive x1, navicomputer",
+          "Availability": "Availability Licensed; Cost 180,000 (40,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "laser cannons",
+          "station": "pilot",
+          "attackBonus": 2,
+          "damage": "4d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -3,
+          "sourcePage": 116,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "medium concussion missiles",
+          "station": "gunner",
+          "attackBonus": 2,
+          "damage": "8d10x2, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 116,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            116
+          ],
+          "category": "SOURCE_CONFLICT",
+          "finding": "Statblock header Init +1 conflicts with Skills Initiative +3; preserve both."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            116,
+            117
+          ],
+          "category": "NARRATIVE_CONFIGURATION",
+          "finding": "Narrative base model x2 hyperdrive and simple two laser guns; printed typical variant x1 hyperdrive, laser and medium missile rows. Configuration distinction NOT a second independently CL-statted ship."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          116,
+          117
+        ],
+        "statblockLocation": "printed p.116",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": [
+        {
+          "status": "SOURCE_CONFLICT_PRESERVED",
+          "field": "Initiative",
+          "printedFirstValue": "Init +1",
+          "printedSecondValue": "Skills Initiative +3",
+          "issue": "statblock headline versus Skills line",
+          "sourcePrintedPages": [
+            116
+          ],
+          "resolution": "RETAIN_BOTH_PENDING_AUTHORITY_POLICY"
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "fucg-venator-class-star-destroyer",
+      "printedName": "Venator-class Star Destroyer",
+      "printedStatblockStartPage": 210,
+      "phase1SectionStartPage": 210,
+      "phase1PdfPhysicalPage": 211,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        210
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 19,
+        "initiative": -3,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 13,
+          "fortitude": 52,
+          "armorBonus": 13,
+          "shieldRating": 200
+        },
+        "durability": {
+          "hitPoints": 1590,
+          "damageReduction": 20,
+          "threshold": 252
+        },
+        "movement": {
+          "printed": "Speed fly 2 squares (starship scale)",
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 2
+        },
+        "combat": {
+          "ranged": "Ranged 2 heavy turbolaser batteries +11” (see below) and 2 medium double turbolasers +7* (see below) and 8 point-defense laser batteries +13 (see below) and 2 point-defense flight deck laser batteries +15 (see below) and 2 tractor beam batteries +9* (see below) and 4 proton torpedoes +5* (see below) and",
+          "fightingSpace": "Fighting Space 2x2 (starship scale); Cover total (crew), +5 (ships in flight deck when hangar open)",
+          "baseAttackBonus": 2,
+          "grappleBonus": 74,
+          "attackOptions": "Atk Options autofire (medium double turbolasers)"
+        },
+        "abilities": {
+          "strength": 95,
+          "dexterity": 12,
+          "constitution": null,
+          "intelligence": 16
+        },
+        "skills": "Skills Initiative -3, Mechanics +6, Perception +6, Pilot -3, Use Computer +6",
+        "crewAndPassengers": "Crew 7,400 (skilled); Passengers 2,000 (troops)",
+        "cargoConsumablesCraft": "Cargo 20,000 tons; Consumables 2 years; Carried Craft 192 V-wings or V-19 Torrents, 192 Eta-2s, 36 ARC-170s, 40 heavy airspeeders, 24 heavy walkers, various support craft",
+        "payload": "Payload 64 proton torpedoes",
+        "hyperdrive": "Hyperdrive x1 (backup x12), navicomputer",
+        "economics": "Availability Military; Cost not available for sale (black market value 50,000,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init -3; Senses Perception +6",
+          "Defenses": "Defenses Ref 14 (flat-footed 13), Fort 52; +13 armor",
+          "hp": "hp 1,590; DR 20; SR 200; Threshold 252",
+          "Speed": "Speed fly 2 squares (starship scale)",
+          "Ranged": "Ranged 2 heavy turbolaser batteries +11” (see below) and 2 medium double turbolasers +7* (see below) and 8 point-defense laser batteries +13 (see below) and 2 point-defense flight deck laser batteries +15 (see below) and 2 tractor beam batteries +9* (see below) and 4 proton torpedoes +5* (see below) and",
+          "Fighting Space": "Fighting Space 2x2 (starship scale); Cover total (crew), +5 (ships in flight deck when hangar open)",
+          "Base Atk": "Base Atk +2; Grp +74",
+          "Atk Options": "Atk Options autofire (medium double turbolasers)",
+          "Abilities": "Abilities Str 95, Dex 12, Con —, Int 16",
+          "Skills": "Skills Initiative -3, Mechanics +6, Perception +6, Pilot -3, Use Computer +6",
+          "Crew": "Crew 7,400 (skilled); Passengers 2,000 (troops)",
+          "Cargo": "Cargo 20,000 tons; Consumables 2 years; Carried Craft 192 V-wings or V-19 Torrents, 192 Eta-2s, 36 ARC-170s, 40 heavy airspeeders, 24 heavy walkers, various support craft",
+          "Payload": "Payload 64 proton torpedoes",
+          "Hyperdrive": "Hyperdrive x1 (backup x12), navicomputer",
+          "Availability": "Availability Military; Cost not available for sale (black market value 50,000,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy turbolaser battery",
+          "station": "4 gunners",
+          "attackBonus": 11,
+          "damage": "8d10x5",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 210,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "medium double turbolaser",
+          "station": "gunner",
+          "attackBonus": 7,
+          "damage": "6d10x5",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 2,
+          "sourcePage": 210,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "point-defense laser battery",
+          "station": "5 gunners",
+          "attackBonus": 13,
+          "damage": "3d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 210,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "point-defense flight deck laser battery",
+          "station": "6 gunners",
+          "attackBonus": 15,
+          "damage": "3d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 210,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "3 gunners",
+          "attackBonus": 9,
+          "damage": "grapple +74",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 210,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "proton torpedo",
+          "station": "gunner",
+          "attackBonus": 5,
+          "damage": "9d10x2, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 210,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            210
+          ],
+          "category": "TACTICAL_FIRE",
+          "finding": "Tactical Fire: standard action forgo attacks; allied Gargantuan-or-smaller ships within 2-square radius gain +2 attack and one-step increased damage dice."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            210
+          ],
+          "category": "CONDITIONAL_COVER",
+          "finding": "Hangar-open flight deck imposes printed +5 cover qualifier to craft therein; not unconditional ship Defense bonus."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            210
+          ],
+          "category": "MOUNT_TOPOLOGY",
+          "finding": "Six detail attack groups include tractor and proton torpedo; battery counts are distinct from groups."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          210
+        ],
+        "statblockLocation": "printed p.210",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-victory-i-class-star-destroyer",
+      "printedName": "Victory I-class Star Destroyer",
+      "printedStatblockStartPage": 211,
+      "phase1SectionStartPage": 211,
+      "phase1PdfPhysicalPage": 212,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        211
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "PDF_VERIFIED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Colossal (cruiser) capital ship",
+        "cl": 19,
+        "initiative": -2,
+        "sensesPerception": 6,
+        "defenses": {
+          "reflex": 14,
+          "flatFootedReflex": 12,
+          "fortitude": 45,
+          "armorBonus": 12,
+          "shieldRating": 150
+        },
+        "durability": {
+          "hitPoints": 1200,
+          "damageReduction": 20,
+          "threshold": 245
+        },
+        "movement": {
+          "printed": "Speed fly 1 square (starship scale)",
+          "characterScaleFlySquares": null,
+          "starshipScaleFlySquares": 1
+        },
+        "combat": {
+          "ranged": "Ranged 4 heavy double turbolaser batteries +14* (see below) and 2 light quad turbolaser batteries +14” (see below) and 4 heavy concussion missile batteries +14\" (see below) and 2 tractor beam batteries +14* (see below) and",
+          "fightingSpace": "Fighting Space 1 square (starship scale); Cover total",
+          "baseAttackBonus": 2,
+          "grappleBonus": 67,
+          "attackOptions": "Atk Options autofire (double turbolasers, light quad turbolasers)"
+        },
+        "abilities": {
+          "strength": 90,
+          "dexterity": 14,
+          "constitution": null,
+          "intelligence": 18
+        },
+        "skills": "Skills Initiative -2, Mechanics +6, Perception +6, Pilot -2, Use Computer +6",
+        "crewAndPassengers": "Crew 5,200 (skilled); Passengers 2,040 (troops)",
+        "cargoConsumablesCraft": "Cargo 8,100 tons; Consumables 4 years; Carried Craft 48 starfighters, 20 heavy ground vehicles, 20 medium ground vehicles, various support craft",
+        "payload": "Payload 80 heavy concussion missiles",
+        "hyperdrive": "Hyperdrive x1 (backup x15), navicomputer",
+        "economics": "Availability Military; Cost not available for sale (black market value 50,000,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init -2; Senses Perception +6",
+          "Defenses": "Defenses Ref 14 (flat-footed 12), Fort 45: +12 armor",
+          "hp": "hp 1,200; DR 20; SR 150; Threshold 245",
+          "Speed": "Speed fly 1 square (starship scale)",
+          "Ranged": "Ranged 4 heavy double turbolaser batteries +14* (see below) and 2 light quad turbolaser batteries +14” (see below) and 4 heavy concussion missile batteries +14\" (see below) and 2 tractor beam batteries +14* (see below) and",
+          "Fighting Space": "Fighting Space 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +2; Grp +67",
+          "Atk Options": "Atk Options autofire (double turbolasers, light quad turbolasers)",
+          "Abilities": "Abilities Str 90, Dex 14, Con —, Int 18",
+          "Skills": "Skills Initiative -2, Mechanics +6, Perception +6, Pilot -2, Use Computer +6",
+          "Crew": "Crew 5,200 (skilled); Passengers 2,040 (troops)",
+          "Cargo": "Cargo 8,100 tons; Consumables 4 years; Carried Craft 48 starfighters, 20 heavy ground vehicles, 20 medium ground vehicles, various support craft",
+          "Payload": "Payload 80 heavy concussion missiles",
+          "Hyperdrive": "Hyperdrive x1 (backup x15), navicomputer",
+          "Availability": "Availability Military; Cost not available for sale (black market value 50,000,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy double turbolaser battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "damage": "4d10x5",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 9,
+          "sourcePage": 211,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "light quad turbolaser battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "damage": "3d10x5",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": 9,
+          "sourcePage": 211,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "heavy concussion missile battery",
+          "station": "5 gunners",
+          "attackBonus": 14,
+          "damage": "8d10x5, 2-square splash",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 211,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        },
+        {
+          "weaponLabel": "tractor beam battery",
+          "station": "3 gunners",
+          "attackBonus": 14,
+          "damage": "grapple +67",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": null,
+          "sourcePage": 211,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            211
+          ],
+          "category": "TACTICAL_FIRE",
+          "finding": "Tactical Fire: standard action forgo attacks; allies targeting ships in 2-square-radius area gain +2 attack."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            211
+          ],
+          "category": "NARRATIVE_VARIANT",
+          "finding": "Narrative replacement of twenty heavy assault missile tubes by eighty standard launchers with 1,600 total payload describes alternative; not stock 80-heavy-missile statblock."
+        },
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            211
+          ],
+          "category": "NARRATIVE_VARIANT",
+          "finding": "Victory II narrative speed improvement to 3 squares is not a second Phase 1 CL entry."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          211
+        ],
+        "statblockLocation": "printed p.211",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "SOURCE_SILENT_CONFIRMED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    },
+    {
+      "sourceEntryKey": "fucg-zebra-starfighter",
+      "printedName": "Zebra Starfighter",
+      "printedStatblockStartPage": 118,
+      "phase1SectionStartPage": 117,
+      "phase1PdfPhysicalPage": 119,
+      "endPageReviewStatus": "PDF_VERIFIED",
+      "reviewedPDFPages": [
+        118
+      ],
+      "fieldGroups": {
+        "printedTypeLine": "PDF_VERIFIED",
+        "challenge": "PDF_VERIFIED",
+        "initiativeSenses": "PDF_VERIFIED",
+        "defenses": "PDF_VERIFIED",
+        "durability": "PDF_VERIFIED",
+        "speed": "PDF_VERIFIED",
+        "rangedAttack": "PDF_VERIFIED",
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "fightingSpace": "PDF_VERIFIED",
+        "baseAttack": "PDF_VERIFIED",
+        "attackOptions": "PDF_VERIFIED",
+        "abilities": "PDF_VERIFIED",
+        "skills": "PDF_VERIFIED",
+        "crew": "PDF_VERIFIED",
+        "capacity": "PDF_VERIFIED",
+        "payload": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED",
+        "cost": "PDF_VERIFIED",
+        "weaponAttackProfile": "PDF_VERIFIED"
+      },
+      "narrativeMechanicsStatus": "PDF_VERIFIED",
+      "weaponMountReconciliationStatus": "PDF_VERIFIED_PARTIAL",
+      "fullFieldCertified": false,
+      "fullWeaponMountReconciled": false,
+      "blockingFindings": [
+        {
+          "status": "SOURCE_SILENT_CONFIRMED",
+          "issue": "Full independent mount geometry, location, arcs and battery decomposition are not source-certified."
+        }
+      ],
+      "printedFacts": {
+        "type": "Gargantuan starfighter",
+        "cl": 6,
+        "initiative": 1,
+        "sensesPerception": 5,
+        "defenses": {
+          "reflex": 13,
+          "flatFootedReflex": 12,
+          "fortitude": 27,
+          "armorBonus": 7,
+          "shieldRating": 15
+        },
+        "durability": {
+          "hitPoints": 120,
+          "damageReduction": 10,
+          "threshold": 47
+        },
+        "movement": {
+          "printed": "Speed fly 16 squares (max. velocity 1,000 km/h), fly 4 squares (starship scale)",
+          "characterScaleFlySquares": 16,
+          "starshipScaleFlySquares": 4
+        },
+        "combat": {
+          "ranged": "Ranged heavy laser cannons +1 (see below}",
+          "fightingSpace": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "baseAttackBonus": 0,
+          "grappleBonus": 32,
+          "attackOptions": "Atk Options autofire (heavy laser cannons)"
+        },
+        "abilities": {
+          "strength": 44,
+          "dexterity": 12,
+          "constitution": null,
+          "intelligence": 12
+        },
+        "skills": "Skills Initiative +1, Mechanics +5, Perception +5, Pilot +1, Use Computer +5",
+        "crewAndPassengers": "Crew 1 (normal); Passengers none",
+        "cargoConsumablesCraft": "Cargo 65 kg; Consumables 1 day; Carried Craft none",
+        "payload": null,
+        "hyperdrive": "Hyperdrive none",
+        "economics": "Availability Restricted; Cost 80,000 (30,000 used)",
+        "searchableTextFieldExcerpts": {
+          "Init": "Init +1; Senses Perception +5",
+          "Defenses": "Defenses Ref 13 (flat-footed 12), Fort 27; +7 armor",
+          "hp": "hp 120; DR 10; SR 15; Threshold 47",
+          "Speed": "Speed fly 16 squares (max. velocity 1,000 km/h), fly 4 squares (starship scale)",
+          "Ranged": "Ranged heavy laser cannons +1 (see below}",
+          "Fighting Space": "Fighting Space 4x4 or 1 square (starship scale); Cover total",
+          "Base Atk": "Base Atk +0; Grp +32",
+          "Atk Options": "Atk Options autofire (heavy laser cannons)",
+          "Abilities": "Abilities Str 44, Dex 12, Con —, Int 12",
+          "Skills": "Skills Initiative +1, Mechanics +5, Perception +5, Pilot +1, Use Computer +5",
+          "Crew": "Crew 1 (normal); Passengers none",
+          "Cargo": "Cargo 65 kg; Consumables 1 day; Carried Craft none",
+          "Payload": null,
+          "Hyperdrive": "Hyperdrive none",
+          "Availability": "Availability Restricted; Cost 80,000 (30,000 used)"
+        }
+      },
+      "mountAndFiringGroups": [
+        {
+          "weaponLabel": "heavy laser cannons",
+          "station": "pilot",
+          "attackBonus": 1,
+          "damage": "6d10x2",
+          "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+          "firingArc": "SOURCE_SILENT_CONFIRMED",
+          "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+          "autofireAttackBonus": -4,
+          "sourcePage": 118,
+          "sourceEvidenceStatus": "PDF_VERIFIED"
+        }
+      ],
+      "configurationAndRuleFindings": [
+        {
+          "status": "PDF_VERIFIED",
+          "sourcePrintedPages": [
+            118
+          ],
+          "category": "LINKED_WEAPON_CONFIGURATION",
+          "finding": "Two linked heavy laser cannons are part of stock craft; no hyperdrive."
+        }
+      ],
+      "sourceEvidence": {
+        "source": "Force Unleashed Campaign Guide uploaded original scanned PDF",
+        "printedPages": [
+          118
+        ],
+        "statblockLocation": "printed p.118",
+        "pdfPageIndexSemantics": "Zero-based PDF page index equals printed page; physical PDF page ordinal = printed page + 1",
+        "reviewScope": "Rendered scanned PDF reviewed; DJVU source text used to navigate and collate fields; any printed-versus-text conflicts adjudicated by image."
+      },
+      "sourceFieldStates": {
+        "shieldRating": "PDF_VERIFIED",
+        "physicalWeaponHardwareCount": "PDF_VERIFIED",
+        "weaponFiringArc": "SOURCE_SILENT_CONFIRMED",
+        "batteryComposition": "SOURCE_SILENT_CONFIRMED",
+        "hyperdrive": "PDF_VERIFIED"
+      },
+      "sourceConflicts": []
+    }
+  ]
+}

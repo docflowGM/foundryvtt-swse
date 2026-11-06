@@ -19,6 +19,11 @@ import { SWSEItemBase } from "./scripts/items/base/swse-item-base.js";
 import { SWSECombatDocument } from "./scripts/combat/swse-combat.js";
 import { SWSECombatant } from "./scripts/combat/swse-combatant.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
+import { registerVehiclePreCreateHooks } from "./scripts/actors/vehicle/vehicle-precreate-hooks.js";
+import { registerVehicleErrataMigration } from "./scripts/engine/vehicles/vehicle-errata-migration-service.js";
+import { registerCP23C4ObservationSetting } from "./scripts/domain/vehicles/vehicle-cp23c4-gm-observation-ledger.js";
+import { auditUniversalVehicleRuntime, openUniversalVehicleSampleSheet } from "./scripts/domain/vehicles/vehicle-phase4d-runtime-audit.js";
+import { runUniversalVehicleScratchImport } from "./scripts/domain/vehicles/vehicle-phase4d-scratch-import.js";
 import { registerForceTraditionHouseRuleSettings } from "./scripts/settings/force-tradition-house-rules.js";
 import { registerCustomContentApprovalSettings } from "./scripts/settings/custom-content-approval.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
@@ -100,6 +105,13 @@ Hooks.once("init", async () => {
   // SWSE.debug.attackRolls.events after rolling an attack. Disabled (no-op,
   // no logging) by default.
   globalThis.SWSE.debug.attackRolls = AttackRollDiagnostics;
+  // Phase 4D: explicitly invoked GM-only native pack/Actor data inspection.
+  // No startup scanning, no auto-import, no world mutations or attack trust.
+  globalThis.SWSE.debug.vehicles = Object.freeze({
+    audit: (options = {}) => auditUniversalVehicleRuntime(options),
+    openSampleSheet: (sourceKey, options = {}) => openUniversalVehicleSampleSheet(sourceKey, options),
+    scratchImport: (options = {}) => runUniversalVehicleScratchImport(options)
+  });
   // Phase 1 actor authority + performance baseline: opt-in actor/derived/
   // modifier-cache/sheet-context timing. Enable the 'performanceDiagnostics'
   // (or 'debugMode') client setting, then use SWSE.debug.performance.actor(actor),
@@ -179,8 +191,13 @@ Hooks.once("init", async () => {
   registerForceTraditionHouseRuleSettings();
   registerCustomContentApprovalSettings();
   await registerSystemSettings();
+  registerCP23C4ObservationSetting(); // Unverified audit observations only; no trust or receipt issuer
 
   registerInitHooks();
+  // Vehicle provenance / ledger / shipyard-Item guards and stock-weapon arming were registered ONLY in scripts/core/init.js, which nothing imports,
+  // so they never ran in production. index.js is the single owner (registerVehiclePreCreateHooks is idempotent).
+  registerVehiclePreCreateHooks();
+  registerVehicleErrataMigration(); // GM-controlled; never migrates on its own
   // NOTE: store-sheet header hook is registered by registerInitHooks() via ui-hooks.js (single owner).
   // A direct call here previously double-registered the 'swse-store-sheet' hook ("already registered. Overwriting").
   SystemInitHooks.registerHooks();

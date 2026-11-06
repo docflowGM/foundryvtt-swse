@@ -1,0 +1,9 @@
+{
+  "schema": "swse.vehicle.p6a.owner-rulings.v1",
+  "rulings": [
+    { "id": "V-P6A-05", "date": "2026-11-01", "ruling": "Adopt the printed Starships of the Galaxy Table 3-7 base prices (stygium cloaking device 100,000,000; hangar bay 10; concealed hangar bay 1,000). Preserve previous catalog values in discrepancy history.",
+      "catalogIds": ["cloaking-stygium", "hangar-bay", "hangar-bay-concealed"], "effect": "APPLY_PRINTED_VALUES" },
+    { "id": "V-P6A-06", "date": "2026-11-01", "ruling": "A printed dash in an ammunition EP column is not numeric zero. Such rows are consumable ammunition acquired and loaded into a compatible launcher, not separately installed ship modifications. No invented EP. Launcher compatibility, quantity, loading and firing stay gated pending mechanical certification.",
+      "catalogIds": ["ion-bomb", "gravity-mine-standard", "gravity-mine-magnetic", "defoliator-shell"], "effect": "CONSUMABLE_AMMUNITION" }
+  ]
+}

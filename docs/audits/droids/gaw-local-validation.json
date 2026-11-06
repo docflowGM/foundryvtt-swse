@@ -1,0 +1,19 @@
+{
+  "schema": "swse.droid.gaw.local-validation/0.1",
+  "status": "PASS",
+  "scope": "LOCAL_SEMANTIC_AND_SELECTED_PDF_FIELD_VALIDATION_ONLY",
+  "errors": [],
+  "counts": {
+    "publicationClaims": 22,
+    "selectedFirstPageVisualReviews": 22,
+    "directFieldComparisons": 285,
+    "droidActorSourceRecords": 20,
+    "vehiclePrimaryRecords": 1,
+    "squadPrimaryRecords": 1,
+    "independentlyMechanicalCertified": 0
+  },
+  "fullUpstreamJsonSchema202012Validated": false,
+  "foundryRuntimeCertified": false,
+  "sourceLedgerSha256": "41aa916a3922c38e310bc1e31857abc3acb61a1bfaa00be76311420e8e8dab0a",
+  "limitations": "Selected pages only; source PDF/TXT hashes verified. No complete narrative, feat/talent, equipment, attack/mount, PC-route or Foundry V13 certification. Upstream schema not available in container."
+}

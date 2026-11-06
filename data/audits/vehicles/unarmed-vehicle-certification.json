@@ -1,0 +1,610 @@
+{
+ "schema": "swse.vehicle.unarmed-certification.v1",
+ "note": "Vehicles with no printed firing group in the canonical record, classified from the printed statblock (sourcebook text corpus; the PDF is the final authority). UNARMED_CONFIRMED = no Ranged/Melee line in the statblock. ARMED_RECORD_GAP = the statblock prints an attack line the record lacks (a data defect to repair). UNRESOLVED = the statblock could not be isolated automatically.",
+ "counts": {
+  "UNARMED_CONFIRMED": 38,
+  "ARMED_RECORD_GAP": 4
+ },
+ "rows": [
+  {
+   "sourceEntryKey": "core-sorosuub-x-34-landspeeder",
+   "printedTitle": "SoroSuub X-34 Landspeeder",
+   "book": "Core Rulebook",
+   "page": 176,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Core Rulebook_djvu.txt",
+    "statblockLine": 16636,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "cw-bc-714-luxury-transport",
+   "printedTitle": "BC-714 Luxury Transport",
+   "book": "Clone Wars Campaign Guide",
+   "page": 203,
+   "printedTypeLine": "Colossal space transport",
+   "status": "ARMED_RECORD_GAP",
+   "evidence": {
+    "file": "Clone Wars Campaign Guide_djvu.txt",
+    "statblockLine": 19960,
+    "statblocksFound": 1,
+    "attackLines": [
+     "Ranged double laser cannon +9 (see below)"
+    ]
+   }
+  },
+  {
+   "sourceEntryKey": "cw-daystar-dc0052-intergalactic-speeder",
+   "printedTitle": "DC0052 \"Intergalactic\" Speeder",
+   "book": "Clone Wars Campaign Guide",
+   "page": 138,
+   "printedTypeLine": "Large airspeeder",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Clone Wars Campaign Guide_djvu.txt",
+    "statblockLine": 12961,
+    "statblocksFound": 1,
+    "attackLines": [],
+    "review": "manual (corpus text)"
+   }
+  },
+  {
+   "sourceEntryKey": "cw-medlifter-troop-transport",
+   "printedTitle": "Medlifter Troop Transport",
+   "book": "Clone Wars Campaign Guide",
+   "page": 167,
+   "printedTypeLine": "Huge air vehicle (airspeeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Clone Wars Campaign Guide_djvu.txt",
+    "statblockLine": 16016,
+    "statblocksFound": 2,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "cw-sheathipede-class-shuttle",
+   "printedTitle": "Sheathipede-class Shuttle",
+   "book": "Clone Wars Campaign Guide",
+   "page": 209,
+   "printedTypeLine": "Colossal space transport",
+   "status": "ARMED_RECORD_GAP",
+   "evidence": {
+    "file": "Clone Wars Campaign Guide_djvu.txt",
+    "statblockLine": 20580,
+    "statblocksFound": 1,
+    "attackLines": [
+     "Ranged microtractor-pressor +2 (see below)"
+    ]
+   }
+  },
+  {
+   "sourceEntryKey": "cw-trade-federation-troop-carrier",
+   "printedTitle": "Trade Federation Troop Carrier",
+   "book": "Clone Wars Campaign Guide",
+   "page": 202,
+   "printedTypeLine": "Colossal ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Clone Wars Campaign Guide_djvu.txt",
+    "statblockLine": 19787,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "cw-tsmeu-6-personal-wheel-bike",
+   "printedTitle": "Tsmeu-6 Personal Wheel Bike",
+   "book": "Clone Wars Campaign Guide",
+   "page": 203,
+   "printedTypeLine": "Large ground vehicle (wheeled/walking)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Clone Wars Campaign Guide_djvu.txt",
+    "statblockLine": 19877,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "cw-ubrikkian-seltiss-2-caravel-cabin",
+   "printedTitle": "Ubrikkian Seltiss-2 Caravel Cabin",
+   "book": "Clone Wars Campaign Guide",
+   "page": 81,
+   "printedTypeLine": "Huge space transport",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Clone Wars Campaign Guide_djvu.txt",
+    "statblockLine": 7079,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "fucg-a-a5-speeder-truck",
+   "printedTitle": "A-A5 Speeder Truck",
+   "book": "Force Unleashed Campaign Guide",
+   "page": 113,
+   "printedTypeLine": "Colossal ground speeder",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Force Unleashed Campaign Guide_djvu.txt",
+    "statblockLine": 10700,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "fucg-flare-s-swoop",
+   "printedTitle": "Flare-S Swoop",
+   "book": "Force Unleashed Campaign Guide",
+   "page": 111,
+   "printedTypeLine": "Large air vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Force Unleashed Campaign Guide_djvu.txt",
+    "statblockLine": 10511,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "fucg-v-35-courier",
+   "printedTitle": "V-35 Courier",
+   "book": "Force Unleashed Campaign Guide",
+   "page": 112,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Force Unleashed Campaign Guide_djvu.txt",
+    "statblockLine": 10558,
+    "statblocksFound": 2,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "fucg-zephyr-g-swoop",
+   "printedTitle": "Zephyr-G Swoop",
+   "book": "Force Unleashed Campaign Guide",
+   "page": 112,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Force Unleashed Campaign Guide_djvu.txt",
+    "statblockLine": 10608,
+    "statblocksFound": 2,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "gaw-drop-pod",
+   "printedTitle": "Drop Pod",
+   "book": "Galaxy at War",
+   "page": 64,
+   "printedTypeLine": "Gargantuan air vehicle",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Galaxy At War_djvu.txt",
+    "statblockLine": 6362,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "gaw-shelter-speeder",
+   "printedTitle": "Shelter Speeder",
+   "book": "Galaxy at War",
+   "page": 63,
+   "printedTypeLine": "Huge air vehicle",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Galaxy At War_djvu.txt",
+    "statblockLine": 6268,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "gaw-t8-loading-vehicle",
+   "printedTitle": "T8 Loading Vehicle",
+   "book": "Galaxy at War",
+   "page": 179,
+   "printedTypeLine": "Large ground vehicle (wheeled)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Galaxy At War_djvu.txt",
+    "statblockLine": 17535,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "goi-corona-limited-luxury-groundspeeder",
+   "printedTitle": "Corona Limited Luxury Groundspeeder",
+   "book": "Galaxy of Intrigue",
+   "page": 71,
+   "printedTypeLine": "Huge ground vehicle (speeder)",
+   "status": "ARMED_RECORD_GAP",
+   "evidence": {
+    "file": "Galaxy of Intrigue_djvu.txt",
+    "statblockLine": 6672,
+    "statblocksFound": 2,
+    "attackLines": [
+     "Ranged 4 heavy laser cannons +9 (see below)"
+    ]
+   }
+  },
+  {
+   "sourceEntryKey": "goi-sorosuub-jg-8-luxury-landspeeder",
+   "printedTitle": "SoroSuub JG-8 Luxury Landspeeder",
+   "book": "Galaxy of Intrigue",
+   "page": 71,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Galaxy of Intrigue_djvu.txt",
+    "statblockLine": 6746,
+    "statblocksFound": 2,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "kotor-aratech-urban-navigator-speeder-bike",
+   "printedTitle": "Aratech Urban Navigator Speeder Bike",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "page": 93,
+   "printedTypeLine": "Large air vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Knights of the Old Republic Campaign Guide_djvu.txt",
+    "statblockLine": 8958,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "kotor-corellia-stardrive-quartermaster-class-supply-carrier",
+   "printedTitle": "Corellia StarDrive Quartermaster-class Supply Carrier",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "page": 100,
+   "printedTypeLine": "Colossal space transport",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Knights of the Old Republic Campaign Guide_djvu.txt",
+    "statblockLine": 9749,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "kotor-lhosan-industries-aerochaser-speeder-bike",
+   "printedTitle": "Lhosan Industries AeroChaser Speeder Bike",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "page": 92,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Knights of the Old Republic Campaign Guide_djvu.txt",
+    "statblockLine": 8858,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "kotor-lhosan-industries-swoop-racer",
+   "printedTitle": "Lhosan Industries Swoop Racer",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "page": 93,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Knights of the Old Republic Campaign Guide_djvu.txt",
+    "statblockLine": 8906,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "kotor-sorosuub-tt-6-landspeeder",
+   "printedTitle": "SoroSuub TT-6 Landspeeder",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "page": 94,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Knights of the Old Republic Campaign Guide_djvu.txt",
+    "statblockLine": 9026,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "kotor-sorosuub-twin-228-airspeeder",
+   "printedTitle": "SoroSuub Twin-228 Airspeeder",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "page": 95,
+   "printedTypeLine": "Huge air vehicle (airspeeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Knights of the Old Republic Campaign Guide_djvu.txt",
+    "statblockLine": 9148,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "kotor-ubrikkian-pl-90-luxury-speeder",
+   "printedTitle": "Ubrikkian Repulsorlift Manufacturing PL-90 Luxury Speeder",
+   "book": "Knights of the Old Republic Campaign Guide",
+   "page": 94,
+   "printedTypeLine": "Huge ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Knights of the Old Republic Campaign Guide_djvu.txt",
+    "statblockLine": 9083,
+    "statblocksFound": 1,
+    "attackLines": [],
+    "review": "manual (corpus text)"
+   }
+  },
+  {
+   "sourceEntryKey": "le-gpe-3300-airspeeder",
+   "printedTitle": "GPE-3300 Airspeeder",
+   "book": "Legacy Era Campaign Guide",
+   "page": 81,
+   "printedTypeLine": "Huge air vehicle (airspeeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Legacy Era Campaign Guide_djvu.txt",
+    "statblockLine": 7204,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "le-model-67-shrieker-speeder-bike",
+   "printedTitle": "Model 67 Shrieker Speeder Bike",
+   "book": "Legacy Era Campaign Guide",
+   "page": 80,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Legacy Era Campaign Guide_djvu.txt",
+    "statblockLine": 7085,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "le-veltiss-2-airspeeder",
+   "printedTitle": "Veltiss-2 Airspeeder",
+   "book": "Legacy Era Campaign Guide",
+   "page": 82,
+   "printedTypeLine": "Large air vehicle (airspeeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Legacy Era Campaign Guide_djvu.txt",
+    "statblockLine": 7247,
+    "statblocksFound": 2,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "re-9000-z004-landspeeder",
+   "printedTitle": "9000 Z004 Landspeeder",
+   "book": "Rebellion Era Campaign Guide",
+   "page": 62,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Rebellion Era Campaign Guide_djvu.txt",
+    "statblockLine": 5365,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "re-air-2-swoop",
+   "printedTitle": "Air-2 Swoop",
+   "book": "Rebellion Era Campaign Guide",
+   "page": 62,
+   "printedTypeLine": "Large ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Rebellion Era Campaign Guide_djvu.txt",
+    "statblockLine": 5426,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "re-bantha-ii-cargo-skiff",
+   "printedTitle": "Bantha-II Cargo Skiff",
+   "book": "Rebellion Era Campaign Guide",
+   "page": 60,
+   "printedTypeLine": "Huge ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Rebellion Era Campaign Guide_djvu.txt",
+    "statblockLine": 5185,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "re-f9-tz-transport",
+   "printedTitle": "F9-TZ Transport",
+   "book": "Rebellion Era Campaign Guide",
+   "page": 154,
+   "printedTypeLine": "Gargantuan ground vehicle (speeder)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Rebellion Era Campaign Guide_djvu.txt",
+    "statblockLine": 14933,
+    "statblocksFound": 1,
+    "attackLines": [],
+    "review": "manual (corpus text)"
+   }
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-engineering-corporation-action-vi-bulk-transport",
+   "printedTitle": "Corellian Engineering Corporation Action VI Bulk Transport",
+   "book": "Starships of the Galaxy",
+   "page": 58,
+   "printedTypeLine": "Colossal (frigate) capital ship",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Starships of the Galaxy_djvu.txt",
+    "statblockLine": 5488,
+    "statblocksFound": 1,
+    "attackLines": [],
+    "review": "manual (corpus text)"
+   }
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-engineering-corporation-consular-class-cruiser",
+   "printedTitle": "Corellian Engineering Corporation Consular-class Cruiser",
+   "book": "Starships of the Galaxy",
+   "page": 126,
+   "printedTypeLine": "Colossal (frigate) space transport",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Starships of the Galaxy_djvu.txt",
+    "statblockLine": 11848,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "sotg-corellian-engineering-corporation-cr70-corvette",
+   "printedTitle": "Corellian Engineering Corporation CR70 Corvette",
+   "book": "Starships of the Galaxy",
+   "page": 75,
+   "printedTypeLine": "Colossal (frigate) capital ship",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Starships of the Galaxy_djvu.txt",
+    "statblockLine": 7186,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "sotg-escape-pod",
+   "printedTitle": "Escape Pod",
+   "book": "Starships of the Galaxy",
+   "page": 50,
+   "printedTypeLine": "Huge starfighter",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Starships of the Galaxy_djvu.txt",
+    "statblockLine": 4801,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "tog-bloodfin-razalon-fc-20-speeder-bike",
+   "printedTitle": "Bloodfin Razalon FC-20 Speeder Bike",
+   "book": "Threats of the Galaxy",
+   "page": 81,
+   "printedTypeLine": "Medium ground vehicle",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Threats of the Galaxy_djvu.txt",
+    "statblockLine": 8043,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "tog-nebulon-q-swoop",
+   "printedTitle": "Nebulon-Q Swoop",
+   "book": "Threats of the Galaxy",
+   "page": 99,
+   "printedTypeLine": "Large ground vehicle (swoop)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Threats of the Galaxy_djvu.txt",
+    "statblockLine": 9993,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "ur-all-terrain-roller",
+   "printedTitle": "All-Terrain Roller",
+   "book": "Unknown Regions",
+   "page": 48,
+   "printedTypeLine": "Medium ground vehicle (wheeled)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Unknown Regions_djvu.txt",
+    "statblockLine": 4951,
+    "statblocksFound": 2,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "ur-gallis-tech-48-roller-wheel-bike",
+   "printedTitle": "Gallis-Tech 48 Roller Wheel Bike",
+   "book": "Unknown Regions",
+   "page": 48,
+   "printedTypeLine": "Large ground vehicle (wheeled)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Unknown Regions_djvu.txt",
+    "statblockLine": 4877,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "ur-groundcar",
+   "printedTitle": "Groundcar",
+   "book": "Unknown Regions",
+   "page": 49,
+   "printedTypeLine": "Huge ground vehicle (wheeled)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Unknown Regions_djvu.txt",
+    "statblockLine": 5037,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "ur-land-crawler",
+   "printedTitle": "Land Crawler",
+   "book": "Unknown Regions",
+   "page": 49,
+   "printedTypeLine": "Huge ground vehicle (tracked)",
+   "status": "UNARMED_CONFIRMED",
+   "evidence": {
+    "file": "Unknown Regions_djvu.txt",
+    "statblockLine": 5072,
+    "statblocksFound": 1,
+    "attackLines": []
+   }
+  },
+  {
+   "sourceEntryKey": "ur-landing-sphere",
+   "printedTitle": "Landing Sphere",
+   "book": "Unknown Regions",
+   "page": 58,
+   "printedTypeLine": "Huge air vehicle (airspeeder)",
+   "status": "ARMED_RECORD_GAP",
+   "evidence": {
+    "file": "Unknown Regions_djvu.txt",
+    "statblockLine": 5905,
+    "statblocksFound": 1,
+    "attackLines": [
+     "Ranged 6 turbolaser batteries +5* (see below) and"
+    ]
+   }
+  }
+ ]
+}

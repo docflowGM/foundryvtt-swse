@@ -1,0 +1,481 @@
+{
+  "schema": "swse.vehicle.universal.phase3.targeted-exception-reconciliation.v1",
+  "scope": "Targeted known source anomalies only; not new publication census, not physical weapon certification",
+  "baselineSourceQA": "docs/audits/vehicles/universal-vehicle-phase3-focused-48-source-qa-closeout.md",
+  "sourceAssertions": [
+    "Independent publication identity preserved",
+    "Conflicting print remains conflicting",
+    "Owner-approved interpretations separated from print",
+    "No new physical mounts, operator grants, or executable attacks",
+    "Core Vulture printed p181 and physical p182 resolved through SHA-checked additive source provenance view, not retroactive edit of frozen audit files"
+  ],
+  "cases": [
+    {
+      "id": "P3R-SAV-STARFORGE",
+      "sourceEntryKey": "sav-starforge-station",
+      "sourceBook": "Scum and Villainy",
+      "printedPages": [
+        129,
+        130
+      ],
+      "pdfPhysicalPages": [
+        130,
+        131
+      ],
+      "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+      "sourceReconciliation": "verified-preserve-contradictions",
+      "printedFacts": {
+        "cl": 20,
+        "printedTypeLine": "Colossal (station) space station",
+        "headerInitiative": -4,
+        "skillsInitiative": -5,
+        "headerPerception": 6,
+        "skillsPerception": 5,
+        "sourceRangedGroup": "5 turbolaser batteries +12",
+        "detailAttackBonus": 12,
+        "smallerTargetPenalty": -20,
+        "smallerTargetEffectiveAttack": -8,
+        "groupKind": "weapon-battery",
+        "declaredBatteries": 5,
+        "sourceAttackGroupCount": 1
+      },
+      "identityBoundary": "Explicit source sidebar: unrelated to the ancient Rakatan Star Forge. Do not merge.",
+      "knownConflict": "Printed header Initiative -4 and Perception +6 contradict Skills Initiative -5 and Perception +5; neither is silently adjudicated.",
+      "sourceEvidence": "Original scanned Scum and Villainy printed pp129-130, physical p130-131; checksum matched.",
+      "unresolvedOperational": [
+        "individual installed mounts and arcs",
+        "physical interpretation of five source battery declarations",
+        "typed market and shipyard effects",
+        "approved initiative/perception effective-value adjudication"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-SAV-HORNET",
+      "sourceEntryKey": "sav-tenloss-corporation-hornet-class-interceptor",
+      "sourceBook": "Scum and Villainy",
+      "printedPages": [
+        125
+      ],
+      "pdfPhysicalPages": [
+        126
+      ],
+      "sourcePdfSha256": "74f222e9b10c17b6c8dae13fe4c97edb49d6d3c1fc278c3653ad72050db41399",
+      "sourceReconciliation": "verified-conditional-alternate-configuration",
+      "printedFacts": {
+        "cl": 12,
+        "printedTypeLine": "Gargantuan starfighter",
+        "defaultGroup": "advanced heavy laser cannons",
+        "defaultAttackBonus": 6,
+        "defaultAutofireBonus": 1,
+        "defaultDamage": "10d10x2",
+        "alternateGroup": "medium laser cannons",
+        "alternateAttackBonus": 6,
+        "alternateAutofireBonus": 1,
+        "alternateDamage": "5d10x2",
+        "overloadNaturalOne": true,
+        "overloadSelfDamage": "6d10x2",
+        "overloadIgnoresSR": true,
+        "overloadDestroysDefaultCannons": true
+      },
+      "identityBoundary": "Approved supplemental publication claim remains one Hornet identity; alternate loadout is not another source entry.",
+      "configurationConstraint": "Alternate medium lasers replace the heavy lasers; these are not two simultaneously installed stock groups. Default overload does not transfer to alternate.",
+      "hyperdriveEvidence": "not stated in printed source; never turn silence into unavailable",
+      "sourceEvidence": "Original scanned Scum and Villainy printed p125, physical p126; checksum matched against supplemental overlay.",
+      "unresolvedOperational": [
+        "approved source-to-runtime configuration selector",
+        "actual installed cannon mount count/arcs",
+        "conditional overload executable handler"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-KOTOR-BASILISK",
+      "sourceEntryKey": "kotor-basilisk-war-droid",
+      "sourceBook": "Knights of the Old Republic Campaign Guide",
+      "printedPages": [
+        202,
+        203
+      ],
+      "pdfPhysicalPages": [
+        203,
+        204
+      ],
+      "sourcePdfSha256": "fd6a61b0ca0d5d8aeec722d033a6652cb23c932f119d4298f523394f96efa419",
+      "sourceReconciliation": "verified-single-vehicle-droid-claim",
+      "printedFacts": {
+        "cl": 6,
+        "printedTypeLine": "Huge air vehicle (droid)",
+        "movementCharacterSquares": 12,
+        "starshipScaleSquares": 3,
+        "passengerCount": 1,
+        "droidBrainCrew": 1,
+        "pilotAttackOverridesConditional": true,
+        "meleeClawsBonus": 11,
+        "rangedBonuses": [
+          4,
+          4,
+          4,
+          5
+        ],
+        "missilePayload": 4,
+        "spaceMinePayload": 2,
+        "sourceRangedGroupCount": 4
+      },
+      "identityBoundary": "One published vehicle (droid) with multiple domains; not independent source spacecraft and droid statblocks.",
+      "sourceEvidence": "KOTOR printed narrative p202 plus complete vehicle statblock p203; physical PDF pp203-204, original PDF SHA verified.",
+      "printedPassengerRule": "Authorized passenger may substitute their own attack/skill bonuses for droid brain; this cannot be globally applied as a permanent pilot stat.",
+      "sourceWeaponRule": "Melee claws separate from four Ranged source attack groups; pulse-wave points to printed p69; group names do not establish firing arc or independent mount topology.",
+      "unresolvedOperational": [
+        "droid-brain and passenger override typed consumer",
+        "whether droid actor representation can share a single publication identity without duplicate Actors",
+        "physical mount and arc certification",
+        "melee and pulse-wave rule execution"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-CW-SPHA",
+      "sourceEntryKey": "cw-self-propelled-heavy-artillery",
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedPages": [
+        168,
+        169
+      ],
+      "pdfPhysicalPages": [
+        169,
+        170
+      ],
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+      "sourceReconciliation": "verified-five-exclusive-primary-weapon-configurations",
+      "printedFacts": {
+        "cl": 16,
+        "printedTypeLine": "Colossal ground vehicle (walker)",
+        "variantKeys": [
+          "SPHA-T",
+          "SPHA-I",
+          "SPHA-V",
+          "SPHA-C",
+          "SPHA-M"
+        ],
+        "sourcePrimaryGroupCount": 5,
+        "sharedSupportGroup": "12 heavy repeating blaster cannons (autofire only)",
+        "totalSourceAttackGroupCount": 6,
+        "missileVariantOnly": "SPHA-C",
+        "missilePayload": 48,
+        "crew": 25
+      },
+      "identityBoundary": "One printed SPHA vehicle statblock; five primary gun variant designations, not five distinct independently statted publication identities.",
+      "configurationConstraint": "Exactly one of the five primary armaments for a selected source configuration; common repeating blaster groups are distinct support source rows, not five additional primaries.",
+      "sourceEvidence": "Original Clone Wars PDF printed pp168-169 scanned; SHA verified against Phase1 ledger.",
+      "unresolvedOperational": [
+        "typed variant selector and optional hull configuration",
+        "weapon hardware count and arcs",
+        "source list of 12 heavy repeaters not authenticated as mounts"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-CW-TX130",
+      "sourceEntryKey": "cw-tx-130t-saber-class-fighter-tank",
+      "sourceBook": "Clone Wars Campaign Guide",
+      "printedPages": [
+        169
+      ],
+      "pdfPhysicalPages": [
+        170
+      ],
+      "sourcePdfSha256": "3c1f085b17f5c9e7288dcd1e1141279a61fc914ce7acb9229f6f3d1aa02219e6",
+      "sourceReconciliation": "verified-retain-cross-variant-printed-attack-discrepancy",
+      "printedFacts": {
+        "cl": 7,
+        "printedTypeLine": "Huge ground vehicle (speeder)",
+        "firstRangedPilotLaserBonus": 3,
+        "secondRangedPilotLaserBonus": 1,
+        "laserDetailedBonus": 3,
+        "optionalAstromech": true,
+        "baseCrew": 3,
+        "astromechModifiedMechanicsBonus": 12,
+        "astromechModifiedUseComputerBonus": 12,
+        "missilePayload": 16,
+        "laterVariantAdds": "top-mounted composite beam turret"
+      },
+      "identityBoundary": "TX-130T Clone Wars printed p169 is a distinct publication claim from Force Unleashed TX-130T printed p203; no silent cross-book stat merge.",
+      "knownConflict": "Second Ranged summary lists laser +1, while detailed Laser Cannons row lists +3. First Ranged summary lists +3. Preserve all source declarations without declaring a preferred effective value.",
+      "configurationConstraint": "Astromech is optional and affects only starred skills; later composite turret is an added variant, not automatic default equipment.",
+      "sourceEvidence": "Original Clone Wars Campaign Guide printed p169, physical PDF p170; exact SHA verified.",
+      "unresolvedOperational": [
+        "approved effective value for contradictory alternate Ranged laser bonus",
+        "typed astromech skill override",
+        "later turret installed-source variant",
+        "physical mounts and operators",
+        "comparison to Force Unleashed cross-book TX-130"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-FU-TX130-CROSSBOOK",
+      "sourceEntryKey": "fucg-tx-130t-fighter-tank",
+      "sourceBook": "Force Unleashed Campaign Guide",
+      "printedPages": [
+        203
+      ],
+      "pdfPhysicalPages": [
+        204
+      ],
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+      "relatedSourceEntryKeys": [
+        "cw-tx-130t-saber-class-fighter-tank"
+      ],
+      "sourceReconciliation": "verified-independent-cross-book-publication-claims",
+      "printedFacts": {
+        "cl": 8,
+        "printedTypeLine": "Huge ground vehicle (speeder)",
+        "reflex": 17,
+        "hp": 120,
+        "speedSquares": 8,
+        "maxVelocityKmh": 193,
+        "crew": 2,
+        "passengers": 5,
+        "cargoKg": 100,
+        "payloadMissiles": 8,
+        "summaryWeaponAttackBonus": 1,
+        "detailedWeaponAttackBonus": 2,
+        "sourceAttackGroupCount": 2
+      },
+      "compareCloneWars": {
+        "sourceEntryKey": "cw-tx-130t-saber-class-fighter-tank",
+        "cl": 7,
+        "maxVelocityKmh": 200,
+        "crew": 3,
+        "passengers": 2,
+        "cargoKg": 750,
+        "missilePayload": 16,
+        "sourceAttackGroupCount": 4,
+        "optionalAstromech": true,
+        "optionalCompositeTurret": true
+      },
+      "identityBoundary": "Two separately printed and statted TX-130T publication identities with materially different CL, capacity, speed and armament. Do not deduplicate or transplant statistics.",
+      "knownConflict": "Force Unleashed p203 Ranged summary gives both attacks +1, while detailed weapon subsection gives +2 for both. Preserve both original values without inventing an adjudicated effective value.",
+      "sourceEvidence": "Original Force Unleashed PDF printed p203/physical p204 and original Clone Wars PDF printed p169/physical p170 visually inspected; exact PDF SHA fingerprints verified.",
+      "unresolvedOperational": [
+        "owner adjudication of Force Unleashed +1 vs +2 original attack discrepancy",
+        "Clone Wars second summary +1 vs detail +3 original attack discrepancy",
+        "no shared executable mount or operator trust",
+        "independent source actor import and optional modification policy"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-GAW-YU410",
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "sourceBook": "Galaxy at War",
+      "printedPages": [
+        65
+      ],
+      "pdfPhysicalPages": [
+        66
+      ],
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+      "sourceReconciliation": "verified-literal-duplicate-dr-and-initiative-conflict",
+      "printedFacts": {
+        "cl": 7,
+        "headerInitiative": -5,
+        "skillsInitiative": -2,
+        "damageReductionLabeled1": 15,
+        "damageReductionLabeled2": 20,
+        "explicitShieldRatingLabel": false,
+        "hitPoints": 120,
+        "damageThreshold": 76
+      },
+      "knownConflict": "Two DR labels printed; second value cannot be silently converted to SR 20 despite prose referencing shields. Header Initiative -5 differs from Skills Initiative -2.",
+      "sourceEvidence": "Galaxy at War printed p65 / original PDF physical p66 visually inspected, matching source hash.",
+      "unresolvedOperational": [
+        "authoritative interpretation of duplicated DR labels",
+        "which printed Initiative is effective",
+        "untyped +5 Stealth concealment cargo rule"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-GAW-WLO5",
+      "sourceEntryKey": "gaw-wlo-5-speeder-tank",
+      "sourceBook": "Galaxy at War",
+      "printedPages": [
+        63
+      ],
+      "pdfPhysicalPages": [
+        64
+      ],
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+      "sourceReconciliation": "verified-malformed-price-preserved",
+      "printedFacts": {
+        "cl": 6,
+        "printedNewCost": "115,00 credits",
+        "parsedNewCost": null,
+        "usedCost": 65000,
+        "availability": "Military",
+        "gunnerCover": "+5",
+        "equipmentMechanicsBonus": 5
+      },
+      "knownConflict": "Printed new price lacks a digit/valid grouping. It is an ambiguous literal, not certified 115,000 or 11,500.",
+      "configurationConstraint": "Pirate-added antipersonnel cannons are narrative aftermarket additions, not automatically stocked weapon groups.",
+      "sourceEvidence": "Galaxy at War printed p63/physical PDF p64; source checksum confirmed.",
+      "unresolvedOperational": [
+        "owner-approved price repair or published errata",
+        "typed repair bonus and gunner cover",
+        "optional pirate modifications vs stock attacks"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-GAW-GAT-SHOCK",
+      "sourceEntryKey": "gaw-ground-armored-tank",
+      "sourceBook": "Galaxy at War",
+      "printedPages": [
+        216
+      ],
+      "pdfPhysicalPages": [
+        217
+      ],
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+      "sourceReconciliation": "verified-conditional-fire-effect-not-stock-attack",
+      "printedFacts": {
+        "cl": 10,
+        "encounterInstances": 4,
+        "publicationStatblockCount": 1,
+        "publishedFiringGroups": 2,
+        "shockAndAweRadiusSquares": 6,
+        "activation": "standard action",
+        "forgoAllAttacks": true,
+        "extraConditionStep": -1,
+        "thresholdGate": "target must be damaged by a successful attack meeting/exceeding damage threshold"
+      },
+      "knownConflict": "Shock and Awe is an area-based special Fire Effect, not a printed weapon firing-group entry and not automatic immediate damage.",
+      "sourceEvidence": "Galaxy at War printed p216/physical PDF p217, original page visually checked; source hash verified.",
+      "unresolvedOperational": [
+        "typed Fire Effect area/predicate/condition-track consumer",
+        "per-turn action substitution; must forgo attacks",
+        "per-instance actor ownership and source item provenance",
+        "certified physical mounts for two separate ranged source rows"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true
+    },
+    {
+      "id": "P3R-CORE-SOTG-VULTURE",
+      "sourceEntryKey": "core-vulture-class-droid-starfighter",
+      "relatedSourceEntryKeys": [
+        "sotg-baktoid-armor-workshop-vulture-class-starfighter"
+      ],
+      "sourceBook": "Core Rulebook",
+      "printedPages": [
+        181
+      ],
+      "pdfPhysicalPages": [
+        182
+      ],
+      "sourcePdfSha256": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+      "secondSource": {
+        "sourceBook": "Starships of the Galaxy",
+        "sourceEntryKey": "sotg-baktoid-armor-workshop-vulture-class-starfighter",
+        "printedPage": 78,
+        "pdfPhysicalPage": 79,
+        "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0"
+      },
+      "sourceReconciliation": "source-provenance-reconciled-via-approved-additive-effective-view",
+      "printedFacts": {
+        "coreHeading": "\"Vulture\" Droid Starfighter",
+        "coreStatblockPrintedPage": 181,
+        "corePdfPhysicalPage": 182,
+        "coreFrozenCensusName": "Vulture-class Droid Starfighter",
+        "coreFrozenCensusPrintedPage": 180,
+        "coreFrozenCensusPdfPhysicalPage": 181,
+        "sotgHeading": "Baktoid Armor Workshop Vulture-class Starfighter",
+        "sotgPrintedPage": 78,
+        "printedTypeLine": "Huge starfighter/ground vehicle (walker)",
+        "coreChallenges": 7,
+        "sotgChallenge": 7,
+        "walkSpeedSquares": 6,
+        "flightSpeedCharacterSquares": 16,
+        "flightSpeedStarshipSquares": 4,
+        "coreTransitionAction": "standard action",
+        "sotgCharacterScaleFightingSpace": "3x3",
+        "sotgStarshipScaleFightingSpace": "1 square"
+      },
+      "identityBoundary": "Core and SotG each print a statblock; preserve TWO independent book-specific source keys. Each statblock is one hybrid starfighter/ground walker identity, never two separate Actors for its flight and walking modes.",
+      "sourceEvidence": "Original Core Rulebook p181/physical PDF p182 and Starships of the Galaxy p78/physical PDF p79 visually inspected with matching source SHA fingerprints. Earlier Core physical p181 is printed page180 and does NOT contain the Vulture statblock.",
+      "knownConflict": "Core frozen census and Phase 2 staging mis-locate the Vulture title at printed p180, physical p181, and normalize its title as Vulture-class. The original printed header is '\"Vulture\" Droid Starfighter' on printed p181, physical p182. Correct via explicit evidence-backed census/provenance amendment, not silent key regeneration.",
+      "provenanceAmendmentRecommended": {
+        "keepSourceEntryKey": "core-vulture-class-droid-starfighter",
+        "correctPrintedTitle": "\"Vulture\" Droid Starfighter",
+        "correctPrintedPage": 181,
+        "correctPhysicalPdfPage": 182,
+        "doNotRewriteFrozenCensusWithoutExplicitReconciliation": true
+      },
+      "sourceFidelityCorrectionApplied": [
+        "SotG original 3x3 character-scale fighting space restored to staged record"
+      ],
+      "unresolvedOperational": [
+        "Phase 4A builder MUST resolve the approved immutable Core page/title amendment before any new SSOT rows are constructed",
+        "dual-mode transition typed consumer in V2",
+        "drone autonomous pilot semantics",
+        "physical mount and arc geometry per publication"
+      ],
+      "requiresRuntimeConsumer": true,
+      "allowExecutableAttacks": false,
+      "sourceFieldQAAccepted": true,
+      "phase3GlobalProvenanceGate": "resolved-by-approved-additive-amendment",
+      "provenanceAmendmentApplied": true,
+      "provenanceAmendmentPath": "data/audits/vehicles/swse-universal-phase3-vulture-provenance-amendment.json"
+    }
+  ],
+  "remainingTargetedCandidates": [],
+  "phase4CutoverAuthorized": false,
+  "strictPhysicalMountCertificationPromoted": 0,
+  "remainingProvenanceBlockers": [],
+  "globalGate": {
+    "sourceFieldPdfQueue": {
+      "reviewed": 48,
+      "total": 48,
+      "status": "closed"
+    },
+    "publicationIdentities": {
+      "total": 429,
+      "preserved": true
+    },
+    "namedTargetedRisksReviewed": 10,
+    "namedTargetedRisksPendingPrimaryPdfReview": 0,
+    "unresolvedCriticalProvenance": [],
+    "resolvedProvenanceAmendments": [
+      "P3R-CORE-VULTURE-PROVENANCE-001"
+    ],
+    "phase3SourceAcceptance": "ACCEPTED_FOR_PHASE4A_SOURCE_PREPARATION",
+    "phase4CanonicalSsotAuthorized": true,
+    "phase4NativePackRegistrationAuthorized": false,
+    "phase4ActorImportAuthorized": false,
+    "phase4CutoverAuthorized": false,
+    "migrationRuntimeAuthorized": false,
+    "mechanicalWeaponMountPromotionAuthorized": false,
+    "reason": "All 48 focused PDF-field source reviews and 10 named targeted risks reconciled, with the only frozen Core provenance mismatch resolved by a read-only, checksum-anchored additive effective source view. Printed ambiguities remain informational and mechanically fail-closed.",
+    "normalizerBlocker": "CP23-C4C numeric Initiative loss and unknown/default conflation remains an independent hard Phase 4 importer block; no V2 playable import or installed stock attacks authorized.",
+    "sourceBuilder": "tools/build-universal-vehicle-phase3-source-preview.mjs"
+  }
+}

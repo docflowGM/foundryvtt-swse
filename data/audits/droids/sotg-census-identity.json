@@ -1,0 +1,42 @@
+{
+  "schema": "swse.droid.sotg.census-parity/0.1",
+  "authority": "Published census identities checked against printed PDF.",
+  "claims": [
+    {
+      "sourceEntryKey": "SOTG-DROID-001",
+      "printedName": "Baktoid Armor Workshop Vulture-class Starfighter",
+      "printedPageStart": 78,
+      "printedPageEnd": 78,
+      "txtLine1Based": 7405,
+      "publishedDegree": null,
+      "size": "Huge",
+      "challengeLevel": 7,
+      "kind": "vehicle-format",
+      "heroEligibility": "n/a"
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-002",
+      "printedName": "Phlac-Arphocc Automata Industries Droid Tri-Fighter",
+      "printedPageStart": 79,
+      "printedPageEnd": 79,
+      "txtLine1Based": 7515,
+      "publishedDegree": null,
+      "size": "Huge",
+      "challengeLevel": 9,
+      "kind": "vehicle-format",
+      "heroEligibility": "n/a"
+    },
+    {
+      "sourceEntryKey": "SOTG-DROID-003",
+      "printedName": "Haor Chall Engineering Scarab-class Starfighter",
+      "printedPageStart": 79,
+      "printedPageEnd": 79,
+      "txtLine1Based": 7566,
+      "publishedDegree": null,
+      "size": "Huge",
+      "challengeLevel": 6,
+      "kind": "vehicle-format",
+      "heroEligibility": "n/a"
+    }
+  ]
+}

@@ -33,6 +33,7 @@ import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/
 import { isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
 import { resolveCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { isVehicleManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 
 /**
  * Roll damage for a SWSE weapon/power.
@@ -180,6 +181,12 @@ export async function rollDamage(actor, weapon, context = {}) {
     ui.notifications.info(notification);
   }
 
+  // P6C-2C: the damage TYPE of a vehicle-managed weapon (the printed "ion" of a published group, Core pp. 159-160) comes from
+  // its vehicle authority through the composition, so the card -- and the packet built from it -- carries the type the
+  // source states, never the Item's own fields.
+  const authorityType = isVehicleManagedWeaponItem(weapon) ? (composition.damageTypes?.[0] ?? null) : null;
+  const packetOptions = authorityType ? { ...rollContext, damageType: authorityType } : rollContext;
+
   if (rollContext.suppressChat !== true) {
     await SWSEChat.postRoll({
       roll,
@@ -195,8 +202,8 @@ export async function rollDamage(actor, weapon, context = {}) {
         workflowContext,
         target: rollContext.target ?? null,
         targetContext: rollContext.targetContext ?? null,
-        damageType: resolveDamagePacketType({ weapon, workflowContext, options: rollContext }),
-        damageTypes: damageTypesFromContext({ weapon, workflowContext, options: rollContext }).expanded,
+        damageType: resolveDamagePacketType({ weapon, workflowContext, options: packetOptions }),
+        damageTypes: damageTypesFromContext({ weapon, workflowContext, options: packetOptions }).expanded,
         damageComponents: rollContext.damageComponents ?? workflowContext?.damage?.damageComponents ?? []
       }
     });

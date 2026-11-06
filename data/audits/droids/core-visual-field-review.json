@@ -1,0 +1,115 @@
+{
+  "schema": "swse.droid.core.selected-pdf-visual/0.1",
+  "sourceBook": "Saga Edition Core Rulebook",
+  "manualVisualReviews": 13,
+  "directFieldComparisons": 263,
+  "sourcePdfHash": "509c4a701a83cebf00ba91574eec88d60d1ea96d4849d22d2c5f1f176bc32fd9",
+  "method": "PDF printed pages visually reviewed; selected source fields compared with searchable text as index.",
+  "scope": "Selected first-page fields only; no complete mechanical certification.",
+  "items": [
+    {
+      "sourceEntryKey": "CORE-DROID-001",
+      "printedName": "2-1B Medical Droid",
+      "printedPage": 197,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/core_pdf_review/printed_p197.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-002",
+      "printedName": "R2 Series Astromech Droid",
+      "printedPage": 198,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/core_pdf_review/printed_p198.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-003",
+      "printedName": "3PO Series Protocol Droid",
+      "printedPage": 198,
+      "verifiedFieldCount": 16,
+      "sourceImage": "work/core_pdf_review/printed_p198.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-004",
+      "printedName": "B1 Series Battle Droid",
+      "printedPage": 199,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/core_pdf_review/printed_p199.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-005",
+      "printedName": "B2 Series Super Battle Droid",
+      "printedPage": 199,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/core_pdf_review/printed_p199.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-006",
+      "printedName": "Droideka Series Destroyer Droid",
+      "printedPage": 200,
+      "verifiedFieldCount": 22,
+      "sourceImage": "work/core_pdf_review/printed_p200.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-007",
+      "printedName": "Dwarf Spider Droid",
+      "printedPage": 200,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/core_pdf_review/printed_p200.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-008",
+      "printedName": "Crab Droid Scout",
+      "printedPage": 201,
+      "verifiedFieldCount": 19,
+      "sourceImage": "work/core_pdf_review/printed_p201.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-009",
+      "printedName": "IG-100 Series MagnaGuard",
+      "printedPage": 201,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/core_pdf_review/printed_p201.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-010",
+      "printedName": "Viper Series Probe Droid",
+      "printedPage": 202,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/core_pdf_review/printed_p202.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-011",
+      "printedName": "ASP Series Labor Droid",
+      "printedPage": 203,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/core_pdf_review/printed_p203.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-012",
+      "printedName": "R2-D2 (Episode VI)",
+      "printedPage": 267,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/core_pdf_review/printed_p267.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "CORE-DROID-013",
+      "printedName": "C-3PO (Episode VI)",
+      "printedPage": 267,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/core_pdf_review/printed_p267.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    }
+  ]
+}

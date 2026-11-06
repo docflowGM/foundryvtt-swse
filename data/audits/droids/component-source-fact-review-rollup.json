@@ -1,0 +1,258 @@
+{
+  "schema": "swse.droids.catalog.missing-add-source-review-rollup/0.1",
+  "date": "2026-11-02",
+  "baseline": {
+    "canonicalIdentitiesCorePlusSGD": 122,
+    "missingAddTotal": 23,
+    "editFamilies": 7,
+    "repoOnlyCandidates": 5,
+    "beyondCoreAndSGDNotYetCensused": true
+  },
+  "snapshotStatus": "SOURCE_REVIEW_ROLLUP_NOT_PRODUCTION_AUTHORIZATION",
+  "packets": [
+    {
+      "sprint": "001",
+      "path": "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+      "sourceFactRecords": 8,
+      "missingAddsCovered": 4
+    },
+    {
+      "sprint": "002",
+      "path": "data/audits/droids/component-source-facts-sprint-002.json",
+      "sourceFactRecords": 8,
+      "missingAddsCovered": 8
+    },
+    {
+      "sprint": "003",
+      "path": "data/audits/droids/component-source-facts-sprint-003.json",
+      "sourceFactRecords": 11,
+      "missingAddsCovered": 11
+    }
+  ],
+  "counts": {
+    "publishedMissingAddsPdfReviewed": 23,
+    "publishedMissingAddsOutstanding": 0,
+    "sourceFactRecordsAcrossSprints": 27,
+    "nonBodyPhysicalAssetTitles": 5,
+    "fullMechanicalCertifications": 0,
+    "productionRegistryAdds": 0,
+    "appParityTests": 0,
+    "runtimeCertifications": 0
+  },
+  "reviewedAdds": [
+    {
+      "backlogId": "SGD-CAT-ADD-001",
+      "canonicalPrintedName": "Diagnostics Package",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-002.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-002",
+      "canonicalPrintedName": "Internal Storage",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-002.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-003",
+      "canonicalPrintedName": "Spring-Loaded Mechanism",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-002.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-004",
+      "canonicalPrintedName": "Locked Access",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-002.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-005",
+      "canonicalPrintedName": "Antitheft Comlink Locator",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-006",
+      "canonicalPrintedName": "Collapsible Construction",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-007",
+      "canonicalPrintedName": "Courier Compartments",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-002.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-008",
+      "canonicalPrintedName": "Droid Oil Bath",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-002.json",
+      "hostClassification": "EXTERNAL_MAINTENANCE_EQUIPMENT_NOT_DROID_BODY",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-009",
+      "canonicalPrintedName": "Earphone Binary-to-Basic Translator",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-002.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE_WITH_EXTERNAL_RECEIVER",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-010",
+      "canonicalPrintedName": "Emergency Oxygen Supply",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-002.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-011",
+      "canonicalPrintedName": "Holographic Game System",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-012",
+      "canonicalPrintedName": "Interference Generator",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-013",
+      "canonicalPrintedName": "Remote Viewer",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "DROID_DETACHABLE_DEVICE_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-014",
+      "canonicalPrintedName": "Rental Restraining Bolt",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "EXTERNAL_DROID_CONTROL_ATTACHMENT",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-015",
+      "canonicalPrintedName": "Repulsorcam",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+      "hostClassification": "DROID_DETACHABLE_DEVICE_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-016",
+      "canonicalPrintedName": "Silence-Bubble Generator",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-017",
+      "canonicalPrintedName": "Space-Beacon Launcher",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-018",
+      "canonicalPrintedName": "Video Screen",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-019",
+      "canonicalPrintedName": "Voice-Print Command Lock",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "DROID_INSTALLED_CANDIDATE",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-020",
+      "canonicalPrintedName": "Droid Battle Station",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "FACILITY_OR_STARSHIP_STATION_NOT_DROID_BODY",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-021",
+      "canonicalPrintedName": "Droid Command Station",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "FACILITY_OR_STARSHIP_STATION_NOT_DROID_BODY",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-022",
+      "canonicalPrintedName": "Droid Recharge Station",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "FACILITY_OR_STARSHIP_STATION_NOT_DROID_BODY",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    },
+    {
+      "backlogId": "SGD-CAT-ADD-023",
+      "canonicalPrintedName": "Droid Socket",
+      "sourceFactPacket": "data/audits/droids/component-source-facts-sprint-003.json",
+      "hostClassification": "VEHICLE_OR_STARSHIP_SOCKET_NOT_DROID_BODY",
+      "hostClassificationStatus": "PROVISIONAL_FROM_PRINTED_TEXT_NOT_MIGRATION_AUTHORITY",
+      "sourceFactReviewStatus": "PDF_REVIEWED",
+      "productionStatus": "NOT_CREATED"
+    }
+  ],
+  "notes": [
+    "The frozen October census backlog intentionally remains unchanged; its historical NOT_YET_SOURCE_REVIEWED fields are not the rolling status",
+    "Droid Oil Bath and four facility/vehicle station types are not proven as droid-body installables",
+    "Rental bolt is a separate control attachment and remote viewer / repulsorcam can detach",
+    "Seven EDIT and five repo-only cases remain source unreviewed by this rollup",
+    "122 Core+SGD identities have not yet been certified as complete across 14 sourcebooks"
+  ]
+}

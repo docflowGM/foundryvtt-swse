@@ -1,0 +1,484 @@
+{
+  "schema": "swse.droids.catalog.sgd-keep-source-facts/0.1",
+  "date": "2026-11-02",
+  "sprint": "KEEP-005",
+  "sourceBook": "Scavenger's Guide to Droids",
+  "sourcePdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "sourceMethod": "Printed pp57-61 rendered and visually checked, including Table 3-2 on pp58-59; OCR only locator.",
+  "scope": "Eight SGD overlay-only existing records, source costs and scope/action/resource facts; not runtime integration",
+  "dependsOn": [
+    "data/audits/droids/component-keep-source-facts-sgd-004.json"
+  ],
+  "summary": {
+    "newRows": 8,
+    "cumulativeFactRows": 82,
+    "keepFactRows": 55,
+    "overlayOnlyRowsInThisPacket": 8,
+    "sourceVariantCount": 1,
+    "priceUnderspecification": 1,
+    "fullMechanicCertificates": 0,
+    "productionChanges": 0,
+    "appParityTests": 0,
+    "foundryRuntimeCertifications": 0
+  },
+  "records": [
+    {
+      "id": "electric-defense-grid",
+      "name": "Electric Defense Grid",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "verified": "visual PDF review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verified": "visual PDF review 2026-11-02"
+        }
+      ],
+      "price": {
+        "formulaCredits": "3000 * costFactor"
+      },
+      "weight": {
+        "formulaKg": "100 * costFactor"
+      },
+      "availability": "Restricted",
+      "host": "armor-or-outer-shell",
+      "mechanics": {
+        "trigger": "Droid takes damage from melee attack",
+        "effect": "Attacker automatically takes 5 energy damage",
+        "exception": "Melee weapons using energy to cause damage (e.g. lightsaber) are immune"
+      },
+      "issues": [
+        "NO_BASE_CATALOG_PRICE",
+        "EXCEPTION_WEAPON_DAMAGE_TYPE",
+        "AUTOMATIC_RETALIATION_UNTESTED"
+      ],
+      "evidenceId": "SGD-KEEP-005-001",
+      "repository": {
+        "rawCatalog": "ABSENT_EXACT_ID",
+        "overlay": "PRESENT",
+        "sourceRawBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "sourceOverlayBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+        "defaultPriceRisk": "ZERO_ON_NO_OVERRIDE_NOT_PROVEN_TRANSACTION"
+      },
+      "certification": {
+        "identityPresent": true,
+        "sourceFactsReviewed": true,
+        "mechanicalComplete": false,
+        "productionMigrated": false,
+        "appTestsPassed": false,
+        "foundryRuntimePassed": false
+      }
+    },
+    {
+      "id": "hidden-holster",
+      "name": "Hidden Holster",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "verified": "visual PDF review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verified": "visual PDF review 2026-11-02"
+        }
+      ],
+      "price": {
+        "formulaCredits": "500 * costFactor"
+      },
+      "weight": {
+        "formulaKg": "2 * costFactor"
+      },
+      "availability": "Licensed",
+      "host": "droid-leg",
+      "mechanics": {
+        "itemSize": "Weapon one size smaller than droid or less",
+        "open": "free action",
+        "drawOrHolster": "swift action",
+        "quickDrawBenefitPrecondition": "BAB at least +1"
+      },
+      "issues": [
+        "NO_BASE_CATALOG_PRICE",
+        "PHYSICAL_LEG_HOST_NOT_VERIFIED",
+        "BAB_GATE_UNTESTED"
+      ],
+      "evidenceId": "SGD-KEEP-005-002",
+      "repository": {
+        "rawCatalog": "ABSENT_EXACT_ID",
+        "overlay": "PRESENT",
+        "sourceRawBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "sourceOverlayBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+        "defaultPriceRisk": "ZERO_ON_NO_OVERRIDE_NOT_PROVEN_TRANSACTION"
+      },
+      "certification": {
+        "identityPresent": true,
+        "sourceFactsReviewed": true,
+        "mechanicalComplete": false,
+        "productionMigrated": false,
+        "appTestsPassed": false,
+        "foundryRuntimePassed": false
+      }
+    },
+    {
+      "id": "high-speed-cutting-torch-and-welder",
+      "name": "High-Speed Cutting Torch and Welding System",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 57,
+          "pdfPage1Based": 58,
+          "verified": "visual PDF review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verified": "visual PDF review 2026-11-02"
+        }
+      ],
+      "price": {
+        "credits": 2500
+      },
+      "weight": {
+        "kg": 500
+      },
+      "availability": "Licensed",
+      "host": "Medium-or-larger-droid",
+      "mechanics": {
+        "weldingTime": "typically half normal",
+        "torchRangeSquares": 1,
+        "torchDamage": "4d10",
+        "continuousObjectContact": "two or more consecutive rounds",
+        "objectDRIgnore": 5,
+        "objectDamageThresholdReduction": 10
+      },
+      "issues": [
+        "NO_BASE_CATALOG_PRICE",
+        "MIN_SIZE_NOT_IMPLEMENTATION_PROVEN",
+        "OBJECT_CONTACT_TRACKING_UNTESTED"
+      ],
+      "evidenceId": "SGD-KEEP-005-003",
+      "repository": {
+        "rawCatalog": "ABSENT_EXACT_ID",
+        "overlay": "PRESENT",
+        "sourceRawBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "sourceOverlayBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+        "defaultPriceRisk": "ZERO_ON_NO_OVERRIDE_NOT_PROVEN_TRANSACTION"
+      },
+      "certification": {
+        "identityPresent": true,
+        "sourceFactsReviewed": true,
+        "mechanicalComplete": false,
+        "productionMigrated": false,
+        "appTestsPassed": false,
+        "foundryRuntimePassed": false
+      }
+    },
+    {
+      "id": "holographic-image-disguiser",
+      "name": "Holographic Image Disguiser",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verified": "visual PDF review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verified": "visual PDF review 2026-11-02"
+        }
+      ],
+      "price": {
+        "baseFormulaCredits": "20000 * costFactor",
+        "advancedMultiplier": 2
+      },
+      "weight": {
+        "baseFormulaKg": "20 * costFactor",
+        "advancedWeight": "not separately stated"
+      },
+      "availability": "Restricted",
+      "host": "body-wide holographic projectors and processor",
+      "mechanics": {
+        "basic": "+10 equipment to Deception using Deceptive Appearance",
+        "advanced": "Full-round action to disguise appearance at no penalty, including reactive ambient conditions"
+      },
+      "issues": [
+        "NO_BASE_CATALOG_PRICE",
+        "ADVANCED_VARIANT_NOT_MODELED",
+        "ACTION_BENEFIT_UNTESTED"
+      ],
+      "evidenceId": "SGD-KEEP-005-004",
+      "repository": {
+        "rawCatalog": "ABSENT_EXACT_ID",
+        "overlay": "PRESENT",
+        "sourceRawBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "sourceOverlayBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+        "defaultPriceRisk": "ZERO_ON_NO_OVERRIDE_NOT_PROVEN_TRANSACTION"
+      },
+      "certification": {
+        "identityPresent": true,
+        "sourceFactsReviewed": true,
+        "mechanicalComplete": false,
+        "productionMigrated": false,
+        "appTestsPassed": false,
+        "foundryRuntimePassed": false
+      }
+    },
+    {
+      "id": "id-dodge",
+      "name": "ID Dodge",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verified": "visual PDF review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verified": "visual PDF review 2026-11-02"
+        }
+      ],
+      "price": {
+        "credits": 5000
+      },
+      "weight": {
+        "kg": 1
+      },
+      "availability": "Illegal",
+      "host": "biometric-security-emulation-device",
+      "mechanics": {
+        "swap": "Deception instead of Use Computer",
+        "scope": "Biometric security devices requiring organic identification"
+      },
+      "issues": [
+        "NO_BASE_CATALOG_PRICE",
+        "SKILL_SUBSTITUTION_SCOPE_UNTESTED"
+      ],
+      "evidenceId": "SGD-KEEP-005-005",
+      "repository": {
+        "rawCatalog": "ABSENT_EXACT_ID",
+        "overlay": "PRESENT",
+        "sourceRawBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "sourceOverlayBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+        "defaultPriceRisk": "ZERO_ON_NO_OVERRIDE_NOT_PROVEN_TRANSACTION"
+      },
+      "certification": {
+        "identityPresent": true,
+        "sourceFactsReviewed": true,
+        "mechanicalComplete": false,
+        "productionMigrated": false,
+        "appTestsPassed": false,
+        "foundryRuntimePassed": false
+      }
+    },
+    {
+      "id": "improved-coordination-circuitry",
+      "name": "Improved Coordination Circuitry",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verified": "visual PDF review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verified": "visual PDF review 2026-11-02"
+        }
+      ],
+      "price": {
+        "credits": 1000
+      },
+      "weight": {
+        "kg": 1
+      },
+      "availability": "-",
+      "host": "paired-droid-coordination",
+      "mechanics": {
+        "scope": "Aid Another for a specific trained skill; aiding another droid also having matching circuitry",
+        "aidAnotherTotalBonus": 4,
+        "notAdditionalFour": true,
+        "requires": "Both droids matching circuitry and acting droid trained in chosen skill"
+      },
+      "issues": [
+        "NO_BASE_CATALOG_PRICE",
+        "MATCHED_KEYED_SKILL_NOT_VALIDATED",
+        "AID_BONUS_REPLACEMENT_UNTESTED"
+      ],
+      "evidenceId": "SGD-KEEP-005-006",
+      "repository": {
+        "rawCatalog": "ABSENT_EXACT_ID",
+        "overlay": "PRESENT",
+        "sourceRawBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "sourceOverlayBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+        "defaultPriceRisk": "ZERO_ON_NO_OVERRIDE_NOT_PROVEN_TRANSACTION"
+      },
+      "certification": {
+        "identityPresent": true,
+        "sourceFactsReviewed": true,
+        "mechanicalComplete": false,
+        "productionMigrated": false,
+        "appTestsPassed": false,
+        "foundryRuntimePassed": false
+      }
+    },
+    {
+      "id": "internal-defenses",
+      "name": "Internal Defenses",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verified": "visual PDF review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verified": "visual PDF review 2026-11-02"
+        }
+      ],
+      "price": {
+        "formulaCredits": "10 * costFactor"
+      },
+      "weight": {
+        "formulaKg": "1 * costFactor"
+      },
+      "availability": "Licensed",
+      "host": "maintenance-and-access-panels",
+      "mechanics": {
+        "trigger": "Unauthorized panel opening",
+        "automaticAttack": "1d20+5 against intruder Fortitude Defense",
+        "damage": "1d8 + half droid heroic level",
+        "maximumAttacks": 10,
+        "deactivation": {
+          "skill": "Mechanics",
+          "dc": 25,
+          "timeHours": 1
+        }
+      },
+      "issues": [
+        "NO_BASE_CATALOG_PRICE",
+        "REACTIVE_ATTACK_RESOURCE_COUNT",
+        "UNAUTHORIZED_ACCESS_PREDICATE"
+      ],
+      "evidenceId": "SGD-KEEP-005-007",
+      "repository": {
+        "rawCatalog": "ABSENT_EXACT_ID",
+        "overlay": "PRESENT",
+        "sourceRawBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "sourceOverlayBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+        "defaultPriceRisk": "ZERO_ON_NO_OVERRIDE_NOT_PROVEN_TRANSACTION"
+      },
+      "certification": {
+        "identityPresent": true,
+        "sourceFactsReviewed": true,
+        "mechanicalComplete": false,
+        "productionMigrated": false,
+        "appTestsPassed": false,
+        "foundryRuntimePassed": false
+      }
+    },
+    {
+      "id": "multispectrum-searchlight",
+      "name": "Multispectrum Searchlight",
+      "source": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verified": "visual PDF review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verified": "visual PDF review 2026-11-02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verified": "visual PDF review 2026-11-02"
+        }
+      ],
+      "price": {
+        "credits": 100
+      },
+      "weight": {
+        "kg": 2
+      },
+      "availability": "-",
+      "host": "handheld-or-installed",
+      "mechanics": {
+        "minimumDroidSize": "Tiny",
+        "lightRangeKm": 6,
+        "lightTypes": [
+          "visible",
+          "infrared",
+          "ultraviolet"
+        ],
+        "perceptionBonus": 2,
+        "perceptionScope": "Search and Notice targets lit where the droid can see the light",
+        "perceptionBonusStacksWith": [
+          "helmet package",
+          "improved sensor package"
+        ],
+        "blind": {
+          "action": "standard",
+          "area": "6-square cone",
+          "stealthPenaltyAllInCone": -10,
+          "attack": "ranged vs each target Fortitude",
+          "successPenalty": -5,
+          "failurePenalty": -2,
+          "penaltyTarget": "attack rolls, Perception, Pilot and other skill checks",
+          "duration": "through end of droid next turn"
+        }
+      },
+      "issues": [
+        "NO_BASE_CATALOG_PRICE",
+        "TWO_ATTACK_OUTCOMES_UNTESTED",
+        "LIGHT_CONE_AND_VISIBILITY_SCOPE"
+      ],
+      "evidenceId": "SGD-KEEP-005-008",
+      "repository": {
+        "rawCatalog": "ABSENT_EXACT_ID",
+        "overlay": "PRESENT",
+        "sourceRawBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "sourceOverlayBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015",
+        "defaultPriceRisk": "ZERO_ON_NO_OVERRIDE_NOT_PROVEN_TRANSACTION"
+      },
+      "certification": {
+        "identityPresent": true,
+        "sourceFactsReviewed": true,
+        "mechanicalComplete": false,
+        "productionMigrated": false,
+        "appTestsPassed": false,
+        "foundryRuntimePassed": false
+      }
+    }
+  ],
+  "guardrails": [
+    "Overlay existence does not make a priced component canonical executable",
+    "All eight have no raw source part entry and default quote can fall back to zero",
+    "Price precedence and selected host must be unified in V2, with installedSystems as installed ledger",
+    "No production change, no Foundry certification"
+  ]
+}

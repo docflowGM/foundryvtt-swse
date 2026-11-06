@@ -1,0 +1,46 @@
+{
+  "schema": "swse.droids.mechanical-certification-ledger-delta/v1",
+  "batch": "MECH-003",
+  "baseLedger": "data/audits/droids/component-mechanical-certification-ledger.json",
+  "baseCommit": "0f0cfb0e944a4bc97539baa9160bd764511fceb2",
+  "expectedPreviousCounts": {
+    "certified": 44,
+    "holds": 6
+  },
+  "nextCounts": {
+    "certified": 61,
+    "holds": 14,
+    "notEvaluated": 47,
+    "remainingNotCertified": 61
+  },
+  "newCertifiedIds": [
+    "droid-extra-legs",
+    "droid-telescopic-appendage",
+    "droid-stabilized-mount",
+    "droid-spring-loaded-mechanism",
+    "droid-locked-access",
+    "droid-translator-unit",
+    "droid-gyroscopic-stabilizers",
+    "droid-underwater-drive",
+    "droid-magnetic-hands",
+    "droid-quick-release-coupling",
+    "droid-droid-remote-control",
+    "droid-hidden-core",
+    "droid-specialized-subprocessor",
+    "droid-tactician-battle-computer",
+    "droid-laminanium-plating",
+    "droid-communications-countermeasure-system",
+    "droid-communications-jammer"
+  ],
+  "newHeldIds": [
+    "droid-climbing-claws",
+    "droid-jump-servos",
+    "droid-magnetic-feet",
+    "droid-burrower-drive",
+    "droid-projectile-hand",
+    "droid-remote-limb-control",
+    "droid-rocket-arm",
+    "droid-personality-downloader"
+  ],
+  "note": "Apply atomically to audit-branch ledger only after merging the batch packet; no prod changes."
+}

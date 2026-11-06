@@ -1,0 +1,51 @@
+{
+  "schema": "swse.vehicle.phase2c.cp3.approved-decisions.v1",
+  "approvalSource": "USER_EXPLICIT_APPROVAL_IN_PROJECT_CONVERSATION",
+  "approvedOn": "2026-10-17",
+  "priorProposalCommit": "5c008e36455a34173f50518e4614ff4e9a724f7e",
+  "priorCandidateEvidenceCommit": "eb49083a2947fb49d969609098a50b296930b00f",
+  "approvalScope": "ARCHITECTURE_AND_AUDIT_CONTRACTS_ONLY",
+  "sourceProvenanceImmutable": true,
+  "productionMutationAuthorizedByThisCheckpoint": false,
+  "decisions": [
+    {
+      "id": "P2C-D01",
+      "decision": "APPROVED",
+      "implementation": "SUPPLEMENTAL_318_CENSUS_OVERLAY",
+      "requirements": [
+        "Exactly two verified independent published statblocks",
+        "Original 316-source-entry Phase1 baseline untouched",
+        "One Hornet statblock with alternate configuration, not two",
+        "Stable book-scoped sourceEntryKeys; no name-based merge"
+      ],
+      "auditArtifact": "data/audits/vehicles/swse-phase2c-cp3-318-census-overlay.json"
+    },
+    {
+      "id": "P2C-D02",
+      "decision": "APPROVED",
+      "implementation": "SOURCE_COMPLETE_VS_OPERATIONAL_ELIGIBILITY_GATE",
+      "requirements": [
+        "Printed attack groups never counted automatically as physical mounts",
+        "Missing firing arc blocks automatic arc-dependent eligibility",
+        "GM may override only on explicitly-scoped game instance, and consumer must persist audit receipt",
+        "Ambiguous crew or missing target still blocks",
+        "GM override cannot produce source certification"
+      ],
+      "auditArtifact": "data/audits/vehicles/swse-phase2c-cp3-authority-contract.json"
+    },
+    {
+      "id": "P2C-D03",
+      "decision": "APPROVED",
+      "implementation": "PUBLISHED_CONFLICT_PRESERVATION_AND_INSTANCE_ADJUDICATION",
+      "requirements": [
+        "Preserve alternatives with printed page/field source provenance",
+        "No canonical numeric choice without published errata or separately approved adjudication",
+        "GM instance choice must be explicitly recorded and never modify source claims",
+        "No fallback to main attack line or reconstructed math"
+      ],
+      "auditArtifact": "data/audits/vehicles/swse-phase2c-cp3-authority-contract.json"
+    }
+  ],
+  "frozenSchema": false,
+  "productionImplementationStatus": "AWAITING_CONSUMER_PARITY_AND_TESTED_HYDRATION_GATE"
+}

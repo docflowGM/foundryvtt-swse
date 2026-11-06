@@ -1,0 +1,136 @@
+{
+  "schema": "swse.droids.clone.vehicle-mechanical-deepening/0.1",
+  "date": "2026-11-02",
+  "sourceBook": "Clone Wars Campaign Guide",
+  "checkpoint": "034–040",
+  "scope": "Vehicle/starship primary source mechanical review; no droid actor conversions.",
+  "records": [
+    {
+      "id": "CLONE-DROID-034",
+      "page": 198,
+      "printedName": "Ground Armored Tank",
+      "primaryAuthority": "ground-vehicle",
+      "challengeLevel": 10,
+      "hp": 175,
+      "DR": 10,
+      "threshold": 33,
+      "sourceWeapons": 2,
+      "payload": "missiles",
+      "sourceClaims": 3,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-035",
+      "page": 199,
+      "printedName": "IG-227 Hailfire-class Droid Tank",
+      "primaryAuthority": "ground-vehicle",
+      "challengeLevel": 12,
+      "hp": 60,
+      "DR": 10,
+      "threshold": 29,
+      "sourceWeapons": 2,
+      "payload": "hailfire missiles",
+      "sourceClaims": 3,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-036",
+      "page": 200,
+      "printedName": "Manta Droid Subfighter",
+      "primaryAuthority": "water-vehicle",
+      "challengeLevel": 9,
+      "hp": 75,
+      "DR": 10,
+      "threshold": 27,
+      "sourceWeapons": 2,
+      "payload": "torpedoes",
+      "sourceClaims": 3,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-037",
+      "page": 201,
+      "printedName": "OG-9 Homing Spider Droid",
+      "primaryAuthority": "ground-vehicle",
+      "challengeLevel": 7,
+      "hp": 70,
+      "DR": 10,
+      "threshold": 27,
+      "sourceWeapons": 2,
+      "payload": null,
+      "sourceClaims": 3,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-038",
+      "page": 201,
+      "printedName": "Persuader-class Droid Enforcer",
+      "primaryAuthority": "ground-vehicle",
+      "challengeLevel": 14,
+      "hp": 120,
+      "DR": 15,
+      "threshold": 34,
+      "sourceWeapons": 3,
+      "payload": "thermal detonators (plus 12 concussion missiles, 4 homing missiles, 2 dumbfire torpedoes)",
+      "sourceClaims": 3,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-039",
+      "page": 202,
+      "printedName": "Tri-Droid",
+      "primaryAuthority": "ground-vehicle",
+      "challengeLevel": 9,
+      "hp": 160,
+      "DR": 15,
+      "threshold": 32,
+      "sourceWeapons": 1,
+      "payload": "heavy ordnance shells",
+      "sourceClaims": 3,
+      "mechanicalStatus": "partial"
+    },
+    {
+      "id": "CLONE-DROID-040",
+      "page": 208,
+      "printedName": "Hyena-class Bomber",
+      "primaryAuthority": "starfighter",
+      "challengeLevel": 7,
+      "hp": 70,
+      "DR": 5,
+      "threshold": 32,
+      "sourceWeapons": 3,
+      "payload": "proton torpedoes, plus 6 concussion missiles",
+      "sourceClaims": 3,
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "counts": {
+    "vehicles": 7,
+    "groundVehicles": 5,
+    "waterVehicles": 1,
+    "starfighters": 1,
+    "sourceWeaponGroups": 15,
+    "sourceMechanicalConstraints": 21,
+    "corrections": 2,
+    "totalSecondPassReviewed": 40,
+    "totalPublicationIdentities": 40,
+    "strictCertified": 0
+  },
+  "corrections": [
+    {
+      "id": "CLONE-DROID-019",
+      "page": 189,
+      "description": "Replaced incorrectly interleaved A-DSD systems tokens with actual A-Series printed systems."
+    },
+    {
+      "id": "CLONE-DROID-037",
+      "page": 201,
+      "description": "OG-9 leg-damage rule citation moved from p200 to printed p201."
+    }
+  ],
+  "exclusions": [
+    "All standard actor fields, heroic starting chassis, feat/languages and species modifications are disallowed by vehicle primary authority.",
+    "Core vehicle/Starships of the Galaxy cross-references remain canonical-dependency pending.",
+    "No runtime engine integration, no production mutations."
+  ]
+}

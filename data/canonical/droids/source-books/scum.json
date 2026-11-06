@@ -1,0 +1,478 @@
+{
+  "schema": "swse.droid.source-book-hydration-ledger/0.1-partial",
+  "bookId": "SCUM",
+  "book": "Scum and Villainy",
+  "draftSourceEntrySchema": "swse.droid.universal-source/0.1-draft",
+  "sourceBookPdf": "SAGA EDITION - Scum and Villainy.pdf",
+  "scope": "Selected PDF fields and source-only constraints; not import-ready.",
+  "expectedPublicationClaims": 5,
+  "sourceEntries": [
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SCUM-DROID-001",
+        "printedName": "Industrial Automaton K-Series Spaceport Control Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "bookId": "SCUM",
+        "printedPageStart": 96,
+        "printedPageEnd": 96,
+        "pdfPageStart1Based": 97,
+        "textLineAnchor1Based": 6551,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Comlink and datapad are possessions, not automatically installed chassis systems."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "SCUM-DROID-001-BOUNDARY-1",
+            "statement": "Comlink and datapad are possessions, not automatically installed chassis systems.",
+            "scope": "SCUM-DROID-001",
+            "source": {
+              "book": "Scum and Villainy",
+              "page": 96,
+              "pdfPage1Based": 97,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SCUM-DROID-001"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "SCUM-DROID-001:pdf-p96",
+          "SCUM-DROID-001:txt-line-6551"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SCUM-DROID-002",
+        "printedName": "Industrial Automaton RX-Series Pilot Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "bookId": "SCUM",
+        "printedPageStart": 96,
+        "printedPageEnd": 96,
+        "pdfPageStart1Based": 97,
+        "textLineAnchor1Based": 6584,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 2,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": "allowed"
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Shared RX-Series model name with SGD is not certified mechanical lineage.",
+          "Droid pilot remains droid actor, not the vehicle it pilots."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "SCUM-DROID-002-BOUNDARY-1",
+            "statement": "Shared RX-Series model name with SGD is not certified mechanical lineage.",
+            "scope": "SCUM-DROID-002",
+            "source": {
+              "book": "Scum and Villainy",
+              "page": 96,
+              "pdfPage1Based": 97,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SCUM-DROID-002"
+            },
+            "executionStatus": "source-only"
+          },
+          {
+            "ruleId": "SCUM-DROID-002-BOUNDARY-2",
+            "statement": "Droid pilot remains droid actor, not the vehicle it pilots.",
+            "scope": "SCUM-DROID-002",
+            "source": {
+              "book": "Scum and Villainy",
+              "page": 96,
+              "pdfPage1Based": 97,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SCUM-DROID-002"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "SCUM-DROID-002:pdf-p96",
+          "SCUM-DROID-002:txt-line-6584"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SCUM-DROID-003",
+        "printedName": "Roche 11-17 Series Mining Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "bookId": "SCUM",
+        "printedPageStart": 156,
+        "printedPageEnd": 156,
+        "pdfPageStart1Based": 157,
+        "textLineAnchor1Based": 11406,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 5,
+        "size": "Small",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 1
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Mining encounter p216 repeats model with hostile programming; no second factory identity."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "SCUM-DROID-003-BOUNDARY-1",
+            "statement": "Mining encounter p216 repeats model with hostile programming; no second factory identity.",
+            "scope": "SCUM-DROID-003",
+            "source": {
+              "book": "Scum and Villainy",
+              "page": 156,
+              "pdfPage1Based": 157,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SCUM-DROID-003"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "SCUM-DROID-003:pdf-p156",
+          "SCUM-DROID-003:txt-line-11406"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SCUM-DROID-004",
+        "printedName": "Roche 8D8 Smelting Operator Droid",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "bookId": "SCUM",
+        "printedPageStart": 157,
+        "printedPageEnd": 157,
+        "pdfPageStart1Based": 158,
+        "textLineAnchor1Based": 11470,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 5,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Explicit +20 equipment Fortitude bonus vs extreme heat/fire is model-specific; do not equate this with SGD 8D."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "SCUM-DROID-004-BOUNDARY-1",
+            "statement": "Explicit +20 equipment Fortitude bonus vs extreme heat/fire is model-specific; do not equate this with SGD 8D.",
+            "scope": "SCUM-DROID-004",
+            "source": {
+              "book": "Scum and Villainy",
+              "page": 157,
+              "pdfPage1Based": 158,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SCUM-DROID-004"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "SCUM-DROID-004:pdf-p157",
+          "SCUM-DROID-004:txt-line-11470"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "swse.droid.universal-source/0.1-draft",
+      "recordType": "droid-publication-source-entry",
+      "identity": {
+        "sourceEntryKey": "SCUM-DROID-005",
+        "printedName": "Roche J9 Worker Drone",
+        "namedIndividual": false
+      },
+      "publication": {
+        "book": "Scum and Villainy",
+        "bookId": "SCUM",
+        "printedPageStart": 157,
+        "printedPageEnd": 157,
+        "pdfPageStart1Based": 158,
+        "textLineAnchor1Based": 11491,
+        "publicationKind": "model"
+      },
+      "classification": {
+        "publishedDegree": 3,
+        "size": "Medium",
+        "ruleEntityNature": "standard-droid",
+        "statblockFormat": "droid-actor",
+        "sourceStatblockFormat": "droid-actor",
+        "primaryActorAuthority": "droid"
+      },
+      "challenge": {
+        "challengeLevel": 0
+      },
+      "geometry": {},
+      "abilities": {
+        "con": null
+      },
+      "progression": {},
+      "defenses": {},
+      "durability": {},
+      "movement": {},
+      "anatomy": {},
+      "processor": {},
+      "programming": {},
+      "combat": {},
+      "capacity": {},
+      "systems": {},
+      "equipment": {},
+      "modifications": {},
+      "pcConstruction": {
+        "heroEligibility": null
+      },
+      "vehicleLink": {},
+      "economics": {},
+      "text": {
+        "sourceWarnings": [
+          "Selected PDF fields only; full mechanical certification outstanding.",
+          "Statblock does not enumerate manipulators; absence of statement is not zero manipulators."
+        ]
+      },
+      "exceptions": {
+        "notes": "No mechanic execution. Feats/talents, inventory instances, legal attacks, full narrative rules and engine runtime remain uncertified."
+      },
+      "fieldStates": {
+        "/abilities/con": "explicitly-none",
+        "/pcConstruction/heroEligibility": "not-stated"
+      },
+      "rules": {
+        "conditionalMechanics": [
+          {
+            "ruleId": "SCUM-DROID-005-BOUNDARY-1",
+            "statement": "Statblock does not enumerate manipulators; absence of statement is not zero manipulators.",
+            "scope": "SCUM-DROID-005",
+            "source": {
+              "book": "Scum and Villainy",
+              "page": 157,
+              "pdfPage1Based": 158,
+              "verifiedBy": "pdf-visual",
+              "sourceEntryKey": "SCUM-DROID-005"
+            },
+            "executionStatus": "source-only"
+          }
+        ],
+        "mechanicalExecutionStatus": "source-only"
+      },
+      "certification": {
+        "identityStatus": "pdf-reviewed",
+        "mechanicalStatus": "partial",
+        "runtimeStatus": "not-tested",
+        "reviewNotes": "Selected first-page fields only; independently certified mechanical effects: zero.",
+        "reviewerEvidenceRefs": [
+          "SCUM-DROID-005:pdf-p157",
+          "SCUM-DROID-005:txt-line-11491"
+        ]
+      }
+    }
+  ]
+}

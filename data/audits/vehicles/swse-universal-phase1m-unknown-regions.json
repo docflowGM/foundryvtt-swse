@@ -1,0 +1,842 @@
+{
+  "schema": "swse.vehicle.universal.phase1m.unknown-regions.v1",
+  "status": "PHASE1_M_UNKNOWN_REGIONS_ENUMERATION_AND_PROVENANCE_COMPLETE",
+  "sourceBook": "Unknown Regions",
+  "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+  "sourceFiles": {
+    "pdf": "SW_Saga_The_Unknown_Regions.pdf",
+    "text": "Unknown Regions_djvu.txt"
+  },
+  "counts": {
+    "inheritedSpacecraftPublicationClaims": 12,
+    "approvedSupplementalSpacecraftPublicationClaimsAlreadyIn318Baseline": 1,
+    "newOtherVehiclePublicationClaims": 13,
+    "allBookVehiclePublicationClaims": 26,
+    "inheritedClassifications": {
+      "space-transport": 6,
+      "starfighter": 3,
+      "capital-ship": 3
+    },
+    "newVehicleClassifications": {
+      "wheeled-vehicle": 3,
+      "airspeeder": 3,
+      "tracked-vehicle": 4,
+      "ground-speeder": 2,
+      "speeder-bike": 1
+    },
+    "cumulativeKnownUniversalPublicationClaims": 428
+  },
+  "process": {
+    "entirePdfPageCount": 226,
+    "discoveryMethod": "Searched all 923,131 source text characters for 23,661-line statblock header and vehicle type taxonomy, across expedition vehicles, spaceships, creatures, settlements and adventure-only blocks. Rendered and visually swept the full 226-page primary PDF using 15 sixteen-page contact sheets. Original PDF close reads establish distinct blocks and section splits on pp48–59, late Wind Skiff p189 and Eeook Protector VI p214. Compared all 12 Phase2B ship records and the approved Phase2C Deep-X amendment without double counting.",
+    "primaryPdfPagesConfirmed": [
+      48,
+      49,
+      50,
+      51,
+      58,
+      189,
+      214
+    ],
+    "printedToPdfMapping": "Zero-based PDF physical index matches printed page number; one-based physical page ordinal equals printed+1.",
+    "sectionCoverage": [
+      "Exploration ground and atmospheric vehicles pp48-51",
+      "Exploration space vessels pp51-59",
+      "Killik and other culture entries through p154",
+      "Volik Wind Skiff location p189",
+      "Deep Space Encounters mini-adventures pp192-223",
+      "Eeook speeder in 244Core adventure p214"
+    ],
+    "sourceDocumentTextSemantics": "Original printed PDF visual evidence controls spelling and CL; TXT source is index/discovery only. OCR renders Gallis-Tech Wheel Bike CL inconsistently but PDF shows CL 1.",
+    "mechanicalTranscriptionNotAuthorizedThisPhase": true
+  },
+  "identityDecisions": [
+    {
+      "subject": "Gallis-Tech 48 Roller Wheel Bike",
+      "printedPage": 48,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Tangan Industries Aerosled Mark III",
+      "printedPage": 48,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "All-Terrain Roller",
+      "printedPage": 48,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Compact Assault Vehicle/Wheeled PX-10",
+      "printedPage": 49,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Groundcar",
+      "printedPage": 49,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Land Crawler",
+      "printedPage": 49,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Jaffryes Universal Automotive ARK-II Series Landmaster",
+      "printedPage": 50,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Hyrotii Corporation Mobile Recon/Research Vehicle",
+      "printedPage": 50,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Ikas-Adno 22-B Nightfalcon Speeder Bike",
+      "printedPage": 50,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "SRV-1 Scout and Retrieval Vehicle",
+      "printedPage": 51,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Landing Sphere",
+      "printedPage": 58,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Wind Skiff",
+      "printedPage": 189,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Eeook Protector VI Patrol Speeder",
+      "printedPage": 214,
+      "status": "INCLUDE_INDEPENDENT_PUBLICATION_VEHICLE",
+      "reason": "Complete independent vehicle-type CL statblock visually present in original source; excluded from 316 ship-only closure."
+    },
+    {
+      "subject": "Uulshos Manufacturing Deep-X Explorer",
+      "printedPage": 51,
+      "status": "PRESERVE_APPROVED_318_BASELINE_SHIP_AMENDMENT",
+      "reason": "Previously published source-reviewed supplemental spacecraft claim in swse-phase2c-cp3-318-census-overlay.json; present in corrected 318 baseline, not 316 canonical pack. Do not count again as 14th new vehicle."
+    },
+    {
+      "subject": "Landing Sphere",
+      "printedPage": 58,
+      "status": "INCLUDE_AIRSPEEDER_WITH_STARSHIP_MOVEMENT",
+      "reason": "Printed Huge air vehicle (airspeeder) with both character-scale and starship-scale fly entries, but no duplicate spacecraft claim."
+    },
+    {
+      "subject": "Jaffryes Universal Automotive ARK-II Series Landmaster",
+      "printedPage": 50,
+      "status": "ONE_MULTIDOMAIN_VEHICLE",
+      "reason": "Printed tracked ground vehicle, narrative buoyancy and amphibious role permits aquatic movement; maintain one identity with multiple mobility tags, not separate watercraft."
+    },
+    {
+      "subject": "Compact Assault Vehicle/Wheeled PX-10",
+      "printedPage": 49,
+      "status": "PRINTED_TYPE_SUPERSEDES_NAME_DESCRIPTOR",
+      "reason": "Heading contains 'Wheeled', but independently printed block explicitly calls it 'Large ground vehicle (tracked)'; canonicalize type from printed type, no unprinted wheeled alternate identity."
+    },
+    {
+      "subject": "Wind Skiff wheeled variant",
+      "printedPage": 189,
+      "status": "EXCLUDE_SHARED_STATBLOCK_WHEELED_OPTION",
+      "reason": "Publisher footnote says modified versions using wheels are mechanically identical except wheeled category/ground movement; not a distinct heading+block."
+    },
+    {
+      "subject": "Unnamed landing sphere associated with other starships",
+      "printedPage": 58,
+      "status": "DO_NOT_MERGE_CARRIED_CRAFT",
+      "reason": "Landing Sphere has independent full ground/air vehicle block; published colony ship has its own separate inherited ship block."
+    },
+    {
+      "subject": "Generic droids, character statblocks, ship cargo, plot vehicles and encounter hazards",
+      "status": "EXCLUDE_NO_INDEPENDENT_VEHICLE_STATBLOCK",
+      "reason": "Throughout encounters/creature catalog and adventures, absent complete vehicle type blocks do not become vehicles."
+    }
+  ],
+  "existingSpacecraft": [
+    {
+      "sourceEntryKey": "ur-hoersch-kessel-vaya-class-scout-ship",
+      "printedName": "Hoersch-Kessel Vaya-class Scout Ship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 59,
+      "pdfPhysicalPage": 60,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-jumpmaster-5000-scout-ship",
+      "printedName": "JumpMaster 5000 Scout Ship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 52,
+      "pdfPhysicalPage": 53,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-killik-dartship",
+      "printedName": "Killik Dartship",
+      "printedTypeLine": "Huge starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Huge starfighter"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 133,
+      "pdfPhysicalPage": 134,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-kuat-drive-yards-star-seeder-class-colony-ship",
+      "printedName": "Kuat Drive Yards Star Seeder-class Colony Ship",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 58,
+      "pdfPhysicalPage": 59,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-loronar-corporation-skyblind-recon-ship",
+      "printedName": "Loronar Corporation SkyBlind Recon Ship",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 57,
+      "pdfPhysicalPage": 58,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-mesens-corporation-sct-scout-craft",
+      "printedName": "Mesens Corporation SCT Scout Craft",
+      "printedTypeLine": "Colossal (frigate) space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) space transport"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 56,
+      "pdfPhysicalPage": 57,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-mrx-br-pacifier-combat-contact-vessel",
+      "printedName": "MRX-BR Pacifier Combat/Contact Vessel",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 55,
+      "pdfPhysicalPage": 56,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-royal-fortune-light-clipper",
+      "printedName": "Royal Fortune Light Clipper",
+      "printedTypeLine": "Colossal (frigate) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (frigate) capital ship"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 151,
+      "pdfPhysicalPage": 152,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-sienar-fleet-systems-mu-2-model-2-shuttle",
+      "printedName": "Sienar Fleet Systems Mu-2 Model 2 Shuttle",
+      "printedTypeLine": "Colossal space transport",
+      "classification": {
+        "primaryCategory": "space-transport",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal space transport"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 55,
+      "pdfPhysicalPage": 56,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-sorosuub-drexl-class-planetary-defender-starfighter",
+      "printedName": "SoroSuub Drexl-class \"Planetary Defender\" Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 52,
+      "pdfPhysicalPage": 53,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-sorosuub-preybird-class-starfighter",
+      "printedName": "SoroSuub Preybird-class Starfighter",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 56,
+      "pdfPhysicalPage": 57,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    },
+    {
+      "sourceEntryKey": "ur-surfeik-cruiser",
+      "printedName": "Surfeik Cruiser",
+      "printedTypeLine": "Colossal (cruiser) capital ship",
+      "classification": {
+        "primaryCategory": "capital-ship",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Colossal (cruiser) capital ship"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 154,
+      "pdfPhysicalPage": 155,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "historicSourceReview": "data/audits/vehicles/swse-phase2b-unknown-regions-book-source-closure-ledger.json",
+        "canonicalSource": "data/canonical/vehicles/ships.json"
+      },
+      "reviewStatus": "INHERITED_SOURCE_CLOSE_READ_PDF_VERIFIED",
+      "existingCanonicalShip": true,
+      "hydrationStatus": "EXISTING_SHIP_CANONICAL_RECORD"
+    }
+  ],
+  "approvedSupplementalSpacecraft": [
+    {
+      "sourceEntryKey": "ur-uulshos-manufacturing-deep-x-explorer",
+      "printedName": "Uulshos Manufacturing Deep-X Explorer",
+      "printedTypeLine": "Gargantuan starfighter",
+      "classification": {
+        "primaryCategory": "starfighter",
+        "mobilityDomains": [
+          "space"
+        ],
+        "printedCategory": "Gargantuan starfighter"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 51,
+      "pdfPhysicalPage": 52,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "approvedSupplementalSource": "data/audits/vehicles/swse-phase2c-cp3-318-census-overlay.json",
+        "sourceReviewState": "SOURCE_COMPLETE_PRINTED_FACTS"
+      },
+      "reviewStatus": "APPROVED_PHASE2C_SUPPLEMENTAL_PDF_VERIFIED",
+      "existingCanonicalShip": false,
+      "inApproved318SpacecraftBaseline": true,
+      "hydrationStatus": "APPROVED_SUPPLEMENTAL_NOT_IN_316_PACK"
+    }
+  ],
+  "newVehicleEntries": [
+    {
+      "sourceEntryKey": "ur-gallis-tech-48-roller-wheel-bike",
+      "printedName": "Gallis-Tech 48 Roller Wheel Bike",
+      "printedTypeLine": "Large ground vehicle (wheeled)",
+      "classification": {
+        "primaryCategory": "wheeled-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (wheeled)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 48,
+      "pdfPhysicalPage": 49,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 49,
+        "printedChallengeLevel": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-tangan-industries-aerosled-mark-iii",
+      "printedName": "Tangan Industries Aerosled Mark III",
+      "printedTypeLine": "Large air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large air vehicle (airspeeder)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 48,
+      "pdfPhysicalPage": 49,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 49,
+        "printedChallengeLevel": 5
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-all-terrain-roller",
+      "printedName": "All-Terrain Roller",
+      "printedTypeLine": "Medium ground vehicle (wheeled)",
+      "classification": {
+        "primaryCategory": "wheeled-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Medium ground vehicle (wheeled)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 48,
+      "pdfPhysicalPage": 49,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 49,
+        "printedChallengeLevel": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-compact-assault-vehicle-wheeled-px-10",
+      "printedName": "Compact Assault Vehicle/Wheeled PX-10",
+      "printedTypeLine": "Large ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Large ground vehicle (tracked)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 49,
+      "pdfPhysicalPage": 50,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 50,
+        "printedChallengeLevel": 7
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-groundcar",
+      "printedName": "Groundcar",
+      "printedTypeLine": "Huge ground vehicle (wheeled)",
+      "classification": {
+        "primaryCategory": "wheeled-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (wheeled)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 49,
+      "pdfPhysicalPage": 50,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 50,
+        "printedChallengeLevel": 0
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-land-crawler",
+      "printedName": "Land Crawler",
+      "printedTypeLine": "Huge ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (tracked)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 49,
+      "pdfPhysicalPage": 50,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 50,
+        "printedChallengeLevel": 1
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-jaffryes-universal-automotive-ark-ii-series-landmaster",
+      "printedName": "Jaffryes Universal Automotive ARK-II Series Landmaster",
+      "printedTypeLine": "Gargantuan ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground",
+          "water"
+        ],
+        "printedCategory": "Gargantuan ground vehicle (tracked)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 50,
+      "pdfPhysicalPage": 51,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 51,
+        "printedChallengeLevel": 8
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-hyrotii-corporation-mobile-recon-research-vehicle",
+      "printedName": "Hyrotii Corporation Mobile Recon/Research Vehicle",
+      "printedTypeLine": "Colossal ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Colossal ground vehicle (speeder)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 50,
+      "pdfPhysicalPage": 51,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 51,
+        "printedChallengeLevel": 0
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-ikas-adno-22-b-nightfalcon-speeder-bike",
+      "printedName": "Ikas-Adno 22-B Nightfalcon Speeder Bike",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "classification": {
+        "primaryCategory": "speeder-bike",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Large ground vehicle (speeder)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 50,
+      "pdfPhysicalPage": 51,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 51,
+        "printedChallengeLevel": 2
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-srv-1-scout-and-retrieval-vehicle",
+      "printedName": "SRV-1 Scout and Retrieval Vehicle",
+      "printedTypeLine": "Huge ground vehicle (tracked)",
+      "classification": {
+        "primaryCategory": "tracked-vehicle",
+        "mobilityDomains": [
+          "ground"
+        ],
+        "printedCategory": "Huge ground vehicle (tracked)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 51,
+      "pdfPhysicalPage": 52,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 52,
+        "printedChallengeLevel": 6
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-landing-sphere",
+      "printedName": "Landing Sphere",
+      "printedTypeLine": "Huge air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "space"
+        ],
+        "printedCategory": "Huge air vehicle (airspeeder)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 58,
+      "pdfPhysicalPage": 59,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 59,
+        "printedChallengeLevel": 2
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-wind-skiff",
+      "printedName": "Wind Skiff",
+      "printedTypeLine": "Huge ground vehicle (speeder*)",
+      "classification": {
+        "primaryCategory": "ground-speeder",
+        "mobilityDomains": [
+          "ground",
+          "repulsorlift"
+        ],
+        "printedCategory": "Huge ground vehicle (speeder*)",
+        "variantNote": "Wheeled versions are explicitly described as mechanically identical, not a separately printed block"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 189,
+      "pdfPhysicalPage": 190,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 190,
+        "printedChallengeLevel": 6
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    },
+    {
+      "sourceEntryKey": "ur-eeook-protector-vi-patrol-speeder",
+      "printedName": "Eeook Protector VI Patrol Speeder",
+      "printedTypeLine": "Huge air vehicle (airspeeder)",
+      "classification": {
+        "primaryCategory": "airspeeder",
+        "mobilityDomains": [
+          "air",
+          "repulsorlift"
+        ],
+        "printedCategory": "Huge air vehicle (airspeeder)"
+      },
+      "sourceBook": "Unknown Regions",
+      "printedStatblockStartPage": 214,
+      "pdfPhysicalPage": 215,
+      "provenance": {
+        "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+        "sourceFile": "SW_Saga_The_Unknown_Regions.pdf",
+        "textSearchLayer": "Unknown Regions_djvu.txt (discovery only; original PDF authority)",
+        "pdfVisualReviewMethod": "FULL_226_PAGE_CONTACT_SWEEP_AND_TARGETED_SOURCE_PDF_RENDER",
+        "physicalPdfPage": 215,
+        "printedChallengeLevel": 7
+      },
+      "reviewStatus": "PDF_VISUALLY_VERIFIED",
+      "existingCanonicalShip": false,
+      "hydrationStatus": "PHASE2_NOT_STARTED"
+    }
+  ],
+  "mechanicsTransferredThisPhase": 0,
+  "productionPackFilesChanged": false,
+  "next": "Phase 1-N Scavenger's Guide to Droids"
+}

@@ -1,0 +1,939 @@
+{
+  "schema": "swse.droids.catalog.keep-core-003/source-fact-v1",
+  "sprint": "KEEP-003",
+  "date": "2026-11-02",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "baseline": "13a14d8d5522940691623fc266e01d71611c36df",
+  "sourceBook": "Star Wars Saga Edition Core Rulebook",
+  "renderedPrintedPages": [
+    188,
+    189,
+    190,
+    193,
+    194,
+    195
+  ],
+  "tableReferences": [
+    "Table 11-3 p188 locomotion",
+    "Table 11-4 p190 droid appendages and damage",
+    "Table 11-5 p194 droid accessories"
+  ],
+  "repoBlobs": {
+    "scripts/data/droid-systems.js": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+    "scripts/data/droid-part-schema.js": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+  },
+  "specialRules": {
+    "additionalLocomotionSystems": {
+      "second": 500,
+      "third": 1000,
+      "fourth": 2000,
+      "fifth": 5000,
+      "appliedTo": "droid size cost factor",
+      "sourcePrintedPage": 188
+    },
+    "restrictedLocomotion": {
+      "costFraction": 0.1,
+      "exclusive": {
+        "engageOrDisengage": "move",
+        "allowedActionsWhileEngaged": [
+          "move",
+          "run"
+        ]
+      },
+      "limited": {
+        "durationBeforeCheckRounds": 1,
+        "enduranceDC": 10,
+        "dcIncrementPerSubsequentCheck": 1,
+        "cooldownOnFailureRounds": 10
+      },
+      "sourcePrintedPage": 189
+    },
+    "appendages": {
+      "multipleAppendagesAdditionalAttacks": false,
+      "mountedWeaponCountsAsToolUnlessNoted": true,
+      "mountedToolWeaponCostNotIncluded": true,
+      "sourcePrintedPage": 190
+    }
+  },
+  "counts": {
+    "newSourceFactRows": 16,
+    "priorComponentSourceFactRows": 46,
+    "cumulativeComponentSourceFactRows": 62,
+    "locomotionRows": 5,
+    "appendageRows": 5,
+    "enhancementRows": 6,
+    "findings": 10,
+    "fullMechanicalCertifications": 0,
+    "productionMutations": 0,
+    "applicationParityTests": 0,
+    "foundryRuntimeCertifications": 0
+  },
+  "records": [
+    {
+      "id": "walking",
+      "name": "Walking",
+      "group": "base_locomotion",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 188,
+          "pdfPage1Based": 189,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "speedSquares": {
+          "upToSmall": 4,
+          "medium": 6,
+          "largeOrGreater": 8
+        },
+        "costFormulaCredits": "10 * droidCostFactor * speedSquares^2",
+        "weightKg": "NOT_LISTED_IN_TABLE_11_3",
+        "rule": "Walking can climb normally and is penalized by difficult terrain"
+      },
+      "code": {
+        "id": "walking",
+        "costMultiplier": 10,
+        "sourceWeightFormulaInKgTimesFactor": 5,
+        "weightFormulaPrintedInTable11_3": false
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT",
+        "UNPROVEN_LOCOMOTION_WEIGHT_SOURCE",
+        "ADDITIONAL_LOCOMOTION_SURCHARGE_NOT_COVERED_BY_ROW"
+      ],
+      "auditId": "KEEP-003-001",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "wheeled",
+      "name": "Wheeled",
+      "group": "base_locomotion",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 188,
+          "pdfPage1Based": 189,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "speedSquares": {
+          "upToSmall": 6,
+          "medium": 8,
+          "largeOrGreater": 10
+        },
+        "costFormulaCredits": "5 * droidCostFactor * speedSquares^2",
+        "weightKg": "NOT_LISTED_IN_TABLE_11_3",
+        "rule": "Cannot use Climb; difficult-terrain penalties doubled"
+      },
+      "code": {
+        "id": "wheeled",
+        "costMultiplier": 5,
+        "sourceWeightFormulaInKgTimesFactor": 4,
+        "weightFormulaPrintedInTable11_3": false
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT",
+        "UNPROVEN_LOCOMOTION_WEIGHT_SOURCE",
+        "ADDITIONAL_LOCOMOTION_SURCHARGE_NOT_COVERED_BY_ROW"
+      ],
+      "auditId": "KEEP-003-002",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "tracked",
+      "name": "Tracked",
+      "group": "base_locomotion",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 188,
+          "pdfPage1Based": 189,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "speedSquares": {
+          "upToSmall": 4,
+          "medium": 6,
+          "largeOrGreater": 8
+        },
+        "costFormulaCredits": "20 * droidCostFactor * speedSquares^2",
+        "weightKg": "NOT_LISTED_IN_TABLE_11_3",
+        "rule": "Ignores difficult-terrain penalties; -5 on Climb checks"
+      },
+      "code": {
+        "id": "tracked",
+        "costMultiplier": 20,
+        "sourceWeightFormulaInKgTimesFactor": 6,
+        "weightFormulaPrintedInTable11_3": false
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT",
+        "UNPROVEN_LOCOMOTION_WEIGHT_SOURCE",
+        "ADDITIONAL_LOCOMOTION_SURCHARGE_NOT_COVERED_BY_ROW"
+      ],
+      "auditId": "KEEP-003-003",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "hovering",
+      "name": "Hovering",
+      "group": "base_locomotion",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 188,
+          "pdfPage1Based": 189,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "speedSquares": {
+          "upToSmall": 6,
+          "medium": 6,
+          "largeOrGreater": 6
+        },
+        "costFormulaCredits": "100 * droidCostFactor * speedSquares^2",
+        "weightKg": "NOT_LISTED_IN_TABLE_11_3",
+        "rule": "Floats within 3m of ground; ignores difficult-terrain penalties"
+      },
+      "code": {
+        "id": "hovering",
+        "costMultiplier": 100,
+        "sourceWeightFormulaInKgTimesFactor": 3,
+        "weightFormulaPrintedInTable11_3": false
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT",
+        "UNPROVEN_LOCOMOTION_WEIGHT_SOURCE",
+        "ADDITIONAL_LOCOMOTION_SURCHARGE_NOT_COVERED_BY_ROW"
+      ],
+      "auditId": "KEEP-003-004",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "flying",
+      "name": "Flying",
+      "group": "base_locomotion",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 188,
+          "pdfPage1Based": 189,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "speedSquares": {
+          "upToSmall": 9,
+          "medium": 12,
+          "largeOrGreater": 12
+        },
+        "costFormulaCredits": "200 * droidCostFactor * speedSquares^2",
+        "weightKg": "NOT_LISTED_IN_TABLE_11_3",
+        "rule": "Flight not hampered by terrain"
+      },
+      "code": {
+        "id": "flying",
+        "costMultiplier": 200,
+        "sourceWeightFormulaInKgTimesFactor": 3,
+        "weightFormulaPrintedInTable11_3": false
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT",
+        "UNPROVEN_LOCOMOTION_WEIGHT_SOURCE",
+        "ADDITIONAL_LOCOMOTION_SURCHARGE_NOT_COVERED_BY_ROW"
+      ],
+      "auditId": "KEEP-003-005",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "probe",
+      "name": "Probe",
+      "group": "appendage",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "costFormulaCredits": "2 * droidCostFactor",
+        "weightFormulaKg": "0.5 * droidCostFactor",
+        "unarmedDamageByDroidSize": {
+          "fine": null,
+          "diminutive": null,
+          "tiny": null,
+          "small": null,
+          "medium": "1",
+          "large": "1d2",
+          "huge": "1d3",
+          "gargantuan": "1d4",
+          "colossal": "1d6"
+        },
+        "rules": {
+          "appendageCount": "No fixed number maximum; no extra attacks from more appendages",
+          "unarmed": "Damage depends on size/appendage plus Strength modifier; dash indicates no printed unarmed damage for size/type",
+          "tool": "Weapons mounted on a droid count as tool appendages unless otherwise stated",
+          "claw": "DC15 Dexterity for fine manipulation; drop item on failure"
+        }
+      },
+      "code": {
+        "rawId": "probe",
+        "canAttack": false,
+        "createsUnarmedAttack": false
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT",
+        "UNARMED_ATTACK_EXCLUDED_WHERE_SOURCE_HAS_DAMAGE"
+      ],
+      "auditId": "KEEP-003-006",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "instrument",
+      "name": "Instrument",
+      "group": "appendage",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "costFormulaCredits": "5 * droidCostFactor",
+        "weightFormulaKg": "1 * droidCostFactor",
+        "unarmedDamageByDroidSize": {
+          "fine": null,
+          "diminutive": null,
+          "tiny": null,
+          "small": "1",
+          "medium": "1d2",
+          "large": "1d3",
+          "huge": "1d4",
+          "gargantuan": "1d6",
+          "colossal": "1d8"
+        },
+        "rules": {
+          "appendageCount": "No fixed number maximum; no extra attacks from more appendages",
+          "unarmed": "Damage depends on size/appendage plus Strength modifier; dash indicates no printed unarmed damage for size/type",
+          "tool": "Weapons mounted on a droid count as tool appendages unless otherwise stated",
+          "claw": "DC15 Dexterity for fine manipulation; drop item on failure"
+        }
+      },
+      "code": {
+        "rawId": "instrument",
+        "canAttack": false,
+        "createsUnarmedAttack": false
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT",
+        "UNARMED_ATTACK_EXCLUDED_WHERE_SOURCE_HAS_DAMAGE"
+      ],
+      "auditId": "KEEP-003-007",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "tool",
+      "name": "Tool",
+      "group": "appendage",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "costFormulaCredits": "10 * droidCostFactor",
+        "weightFormulaKg": "2 * droidCostFactor",
+        "unarmedDamageByDroidSize": {
+          "fine": null,
+          "diminutive": null,
+          "tiny": "1",
+          "small": "1d2",
+          "medium": "1d3",
+          "large": "1d4",
+          "huge": "1d6",
+          "gargantuan": "1d8",
+          "colossal": "2d6"
+        },
+        "rules": {
+          "appendageCount": "No fixed number maximum; no extra attacks from more appendages",
+          "unarmed": "Damage depends on size/appendage plus Strength modifier; dash indicates no printed unarmed damage for size/type",
+          "tool": "Weapons mounted on a droid count as tool appendages unless otherwise stated",
+          "claw": "DC15 Dexterity for fine manipulation; drop item on failure"
+        }
+      },
+      "code": {
+        "rawId": "tool",
+        "canAttack": false,
+        "createsUnarmedAttack": false
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT",
+        "UNARMED_ATTACK_EXCLUDED_WHERE_SOURCE_HAS_DAMAGE"
+      ],
+      "auditId": "KEEP-003-008",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "claw",
+      "name": "Claw",
+      "group": "appendage",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "costFormulaCredits": "20 * droidCostFactor",
+        "weightFormulaKg": "5 * droidCostFactor",
+        "unarmedDamageByDroidSize": {
+          "fine": null,
+          "diminutive": "1",
+          "tiny": "1d2",
+          "small": "1d3",
+          "medium": "1d4",
+          "large": "1d6",
+          "huge": "1d8",
+          "gargantuan": "2d6",
+          "colossal": "2d8"
+        },
+        "rules": {
+          "appendageCount": "No fixed number maximum; no extra attacks from more appendages",
+          "unarmed": "Damage depends on size/appendage plus Strength modifier; dash indicates no printed unarmed damage for size/type",
+          "tool": "Weapons mounted on a droid count as tool appendages unless otherwise stated",
+          "claw": "DC15 Dexterity for fine manipulation; drop item on failure"
+        }
+      },
+      "code": {
+        "rawId": "claw",
+        "canAttack": true,
+        "createsUnarmedAttack": true
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT"
+      ],
+      "auditId": "KEEP-003-009",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "hand",
+      "name": "Hand",
+      "group": "appendage",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "costFormulaCredits": "50 * droidCostFactor",
+        "weightFormulaKg": "5 * droidCostFactor",
+        "unarmedDamageByDroidSize": {
+          "fine": null,
+          "diminutive": null,
+          "tiny": "1",
+          "small": "1d2",
+          "medium": "1d3",
+          "large": "1d4",
+          "huge": "1d6",
+          "gargantuan": "1d8",
+          "colossal": "2d6"
+        },
+        "rules": {
+          "appendageCount": "No fixed number maximum; no extra attacks from more appendages",
+          "unarmed": "Damage depends on size/appendage plus Strength modifier; dash indicates no printed unarmed damage for size/type",
+          "tool": "Weapons mounted on a droid count as tool appendages unless otherwise stated",
+          "claw": "DC15 Dexterity for fine manipulation; drop item on failure"
+        }
+      },
+      "code": {
+        "rawId": "hand",
+        "canAttack": true,
+        "createsUnarmedAttack": true
+      },
+      "issues": [
+        "SIZE_COST_FACTOR_SPLIT"
+      ],
+      "auditId": "KEEP-003-010",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "extra-legs",
+      "name": "Extra Legs",
+      "group": "locomotion_enhancement",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "cost": "2 * walking locomotion cost",
+        "requirements": [
+          "walking"
+        ],
+        "effects": [
+          "50% greater carrying capacity than biped of same Strength",
+          "+5 stability bonus to resist prone"
+        ]
+      },
+      "code": {
+        "id": "extra-legs",
+        "costMultiplier": 2,
+        "requiresLocomtion": "walking",
+        "fieldTypo": "requiresLocomtion vs requiredLocomotion"
+      },
+      "issues": [
+        "RAW_REQUIREMENT_FIELD_TYPO",
+        "NEEDS_MULTIPLIER_HOST_TEST"
+      ],
+      "auditId": "KEEP-003-011",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "jump-servos",
+      "name": "Jump Servos",
+      "group": "locomotion_enhancement",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "descriptionPrice": "2 * cost of walking locomotion system",
+        "tablePrice": "2 * appendage cost",
+        "tableWeightKg": "2 * droidCostFactor",
+        "requirements": [
+          "walking"
+        ],
+        "effects": [
+          "Treat all jumps as running jumps",
+          "May reroll failed Jump checks keeping better",
+          "May take 10 even rushed or threatened"
+        ]
+      },
+      "code": {
+        "id": "jump-servos",
+        "costMultiplier": 2,
+        "requiredLocomotion": "walking"
+      },
+      "issues": [
+        "PUBLISHED_TABLE_VS_PROSE_COST_CONFLICT",
+        "NEEDS_WEIGHT_HOST"
+      ],
+      "auditId": "KEEP-003-012",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "magnetic-feet",
+      "name": "Magnetic Feet",
+      "group": "locomotion_enhancement",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "tablePrice": "2 * appendage cost",
+        "tableWeightKg": null,
+        "requirements": [
+          "walking",
+          "wheeled",
+          "tracked"
+        ],
+        "effect": "Cling to metal spacecraft hull even at high speed"
+      },
+      "code": {
+        "id": "magnetic-feet",
+        "costMultiplier": 2,
+        "requiredLocomotion": [
+          "walking",
+          "wheeled",
+          "tracked"
+        ],
+        "costMultiplierInCurrentBroadCatalogComment": "2 * base locomotion cost"
+      },
+      "issues": [
+        "TABLE_PRICE_VS_GENERIC_LOCOMOTION_MULTIPLIER",
+        "NO_PRINTED_WEIGHT_IN_TABLE"
+      ],
+      "auditId": "KEEP-003-013",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "climbing-claws",
+      "name": "Climbing Claws",
+      "group": "locomotion_enhancement",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 189,
+          "pdfPage1Based": 190,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "descriptionPrice": "2 * walking locomotion cost",
+        "tablePrice": "2 * appendage cost",
+        "tableWeightKg": null,
+        "requirements": [
+          "walking"
+        ],
+        "effects": [
+          "Climb speed half walking speed",
+          "May reroll failed Climb check keeping better",
+          "May take 10 rushed/threatened"
+        ]
+      },
+      "code": {
+        "id": "climbing-claws",
+        "requiresAppendage": [
+          "hand",
+          "claw"
+        ],
+        "costFunctionParameterName": "appendageCost",
+        "genericCostHelperPasses": "droidCostFactor not appendageCost"
+      },
+      "issues": [
+        "PUBLISHED_TABLE_VS_PROSE_COST_CONFLICT",
+        "WRONG_REQUIRED_HOST",
+        "COST_CALLBACK_ARGUMENT_MISMATCH"
+      ],
+      "auditId": "KEEP-003-014",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "telescopic-appendage",
+      "name": "Telescopic Appendage",
+      "group": "appendage_enhancement",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "tablePrice": "2 * cost of selected appendage",
+        "tableWeightKg": "2 * normal appendage weight",
+        "reachMultiplier": 2
+      },
+      "code": {
+        "id": "telescopic-appendage",
+        "costFunctionParameterName": "appendageCost",
+        "weightFunctionParameterName": "appendageWeight",
+        "genericCostHelperPasses": "costFactor to source.cost; costFactor to source.weight"
+      },
+      "issues": [
+        "CONFIRMED_COST_CALLBACK_ARGUMENT_MISMATCH",
+        "CONFIRMED_WEIGHT_CALLBACK_ARGUMENT_MISMATCH"
+      ],
+      "auditId": "KEEP-003-015",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "id": "mount",
+      "name": "Stabilized Mount",
+      "group": "appendage_enhancement",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "verifiedBy": "rendered printed PDF visual inspection"
+        }
+      ],
+      "printed": {
+        "cost": "5 * listed Tool appendage cost",
+        "weight": "5 * listed Tool appendage weight",
+        "benefit": "One large weapon treated as if wielded in two hands",
+        "toolAppendagePriceBase": 10,
+        "toolAppendageWeightBaseKg": 2,
+        "mediumCostCredits": 50,
+        "mediumWeightKg": 10
+      },
+      "code": {
+        "id": "mount",
+        "costFormulaCredits": "125 * droidCostFactor",
+        "weightFormulaKg": "2 * droidCostFactor"
+      },
+      "issues": [
+        "CONFIRMED_PRINTED_COST_MISMATCH",
+        "CONFIRMED_PRINTED_WEIGHT_MISMATCH"
+      ],
+      "auditId": "KEEP-003-016",
+      "sourceFactsPdfVerified": true,
+      "completeSourceMechanicalCertified": false,
+      "productionRegistryMigrated": false,
+      "appParityCertified": false,
+      "foundryRuntimeCertified": false
+    }
+  ],
+  "findings": [
+    {
+      "id": "K003-STABILIZED-MOUNT-PRICE",
+      "severity": "HIGH",
+      "finding": "Stabilized Mount is 5x the Tool appendage listed cost and weight. At Medium (CF=1): 50 credits/10kg; live source 125 credits/2kg. Source p190.",
+      "status": "CONFIRMED_STATIC_SOURCE_CODE_MISMATCH"
+    },
+    {
+      "id": "K003-TELESCOPIC-ARGUMENTS",
+      "severity": "HIGH",
+      "finding": "source.cost(appendageCost) and source.weight(appendageWeight) are called by generic shared helpers with droidCostFactor, not installed base appendage cost/weight. Source p194 requires twice appendage cost and weight.",
+      "status": "CONFIRMED_STATIC_CALL_SIGNATURE_MISMATCH"
+    },
+    {
+      "id": "K003-UNARMED-ATTACK-CAPABILITY",
+      "severity": "HIGH",
+      "finding": "Core Table 11-4 gives damage for Probe (Medium+), Instrument (Small+), Tool (Tiny+); RAW definitions mark these canAttack=false, createsUnarmedAttack=false. Need review whether the virtual attack engine suppresses printed unarmed attack opportunities.",
+      "status": "CONFIRMED_STATIC_SOURCE_CODE_MISMATCH_RUNTIME_EFFECT_UNTESTED"
+    },
+    {
+      "id": "K003-CLIMBING-CLAWS-HOST",
+      "severity": "MEDIUM",
+      "finding": "Printed Climbing Claws paragraph says add to any walking droid. RAW appendage-enhancement requires hand/claw rather than walking; source table and prose also disagree on price base.",
+      "status": "CONFIRMED_STATIC_REQUIREMENT_MISMATCH"
+    },
+    {
+      "id": "K003-PRICE-TABLE-PROSE-CONFLICT",
+      "severity": "HIGH",
+      "finding": "Core p189 description: Climbing Claws and Jump Servos double Walking locomotion system cost. Table 11-5 p194 lists appendage cost x2 for both. Preserve both; do not silently choose.",
+      "status": "SOURCE_CONFLICT_UNRESOLVED"
+    },
+    {
+      "id": "K003-MAGNETIC-FEET-COST",
+      "severity": "MEDIUM",
+      "finding": "Table 11-5 p194 gives appendage cost x2; broad registry locomotion-enhancement multiplier implies doubling locomotion base. No automatic price adjudication from one text alone.",
+      "status": "SOURCE_TABLE_VS_RUNTIME_INTERPRETATION"
+    },
+    {
+      "id": "K003-BASE-LOCOMOTION-WEIGHTS",
+      "severity": "MEDIUM",
+      "finding": "Core Table 11-3 lists speed and cost but no weight column; raw sources provide invented-looking per-cost-factor weight formulas. The printed pages inspected here do not establish those values.",
+      "status": "SOURCE_WEIGHT_NOT_VERIFIED"
+    },
+    {
+      "id": "K003-EXTRA-LEGS-FIELD-TYPO",
+      "severity": "LOW",
+      "finding": "Extra Legs raw definition has requiresLocomtion instead of requiredLocomotion. Whether validator normalizes typo is untested.",
+      "status": "STATIC_DATA_FIELD_SUSPECT"
+    },
+    {
+      "id": "K003-MULTI-LOCOMOTION-AND-RESTRICTED",
+      "severity": "HIGH",
+      "finding": "Core p188 gives second/third/fourth/fifth locomotion surcharges of 500/1000/2000/5000 times CF, and restricted locomotion costs 1/10 normal (exclusive/limited). These must be accounted for by shared quote authority, not merely one base engine price.",
+      "status": "CROSS_APP_PRICING_COVERAGE_UNTESTED"
+    },
+    {
+      "id": "K003-APPENDAGE-ACTION-COUNT",
+      "severity": "MEDIUM",
+      "finding": "Core p190 permits any number of appendages but does not grant extra actions/attacks. A tool mount does not include the price of mounted tool/weapon; separate physical and economic ownership.",
+      "status": "MECHANICAL_GUARDRAIL"
+    }
+  ],
+  "guardrails": [
+    "Keep printed table vs prose contradictions visible until explicit source-precedence decision",
+    "Source-fact row counts do not equal distinct canonical identity certification counts",
+    "No Foundry or production changes",
+    "No ordinary packs/equipment.db item for built-in droid systems",
+    "One canonical part cost factor authority remains necessary"
+  ]
+}

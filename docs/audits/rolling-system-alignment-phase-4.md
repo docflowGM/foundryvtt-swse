@@ -963,3 +963,7 @@ This pass does not claim the rolling system is fully unified, and does not
 claim the remaining live bypasses are proven closed by anything other than
 static analysis — the runtime matrix above must be executed in a live
 Foundry VTT v13 world before that claim could be made.
+
+## Addendum (2026-11-02): published capital-ship attack penalty
+
+The "no verified vehicle size attack modifier" conclusion above is superseded in exactly one respect. Core Rulebook printed p. 171 (verified by the project owner against the PDF) publishes: a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against targets smaller than Colossal; point-defense weapons are exempt. It is implemented once, in `vehicle-attack-math.js` (helpers delimited for `tests/phase4-vehicle-size-fire-control-regression.test.mjs`), delegating to `scripts/domain/vehicles/vehicle-capital-penalty.js`. The same page gives trained Pilot characters +2 on attacks with pilot-crewed vehicle weapons (also implemented there, for sealed certified installations only). No general vehicle/weapon size modifier and no fire-control modifier exists or was added.

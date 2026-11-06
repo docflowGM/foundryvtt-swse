@@ -1,0 +1,379 @@
+{
+  "schema": "swse.vehicle.phase2c.schema-discovery.v0.1",
+  "sourceBook": "Scum and Villainy",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "scum-and-villainy-001",
+      "sourceEntryKey": "sav-c-wing-ugly-fighter",
+      "ship": "C-wing Ugly Fighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        66
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-002",
+      "sourceEntryKey": "sav-c-wing-ugly-fighter",
+      "ship": "C-wing Ugly Fighter",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        66
+      ],
+      "sourceDerivedIssue": "Narrative describes B-wing/YT-series hybrid and two passenger seats; no generic ugly-fighter record merge.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-003",
+      "sourceEntryKey": "sav-c-wing-ugly-fighter",
+      "ship": "C-wing Ugly Fighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        66
+      ],
+      "sourceDerivedIssue": "The torpedo weapon row does not print a splash radius; do not infer it from other torpedoes.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-004",
+      "sourceEntryKey": "sav-clutch-ugly-fighter",
+      "ship": "Clutch Ugly Fighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-005",
+      "sourceEntryKey": "sav-clutch-ugly-fighter",
+      "ship": "Clutch Ugly Fighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "Vehicle Combat is expressly printed in the defenses; source does not provide a separate granted-feat actor implementation.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-006",
+      "sourceEntryKey": "sav-clutch-ugly-fighter",
+      "ship": "Clutch Ugly Fighter",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "Ugly narrative rules include unreliable ship treatment; do not replace the specific statblock with a generic ugly.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-007",
+      "sourceEntryKey": "sav-clutch-ugly-fighter",
+      "ship": "Clutch Ugly Fighter",
+      "category": "SOURCE_ATTACK_BONUS_CONFLICT",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "{\"category\": \"SOURCE_ATTACK_BONUS_CONFLICT\", \"mainRanged\": \"ion cannons +7\", \"detailedWeapon\": \"ion cannons (pilot) Atk +5\", \"page\": 67, \"resolution\": \"UNRESOLVED_KEEP_BOTH_PRINTED_VALUES\"}",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-008",
+      "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1250-transport",
+      "ship": "Corellian Engineering Corporation YT-1250 Transport",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        64
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-009",
+      "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1250-transport",
+      "ship": "Corellian Engineering Corporation YT-1250 Transport",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        64
+      ],
+      "sourceDerivedIssue": "Source narrative explicitly identifies six free emplacement points; do not import the usual ten free points from other YT-series hulls.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-010",
+      "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1250-transport",
+      "ship": "Corellian Engineering Corporation YT-1250 Transport",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        64
+      ],
+      "sourceDerivedIssue": "The single detailed weapon row and Ranged 2 double lasers must not be treated as automatically specifying two complete mount geometry records.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-011",
+      "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1930-transport",
+      "ship": "Corellian Engineering Corporation YT-1930 Transport",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        66
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-012",
+      "sourceEntryKey": "sav-corellian-engineering-corporation-yt-1930-transport",
+      "ship": "Corellian Engineering Corporation YT-1930 Transport",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        66
+      ],
+      "sourceDerivedIssue": "Printed YT-1930 is a distinct transport from YT-1250 and Core YT-1300.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-013",
+      "sourceEntryKey": "sav-corelliaspace-gymsnor-3-light-freighter",
+      "ship": "CorelliaSpace Gymsnor-3 Light Freighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        62
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-014",
+      "sourceEntryKey": "sav-corelliaspace-gymsnor-3-light-freighter",
+      "ship": "CorelliaSpace Gymsnor-3 Light Freighter",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        62
+      ],
+      "sourceDerivedIssue": "The printed narrative describes a detachable cockpit escape pod; escape-pod operation/capabilities are not separately statted.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-015",
+      "sourceEntryKey": "sav-errant-venture",
+      "ship": "Errant Venture",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        128
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-016",
+      "sourceEntryKey": "sav-errant-venture",
+      "ship": "Errant Venture",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        128
+      ],
+      "sourceDerivedIssue": "Apply -20 on attacks against targets smaller than Colossal size; weapon rows separately give derived -7/-11 values.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-017",
+      "sourceEntryKey": "sav-errant-venture",
+      "ship": "Errant Venture",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        128
+      ],
+      "sourceDerivedIssue": "This is the modified named Errant Venture, not the stock Imperial II-class Star Destroyer.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-018",
+      "sourceEntryKey": "sav-errant-venture",
+      "ship": "Errant Venture",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        128
+      ],
+      "sourceDerivedIssue": "Narrative specifically describes reduced armament compared with conventional Star Destroyer and changing configurations; use printed statblock as the specific version.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-019",
+      "sourceEntryKey": "sav-kaloth-style-battlecruiser",
+      "ship": "Kaloth-style Battlecruiser",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        126
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-020",
+      "sourceEntryKey": "sav-kaloth-style-battlecruiser",
+      "ship": "Kaloth-style Battlecruiser",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        126
+      ],
+      "sourceDerivedIssue": "Printed generic -20 attack penalty against targets smaller than Colossal; applies to qualifying large guns rather than point-defense batteries.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-021",
+      "sourceEntryKey": "sav-kaloth-style-battlecruiser",
+      "ship": "Kaloth-style Battlecruiser",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        126
+      ],
+      "sourceDerivedIssue": "Narrative explicitly says Kaloth has no ion weapons; preserves its capture tactics as tractor rather than ion.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-022",
+      "sourceEntryKey": "sav-kazellis-corporation-light-freighter",
+      "ship": "Kazellis Corporation Light Freighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        62
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-023",
+      "sourceEntryKey": "sav-surronian-conqueror-class-assault-ship",
+      "ship": "Surronian Conqueror-class Assault Ship",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        64
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-024",
+      "sourceEntryKey": "sav-surronian-conqueror-class-assault-ship",
+      "ship": "Surronian Conqueror-class Assault Ship",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        64
+      ],
+      "sourceDerivedIssue": "Narrative says one pilot can operate the two double medium laser cannons, though typically controlled by a gunner.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-025",
+      "sourceEntryKey": "sav-surronian-conqueror-class-assault-ship",
+      "ship": "Surronian Conqueror-class Assault Ship",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        64
+      ],
+      "sourceDerivedIssue": "Fire-link ion cannons is explicitly printed despite the summary singular light ion cannon; preserve rather than infer barrel or linked topology.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-026",
+      "sourceEntryKey": "sav-x-tie-ugly-fighter",
+      "ship": "X-TIE Ugly Fighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-027",
+      "sourceEntryKey": "sav-x-tie-ugly-fighter",
+      "ship": "X-TIE Ugly Fighter",
+      "category": "CONDITIONAL_ASTROMECH",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "Astromech droid conditional Use Computer/Mechanics modifiers are not unconditional bonuses.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-028",
+      "sourceEntryKey": "sav-x-tie-ugly-fighter",
+      "ship": "X-TIE Ugly Fighter",
+      "category": "PRINTED_SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "No shield rating is printed; cannot certify a numeric SR of zero.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-029",
+      "sourceEntryKey": "sav-x-tie-ugly-fighter",
+      "ship": "X-TIE Ugly Fighter",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        67
+      ],
+      "sourceDerivedIssue": "X-ceptor variant is discussed in narrative (TIE interceptor panels, additional lasers and torpedo launcher) but no separately published full statblock.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-030",
+      "sourceEntryKey": "sav-y164-thalassian-slave-transport",
+      "ship": "Y164 Thalassian Slave Transport",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        127
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-031",
+      "sourceEntryKey": "sav-y164-thalassian-slave-transport",
+      "ship": "Y164 Thalassian Slave Transport",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        127
+      ],
+      "sourceDerivedIssue": "Passenger figure explicitly labels enslaved captives; preserve published capacity as data, not a player-facing recommended use.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "scum-and-villainy-identity-hornet-001",
+      "sourceEntryKey": null,
+      "ship": "Tenloss Corporation Hornet-class Interceptor",
+      "category": "PHASE1_CENSUS_OMISSION_CANDIDATE",
+      "sourcePrintedPages": [
+        125
+      ],
+      "sourceDerivedIssue": "Complete CL 12 Hornet-class Interceptor starship statblock visually confirmed printed p.125. Not among the immutable 11 Scum and Villainy Phase1 entries. Requires separate provenance identity reconciliation; DO NOT silently insert into this ledger or production roster.",
+      "requiresFollowup": true
+    }
+  ],
+  "additionalStatblockIdentityCandidates": [
+    {
+      "printedName": "Tenloss Corporation Hornet-class Interceptor",
+      "printedPage": 125,
+      "printedChallengeLevel": 12,
+      "sourceStatblockType": "Gargantuan starfighter",
+      "disposition": "DISCOVERY_ONLY_PENDING_PHASE1_IDENTITY_RECONCILIATION"
+    }
+  ],
+  "counts": {
+    "discoveryCases": 32,
+    "unreconciledAdditionalStatblockIdentities": 1
+  },
+  "scopeGuardrails": [
+    "No production data/hydration changes",
+    "No auto-generated physical mounts/arcs",
+    "Source-review not strict mechanical certification",
+    "Never silently modify Phase1 publication identities"
+  ]
+}

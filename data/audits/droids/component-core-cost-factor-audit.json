@@ -1,0 +1,131 @@
+{
+  "schema": "swse.droids.catalog.factor-authority-audit/0.1",
+  "date": "2026-11-02",
+  "source": {
+    "book": "Star Wars Saga Edition Core Rulebook",
+    "printedPage": 187,
+    "pdfPage1Based": 188,
+    "table": "Table 11-2 Droid Sizes",
+    "verification": "original PDF page rendered and visually checked"
+  },
+  "codeSources": [
+    {
+      "file": "scripts/data/droid-part-schema.js",
+      "function": "getDroidCostFactor",
+      "blob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+    },
+    {
+      "file": "scripts/engine/progression/droids/droid-trait-rules.js",
+      "function": "getDroidSizeCostFactor",
+      "blob": "cc408d12d09a12c071bb1a9a9256b05cae"
+    }
+  ],
+  "rows": [
+    {
+      "size": "fine",
+      "sourceCostFactor": 20,
+      "garageFactor": 0.125,
+      "progressionFactor": null,
+      "mismatch": true
+    },
+    {
+      "size": "diminutive",
+      "sourceCostFactor": 10,
+      "garageFactor": 0.2,
+      "progressionFactor": null,
+      "mismatch": true
+    },
+    {
+      "size": "tiny",
+      "sourceCostFactor": 5,
+      "garageFactor": 0.25,
+      "progressionFactor": 5,
+      "mismatch": true
+    },
+    {
+      "size": "small",
+      "sourceCostFactor": 2,
+      "garageFactor": 0.5,
+      "progressionFactor": 2,
+      "mismatch": true
+    },
+    {
+      "size": "medium",
+      "sourceCostFactor": 1,
+      "garageFactor": 1,
+      "progressionFactor": 1,
+      "mismatch": false
+    },
+    {
+      "size": "large",
+      "sourceCostFactor": 2,
+      "garageFactor": 2,
+      "progressionFactor": 2,
+      "mismatch": false
+    },
+    {
+      "size": "huge",
+      "sourceCostFactor": 5,
+      "garageFactor": 4,
+      "progressionFactor": 5,
+      "mismatch": true
+    },
+    {
+      "size": "gargantuan",
+      "sourceCostFactor": 10,
+      "garageFactor": 8,
+      "progressionFactor": 10,
+      "mismatch": true
+    },
+    {
+      "size": "colossal",
+      "sourceCostFactor": 20,
+      "garageFactor": 16,
+      "progressionFactor": 20,
+      "mismatch": true
+    }
+  ],
+  "counts": {
+    "sizes": 9,
+    "sharedSchemaMismatches": 7,
+    "progressionDefinedSizes": 7,
+    "progressionDefinedSizeMismatches": 0,
+    "fullMechanicalCertificates": 0,
+    "productionMutations": 0,
+    "runtimeTests": 0
+  },
+  "impact": {
+    "example": {
+      "component": "Shield Generator SR5",
+      "size": "small",
+      "tableBasePrice": 2500,
+      "tableBaseWeightKg": 10,
+      "correctCredits": 5000,
+      "sharedSchemaQuoteCredits": 1250,
+      "correctWeightKg": 10,
+      "sharedSchemaWeightKg": 5,
+      "preOfficialErrataWeightAssumptionKg": 20,
+      "sourceWeightCorrection": "Core official October 2008 errata p186: Small accessory weight uses 2/costFactor; Small CF 2 gives x1."
+    },
+    "otherImpactedDomains": [
+      "appendages",
+      "built-in armor",
+      "hardened systems",
+      "locomotion",
+      "shield generators",
+      "cost-factor accessories"
+    ]
+  },
+  "nextActions": [
+    "Replace fragmented factor authority in future approved production tranche",
+    "Use printed factor map and fail closed on unsupported sizes",
+    "Test Garage, PC chargen, follower and Store quotes including actor wallet/costs",
+    "Do not implement ad hoc per-part price overrides"
+  ],
+  "officialErrata": {
+    "authority": "data/audits/droids/droid-component-official-errata-authority-001.json",
+    "costFactorForPrice": "Table 11-2 unchanged",
+    "accessoryWeightFactorForSmallAndSmaller": "2/sizeCostFactor",
+    "unresolvedSgdAccessoryHostScopes": true
+  }
+}

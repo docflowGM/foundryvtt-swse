@@ -1,0 +1,1151 @@
+{
+  "schema": "swse.droids.component.mechanical-fixtures/1",
+  "batch": "MECH-005",
+  "expected": {
+    "evaluatedInBatch": 22,
+    "sourcePassInBatch": 20,
+    "sourceHoldInBatch": 2,
+    "evaluatedCumulative": 122,
+    "sourcePassedCumulativeIfBatches3And4Applied": 99,
+    "sourceHeldCumulativeIfBatches3And4Applied": 23,
+    "sourceUnreviewedAfterBatch": 0,
+    "productionRegistryCertified": 0,
+    "applicationParityCertified": 0,
+    "foundryRuntimeCertified": 0
+  },
+  "cases": [
+    {
+      "id": "B005-01",
+      "canonicalId": "droid-multifunction-apparatus",
+      "name": "Multifunction Apparatus",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "SIZE_FACTOR_CREDITS",
+          "baseCredits": 80,
+          "factorAuthority": "published Core Table 11-2 size factor"
+        },
+        "weight": {
+          "kind": "SIZE_FACTOR_KG",
+          "baseKg": 15,
+          "factorAuthority": "published Core Table 11-2 size factor"
+        },
+        "availability": "-",
+        "host": "ONE selected droid appendage",
+        "prerequisites": "A real appendage; mounted tools/weapons bought separately",
+        "mechanics": {
+          "maxToolsOrWeapons": 3,
+          "simultaneouslyActive": 1,
+          "switchAction": "swift",
+          "additionalActionsOrAttacks": 0
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-02",
+      "canonicalId": "droid-multispectrum-searchlight",
+      "name": "Multispectrum Searchlight",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 100
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 2
+        },
+        "availability": "-",
+        "host": "Droid-installed or handheld; distinguish ownership",
+        "prerequisites": "Installed only on droid Tiny or larger for blinding mode",
+        "mechanics": {
+          "lightRangeKm": 6,
+          "wavelengths": [
+            "visible",
+            "infrared",
+            "ultraviolet"
+          ],
+          "equipmentPerceptionBonus": 2,
+          "bonusFor": "Search and Notice when light is visible and helpful",
+          "bonusStacksWith": [
+            "helmet packages",
+            "improved sensor packages"
+          ],
+          "blindAction": "standard",
+          "blindArea": "6-square cone",
+          "stealthPenaltyInCone": -10,
+          "attack": "ranged attack against each target Fortitude",
+          "onHitPenalty": -5,
+          "onMissPenalty": -2,
+          "affects": [
+            "attack rolls",
+            "Perception",
+            "Pilot",
+            "other skill checks"
+          ],
+          "duration": "end of droid next turn"
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 60,
+          "pdfPage1Based": 61,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-03",
+      "canonicalId": "droid-radiant-heat-element",
+      "name": "Radiant Heat Element",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 200
+        },
+        "weight": {
+          "kind": "SIZE_FACTOR_KG",
+          "baseKg": 20,
+          "factorAuthority": "published Core Table 11-2 size factor"
+        },
+        "availability": "-",
+        "host": "Droid torso integrated heating device",
+        "prerequisites": "Highest heat setting must be actively selected",
+        "mechanics": {
+          "modes": [
+            "ambient heat",
+            "cooking/boiling",
+            "highest defensive"
+          ],
+          "trigger": "character ENDING its turn adjacent",
+          "adjacentFireDamage": "1d4",
+          "droidSelfDamageEachTurn": 1,
+          "notTriggeredOnEntry": true
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-04",
+      "canonicalId": "droid-remote-viewer",
+      "name": "Remote Viewer",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 1000
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 20
+        },
+        "availability": "-",
+        "host": "Droid-mounted detachable repulsorlift sensor",
+        "prerequisites": "Must remain within 12 squares of parent droid",
+        "mechanics": {
+          "audioVisual": "Function as one of parent droid regular vision/hearing sensors",
+          "detachable": true,
+          "maximumDistanceSquares": 12,
+          "flySpeedSquares": 4,
+          "reflexDefense": 18,
+          "fortitudeDefense": 12,
+          "operatingMinutes": 30,
+          "rechargeMinutes": 60
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-05",
+      "canonicalId": "droid-rental-restraining-bolt",
+      "name": "Rental Restraining Bolt",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 10
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 0.5
+        },
+        "availability": "-",
+        "host": "External control bolt mounted on rented droid",
+        "prerequisites": "Credit account, purchased rental duration set by proprietor",
+        "mechanics": {
+          "normalRestrainingBoltRulesApply": true,
+          "integratedCreditReader": true,
+          "activation": "Deposit specified credits for specified rental period",
+          "endOfPaidInterval": "Droid deactivates until additional deposit",
+          "specifiedRentalCreditRate": "NOT_PUBLISHED_AS_FIXED_AMOUNT"
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 61,
+          "pdfPage1Based": 62,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-06",
+      "canonicalId": "droid-repulsorcam",
+      "name": "Repulsorcam",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 1000
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 20
+        },
+        "availability": "-",
+        "host": "Droid-mounted detachable audio/video recorder",
+        "prerequisites": "Specialized parent droid docking socket; separate recharger optional",
+        "mechanics": {
+          "maximumDistanceSquares": 12,
+          "flySpeedSquares": 4,
+          "reflexDefense": 16,
+          "fortitudeDefense": 10,
+          "recordingHours": 2,
+          "energyCellOperationHours": 4,
+          "recharge": "upon reattaching to parent socket",
+          "separateRechargerCredits": 150
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-07",
+      "canonicalId": "droid-scomp-link",
+      "name": "Scomp Link",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 100
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 1
+        },
+        "availability": "-",
+        "host": "Extendable droid data-port arm",
+        "prerequisites": "Connect to compatible scomp input/output socket",
+        "mechanics": {
+          "equipmentBonus": 2,
+          "skill": "Use Computer",
+          "scope": "Access Information only",
+          "targetComputerAttitude": [
+            "helpful",
+            "friendly"
+          ],
+          "factoryStandardOn": "astromech droids; not a universal grant"
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-08",
+      "canonicalId": "droid-silence-bubble-generator",
+      "name": "Silence-Bubble Generator",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 3500
+        },
+        "weight": {
+          "kind": "SIZE_FACTOR_KG",
+          "baseKg": 20,
+          "factorAuthority": "published Core Table 11-2 size factor"
+        },
+        "availability": "Licensed",
+        "host": "Installed droid sound-dampening projector",
+        "prerequisites": "Droid must activate the device",
+        "mechanics": {
+          "activateAction": "standard",
+          "radiusSquares": 3,
+          "effect": "Anyone outside listening to sounds inside bubble takes -10 on Perception to hear them",
+          "notAllPerceptionOrStealth": true
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-09",
+      "canonicalId": "droid-space-beacon-launcher",
+      "name": "Space-Beacon Launcher",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "CONFIGURED_CAPACITY",
+          "baseCredits": 5000,
+          "baseCapacity": 12,
+          "extraCreditsPerAdditionalBeacon": 500,
+          "maxCapacity": 24,
+          "formula": "5000 * (1 + .10*(capacity-12)); capacity 12 through 24"
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 10
+        },
+        "availability": "-",
+        "host": "Droid-integrated beacon launcher, carried beacons separate",
+        "prerequisites": "Standard initial launcher capacity 12; add storage up to capacity 24",
+        "mechanics": {
+          "beaconLengthMeters": 0.25,
+          "signalCoverage": "Star system unless nebular interference or jamming",
+          "beaconFind": "Use Computer DC10 through ship sensors",
+          "capacityDefault": 12,
+          "capacityMaximum": 24,
+          "capacityPriceIncrementPctPerBeacon": 10
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-10",
+      "canonicalId": "droid-survival-kit",
+      "name": "Survival Kit",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 100
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 1
+        },
+        "availability": "-",
+        "host": "Droid-held or integrated accessory; owner/host selected",
+        "prerequisites": "Aiding another creature using Survival",
+        "mechanics": {
+          "contains": [
+            "small refrigeration unit",
+            "water recycler/dispenser",
+            "rechargeable glow rod",
+            "fire sparker"
+          ],
+          "aidAnotherTotalBonus": 4,
+          "normalAidAnotherBonus": 2,
+          "additionalBonusAboveNormal": 2
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-11",
+      "canonicalId": "droid-taser",
+      "name": "Taser",
+      "decision": "HOLD",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 250
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 2
+        },
+        "availability": "Licensed",
+        "host": "Droid-carried projectile weapon or installed weapon mount",
+        "prerequisites": "Normal ranged attack/weapon proficiency and legal licensing",
+        "mechanics": {
+          "intendedUse": "nonlethal electrical projectile vs organics",
+          "vsDroid": "Behaves like ion gun",
+          "meleeUse": "As electroshock probe",
+          "rangedDamageDiceInReviewedSection": "NOT_PRINTED",
+          "meleeDamageDiceInReviewedSection": "NOT_PRINTED"
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-12",
+      "canonicalId": "droid-video-screen",
+      "name": "Video Screen",
+      "decision": "HOLD",
+      "printedRule": {
+        "cost": {
+          "kind": "AREA_PRICING",
+          "creditsPerSquareMm": 1,
+          "printedSizeRangeMm": [
+            50,
+            500
+          ],
+          "measurementInterpretation": "UNSPECIFIED_DIMENSION_NOT_SILENTLY_SQUARED"
+        },
+        "weight": {
+          "kind": "AREA_MASS",
+          "baseKg": 1,
+          "kgPerSquareMm": 0.01,
+          "printedWeightFormula": "1 kg + 0.01 kg per square mm"
+        },
+        "availability": "-",
+        "host": "Droid-integrated display",
+        "prerequisites": "Select physical screen dimensions and compute actual display area",
+        "mechanics": {
+          "function": "Displays text, translations, diagnostics, programming, images, and other information",
+          "printedSizeRangeMm": [
+            50,
+            500
+          ],
+          "squareMmUnitRequired": true
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-13",
+      "canonicalId": "droid-voice-print-command-lock",
+      "name": "Voice-Print Command Lock",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 400
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 1
+        },
+        "availability": "-",
+        "host": "Integrated droid command authorization lock",
+        "prerequisites": "One designated master voiceprint; audio source may be recorded",
+        "mechanics": {
+          "commandRestriction": "Obeys only selected master voice",
+          "recordedCommandBypass": "Use Computer vs droid Will Defense with +5 to Will Defense",
+          "doesNotGrantOtherControllerOwnership": true
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-14",
+      "canonicalId": "droid-weapon-detector",
+      "name": "Weapon Detector",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 1500
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 5
+        },
+        "availability": "Licensed",
+        "host": "Installed droid security sensors",
+        "prerequisites": "Perception Search check to detect weapons",
+        "mechanics": {
+          "detects": [
+            "deactivated vibroweapon frequency",
+            "tibanna gas residue on blasters"
+          ],
+          "modifier": "Add droid Intelligence modifier to Perception Search for weapons",
+          "notGenericPerceptionBonus": true
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 58,
+          "pdfPage1Based": 59,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-15",
+      "canonicalId": "droid-sensor-booster",
+      "name": "Sensor Booster",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 200
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 5
+        },
+        "availability": "-",
+        "host": "Installed on droid sensor suite",
+        "prerequisites": "Droid has a sensor pack installed",
+        "mechanics": {
+          "maximumRangeKm": 2,
+          "effect": "Extend sensor range up to 2 kilometers",
+          "notGenericPerceptionBonus": true
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-16",
+      "canonicalId": "droid-sensor-countermeasure-package",
+      "name": "Sensor Countermeasure Package",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 1000
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 2
+        },
+        "availability": "-",
+        "host": "Installed droid sensor countermeasure suite",
+        "prerequisites": "Incoming detection uses nonvisual sensor equipment",
+        "mechanics": {
+          "stealthMethod": "Droid rolls Use Computer",
+          "opposedTo": "Perception to detect droid using nonvisual sensors",
+          "success": "If Use Computer >= detection Perception then droid remains undetected",
+          "visualDetectionUnaffected": true
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-17",
+      "canonicalId": "droid-yv-sensor-package",
+      "name": "YV Sensor Package",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 1000
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 3
+        },
+        "availability": "Military",
+        "host": "Installed specialized sensor suite",
+        "prerequisites": "Target is Yuuzhan Vong in line of sight and within 12 squares",
+        "mechanics": {
+          "perceptionBonus": 10,
+          "bonusScope": "Detect Yuuzhan Vong",
+          "maximumDistanceSquares": 12,
+          "lineOfSightRequired": true,
+          "worksAgainstConcealment": [
+            "ooglith masquer",
+            "other methods"
+          ],
+          "factoryStandardOn": "YVH series only"
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-18",
+      "canonicalId": "droid-shield-expansion-module",
+      "name": "Shield Expansion Module",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "SHIELD_RATING_FACTOR",
+          "baseCreditsPerSR": 50,
+          "formula": "50 * selected installed shield SR * published droid size cost factor"
+        },
+        "weight": {
+          "kind": "SHIELD_RATING_FACTOR_KG",
+          "baseKgPerSR": 2,
+          "formula": "2 * selected installed shield SR * size cost factor"
+        },
+        "availability": "Military",
+        "host": "Installed adjacent-square shield projector",
+        "prerequisites": "Droid Small+ with an existing shield generator installed",
+        "mechanics": {
+          "activateAction": "standard",
+          "protectedArea": "ONE selected adjacent square",
+          "recipientMaximumSize": "Medium",
+          "effect": "Eligible creature there uses droid CURRENT SR, only while still in selected adjacent square and droid remains adjacent",
+          "maxModulesOnSmallOrMedium": 1,
+          "maxModulesOnLargeOrLarger": 2
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 62,
+          "pdfPage1Based": 63,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-19",
+      "canonicalId": "droid-droid-battle-station",
+      "name": "Droid Battle Station",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "PER_100_DROIDS",
+          "creditsPer100Droids": 50000
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 5000
+        },
+        "availability": "Military",
+        "host": "Facility or starship station; NOT droid chassis",
+        "prerequisites": "Installation at facility; operator chooses talents at station installation",
+        "mechanics": {
+          "inherits": "Droid Command Station functions",
+          "canCoordinate": "Large droid groups including combat",
+          "chooseDroidCommanderTalentsOnInstall": 2,
+          "talentUseTracking": "By station, not per operator",
+          "operatorChangingCannotResetUses": true,
+          "duplicateOperatorTalentDoesNotExpandUses": true
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-20",
+      "canonicalId": "droid-droid-command-station",
+      "name": "Droid Command Station",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 10000
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 1000
+        },
+        "availability": "Licensed",
+        "host": "Facility or starship station; NOT droid chassis",
+        "prerequisites": "Member droids have comlink/integrated comlink or remote processor; operator supplies password/code cylinder",
+        "mechanics": {
+          "stationIntelligence": "max(14, ship Intelligence)",
+          "stationWillDefense": 15,
+          "issueRoutineCommand": "No check if familiar/trained; complex commands may need Use Computer at GM discretion",
+          "commandBonus": "+10 equipment to Use Computer, Persuasion, Perception against pool droids",
+          "coordinatePool": {
+            "UseComputerDC": 15,
+            "AidAnotherTotalBonus": 3,
+            "automaticAidSuccess": true
+          },
+          "locateTrackedPoolDroid": {
+            "UseComputerDC": 5,            "needsTrackingDeviceOrLocatableBolt": true
+          },
+          "readDroidStatus": "No check",
+          "remoteReprogramming": "Core p192 procedure",
+          "translateBinary": "No check"
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 63,
+          "pdfPage1Based": 64,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 64,
+          "pdfPage1Based": 65,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-21",
+      "canonicalId": "droid-droid-recharge-station",
+      "name": "Droid Recharge Station",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 4000
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 500
+        },
+        "availability": "-",
+        "host": "Powered facility/ship station; NOT droid chassis",
+        "prerequisites": "Requires external power and compatible supported droid size/model",
+        "mechanics": {
+          "publicUseFeeCredits": 20,
+          "rechargeTimeHours": 1,
+          "selfPowered": false,
+          "diagnosticUseComputerDC": 10,
+          "reveals": [
+            "current HP",
+            "condition track",
+            "systems",
+            "appendages",
+            "tools"
+          ],
+          "securesDroidDuringShipTravel": true,
+          "supportedSizeOrModel": "by installed station model"
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 64,
+          "pdfPage1Based": 65,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    },
+    {
+      "id": "B005-22",
+      "canonicalId": "droid-droid-socket",
+      "name": "Droid Socket",
+      "decision": "PASS",
+      "printedRule": {
+        "cost": {
+          "kind": "FIXED_CREDITS",
+          "credits": 10000
+        },
+        "weight": {
+          "kind": "FIXED_KG",
+          "kg": 1000
+        },
+        "availability": "Military",
+        "host": "Vehicle or starship socket; NOT droid chassis",
+        "prerequisites": "Designed for astromech; vehicle-installed; source often includes socket in vehicle base cost",
+        "mechanics": {
+          "usuallyIncludedWithVehicle": true,
+          "allowedWithPilotPermission": [
+            "pilot or copilot",
+            "eject droid",
+            "raise/lower/recharge shields",
+            "reroute power",
+            "limited Repairs",
+            "operate computer",
+            "communicate/sensors",
+            "astrogation buffer hyperdrive control"
+          ],
+          "pilotUnconsciousException": "Pilot/copy pilot permission not needed if pilot unconscious",
+          "noPilotPermissionByDefault": [
+            "fire weapons",
+            "jump to hyperspace"
+          ],
+          "ejectionSpeed": 12,
+          "canBeOriginalOrRetrofit": true
+        },
+        "variants": [],
+        "sourceNonstatements": []
+      },
+      "sourcePages": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 59,
+          "pdfPage1Based": 60,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        },
+        {
+          "book": "Scavenger's Guide to Droids",
+          "printedPage": 64,
+          "pdfPage1Based": 65,
+          "verification": "RENDERED_ORIGINAL_PDF_VISUALLY_INSPECTED_2026_11_02"
+        }
+      ],
+      "garage": "NOT_EXECUTED",
+      "chargen": "NOT_EXECUTED",
+      "follower": "NOT_EXECUTED",
+      "store": "NOT_EXECUTED",
+      "foundry": "NOT_EXECUTED"
+    }
+  ]
+}

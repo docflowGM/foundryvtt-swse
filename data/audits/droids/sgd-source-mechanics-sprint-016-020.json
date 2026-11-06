@@ -1,0 +1,180 @@
+{
+  "schema": "swse.droids.sgd.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "bookId": "SGD",
+  "scope": "Second pass printed pp.98-107; original publication identities and structural hydration preserved. Not mechanical certification.",
+  "sourcePdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+  "records": [
+    {
+      "sourceEntryKey": "SGD-DROID-016",
+      "printedName": "G2 Repair Droid",
+      "printedPages": [
+        98,
+        99
+      ],
+      "pdfPages1Based": [
+        99,
+        100
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-016-ACTION-PATCH-JOB",
+        "SGD-DROID-016-ACTION-RECHARGE-SHIELDS",
+        "SGD-DROID-016-ACTION-REGULATE-POWER",
+        "SGD-DROID-016-ACTION-RUN-DIAGNOSTICS"
+      ],
+      "variantIds": [
+        "SGD-DROID-016-VARIANT-COPILOT",
+        "SGD-DROID-016-VARIANT-EXPLOSIVES-DETECTOR",
+        "SGD-DROID-016-VARIANT-SCAVENGER"
+      ],
+      "constraintIds": [
+        "SGD-DROID-016-CONSTRAINT-FACTORY-VS-HEROIC",
+        "SGD-DROID-016-CONSTRAINT-PATCH-JOB-CONFLICT"
+      ],
+      "contradictionIds": [
+        "SGD-016-PATCH-JOB-ACTION-CONFLICT"
+      ],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-017",
+      "printedName": "GD16-Series Pilot Droid",
+      "printedPages": [
+        100,
+        101
+      ],
+      "pdfPages1Based": [
+        101,
+        102
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-017-ACTION-COPILOT",
+        "SGD-DROID-017-ACTION-RECHARGE-SHIELDS",
+        "SGD-DROID-017-ACTION-REGULATE-POWER",
+        "SGD-DROID-017-ACTION-SENSOR-CROWN",
+        "SGD-DROID-017-ACTION-VEHICLE-LINK"
+      ],
+      "variantIds": [
+        "SGD-DROID-017-VARIANT-ADVANCED-ESPIONAGE-UPGRADE",
+        "SGD-DROID-017-VARIANT-PRECISION-FLIGHT"
+      ],
+      "constraintIds": [
+        "SGD-DROID-017-CONSTRAINT-VEHICLE-LINK-FRIENDLY-COMPUTER",
+        "SGD-DROID-017-CONSTRAINT-SIMULTANEOUS-OPERATION-RESOURCE"
+      ],
+      "contradictionIds": [
+        "SGD-017-VEHICLE-LINK-ACTION-CONFLICT"
+      ],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-018",
+      "printedName": "GX1-Series Battle Droid",
+      "printedPages": [
+        102,
+        103
+      ],
+      "pdfPages1Based": [
+        103,
+        104
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-018-ACTION-BLASTER-RIFLE-ATTACK",
+        "SGD-DROID-018-ACTION-RAPID-SHOT",
+        "SGD-DROID-018-ACTION-REPOSITIONING-ROUTINES",
+        "SGD-DROID-018-ACTION-RETRIEVE-ITEM"
+      ],
+      "variantIds": [
+        "SGD-DROID-018-VARIANT-ARMORED-COURIER",
+        "SGD-DROID-018-VARIANT-AIRDROP-DROID"
+      ],
+      "constraintIds": [
+        "SGD-DROID-018-CONSTRAINT-FOUR-HANDS-NOT-FOUR-ATTACKS",
+        "SGD-DROID-018-CONSTRAINT-ARMOR-REPLACEMENT"
+      ],
+      "contradictionIds": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-019",
+      "printedName": "GY-I Information Analysis Droid",
+      "printedPages": [
+        104,
+        105
+      ],
+      "pdfPages1Based": [
+        105,
+        106
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-019-ACTION-ANALYZE-DATA",
+        "SGD-DROID-019-ACTION-DIAGNOSIS",
+        "SGD-DROID-019-ACTION-EXPERT-OPINION"
+      ],
+      "variantIds": [
+        "SGD-DROID-019-VARIANT-ASTROMECH-DROID",
+        "SGD-DROID-019-VARIANT-FINANCIAL-WIZARD"
+      ],
+      "constraintIds": [
+        "SGD-DROID-019-CONSTRAINT-ASTROMECH-SLOT-PHYSICAL",
+        "SGD-DROID-019-CONSTRAINT-WEALTH-NONSTACKING"
+      ],
+      "contradictionIds": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-020",
+      "printedName": "H-1ME Battle Mechanic Droid",
+      "printedPages": [
+        106,
+        107
+      ],
+      "pdfPages1Based": [
+        107,
+        108
+      ],
+      "protocolActionIds": [
+        "SGD-DROID-020-ACTION-IDENTIFY-TECHNOLOGY",
+        "SGD-DROID-020-ACTION-MECHANICAL-ASSISTANCE",
+        "SGD-DROID-020-ACTION-PICKPOCKET",
+        "SGD-DROID-020-ACTION-RECHARGE-SHIELDS",
+        "SGD-DROID-020-ACTION-REGULATE-POWER"
+      ],
+      "variantIds": [
+        "SGD-DROID-020-VARIANT-MISSILE-DROID"
+      ],
+      "constraintIds": [
+        "SGD-DROID-020-CONSTRAINT-PREVENTIVE-MAINTENANCE-CAP",
+        "SGD-DROID-020-CONSTRAINT-MISSILE-HOUSING-NOT-ATTACK"
+      ],
+      "contradictionIds": [],
+      "mechanicalStatus": "partial",
+      "executionStatus": "source-only"
+    }
+  ],
+  "totals": {
+    "models": 5,
+    "protocolActions": 21,
+    "optionalVariants": 10,
+    "installationAndUseConstraints": 10,
+    "heroicRouteNotes": 4,
+    "newUnresolvedContradictions": 2,
+    "sourceHydrated": 46,
+    "strictMechanicallyCertified": 0
+  },
+  "assertions": {
+    "uniquePublicationIdentities": true,
+    "allNewClaimsSourceCited": true,
+    "allProtocolAndVariantsSourceOnly": true,
+    "printedAttackRowsSourceOnly": true,
+    "zeroCertificationPromotion": true,
+    "productionChanged": false,
+    "pythonDraft202012": "NOT_RUN",
+    "foundryRuntime": "NOT_RUN"
+  },
+  "next": "SGD-DROID-021 to 025 source-mechanical deep review; independent full mechanical certificate remains outstanding."
+}

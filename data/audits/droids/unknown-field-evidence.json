@@ -1,0 +1,237 @@
+{
+  "schema": "swse.droid.unknown.source-evidence/0.1",
+  "sourceBook": "The Unknown Regions",
+  "sourcePdf": "SW_Saga_The_Unknown_Regions.pdf",
+  "sourcePdfSha256": "43a69aa7974ed4aeb52b57ba28b3466c2ed9f54bd73fe5d5295b744bfe1bd55b",
+  "sourceTxt": "Unknown Regions_djvu.txt",
+  "sourceTxtSha256": "e3d140a39e983fc6def7fd8bbe4efcb85e9e21ca3815acfaa1bd317259c3b7e1",
+  "records": [
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-001",
+      "printedName": "AS23 Aerial Survey Droid",
+      "printedPage": 43,
+      "pdfPage1Based": 44,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 4206,
+      "txtWindowSha256": "08295aebc4a614ac255925bd28713238491ef8000bb1302cae9a83dc054cbd3f",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/unknown_pdf_review/printed_p43.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "AS23 Aerial Survey Droid",
+          "/publication/printedPageStart": 43,
+          "/publication/printedPageEnd": 43,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 3,
+          "/pcConstruction/heroEligibility": "prohibited",
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 14,
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 3,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 23500
+        },
+        "fieldComparisonCount": 16,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Aerial survey spotting rules are model-specific, not vehicle targeting authority."
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-002",
+      "printedName": "DSH-3 Probe Droid",
+      "printedPage": 44,
+      "pdfPage1Based": 45,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 4305,
+      "txtWindowSha256": "a088c4dc46275c03818b158b9e22c2ac57b69fb0d4597ec7d7d10bf06dff9d89",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/unknown_pdf_review/printed_p44.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "DSH-3 Probe Droid",
+          "/publication/printedPageStart": 44,
+          "/publication/printedPageEnd": 44,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 4,
+          "/pcConstruction/heroEligibility": "prohibited",
+          "/abilities/initiativePrinted": 5,
+          "/abilities/perceptionPrinted": 15,
+          "/defenses/reflex": 15,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 8,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 8,
+          "/durability/damageThreshold": 8,
+          "/economics/newCredits": 13000
+        },
+        "fieldComparisonCount": 16,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Probe droid reactions and tracking do not create generic droid actions."
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-003",
+      "printedName": "F1 Exploration Droid",
+      "printedPage": 44,
+      "pdfPage1Based": 45,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 4407,
+      "txtWindowSha256": "3b80828ce11262b113d9cd0cce407537450208ed7fde7fec77911928678f2d4f",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/unknown_pdf_review/printed_p44.png",
+        "extraVisualSourcePages": [
+          45
+        ],
+        "fieldValues": {
+          "/identity/printedName": "F1 Exploration Droid",
+          "/publication/printedPageStart": 44,
+          "/publication/printedPageEnd": 45,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 3,
+          "/classification/publishedDegree": 5,
+          "/pcConstruction/heroEligibility": "allowed",
+          "/abilities/initiativePrinted": 7,
+          "/abilities/perceptionPrinted": 15,
+          "/defenses/reflex": 17,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 15,
+          "/durability/hitPoints": 33,
+          "/durability/damageThreshold": 15,
+          "/economics/newCredits": 12500
+        },
+        "fieldComparisonCount": 16,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Force points printed on Scout model do not prove universal droid Force Sensitivity.",
+        "Full statblock and protocol view span adjacent pages; one source identity only."
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-004",
+      "printedName": "MULE Droid",
+      "printedPage": 45,
+      "pdfPage1Based": 46,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 4520,
+      "txtWindowSha256": "6d6d3603bcbd25e1bb723a77975eee35fa44e8f7a4bb9bbbd9a7c0ca8d8135b7",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/unknown_pdf_review/printed_p45.png",
+        "extraVisualSourcePages": [
+          46
+        ],
+        "fieldValues": {
+          "/identity/printedName": "MULE Droid",
+          "/publication/printedPageStart": 45,
+          "/publication/printedPageEnd": 46,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 5,
+          "/pcConstruction/heroEligibility": "allowed",
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 12,
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 15,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 9,
+          "/durability/damageThreshold": 15,
+          "/economics/newCredits": 9000,
+          "/movement/speedLineRaw": "4 squares (hovering)"
+        },
+        "fieldComparisonCount": 17,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Self-diagnostic grant is limited to source conditions.",
+        "Protocol view is a second presentation, not another droid."
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-005",
+      "printedName": "Wanderer Scout Surveyor Droid",
+      "printedPage": 46,
+      "pdfPage1Based": 47,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 4663,
+      "txtWindowSha256": "ffeb6e9afcf5228e9531318850e2c49697225cab9f822ffa00c4e77ef288eca2",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/unknown_pdf_review/printed_p46.png",
+        "extraVisualSourcePages": [
+          47
+        ],
+        "fieldValues": {
+          "/identity/printedName": "Wanderer Scout Surveyor Droid",
+          "/publication/printedPageStart": 46,
+          "/publication/printedPageEnd": 47,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 5,
+          "/pcConstruction/heroEligibility": "prohibited",
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 6,
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 16,
+          "/defenses/fortitude": 14,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 26,
+          "/durability/damageThreshold": 14,
+          "/economics/newCredits": 9400,
+          "/movement/speedLineRaw": "6 squares (walking)"
+        },
+        "fieldComparisonCount": 17,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "360-degree photoreceptor prevents flank and certain flat-footed effects only as printed; no unrestricted awareness."
+      ]
+    },
+    {
+      "sourceEntryKey": "UNKNOWN-DROID-006",
+      "printedName": "WED-20 Treadwell",
+      "printedPage": 47,
+      "pdfPage1Based": 48,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 4771,
+      "txtWindowSha256": "7eaa6d1aa347590c501b51dd4087ff26bf4519dd584b0d6c9b286cd345fda25b",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/unknown_pdf_review/printed_p47.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "WED-20 Treadwell",
+          "/publication/printedPageStart": 47,
+          "/publication/printedPageEnd": 47,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 1,
+          "/pcConstruction/heroEligibility": "allowed",
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 13,
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 9,
+          "/economics/newCredits": 8300,
+          "/movement/speedLineRaw": "4 squares (tracked)"
+        },
+        "fieldComparisonCount": 17,
+        "scope": "Selected source facts only. Sourcebook PDF is authority."
+      },
+      "warnings": [
+        "Scientific Focus bonus limited to printed Knowledge checks; no blanket skill grant."
+      ]
+    }
+  ]
+}

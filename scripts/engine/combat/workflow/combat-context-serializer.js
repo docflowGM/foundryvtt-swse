@@ -157,6 +157,15 @@ function summarizeSpecial(special) {
   return Object.keys(out).length ? out : undefined;
 }
 
+// P6C-2B: the weapon-battery outcome of the attack (Core p. 170), carried to the later Damage roll. Numbers only; the damage
+// authority validates extraHits against the weapons actually participating, so a forged card cannot exceed them.
+function summarizeBatteryOutcome(b) {
+  if (!b || typeof b !== 'object') return undefined;
+  const out = {};
+  for (const k of ['extraHits', 'participatingWeapons', 'margin', 'attackTotal', 'targetDefense']) if (Number.isFinite(Number(b[k])) && b[k] !== null && b[k] !== '') out[k] = Number(b[k]);
+  return Object.keys(out).length ? out : undefined;
+}
+
 // Phase 5D-F: per-attack shape record (fire mode, index/length in the sequence, package, hand role, double-weapon end)
 function summarizeAttackShape(shape) {
   if (!shape || typeof shape !== 'object') return undefined;
@@ -283,6 +292,7 @@ export function summarizeCombatWorkflowContext(context = null, extra = {}) {
     weaponForm: summarizeWeaponForm(extra.weaponForm ?? context.weaponForm),
     special: summarizeSpecial(extra.special ?? context.special),
     attackShape: summarizeAttackShape(extra.attackShape ?? context.attackShape),
+    battery: summarizeBatteryOutcome(extra.battery ?? context.battery),
     attack: {
       mode: extra.attackMode ?? attack.mode ?? context.attackMode ?? null,
       isArea: asBool(extra.isArea ?? attack.isArea ?? context.isAreaAttack ?? context.areaAttack),

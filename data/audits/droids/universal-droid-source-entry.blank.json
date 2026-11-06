@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "swse.droid.universal-source/0.1-draft",
+  "recordType": "droid-publication-source-entry",
+  "identity": {
+    "sourceEntryKey": "REPLACE_WITH_BOOK_SPECIFIC_KEY",
+    "printedName": "REPLACE_WITH_PRINTED_NAME"
+  },
+  "publication": {
+    "book": "REPLACE_WITH_PRINTED_SOURCEBOOK"
+  },
+  "classification": {},
+  "challenge": {},
+  "geometry": {},
+  "abilities": {},
+  "progression": {},
+  "defenses": {},
+  "durability": {},
+  "movement": {},
+  "anatomy": {},
+  "processor": {},
+  "programming": {},
+  "combat": {},
+  "capacity": {},
+  "systems": {},
+  "equipment": {},
+  "modifications": {},
+  "pcConstruction": {},
+  "vehicleLink": {},
+  "economics": {},
+  "text": {},
+  "exceptions": {},
+  "fieldStates": {},
+  "rules": {},
+  "certification": {
+    "identityStatus": "unreviewed",
+    "mechanicalStatus": "unreviewed",
+    "runtimeStatus": "not-tested"
+  }
+}

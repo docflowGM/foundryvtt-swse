@@ -1,0 +1,10 @@
+{
+  "bookId": "SCUM",
+  "draftEntries": 5,
+  "selectedPdfReviewed": 5,
+  "comparisons": 32,
+  "mechanicallyCertified": 0,
+  "runtimeVerified": 0,
+  "status": "IN_PROGRESS_SOURCE_REVIEW_ONLY",
+  "publishedAuditScope": "selected-field-source-review-only"
+}

@@ -1,0 +1,233 @@
+{
+  "schema": "swse.droids.sgd.mechanical-sprint-005/source-evidence-v1",
+  "date": "2026-11-02",
+  "bookId": "SGD",
+  "sourceBook": "Scavenger's Guide to Droids",
+  "sprint": "source-mechanical-sprint-001-005",
+  "sourcePageRangePrinted": [
+    68,
+    77
+  ],
+  "recordIds": [
+    "SGD-DROID-001",
+    "SGD-DROID-002",
+    "SGD-DROID-003",
+    "SGD-DROID-004",
+    "SGD-DROID-005"
+  ],
+  "status": "SOURCE_MECHANICAL_DEEPENING_NOT_STRICT_CERTIFICATION",
+  "recordCount": 5,
+  "remainingSGDRecordsNotYetDeepenedInThisPass": 41,
+  "allSGDStructurallyHydrated": 46,
+  "strictMechanicalCertificationsTotal": 0,
+  "strictMechanicalCertificationsInSprint": 0,
+  "foundryRuntimeCertifications": 0,
+  "sourceLedgerCommit": "6b106fb7e81b7a11fe212cacc6c79d218c820f40",
+  "summary": {
+    "reviewedSourceEntries": 5,
+    "variantRecords": 15,
+    "newProtocolActionClaims": 19,
+    "newHeroicConstructionClaims": 4,
+    "newVariantConstraintRules": 6,
+    "newFiringDelegationGuards": 1,
+    "newlyRecordedSourceContradictions": 1,
+    "preexistingContradictionsInThisTranche": 1,
+    "sourcePdfPageCount": 10
+  },
+  "records": [
+    {
+      "id": "SGD-DROID-001",
+      "name": "8D Smelter Droid",
+      "pages": [
+        68,
+        69
+      ],
+      "variants": [
+        "Damage Control",
+        "Master's Decoy",
+        "Survivalist"
+      ],
+      "newProtocolActionClaims": 2,
+      "newPCClaims": 1,
+      "newConstraints": 1,
+      "unresolved": [
+        {
+          "id": "SGD-001-VEHICLE-REPAIR-HOST",
+          "reason": "Damage-control healing (+2 steps and 2d8 ship HP) requires separate vehicle-repair action authority, and is only valid for fully modified unit."
+        },
+        {
+          "id": "SGD-001-HEAT-SHELL-PROVENANCE",
+          "reason": "Prove Duravlex shell special-quality mechanics and shell acquisition, not free bonus on heroic chassis."
+        },
+        {
+          "id": "SGD-001-TRAIT-INSTANCE-PROOF",
+          "reason": "Printed feat Skill Focus / Skill Training exact instance mappings remain source-only; no executable effect."
+        }
+      ]
+    },
+    {
+      "id": "SGD-DROID-002",
+      "name": "A9G-Series Archive Droid",
+      "pages": [
+        70,
+        71
+      ],
+      "variants": [
+        "Field Medic",
+        "Reconnaissance",
+        "Slicer's Computer"
+      ],
+      "newProtocolActionClaims": 4,
+      "newPCClaims": 1,
+      "newConstraints": 0,
+      "unresolved": [
+        {
+          "id": "SGD-002-ARCHIVE-PROCESSOR-ACTION-COST",
+          "reason": "Printed standard prose full-round vs protocol two swift actions; unresolved and already flagged."
+        },
+        {
+          "id": "SGD-002-PC-IN-LIEU",
+          "reason": "Heroic stock protocol chassis gets Archive Processor in place of Translator Unit. No duplicate free entitlement."
+        },
+        {
+          "id": "SGD-002-MEDICAL-SCANNER-SCOPE",
+          "reason": "Field medic optional scanner +2 Treat Injury equipment bonus stacks with medkit bonus only as printed, requires DC20 Mechanics and 2 hours."
+        },
+        {
+          "id": "SGD-002-EXTERNAL-SLICER-CONTROL",
+          "reason": "Computer variant reroll belongs to cooperating slicer; not a passive droid Use Computer advantage."
+        }
+      ]
+    },
+    {
+      "id": "SGD-DROID-003",
+      "name": "AD-Series Weapons Maintenance Droid",
+      "pages": [
+        72,
+        73
+      ],
+      "variants": [
+        "Police",
+        "Sniper",
+        "Speakeasy"
+      ],
+      "newProtocolActionClaims": 4,
+      "newPCClaims": 1,
+      "newConstraints": 0,
+      "unresolved": [
+        {
+          "id": "SGD-003-SNIPER-EXACT-WEAPON",
+          "reason": "Sniper +2/-2 applies to single selected weapon and ALL alternatives, with no universal to-hit grant; install DC20 Mechanics, one hour."
+        },
+        {
+          "id": "SGD-003-INTEGRATED-BLASTER-MOUNT",
+          "reason": "Police blaster carbine or optional integrated blaster is a modified loadout; no baseline printed Possessions list or automatic weapon Item."
+        },
+        {
+          "id": "SGD-003-TOOLKIT-SEPARATION",
+          "reason": "Printed 2 tool appendages and tool kit are different objects; police variant removes kit without removing appendages."
+        }
+      ]
+    },
+    {
+      "id": "SGD-DROID-004",
+      "name": "Annihilator Droid",
+      "pages": [
+        74,
+        75
+      ],
+      "variants": [
+        "Capital Ship Scrapper",
+        "Cargo Hauler",
+        "Space Sentry"
+      ],
+      "newProtocolActionClaims": 5,
+      "newPCClaims": 0,
+      "newConstraints": 2,
+      "newFiringDelegations": 1,
+      "unresolved": [
+        {
+          "id": "SGD-004-WEAPON-MOUNT-OWNERSHIP",
+          "reason": "Two tool appendages with laser cannons treated as blaster rifles; weapon provenance/mount identities and simultaneous attacks not certified."
+        },
+        {
+          "id": "SGD-004-REMOTE-CONTROL-HOST",
+          "reason": "Source specifies remote receiver without independent processor; no remote host/range can be assumed."
+        },
+        {
+          "id": "SGD-004-EXCLUSIVE-MOVEMENT-ACTION",
+          "reason": "Wheeled speed 10 requires two swift moves to transform; single swift move only walking 2."
+        },
+        {
+          "id": "SGD-004-MOD-SLOT-RESOURCE",
+          "reason": "Cargo pods each impose -1 to chosen attack or Reflex; space sentry thrusters don't grant relocation; ship scrapper alters two separate cannon/appendage mounts."
+        }
+      ],
+      "pcEligibility": "prohibited"
+    },
+    {
+      "id": "SGD-DROID-005",
+      "name": "BLX Labor Droid",
+      "pages": [
+        76,
+        77
+      ],
+      "variants": [
+        "Attaché",
+        "Long-Range Sensor",
+        "Portable Generator"
+      ],
+      "newProtocolActionClaims": 4,
+      "newPCClaims": 1,
+      "newConstraints": 3,
+      "unresolved": [
+        {
+          "id": "SGD-005-JACK-ACTION-COST-CONFLICT",
+          "reason": "Main text Jack of All Trades is standard action; protocol says one swift action once/turn; both still limit once/encounter."
+        },
+        {
+          "id": "SGD-005-TRAIT-REPLACEMENT",
+          "reason": "Attaché translator removes Jack of All Trades; heroic labor chassis replaces Heavy Lifting rather than stacking both."
+        },
+        {
+          "id": "SGD-005-5KM-SENSOR-VARIANT",
+          "reason": "Special BLX-only 5 km signal requires removing 10 kg storage, installing sensor pack and booster with separate DC15 Mechanics/1-hour steps and feat retraining; cannot generalize to all boosters."
+        },
+        {
+          "id": "SGD-005-GENERATOR-PROCESSOR",
+          "reason": "Portable Generator requires basic replacing heuristic, removal of magnetic feet/storage, and DC20 Mechanics/day/1,000-credit shielding."
+        }
+      ]
+    }
+  ],
+  "validators": {
+    "recursiveDraftSchemaShape": "PASS 46/46 (custom JavaScript schema walker)",
+    "fieldStateNullEmpty": "PASS 46/46 (custom JS)",
+    "censusSourceIdentityNamePage": "PASS 46/46",
+    "attackOperationRemainsSourceOnly": "PASS 46/46",
+    "newVariantActionSourceAndNoExecution": "PASS 5/5",
+    "githubExactFileReadback": "PASS (ledger)",
+    "pythonJsonschemaDraft202012": "NOT_RUN against GitHub ledger",
+    "foundryV13Runtime": "NOT_RUN"
+  },
+  "productionEffects": {
+    "productionPacksEdited": false,
+    "runtimeCodeEdited": false,
+    "merges": false
+  },
+  "gatePolicy": [
+    "All variants source-only",
+    "No optional modification treated as stock-installed component",
+    "No printed protocol action converted into executable attack",
+    "No source conflicts resolved without controlling-source decision",
+    "Printed PDF review alone does not prove complete feat/talent/mount/rule certifications",
+    "Foundry runtime deferred to Claude per owner split"
+  ],
+  "nextSourceRecords": [
+    "SGD-DROID-006",
+    "SGD-DROID-007",
+    "SGD-DROID-008",
+    "SGD-DROID-009",
+    "SGD-DROID-010"
+  ]
+}

@@ -1,0 +1,468 @@
+{
+  "schema": "swse.droid.force.source-evidence/0.1",
+  "sourceBook": "Force Unleashed Campaign Guide",
+  "sourcePdf": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+  "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+  "sourceTxt": "Force Unleashed Campaign Guide_djvu.txt",
+  "sourceTxtSha256": "a060b0b9184df6175d47e58fe1234ae6de64fe3c8d9b092816020b8edd28ce31",
+  "records": [
+    {
+      "sourceEntryKey": "FORCE-DROID-001",
+      "printedName": "FX-6 Medical Droid",
+      "printedPage": 103,
+      "pdfPage1Based": 104,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 9835,
+      "txtWindowSha256": "f89cb99beb8ad5c0d52a58787713a0d89ef5032b377abb075b39366eb64f932f",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p103.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "FX-6 Medical Droid",
+          "/publication/printedPageStart": 103,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 1,
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 5,
+          "/abilities/str": 9,
+          "/abilities/dex": 10,
+          "/abilities/int": 15,
+          "/abilities/wis": 14,
+          "/abilities/cha": 9,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/defenses/reflex": 11,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 10,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 10,
+          "/movement/speedLineRaw": "8 squares (wheeled)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Force Unleashed FX-6 and Clone Wars FX-6 are separate publication claims.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-002",
+      "printedName": "Q7 Series Astromech Droid",
+      "printedPage": 104,
+      "pdfPage1Based": 105,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 9933,
+      "txtWindowSha256": "55670e8003bf10b5731ea1d18e35d06225ff07a6557bddb1ecc9bdd32cbc7c79",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p104.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Q7 Series Astromech Droid",
+          "/publication/printedPageStart": 104,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 3,
+          "/abilities/str": 7,
+          "/abilities/dex": 16,
+          "/abilities/int": 15,
+          "/abilities/wis": 10,
+          "/abilities/cha": 7,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 7,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 5,
+          "/durability/damageThreshold": 7,
+          "/movement/speedLineRaw": "6 squares (hovering)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-003",
+      "printedName": "BD-3000 Luxury Droid",
+      "printedPage": 105,
+      "pdfPage1Based": 106,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 10059,
+      "txtWindowSha256": "f71d17ab3abb53bc2c9353fbf42e29013d8164568d4ae52b451ff1eb320d21e3",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p105.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "BD-3000 Luxury Droid",
+          "/publication/printedPageStart": 105,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 3,
+          "/abilities/initiativePrinted": -1,
+          "/abilities/perceptionPrinted": -1,
+          "/abilities/str": 8,
+          "/abilities/dex": 13,
+          "/abilities/int": 12,
+          "/abilities/wis": 9,
+          "/abilities/cha": 15,
+          "/progression/classLineRaw": "nonheroic 1",
+          "/defenses/reflex": 11,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 9,
+          "/durability/hitPoints": 2,
+          "/durability/damageThreshold": 9,
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/pcConstruction/heroEligibility": "allowed",
+          "/economics/newCredits": 25000,
+          "/economics/usedCredits": 8000
+        },
+        "fieldComparisonCount": 23,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "New price 25,000 credits; used price 8,000 credits are distinct fields.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-004",
+      "printedName": "Junk Droid",
+      "printedPage": 106,
+      "pdfPage1Based": 107,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 10173,
+      "txtWindowSha256": "de8a53fb1c3d596ec43e16791d6054f53d9621d4c5d293564d39178c536fccf3",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p106.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Junk Droid",
+          "/publication/printedPageStart": 106,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/abilities/initiativePrinted": 4,
+          "/abilities/perceptionPrinted": 5,
+          "/abilities/str": 15,
+          "/abilities/dex": 16,
+          "/abilities/int": 10,
+          "/abilities/wis": 8,
+          "/abilities/cha": 8,
+          "/progression/classLineRaw": "nonheroic 3",
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 11,
+          "/defenses/fortitude": 13,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 12,
+          "/durability/damageThreshold": 13,
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 20,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "No degree printed; contextual fourth-degree heading is not explicit degree.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-005",
+      "printedName": "Brute Junk Droid",
+      "printedPage": 107,
+      "pdfPage1Based": 108,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 10206,
+      "txtWindowSha256": "3f929d6b8bd6c98badab8d944a8c46e9d1c2805f66445fb4f2b30cd90042e6b7",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p107.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Brute Junk Droid",
+          "/publication/printedPageStart": 107,
+          "/classification/size": "Large",
+          "/challenge/challengeLevel": 3,
+          "/abilities/initiativePrinted": 7,
+          "/abilities/perceptionPrinted": 8,
+          "/abilities/str": 25,
+          "/abilities/dex": 16,
+          "/abilities/int": 10,
+          "/abilities/wis": 8,
+          "/abilities/cha": 8,
+          "/progression/classLineRaw": "nonheroic 9",
+          "/defenses/reflex": 13,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 18,
+          "/defenses/will": 10,
+          "/durability/hitPoints": 43,
+          "/durability/damageThreshold": 23,
+          "/movement/speedLineRaw": "8 squares (walking)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 20,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "No degree printed; source describes a distinct Large junk variant.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-006",
+      "printedName": "Behemoth Junk Droid",
+      "printedPage": 107,
+      "pdfPage1Based": 108,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 10243,
+      "txtWindowSha256": "6004350eefd08e34f0ae5c0f85b03073e6f6258e02c386017fc4e17485fd455b",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p107.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "Behemoth Junk Droid",
+          "/publication/printedPageStart": 107,
+          "/classification/size": "Huge",
+          "/challenge/challengeLevel": 4,
+          "/abilities/initiativePrinted": 5,
+          "/abilities/perceptionPrinted": 11,
+          "/abilities/str": 34,
+          "/abilities/dex": 12,
+          "/abilities/int": 10,
+          "/abilities/wis": 11,
+          "/abilities/cha": 8,
+          "/progression/classLineRaw": "nonheroic 12",
+          "/defenses/reflex": 10,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 23,
+          "/defenses/will": 11,
+          "/durability/hitPoints": 63,
+          "/durability/damageThreshold": 33,
+          "/movement/speedLineRaw": "8 squares (walking)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 20,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "No degree printed; Huge junk variant and optional passenger space are not fixed chassis capacities.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-007",
+      "printedName": "IT-O Interrogator",
+      "printedPage": 195,
+      "pdfPage1Based": 196,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19621,
+      "txtWindowSha256": "7f7815dc6eaabcfaf87c463eb495ba655a519c750d9a88c83257a7bde573ba51",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p195.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "IT-O Interrogator",
+          "/publication/printedPageStart": 195,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 2,
+          "/abilities/initiativePrinted": 8,
+          "/abilities/perceptionPrinted": 9,
+          "/abilities/str": 8,
+          "/abilities/dex": 11,
+          "/abilities/int": 16,
+          "/abilities/wis": 15,
+          "/abilities/cha": 16,
+          "/progression/classLineRaw": "noble 1",
+          "/defenses/reflex": 12,
+          "/defenses/flatFootedReflex": 12,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 14,
+          "/durability/hitPoints": 17,
+          "/durability/damageThreshold": 9,
+          "/movement/speedLineRaw": "6 squares (hovering)",
+          "/pcConstruction/heroEligibility": "conditional"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Hero route conditional on reprogramming; not unconditional allowed.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-008",
+      "printedName": "RA-7 Protocol Droid",
+      "printedPage": 196,
+      "pdfPage1Based": 197,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19732,
+      "txtWindowSha256": "028765008166603f3e715be522d5f52377fd4daadf06b1a9b3e44b938422564a",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p196.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "RA-7 Protocol Droid",
+          "/publication/printedPageStart": 196,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 3,
+          "/abilities/initiativePrinted": 1,
+          "/abilities/perceptionPrinted": 14,
+          "/abilities/str": 8,
+          "/abilities/dex": 13,
+          "/abilities/int": 12,
+          "/abilities/wis": 15,
+          "/abilities/cha": 9,
+          "/progression/classLineRaw": "nonheroic 1",
+          "/defenses/reflex": 11,
+          "/defenses/flatFootedReflex": 10,
+          "/defenses/fortitude": 9,
+          "/defenses/will": 12,
+          "/durability/hitPoints": 2,
+          "/durability/damageThreshold": 9,
+          "/movement/speedLineRaw": "6 squares (walking)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-009",
+      "printedName": "PROXY",
+      "printedPage": 197,
+      "pdfPage1Based": 198,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19802,
+      "txtWindowSha256": "51091a978ddd31b1be39cec413e679899efc79e62c294b37c983122be3d1602c",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p197.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "PROXY",
+          "/publication/printedPageStart": 197,
+          "/classification/size": "Medium",
+          "/challenge/challengeLevel": 13,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 14,
+          "/abilities/perceptionPrinted": 6,
+          "/abilities/str": 18,
+          "/abilities/dex": 16,
+          "/abilities/int": 13,
+          "/abilities/wis": 10,
+          "/abilities/cha": 8,
+          "/progression/classLineRaw": "soldier 1/Jedi 9/independent droid 3",
+          "/defenses/reflex": 30,
+          "/defenses/flatFootedReflex": 27,
+          "/defenses/fortitude": 29,
+          "/defenses/will": 27,
+          "/durability/hitPoints": 89,
+          "/durability/damageThreshold": 29,
+          "/movement/speedLineRaw": "6 squares"
+        },
+        "fieldComparisonCount": 20,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "PROXY is a named droid with Jedi levels and Force points; neither implies universal Force sensitivity for droids.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-010",
+      "printedName": "R-1 Recon Droid",
+      "printedPage": 197,
+      "pdfPage1Based": 198,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19876,
+      "txtWindowSha256": "44b01c95d9bdcbee61d262dc1c137f50f3af365395af6b0636de219247ebef97",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p197.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "R-1 Recon Droid",
+          "/publication/printedPageStart": 197,
+          "/classification/size": "Small",
+          "/challenge/challengeLevel": 1,
+          "/classification/publishedDegree": 4,
+          "/abilities/initiativePrinted": 8,
+          "/abilities/perceptionPrinted": 9,
+          "/abilities/str": 10,
+          "/abilities/dex": 16,
+          "/abilities/int": 12,
+          "/abilities/wis": 15,
+          "/abilities/cha": 11,
+          "/progression/classLineRaw": "scout 1",
+          "/defenses/reflex": 16,
+          "/defenses/flatFootedReflex": 13,
+          "/defenses/fortitude": 11,
+          "/defenses/will": 13,
+          "/durability/hitPoints": 24,
+          "/durability/damageThreshold": 11,
+          "/movement/speedLineRaw": "6 squares (hovering)",
+          "/pcConstruction/heroEligibility": "allowed"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Integral blaster is described in narrative but listed as a possession; must reconcile weapon/component ownership.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-011",
+      "printedName": "MSE-6 Repair Droid",
+      "printedPage": 198,
+      "pdfPage1Based": 199,
+      "sourceReviewStatus": "PDF_SELECTED_FIELDS_VISUAL",
+      "txtAnchorLine1Based": 19978,
+      "txtWindowSha256": "4554590b8273613524ce205bc8412500025867364efbec64f4d93395a3be8321",
+      "pdfVisualFieldChecks": {
+        "sourceImage": "work/force_pdf_review/printed_p198.png",
+        "extraVisualSourcePages": [],
+        "fieldValues": {
+          "/identity/printedName": "MSE-6 Repair Droid",
+          "/publication/printedPageStart": 198,
+          "/classification/size": "Tiny",
+          "/challenge/challengeLevel": 0,
+          "/classification/publishedDegree": 5,
+          "/abilities/initiativePrinted": 3,
+          "/abilities/perceptionPrinted": 3,
+          "/abilities/str": 6,
+          "/abilities/dex": 14,
+          "/abilities/int": 15,
+          "/abilities/wis": 7,
+          "/abilities/cha": 7,
+          "/progression/classLineRaw": "nonheroic 2",
+          "/defenses/reflex": 14,
+          "/defenses/flatFootedReflex": 12,
+          "/defenses/fortitude": 8,
+          "/defenses/will": 8,
+          "/durability/hitPoints": 6,
+          "/durability/damageThreshold": 8,
+          "/movement/speedLineRaw": "6 squares (wheeled)",
+          "/pcConstruction/heroEligibility": "prohibited"
+        },
+        "fieldComparisonCount": 21,
+        "scope": "Selected printed statblock facts, NOT complete field-by-field mechanics certification."
+      },
+      "warnings": [
+        "Reach 0 and model-specific reaction are not universal droid weaknesses.",
+        "OCR columns may interleave. Only retained selected field values are reviewed source facts."
+      ]
+    }
+  ]
+}

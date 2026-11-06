@@ -1,0 +1,66 @@
+{
+  "schema": "swse.droids.mechanical003.independent-acceptance/v1",
+  "batch": "MECH-003",
+  "expectedByName": {
+    "Extra Legs": "PASS",
+    "Telescopic Appendage": "PASS",
+    "Stabilized Mount": "PASS",
+    "Spring-Loaded Mechanism": "PASS",
+    "Locked Access": "PASS",
+    "Translator Unit": "PASS",
+    "Gyroscopic Stabilizers": "PASS",
+    "Underwater Drive": "PASS",
+    "Magnetic Hands": "PASS",
+    "Quick-Release Coupling": "PASS",
+    "Droid Remote Control": "PASS",
+    "Hidden Core": "PASS",
+    "Specialized Subprocessor": "PASS",
+    "Tactician Battle Computer": "PASS",
+    "Laminanium Plating": "PASS",
+    "Communications Countermeasure System": "PASS",
+    "Communications Jammer": "PASS",
+    "Climbing Claws": "HOLD",
+    "Jump Servos": "HOLD",
+    "Magnetic Feet": "HOLD",
+    "Burrower Drive": "HOLD",
+    "Projectile Hand": "HOLD",
+    "Remote Limb Control": "HOLD",
+    "Rocket Arm": "HOLD",
+    "Personality Downloader": "HOLD"
+  },
+  "checks": {
+    "expectedPass": 17,
+    "expectedHold": 8,
+    "expectedTotal": 25,
+    "noSourcePromotionsOnHold": true,
+    "expectedCumulativeCertified": 61,
+    "expectedCumulativeHold": 14,
+    "executedAppTests": 0
+  },
+  "examples": {
+    "stabilizedMountMediumCredits": 50,
+    "stabilizedMountMediumKg": 10,
+    "translatorDcTiers": [
+      20,
+      15,
+      10,
+      5
+    ],
+    "translatorCredits": [
+      200,
+      500,
+      1000,
+      2000
+    ],
+    "quickReleaseTypes": [
+      "tool",
+      "appendage"
+    ],
+    "laminaniumArmorClasses": [
+      "light",
+      "heavy"
+    ],
+    "communicationsJammerLocalDC": 25,
+    "communicationsJammerLocalRadiusKm": 1
+  }
+}

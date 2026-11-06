@@ -1,0 +1,135 @@
+{
+  "schema": "swse.vehicle.rebellion-era.phase2c.cp1.schema-discovery.v1",
+  "sourceBook": "Rebellion Era Campaign Guide",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "re-dunelizard-conditional-astromech",
+      "ship": "G1-M4-C",
+      "category": "CREW_CONFIGURATION",
+      "sourceDerivedIssue": "Optional copilot-seat to astromech port retrofit changes skills and nav memory; not the stock fit.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-dunelizard-repair-equipment-bonus",
+      "ship": "G1-M4-C",
+      "category": "SKILL_EQUIPMENT_BONUS",
+      "sourceDerivedIssue": "Always-on +1 equipment bonus only for Mechanics checks made to repair this ship.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ixiyen-single-pilot-weapon-exclusivity",
+      "ship": "Ixiyen",
+      "category": "FIRE_OPTION_DISJUNCTION",
+      "sourceDerivedIssue": "No extra gunner or droid slots; pilot chooses among attack systems.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-kimogila-crew-relative-torpedo-bonus",
+      "ship": "M12-L",
+      "category": "STATION_ATTACK_ALTERNATE",
+      "sourceDerivedIssue": "Torpedo detailed row gunner +3 versus pilot +5; narrative role-specific control.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-kimogila-ammunition-unspecified",
+      "ship": "M12-L",
+      "category": "PAYLOAD_PARTIAL",
+      "sourceDerivedIssue": "12 concussion missiles printed; no numbered proton torpedo stock payload.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-krayt-turret-bonus",
+      "ship": "M22-T",
+      "category": "STATION_BONUS_SCOPE",
+      "sourceDerivedIssue": "+1 equipment targeting-computer bonus to gunner turret weapons but not concussion missiles.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-krayt-passenger-conflict",
+      "ship": "M22-T",
+      "category": "NARRATIVE_STATBLOCK_CONFLICT",
+      "sourceDerivedIssue": "Narrative room for 2 passengers/prisoners versus printed statblock Passengers none.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-razor-missiles-per-tube",
+      "ship": "Razor",
+      "category": "PAYLOAD_MULTIPLICITY",
+      "sourceDerivedIssue": "8 concussion missiles per tube; physical tube count unknown; never infer grand total.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-mobquet-modular-nodes",
+      "ship": "Mobquet",
+      "category": "MODULAR_CAPACITY",
+      "sourceDerivedIssue": "Stock 24 passengers vs optional 32-passenger conversion; three modular sections.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-mobquet-frigate-classification",
+      "ship": "Mobquet",
+      "category": "TYPE_DISAMBIGUATION",
+      "sourceDerivedIssue": "Statblock says capital frigate; in-universe marketing/licensing calls it medium transport.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ykl-turret-launcher-count",
+      "ship": "YKL-37R",
+      "category": "NARRATIVE_HARDWARE_EVIDENCE",
+      "sourceDerivedIssue": "2 twin-laser turrets and 3 separate missile launchers, distinct from two attack-detail rows.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ykl-role-and-ammunition",
+      "ship": "YKL-37R",
+      "category": "MULTI_STATION_ATTACK",
+      "sourceDerivedIssue": "Missile row is controlled by copilot and 2 gunners; do not fabricate extra turns or fire groups.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-yv545-untrained-pilot",
+      "ship": "YV-545",
+      "category": "CONDITIONAL_PILOT_PENALTY",
+      "sourceDerivedIssue": "-2 to Pilot only if untrained; ordinary pilot stat remains +0.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-yv545-geometry-and-slots",
+      "ship": "YV-545",
+      "category": "CONDITIONAL_GEOMETRY",
+      "sourceDerivedIssue": "90-degree cockpit rotation, narrative top/bottom turrets, 3 unused emplacement points.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ym2800-attachment-breach",
+      "ship": "YM-2800",
+      "category": "BOARDING_CUTTER_ACTION_SEQUENCE",
+      "sourceDerivedIssue": "Adjacency hit attaches without collision; subsequent grapple checks bypass SR; cumulative threshold breach.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ym2800-shield-suppression",
+      "ship": "YM-2800",
+      "category": "TEMPORARY_POWER_REDIRECTION",
+      "sourceDerivedIssue": "Plasma cutter suppresses shields and other weapons during use; restored at start next pilot turn.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ym2800-unprinted-hyperdrive",
+      "ship": "YM-2800",
+      "category": "SOURCE_SILENT_FIELD",
+      "sourceDerivedIssue": "No hyperdrive listed in printed block; unknown rather than confirmed absent.",
+      "requiresFollowup": true
+    }
+  ],
+  "counts": {
+    "discoveryCases": 17,
+    "bookScopeReviewed": 10
+  },
+  "scopeGuardrails": [
+    "Cannot add a production ship, merge source identities or hydrate a compendium from discovery cases.",
+    "Prior SotG, Clone Wars, Legacy Era discovery counts are independent; do not overwrite or conflate."
+  ]
+}

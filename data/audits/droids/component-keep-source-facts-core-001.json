@@ -1,0 +1,569 @@
+{
+  "schema": "swse.droids.catalog.keep-source-review/0.1",
+  "auditDate": "2026-11-02",
+  "sprint": "KEEP-001",
+  "baselineHead": "c8926c4fc050fc1c041e3cdb3acbadf149502779",
+  "branch": "audit/droid-publication-census-2026-10-29",
+  "book": "Star Wars Saga Edition Core Rulebook",
+  "reviewedPdfPages1Based": [
+    191,
+    192,
+    194,
+    195,
+    196,
+    197,
+    198
+  ],
+  "reviewMethod": "Rendered original Core printed pages 190-197 using pdftoppm. Visually read source tables and rules; supplied DJVU TXT only used as locator.",
+  "priorPackets": [
+    "data/audits/droids/component-source-facts-sgd-sprint-001.json",
+    "data/audits/droids/component-source-facts-sprint-002.json",
+    "data/audits/droids/component-source-facts-sprint-003.json",
+    "data/audits/droids/component-edit-families-source-facts-c2-001.json"
+  ],
+  "summary": {
+    "pdfSourceReviewedThisPacket": 10,
+    "cumulativeSourceFactSets": 37,
+    "baselineKeepIdentityCount": 92,
+    "keepTrackDefinitionsSourceReviewedThisPacket": 10,
+    "keepIdentityCensusFullyCertified": 0,
+    "previousMissingAddsSourceReviewed": 23,
+    "previousEditFamiliesReviewed": 7,
+    "previousRepoOnlyScreened": 5,
+    "staticConfirmedDiscrepancyCategories": 2,
+    "otherOpenFindings": 7,
+    "fullMechanicalCertifications": 0,
+    "productionDefinitionsChanged": 0,
+    "applicationParityTests": 0,
+    "foundryRuntimeCertifications": 0
+  },
+  "records": [
+    {
+      "auditId": "C-KEEP-001-001",
+      "publishedIdentity": "Heuristic Processor",
+      "canonicalCandidateId": "heuristic-processor",
+      "rawRuntimeId": "heuristic",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 190,
+          "pdfPage1Based": 191,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": 2000,
+        "weightKg": 5,
+        "weightPrintedCell": "5 kg",
+        "availability": "-"
+      },
+      "hostClass": "DROID_PRIMARY_PROCESSOR",
+      "printedMechanicalSummary": "Heuristic processor may use skills untrained, wield nonproficient weapons at the normal -5 penalty and interpret instructions creatively.",
+      "sourceVsRepository": "Source and registry price/weight aligned; effects require actual skill/weapon and inhibitor-rule consumers.",
+      "issueIds": [],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "auditId": "C-KEEP-001-002",
+      "publishedIdentity": "Remote Receiver",
+      "canonicalCandidateId": "remote-receiver",
+      "rawRuntimeId": "remote-receiver",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 191,
+          "pdfPage1Based": 192,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": -500,
+        "weightKg": 1,
+        "weightPrintedCell": "1 kg",
+        "availability": "-"
+      },
+      "hostClass": "DROID_RECEIVER_COST_OFFSET",
+      "printedMechanicalSummary": "Only droids lacking an internal processor may fit a remote receiver; one remote processor pairing; DC 20 Mechanics + tool kit to change controller.",
+      "sourceVsRepository": "Published -500 is construction cost reduction, not a payable cash rebate; current generic cost path clamps negative amounts to zero.",
+      "issueIds": [
+        "K001-NEGATIVE-COST",
+        "K001-EXTERNAL-PREREQ"
+      ],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "auditId": "C-KEEP-001-003",
+      "publishedIdentity": "Backup Processor",
+      "canonicalCandidateId": "backup-processor",
+      "rawRuntimeId": "backup-processor",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 191,
+          "pdfPage1Based": 192,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": 100,
+        "weightKg": null,
+        "weightPrintedCell": "—",
+        "availability": "-"
+      },
+      "hostClass": "DROID_RECEIVER_DEPENDENT",
+      "printedMechanicalSummary": "Receiver-equipped droid continues executing last orders when disconnected from remote controller until contact resumes.",
+      "sourceVsRepository": "Code represents weight as 0 although printed table has dash; prerequisites may improperly require installing external transmitter on drone actor.",
+      "issueIds": [
+        "K001-UNKNOWN-WEIGHT",
+        "K001-EXTERNAL-PREREQ"
+      ],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "auditId": "C-KEEP-001-004",
+      "publishedIdentity": "Synchronized Fire Circuits",
+      "canonicalCandidateId": "synchronized-fire-circuits",
+      "rawRuntimeId": "synchronized-fire",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 191,
+          "pdfPage1Based": 192,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": 150,
+        "weightKg": 1,
+        "weightPrintedCell": "1 kg",
+        "availability": "Military"
+      },
+      "hostClass": "DROID_RECEIVER_DEPENDENT",
+      "printedMechanicalSummary": "On a successful Aid Another check for another droid attached to same remote processor, adds +2 to normal Aid Another +2 (total +4).",
+      "sourceVsRepository": "Both raw and overlay currently say +5 total; resulting bonus is one too high. Requires successful aid check and identical remote-processor connection.",
+      "issueIds": [
+        "K001-AID-BONUS-PLUS-ONE",
+        "K001-EXTERNAL-PREREQ"
+      ],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "auditId": "C-KEEP-001-005",
+      "publishedIdentity": "Restraining Bolt",
+      "canonicalCandidateId": "restraining-bolt",
+      "rawRuntimeId": "restraining-bolt",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 191,
+          "pdfPage1Based": 192,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": 5,
+        "weightKg": null,
+        "weightPrintedCell": "—",
+        "availability": "-"
+      },
+      "hostClass": "EXTERNAL_ATTACHED_CONTROL_DEVICE",
+      "printedMechanicalSummary": "Attaching/removing a restraining bolt: full-round action and DC 10 Mechanics. Caller impels motor motion without shutting processor; restrains skill improvement. Heuristic droid can attempt self removal as standard action with DC 20 Charisma then DC 15 Mechanics; failed Charisma lockout 24 hours.",
+      "sourceVsRepository": "Printed table weight is dash, while code asserts 0.1 kg. Code includes the self-removal restrictions only in prose notes; no proven execution.",
+      "issueIds": [
+        "K001-UNPRINTED-BOLT-WEIGHT",
+        "K001-BOLT-ACTION-RULES"
+      ],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "auditId": "C-KEEP-001-006",
+      "publishedIdentity": "Droid Caller",
+      "canonicalCandidateId": "droid-caller",
+      "rawRuntimeId": "droid-caller",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 191,
+          "pdfPage1Based": 192,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": 10,
+        "weightKg": 0.2,
+        "weightPrintedCell": "0.2 kg",
+        "availability": "-"
+      },
+      "hostClass": "EXTERNAL_HANDHELD_ITEM_NOT_DROID_BODY",
+      "printedMechanicalSummary": "Handheld transmitter activates compatible restraining bolts and impels affected droid toward caller while active. Heuristic droid can resist a specific caller with DC 20 Charisma for 24 hours.",
+      "sourceVsRepository": "Current broad droid system catalog has an entry, but this is handheld equipment; do not classify as installed part or assume permissions without pairing/ownership.",
+      "issueIds": [
+        "K001-DROID-CALLER-HOST"
+      ],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "auditId": "C-KEEP-001-007",
+      "publishedIdentity": "Comlink, Internal",
+      "canonicalCandidateId": "internal-comlink",
+      "rawRuntimeId": "internal-comlink",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": 250,
+        "weightKg": 0.1,
+        "weightPrintedCell": "0.1 kg",
+        "availability": "-"
+      },
+      "hostClass": "DROID_INSTALLED_COMMUNICATION",
+      "printedMechanicalSummary": "Integrated comlink otherwise operates as normal comlink per Core printed p.134.",
+      "sourceVsRepository": "Current definition numeric fields align. General comlink operation and range depend on standard equipment rules, not this row alone.",
+      "issueIds": [],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "auditId": "C-KEEP-001-008",
+      "publishedIdentity": "Vocabulator",
+      "canonicalCandidateId": "vocabulator",
+      "rawRuntimeId": "vocabulator",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 193,
+          "pdfPage1Based": 194,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 194,
+          "pdfPage1Based": 195,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": 50,
+        "weightKg": 0.5,
+        "weightPrintedCell": "0.5 kg",
+        "availability": "-"
+      },
+      "hostClass": "DROID_INSTALLED_COMMUNICATION",
+      "printedMechanicalSummary": "Allows droid to emulate speech instead of emitting only Binary; standard equipment when droid speaks any language other than Binary.",
+      "sourceVsRepository": "Current cost and weight align. Confirm factory/default component is not billed twice during chargen.",
+      "issueIds": [
+        "K001-FACTORY-INCLUSION"
+      ],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "auditId": "C-KEEP-001-009",
+      "publishedIdentity": "Improved Sensor Package",
+      "canonicalCandidateId": "improved-sensor-package",
+      "rawRuntimeId": "improved-sensor-package",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 196,
+          "pdfPage1Based": 197,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 197,
+          "pdfPage1Based": 198,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": 200,
+        "weightKg": 2.5,
+        "weightPrintedCell": "2.5 kg",
+        "availability": "-"
+      },
+      "hostClass": "DROID_INSTALLED_SENSOR",
+      "printedMechanicalSummary": "+2 equipment bonus on Perception; low-light vision allows ignoring concealment from darkness but not total concealment.",
+      "sourceVsRepository": "Cost and weight match. Presence of sense label and modifier overlay is not proof that concealment/darkness gates are honored in runtime.",
+      "issueIds": [
+        "K001-SENSOR-RUNTIME-NOT-PROVEN"
+      ],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    },
+    {
+      "auditId": "C-KEEP-001-010",
+      "publishedIdentity": "Darkvision",
+      "canonicalCandidateId": "darkvision",
+      "rawRuntimeId": "darkvision",
+      "source": [
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 195,
+          "pdfPage1Based": 196,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        },
+        {
+          "book": "Star Wars Saga Edition Core Rulebook",
+          "printedPage": 197,
+          "pdfPage1Based": 198,
+          "evidence": "PDF rendered and visually inspected; printed page number legible"
+        }
+      ],
+      "table": {
+        "costCredits": 150,
+        "weightKg": 1.5,
+        "weightPrintedCell": "1.5 kg",
+        "availability": "-"
+      },
+      "hostClass": "DROID_INSTALLED_SENSOR",
+      "printedMechanicalSummary": "Ignores darkness-based concealment, including total concealment.",
+      "sourceVsRepository": "Cost and weight match. Do not extend to other concealment causes; confirm darkvision is actually consumed by detection/combat visibility paths.",
+      "issueIds": [
+        "K001-SENSOR-RUNTIME-NOT-PROVEN"
+      ],
+      "repository": {
+        "rawCatalog": "scripts/data/droid-systems.js",
+        "runtimeDefinition": "scripts/data/droid-part-schema.js",
+        "catalogBlob": "db4f5aea9ed2ef784acbee9a7927056121128d8f",
+        "registryBlob": "fcde3e63eb847397b16cd1606df153dd8bc9c015"
+      },
+      "identityPresenceReviewed": true,
+      "publishedSourceFactsVerified": true,
+      "completeSourceMechanicalCertification": false,
+      "garageChargenStoreParityTested": false,
+      "productionRegistryChanged": false,
+      "foundryRuntimeCertified": false
+    }
+  ],
+  "findings": [
+    {
+      "id": "K001-AID-BONUS-PLUS-ONE",
+      "severity": "CONFIRMED_STATIC_SOURCE_VS_CODE_MISMATCH",
+      "component": "Synchronized Fire Circuits",
+      "printed": "Additional +2 to ordinary successful Aid Another +2 -> total +4",
+      "current": "Raw catalog text +5 instead of +2; overlay modifier value 5 targeting aidAnother.droid.sameRemoteProcessor",
+      "fixBoundary": "Requires rules-aware Aid Another bonus derivation; do not merely change a +5 static modifier to +4 without checking for base +2 duplication."
+    },
+    {
+      "id": "K001-NEGATIVE-COST",
+      "severity": "CONFIRMED_STATIC_PRICING_GAP",
+      "component": "Remote Receiver",
+      "printed": "-500 credits reduces cost of constructing a remotely processed droid",
+      "current": "computeDroidPartCost clamps resolved prices to Math.max(0, ...), so a negative cost source cannot yield a construction discount",
+      "fixBoundary": "Implement correctly bounded construction cost offset with external processor eligibility; do not permit negative cash-back purchase in Garage."
+    },
+    {
+      "id": "K001-EXTERNAL-PREREQ",
+      "severity": "UNRESOLVED_INSTALLATION_AUTHORITY",
+      "component": "Remote Receiver / Backup Processor / Synchronized Fire Circuits",
+      "printed": "Remote processor exists outside droid, receiver fitted only when no internal processor; backup/synchronized require the receiver and shared controller as appropriate",
+      "current": "Overlay prerequisiteIds ['remote-processor','remote-receiver'] for backup/circuits; raw catalog's receiver requiredSystems ['remote']",
+      "fixBoundary": "Do not require a physically installed external transmitter on same actor; model remote-controller link while respecting receiver and exclusivity."
+    },
+    {
+      "id": "K001-UNKNOWN-WEIGHT",
+      "severity": "UNSUPPORTED_NUMERIC_NORMALIZATION",
+      "component": "Backup Processor",
+      "printed": "Table accessory weight dash",
+      "current": "Raw backup-processor weight 0",
+      "fixBoundary": "Treat dash as not listed rather than source proof of 0 kg."
+    },
+    {
+      "id": "K001-UNPRINTED-BOLT-WEIGHT",
+      "severity": "UNSUPPORTED_NUMERIC_NORMALIZATION",
+      "component": "Restraining Bolt",
+      "printed": "Table accessory weight dash",
+      "current": "Raw restraining-bolt weight 0.1 kg",
+      "fixBoundary": "Flag unsupported source weight; no silent rewriting before migration."
+    },
+    {
+      "id": "K001-BOLT-ACTION-RULES",
+      "severity": "RUNTIME_IMPLEMENTATION_UNTESTED",
+      "component": "Restraining Bolt",
+      "printed": "Attach/remove full-round DC10 Mechanics; heuristic self-removal standard DC20 Charisma + DC15 Mechanics; retry lockout 24h if Charisma fails",
+      "current": "Raw description/notes include aspects but mechanical consumer verification not conducted",
+      "fixBoundary": "Add explicit actor state/owner/droid-caller and action-economy acceptance fixtures."
+    },
+    {
+      "id": "K001-DROID-CALLER-HOST",
+      "severity": "HOST_CLASSIFICATION",
+      "component": "Droid Caller",
+      "printed": "0.2kg handheld transmitter; sold 10 credits",
+      "current": "Raw droid systems communications entry could be offered among installed parts",
+      "fixBoundary": "Equipment or external controller classification, not installedSystems component on target droid."
+    },
+    {
+      "id": "K001-FACTORY-INCLUSION",
+      "severity": "CHARGEN_POLICY_NEEDS_REVIEW",
+      "component": "Vocabulator",
+      "printed": "Standard if droid can speak languages other than Binary",
+      "current": "Catalog charges 50 credits; actual factory inclusion or builder credit logic not tested",
+      "fixBoundary": "Allow legitimate factory-grant and separate purchased installation states; no double debit."
+    },
+    {
+      "id": "K001-SENSOR-RUNTIME-NOT-PROVEN",
+      "severity": "EFFECT_CONSUMER_UNTESTED",
+      "component": "Improved Sensor Package / Darkvision",
+      "printed": "Darkness concealment only; improved low-light does not ignore total concealment, darkvision does",
+      "current": "Raw descriptive fields and some overlay senses exist, actual visibility/combat engine not tested",
+      "fixBoundary": "Verify precise low-light/darkness/total concealment tests in Foundry, not a blanket detection bonus."
+    }
+  ],
+  "guardrails": [
+    "Do not equate printed presence with a mechanically certified installed part.",
+    "Negative Remote Receiver price is a droid-construction cost adjustment; never issue uncapped refund.",
+    "A droid caller is handheld, not an installed droid body part.",
+    "No producer/runtime changes authorized.",
+    "No full 92-KEEP census claim; this is a separate source-fact batch."
+  ]
+}

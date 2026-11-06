@@ -1,0 +1,1970 @@
+{
+ "schema": "swse.vehicle.p6a.pdf-review-worksheet.v2",
+ "note": "The 91 OCR review requests and their PDF dispositions (print-verified-components-v2.json), reconciled against the catalog.",
+ "items": [
+  {
+   "catalogId": "anti-boarding-systems",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "com-jammers",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "reinforced-keel",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "reinforced-keel-boarding",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "security-bracing",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "cannon-enhancement",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "damage"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-launcher-light",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "damage"
+   ]
+  },
+  {
+   "catalogId": "concussion-missile-launcher-medium",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "damage"
+   ]
+  },
+  {
+   "catalogId": "proton-torpedo",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "tractor-beam",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "name",
+    "availability"
+   ]
+  },
+  {
+   "catalogId": "space-mine-standard",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "damage"
+   ]
+  },
+  {
+   "catalogId": "ion-bomb",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints"
+   ]
+  },
+  {
+   "catalogId": "shieldbuster-torpedo",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "availability",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "fire-linked-optional",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints"
+   ]
+  },
+  {
+   "catalogId": "composite-beam-cannon",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "damage",
+    "emplacementPoints",
+    "cost",
+    "availability"
+   ]
+  },
+  {
+   "catalogId": "mass-driver-cannon-standard",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "emplacementPoints",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "mass-driver-cannon-heavy",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "emplacementPoints",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "proton-grenade-launcher",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "damage",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "proton-grenade",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "damage",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "rail-cannon",
+   "book": "Clone Wars Campaign Guide",
+   "fields": [
+    "emplacementPoints",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "anti-aircraft-flak-pod",
+   "book": "Rebellion Era Campaign Guide",
+   "fields": [
+    "damage",
+    "emplacementPoints",
+    "cost"
+   ]
+  },
+  {
+   "catalogId": "defoliator-shell",
+   "book": "Galaxy At War",
+   "fields": [
+    "emplacementPoints"
+   ]
+  },
+  {
+   "catalogId": "cargo-jettison",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cargo-pod-light",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cargo-pod-medium",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cargo-pod-heavy",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cloaking-hibridium",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cloaking-stygium",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "cryogenic-chambers",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "docking-clamps",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "droid-repair-team",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "escape-pod-small",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "escape-pod-large",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "extended-range",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "hangar-bay",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "hangar-bay-concealed",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "holonet-transceiver",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "hyper-transceiver",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "luxury-basic",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "luxury-advanced",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "luxury-extreme",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "medical-suite",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "passenger-seating",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "passenger-quarters",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "sensor-array-2",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "sensor-array-4",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "sensor-array-6",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "sensor-enhancement",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "slave-circuits-basic",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "slave-circuits-advanced",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "slave-circuits-recall",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "smuggler-compartments",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-iff",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-masked",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-disguised-1",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-disguised-2",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "transponder-disguised-3",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "emplacementPoints",
+    "sizeRestriction"
+   ]
+  },
+  {
+   "catalogId": "amphibious-seals",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "auxiliary-generators-2",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "auxiliary-generators-4",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "auxiliary-generators-6",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "backup-battery",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "baffled-drive",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "cockpit-ejection",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "cofferdam",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "environmental-filters",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "fuel-converters",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "grappler-mag",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "hardpoint",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "hidden-cargo-25",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "hidden-cargo-50",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "hidden-cargo-75",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "holding-cells-25",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "holding-cells-50",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "holding-cells-75",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "interrogation-chamber",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "personalized-controls",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "sensor-baffling",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "sensor-decoy",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "sensor-mask",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "workshop",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "plasma-punch",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "plasma-torch",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "catalogId": "tractor-clamp",
+   "book": "Scum and Villainy",
+   "fields": [
+    "all"
+   ]
+  },
+  {
+   "censusId": "sotg-concussion-missile-armor-piercing",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-concussion-launcher-capacity",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-proton-launcher-capacity",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-shieldbuster-launcher-capacity",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-mine-launcher-capacity",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  },
+  {
+   "censusId": "sotg-cargo-pod-detachable",
+   "book": "Starships of the Galaxy",
+   "fields": [
+    "all"
+   ],
+   "reason": "missing component: confirm printed values before adding"
+  }
+ ],
+ "resolution": [
+  {
+   "worksheetIndex": 1,
+   "id": "cloaking-stygium",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 6
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 2,
+   "id": "hangar-bay",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 13
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 3,
+   "id": "hangar-bay-concealed",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 14
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 4,
+   "id": "anti-boarding-systems",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 2
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 5,
+   "id": "com-jammers",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 9
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 6,
+   "id": "reinforced-keel",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 25
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 7,
+   "id": "reinforced-keel-boarding",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 26
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 8,
+   "id": "security-bracing",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 27
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 9,
+   "id": "cannon-enhancement",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 7
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 10,
+   "id": "concussion-missile-launcher-light",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 12
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 11,
+   "id": "concussion-missile-launcher-medium",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 13
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 12,
+   "id": "concussion-missile-launcher-heavy",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 14
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 13,
+   "id": "proton-torpedo",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 31
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 14,
+   "id": "tractor-beam",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 40
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 15,
+   "id": "space-mine-standard",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 35
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 16,
+   "id": "ion-bomb",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 21
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 17,
+   "id": "shieldbuster-torpedo",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 33
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 18,
+   "id": "fire-linked-optional",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 19
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 19,
+   "id": "space-mine-launcher-heavy",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-5",
+    "printedPage": 47,
+    "book": "Starships of the Galaxy",
+    "row": 39
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 20,
+   "id": "composite-beam-cannon",
+   "pdfDisposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+   "reconciliation": "UNRESOLVED_SOURCE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+  },
+  {
+   "worksheetIndex": 21,
+   "id": "mass-driver-cannon-standard",
+   "pdfDisposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+   "reconciliation": "UNRESOLVED_SOURCE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+  },
+  {
+   "worksheetIndex": 22,
+   "id": "mass-driver-cannon-heavy",
+   "pdfDisposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+   "reconciliation": "UNRESOLVED_SOURCE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+  },
+  {
+   "worksheetIndex": 23,
+   "id": "proton-grenade-launcher",
+   "pdfDisposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+   "reconciliation": "UNRESOLVED_SOURCE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+  },
+  {
+   "worksheetIndex": 24,
+   "id": "proton-grenade",
+   "pdfDisposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+   "reconciliation": "UNRESOLVED_SOURCE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+  },
+  {
+   "worksheetIndex": 25,
+   "id": "rail-cannon",
+   "pdfDisposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+   "reconciliation": "UNRESOLVED_SOURCE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Clone Wars Campaign Guide",
+    "printedPage": 162,
+    "pdfPage1Based": 163,
+    "section": "Republic Vehicles / Weapon Systems"
+   },
+   "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+  },
+  {
+   "worksheetIndex": 26,
+   "id": "anti-aircraft-flak-pod",
+   "pdfDisposition": "PDF_PROSE_REVIEWED_NO_INSTALL_PRICE_TABLE",
+   "reconciliation": "UNRESOLVED_SOURCE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Rebellion Era Campaign Guide",
+    "printedPage": 130,
+    "pdfPage1Based": 131,
+    "section": "Vehicles and Starships / Weapon Systems"
+   },
+   "unresolved": "No independent catalog cost or EP printed in the reviewed weapons prose; vehicle statblock statistics are not a universal price table"
+  },
+  {
+   "worksheetIndex": 27,
+   "id": "defoliator-shell",
+   "pdfDisposition": "PDF_PRINTED_DASH_CONFIRMED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Galaxy at War",
+    "printedPage": 67,
+    "table": "2-7",
+    "row": 3
+   },
+   "unresolved": "Printed dash is not an explicit numeric zero; verify semantics before using as an ammo EP charge"
+  },
+  {
+   "worksheetIndex": 28,
+   "id": "cargo-jettison",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 1
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 29,
+   "id": "cargo-pod-light",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 2
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 30,
+   "id": "cargo-pod-medium",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 3
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 31,
+   "id": "cargo-pod-heavy",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 4
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 32,
+   "id": "cloaking-hibridium",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 5
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 33,
+   "id": "cryogenic-chambers",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 7
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 34,
+   "id": "docking-clamps",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 8
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 35,
+   "id": "droid-repair-team",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 9
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 36,
+   "id": "escape-pod-small",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 10
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 37,
+   "id": "escape-pod-large",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 11
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 38,
+   "id": "extended-range",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 12
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 39,
+   "id": "holonet-transceiver",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 15
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 40,
+   "id": "hyper-transceiver",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 16
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 41,
+   "id": "luxury-basic",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 17
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 42,
+   "id": "luxury-advanced",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 18
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 43,
+   "id": "luxury-extreme",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 19
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 44,
+   "id": "medical-suite",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 20
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 45,
+   "id": "passenger-seating",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 21
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 46,
+   "id": "passenger-quarters",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 22
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 47,
+   "id": "sensor-array-2",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 23
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 48,
+   "id": "sensor-array-4",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 24
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 49,
+   "id": "sensor-array-6",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 25
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 50,
+   "id": "sensor-enhancement",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 26
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 51,
+   "id": "slave-circuits-basic",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 27
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 52,
+   "id": "slave-circuits-advanced",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 28
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 53,
+   "id": "slave-circuits-recall",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 29
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 54,
+   "id": "smuggler-compartments",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 30
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 55,
+   "id": "transponder-iff",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 31
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 56,
+   "id": "transponder-masked",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 32
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 57,
+   "id": "transponder-disguised-1",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 33
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 58,
+   "id": "transponder-disguised-2",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 34
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 59,
+   "id": "transponder-disguised-3",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "3-7",
+    "printedPage": 49,
+    "book": "Starships of the Galaxy",
+    "row": 35
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 60,
+   "id": "amphibious-seals",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 1
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 61,
+   "id": "auxiliary-generators-2",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 3
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 62,
+   "id": "auxiliary-generators-4",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 4
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 63,
+   "id": "auxiliary-generators-6",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 5
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 64,
+   "id": "backup-battery",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 6
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 65,
+   "id": "cockpit-ejection",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 8
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 66,
+   "id": "cofferdam",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 10
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 67,
+   "id": "environmental-filters",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 11
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 68,
+   "id": "fuel-converters",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 12
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 69,
+   "id": "grappler-mag",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 13
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 70,
+   "id": "hardpoint",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 14
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 71,
+   "id": "hidden-cargo-25",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 15
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 72,
+   "id": "hidden-cargo-50",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 16
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 73,
+   "id": "hidden-cargo-75",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 17
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 74,
+   "id": "holding-cells-25",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 18
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 75,
+   "id": "holding-cells-50",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 19
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 76,
+   "id": "holding-cells-75",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 20
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 77,
+   "id": "interrogation-chamber",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 21
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 78,
+   "id": "personalized-controls",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 22
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 79,
+   "id": "sensor-baffling",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 28
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 80,
+   "id": "sensor-decoy",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 29
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 81,
+   "id": "sensor-mask",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 30
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 82,
+   "id": "workshop",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 32
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 83,
+   "id": "plasma-punch",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 23
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 84,
+   "id": "plasma-torch",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 24
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 85,
+   "id": "tractor-clamp",
+   "pdfDisposition": "PDF_TABLE_CELLS_VERIFIED",
+   "reconciliation": "MATCHED_CANONICAL",
+   "applyStatus": null,
+   "evidence": {
+    "table": "2-10",
+    "printedPage": 58,
+    "book": "Scum and Villainy",
+    "row": 31
+   },
+   "unresolved": null
+  },
+  {
+   "worksheetIndex": 86,
+   "id": "sotg-concussion-missile-armor-piercing",
+   "pdfDisposition": "PDF_PROSE_REVIEWED",
+   "reconciliation": "MISSING_FROM_CATALOG_PROSE_RULE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 44,
+    "pdfPage1Based": 45,
+    "section": "Concussion Missiles"
+   },
+   "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+  },
+  {
+   "worksheetIndex": 87,
+   "id": "sotg-concussion-launcher-capacity",
+   "pdfDisposition": "PDF_PROSE_REVIEWED",
+   "reconciliation": "MISSING_FROM_CATALOG_PROSE_RULE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 44,
+    "pdfPage1Based": 45,
+    "section": "Concussion Missiles / Launchers"
+   },
+   "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+  },
+  {
+   "worksheetIndex": 88,
+   "id": "sotg-proton-launcher-capacity",
+   "pdfDisposition": "PDF_PROSE_REVIEWED",
+   "reconciliation": "MISSING_FROM_CATALOG_PROSE_RULE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 46,
+    "pdfPage1Based": 47,
+    "section": "Proton Torpedoes / Launchers"
+   },
+   "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+  },
+  {
+   "worksheetIndex": 89,
+   "id": "sotg-shieldbuster-launcher-capacity",
+   "pdfDisposition": "PDF_PROSE_REVIEWED",
+   "reconciliation": "MISSING_FROM_CATALOG_PROSE_RULE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 46,
+    "pdfPage1Based": 47,
+    "section": "Shieldbuster Torpedoes / Launchers"
+   },
+   "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+  },
+  {
+   "worksheetIndex": 90,
+   "id": "sotg-mine-launcher-capacity",
+   "pdfDisposition": "PDF_PROSE_REVIEWED",
+   "reconciliation": "MISSING_FROM_CATALOG_PROSE_RULE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 46,
+    "pdfPage1Based": 47,
+    "section": "Space Mines / Mine Launcher"
+   },
+   "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+  },
+  {
+   "worksheetIndex": 91,
+   "id": "sotg-cargo-pod-detachable",
+   "pdfDisposition": "PDF_PROSE_REVIEWED",
+   "reconciliation": "MISSING_FROM_CATALOG_PROSE_RULE",
+   "applyStatus": null,
+   "evidence": {
+    "book": "Starships of the Galaxy",
+    "printedPage": 48,
+    "pdfPage1Based": 49,
+    "section": "Cargo Pods"
+   },
+   "unresolved": "No separately printed EP or fixed price where noted; do not invent them"
+  }
+ ],
+ "counts": {
+  "MATCHED_CANONICAL": 78,
+  "UNRESOLVED_SOURCE": 7,
+  "MISSING_FROM_CATALOG_PROSE_RULE": 6
+ }
+}

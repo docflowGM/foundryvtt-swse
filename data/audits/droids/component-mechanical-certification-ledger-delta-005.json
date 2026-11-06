@@ -1,0 +1,51 @@
+{
+  "schema": "swse.droids.component.mechanical-ledger-delta/1",
+  "date": "2026-11-02",
+  "requires": [
+    "MECH-001",
+    "MECH-002",
+    "MECH-003",
+    "MECH-004"
+  ],
+  "batch": "MECH-005",
+  "batchPacket": "data/audits/droids/component-mechanical-certification-batch-005.json",
+  "newCertifiedIds": [
+    "droid-multifunction-apparatus",
+    "droid-multispectrum-searchlight",
+    "droid-radiant-heat-element",
+    "droid-remote-viewer",
+    "droid-rental-restraining-bolt",
+    "droid-repulsorcam",
+    "droid-scomp-link",
+    "droid-silence-bubble-generator",
+    "droid-space-beacon-launcher",
+    "droid-survival-kit",
+    "droid-voice-print-command-lock",
+    "droid-weapon-detector",
+    "droid-sensor-booster",
+    "droid-sensor-countermeasure-package",
+    "droid-yv-sensor-package",
+    "droid-shield-expansion-module",
+    "droid-droid-battle-station",
+    "droid-droid-command-station",
+    "droid-droid-recharge-station",
+    "droid-droid-socket"
+  ],
+  "newHeldIds": [
+    "droid-taser",
+    "droid-video-screen"
+  ],
+  "finalCountsIfPriorBatchesIntegrated": {
+    "evaluatedInBatch": 22,
+    "sourcePassInBatch": 20,
+    "sourceHoldInBatch": 2,
+    "evaluatedCumulative": 122,
+    "sourcePassedCumulativeIfBatches3And4Applied": 99,
+    "sourceHeldCumulativeIfBatches3And4Applied": 23,
+    "sourceUnreviewedAfterBatch": 0,
+    "productionRegistryCertified": 0,
+    "applicationParityCertified": 0,
+    "foundryRuntimeCertified": 0
+  },
+  "warning": "Local delta, not signed GitHub certification until cumulative ledger integrated and checked against prior PASS/HOLD records."
+}

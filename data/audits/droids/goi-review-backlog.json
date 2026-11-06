@@ -1,0 +1,102 @@
+{
+  "bookId": "GOI",
+  "mechanicallyCertified": 0,
+  "items": [
+    {
+      "sourceEntryKey": "GOI-DROID-001",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-002",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-003",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-004",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-005",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-006",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-007",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    },
+    {
+      "sourceEntryKey": "GOI-DROID-008",
+      "status": "MECHANICALLY_UNCERTIFIED",
+      "blockers": [
+        "Full narrative and source statblock field verification",
+        "Canonical feat/talent provenance and prerequisites",
+        "Installed components, separate possessions, weapon mounts and attack-group legality",
+        "Creation permission restrictions and exceptions",
+        "Official upstream JSON Schema validation",
+        "Foundry V13 execution verification"
+      ]
+    }
+  ]
+}

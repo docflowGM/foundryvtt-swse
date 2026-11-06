@@ -1,0 +1,730 @@
+{
+  "schema": "swse.vehicle.sotg.cp19.tranche07.original-pdf-ship-review.v1",
+  "checkpoint": "CP19_T07",
+  "book": "Starships of the Galaxy",
+  "trancheNumber": 7,
+  "queueRange": [
+    91,
+    100
+  ],
+  "authority": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "branch": "audit/sotg-strict-certification-cp17",
+    "baseCommitSha": "26fc06baadbe51b75909e2bed215492a51278389",
+    "sourceBookSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+    "cp16LedgerPath": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+    "cp16LedgerBlobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557",
+    "cp17QueuePath": "data/audits/vehicles/swse-phase2b-sotg-cp17-strict-certification-work-queue.json",
+    "cp17QueueBlobSha": "9c7df34eefa54f456721ee18c6ee684ec214dbf6",
+    "priorTrancheFiles": [
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche01-primary-source-review.json",
+        "blobSha": "e21200f0f8604e16ff3ebbbbb63ea79c44252bf3"
+      },
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche02-primary-source-review.json",
+        "blobSha": "0613ba9a0e1ef82efc0b773c66fbfc592f06cf57"
+      },
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche03-primary-source-review.json",
+        "blobSha": "ad4e95864c402cd83a447a8bfece26e8e40f6c50"
+      },
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche04-primary-source-review.json",
+        "blobSha": "c73fcd8e6477fe0488c9a08588bd8d10656fbf3e"
+      },
+      {
+        "path": "data/audits/vehicles/swse-phase2b-sotg-cp19-tranche05-primary-source-review.json",
+        "blobSha": "56d7ffaef64bc8c289b6f41980573d8846be937e"
+      }
+    ],
+    "policyId": "SOTG-CP18-D01"
+  },
+  "reviewMethod": "VISUALLY_RENDERED_PRINTED_PDF_PRIMARY_SOURCE_NOT_OCR_ONLY",
+  "pdfPages": [
+    102,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160
+  ],
+  "counts": {
+    "reviewedShipRecords": 10,
+    "reviewedAttackGroupRows": 18,
+    "sourceClassificationCandidates": 0,
+    "newSourceFidelityCertificates": 0,
+    "newPhysicalMountCertificates": 0,
+    "newOperationalAttackAuthorities": 0
+  },
+  "noProductionDataAltered": true,
+  "entries": [
+    {
+      "queuePosition": 91,
+      "cp16LedgerIndex": 95,
+      "sourceEntryKey": "sotg-incom-t-65br-x-wing-starfighter",
+      "printedName": "Incom T-65BR X-wing Starfighter",
+      "printedStatblockStartPage": 153,
+      "reviewedPrintedPages": [
+        153
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "T65BR_SENSOR_BONUS_AND_NO_TORPEDO_ROW",
+      "sourceObservations": [
+        {
+          "printedPage": 153,
+          "kind": "sensorActive",
+          "observation": "Active sensor array gives +10 equipment Use Computer sensor checks and -10 ship Stealth"
+        },
+        {
+          "printedPage": 153,
+          "kind": "stockWeapons",
+          "observation": "Only laser cannon +6; no printed torpedo attack row or payload"
+        },
+        {
+          "printedPage": 153,
+          "kind": "selfDestruct",
+          "observation": "Switch destroys astromech and ship navigation memory, poisons pilot and detonates barium charge"
+        }
+      ],
+      "finding": "Do not import T-65B torpedo hardware. Active sensor penalty/bonus is conditional; destructive failsafe is not standard ranged weapon action.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 6,
+            "damage": "6d10x2",
+            "sourcePage": 153,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 92,
+      "cp16LedgerIndex": 96,
+      "sourceEntryKey": "sotg-corellian-yt-1300-transport",
+      "printedName": "Corellian YT-1300 Transport",
+      "printedStatblockStartPage": 154,
+      "reviewedPrintedPages": [
+        154,
+        157
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "STOCK_YT1300_TEN_UNUSED_EMPLACEMENTS",
+      "sourceObservations": [
+        {
+          "printedPage": 154,
+          "kind": "stockWeapon",
+          "observation": "Stock YT-1300 laser cannons +2 (gunner), 4d10x2; no printed SR"
+        },
+        {
+          "printedPage": 154,
+          "kind": "emplacements",
+          "observation": "YT-series stock examples provide ten unused emplacement points, modification capacity only"
+        },
+        {
+          "printedPage": 157,
+          "kind": "deckPlan",
+          "observation": "Stock YT-1300 freight floorplan shows rooms and docking rings, not numeric gun arc"
+        }
+      ],
+      "finding": "Stock YT-1300 must not inherit Millennium Falcon modifications, shields or extra gun mounts. An unused emplacement point is not installed hardware.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "gunner",
+            "attackBonus": 2,
+            "damage": "4d10x2",
+            "sourcePage": 154,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 93,
+      "cp16LedgerIndex": 97,
+      "sourceEntryKey": "sotg-corellian-yt-2000",
+      "printedName": "Corellian YT-2000",
+      "printedStatblockStartPage": 155,
+      "reviewedPrintedPages": [
+        155
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "YT2000_PRINTED_NEGATIVE_PILOT_AND_TWO_DOUBLE_GUNS",
+      "sourceObservations": [
+        {
+          "printedPage": 155,
+          "kind": "pilotPrint",
+          "observation": "Skills line literally Pilot + -2 (negative two)"
+        },
+        {
+          "printedPage": 155,
+          "kind": "physicalCannons",
+          "observation": "Ranged explicitly two double laser cannons +2; count already in CP16"
+        },
+        {
+          "printedPage": 155,
+          "kind": "maintenance",
+          "observation": "Mechanics checks to repair or modify YT-2000 suffer -2 penalty"
+        }
+      ],
+      "finding": "Preserve literal plus-minus pilot typography, numeric -2, maintenance penalty and exact double-cannon count; firing arcs remain unknown.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "double laser cannons",
+            "station": "gunner",
+            "attackBonus": 2,
+            "damage": "5d10x2",
+            "sourcePage": 155,
+            "hardwareCount": 2,
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "hardwareEvidence": "p155 Ranged group explicitly counts mounted weapons"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 94,
+      "cp16LedgerIndex": 98,
+      "sourceEntryKey": "sotg-corellian-yt-2400",
+      "printedName": "Corellian YT-2400",
+      "printedStatblockStartPage": 156,
+      "reviewedPrintedPages": [
+        155,
+        156
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "attackOptions": "SOURCE_SILENT_CONFIRMED",
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "YT2400_PRINTED_NEGATIVE_PILOT_AND_ESCAPE_POD",
+      "sourceObservations": [
+        {
+          "printedPage": 156,
+          "kind": "pilotPrint",
+          "observation": "Skills line literally Pilot + -1 (negative one)"
+        },
+        {
+          "printedPage": 155,
+          "kind": "escapePod",
+          "observation": "Cockpit-integrated escape pod grants +5 Acrobatics to enter from cockpit when ship destroyed"
+        },
+        {
+          "printedPage": 156,
+          "kind": "stock",
+          "observation": "YT-2400 has 120 HP and 150 tons cargo, separate from YT-2000's 180 HP and installed double laser pair"
+        }
+      ],
+      "finding": "Do not normalize Pilot + -1 to positive one or borrow YT-2000 armament; conditional escape pod is not an attack.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "gunner",
+            "attackBonus": 2,
+            "damage": "5d10x2",
+            "sourcePage": 156,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 95,
+      "cp16LedgerIndex": 99,
+      "sourceEntryKey": "sotg-millennium-falcon",
+      "printedName": "Millennium Falcon",
+      "printedStatblockStartPage": 156,
+      "reviewedPrintedPages": [
+        156
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED",
+        "cost": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "FALCON_NAMED_MODIFIED_AND_CHARACTER_SCALE_GUN",
+      "sourceObservations": [
+        {
+          "printedPage": 156,
+          "kind": "twoQuadCannons",
+          "observation": "Ranged explicitly lists two quad laser cannons +13"
+        },
+        {
+          "printedPage": 156,
+          "kind": "dockingGun",
+          "observation": "One docking gun blaster cannon +15 deals 3d12 only at character scale"
+        },
+        {
+          "printedPage": 156,
+          "kind": "sizeContext",
+          "observation": "Physical Colossal transport treated Gargantuan starfighter solely for capital targeting, dogfight and maneuver use"
+        },
+        {
+          "printedPage": 156,
+          "kind": "configuration",
+          "observation": "Heavily modified unique YT-1300 with eight medium concussion missiles and non-stock SR45"
+        }
+      ],
+      "finding": "Do not conflate character-scale docking gun with another starship attack; unique Falcon snapshot is not stock YT-1300 and contextual size is not hull reclassification.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "quad laser cannon",
+            "station": "gunner",
+            "attackBonus": 13,
+            "damage": "6d10x2",
+            "sourcePage": 156,
+            "hardwareCount": 2,
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "hardwareEvidence": "p156 Ranged group explicitly counts mounted weapons"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "medium concussion missiles",
+            "station": "pilot",
+            "attackBonus": 15,
+            "damage": "9d10x2, 4-square splash",
+            "sourcePage": 156,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 2,
+          "originalRow": {
+            "weaponLabel": "docking gun (blaster cannon)",
+            "station": "pilot",
+            "attackBonus": 15,
+            "damage": "3d12, character scale only",
+            "sourcePage": 156,
+            "hardwareCount": 1,
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "hardwareEvidence": "single docking gun singular attack group on p156"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 96,
+      "cp16LedgerIndex": 100,
+      "sourceEntryKey": "sotg-koensayr-btl-s3-y-wing",
+      "printedName": "Koensayr BTL-S3 Y-wing",
+      "printedStatblockStartPage": 158,
+      "reviewedPrintedPages": [
+        158
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "Y_WING_BTL_S3_TWO_ION_GUNNER_AND_PAYLOAD",
+      "sourceObservations": [
+        {
+          "printedPage": 158,
+          "kind": "ionCount",
+          "observation": "Ranged says two ion cannons +5 operated by gunner; physical count already in CP16"
+        },
+        {
+          "printedPage": 158,
+          "kind": "attacks",
+          "observation": "Laser +7 AND ion +5 OR proton torpedo +7 AND ion +5; printed gunner applies to ions"
+        },
+        {
+          "printedPage": 158,
+          "kind": "payload",
+          "observation": "Eight proton torpedoes carried; physical tube count not printed"
+        }
+      ],
+      "finding": "Two ion guns and an 8-torpedo magazine are not equivalent. Separate pilot/gunner and OR combinations must survive schema mapping.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 7,
+            "damage": "4d10x2",
+            "sourcePage": 158,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "ion cannons",
+            "station": "gunner",
+            "attackBonus": 5,
+            "damage": "4d10x2 ion",
+            "sourcePage": 158,
+            "hardwareCount": 2,
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED",
+            "hardwareEvidence": "p158 Ranged group explicitly counts mounted weapons"
+          }
+        },
+        {
+          "cp16RowIndex": 2,
+          "originalRow": {
+            "weaponLabel": "proton torpedoes",
+            "station": "gunner",
+            "attackBonus": 7,
+            "damage": "9d10x2, 4-square splash",
+            "sourcePage": 158,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 97,
+      "cp16LedgerIndex": 101,
+      "sourceEntryKey": "sotg-koensayr-btl-a4-lp-longprobe",
+      "printedName": "Koensayr BTL-A4 LP \"Longprobe\"",
+      "printedStatblockStartPage": 159,
+      "reviewedPrintedPages": [
+        158,
+        159
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "Y_WING_LONGPROBE_PILOT_WEAPONS_SENSOR_BONUS",
+      "sourceObservations": [
+        {
+          "printedPage": 159,
+          "kind": "crew",
+          "observation": "One pilot plus astromech, pilot operates laser/ion/proton torpedoes as exclusive OR options"
+        },
+        {
+          "printedPage": 159,
+          "kind": "sensor",
+          "observation": "Use Computer sensors +11 (+18 with astromech), compared with ordinary +6 (+13)"
+        },
+        {
+          "printedPage": 159,
+          "kind": "hyperdrive",
+          "observation": "Backup x12, more consumables and cargo; no upgraded printed starship fly speed"
+        }
+      ],
+      "finding": "Longprobe's no-additional-gunner configuration differs from stock BTL-S3; sensor +5 effect is context-specific.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 9,
+            "damage": "4d10x2",
+            "sourcePage": 159,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "ion cannons",
+            "station": "pilot",
+            "attackBonus": 9,
+            "damage": "4d10x2 ion",
+            "sourcePage": 159,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 2,
+          "originalRow": {
+            "weaponLabel": "proton torpedoes",
+            "station": "pilot",
+            "attackBonus": 9,
+            "damage": "9d10x2, 4-square splash",
+            "sourcePage": 159,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 98,
+      "cp16LedgerIndex": 102,
+      "sourceEntryKey": "sotg-koensayr-btl-s3-courier",
+      "printedName": "Koensayr BTL-S3 \"Courier\"",
+      "printedStatblockStartPage": 159,
+      "reviewedPrintedPages": [
+        159
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "Y_WING_COURIER_ION_REMOVAL_AND_GUNNER",
+      "sourceObservations": [
+        {
+          "printedPage": 159,
+          "kind": "removedIon",
+          "observation": "Courier replaces ion cannons with three passenger seats and additional cargo"
+        },
+        {
+          "printedPage": 159,
+          "kind": "torpedoOperator",
+          "observation": "Laser cannons +7 pilot AND proton torpedoes +5 gunner; Crew two plus astromech"
+        },
+        {
+          "printedPage": 159,
+          "kind": "payload",
+          "observation": "Four torpedoes, 800 kg cargo, one month consumables and escape cockpit"
+        }
+      ],
+      "finding": "Do not inherit base Y-wing ion group. Courier does retain a gunner on torpedoes, unlike single-pilot Longprobe.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "laser cannons",
+            "station": "pilot",
+            "attackBonus": 7,
+            "damage": "4d10x2",
+            "sourcePage": 159,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "proton torpedoes",
+            "station": "gunner",
+            "attackBonus": 5,
+            "damage": "9d10x2, 4-square splash",
+            "sourcePage": 159,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 99,
+      "cp16LedgerIndex": 103,
+      "sourceEntryKey": "sotg-incom-subpro-z-95-headhunter",
+      "printedName": "Incom/Subpro Z-95 Headhunter",
+      "printedStatblockStartPage": 160,
+      "reviewedPrintedPages": [
+        160
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P2_PHYSICAL_SOURCE_SILENCE",
+      "originalFieldExceptions": {
+        "meleeAttack": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "Z95_STOCK_HYPERDRIVELESS",
+      "sourceObservations": [
+        {
+          "printedPage": 160,
+          "kind": "stockHyperdrive",
+          "observation": "Capabilities expressly state stock Z-95 not equipped with hyperdrive; later variants can add one"
+        },
+        {
+          "printedPage": 160,
+          "kind": "attacks",
+          "observation": "Triple light blaster cannons +5 OR medium concussion missiles +5"
+        },
+        {
+          "printedPage": 160,
+          "kind": "payload",
+          "observation": "Six medium missiles carried; physical launcher and barrel counts/arcs not quantified"
+        }
+      ],
+      "finding": "Explicit stock hyperspace absence already noted by CP16; later retrofit is not stock. Triple-family wording is not independent mount count.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "triple light blaster cannons",
+            "station": "pilot",
+            "attackBonus": 5,
+            "damage": "3d10x2",
+            "sourcePage": 160,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        },
+        {
+          "cp16RowIndex": 1,
+          "originalRow": {
+            "weaponLabel": "medium concussion missiles",
+            "station": "pilot",
+            "attackBonus": 5,
+            "damage": "7d10x2, 4-square splash",
+            "sourcePage": 160,
+            "hardwareCount": "SOURCE_SILENT_CONFIRMED",
+            "firingArc": "SOURCE_SILENT_CONFIRMED",
+            "batteryCount": "SOURCE_SILENT_CONFIRMED"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    },
+    {
+      "queuePosition": 100,
+      "cp16LedgerIndex": 45,
+      "sourceEntryKey": "sotg-rendili-star-drive-light-corvette",
+      "printedName": "Rendili Star Drive Light Corvette",
+      "printedStatblockStartPage": 102,
+      "reviewedPrintedPages": [
+        102
+      ],
+      "reviewStatus": "ORIGINAL_MATCHING_SHA256_PDF_VISUAL_CLOSE_READ",
+      "cp17PriorityTrack": "P3_FIELD_SOURCE_SILENCE_OR_OTHER_GAP",
+      "originalFieldExceptions": {
+        "payload": "SOURCE_SILENT_CONFIRMED"
+      },
+      "sourceConflictFieldGroups": [],
+      "category": "RENDILI_SIX_FLANK_TURRETS_ONE_BATTERY",
+      "sourceObservations": [
+        {
+          "printedPage": 102,
+          "kind": "sixPhysicalTurrets",
+          "observation": "Capabilities explicitly identify six double laser cannon turrets mounted along ship flanks"
+        },
+        {
+          "printedPage": 102,
+          "kind": "onePublishedBattery",
+          "observation": "Single double laser cannon battery +14 with six gunners, 4d10x2"
+        },
+        {
+          "printedPage": 102,
+          "kind": "arcAndPayload",
+          "observation": "No precise firing-sector coverage or payload line printed; do not infer numeric 360-degree or forward arcs"
+        }
+      ],
+      "finding": "Six physical turrets versus one battery firing group are explicitly different counts. The remaining nonmount payload source silence and unprinted geometry block strict full mechanical certification.",
+      "sourceAttackGroups": [
+        {
+          "cp16RowIndex": 0,
+          "originalRow": {
+            "weaponLabel": "double laser cannon battery",
+            "station": "battery (6 gunners)",
+            "attackBonus": 14,
+            "damage": "4d10x2",
+            "sourcePage": 102,
+            "hardwareCount": 6,
+            "firingArc": "flank-mounted turrets; numeric/coverage arcs not printed",
+            "batteryCount": 1,
+            "hardwareCountBasis": "p102 capability: six double laser cannon turrets along ship flanks"
+          }
+        }
+      ],
+      "correctionCandidates": [],
+      "sourceFidelityCertificateGranted": false,
+      "newStrictPhysicalMountCertificateGranted": false,
+      "operationalStockAttackAuthorityGranted": false
+    }
+  ]
+}

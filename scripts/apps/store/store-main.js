@@ -58,6 +58,7 @@ import {
   getWeaponFamily
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { initVehicleAmmunitionContext, buildVehicleAmmunitionView, bindVehicleAmmunition } from "/systems/foundryvtt-swse/scripts/apps/store/store-vehicle-ammunition.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { isStoreItemPurchasable, summarizeStorePolicy } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
@@ -319,6 +320,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.selectedProductId = null;
     this.entryOrigin = options.entryOrigin || options.origin || 'unknown';
     this.storeCurrencySymbol = getStoreCurrencySymbol();
+    // opened by the vehicle sheet's Buy Ammunition shortcuts: the store starts in its vehicle-ammunition context
+    initVehicleAmmunitionContext(this, options);
   }
 
 
@@ -375,6 +378,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const categorySummary = this._buildCategorySummary(allItems);
     const currentCategoryLabel = this._getCurrentCategoryLabel(categorySummary);
     const selectedProduct = await this._buildSelectedProductView();
+    const vehicleAmmunition = this.vehicleAmmo ? await buildVehicleAmmunitionView(this) : null;
 
     // Phase 2: Build hierarchical navigation model
     const navigationModel = buildStoreNavigationModel(this.storeInventory, {
@@ -406,6 +410,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       cartRemaining,
       cartEntries,
       currentView,
+      vehicleAmmunition,
       currentCategory: this.currentCategory,
       currentSubcategory: this.currentSubcategory,
       currentFamily: this.currentFamily,
@@ -1421,6 +1426,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
         updateGrid();
       }, { signal });
     }
+
+    bindVehicleAmmunition(this, root, signal);
+    root.querySelectorAll('[data-action="show-vehicle-ammunition"]').forEach(btn => {
+      btn.addEventListener('click', () => { this.currentView = 'vehicle-ammunition'; this.render(); }, { signal });
+    });
 
     root.querySelectorAll('[data-action="show-browse"]').forEach(btn => {
       btn.addEventListener('click', () => {

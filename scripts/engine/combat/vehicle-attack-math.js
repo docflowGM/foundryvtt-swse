@@ -37,10 +37,15 @@
  * the evidence behind which formula components apply.
  */
 
-import { resolveAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
+import { resolveAttackBonus, getTargetActorFromOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
+import { getEffectiveVehicleSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
+import { capitalShipAttackPenalty } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-capital-penalty.js";
+import { resolveVehicleWeaponAuthority } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
+import { resolveVehicleCrewActor } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-actor-authority.js";
 import { getWeaponAttackAbility, getRangePenalty, getWeaponFlatAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { readPendingAid, aidLedgerEntry } from '../../domain/vehicles/vehicle-battery-aid.js';
 
 const VEHICLE_ATTACK_DOMAIN = 'vehicle.attack';
 
@@ -95,6 +100,81 @@ function ledgerEntry({ id, label, value, category, sourceId = null, sourceName =
   };
 }
 
+
+/** Size of a vehicle (verified record / construction frame) or of any actor (system.size). null = unknown. */
+function actorSize(actor) {
+  if (!actor) return null;
+  const src = actor.type === 'vehicle' ? getEffectiveVehicleSource(actor) : null;
+  return src?.record?.classification?.printedSize ?? actor.system?.size ?? null;
+}
+
+/**
+ * Range of a vehicle attack. For a vehicle-managed weapon rollAttack attaches `vehicleRange` (the Table 10-2 band resolved from the
+ * tokens' distance, vehicle-attack-range.js): it is the ONLY source, so the context handed to the one band-penalty authority
+ * (getRangePenalty, called exactly once per resolver below) carries that band and NO caller-supplied explicit penalty. Attacks without a
+ * `vehicleRange` (custom designs and legacy weapons) keep the caller-supplied band behavior.
+ */
+function withCalculatedRange(context) {
+  const vr = context?.vehicleRange;
+  if (!vr?.band) return context;
+  const { rangePenalty: _p, range: _r, ...rest } = context;
+  const { rangePenalty: _mp, ...modifiers } = context.modifiers ?? {};
+  return { ...rest, ...(context.modifiers ? { modifiers } : {}), rangeBand: vr.band };
+}
+/** The band as the breakdown shows it, and where it came from. */
+function describeRange(weapon, context) {
+  const vr = context?.vehicleRange;
+  if (vr?.band) return { rangeBand: `${vr.bandLabel} (${vr.squares} square${vr.squares === 1 ? '' : 's'}, ${vr.scale} scale)`, rangeSource: `Core Rulebook Table 10-2 (${vr.slug}), measured between the tokens` };
+  return { rangeBand: String(context.rangeBand ?? context.range ?? weapon?.system?.rangeBand ?? '').toLowerCase() || 'unspecified', rangeSource: 'getRangePenalty helper' };
+}
+
+/**
+ * Core Vehicle Combat, Capital Ships: a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against
+ * targets smaller than Colossal; point-defense weapons are exempt. Point-defense status comes ONLY from the certified
+ * weapon specification of a sealed installation (never from an Item name or editable field).
+ * @returns {{entry:object|null, error:string|null, warnings:string[]}}
+ */
+function capitalShipPenaltyEntry(vehicleActor, weapon, context) {
+  const authority = resolveVehicleWeaponAuthority(weapon);
+  const pointDefense = authority?.ok === true && (authority.installed?.pointDefense === true || authority.pointDefense === true);   // WE-PD: from the certified option sealed into the installation
+  const target = getTargetActorFromOptions(context);
+  const r = capitalShipAttackPenalty({ attackerSize: actorSize(vehicleActor), targetSize: actorSize(target), pointDefense });
+  const base = { id: 'capital-ship-attack-penalty', label: 'Capital ship vs. target smaller than Colossal', category: 'vehicle',
+    sourceId: vehicleActor.id ?? null, sourceName: vehicleActor.name ?? null };
+  switch (r.status) {
+    case 'APPLIES':
+      return { entry: ledgerEntry({ ...base, value: r.value, reason: 'Core Rulebook, Vehicle Combat (Capital Ships): a vehicle of Colossal (frigate) size or larger takes -20 on attack rolls against targets smaller than Colossal.' }), error: null, warnings: [] };
+    case 'TARGET_SIZE_UNKNOWN':
+      // a capital-size attacker with a target of unknown size: refuse rather than guess the target is not small
+      return target ? { entry: null, error: 'capital-ship-target-size-unknown', warnings: [] }
+        : { entry: null, error: null, warnings: ['Capital ship attack has no target yet; the -20 penalty against targets smaller than Colossal cannot be evaluated.'] };
+    case 'ATTACKER_SIZE_UNKNOWN':
+      return authority?.ok ? { entry: null, error: 'capital-ship-attacker-size-unknown', warnings: [] }
+        : { entry: null, error: null, warnings: ['Attacking vehicle size is unknown; the capital-ship attack penalty was not evaluated.'] };
+    default:
+      return { entry: null, error: null, warnings: [] };
+  }
+}
+
+/**
+ * Core Vehicle Combat: "If you are trained in the Pilot skill, you gain a +2 bonus on attack rolls made with any
+ * vehicle weapon identified as being crewed by the pilot." Applied only when ALL hold: the weapon is a sealed certified
+ * installation or a verified published stock group whose operator is the pilot; the resolved gunner Actor IS the vehicle's assigned pilot-station
+ * Actor; that Actor is trained in Pilot; and no Pilot component is already in the ledger. Never for abstract crew.
+ */
+async function trainedPilotWeaponEntry(gunnerActor, vehicleActor, weapon, ledger) {
+  const authority = resolveVehicleWeaponAuthority(weapon);
+  if (!authority?.ok || authority.operator !== 'pilot') return null;
+  const pilot = await resolveVehicleCrewActor(vehicleActor, 'pilot');
+  if (pilot.source !== 'actor' || !pilot.actor || (pilot.actor !== gunnerActor && !(pilot.actor.id && pilot.actor.id === gunnerActor.id))) return null;
+  const row = gunnerActor.system?.derived?.skills?.pilot ?? gunnerActor.system?.skills?.pilot;
+  if (row?.trained !== true) return null;
+  if (ledger.some(e => /pilot/i.test(`${e.id} ${e.label}`))) return null;
+  return ledgerEntry({ id: 'pilot-trained-weapon-crew', label: 'Trained Pilot (pilot-crewed weapon)', value: 2, category: 'operator',
+    sourceId: gunnerActor.id ?? null, sourceName: gunnerActor.name ?? null,
+    reason: 'Core Rulebook, Vehicle Combat (Pilot): +2 on attack rolls with a vehicle weapon crewed by the pilot, when trained in Pilot. Weapon operator taken from the sealed installation or the verified source group; pilot from the vehicle\'s pilot station.' });
+}
+
 function slugify(label) {
   return String(label ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
@@ -124,32 +204,21 @@ export async function resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapo
 
   const baseline = resolveAttackBonus(gunnerActor, weapon, null, context);
 
-  // Edge case: NPC statblock mode returns a single flat override total with
-  // no BAB/ability decomposition at all (combat-roll-math.js resolveAttackBonus,
-  // npc?.useFlat branch). There is no evidence for how a flat NPC override
-  // should interact with the vehicle INT/range formula, so this preserves
-  // the actor's pre-existing flat-bonus behavior unchanged rather than
-  // inventing a new stacking rule.
+  // A flat NPC statblock total cannot be decomposed into the printed
+  // Gunner BAB + Vehicle INT formula. Never substitute the flat total:
+  // that can conceal the NPC's own DEX or other baked-in bonuses.
   if (baseline.flags?.npcFlat === true) {
-    warnings.push('Gunner actor uses an NPC flat attack-bonus override; preserving that behavior unchanged instead of decomposing into Gunner BAB + Vehicle INT (no verified rule for how a flat override should combine with the vehicle formula).');
-    return {
-      total: baseline.total,
-      ledger: [ledgerEntry({
-        id: 'npc-flat-override', label: 'NPC Flat Attack Bonus', value: baseline.total, category: 'gunner',
-        sourceId: gunnerActor.id ?? null, sourceName: gunnerActor.name ?? null,
-        reason: 'actor.type === "npc" statblock-mode flat attack bonus; pre-existing behavior preserved unchanged.'
-      })],
-      warnings,
-      error: null
-    };
+    warnings.push('NPC flat attack total cannot be decomposed into Gunner BAB + Vehicle INT; require verified crew BAB and a source-specific modifier ledger.');
+    return { total: 0, ledger: [], warnings, error: 'npc-flat-vehicle-attack-unreconciled' };
   }
 
   const abilityKey = getWeaponAttackAbility(gunnerActor, weapon);
   const gunnerAbilityLabel = `Ability (${abilityKey.toUpperCase()})`;
   const gunnerBab = Number(baseline.components?.['BAB'] ?? 0);
   const vehicleIntModifier = SchemaAdapters.getAbilityMod(vehicleActor, 'int');
+  context = withCalculatedRange(context);                // (a calculated vehicleRange replaces any caller-supplied band / explicit penalty)
   const rangeModifier = getRangePenalty(weapon, context);
-  const rangeBand = String(context.rangeBand ?? context.range ?? weapon?.system?.rangeBand ?? '').toLowerCase() || 'unspecified';
+  const { rangeBand, rangeSource } = describeRange(weapon, context);
 
   const ledger = [
     ledgerEntry({
@@ -165,7 +234,7 @@ export async function resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapo
     ledgerEntry({
       id: 'range', label: 'Range', value: rangeModifier, category: 'range',
       sourceId: weapon?.id ?? null, sourceName: weapon?.name ?? null,
-      reason: `Source: getRangePenalty helper; range band: ${rangeBand}. Sign preserved (negative = penalty); resolved once here, never reapplied by ModifierEngine or recalculated in chat rendering.`
+      reason: `Source: ${rangeSource}; range band: ${rangeBand}. Sign preserved (negative = penalty); resolved once here, never reapplied by ModifierEngine or recalculated in chat rendering.`
     })
   ];
 
@@ -182,6 +251,13 @@ export async function resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapo
       reason: 'Reused verbatim from resolveAttackBonus(gunnerActor, weapon) — a gunner-scoped component unaffected by the vehicle ability-modifier substitution.'
     }));
   }
+
+  const pilotBonus = await trainedPilotWeaponEntry(gunnerActor, vehicleActor, weapon, ledger);
+  if (pilotBonus) ledger.push(pilotBonus);
+  const capital = capitalShipPenaltyEntry(vehicleActor, weapon, context);
+  if (capital.error) { warnings.push(...capital.warnings); return { total: 0, ledger: [], warnings, error: capital.error }; }
+  warnings.push(...capital.warnings);
+  if (capital.entry) ledger.push(capital.entry);
 
   // Registered effect/feat/talent modifiers explicitly targeting the
   // 'vehicle.attack' domain — distinct from 'combat.attack' (already
@@ -254,29 +330,66 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
     // records that may have stray/legacy crewQuality text.
     warnings.push(`Unrecognized crew quality "${rawQuality}" on ${vehicleActor.name ?? 'vehicle'}; defaulting to "normal".`);
   }
-  const crewQualityBonus = CREW_QUALITY_BONUS[recognizedQuality];
+  // Generic crew Base Attack. For a source-backed ship the statblock prints the crew's Base Attack (it matches the Core crew
+  // quality attack column in 365 of 427 published records), and a constructed ship derives it from the Core crew quality
+  // table; both are verified sources and replace the unsourced legacy tier table below. Legacy actors keep the tier.
+  const crewSource = getEffectiveVehicleSource(vehicleActor);
+  let crewBab = CREW_QUALITY_BONUS[recognizedQuality], crewBabLabel = `Crew Quality (${recognizedQuality})`, crewBabReason = null;
+  if (crewSource?.origin === 'published') {
+    const printed = crewSource.record.combat?.baseAttackBonusPrinted;
+    if (!Number.isFinite(printed)) return { total: 0, ledger: [], warnings, error: 'published-crew-bab-unknown' };
+    crewBab = printed; crewBabLabel = 'Crew Base Attack (published statblock)';
+    crewBabReason = `Published statblock Base Atk of ${crewSource.record.identity?.name ?? 'the vehicle'} (${crewSource.record.publication?.book ?? 'source'} p. ${crewSource.record.publication?.page ?? '?'}): the generic crew's Base Attack Bonus.`;
+  } else if (crewSource?.origin === 'custom-constructed') {
+    const derived = crewSource.construction.derived?.baseAttackBonus;
+    if (!Number.isFinite(derived)) return { total: 0, ledger: [], warnings, error: 'constructed-crew-bab-unknown' };
+    crewBab = derived; crewBabLabel = `Crew Base Attack (${crewSource.construction.crewQuality} crew, Core crew quality)`;
+    crewBabReason = 'Constructed ship: Base Attack from the chosen crew quality (Core Rulebook crew quality table).';
+  }
+  const crewQualityBonus = crewBab;
 
   const vehicleIntModifier = SchemaAdapters.getAbilityMod(vehicleActor, 'int');
+  context = withCalculatedRange(context);                // (a calculated vehicleRange replaces any caller-supplied band / explicit penalty)
   const rangeModifier = getRangePenalty(weapon, context);
-  const rangeBand = String(context.rangeBand ?? context.range ?? weapon?.system?.rangeBand ?? '').toLowerCase() || 'unspecified';
+  const { rangeBand, rangeSource } = describeRange(weapon, context);
   const weaponEnhancement = getWeaponFlatAttackBonus(weapon);
 
-  const ledger = [
+  // PUBLISHED STOCK weapon with generic crew: the statblock's printed attack total IS the generic crew's complete attack
+  // modifier. It is the baseline (nothing is recomposed or added to it); its known components are listed as included
+  // (applied: false) so the breakdown shows what the number contains. Range, conditions, the capital-ship penalty and
+  // registered effects are the genuine attack-time modifiers and stack on top.
+  const stockAuthority = resolveVehicleWeaponAuthority(weapon);
+  // the basis of the MODE this Item runs in (a printed battery's independent weapon has the battery assistance removed)
+  const stockBasis = stockAuthority?.ok && stockAuthority.origin === 'stock' ? { label: stockAuthority.stock.group.label, attackBasis: stockAuthority.stock.attackBasis } : null;
+  const rangeEntry = ledgerEntry({
+    id: 'range', label: 'Range', value: rangeModifier, category: 'range',
+    sourceId: weapon?.id ?? null, sourceName: weapon?.name ?? null,
+    reason: `Source: ${rangeSource}; range band: ${rangeBand}. Sign preserved; resolved once.`
+  });
+  const ledger = stockBasis ? [
     ledgerEntry({
-      id: 'crew-quality-bab', label: `Crew Quality (${recognizedQuality})`, value: crewQualityBonus, category: 'gunner',
+      id: 'published-statblock-attack', label: `Published statblock attack (${stockBasis.label})`, value: stockBasis.attackBasis.printed, category: 'gunner',
+      sourceId: vehicleActor.id ?? null, sourceName: `${vehicleActor.name ?? 'Vehicle'} — published generic crew`,
+      reason: `Printed attack total of the stock group: the generic crew's complete modifier (${stockBasis.attackBasis.kind}). Range and attack-time conditions apply on top; its components are listed below and are not added again.`
+    }),
+    ...stockBasis.attackBasis.components.map(c => ledgerEntry({
+      id: `included-${c.id}`, label: `${c.label} (included in the printed total)`, value: c.value, category: 'included', applied: false,
+      sourceId: vehicleActor.id ?? null, sourceName: vehicleActor.name ?? null,
+      reason: 'Already part of the published statblock attack total; shown for transparency, not added again.'
+    })),
+    rangeEntry
+  ] : [
+    ledgerEntry({
+      id: 'crew-quality-bab', label: crewBabLabel, value: crewQualityBonus, category: 'gunner',
       sourceId: vehicleActor.id ?? null, sourceName: `${vehicleActor.name ?? 'Vehicle'} — abstract crew`,
-      reason: 'CREW_QUALITY_BONUS tier value used as a direct Gunner-BAB-equivalent substitute — the only decomposable component abstract crew data provides; not a combined total (no ability/proficiency/condition components exist to source, since no gunner Actor exists).'
+      reason: crewBabReason ?? 'CREW_QUALITY_BONUS tier value used as a direct Gunner-BAB-equivalent substitute — the only decomposable component abstract crew data provides; not a combined total (no ability/proficiency/condition components exist to source, since no gunner Actor exists).'
     }),
     ledgerEntry({
       id: 'vehicle-int', label: 'Vehicle INT', value: vehicleIntModifier, category: 'vehicle',
       sourceId: vehicleActor.id ?? null, sourceName: vehicleActor.name ?? null,
       reason: 'SchemaAdapters.getAbilityMod(vehicleActor, "int") — same vehicle Intelligence source as the named-gunner formula; the vehicle\'s own targeting system assists any operator, named or abstract.'
     }),
-    ledgerEntry({
-      id: 'range', label: 'Range', value: rangeModifier, category: 'range',
-      sourceId: weapon?.id ?? null, sourceName: weapon?.name ?? null,
-      reason: `Source: getRangePenalty helper; range band: ${rangeBand}. Sign preserved; resolved once.`
-    })
+    rangeEntry
   ];
 
   if (weaponEnhancement !== 0) {
@@ -285,6 +398,18 @@ export async function resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQ
       sourceId: weapon?.id ?? null, sourceName: weapon?.name ?? null,
       reason: 'getWeaponFlatAttackBonus(weapon) — weapon item flat attack bonus, same source as the named-gunner formula.'
     }));
+  }
+
+  const capital = capitalShipPenaltyEntry(vehicleActor, weapon, context);
+  if (capital.error) { warnings.push(...capital.warnings); return { total: 0, ledger: [], warnings, error: capital.error }; }
+  warnings.push(...capital.warnings);
+  if (capital.entry) ledger.push(capital.entry);
+
+  // Battery Aid Another (Core p. 170): a pending, unconsumed aid for THIS weapon's next attack roll. Never for the aid roll
+  // itself (context.aid), so an assisting battery cannot benefit from its own aid. Consumed once by the attack, not here.
+  if (context?.aid !== true) {
+    const pendingAid = readPendingAid(vehicleActor, weapon?.id);
+    if (pendingAid && resolveVehicleWeaponAuthority(weapon)?.battery) ledger.push(aidLedgerEntry(pendingAid, { vehicleActor }));
   }
 
   // No gunner Actor exists for abstract crew, so registered-modifier

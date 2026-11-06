@@ -1,0 +1,159 @@
+{
+  "schema": "swse.droids.sgd.source-mechanics-sprint/0.1",
+  "date": "2026-11-02",
+  "bookId": "SGD",
+  "scope": "Detailed second pass 041-045 printed pp.148-157 PDF 149-158.",
+  "records": [
+    {
+      "sourceEntryKey": "SGD-DROID-041",
+      "printedName": "TT-8L Gatekeeper Droid",
+      "pages": [
+        148,
+        149
+      ],
+      "actionIds": [
+        "SGD-DROID-041-ACTION-EAVESDROP",
+        "SGD-DROID-041-ACTION-INTIMIDATE",
+        "SGD-DROID-041-ACTION-SENSE-DECEPTION",
+        "SGD-DROID-041-ACTION-STUBBORN"
+      ],
+      "variantIds": [
+        "SGD-DROID-041-VARIANT-ADVANCE-SCOUT",
+        "SGD-DROID-041-VARIANT-COMMUNICATIONS-ANTENNA",
+        "SGD-DROID-041-VARIANT-SECURITY-CAMERA"
+      ],
+      "constraintIds": [
+        "SGD-DROID-041-CONSTRAINT-SPEED-ZERO",
+        "SGD-DROID-041-CONSTRAINT-STUBBORN-TARGET-UNRESOLVED",
+        "SGD-DROID-041-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-042",
+      "printedName": "V2-Series Commando Droid",
+      "pages": [
+        150,
+        151
+      ],
+      "actionIds": [
+        "SGD-DROID-042-ACTION-MOVE",
+        "SGD-DROID-042-ACTION-AVOID-SURPRISE",
+        "SGD-DROID-042-ACTION-PATROL-DUTY",
+        "SGD-DROID-042-ACTION-SILENT-ACTION",
+        "SGD-DROID-042-ACTION-SUPPORT-FIRE"
+      ],
+      "variantIds": [
+        "SGD-DROID-042-VARIANT-BOMB-DISPOSAL-UNIT",
+        "SGD-DROID-042-VARIANT-EVA-SHIPJACKER",
+        "SGD-DROID-042-VARIANT-HALA-DROID"
+      ],
+      "constraintIds": [
+        "SGD-DROID-042-CONSTRAINT-COURIER-EXPLOSIVE-DESTROYS-SELF",
+        "SGD-DROID-042-CONSTRAINT-EVA-STARSHIP-MOVEMENT",
+        "SGD-DROID-042-CONSTRAINT-HERO-RECOMMENDATIONS-NOT-FREE"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-043",
+      "printedName": "V6-Series Pilot Droid",
+      "pages": [
+        152,
+        153
+      ],
+      "actionIds": [
+        "SGD-DROID-043-ACTION-MOVE",
+        "SGD-DROID-043-ACTION-COPILOT",
+        "SGD-DROID-043-ACTION-ISSUE-ROUTINE-COMMAND",
+        "SGD-DROID-043-ACTION-RECHARGE-SHIELDS",
+        "SGD-DROID-043-ACTION-REGULATE-POWER",
+        "SGD-DROID-043-ACTION-STAY-ON-TARGET"
+      ],
+      "variantIds": [
+        "SGD-DROID-043-VARIANT-GUNNER-DROID",
+        "SGD-DROID-043-VARIANT-SPEEDER-PILOT",
+        "SGD-DROID-043-VARIANT-HIJACKER-DROID"
+      ],
+      "constraintIds": [
+        "SGD-DROID-043-CONSTRAINT-LICENSED-MEMORY-WIPE",
+        "SGD-DROID-043-CONSTRAINT-VEHICULAR-COMBAT-SCOPE",
+        "SGD-DROID-043-CONSTRAINT-GUNNER-ALTERNATIVE-RULES"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-044",
+      "printedName": "X-1 Viper Droid",
+      "pages": [
+        154,
+        155
+      ],
+      "actionIds": [
+        "SGD-DROID-044-ACTION-MOVE",
+        "SGD-DROID-044-ACTION-AVOID-SURPRISE",
+        "SGD-DROID-044-ACTION-DOUBLE-ATTACK",
+        "SGD-DROID-044-ACTION-PATROL-DUTY",
+        "SGD-DROID-044-ACTION-RAPID-SHOT"
+      ],
+      "variantIds": [
+        "SGD-DROID-044-VARIANT-DEEP-SEA-DIVER",
+        "SGD-DROID-044-VARIANT-JAWA-TRANSPORT",
+        "SGD-DROID-044-VARIANT-RECONSTRUCTION-DROID"
+      ],
+      "constraintIds": [
+        "SGD-DROID-044-CONSTRAINT-MOLECULAR-REFLECTION",
+        "SGD-DROID-044-CONSTRAINT-HOSTAGE-ENCOUNTER-NOT-FACTORY",
+        "SGD-DROID-044-CONSTRAINT-HERO-PROHIBITED"
+      ],
+      "mechanicalStatus": "partial"
+    },
+    {
+      "sourceEntryKey": "SGD-DROID-045",
+      "printedName": "XLT-014 Labor Droid",
+      "pages": [
+        156,
+        157
+      ],
+      "actionIds": [
+        "SGD-DROID-045-ACTION-MOVE",
+        "SGD-DROID-045-ACTION-AVOID-SURPRISE",
+        "SGD-DROID-045-ACTION-IMPROVE-ACCESS",
+        "SGD-DROID-045-ACTION-ISSUE-ROUTINE-COMMAND",
+        "SGD-DROID-045-ACTION-QUICK-SCAN"
+      ],
+      "variantIds": [
+        "SGD-DROID-045-VARIANT-CHAUFFEUR",
+        "SGD-DROID-045-VARIANT-INFILTRATOR",
+        "SGD-DROID-045-VARIANT-MECHANICS-ASSISTANT"
+      ],
+      "constraintIds": [
+        "SGD-DROID-045-CONSTRAINT-QUICK-SCAN-SCOPE",
+        "SGD-DROID-045-CONSTRAINT-HEURISTIC-PROCESSOR-REPLACEMENT",
+        "SGD-DROID-045-CONSTRAINT-LIMITED-HOVER"
+      ],
+      "mechanicalStatus": "partial"
+    }
+  ],
+  "totals": {
+    "models": 5,
+    "actions": 25,
+    "variants": 15,
+    "constraints": 15,
+    "heroicRoutes": 3,
+    "newContradictions": 0,
+    "deepReviewedModels": 45,
+    "hydrated": 46,
+    "strictCertified": 0,
+    "preservedStubbornConflict": true
+  },
+  "validation": {
+    "sourcePageRenderInspected": true,
+    "identityPreserved": true,
+    "sourceOnly": true,
+    "printedAttacksNotExecutable": true,
+    "pythonDraft202012": "NOT RUN",
+    "foundryRuntime": "NOT RUN"
+  },
+  "next": "Final YVH 046 source-mechanics reconciliation and SGD second-pass closeout."
+}

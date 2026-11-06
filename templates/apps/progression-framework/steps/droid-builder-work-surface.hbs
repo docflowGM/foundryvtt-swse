@@ -175,7 +175,7 @@
                       <h4 class="prog-droid-builder__component-card-title">{{this.name}}</h4>
                       {{#if this.description}}<p class="prog-droid-builder__component-card-body">{{this.description}}</p>{{/if}}
                       <div class="prog-droid-builder__component-card-meta">
-                        <span class="prog-droid-builder__chip">{{this.adjustedCost}} cr</span>
+                        <span class="prog-droid-builder__chip">{{this.quoteCostLabel}}</span>
                         {{#if this.isInstalled}}<span class="prog-droid-builder__chip prog-droid-builder__chip--positive">Installed</span>{{/if}}
                         {{#if this.isSuggested}}<span class="prog-droid-builder__chip prog-droid-builder__chip--neutral">Recommended</span>{{/if}}
                         {{#unless this.canInstall}}{{#unless this.isInstalled}}<span class="prog-droid-builder__chip prog-droid-builder__chip--negative">Blocked</span>{{/unless}}{{/unless}}
@@ -208,7 +208,7 @@
                     <h4 class="prog-droid-builder__component-card-title">{{this.name}}</h4>
                     {{#if this.description}}<p class="prog-droid-builder__component-card-body">{{this.description}}</p>{{/if}}
                     <div class="prog-droid-builder__component-card-meta">
-                      <span class="prog-droid-builder__chip">{{this.adjustedCost}} cr</span>
+                      <span class="prog-droid-builder__chip">{{this.quoteCostLabel}}</span>
                       {{#if this.speed}}<span class="prog-droid-builder__chip">SPD {{this.speed}}</span>{{/if}}
                       {{#if this.isInstalled}}<span class="prog-droid-builder__chip prog-droid-builder__chip--positive">Installed</span>{{/if}}
                       {{#if this.isSuggested}}<span class="prog-droid-builder__chip prog-droid-builder__chip--neutral">Recommended</span>{{/if}}

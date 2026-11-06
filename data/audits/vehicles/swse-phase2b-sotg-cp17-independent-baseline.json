@@ -1,0 +1,84 @@
+{
+  "schema": "swse.vehicle.sotg.phase2b.cp17.independent-baseline.v1",
+  "book": "Starships of the Galaxy",
+  "phase": "CP17_INDEPENDENT_STRUCTURAL_BASELINE_NO_NEW_CERTIFICATIONS",
+  "repository": "docflowGM/foundryvtt-swse",
+  "isolatedBranch": "audit/sotg-strict-certification-cp17",
+  "sourceBranch": "audit/vehicle-phase-0-1-canonical-foundation",
+  "sourceCommitSha": "318c635e07577f9d04f9e1707908bf4590528758",
+  "authority": {
+    "primarySource": "SAGA EDITION - Starships of the Galaxy.pdf",
+    "sourcePdfSha256": "e4db33bea7d6c0cdd359870a6fc4f5a546ee9cefb25f964cd0e16a2c94e18bb0",
+    "localPdfSha256Verified": true,
+    "ledger": {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp16-per-entry-certification-ledger.json",
+      "blobSha": "d08ca75b0b30e8b44896588edf3c5ce1cd335557"
+    },
+    "mountBacklog": {
+      "path": "data/audits/vehicles/swse-phase2b-sotg-cp16-book-source-closure-mount-backlog.json",
+      "blobSha": "15b65e5d3c005b9bdefab8b473661a86ad08b162"
+    },
+    "schemaDiscovery": {
+      "path": "data/audits/vehicles/swse-phase2c-vehicle-v06-pressure-cases-cp16.json",
+      "blobSha": "a7333de1e19514a5082b7d6961085a4c27602275"
+    }
+  },
+  "validationType": "Independent recomputation from CP16 source ledgers and PDF SHA-256; not an independent re-reading of all 104 sourcebook statblocks.",
+  "counts": {
+    "bookSourceEntries": 104,
+    "closeReadComplete": 104,
+    "strictlyCertified": 4,
+    "remainingUncertified": 100,
+    "attackGroups": 258,
+    "hardwareCountSourceSilent": 228,
+    "firingArcSourceSilent": 251,
+    "batteryCountSourceSilent": 132,
+    "hardwareCountLegacyMissing": 2,
+    "firingArcLegacyMissing": 1,
+    "batteryCountLegacyMissing": 7,
+    "sourceConflictEntries": 12,
+    "schemaDiscoveryCases": 155,
+    "priorityTracks": {
+      "P2_PHYSICAL_SOURCE_SILENCE": 84,
+      "P0_SOURCE_CONFLICT": 12,
+      "P1_LEGACY_MISSING_FIELDS": 3,
+      "P3_FIELD_SOURCE_SILENCE_OR_OTHER_GAP": 1
+    }
+  },
+  "existingStrictCertificates": [
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-action-vi-bulk-transport",
+      "printedName": "Corellian Engineering Corporation Action VI Bulk Transport",
+      "printedStatblockStartPage": 58
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-cr70-corvette",
+      "printedName": "Corellian Engineering Corporation CR70 Corvette",
+      "printedStatblockStartPage": 75
+    },
+    {
+      "sourceEntryKey": "sotg-ghtroc-industries-class-720-freighter",
+      "printedName": "Ghtroc Industries Class 720 Freighter",
+      "printedStatblockStartPage": 88
+    },
+    {
+      "sourceEntryKey": "sotg-corellian-engineering-corporation-consular-class-cruiser",
+      "printedName": "Corellian Engineering Corporation Consular-class Cruiser",
+      "printedStatblockStartPage": 126
+    }
+  ],
+  "decisions": {
+    "strictCertificationCriteria": "UNCHANGED_FROM_CP16",
+    "sourceSilentHandling": "PENDING_OWNER_POLICY_NO_INFERRED_VALUE",
+    "runtimeStockAttackAuthority": "NOT_GRANTED",
+    "productionHydration": "NOT_AUTHORIZED",
+    "phase3SchemaFreeze": "NOT_AUTHORIZED",
+    "modificationRefactor": "OUT_OF_SCOPE"
+  },
+  "categories": {
+    "P0_SOURCE_CONFLICT": "Printed source field conflicts require exact-page adjudication.",
+    "P1_LEGACY_MISSING_FIELDS": "Historical absent keys require schema-native representation, not guessed values.",
+    "P2_PHYSICAL_SOURCE_SILENCE": "One or more weapon group mount fields explicitly source-silent; policy decision and evidence reconciliation pending.",
+    "P3_FIELD_SOURCE_SILENCE_OR_OTHER_GAP": "No source conflict/missing mount key/mount-silence marker, but strict certificate absent; review non-mount fields and remaining blocking findings."
+  }
+}

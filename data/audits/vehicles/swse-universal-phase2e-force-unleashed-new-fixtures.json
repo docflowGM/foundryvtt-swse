@@ -1,0 +1,964 @@
+{
+  "schema": "swse.vehicle.universal.phase2e.force-unleashed.fixtures.v1",
+  "sourceBook": "Force Unleashed Campaign Guide",
+  "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+  "sourceMethod": "Scanned original publication PDF printed pp110-113,142,200-203 (physical pages +1), reconciled with supplied DJVU searchable text. Local printed anomalies preserved verbatim and separately.",
+  "records": [
+    {
+      "cl": 5,
+      "ini": 10,
+      "per": 5,
+      "def": [
+        17,
+        15,
+        21,
+        6
+      ],
+      "hp": 140,
+      "dr": 5,
+      "dt": 31,
+      "speed": 6,
+      "km": 90,
+      "space": [
+        3,
+        3
+      ],
+      "cover": "total",
+      "bab": 0,
+      "grp": 21,
+      "abi": [
+        32,
+        14,
+        12
+      ],
+      "skills": [
+        8,
+        5,
+        5,
+        8,
+        5
+      ],
+      "crew": 3,
+      "quality": "normal",
+      "pass": 8,
+      "cargo": "300 kg",
+      "cons": "1 week",
+      "avail": "Licensed",
+      "cost": 25000,
+      "used": 13000,
+      "ranged": "2 blaster cannons +1",
+      "weapons": [
+        {
+          "label": "blaster cannons",
+          "station": "gunner",
+          "attack": 1,
+          "damage": "3d10x2"
+        }
+      ],
+      "notes": [
+        "Source header Initiative +10 versus Skills Initiative +8; retain both.",
+        "Wheel-driven groundcar, not a repulsorlift speeder."
+      ],
+      "sourceEntryKey": "fucg-armored-groundcar",
+      "printedName": "Armored Groundcar",
+      "printedTypeLine": "Huge ground vehicle",
+      "printedPage": 110,
+      "pdfPhysicalPage": 111,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 2,
+      "ini": 7,
+      "per": 5,
+      "def": [
+        17,
+        13,
+        21,
+        5
+      ],
+      "hp": 120,
+      "dr": 5,
+      "dt": 31,
+      "speed": 12,
+      "km": 400,
+      "space": [
+        3,
+        3
+      ],
+      "cover": "total (+5 for gunner)",
+      "bab": 0,
+      "grp": 9,
+      "abi": [
+        32,
+        19,
+        12
+      ],
+      "skills": [
+        7,
+        5,
+        5,
+        7,
+        5
+      ],
+      "crew": 2,
+      "quality": "normal",
+      "pass": 5,
+      "cargo": "800 kg",
+      "cons": "1 day",
+      "avail": "Licensed",
+      "cost": 10800,
+      "used": 3400,
+      "ranged": "laser cannon +1 AND grenade launcher +1",
+      "weapons": [
+        {
+          "label": "laser cannon",
+          "station": "pilot",
+          "attack": 1,
+          "damage": "4d10"
+        },
+        {
+          "label": "grenade launcher",
+          "station": "gunner",
+          "attack": 1,
+          "damage": "4d6, 2-square burst"
+        }
+      ],
+      "notes": [
+        "Civilian version is described without weapons at 4,000 credits less; it has no separate printed statblock."
+      ],
+      "sourceEntryKey": "fucg-arrow-23-landspeeder-paramilitary",
+      "printedName": "Arrow-23 Landspeeder (Paramilitary)",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "printedPage": 110,
+      "pdfPhysicalPage": 111,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 3,
+      "ini": 10,
+      "per": 6,
+      "def": [
+        16,
+        11,
+        15,
+        2
+      ],
+      "hp": 50,
+      "dr": 5,
+      "dt": 20,
+      "speed": 12,
+      "km": 650,
+      "space": [
+        2,
+        2
+      ],
+      "cover": "none",
+      "bab": 2,
+      "grp": 12,
+      "abi": [
+        20,
+        20,
+        14
+      ],
+      "skills": [
+        10,
+        6,
+        6,
+        10,
+        6
+      ],
+      "crew": 1,
+      "quality": "skilled",
+      "pass": 1,
+      "cargo": "2 kg",
+      "cons": "1 day",
+      "avail": "Licensed",
+      "cost": 5750,
+      "used": 1500,
+      "ranged": null,
+      "weapons": [],
+      "notes": [
+        "Swoop altitude 340 meters as printed; DC 15 Mechanics modification raises altitude to several kilometers.",
+        "Optional deflector shields grant SR 5 for 20,000 credits; stock swoop has no stated SR.",
+        "Heavy weapons and shield modification cannot coexist per narrative."
+      ],
+      "sourceEntryKey": "fucg-flare-s-swoop",
+      "printedName": "Flare-S Swoop",
+      "printedTypeLine": "Large air vehicle (speeder)",
+      "printedPage": 111,
+      "pdfPhysicalPage": 112,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 2,
+      "ini": 7,
+      "per": 5,
+      "def": [
+        13,
+        10,
+        14,
+        1
+      ],
+      "hp": 40,
+      "dr": 5,
+      "dt": 19,
+      "speed": 8,
+      "km": 105,
+      "space": [
+        2,
+        2
+      ],
+      "cover": "total",
+      "bab": 0,
+      "grp": 9,
+      "abi": [
+        18,
+        16,
+        12
+      ],
+      "skills": [
+        7,
+        5,
+        5,
+        7,
+        5
+      ],
+      "crew": 1,
+      "quality": "normal",
+      "pass": 2,
+      "cargo": "50 kg",
+      "cons": "1 day",
+      "avail": "Licensed",
+      "cost": 8000,
+      "used": 2500,
+      "ranged": null,
+      "weapons": [],
+      "notes": [
+        "Optional roof turret described but not installed in printed stock statblock."
+      ],
+      "sourceEntryKey": "fucg-v-35-courier",
+      "printedName": "V-35 Courier",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "printedPage": 112,
+      "pdfPhysicalPage": 113,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 2,
+      "ini": 8,
+      "per": 5,
+      "def": [
+        15,
+        11,
+        17,
+        2
+      ],
+      "hp": 50,
+      "dr": 5,
+      "dt": 22,
+      "speed": 12,
+      "km": 350,
+      "space": [
+        2,
+        2
+      ],
+      "cover": "none",
+      "bab": 0,
+      "grp": 12,
+      "abi": [
+        24,
+        18,
+        12
+      ],
+      "skills": [
+        8,
+        5,
+        5,
+        8,
+        5
+      ],
+      "crew": 1,
+      "quality": "normal",
+      "pass": 1,
+      "cargo": "100 kg",
+      "cons": "1 day",
+      "avail": "Licensed",
+      "cost": 5750,
+      "used": 1500,
+      "ranged": null,
+      "weapons": [],
+      "notes": [
+        "Printed statblock Cargo 100 kg; narrative says stock models have no cargo and 10-credit panniers provide 100 kg. Unresolved source discrepancy; do not silently decide.",
+        "Hover altitude limit 6 meters; DC 15 Mechanics disables limit, permitting near 1 kilometer."
+      ],
+      "sourceEntryKey": "fucg-zephyr-g-swoop",
+      "printedName": "Zephyr-G Swoop",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "printedPage": 112,
+      "pdfPhysicalPage": 113,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 5,
+      "ini": 3,
+      "per": 6,
+      "def": [
+        15,
+        13,
+        19,
+        13
+      ],
+      "hp": 100,
+      "dr": 15,
+      "dt": 69,
+      "speed": 8,
+      "km": 160,
+      "space": [
+        4,
+        4
+      ],
+      "starSpace": 1,
+      "cover": "total",
+      "bab": 0,
+      "grp": 29,
+      "abi": [
+        28,
+        14,
+        14
+      ],
+      "skills": [
+        -3,
+        5,
+        5,
+        -3,
+        5
+      ],
+      "crew": 3,
+      "quality": "normal",
+      "pass": 25,
+      "cargo": "25 tons",
+      "cons": "1 week",
+      "avail": "Licensed",
+      "cost": 30500,
+      "used": 8000,
+      "ranged": null,
+      "weapons": [],
+      "notes": [
+        "Printed header Init +3 and Senses Perception +6 conflict with Skills Initiative -3 and Perception +5; preserve independently.",
+        "1 starship-scale square in Fighting Space refers to occupied space, NOT hyperdrive or starship flight."
+      ],
+      "sourceEntryKey": "fucg-a-a5-speeder-truck",
+      "printedName": "A-A5 Speeder Truck",
+      "printedTypeLine": "Colossal ground speeder",
+      "printedPage": 113,
+      "pdfPhysicalPage": 114,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 7,
+      "ini": 3,
+      "per": 6,
+      "def": [
+        15,
+        13,
+        26,
+        8
+      ],
+      "hp": 160,
+      "dr": 10,
+      "dt": 46,
+      "speed": 10,
+      "km": 300,
+      "space": [
+        4,
+        4
+      ],
+      "starSpace": 1,
+      "cover": "total",
+      "bab": 2,
+      "grp": 34,
+      "abi": [
+        42,
+        14,
+        14
+      ],
+      "skills": [
+        3,
+        6,
+        6,
+        3,
+        6
+      ],
+      "crew": 5,
+      "quality": "skilled",
+      "pass": 6,
+      "cargo": "250 kg",
+      "cons": "1 week",
+      "avail": "Restricted",
+      "cost": 140000,
+      "used": 110000,
+      "ranged": "2 heavy laser cannons +4 AND 2 blaster cannons +3",
+      "weapons": [
+        {
+          "label": "laser cannons",
+          "station": "gunner",
+          "attack": 4,
+          "damage": "5d10x2",
+          "rangedMultiplicity": 2
+        },
+        {
+          "label": "blaster cannons",
+          "station": "gunner",
+          "attack": 4,
+          "damage": "4d10",
+          "rangedMultiplicity": 2
+        }
+      ],
+      "notes": [
+        "Printed ranged header says blaster cannons +3 while detailed row says Atk +4; both retained.",
+        "Platform can hold up to four weapon systems; facilities and DC 15 Mechanics for swapping; pilot/copilot may fire platform armaments at -5.",
+        "Optional enclosed cockpit +1,000 credits; stock open-cockpit narrative may conflict with printed Cover total."
+      ],
+      "sourceEntryKey": "fucg-kaac-freerunner",
+      "printedName": "KAAC Freerunner",
+      "printedTypeLine": "Gargantuan ground speeder",
+      "printedPage": 113,
+      "pdfPhysicalPage": 114,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 3,
+      "ini": 3,
+      "per": 3,
+      "def": [
+        14,
+        10,
+        14,
+        1
+      ],
+      "hp": 40,
+      "dr": 5,
+      "dt": 24,
+      "speed": 12,
+      "km": 330,
+      "space": [
+        2,
+        2
+      ],
+      "cover": "total",
+      "bab": 5,
+      "grp": 15,
+      "abi": [
+        18,
+        24,
+        14
+      ],
+      "skills": [
+        9,
+        5,
+        3,
+        14,
+        null
+      ],
+      "crew": 1,
+      "quality": "expert",
+      "pass": 1,
+      "cargo": "30 kg",
+      "cons": "1 day",
+      "avail": "Restricted",
+      "cost": 13550,
+      "used": 3500,
+      "ranged": "laser cannon +7",
+      "opts": [
+        "autofire (laser cannon)"
+      ],
+      "weapons": [
+        {
+          "label": "laser cannon",
+          "station": "pilot",
+          "attack": 7,
+          "damage": "4d10",
+          "autofire": 2
+        }
+      ],
+      "notes": [
+        "Printed Init header +3 versus Skills Initiative +9; retain both.",
+        "One-off adventure statblock distinct from the Core Rulebook X-34."
+      ],
+      "sourceEntryKey": "fucg-modified-sorosuub-x-34-speeder-escort",
+      "printedName": "Modified SoroSuub X-34 Speeder Escort",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "printedPage": 142,
+      "pdfPhysicalPage": 143,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 4,
+      "ini": 14,
+      "per": 8,
+      "def": [
+        16,
+        10,
+        14,
+        1
+      ],
+      "hp": 40,
+      "dr": 5,
+      "dt": 19,
+      "speed": 12,
+      "km": 500,
+      "space": [
+        2,
+        2
+      ],
+      "cover": "none",
+      "bab": 5,
+      "grp": 14,
+      "abi": [
+        18,
+        24,
+        14
+      ],
+      "skills": [
+        14,
+        8,
+        8,
+        14,
+        null
+      ],
+      "crew": 1,
+      "quality": "expert",
+      "pass": 1,
+      "cargo": "3 kg",
+      "cons": "1 day",
+      "avail": "Restricted",
+      "cost": 6750,
+      "used": 1200,
+      "ranged": "laser cannon +7",
+      "opts": [
+        "autofire (laser cannon)"
+      ],
+      "weapons": [
+        {
+          "label": "laser cannon",
+          "station": "pilot",
+          "attack": 7,
+          "damage": "4d10",
+          "autofire": 2
+        }
+      ],
+      "notes": [
+        "Independent printed adventure 74-Z identity, even though chassis and source stats match another book."
+      ],
+      "sourceEntryKey": "fucg-aratech-74-z-speeder-bike",
+      "printedName": "Aratech 74-Z Speeder Bike",
+      "printedTypeLine": "Large ground vehicle (speeder)",
+      "printedPage": 142,
+      "pdfPhysicalPage": 143,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 11,
+      "ini": -5,
+      "per": 6,
+      "def": [
+        14,
+        14,
+        25,
+        14
+      ],
+      "hp": 320,
+      "dr": 20,
+      "dt": 75,
+      "speed": 8,
+      "km": 200,
+      "space": [
+        6,
+        14
+      ],
+      "cover": "total",
+      "bab": 0,
+      "grp": 29,
+      "abi": [
+        40,
+        10,
+        14
+      ],
+      "skills": [
+        -5,
+        5,
+        5,
+        -5,
+        5
+      ],
+      "crew": 8,
+      "quality": "normal",
+      "pass": 50,
+      "passType": "troops",
+      "cargo": "1 ton",
+      "cons": "1 week",
+      "avail": "Licensed",
+      "cost": 200000,
+      "used": 120000,
+      "ranged": "heavy laser cannons +4 AND blaster cannon +4 AND grenade launchers +4",
+      "weapons": [
+        {
+          "label": "heavy laser cannons",
+          "station": "gunner",
+          "attack": 4,
+          "damage": "5d10x2"
+        },
+        {
+          "label": "blaster cannon",
+          "station": "gunner",
+          "attack": 4,
+          "damage": "4d10x2"
+        },
+        {
+          "label": "grenade launcher",
+          "station": "gunner",
+          "attack": 4,
+          "damage": "4d6, 2-square burst"
+        }
+      ],
+      "notes": [
+        "Ten-wheel A5 Juggernaut; not A6 and not a walker.",
+        "Narrative includes neuronic-whip defense for low-flying craft; no numeric source effect encoded without authority."
+      ],
+      "sourceEntryKey": "fucg-a5-juggernaut",
+      "printedName": "A5 Juggernaut",
+      "printedTypeLine": "Colossal wheeled ground vehicle",
+      "printedPage": 200,
+      "pdfPhysicalPage": 201,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 10,
+      "ini": 8,
+      "per": 3,
+      "def": [
+        14,
+        12,
+        20,
+        4
+      ],
+      "hp": 120,
+      "dr": 10,
+      "dt": 40,
+      "speed": 6,
+      "km": 90,
+      "space": [
+        3,
+        3
+      ],
+      "cover": "total",
+      "bab": 5,
+      "grp": 25,
+      "abi": [
+        30,
+        14,
+        12
+      ],
+      "skills": [
+        8,
+        4,
+        3,
+        8,
+        null
+      ],
+      "crew": 2,
+      "quality": "expert",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "2 days",
+      "avail": "Military",
+      "cost": null,
+      "payload": "12 frag grenades",
+      "ranged": "stun cannon +6 AND frag grenade +6",
+      "weapons": [
+        {
+          "label": "stun cannon",
+          "station": "gunner",
+          "attack": 6,
+          "damage": "2d10x2 stun"
+        },
+        {
+          "label": "frag grenade",
+          "station": "pilot",
+          "attack": 6,
+          "damage": "4d6, 2-square burst"
+        }
+      ],
+      "notes": [
+        "AT-KT antipersonnel variant has stun-oriented weapons; distinct AT-CT statblock."
+      ],
+      "sourceEntryKey": "fucg-at-kt",
+      "printedName": "All Terrain Kashyyyk Transport (AT-KT)",
+      "printedTypeLine": "Huge ground vehicle (walker)",
+      "printedPage": 201,
+      "pdfPhysicalPage": 202,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 10,
+      "ini": 8,
+      "per": 3,
+      "def": [
+        14,
+        12,
+        23,
+        4
+      ],
+      "hp": 120,
+      "dr": 10,
+      "dt": 43,
+      "speed": 6,
+      "km": 90,
+      "space": [
+        3,
+        3
+      ],
+      "cover": "total",
+      "bab": 5,
+      "grp": 28,
+      "abi": [
+        36,
+        14,
+        16
+      ],
+      "skills": [
+        8,
+        4,
+        3,
+        8,
+        null
+      ],
+      "crew": 2,
+      "quality": "expert",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "2 days",
+      "avail": "Military",
+      "cost": null,
+      "ranged": "tractor beam +8",
+      "weapons": [
+        {
+          "label": "tractor beam",
+          "station": "gunner",
+          "attack": 8,
+          "damage": "—, grapple +28"
+        }
+      ],
+      "notes": [
+        "AT-CT stripped of conventional weapons; source tractor beam can move a held object up to 10 squares and throw at a target within 10 squares, attack versus Reflex; damage depends on object size per Core rules p254.",
+        "Tractor beam attack is not a conventional damaging weapon mount and must not be implemented as automatic hull damage."
+      ],
+      "sourceEntryKey": "fucg-at-ct",
+      "printedName": "All Terrain Construction Transport (AT-CT)",
+      "printedTypeLine": "Huge ground vehicle (walker)",
+      "printedPage": 201,
+      "pdfPhysicalPage": 202,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 8,
+      "ini": 7,
+      "per": 5,
+      "def": [
+        16,
+        12,
+        22,
+        7
+      ],
+      "hp": 120,
+      "dr": 5,
+      "dt": 32,
+      "speed": 12,
+      "km": 350,
+      "space": [
+        3,
+        3
+      ],
+      "cover": "total",
+      "bab": 2,
+      "grp": 24,
+      "abi": [
+        34,
+        18,
+        12
+      ],
+      "skills": [
+        7,
+        5,
+        5,
+        7,
+        5
+      ],
+      "crew": 3,
+      "quality": "skilled",
+      "pass": 0,
+      "cargo": "200 kg",
+      "cons": "3 days",
+      "avail": "Military",
+      "cost": null,
+      "estimate": 40000,
+      "ranged": "laser cannon +3",
+      "opts": [
+        "autofire (laser cannon)"
+      ],
+      "weapons": [
+        {
+          "label": "laser cannon",
+          "station": "gunner",
+          "attack": 3,
+          "damage": "3d10x2",
+          "autofire": -2
+        }
+      ],
+      "notes": [
+        "Military, not for sale; estimated value 40,000 credits is not a normal new-sale price."
+      ],
+      "sourceEntryKey": "fucg-command-speeder",
+      "printedName": "Command Speeder",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "printedPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 8,
+      "ini": -8,
+      "per": 5,
+      "def": [
+        15,
+        15,
+        27,
+        10
+      ],
+      "hp": 270,
+      "dr": 15,
+      "dt": 47,
+      "speed": 8,
+      "km": 200,
+      "space": [
+        8,
+        8
+      ],
+      "cover": "total",
+      "bab": 2,
+      "grp": 39,
+      "abi": [
+        45,
+        10,
+        16
+      ],
+      "skills": [
+        -8,
+        5,
+        5,
+        -8,
+        5
+      ],
+      "crew": 3,
+      "quality": "skilled",
+      "pass": 7,
+      "cargo": "1 ton",
+      "cons": "1 week",
+      "avail": "Military",
+      "cost": null,
+      "estimate": 300000,
+      "ranged": "heavy laser cannon +5",
+      "opts": [
+        "autofire (heavy laser cannon)"
+      ],
+      "weapons": [
+        {
+          "label": "heavy laser cannon",
+          "station": "gunner",
+          "attack": 5,
+          "damage": "4d10x2, 2-square splash",
+          "autofire": 0
+        }
+      ],
+      "notes": [
+        "Tracked mobile command post with communications, computer and holodisplays; tactical functions are narrative and need consumer review."
+      ],
+      "sourceEntryKey": "fucg-mobile-command-base",
+      "printedName": "Mobile Command Base",
+      "printedTypeLine": "Gargantuan ground vehicle (tracked)",
+      "printedPage": 202,
+      "pdfPhysicalPage": 203,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    },
+    {
+      "cl": 8,
+      "ini": 7,
+      "per": 5,
+      "def": [
+        17,
+        13,
+        21,
+        5
+      ],
+      "hp": 120,
+      "dr": 5,
+      "sr": 5,
+      "dt": 31,
+      "speed": 8,
+      "km": 193,
+      "space": [
+        3,
+        3
+      ],
+      "cover": "total",
+      "bab": 0,
+      "grp": 9,
+      "abi": [
+        33,
+        18,
+        14
+      ],
+      "skills": [
+        7,
+        5,
+        5,
+        7,
+        5
+      ],
+      "crew": 2,
+      "quality": "normal",
+      "pass": 5,
+      "cargo": "100 kg",
+      "cons": "1 day",
+      "avail": "Military",
+      "cost": 42000,
+      "used": 34000,
+      "payload": "8 concussion missiles",
+      "ranged": "laser cannons +1 AND medium concussion missiles +1",
+      "weapons": [
+        {
+          "label": "laser cannons",
+          "station": "gunner",
+          "attack": 2,
+          "damage": "5d10x2"
+        },
+        {
+          "label": "medium concussion missiles",
+          "station": "gunner",
+          "attack": 2,
+          "damage": "6d10x2, 2-square splash"
+        }
+      ],
+      "notes": [
+        "Source printed ranged summary +1 on both attack groups, detailed weapon rows Atk +2; preserve both.",
+        "Separate printed Force Unleashed TX-130T statblock, not a duplicate of the Clone Wars publication identity."
+      ],
+      "sourceEntryKey": "fucg-tx-130t-fighter-tank",
+      "printedName": "TX-130T Fighter Tank",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "printedPage": 203,
+      "pdfPhysicalPage": 204,
+      "sourcePdfSha256": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c"
+    }
+  ]
+}

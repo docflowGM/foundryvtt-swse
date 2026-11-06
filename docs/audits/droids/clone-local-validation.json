@@ -1,0 +1,21 @@
+{
+  "schema": "swse.droid.clone.local-validation/0.1",
+  "scope": "LOCAL_TYPED_SEMANTIC_AND_SELECTED_PDF_FIELD_CHECKS_ONLY",
+  "status": "PASS",
+  "errors": [],
+  "counts": {
+    "publicationClaims": 40,
+    "selectedFieldVisualReviews": 40,
+    "directFieldComparisons": 528,
+    "individualDroidActors": 32,
+    "squadAggregations": 1,
+    "vehicleAndStarshipSourceRecords": 7,
+    "mechanicallyCertified": 0,
+    "printedHeroEligibilityVisuallyVerified": 32,
+    "provisionalEntriesWithoutVisualReview": 0
+  },
+  "fullUpstreamJsonSchema202012Validated": false,
+  "foundryRuntimeCertified": false,
+  "sha256Ledger": "f46123b4b575c5a43e05ce3bcffe49db544d853d0a701129a060e18ba35876be",
+  "limitation": "Source has image-only PDF; OCR segments may interleave columns and other droid headings. Fields not selected for manual review remain provisional. Official 2020-12 schema and Foundry runtime not run."
+}

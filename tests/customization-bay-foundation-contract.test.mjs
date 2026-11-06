@@ -126,7 +126,9 @@ const { VehicleCustomizationEngine } = await import('../scripts/engine/customiza
 const { TransactionEngine } = await import('../scripts/engine/store/transaction-engine.js');
 const { normalizeDroidPartId, computeDroidPartCost } = await import('../scripts/data/droid-part-schema.js');
 
-const TRANSLATOR_A = 'advanced-translator';
+// The previous advanced-translator fixture was an unpriced source-alias mismatch.
+// Use a source-reviewed component to test the real Garage transaction contract.
+const CERTIFIED_DROID_PART = 'plasteel-shell';
 const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
 
 // ---------------------------------------------------------------------------
@@ -139,17 +141,17 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
   const droid = makeFakeDroid('droid-a1', 0);
   asGM([owner, droid]);
 
-  const cost = computeDroidPartCost(droid, { id: TRANSLATOR_A });
-  const preview = DroidCustomizationEngine.previewDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+  const cost = computeDroidPartCost(droid, { id: CERTIFIED_DROID_PART });
+  const preview = DroidCustomizationEngine.previewDroidCustomization(droid, { add: [CERTIFIED_DROID_PART] }, { walletActor: owner });
   assert.equal(preview.success, true, preview.error);
   assert.equal(preview.preview.currentCredits, 5000, 'preview must read the WALLET actor\'s credits, not the droid\'s');
   assert.equal(preview.preview.walletActorId, owner.id);
 
-  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [CERTIFIED_DROID_PART] }, { walletActor: owner });
   assert.equal(result.success, true, result.error);
   assert.equal(owner.system.credits, 5000 - cost, 'owner must be debited the purchase cost (Case A: droid)');
   assert.equal(droid.system.credits, 0, 'the droid\'s own (zero) credits must be untouched — it is the asset, not the wallet');
-  assert.ok(droid.system.installedSystems[normalizeDroidPartId(TRANSLATOR_A)], 'the system must still be installed on the droid');
+  assert.ok(droid.system.installedSystems[normalizeDroidPartId(CERTIFIED_DROID_PART)], 'the system must still be installed on the droid');
 }
 
 {
@@ -179,11 +181,11 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
   const droid = makeFakeDroid('droid-b1', 50000);
   asGM([owner, droid]);
 
-  const preview = DroidCustomizationEngine.previewDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+  const preview = DroidCustomizationEngine.previewDroidCustomization(droid, { add: [CERTIFIED_DROID_PART] }, { walletActor: owner });
   assert.equal(preview.success, false, 'preview must fail: the paying wallet cannot afford it, regardless of the droid\'s own balance');
   assert.equal(preview.blockingReason, 'Insufficient funds');
 
-  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [CERTIFIED_DROID_PART] }, { walletActor: owner });
   assert.equal(result.success, false);
   assert.equal(owner.system.credits, 0, 'owner credits must be untouched on rejection');
   assert.equal(droid.system.credits, 50000, 'the droid\'s large balance must never be spent — it is not the wallet');
@@ -214,8 +216,8 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
   resetFakeActorEngine();
   const droid = makeFakeDroid('droid-c1', 10000);
   asGM([droid]);
-  const cost = computeDroidPartCost(droid, { id: TRANSLATOR_A });
-  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [TRANSLATOR_A] });
+  const cost = computeDroidPartCost(droid, { id: CERTIFIED_DROID_PART });
+  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [CERTIFIED_DROID_PART] });
   assert.equal(result.success, true, result.error);
   assert.equal(droid.system.credits, 10000 - cost, 'with no walletActor option, the droid must still fund itself (unchanged default)');
 }
@@ -238,7 +240,7 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
   const owner = makeFakeOwner('owner-d1', 1); // affordable at preview-check math only if cost <= 1; force rejection instead
   const droid = makeFakeDroid('droid-d1', 0);
   asGM([owner, droid]);
-  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [CERTIFIED_DROID_PART] }, { walletActor: owner });
   assert.equal(result.success, false, 'insufficient owner funds must reject the whole transaction');
   assert.deepEqual(droid.system.installedSystems, {}, 'no system may be installed when the transaction is rejected');
   assert.equal(owner.system.credits, 1, 'owner credits must be untouched — no partial debit');
@@ -276,7 +278,7 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
   const droid = makeFakeDroid('droid-rollback2', 0);
   asGM([owner, droid]);
 
-  const expectedCost = computeDroidPartCost(droid, { id: TRANSLATOR_A });
+  const expectedCost = computeDroidPartCost(droid, { id: CERTIFIED_DROID_PART });
   const { ActorEngine: SharedActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
   const realApply = SharedActorEngine.applyMutationPlan;
   let assetMutatedBeforeFailure = false;
@@ -291,7 +293,7 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
 
   let result;
   try {
-    result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+    result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [CERTIFIED_DROID_PART] }, { walletActor: owner });
   } finally {
     SharedActorEngine.applyMutationPlan = realApply;
   }
@@ -325,7 +327,7 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
   const droid = makeFakeDroid('droid-q4', 0);
   asGM([owner, droid]);
 
-  const expectedCost = computeDroidPartCost(droid, { id: TRANSLATOR_A });
+  const expectedCost = computeDroidPartCost(droid, { id: CERTIFIED_DROID_PART });
   const originalCallAll = globalThis.Hooks.callAll;
   globalThis.Hooks.callAll = function throwingCompletionListener(hookName, ...args) {
     if (hookName === 'swseAssetCustomizationTransactionComplete') {
@@ -336,7 +338,7 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
 
   let result;
   try {
-    result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+    result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [CERTIFIED_DROID_PART] }, { walletActor: owner });
   } finally {
     globalThis.Hooks.callAll = originalCallAll;
   }
@@ -365,7 +367,7 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
     return original.call(this, context, options);
   };
   try {
-    const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+    const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [CERTIFIED_DROID_PART] }, { walletActor: owner });
     assert.equal(result.success, true, result.error);
   } finally {
     TransactionEngine.executeAssetCustomizationTransaction = original;
@@ -406,11 +408,11 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
   resetFakeActorEngine();
   const owner = makeFakeOwner('owner-resale1', 1000);
   const droid = makeFakeDroid('droid-resale1', 0, {
-    system: { credits: 0, droidSystems: { size: 'medium' }, installedSystems: { [normalizeDroidPartId(TRANSLATOR_A)]: { installedAt: Date.now() } } }
+    system: { credits: 0, droidSystems: { size: 'medium' }, installedSystems: { [normalizeDroidPartId(CERTIFIED_DROID_PART)]: { installedAt: Date.now() } } }
   });
   asGM([owner, droid]);
-  const expectedResale = Math.floor(computeDroidPartCost(droid, { id: TRANSLATOR_A }) * 0.5);
-  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { remove: [TRANSLATOR_A] }, { walletActor: owner });
+  const expectedResale = Math.floor(computeDroidPartCost(droid, { id: CERTIFIED_DROID_PART }) * 0.5);
+  const result = await DroidCustomizationEngine.applyDroidCustomization(droid, { remove: [CERTIFIED_DROID_PART] }, { walletActor: owner });
   assert.equal(result.success, true, result.error);
   assert.equal(owner.system.credits, 1000 + expectedResale, 'resale credit must return to the wallet actor');
   assert.equal(droid.system.credits, 0, 'the droid\'s own credits must not receive the resale — it is not the wallet');

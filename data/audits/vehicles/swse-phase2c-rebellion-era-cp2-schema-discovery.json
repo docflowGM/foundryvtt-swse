@@ -1,0 +1,268 @@
+{
+  "schema": "swse.vehicle.rebellion-era.phase2c.cp2.schema-discovery.v1",
+  "sourceBook": "Rebellion Era Campaign Guide",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "re-dunelizard-conditional-astromech",
+      "ship": "G1-M4-C",
+      "category": "CREW_CONFIGURATION",
+      "sourceDerivedIssue": "Optional copilot-seat to astromech port retrofit changes skills and nav memory; not the stock fit.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-dunelizard-repair-equipment-bonus",
+      "ship": "G1-M4-C",
+      "category": "SKILL_EQUIPMENT_BONUS",
+      "sourceDerivedIssue": "Always-on +1 equipment bonus only for Mechanics checks made to repair this ship.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ixiyen-single-pilot-weapon-exclusivity",
+      "ship": "Ixiyen",
+      "category": "FIRE_OPTION_DISJUNCTION",
+      "sourceDerivedIssue": "No extra gunner or droid slots; pilot chooses among attack systems.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-kimogila-crew-relative-torpedo-bonus",
+      "ship": "M12-L",
+      "category": "STATION_ATTACK_ALTERNATE",
+      "sourceDerivedIssue": "Torpedo detailed row gunner +3 versus pilot +5; narrative role-specific control.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-kimogila-ammunition-unspecified",
+      "ship": "M12-L",
+      "category": "PAYLOAD_PARTIAL",
+      "sourceDerivedIssue": "12 concussion missiles printed; no numbered proton torpedo stock payload.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-krayt-turret-bonus",
+      "ship": "M22-T",
+      "category": "STATION_BONUS_SCOPE",
+      "sourceDerivedIssue": "+1 equipment targeting-computer bonus to gunner turret weapons but not concussion missiles.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-krayt-passenger-conflict",
+      "ship": "M22-T",
+      "category": "NARRATIVE_STATBLOCK_CONFLICT",
+      "sourceDerivedIssue": "Narrative room for 2 passengers/prisoners versus printed statblock Passengers none.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-razor-missiles-per-tube",
+      "ship": "Razor",
+      "category": "PAYLOAD_MULTIPLICITY",
+      "sourceDerivedIssue": "8 concussion missiles per tube; physical tube count unknown; never infer grand total.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-mobquet-modular-nodes",
+      "ship": "Mobquet",
+      "category": "MODULAR_CAPACITY",
+      "sourceDerivedIssue": "Stock 24 passengers vs optional 32-passenger conversion; three modular sections.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-mobquet-frigate-classification",
+      "ship": "Mobquet",
+      "category": "TYPE_DISAMBIGUATION",
+      "sourceDerivedIssue": "Statblock says capital frigate; in-universe marketing/licensing calls it medium transport.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ykl-turret-launcher-count",
+      "ship": "YKL-37R",
+      "category": "NARRATIVE_HARDWARE_EVIDENCE",
+      "sourceDerivedIssue": "2 twin-laser turrets and 3 separate missile launchers, distinct from two attack-detail rows.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ykl-role-and-ammunition",
+      "ship": "YKL-37R",
+      "category": "MULTI_STATION_ATTACK",
+      "sourceDerivedIssue": "Missile row is controlled by copilot and 2 gunners; do not fabricate extra turns or fire groups.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-yv545-untrained-pilot",
+      "ship": "YV-545",
+      "category": "CONDITIONAL_PILOT_PENALTY",
+      "sourceDerivedIssue": "-2 to Pilot only if untrained; ordinary pilot stat remains +0.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-yv545-geometry-and-slots",
+      "ship": "YV-545",
+      "category": "CONDITIONAL_GEOMETRY",
+      "sourceDerivedIssue": "90-degree cockpit rotation, narrative top/bottom turrets, 3 unused emplacement points.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ym2800-attachment-breach",
+      "ship": "YM-2800",
+      "category": "BOARDING_CUTTER_ACTION_SEQUENCE",
+      "sourceDerivedIssue": "Adjacency hit attaches without collision; subsequent grapple checks bypass SR; cumulative threshold breach.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ym2800-shield-suppression",
+      "ship": "YM-2800",
+      "category": "TEMPORARY_POWER_REDIRECTION",
+      "sourceDerivedIssue": "Plasma cutter suppresses shields and other weapons during use; restored at start next pilot turn.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-ym2800-unprinted-hyperdrive",
+      "ship": "YM-2800",
+      "category": "SOURCE_SILENT_FIELD",
+      "sourceDerivedIssue": "No hyperdrive listed in printed block; unknown rather than confirmed absent.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-twing-torpedo-splash",
+      "ship": "T-Wing",
+      "category": "AREA_DAMAGE",
+      "sourceDerivedIssue": "Proton torpedo attack explicitly applies a four-square splash; separate impact from splash resolution.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-twing-two-jump-memory",
+      "ship": "T-Wing",
+      "category": "NAVICOMPUTER_MEMORY",
+      "sourceDerivedIssue": "Limited navicomputer has only two jumps of memory; do not assume normal navicomputer capacity.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-x4-six-turrets",
+      "ship": "X4",
+      "category": "PHYSICAL_WEAPON_MOUNTS",
+      "sourceDerivedIssue": "Narrative has six rotating laser turrets plus a pair of forward-facing laser cannons; attack rows alone do not define all arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-x4-gunner-distribution",
+      "ship": "X4",
+      "category": "CREW_WEAPON_STATIONS",
+      "sourceDerivedIssue": "Eight skilled crew, six turret systems, and only one aggregate gunner attack row; scheduling concurrent independent attacks needs explicit rules.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-assassin-typical-max-capacity",
+      "ship": "Assassin Corvette",
+      "category": "CONFIGURATION_CAPACITY",
+      "sourceDerivedIssue": "Crew 60–150; max passengers 60 and cargo 2,100 tons, while typical given-weapon layout has crew84/passengers51/cargo1500 tons.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-assassin-heavy-target-penalty",
+      "ship": "Assassin Corvette",
+      "category": "TARGET_SIZE_ATTACK_PENALTY",
+      "sourceDerivedIssue": "Printed -20 against smaller-than-Colossal targets changes attacks from +10/-10 and +6/-14.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-assassin-three-gunners-two-duals",
+      "ship": "Assassin Corvette",
+      "category": "HARDWARE_STAFFING",
+      "sourceDerivedIssue": "Ranged line specifies 2 dual turbolasers but detailed row lists 3 gunners; crew station count cannot be used as turret count.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-assault-gunboat-loadout",
+      "ship": "Assault Gunboat",
+      "category": "WEAPON_VARIANT_STOCK_GUARD",
+      "sourceDerivedIssue": "Stock laser/ion/missile attacks separated from alternate tractor/torpedo/rocket/bomb modifications.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-cargo-ship-point-defense",
+      "ship": "Imperial Cargo Ship",
+      "category": "BATTERY_AND_TARGET_SIZING",
+      "sourceDerivedIssue": "Two quad turbolaser groups and four point-defense laser battery groups with distinct small-target penalty and autofire.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-cargo-ship-advanced-nav",
+      "ship": "Imperial Cargo Ship",
+      "category": "NAVICOMPUTER_TYPE",
+      "sourceDerivedIssue": "Advanced navicomputer printed; preserve variant rather than generic navicomputer.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-frigate-four-battery-types",
+      "ship": "Imperial II-class Frigate",
+      "category": "MULTIPLE_BATTERY_GROUPS",
+      "sourceDerivedIssue": "Four each of turbolaser, ion, point-defense laser and tractor batteries; exact individual hardware remains unresolved.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-frigate-tractor-grapple",
+      "ship": "Imperial II-class Frigate",
+      "category": "TRACTOR_ATTACK",
+      "sourceDerivedIssue": "Tractor battery grapple +69 and -20 size penalty; not damage-dealing weapon.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-frigate-carried-craft",
+      "ship": "Imperial II-class Frigate",
+      "category": "SHIP_HANGAR_INVENTORY",
+      "sourceDerivedIssue": "Thirty-six TIE fighters, thirty-six TIE Interceptors, two Lambda shuttles plus varied other support craft.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-missile-boat-slam",
+      "ship": "Missile Boat",
+      "category": "TEMPORARY_THRUST_MODE",
+      "sourceDerivedIssue": "SLAM sacrifices laser weapon operation to grant temporary speed burst; no numeric duration/speed delta in printed description.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-missile-boat-distinct-magazines",
+      "ship": "Missile Boat",
+      "category": "WEAPON_MAGAZINES",
+      "sourceDerivedIssue": "Twenty standard and twenty advanced concussion missiles with separate launchers and damage, not interchangeable unlabeled ammo.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-royal-guard-ace-no-inferred-upgrades",
+      "ship": "Royal Guard Starfighter",
+      "category": "STOCK_VARIANT_GUARD",
+      "sourceDerivedIssue": "Ace-crew stock with SR15 and lasers; higher SR and missile rack described as modifications, not printed stock equipment.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-aggressor-dual-station",
+      "ship": "TIE Aggressor",
+      "category": "PILOT_GUNNER_ATTACKS",
+      "sourceDerivedIssue": "Two crew with pilot +7 and rotating turret gunner +5, and a missile alternative to pilot gun attack.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-m2-remote-operator",
+      "ship": "TIE Experimental M2",
+      "category": "REMOTE_CONTROL_CREW",
+      "sourceDerivedIssue": "Remotely piloted from Beta-class ETR-3, with weapon row pilot label reflecting remote station, not onboard crew.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "re-m2-m3-separate",
+      "ship": "TIE Experimental M2",
+      "category": "PUBLICATION_IDENTITY",
+      "sourceDerivedIssue": "M2 and M3 share a printed page but have different statblocks and ship identities; CP2 reviews M2 only.",
+      "requiresFollowup": true
+    }
+  ],
+  "counts": {
+    "discoveryCases": 36,
+    "bookScopeReviewed": 20
+  },
+  "scopeGuardrails": [
+    "Cannot add a production ship, merge source identities or hydrate a compendium from discovery cases.",
+    "Prior SotG, Clone Wars, Legacy Era discovery counts are independent; do not overwrite or conflate."
+  ]
+}

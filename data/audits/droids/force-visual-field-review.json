@@ -1,0 +1,99 @@
+{
+  "schema": "swse.droid.force.selected-pdf-visual/0.1",
+  "sourceBook": "Force Unleashed Campaign Guide",
+  "manualVisualReviews": 11,
+  "directFieldComparisons": 229,
+  "sourcePdfHash": "0ef4b47b2bf55091c13c1960e4ea367675cb7d84a776f0b9f6dc8fc27c57840c",
+  "method": "PDF printed pages visually reviewed; selected source fields compared with searchable text as index.",
+  "scope": "Selected first-page fields only; no complete mechanical certification.",
+  "items": [
+    {
+      "sourceEntryKey": "FORCE-DROID-001",
+      "printedName": "FX-6 Medical Droid",
+      "printedPage": 103,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/force_pdf_review/printed_p103.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-002",
+      "printedName": "Q7 Series Astromech Droid",
+      "printedPage": 104,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/force_pdf_review/printed_p104.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-003",
+      "printedName": "BD-3000 Luxury Droid",
+      "printedPage": 105,
+      "verifiedFieldCount": 23,
+      "sourceImage": "work/force_pdf_review/printed_p105.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-004",
+      "printedName": "Junk Droid",
+      "printedPage": 106,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/force_pdf_review/printed_p106.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-005",
+      "printedName": "Brute Junk Droid",
+      "printedPage": 107,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/force_pdf_review/printed_p107.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-006",
+      "printedName": "Behemoth Junk Droid",
+      "printedPage": 107,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/force_pdf_review/printed_p107.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-007",
+      "printedName": "IT-O Interrogator",
+      "printedPage": 195,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/force_pdf_review/printed_p195.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-008",
+      "printedName": "RA-7 Protocol Droid",
+      "printedPage": 196,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/force_pdf_review/printed_p196.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-009",
+      "printedName": "PROXY",
+      "printedPage": 197,
+      "verifiedFieldCount": 20,
+      "sourceImage": "work/force_pdf_review/printed_p197.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-010",
+      "printedName": "R-1 Recon Droid",
+      "printedPage": 197,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/force_pdf_review/printed_p197.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    },
+    {
+      "sourceEntryKey": "FORCE-DROID-011",
+      "printedName": "MSE-6 Repair Droid",
+      "printedPage": 198,
+      "verifiedFieldCount": 21,
+      "sourceImage": "work/force_pdf_review/printed_p198.png",
+      "scope": "Selected first-page visual review, not mechanical certification."
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "swse.droids.sgd.hydration-closeout/0.1",
+  "date": "2026-11-02",
+  "bookId": "SGD",
+  "frozenSGDIdentities": 46,
+  "frozenProjectIdentities": 234,
+  "sourceHydratedRecords": 46,
+  "sourceHydrationComplete": true,
+  "sourceMechanicallyCertifiedRecords": 0,
+  "projectSourceMechanicallyCertifiedRecords": 0,
+  "foundryRuntimeCertifiedRecords": 0,
+  "sourceLedgerCommit": "98eff1b02da0d0634bed8202c91acee807e69064",
+  "finalClaim": {
+    "id": "SGD-DROID-046",
+    "name": "YVH-Series Battle Droid",
+    "printedPages": [
+      158,
+      159
+    ],
+    "sourcePdfPages1Based": [
+      159,
+      160
+    ],
+    "componentInstances": 13,
+    "physicalAppendages": 2,
+    "movementSystems": 1,
+    "printedClasses": [
+      {
+        "name": "soldier",
+        "level": 5
+      },
+      {
+        "name": "scout",
+        "level": 3
+      },
+      {
+        "name": "elite trooper",
+        "level": 1
+      }
+    ],
+    "possessionTypes": 2,
+    "featsLineClaims": 6,
+    "talentLineClaims": 6,
+    "attackRows": 4,
+    "conditionalActions": 5,
+    "sourceResourceFacts": {
+      "blasterNormalPowerCapacityShots": 30,
+      "normalCostShotUnits": 1,
+      "maximumPowerCostShotUnits": 2
+    },
+    "sourceConflicts": [
+      "SGD-046-SCAN-ACTION-COST-CONFLICT",
+      "SGD-046-TAUNT-ACTION-AND-TARGET-CONFLICT"
+    ],
+    "heroEligible": true,
+    "heroicConstructionSidebar": "separate proposed stock battle-droid chassis build",
+    "guardianVariant": "12 hours, DC 25 Use Computer, replacement of one soldier talent",
+    "certification": "partial",
+    "runtime": "not-tested"
+  },
+  "checks": {
+    "customStructuralSchema": "46/46 PASS",
+    "customNullEmptySemantic": "46/46 PASS",
+    "sourceIdentityNamePageCensus": "46/46 PASS",
+    "sourceAttackNonExecutable": "46/46 PASS",
+    "originalPythonDraft202012": "NOT RUN on GitHub ledger",
+    "foundryRuntime": "NOT RUN; post-merge Claude responsibility"
+  },
+  "productionCompendiumMutations": 0,
+  "merges": 0,
+  "remainingBookWork": [
+    "canonical feat and talent identities and parameters",
+    "full source rules, weapon mounts and attack action resource evidence",
+    "contradictions and provenance decisions",
+    "cross-domain vehicle/droid/PC creation and actor authority",
+    "independent source mechanical certification distinct from runtime"
+  ],
+  "nextTrack": "Droid-component catalog mechanical source certification and Garage/chargen/Store parity"
+}

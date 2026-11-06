@@ -1,0 +1,279 @@
+{
+  "schema": "swse.vehicle.phase2c.schema-discovery.v0.1",
+  "sourceBook": "Core Rulebook",
+  "mode": "DISCOVERY_ONLY_NOT_PRODUCTION",
+  "schemaFrozen": false,
+  "discoveries": [
+    {
+      "id": "core-rulebook-001",
+      "sourceEntryKey": "core-arc-170-starfighter",
+      "ship": "ARC-170 Starfighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        180,
+        181
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-002",
+      "sourceEntryKey": "core-arc-170-starfighter",
+      "ship": "ARC-170 Starfighter",
+      "category": "HYPERDRIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        180,
+        181
+      ],
+      "sourceDerivedIssue": "Statblock starts printed page 180 and continues on 181 for cargo, hyperdrive and weapon rows.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-003",
+      "sourceEntryKey": "core-arc-170-starfighter",
+      "ship": "ARC-170 Starfighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        180,
+        181
+      ],
+      "sourceDerivedIssue": "Ranged and detailed row say heavy laser cannons, but Atk Options says medium laser cannons; preserve terminology rather than retype hardware.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-004",
+      "sourceEntryKey": "core-arc-170-starfighter",
+      "ship": "ARC-170 Starfighter",
+      "category": "CONDITIONAL_ASTROMECH",
+      "sourcePrintedPages": [
+        180,
+        181
+      ],
+      "sourceDerivedIssue": "Astromech skill entries with asterisks are conditional.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-005",
+      "sourceEntryKey": "core-arc-170-starfighter",
+      "ship": "ARC-170 Starfighter",
+      "category": "SOURCE_WEAPON_LABEL_CONFLICT",
+      "sourcePrintedPages": [
+        181
+      ],
+      "sourceDerivedIssue": "{\"category\": \"SOURCE_WEAPON_LABEL_CONFLICT\", \"mainRanged\": \"heavy laser cannons\", \"attackOptions\": \"autofire (medium laser cannons, laser cannons)\", \"page\": 181, \"resolution\": \"UNRESOLVED_KEEP_BOTH_PRINTED_VALUES\"}",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-006",
+      "sourceEntryKey": "core-corellian-yt-1300-transport",
+      "ship": "Corellian YT-1300 Transport",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        182,
+        183
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-007",
+      "sourceEntryKey": "core-corellian-yt-1300-transport",
+      "ship": "Corellian YT-1300 Transport",
+      "category": "PRINTED_SOURCE_SILENCE",
+      "sourcePrintedPages": [
+        182,
+        183
+      ],
+      "sourceDerivedIssue": "Statblock starts page 182 and continues page 183; no printed shield rating.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-008",
+      "sourceEntryKey": "core-corellian-yt-1300-transport",
+      "ship": "Corellian YT-1300 Transport",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        182,
+        183
+      ],
+      "sourceDerivedIssue": "Core stock transport is not the same publication statblock as YT-1250 or YT-1930 from Scum and Villainy.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-009",
+      "sourceEntryKey": "core-droid-tri-fighter",
+      "ship": "Droid Tri-Fighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        181
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-010",
+      "sourceEntryKey": "core-droid-tri-fighter",
+      "ship": "Droid Tri-Fighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        181
+      ],
+      "sourceDerivedIssue": "Printed drone has Crew 0 (expert); avoid inventing a pilot station.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-011",
+      "sourceEntryKey": "core-droid-tri-fighter",
+      "ship": "Droid Tri-Fighter",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        181
+      ],
+      "sourceDerivedIssue": "Can fire multiple weapons against the same or different targets, per adjacent narrative.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-012",
+      "sourceEntryKey": "core-droid-tri-fighter",
+      "ship": "Droid Tri-Fighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        181
+      ],
+      "sourceDerivedIssue": "Attack Options calls a medium laser cannon where main Ranged and detail say laser cannon (no medium); preserve printed naming.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-013",
+      "sourceEntryKey": "core-droid-tri-fighter",
+      "ship": "Droid Tri-Fighter",
+      "category": "SOURCE_WEAPON_LABEL_CONFLICT",
+      "sourcePrintedPages": [
+        181
+      ],
+      "sourceDerivedIssue": "{\"category\": \"SOURCE_WEAPON_LABEL_CONFLICT\", \"mainRanged\": \"laser cannon +7\", \"attackOptions\": \"autofire (medium laser cannon, light laser cannons)\", \"page\": 181, \"resolution\": \"UNRESOLVED_KEEP_BOTH_PRINTED_VALUES\"}",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-014",
+      "sourceEntryKey": "core-eta-2-actis-interceptor",
+      "ship": "Eta-2 Actis Interceptor",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        180
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-015",
+      "sourceEntryKey": "core-eta-2-actis-interceptor",
+      "ship": "Eta-2 Actis Interceptor",
+      "category": "HYPERDRIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        180
+      ],
+      "sourceDerivedIssue": "Hyperdrive x1 is available WITH booster ring, not intrinsic; consumables improve with ring.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-016",
+      "sourceEntryKey": "core-eta-2-actis-interceptor",
+      "ship": "Eta-2 Actis Interceptor",
+      "category": "NARRATIVE_CONFIGURATION",
+      "sourcePrintedPages": [
+        180
+      ],
+      "sourceDerivedIssue": "No shield rating printed; source narrative says no shields.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-017",
+      "sourceEntryKey": "core-eta-2-actis-interceptor",
+      "ship": "Eta-2 Actis Interceptor",
+      "category": "CONDITIONAL_ASTROMECH",
+      "sourcePrintedPages": [
+        180
+      ],
+      "sourceDerivedIssue": "Astromech asterisk modifiers are conditional.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-018",
+      "sourceEntryKey": "core-imperial-i-class-star-destroyer",
+      "ship": "Imperial I-class Star Destroyer",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        183
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-019",
+      "sourceEntryKey": "core-imperial-i-class-star-destroyer",
+      "ship": "Imperial I-class Star Destroyer",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        183
+      ],
+      "sourceDerivedIssue": "-20 attack penalty against ships smaller than Colossal size, except appropriate point-defense entry.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-020",
+      "sourceEntryKey": "core-imperial-i-class-star-destroyer",
+      "ship": "Imperial I-class Star Destroyer",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        183
+      ],
+      "sourceDerivedIssue": "Summary multiplicities 5/5/10/10 are published attack group counts, NOT verified independent physical mounts or arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-021",
+      "sourceEntryKey": "core-incom-t-65b-x-wing-starfighter",
+      "ship": "Incom T-65B X-wing Starfighter",
+      "category": "MOUNT_ARC_CERTIFICATION",
+      "sourcePrintedPages": [
+        178
+      ],
+      "sourceDerivedIssue": "Named attack groups are certified as printed attack rows, not independent physical weapon mounts and firing arcs.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-022",
+      "sourceEntryKey": "core-incom-t-65b-x-wing-starfighter",
+      "ship": "Incom T-65B X-wing Starfighter",
+      "category": "CONDITIONAL_ASTROMECH",
+      "sourcePrintedPages": [
+        178
+      ],
+      "sourceDerivedIssue": "Astromech-droid modifiers starred in source are conditional.",
+      "requiresFollowup": true
+    },
+    {
+      "id": "core-rulebook-023",
+      "sourceEntryKey": "core-incom-t-65b-x-wing-starfighter",
+      "ship": "Incom T-65B X-wing Starfighter",
+      "category": "SPECIAL_OR_VARIANT_RULE",
+      "sourcePrintedPages": [
+        178
+      ],
+      "sourceDerivedIssue": "T-65B is the Core publication identity, not a silent substitution with versions published in Starships of the Galaxy.",
+      "requiresFollowup": true
+    }
+  ],
+  "additionalStatblockIdentityCandidates": [],
+  "counts": {
+    "discoveryCases": 23,
+    "unreconciledAdditionalStatblockIdentities": 0
+  },
+  "scopeGuardrails": [
+    "No production data/hydration changes",
+    "No auto-generated physical mounts/arcs",
+    "Source-review not strict mechanical certification",
+    "Never silently modify Phase1 publication identities"
+  ]
+}

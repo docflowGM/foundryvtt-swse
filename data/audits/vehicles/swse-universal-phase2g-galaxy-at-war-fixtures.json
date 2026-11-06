@@ -1,0 +1,494 @@
+{
+  "schema": "swse.vehicle.universal.phase2g.galaxy-at-war.fixtures.v1",
+  "sourceBook": "Galaxy at War",
+  "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+  "method": "Visual primary PDF comparison of printed pages 62-64,179,216; original PDF SHA matched Phase 1, DJVU used only for navigation.",
+  "records": [
+    {
+      "cl": 6,
+      "init": 10,
+      "per": 6,
+      "ref": 17,
+      "ff": 11,
+      "fort": 21,
+      "armor": 3,
+      "hp": 55,
+      "dr": 5,
+      "dt": 31,
+      "speed": 12,
+      "km": 550,
+      "charSpace": [
+        3,
+        3
+      ],
+      "cover": "total (crew)",
+      "bab": 2,
+      "grp": 23,
+      "abilities": [
+        33,
+        22,
+        16
+      ],
+      "skills": {
+        "Initiative": 10,
+        "Mechanics": 6,
+        "Perception": 6,
+        "Pilot": 10,
+        "Use Computer": 6
+      },
+      "crew": "1 (skilled)",
+      "crewCount": 1,
+      "pass": 0,
+      "cargo": "30 kg",
+      "cons": "1 week",
+      "carried": "none",
+      "availability": "Military",
+      "price": 14700,
+      "used": 7400,
+      "ranged": "dual laser cannons +7",
+      "attackOptions": [
+        "autofire (dual laser cannons)"
+      ],
+      "weapons": [
+        {
+          "label": "dual laser cannons",
+          "operator": "pilot",
+          "atk": 7,
+          "auto": 2,
+          "damage": "5d10"
+        }
+      ],
+      "special": [
+        "Printed narrative: low maximum operating altitude, poor rough terrain ability, protection against ranged attacks; no numerical altitude or terrain rule inferred."
+      ],
+      "sourceEntryKey": "gaw-freeco-speeder",
+      "printedPage": 62,
+      "pdfPhysicalPage": 63,
+      "printedName": "Freeco Speeder",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a"
+    },
+    {
+      "cl": 4,
+      "init": 4,
+      "per": 5,
+      "ref": 12,
+      "ff": 11,
+      "fort": 22,
+      "armor": 3,
+      "hp": 60,
+      "dr": 5,
+      "dt": 32,
+      "speed": 8,
+      "km": 280,
+      "starSpeed": 2,
+      "charSpace": [
+        3,
+        3
+      ],
+      "starSpace": 1,
+      "cover": "total (crew)",
+      "bab": 0,
+      "grp": 22,
+      "abilities": [
+        34,
+        12,
+        14
+      ],
+      "skills": {
+        "Initiative": 4,
+        "Mechanics": 5,
+        "Perception": 5,
+        "Pilot": 4,
+        "Use Computer": 4
+      },
+      "crew": "2 (normal)",
+      "crewCount": 2,
+      "pass": 4,
+      "passQualifier": "plus 2 patients",
+      "cargo": "10 tons",
+      "cons": "1 week",
+      "carried": "1 speeder bike",
+      "availability": "Licensed",
+      "price": 41000,
+      "used": 26000,
+      "weapons": [],
+      "special": [
+        "Occupants protected from airborne hazards (including inhaled poisons and disease) and exterior radiation; +5 equipment bonus to Fortitude against airborne disease/poison if not already affected."
+      ],
+      "sourceEntryKey": "gaw-shelter-speeder",
+      "printedPage": 63,
+      "pdfPhysicalPage": 64,
+      "printedName": "Shelter Speeder",
+      "printedTypeLine": "Huge air vehicle",
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a"
+    },
+    {
+      "cl": 6,
+      "init": 3,
+      "per": 6,
+      "ref": 15,
+      "ff": 13,
+      "fort": 28,
+      "armor": 8,
+      "hp": 150,
+      "dr": 15,
+      "dt": 48,
+      "speed": 8,
+      "km": 110,
+      "starSpeed": 3,
+      "charSpace": [
+        4,
+        4
+      ],
+      "cover": "total (crew), +5 gunner",
+      "bab": 2,
+      "grp": 35,
+      "abilities": [
+        46,
+        14,
+        14
+      ],
+      "skills": {
+        "Initiative": 3,
+        "Mechanics": 6,
+        "Perception": 6,
+        "Pilot": 3,
+        "Use Computer": 6
+      },
+      "crew": "3 (skilled)",
+      "crewCount": 3,
+      "pass": 4,
+      "cargo": "150 kg",
+      "cons": "2 weeks",
+      "carried": "none",
+      "availability": "Military",
+      "newPriceRaw": "115,00 credits",
+      "price": null,
+      "used": 65000,
+      "ranged": "heavy laser cannon +6",
+      "weapons": [
+        {
+          "label": "heavy laser cannon",
+          "operator": "2 gunners",
+          "atk": 6,
+          "damage": "6d10x2, 2-square splash"
+        }
+      ],
+      "special": [
+        "Printed Cost '115,00 credits' lacks a digit versus 65,000 used: do not invent 115,000 or 11,500; unresolved price.",
+        "Printed tank sensor targeting / exposed gunner: gunner gains +5 cover, vehicle gives +5 equipment bonus to Mechanics checks to repair or modify; pirate-added extra cannons are optional, not stock."
+      ],
+      "sourceEntryKey": "gaw-wlo-5-speeder-tank",
+      "printedPage": 63,
+      "pdfPhysicalPage": 64,
+      "printedName": "WLO-5 Speeder Tank",
+      "printedTypeLine": "Gargantuan ground vehicle (speeder)",
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a"
+    },
+    {
+      "cl": 2,
+      "init": 0,
+      "per": 5,
+      "ref": 11,
+      "ff": 11,
+      "fort": 22,
+      "armor": 6,
+      "hp": 60,
+      "dr": 10,
+      "dt": 42,
+      "speed": 12,
+      "km": 600,
+      "starSpeed": 3,
+      "charSpace": [
+        4,
+        4
+      ],
+      "starSpace": 1,
+      "cover": "total",
+      "bab": 0,
+      "grp": 27,
+      "abilities": [
+        34,
+        10,
+        12
+      ],
+      "skills": {
+        "Initiative": 0,
+        "Mechanics": 5,
+        "Perception": 5,
+        "Pilot": 0,
+        "Use Computer": 5
+      },
+      "crew": "0 (droid brain)",
+      "crewCount": 0,
+      "autonomy": "droid-brain",
+      "pass": 0,
+      "cargo": "2 tons",
+      "cons": "none",
+      "carried": "1 Gargantuan (or smaller) vehicle",
+      "availability": "Licensed",
+      "price": 17000,
+      "weapons": [],
+      "special": [
+        "Disposable drop pod: self-destructive bolts release contained vehicle after landing; no people travel in pod as passengers; droid brain manages orbital descent.",
+        "Character and starship scale flying speed are both printed. Neither is proof of installed hyperdrive."
+      ],
+      "sourceEntryKey": "gaw-drop-pod",
+      "printedPage": 64,
+      "pdfPhysicalPage": 65,
+      "printedName": "Drop Pod",
+      "printedTypeLine": "Gargantuan air vehicle",
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a"
+    },
+    {
+      "cl": 1,
+      "init": 4,
+      "per": 5,
+      "ref": 10,
+      "ff": 10,
+      "fort": 18,
+      "armor": 1,
+      "hp": 60,
+      "dr": 5,
+      "dt": 23,
+      "speed": 6,
+      "km": 90,
+      "charSpace": [
+        2,
+        2
+      ],
+      "cover": "+5",
+      "bab": 0,
+      "grp": 13,
+      "abilities": [
+        26,
+        10,
+        10
+      ],
+      "skills": {
+        "Initiative": 4,
+        "Mechanics": 5,
+        "Perception": 5,
+        "Pilot": 4,
+        "Use Computer": 5
+      },
+      "crew": "1 (normal)",
+      "crewCount": 1,
+      "pass": 0,
+      "cargo": "50 kg",
+      "cons": "none",
+      "carried": "none",
+      "availability": "Licensed",
+      "price": 5000,
+      "used": 1000,
+      "weapons": [],
+      "special": [
+        "Wheeled cargo loader with forward forks, not a speeder; printed unarmed."
+      ],
+      "sourceEntryKey": "gaw-t8-loading-vehicle",
+      "printedPage": 179,
+      "pdfPhysicalPage": 180,
+      "printedName": "T8 Loading Vehicle",
+      "printedTypeLine": "Large ground vehicle (wheeled)",
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a"
+    },
+    {
+      "cl": 10,
+      "init": 6,
+      "per": 5,
+      "ref": 17,
+      "ff": 14,
+      "fort": 23,
+      "armor": 6,
+      "vc": true,
+      "hp": 175,
+      "dr": 10,
+      "dt": 33,
+      "speed": 8,
+      "km": 130,
+      "charSpace": [
+        3,
+        3
+      ],
+      "cover": "total",
+      "bab": 2,
+      "grp": 25,
+      "abilities": [
+        36,
+        17,
+        14
+      ],
+      "skills": {
+        "Initiative": 6,
+        "Perception": 5,
+        "Pilot": 6
+      },
+      "crew": "droid brain (expert)",
+      "crewCount": null,
+      "autonomy": "droid-brain",
+      "pass": 0,
+      "cargo": "none",
+      "cons": "none",
+      "carried": "none",
+      "payload": "24 missiles",
+      "availability": "Military",
+      "price": 17500,
+      "used": 11000,
+      "ranged": "medium laser cannons +6 OR missile launchers +6",
+      "weapons": [
+        {
+          "label": "medium laser cannons",
+          "operator": "pilot",
+          "atk": 6,
+          "damage": "4d10x2"
+        },
+        {
+          "label": "missile launchers",
+          "operator": "pilot",
+          "atk": 6,
+          "damage": "8d6, 4-square splash"
+        }
+      ],
+      "special": [
+        "Shock and Awe (Fire Effect): standard action, forgo all attacks; affect all squares in a 6-square radius. An enemy in the area moves an additional -1 condition-track step if damaged by a successful attack meeting/exceeding its damage threshold.",
+        "Four encounter GAT units are one printed CL10 statblock, not four publication identities."
+      ],
+      "sourceEntryKey": "gaw-ground-armored-tank",
+      "printedPage": 216,
+      "pdfPhysicalPage": 217,
+      "printedName": "Ground Armored Tank",
+      "printedTypeLine": "Huge ground vehicle (speeder)",
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a"
+    }
+  ],
+  "historicalSourceComplements": [
+    {
+      "sourceEntryKey": "gaw-koensayr-ilh-kk-citadel-class-cruiser",
+      "printedPage": 192,
+      "pdfPhysicalPage": 193,
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+      "sourceBasis": "Scanned printed p192 direct visual, historical canonical ship printedFacts sparse",
+      "cl": 7,
+      "initiative": -4,
+      "perception": 5,
+      "reflex": 15,
+      "flatFooted": 14,
+      "fortitude": 26,
+      "armor": 14,
+      "hp": 120,
+      "dr": 15,
+      "sr": 30,
+      "dt": 76,
+      "charSpeed": 12,
+      "starSpeed": 3,
+      "maxVelocityKmh": 830,
+      "charSpace": [
+        12,
+        12
+      ],
+      "starSpace": 1,
+      "cover": "total",
+      "baseAttack": 0,
+      "grapple": 36,
+      "str": 42,
+      "dex": 12,
+      "int": 12,
+      "skills": {
+        "Initiative": -4,
+        "Mechanics": 5,
+        "Perception": 5,
+        "Pilot": -4,
+        "Use Computer": 5
+      },
+      "crew": 3,
+      "crewQuality": "normal",
+      "passengers": 14,
+      "cargo": "50 tons",
+      "consumables": "6 months",
+      "carried": "2 starfighters (currently none)",
+      "payload": "12 medium concussion missiles",
+      "hyperdrive": "x2, navicomputer",
+      "availability": "Licensed",
+      "newPrice": 205000,
+      "usedPrice": 120000,
+      "ranged": "laser cannons +1 AND 2 ion cannons +1 AND medium concussion missiles +3 OR laser cannons +1 AND 2 ion cannons +1 AND tractor beam +3",
+      "weapons": [
+        {
+          "label": "laser cannons",
+          "atk": 1,
+          "operator": "gunner",
+          "damage": "5d10x2",
+          "auto": -4
+        },
+        {
+          "label": "ion cannons",
+          "atk": 1,
+          "operator": "gunner",
+          "damage": "5d10x2 ion"
+        },
+        {
+          "label": "medium concussion missiles",
+          "atk": 3,
+          "operator": "pilot",
+          "damage": "8d10x2, 4-square splash"
+        },
+        {
+          "label": "tractor beam",
+          "atk": 1,
+          "operator": "pilot",
+          "damage": "grapple +36"
+        }
+      ],
+      "sourceNotes": [
+        "Baseline Citadel statistics explicitly based on Starships of the Galaxy; printed statblock in Galaxy at War is independently countable.",
+        "Ranged summary tractor beam +3 versus weapon detail Atk +1, preserve both.",
+        "Currently no starfighters carried, but craft allowance is 2."
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-corona-class-armed-transport",
+      "printedPage": 67,
+      "pdfPhysicalPage": 68,
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+      "sourceBasis": "Scanned printed p67 directly verified due to historical OCR price corruption",
+      "correctedPrice": {
+        "newCredits": 3700000,
+        "usedCredits": 2000000,
+        "raw": "Cost 3.7 million (2.0 million used)"
+      },
+      "sourceNotes": [
+        "OCR displays '3,7 million', but printed scan reads '3.7 million' (3,700,000 credits); provenance correction is explicit.",
+        "-20 to attacks against targets smaller than Colossal size."
+      ],
+      "printedCarriedCraft": [
+        {
+          "name": "attack shuttles",
+          "count": 6
+        },
+        {
+          "name": "speeder tanks",
+          "count": 12
+        }
+      ]
+    },
+    {
+      "sourceEntryKey": "gaw-yu-410-light-freighter",
+      "printedPage": 65,
+      "pdfPhysicalPage": 66,
+      "sourcePdfSha256": "9829bea74df5dddad946b1f5514caf1838328333979eb573f9b565334258aa4a",
+      "sourceBasis": "Scanned printed p65 direct visual confirms doubled DR label in printed statblock",
+      "sourceNotes": [
+        "Source explicitly reads 'hp 120; DR 15; DR 20; Threshold 76', despite adjacent narrative referencing shields.",
+        "Retain first DR 15 as printed and the second DR 20 as unresolved; do NOT silently map second to SR 20.",
+        "Source header Initiative -5 differs from printed Skills Initiative -2, preserve both."
+      ],
+      "printedAbilities": {
+        "str": 42,
+        "dex": 10,
+        "int": 14,
+        "pilot": -5
+      }
+    }
+  ]
+}

@@ -1,0 +1,1605 @@
+{
+ "schema": "swse.vehicle.weapon-ecosystem-inventory.v1",
+ "note": "Authored inventory of the SWSE vehicle weapon ecosystem (Complete Weapon Ecosystem Addendum). Source statements are paraphrased from the committed sourcebook text; every non-trivial status in the generated readiness matrix is COMPUTED from code and data, and a claim of tested behaviour must name a test file that exists. A row is never counted fully operational while a blocker remains or while LIVE_VERIFIED is false.",
+ "blockerCatalog": {
+  "CONFIGURATION_NOT_IMPLEMENTED": {
+   "class": "ENGINEERING",
+   "text": "The configuration/modification row is SOURCE_VERIFIED only: no certified effect, no Shipyard installation, no attack-time behaviour."
+  },
+  "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE": {
+   "class": "ENGINEERING",
+   "text": "This launcher or its ammunition has no certified effect: the Shipyard cannot sell or install it. (Installable launchers use the shared finite-ammunition ledger and lock-on projectile engine, P6C-3C/3D.)"
+  },
+  "NO_COMPLETE_STOCK_LAUNCHER_FAMILY": {
+   "class": "DATA",
+   "text": "No published firing group carries a verified launcher count, so no stock launcher group is armed canonically. Payload and exact launcher identity are reconciled from the statblock Payload lines for 63 groups; the launcher count is the single missing fact (owner question V-P6C-21); those groups can only be GM-configured."
+  },
+  "SOURCE_ROW_NOT_RECONCILED": {
+   "class": "SOURCE",
+   "text": "The catalog row has no printed table row: its numbers came from vehicle statblocks. It cannot be priced or installed until a printed source is reconciled."
+  },
+  "STATBLOCK_EQUIPMENT_ONLY": {
+   "class": "SOURCE",
+   "text": "Appears only inside vehicle statblocks (no weapon-systems entry in a sourcebook): not a purchasable component."
+  },
+  "POINT_DEFENSE_NOT_IMPLEMENTED": {
+   "class": "ENGINEERING",
+   "text": "The point-defense modification is not implemented for this weapon."
+  },
+  "POINT_DEFENSE_STOCK_CLASSIFICATION_UNVERIFIED": {
+   "class": "SOURCE",
+   "text": "60 stock groups whose label says point-defense are refused: a statblock label is not evidence of the modification's rules (the gate never infers a mechanic from a name). The aftermarket option is implemented."
+  },
+  "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED": {
+   "class": "ENGINEERING",
+   "text": "Source-specific mechanics need individual verification and implementation."
+  },
+  "CAPACITY_EXPANSION_DEFERRED": {
+   "class": "RULES_DEFERRED",
+   "text": "Extra launcher capacity (+20% / +25% cost per additional unit up to the printed maximum) is recorded but not usable: whether added capacity costs emplacement points and which cost the percentage applies to is unresolved. Register V-P6A-03."
+  },
+  "RELOAD_ACTION_UNRULED": {
+   "class": "RULES_DEFERRED",
+   "text": "Bought ammunition arrives in the launcher's reserve; moving it into the launcher is a GM operation (no reload action or cost is invented from personal launchers). Register V-P6C-06."
+  },
+  "STOCK_BATTERY_FACTS_INCOMPLETE": {
+   "class": "DATA",
+   "text": "Most printed weapon batteries lack a printed weapon count. A GM can certify the count of a printed battery (guarded world-Actor configuration; never inferred from gunners); named-gunner rosters (P6B-D-071) and the stacking of several assisting batteries are not implemented."
+  },
+  "OPTIONAL_LINK_NOT_IMPLEMENTED": {
+   "class": "ENGINEERING",
+   "text": "Swift-action link toggle (extra damage and ammunition use apply only while linked) is not implemented."
+  },
+  "FIRE_LINKED_LAUNCHERS_BUCKETED": {
+   "class": "RULES_DEFERRED",
+   "text": "Fire-linked LAUNCHERS (one shot per linked launcher, launcher count and magazine of a linked pair) and the optional fire link (a swift-action toggle on a fire-linked weapon) are not implemented: the published text gives no launcher count or capacity for a linked launcher. Register V-P6C-06; bucketed as P6B-D-050 remainder; fire-linked energy weapons are implemented."
+  },
+  "TRACTOR_BEAM_RESIDUALS_OPEN": {
+   "class": "ENGINEERING",
+   "text": "Stock and aftermarket tractor beams run through the shared weapon-control / grapple engines. Not implemented: a target larger than the beam's vehicle, docking clamps."
+  },
+  "HYPERDRIVE_ACTIVATION_HAS_NO_CONSUMER": {
+   "class": "ENGINEERING",
+   "text": "The 4x4 field, the attack against Reflex 10, the persistent scene record and the per-turn interdiction effect are implemented, and the sheet shows the interdiction; the system has NO hyperdrive activation action, so nothing yet REFUSES a jump (isHyperdriveInterdicted is the query that action must consult). Fields last until a GM ends them (V-P6C-14)."
+  },
+  "ADVANCED_MINE_NOT_OFFERED": {
+   "class": "DATA",
+   "text": "The advanced mine (+10, 9d10x2) has no launcher row in the catalog and is not offered."
+  },
+  "GRAVITY_MINE_NOT_IMPLEMENTED": {
+   "class": "ENGINEERING",
+   "text": "The Legacy Era Campaign Guide gravity mines (standard area, magnetic hull-attached) are a different source and mechanic from the SotG mines and gravity wells; not implemented."
+  },
+  "NO_CERTIFIED_EFFECT": {
+   "class": "SOURCE",
+   "text": "The catalog row is SOURCE_VERIFIED only: no certified weapon specification, so it cannot be installed."
+  },
+  "STOCK_ION_BOMB_GROUPS_NOT_WIRED": {
+   "class": "ENGINEERING",
+   "text": "The aftermarket ion bomb rack drops bombs through the ion bomb service (V-P6C-16). Stock groups that print ion bombs are not wired to that service and stay refused by the stock gate."
+  }
+ },
+ "rows": [
+  {
+   "id": "laser-cannons",
+   "name": "Laser cannons: light, medium, heavy",
+   "kind": "base-weapon",
+   "catalogIds": [
+    "laser-cannon-light",
+    "laser-cannon-medium",
+    "laser-cannon-heavy"
+   ],
+   "stockLabelPatterns": [
+    "\\blaser cannon",
+    "\\blasers?\\b"
+   ],
+   "rangeSlug": "laser-cannons",
+   "mechanic": "ordinary-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Laser Cannons"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Vehicles, Table 10-2: Vehicle Weapon Ranges"
+    }
+   ],
+   "established": [
+    "Table 3-5: 3d10x2 / 4d10x2 / 5d10x2; 1 / 1 / 2 EP; Licensed / Restricted / Military; 1,500 / 4,000 / 6,000 credits.",
+    "Laser cannons are the most common starship weapons, carried by starfighters and transports as primary armament and by capital ships as point-defense weapons; better range than blaster cannons, somewhat more expensive.",
+    "Damage = weapon dice x printed multiplier (Core, Vehicle Combat: Damage)."
+   ],
+   "applicableConfigurations": [
+    "double",
+    "triple",
+    "quad",
+    "fire-linked",
+    "cannon-enhancements",
+    "point-defense",
+    "autofire"
+   ],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "done (P6B weapon slice)",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs"
+   }
+  },
+  {
+   "id": "blaster-cannons",
+   "name": "Blaster cannons: light, medium, heavy",
+   "kind": "base-weapon",
+   "catalogIds": [
+    "blaster-cannon-light",
+    "blaster-cannon-medium",
+    "blaster-cannon-heavy"
+   ],
+   "stockLabelPatterns": [
+    "\\bblaster cannon"
+   ],
+   "rangeSlug": "blaster-cannons",
+   "mechanic": "ordinary-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Blaster Cannons"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Vehicles, Table 10-2: Vehicle Weapon Ranges"
+    }
+   ],
+   "established": [
+    "Table 3-5: 3d10x2 / 4d10x2 / 5d10x2; 1 / 1 / 2 EP; Licensed / Restricted / Military; 1,200 / 2,500 / 5,500 credits.",
+    "Blasters are less expensive than lasers but have a more limited range (Table 10-2: shorter bands than laser cannons)."
+   ],
+   "applicableConfigurations": [
+    "double",
+    "triple",
+    "quad",
+    "fire-linked",
+    "cannon-enhancements",
+    "point-defense",
+    "autofire",
+    "autoblaster"
+   ],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "WE-1 done",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   }
+  },
+  {
+   "id": "autoblasters",
+   "name": "Autoblaster (modification of a single-mounted blaster cannon)",
+   "kind": "modification",
+   "catalogIds": [
+    "autoblaster"
+   ],
+   "stockLabelPatterns": [
+    "\\bautoblaster"
+   ],
+   "rangeSlug": "blaster-cannons",
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Autoblaster"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: no damage printed; +0 EP; Restricted; cost x2 (a TOTAL-cost multiplier, V-P6C-11).",
+    "Blaster cannons can be designed with a higher cyclic firing rate if they have sufficient cooling; only single-mounted blasters are generally made into autoblasters.",
+    "Owner interpretation V-P6C-09: the autoblaster grants autofire capability to an eligible single-mounted blaster cannon; the base dice are unchanged; normal fire and autofire both remain; no compatibility with double or quad is inferred."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   },
+   "implemented": {
+    "effect": "AUTOFIRE_CAPABILITY_GRANT",
+    "modules": [
+     "scripts/domain/vehicles/vehicle-modification-effects.js",
+     "scripts/domain/vehicles/vehicle-fire-mode.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs",
+     "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+    ]
+   }
+  },
+  {
+   "id": "turbolasers",
+   "name": "Turbolasers: light, medium, heavy",
+   "kind": "base-weapon",
+   "catalogIds": [
+    "turbolaser-light",
+    "turbolaser-medium",
+    "turbolaser-heavy"
+   ],
+   "stockLabelPatterns": [
+    "\\bturbolaser"
+   ],
+   "rangeSlug": "turbolasers",
+   "mechanic": "ordinary-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Turbolasers"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Vehicles, Table 10-2: Vehicle Weapon Ranges"
+    }
+   ],
+   "established": [
+    "Table 3-5: 3d10x5 / 5d10x5 / 7d10x5; 2 / 5 / 10 EP; Military; 5,000 / 10,000 / 20,000 credits; Colossal or larger starships only.",
+    "All but the smallest turbolasers cannot autofire even in double, quad or fire-linked configurations.",
+    "Capital weapons take the Core -20 against targets smaller than Colossal (existing capital-ship penalty authority)."
+   ],
+   "applicableConfigurations": [
+    "double",
+    "triple",
+    "quad",
+    "fire-linked",
+    "autofire"
+   ],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "WE-1 done",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs"
+   }
+  },
+  {
+   "id": "ion-cannons",
+   "name": "Ion cannons: light, medium, heavy",
+   "kind": "base-weapon",
+   "catalogIds": [
+    "ion-cannon-light",
+    "ion-cannon-medium",
+    "ion-cannon-heavy"
+   ],
+   "stockLabelPatterns": [
+    "\\bion cannon"
+   ],
+   "rangeSlug": "ion-cannons",
+   "mechanic": "ion-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Ion Cannons"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Vehicles, Table 10-2: Vehicle Weapon Ranges"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Damage: Ion damage, pp. 159-160"
+    }
+   ],
+   "established": [
+    "Table 3-5: 3d10x2 / 5d10x2 / 3d10x5 ion; 1 / 2 / 5 EP; Licensed / Restricted / Military; 2,000 / 3,000 / 6,000 credits; heavy: Colossal or larger only.",
+    "Ion cannons deal ion damage (Core ch. 9). All but the smallest cannot autofire, even in double, quad or fire-linked configurations.",
+    "Ion damage lifecycle on the existing damage authorities: V-P6C-04/05 (project interpretation, decision matrix)."
+   ],
+   "applicableConfigurations": [
+    "double",
+    "triple",
+    "quad",
+    "fire-linked",
+    "cannon-enhancements",
+    "point-defense"
+   ],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "WE-1 done",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p31-aftermarket-energy-weapons.test.mjs",
+    "damage": "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs"
+   }
+  },
+  {
+   "id": "hapan-triple-ion-cannon",
+   "name": "Hapan triple ion cannon",
+   "kind": "base-weapon",
+   "catalogIds": [
+    "ion-cannon-hapan-triple"
+   ],
+   "stockLabelPatterns": [
+    "hapan"
+   ],
+   "rangeSlug": "point-defense",
+   "mechanic": "ion-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Ion Cannons (Hapan triple)"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: 5d10x5 ion; 3 EP; Illegal; 12,000 credits; Colossal or larger only.",
+    "Acts like a point-defense weapon (point-defense ranges, no penalty against ships smaller than Colossal), is capable of autofire mode, may not make starship-scale area attacks. Illegal outside the Hapan Consortium until the New Jedi Order era; the Hapans do not sell them to outsiders."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "POINT_DEFENSE_NOT_IMPLEMENTED",
+    "NO_CERTIFIED_EFFECT"
+   ],
+   "nextSlice": "after point defense and autofire"
+  },
+  {
+   "id": "mass-driver-and-projectile-cannons",
+   "name": "Mass-driver cannons and rail cannons",
+   "kind": "base-weapon",
+   "catalogIds": [
+    "mass-driver-cannon-standard",
+    "mass-driver-cannon-heavy",
+    "rail-cannon"
+   ],
+   "stockLabelPatterns": [
+    "mass.driver",
+    "rail cannon"
+   ],
+   "rangeSlug": null,
+   "mechanic": "ordinary-damage",
+   "sources": [
+    {
+     "book": "Clone Wars Campaign Guide",
+     "section": "Republic Vehicles: Weapon Systems (Mass-Driver Cannon, Rail Cannon)"
+    }
+   ],
+   "established": [
+    "Mass-driver and rail cannons can only be mounted on vehicles of Gargantuan size or larger because of their recoil.",
+    "No table row prints their damage, EP or cost: the catalog numbers come from vehicle statblocks."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "SOURCE_ROW_NOT_RECONCILED"
+   ],
+   "nextSlice": "WE-source reconciliation, then the plain-damage path"
+  },
+  {
+   "id": "proton-torpedoes",
+   "name": "Proton torpedoes and launcher",
+   "kind": "launcher",
+   "catalogIds": [
+    "proton-torpedo-launcher",
+    "proton-torpedo"
+   ],
+   "stockLabelPatterns": [
+    "proton torpedo",
+    "torpedo launcher"
+   ],
+   "rangeSlug": "missiles-torpedoes",
+   "mechanic": "ammunition-limited-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Proton Torpedoes"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Missiles and Torpedoes"
+    }
+   ],
+   "established": [
+    "Table 3-5: torpedo 9d10x2, 0 EP, Military, 800 credits; launcher 1 EP, Military, 2,500 credits.",
+    "4-square splash radius. A standard launcher holds three torpedoes; additional capacity costs +25% per additional torpedo up to sixteen.",
+    "Aimed launch that misses: one follow-up next turn at the same bonus -5, no action; Reflex Defense 30, 10 hit points; second miss self-destructs (Core)."
+   ],
+   "applicableConfigurations": [
+    "fire-linked",
+    "optional-fire-link",
+    "launcher-capacity"
+   ],
+   "resources": "AFTERMARKET_LEDGER_OFFLINE_TESTED_STOCK_LEDGER_SYNTHETIC_ONLY",
+   "blockers": [
+    "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
+    "CAPACITY_EXPANSION_DEFERRED",
+    "RELOAD_ACTION_UNRULED"
+   ],
+   "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts",
+   "evidence": {
+    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "aftermarket": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
+   }
+  },
+  {
+   "id": "concussion-missiles",
+   "name": "Concussion missiles and launchers: light, medium, heavy",
+   "kind": "launcher",
+   "catalogIds": [
+    "concussion-missile-launcher-light",
+    "concussion-missile-launcher-medium",
+    "concussion-missile-launcher-heavy",
+    "concussion-missile-light",
+    "concussion-missile-medium",
+    "concussion-missile-heavy"
+   ],
+   "stockLabelPatterns": [
+    "concussion missile"
+   ],
+   "rangeSlug": "missiles-torpedoes",
+   "mechanic": "ammunition-limited-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Concussion Missiles"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Missiles and Torpedoes"
+    }
+   ],
+   "established": [
+    "Table 3-5: missiles 7d10x2 / 9d10x2 / 9d10x5 (heavy: Colossal or larger), 500 / 750 / 2,000 credits; launchers 2 / 5 / 20 EP, 2,000 / 3,500 / 30,000 credits.",
+    "4-square splash radius. Launcher capacity: light 6, medium 16, heavy 30; additional capacity +20% per missile up to double."
+   ],
+   "applicableConfigurations": [
+    "fire-linked",
+    "optional-fire-link",
+    "launcher-capacity"
+   ],
+   "resources": "AFTERMARKET_LEDGER_OFFLINE_TESTED_STOCK_LEDGER_SYNTHETIC_ONLY",
+   "blockers": [
+    "NO_COMPLETE_STOCK_LAUNCHER_FAMILY",
+    "CAPACITY_EXPANSION_DEFERRED",
+    "RELOAD_ACTION_UNRULED"
+   ],
+   "nextSlice": "WE-L1 done (aftermarket launcher, ammunition purchase, reload, fire, lock-on, removal); stock launcher groups wait for verified launcher counts",
+   "evidence": {
+    "resources": "tests/vehicle-universal-phase4e-p30-ammunition-and-guided-projectiles.test.mjs",
+    "aftermarket": "tests/vehicle-universal-phase4e-p33-aftermarket-launchers.test.mjs"
+   }
+  },
+  {
+   "id": "armor-piercing-concussion-missiles",
+   "name": "Armor-piercing concussion missiles",
+   "kind": "ammunition",
+   "catalogIds": [],
+   "stockLabelPatterns": [
+    "armor.piercing"
+   ],
+   "rangeSlug": "missiles-torpedoes",
+   "mechanic": "ammunition-limited-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Concussion Missiles (Armor-Piercing)"
+    }
+   ],
+   "established": [
+    "Penetration 10 (ignores the first 10 points of DR or SR) at a -5 penalty on attack rolls with the weapon.",
+    "No catalog row exists (recorded as a missing canonical component, sotg-concussion-missile-armor-piercing)."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE",
+    "SOURCE_ROW_NOT_RECONCILED"
+   ],
+   "nextSlice": "after launchers; needs a catalog row"
+  },
+  {
+   "id": "shieldbuster-torpedoes",
+   "name": "Shieldbuster torpedoes and launcher",
+   "kind": "launcher",
+   "catalogIds": [
+    "shieldbuster-torpedo-launcher",
+    "shieldbuster-torpedo"
+   ],
+   "stockLabelPatterns": [
+    "shieldbuster"
+   ],
+   "rangeSlug": "shieldbuster-torpedoes",
+   "mechanic": "shield-specific-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Shieldbuster Torpedoes"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: torpedo 10d10x2, 0 EP, Military, 1,000 credits; launcher 3 EP, Military, 10,000 credits; Table 3-5 prints its own range row (character scale long band 2,251-4,000; starship 0-3 / 4-6 / 7-15 / 16-30).",
+    "Against anything but shields, shieldbusters deal half damage. If an attack exceeds the target's SR, the target loses 10 points of SR (not the normal 5); shields recharge normally.",
+    "A standard launcher holds four torpedoes, up to eight at +25% per additional torpedo."
+   ],
+   "applicableConfigurations": [
+    "fire-linked",
+    "optional-fire-link",
+    "launcher-capacity"
+   ],
+   "resources": "AFTERMARKET_LEDGER_OFFLINE_TESTED",
+   "blockers": [],
+   "nextSlice": "done (V-P6C-13 owner ruling); shared launcher ledger",
+   "implemented": {
+    "effect": "SHIELDBUSTER",
+    "modules": [
+     "scripts/engine/combat/resolvers/shield-mitigation-resolver.js",
+     "scripts/engine/combat/damage-mitigation-manager.js",
+     "scripts/domain/vehicles/vehicle-modification-effects.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p41-shieldbuster.test.mjs"
+    ]
+   }
+  },
+  {
+   "id": "space-mines",
+   "name": "Space mines and mine launchers",
+   "kind": "launcher",
+   "catalogIds": [
+    "space-mine-launcher",
+    "space-mine-launcher-heavy",
+    "space-mine-standard",
+    "space-mine-advanced",
+    "space-mine-heavy"
+   ],
+   "stockLabelPatterns": [
+    "space mine",
+    "\\bmine"
+   ],
+   "rangeSlug": null,
+   "mechanic": "area-persistent",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Space Mines"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: mines 7d10x2 / 9d10x2 / 6d10x5 (heavy takes the -20 against targets smaller than Colossal), launcher 2 EP 5,000 credits, heavy launcher 4 EP (Colossal or larger).",
+    "A mine is deployed as a swift action at any point along the ship's movement path; any ship entering the square detonates it (area attack vs Reflex of all ships there: full damage on a hit, half on a miss). IFF-immune and command-detonated variants exist.",
+    "Stealth +5 (DC to notice); the pilot may make a Perception check as a reaction, and a system operator a Use Computer check.",
+    "Attack bonuses +5 / +10 / +5; launchers hold six mines, up to twelve at +25% per additional mine."
+   ],
+   "applicableConfigurations": [],
+   "resources": "AFTERMARKET_LEDGER_OFFLINE_TESTED",
+   "blockers": [
+    "ADVANCED_MINE_NOT_OFFERED"
+   ],
+   "nextSlice": "deployment, stored 1d20+5 detection DC, GM-mediated notice reactions, proximity/command detonation and recorded-path crossings done (V-P6C-15)",
+   "implemented": {
+    "effect": "PERSISTENT_AREA_MINES",
+    "modules": [
+     "scripts/engine/vehicles/vehicle-mine-service.js",
+     "scripts/domain/vehicles/vehicle-space-mine.js",
+     "scripts/engine/vehicles/vehicle-scene-state.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p45-space-mines.test.mjs",
+     "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs",
+     "tests/vehicle-universal-phase4e-p48-mine-detection.test.mjs"
+    ]
+   }
+  },
+  {
+   "id": "ion-bombs",
+   "name": "Ion bombs and bomb racks",
+   "kind": "launcher",
+   "catalogIds": [
+    "ion-bomb-rack",
+    "ion-bomb"
+   ],
+   "stockLabelPatterns": [
+    "ion bomb"
+   ],
+   "rangeSlug": null,
+   "mechanic": "area-damage",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Ion Bombs"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: bomb 5d10 ion, 500 credits; rack 1 EP, Military, 1,000 credits.",
+    "Usable only in an atmosphere; attacks take a -5 penalty; may target the square directly beneath the ship; on impact a 10-square radius ion field deals 5d10 ion damage; a rack holds up to four bombs."
+   ],
+   "applicableConfigurations": [],
+   "resources": "AFTERMARKET_LEDGER_OFFLINE_TESTED",
+   "blockers": [
+    "STOCK_ION_BOMB_GROUPS_NOT_WIRED"
+   ],
+   "nextSlice": "aftermarket rack done (V-P6C-16: square beneath the ship, atmosphere, -5, 5d10 ion, 10-square radius, four bombs)",
+   "implemented": {
+    "effect": "ION_FIELD_ON_IMPACT",
+    "modules": [
+     "scripts/engine/vehicles/vehicle-ion-bomb-service.js",
+     "scripts/domain/vehicles/vehicle-ion-bomb.js",
+     "scripts/domain/vehicles/vehicle-launcher-capacity.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p49-ion-bombs.test.mjs"
+    ]
+   }
+  },
+  {
+   "id": "tractor-beams",
+   "name": "Tractor beams",
+   "kind": "special-effect-system",
+   "catalogIds": [
+    "tractor-beam"
+   ],
+   "stockLabelPatterns": [
+    "tractor beam"
+   ],
+   "rangeSlug": "tractor-beams",
+   "mechanic": "opposed-control",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Tractor Beams"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Vehicles: Tractor Beams (SotG cites p. 174)"
+    }
+   ],
+   "established": [
+    "Table 3-5: Special; 10 EP; Licensed; 10,000 credits. Considered a nonstandard modification for space transports and starfighters.",
+    "Core: instead of damaging hit points, a tractor beam prevents a vehicle from escaping. The attack hits on equal or exceeding Reflex; on a hit, make an opposed grapple check; a win grabs the target.",
+    "A grabbed target of the beam vehicle's size or smaller cannot move and loses its Dexterity bonus to Reflex; each round another opposed grapple check; a win pulls the target up to 10 squares (1 at starship scale) or holds it; a loss frees it; leaving range breaks the hold."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "TRACTOR_BEAM_RESIDUALS_OPEN"
+   ],
+   "nextSlice": "stock and aftermarket done; residuals listed",
+   "implemented": {
+    "effect": "OPPOSED_CONTROL",
+    "modules": [
+     "scripts/engine/vehicles/vehicle-tractor-beam.js",
+     "scripts/engine/combat/weapon-control-effects.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p40-tractor-beam.test.mjs"
+    ]
+   }
+  },
+  {
+   "id": "gravity-well-projectors",
+   "name": "Gravity well projectors",
+   "kind": "special-effect-system",
+   "catalogIds": [
+    "gravity-well-projector"
+   ],
+   "stockLabelPatterns": [
+    "gravity well"
+   ],
+   "rangeSlug": "gravity-well-projectors",
+   "mechanic": "area-control",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Gravity Well Projectors"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: Special; 5 EP; Military; 50,000 credits; Colossal or larger only; starship range 0-10 squares.",
+    "Not a damage weapon: the operator chooses a 4x4-square (starship scale) area in range and attacks Reflex Defense 10; on a success the area becomes a hyperspace interdiction field; a starship that starts its turn in a covered square may not activate its hyperdrive that turn."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "HYPERDRIVE_ACTIVATION_HAS_NO_CONSUMER"
+   ],
+   "nextSlice": "field, turn-start effect and sheet display done; V-P6C-14 duration convention",
+   "implemented": {
+    "effect": "INTERDICTION_FIELD",
+    "modules": [
+     "scripts/engine/vehicles/vehicle-interdiction-service.js",
+     "scripts/domain/vehicles/vehicle-interdiction-field.js",
+     "scripts/engine/vehicles/vehicle-scene-state.js"
+    ],
+    "tests": [
+     "tests/vehicle-universal-phase4e-p44-gravity-well.test.mjs",
+     "tests/vehicle-universal-phase4e-p47-scene-state-corrections.test.mjs"
+    ]
+   }
+  },
+  {
+   "id": "docking-guns",
+   "name": "Docking guns",
+   "kind": "modification",
+   "catalogIds": [
+    "docking-gun"
+   ],
+   "stockLabelPatterns": [
+    "docking gun"
+   ],
+   "rangeSlug": null,
+   "mechanic": "character-weapon-mount",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Docking Guns"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: damage by weapon; 1 EP; Licensed; +1,000 credits (the gun itself is bought normally).",
+    "Any character-scale ranged weapon can be added as a docking gun; it counts as a heavy weapon once installed, draws power from the ship, and has no effect on starship-scale combat."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "CONFIGURATION_NOT_IMPLEMENTED"
+   ],
+   "nextSlice": "after the core families"
+  },
+  {
+   "id": "superlaser",
+   "name": "Superlasers",
+   "kind": "source-specific",
+   "catalogIds": [],
+   "stockLabelPatterns": [
+    "superlaser"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Core Rulebook / sourcebook statblocks",
+     "section": "Individually printed in vehicle statblocks"
+    }
+   ],
+   "established": [
+    "Printed only inside individual vehicle statblocks; every group is individually verified before it can be executable."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "ion-pulse-cannon",
+   "name": "Ion pulse cannons",
+   "kind": "source-specific",
+   "catalogIds": [
+    "ion-pulse-cannon"
+   ],
+   "stockLabelPatterns": [
+    "ion pulse"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Statblocks",
+     "section": "Vehicle statblocks"
+    }
+   ],
+   "established": [
+    "Statblock equipment only; carries starship-scale radius with hit/miss riders."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "STATBLOCK_EQUIPMENT_ONLY",
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "droid-jammer",
+   "name": "Droid jammer",
+   "kind": "special-effect-system",
+   "catalogIds": [
+    "droid-jammer"
+   ],
+   "stockLabelPatterns": [
+    "droid jammer"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Droid Jammer"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: Special; 1 EP; Licensed; 8,000 credits. While employed, the starship's attacks gain a +2 equipment bonus to hit automated craft; affects only droid-controlled spacecraft within a 5-square radius."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "harpoon-gun",
+   "name": "Harpoon gun",
+   "kind": "source-specific",
+   "catalogIds": [
+    "harpoon-gun"
+   ],
+   "stockLabelPatterns": [
+    "harpoon"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Statblocks",
+     "section": "Vehicle statblocks"
+    }
+   ],
+   "established": [
+    "Statblock equipment only."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "STATBLOCK_EQUIPMENT_ONLY",
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "discord-missile",
+   "name": "Discord missiles and launcher",
+   "kind": "source-specific",
+   "catalogIds": [
+    "discord-missile-launcher",
+    "discord-missile"
+   ],
+   "stockLabelPatterns": [
+    "discord"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Threats of the Galaxy",
+     "section": "Vehicle weapon"
+    }
+   ],
+   "established": [
+    "Matched to the canonical source; mechanics are effect-based (sensor jamming), not damage."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED",
+    "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "gravity-mines",
+   "name": "Gravity mines and launcher",
+   "kind": "source-specific",
+   "catalogIds": [
+    "gravity-mine-launcher",
+    "gravity-mine-standard",
+    "gravity-mine-magnetic"
+   ],
+   "stockLabelPatterns": [
+    "gravity mine"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Legacy Era Campaign Guide",
+     "printedPages": "191",
+     "section": "Gravity Mines sidebar"
+    }
+   ],
+   "established": [
+    "Prevent hyperspace jumps in an area (standard) or attach to a hull (magnetic); no damage."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "GRAVITY_MINE_NOT_IMPLEMENTED",
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "chaff-gun",
+   "name": "Chaff gun",
+   "kind": "special-effect-system",
+   "catalogIds": [
+    "chaff-gun"
+   ],
+   "stockLabelPatterns": [
+    "chaff"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Galaxy at War",
+     "section": "Vehicle equipment"
+    }
+   ],
+   "established": [
+    "Matched to the canonical source; availability not printed."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "defoliator",
+   "name": "Defoliator launcher and shell",
+   "kind": "source-specific",
+   "catalogIds": [
+    "defoliator-launcher",
+    "defoliator-shell"
+   ],
+   "stockLabelPatterns": [
+    "defoliator"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Galaxy at War",
+     "section": "Vehicle weapon"
+    }
+   ],
+   "established": [
+    "Matched to the canonical source."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED",
+    "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "energy-bomblet-generator",
+   "name": "Energy bomblet generator",
+   "kind": "source-specific",
+   "catalogIds": [
+    "energy-bomblet-generator"
+   ],
+   "stockLabelPatterns": [
+    "bomblet"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Statblocks",
+     "section": "Vehicle statblocks"
+    }
+   ],
+   "established": [
+    "Statblock equipment only."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "STATBLOCK_EQUIPMENT_ONLY",
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "heavy-ordnance-launcher",
+   "name": "Heavy ordnance launcher",
+   "kind": "source-specific",
+   "catalogIds": [
+    "heavy-ordnance-launcher"
+   ],
+   "stockLabelPatterns": [
+    "ordnance"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Statblocks",
+     "section": "Vehicle statblocks"
+    }
+   ],
+   "established": [
+    "Statblock equipment only."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "STATBLOCK_EQUIPMENT_ONLY",
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "composite-beam-cannon",
+   "name": "Composite beam cannon",
+   "kind": "source-specific",
+   "catalogIds": [
+    "composite-beam-cannon"
+   ],
+   "stockLabelPatterns": [
+    "composite beam"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Clone Wars Campaign Guide",
+     "section": "Republic Vehicles: Weapon Systems"
+    }
+   ],
+   "established": [
+    "Ignores 5 points of the target's SR."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "SOURCE_ROW_NOT_RECONCILED",
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "microtractor-pressor",
+   "name": "Microtractor-pressor",
+   "kind": "source-specific",
+   "catalogIds": [
+    "microtractor-pressor"
+   ],
+   "stockLabelPatterns": [
+    "microtractor",
+    "pressor"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Statblocks",
+     "section": "Vehicle statblocks"
+    }
+   ],
+   "established": [
+    "Statblock equipment only."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "STATBLOCK_EQUIPMENT_ONLY",
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "anti-aircraft-flak-pod",
+   "name": "Anti-aircraft flak pod",
+   "kind": "source-specific",
+   "catalogIds": [
+    "anti-aircraft-flak-pod"
+   ],
+   "stockLabelPatterns": [
+    "flak"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Rebellion Era Campaign Guide",
+     "section": "Weapon Systems: Anti-Aircraft Flak Pod"
+    }
+   ],
+   "established": [
+    "An area attack even at starship scale: choose a 2x2 starship-scale area in range, attack Reflex Defense 10; on success compare the roll to each ship's Reflex; a hit deals damage, a miss half; Vehicular Evasion halves a hit and negates a miss."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "SOURCE_ROW_NOT_RECONCILED",
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "proton-grenade-launcher",
+   "name": "Proton grenade launcher and grenade",
+   "kind": "source-specific",
+   "catalogIds": [
+    "proton-grenade-launcher",
+    "proton-grenade"
+   ],
+   "stockLabelPatterns": [
+    "proton grenade"
+   ],
+   "rangeSlug": null,
+   "mechanic": "special",
+   "sources": [
+    {
+     "book": "Clone Wars Campaign Guide",
+     "section": "Republic Vehicles: Weapon Systems (Proton Grenade)"
+    }
+   ],
+   "established": [
+    "3-square burst radius area attack: hit full damage, miss half."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "SOURCE_ROW_NOT_RECONCILED",
+    "SPECIAL_WEAPON_NOT_INDIVIDUALLY_VERIFIED",
+    "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE"
+   ],
+   "nextSlice": "priority 11"
+  },
+  {
+   "id": "double-cannons",
+   "name": "Cannon, double",
+   "kind": "configuration",
+   "catalogIds": [
+    "cannon-double"
+   ],
+   "stockLabelPatterns": [
+    "\\bdouble\\b",
+    "\\btwin\\b"
+   ],
+   "rangeSlug": null,
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Cannon, Double/Quad"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: +1d10 damage; +0 EP; Licensed; cost x3.",
+    "Available for blasters, lasers, ion cannons and turbolasers (reciprocating multibarrel weapons); availability is the given one or the base weapon's, whichever is more restrictive."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   }
+  },
+  {
+   "id": "triple-cannons",
+   "name": "Cannon, triple",
+   "kind": "configuration",
+   "catalogIds": [],
+   "stockLabelPatterns": [
+    "\\btriple\\b"
+   ],
+   "rangeSlug": null,
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Cannon, Double/Quad (Triple Cannons)"
+    }
+   ],
+   "established": [
+    "Functionally identical to double cannons (three slightly weaker cannons instead of two standard cannons); alias of the double row (census: sotg-cannon-triple)."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "CONFIGURATION_NOT_IMPLEMENTED"
+   ],
+   "nextSlice": "with double cannons"
+  },
+  {
+   "id": "quad-cannons",
+   "name": "Cannon, quad",
+   "kind": "configuration",
+   "catalogIds": [
+    "cannon-quad"
+   ],
+   "stockLabelPatterns": [
+    "\\bquad\\b"
+   ],
+   "rangeSlug": null,
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Cannon, Double/Quad"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: +2d10 damage; +1 EP; Restricted; cost x5."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   }
+  },
+  {
+   "id": "fire-linked-weapons",
+   "name": "Fire-linked weapons (2 and 4)",
+   "kind": "configuration",
+   "catalogIds": [
+    "fire-linked-2",
+    "fire-linked-4"
+   ],
+   "stockLabelPatterns": [
+    "fire.linked"
+   ],
+   "rangeSlug": null,
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Fire-Linked Weapons"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: fire-linked 2: +1d10, +1 EP, Licensed, x2; fire-linked 4: +2d10, +2 EP, Restricted, x4.",
+    "Weapons of any type that deal damage can be fire-linked. Fire-linked turbolasers are often described as batteries but this is not a weapon battery in game terms. Fire-linked missiles and torpedoes consume shots equal to the number of fire-linked launchers per attack."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "FIRE_LINKED_LAUNCHERS_BUCKETED"
+   ],
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   }
+  },
+  {
+   "id": "optional-fire-link",
+   "name": "Fire-linked weapon, optional",
+   "kind": "configuration",
+   "catalogIds": [
+    "fire-linked-optional"
+   ],
+   "stockLabelPatterns": [],
+   "rangeSlug": null,
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Fire-Linked Weapons (Optional Fire Link)"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: +0 EP; Licensed; +1,000 credits. The link can be turned on or off as a swift action; the extra damage and ammunition consumption apply only while linked."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "FIRE_LINKED_LAUNCHERS_BUCKETED"
+   ],
+   "nextSlice": "priority 6"
+  },
+  {
+   "id": "cannon-enhancements",
+   "name": "Cannon enhancements and advanced cannon enhancements",
+   "kind": "configuration",
+   "catalogIds": [
+    "cannon-enhancement",
+    "cannon-enhancement-advanced"
+   ],
+   "stockLabelPatterns": [],
+   "rangeSlug": null,
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Cannon Enhancements"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    }
+   ],
+   "established": [
+    "Table 3-5: +1d10, +1 EP, Military, x2 / advanced +2d10, +2 EP, Military, x5.",
+    "Boost the damage of a blaster, a laser (but not a turbolaser) or an ion cannon."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "done (WE-4); autofire mode WE-5",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p37-weapon-configurations.test.mjs"
+   }
+  },
+  {
+   "id": "weapon-batteries",
+   "name": "Weapon batteries (Core p. 170)",
+   "kind": "configuration",
+   "catalogIds": [],
+   "stockLabelPatterns": [
+    "batter"
+   ],
+   "rangeSlug": null,
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Core Rulebook",
+     "section": "Vehicle Combat: Weapon Batteries, p. 170"
+    }
+   ],
+   "established": [
+    "A battery of up to six identical weapons; full-battery mode with assistance and margin hits, or independent weapons; Aid Another between batteries (standard action, +2 per complete pair)."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "STOCK_BATTERY_FACTS_INCOMPLETE"
+   ],
+   "nextSlice": "stock done (P6C-2B/3); aftermarket batteries are not a purchasable component",
+   "evidence": {
+    "stock": "tests/vehicle-universal-phase4e-p26-weapon-batteries.test.mjs",
+    "aid": "tests/vehicle-universal-phase4e-p28-battery-aid.test.mjs"
+   }
+  },
+  {
+   "id": "point-defense",
+   "name": "Point-defense weapon modification (a purchase option of an eligible weapon)",
+   "kind": "configuration",
+   "catalogIds": [
+    "point-defense"
+   ],
+   "stockLabelPatterns": [
+    "point.defense"
+   ],
+   "rangeSlug": "point-defense",
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Point-Defense Weapon"
+    },
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "47",
+     "section": "Table 3-5: Starship Weapons"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Vehicle Combat, p. 170"
+    }
+   ],
+   "established": [
+    "Table 3-5: 0 EP (other than the weapon's own); Restricted; +4,000 credits per weapon; Colossal or larger only.",
+    "Normally only blaster cannons, laser cannons and light ion cannons can be point-defense weapons. A point-defense weapon takes no penalty for attacking targets smaller than Colossal.",
+    "Implemented as an option chosen when an eligible weapon is bought (price +4,000, EP +0, sealed into the weapon's entry); the Table 10-2 point-defense range row is recorded for the range-band slice."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "POINT_DEFENSE_STOCK_CLASSIFICATION_UNVERIFIED"
+   ],
+   "nextSlice": "WE-PD done (aftermarket); stock groups wait for verified classification and range automation",
+   "evidence": {
+    "aftermarket": "tests/vehicle-universal-phase4e-p34-point-defense.test.mjs"
+   }
+  },
+  {
+   "id": "autofire",
+   "name": "Autofire mode",
+   "kind": "attack-mode",
+   "catalogIds": [],
+   "stockLabelPatterns": [
+    "autofire"
+   ],
+   "rangeSlug": null,
+   "mechanic": "attack-mode",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Cannon, Double/Quad; Fire-Linked Weapons (Autofire)"
+    },
+    {
+     "book": "Core Rulebook",
+     "section": "Special Combat Rules: Autofire; Vehicle Combat: Scale"
+    }
+   ],
+   "established": [
+    "Double, quad and fire-linked blaster cannons, laser cannons, light ion cannons and light turbolasers can fire normally or in autofire mode; a swift action switches between them. Larger ion cannons and turbolasers cannot autofire.",
+    "Core autofire: an area attack on a 2x2 area, one attack roll at -5 against every creature's Reflex; hit full damage, miss half; consumes ten shots.",
+    "Core vehicle combat: if a vehicle weapon is capable of autofire it can make an area attack at character scale; at starship scale area attacks (including autofire) resolve as attacks on a single target."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "done (V-P6C-08); swift action to set autofire, resolved by CombatOptionResolver",
+   "evidence": {
+    "stock": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs",
+    "switchCost": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+   }
+  },
+  {
+   "id": "burst-fire",
+   "name": "Burst Fire (feat) on vehicle weapons",
+   "kind": "attack-mode",
+   "catalogIds": [],
+   "stockLabelPatterns": [],
+   "rangeSlug": null,
+   "mechanic": "attack-mode",
+   "sources": [
+    {
+     "book": "Core Rulebook",
+     "section": "Feats: Burst Fire; Special Combat Rules: Autofire"
+    }
+   ],
+   "established": [
+    "Burst Fire is a feat: autofire against a specific creature instead of an area at -5 attack for +2 dice of damage, using five shots; not an area attack.",
+    "Starships of the Galaxy, Starship Feats, authorizes Burst Fire with autofire-capable vehicle weapons; the extra dice are added before the vehicle damage multiplier (V-P6C-08, RESOLVED_PUBLISHED_RULE). Needs verified feat evidence of the actual operating character; no magazine is invented for energy weapons."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [],
+   "nextSlice": "done (V-P6C-08); swift action to set autofire, resolved by CombatOptionResolver",
+   "evidence": {
+    "stock": "tests/vehicle-universal-phase4e-p38-autofire-burst.test.mjs"
+   }
+  },
+  {
+   "id": "launcher-capacity",
+   "name": "Launcher capacity upgrades",
+   "kind": "modification",
+   "catalogIds": [],
+   "stockLabelPatterns": [],
+   "rangeSlug": null,
+   "mechanic": "modifier",
+   "sources": [
+    {
+     "book": "Starships of the Galaxy",
+     "printedPages": "44-47",
+     "section": "Weapon Systems: Concussion Missiles / Proton Torpedoes / Shieldbuster Torpedoes / Space Mines (Launchers)"
+    }
+   ],
+   "established": [
+    "Capacity: concussion 6/16/30 (+20% per additional missile, up to double); proton torpedo launcher 3 (+25% per additional, up to 16); shieldbuster launcher 4 (+25%, up to 8); mine launcher 6 (+25%, up to 12)."
+   ],
+   "applicableConfigurations": [],
+   "resources": "NOT_APPLICABLE",
+   "blockers": [
+    "LAUNCHER_AND_AMMUNITION_NOT_INSTALLABLE"
+   ],
+   "nextSlice": "with launcher installation"
+  }
+ ]
+}

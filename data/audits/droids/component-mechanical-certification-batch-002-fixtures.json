@@ -1,0 +1,1247 @@
+{
+  "schema": "swse.droids.component.mechanical-fixtures/v2",
+  "batch": "MECH-002",
+  "sourcePacket": "data/audits/droids/component-mechanical-certification-batch-002.json",
+  "expected": {
+    "evaluated": 25,
+    "pass": 19,
+    "hold": 6,
+    "applicationTestsExecuted": 0,
+    "foundryTestsExecuted": 0
+  },
+  "cases": [
+    {
+      "caseId": "B002-01",
+      "canonicalId": "droid-walking",
+      "name": "Walking",
+      "sourceDecision": "HOLD",
+      "expectedPrice": {
+        "kind": "SPEED_SQUARED",
+        "creditsBase": 10,
+        "formula": "base * CoreSizeFactor * speedSquares^2",
+        "defaultSpeedSquares": {
+          "smallOrLess": 4,
+          "medium": 6,
+          "largeOrMore": 8
+        },
+        "extraLocomotionChargesBySystemNumber": {
+          "2": 500,
+          "3": 1000,
+          "4": 2000,
+          "5": 5000
+        },
+        "extraChargeTimesSizeFactor": true,
+        "restrictedCostRatio": 0.1
+      },
+      "expectedWeight": {
+        "kind": "NOT_LISTED",
+        "reason": "Core Table 11-3 lacks weight column"
+      },
+      "requiredHost": {
+        "type": "DROID_BUILT_IN_LOCOMOTION",
+        "owner": "droid chassis",
+        "multipleLocomotionSystemsPermitted": true
+      },
+      "requiredMechanics": {
+        "terrain": "Normal difficult terrain penalties",
+        "restrictedModes": {
+          "exclusive": {
+            "toggle": "move action",
+            "allowedWhileActive": [
+              "move",
+              "run"
+            ]
+          },
+          "limited": {
+            "firstCheckAfterRounds": 1,
+            "check": "Endurance",
+            "startingDC": 10,
+            "subsequentChecksIncreaseDCBy": 1,
+            "failCooldownRounds": 10
+          }
+        },
+        "modificationTime": "1 day",
+        "speedCanBeSelectedFromSizeColumn": true
+      },
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-02",
+      "canonicalId": "droid-wheeled",
+      "name": "Wheeled",
+      "sourceDecision": "HOLD",
+      "expectedPrice": {
+        "kind": "SPEED_SQUARED",
+        "creditsBase": 5,
+        "formula": "base * CoreSizeFactor * speedSquares^2",
+        "defaultSpeedSquares": {
+          "smallOrLess": 6,
+          "medium": 8,
+          "largeOrMore": 10
+        },
+        "extraLocomotionChargesBySystemNumber": {
+          "2": 500,
+          "3": 1000,
+          "4": 2000,
+          "5": 5000
+        },
+        "extraChargeTimesSizeFactor": true,
+        "restrictedCostRatio": 0.1
+      },
+      "expectedWeight": {
+        "kind": "NOT_LISTED",
+        "reason": "Core Table 11-3 lacks weight column"
+      },
+      "requiredHost": {
+        "type": "DROID_BUILT_IN_LOCOMOTION",
+        "owner": "droid chassis",
+        "multipleLocomotionSystemsPermitted": true
+      },
+      "requiredMechanics": {
+        "terrain": "Cannot use Climb; doubled difficult-terrain penalties",
+        "restrictedModes": {
+          "exclusive": {
+            "toggle": "move action",
+            "allowedWhileActive": [
+              "move",
+              "run"
+            ]
+          },
+          "limited": {
+            "firstCheckAfterRounds": 1,
+            "check": "Endurance",
+            "startingDC": 10,
+            "subsequentChecksIncreaseDCBy": 1,
+            "failCooldownRounds": 10
+          }
+        },
+        "modificationTime": "1 day",
+        "speedCanBeSelectedFromSizeColumn": true
+      },
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-03",
+      "canonicalId": "droid-tracked",
+      "name": "Tracked",
+      "sourceDecision": "HOLD",
+      "expectedPrice": {
+        "kind": "SPEED_SQUARED",
+        "creditsBase": 20,
+        "formula": "base * CoreSizeFactor * speedSquares^2",
+        "defaultSpeedSquares": {
+          "smallOrLess": 4,
+          "medium": 6,
+          "largeOrMore": 8
+        },
+        "extraLocomotionChargesBySystemNumber": {
+          "2": 500,
+          "3": 1000,
+          "4": 2000,
+          "5": 5000
+        },
+        "extraChargeTimesSizeFactor": true,
+        "restrictedCostRatio": 0.1
+      },
+      "expectedWeight": {
+        "kind": "NOT_LISTED",
+        "reason": "Core Table 11-3 lacks weight column"
+      },
+      "requiredHost": {
+        "type": "DROID_BUILT_IN_LOCOMOTION",
+        "owner": "droid chassis",
+        "multipleLocomotionSystemsPermitted": true
+      },
+      "requiredMechanics": {
+        "terrain": "Ignores difficult terrain penalties; -5 on Climb",
+        "restrictedModes": {
+          "exclusive": {
+            "toggle": "move action",
+            "allowedWhileActive": [
+              "move",
+              "run"
+            ]
+          },
+          "limited": {
+            "firstCheckAfterRounds": 1,
+            "check": "Endurance",
+            "startingDC": 10,
+            "subsequentChecksIncreaseDCBy": 1,
+            "failCooldownRounds": 10
+          }
+        },
+        "modificationTime": "1 day",
+        "speedCanBeSelectedFromSizeColumn": true
+      },
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-04",
+      "canonicalId": "droid-hovering",
+      "name": "Hovering",
+      "sourceDecision": "HOLD",
+      "expectedPrice": {
+        "kind": "SPEED_SQUARED",
+        "creditsBase": 100,
+        "formula": "base * CoreSizeFactor * speedSquares^2",
+        "defaultSpeedSquares": {
+          "smallOrLess": 6,
+          "medium": 6,
+          "largeOrMore": 6
+        },
+        "extraLocomotionChargesBySystemNumber": {
+          "2": 500,
+          "3": 1000,
+          "4": 2000,
+          "5": 5000
+        },
+        "extraChargeTimesSizeFactor": true,
+        "restrictedCostRatio": 0.1
+      },
+      "expectedWeight": {
+        "kind": "NOT_LISTED",
+        "reason": "Core Table 11-3 lacks weight column"
+      },
+      "requiredHost": {
+        "type": "DROID_BUILT_IN_LOCOMOTION",
+        "owner": "droid chassis",
+        "multipleLocomotionSystemsPermitted": true
+      },
+      "requiredMechanics": {
+        "terrain": "Floats within three meters above ground; ignores difficult terrain penalties",
+        "restrictedModes": {
+          "exclusive": {
+            "toggle": "move action",
+            "allowedWhileActive": [
+              "move",
+              "run"
+            ]
+          },
+          "limited": {
+            "firstCheckAfterRounds": 1,
+            "check": "Endurance",
+            "startingDC": 10,
+            "subsequentChecksIncreaseDCBy": 1,
+            "failCooldownRounds": 10
+          }
+        },
+        "modificationTime": "1 day",
+        "speedCanBeSelectedFromSizeColumn": true
+      },
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-05",
+      "canonicalId": "droid-flying",
+      "name": "Flying",
+      "sourceDecision": "HOLD",
+      "expectedPrice": {
+        "kind": "SPEED_SQUARED",
+        "creditsBase": 200,
+        "formula": "base * CoreSizeFactor * speedSquares^2",
+        "defaultSpeedSquares": {
+          "smallOrLess": 9,
+          "medium": 12,
+          "largeOrMore": 12
+        },
+        "extraLocomotionChargesBySystemNumber": {
+          "2": 500,
+          "3": 1000,
+          "4": 2000,
+          "5": 5000
+        },
+        "extraChargeTimesSizeFactor": true,
+        "restrictedCostRatio": 0.1
+      },
+      "expectedWeight": {
+        "kind": "NOT_LISTED",
+        "reason": "Core Table 11-3 lacks weight column"
+      },
+      "requiredHost": {
+        "type": "DROID_BUILT_IN_LOCOMOTION",
+        "owner": "droid chassis",
+        "multipleLocomotionSystemsPermitted": true
+      },
+      "requiredMechanics": {
+        "terrain": "Engine-powered flight; not hampered by terrain",
+        "restrictedModes": {
+          "exclusive": {
+            "toggle": "move action",
+            "allowedWhileActive": [
+              "move",
+              "run"
+            ]
+          },
+          "limited": {
+            "firstCheckAfterRounds": 1,
+            "check": "Endurance",
+            "startingDC": 10,
+            "subsequentChecksIncreaseDCBy": 1,
+            "failCooldownRounds": 10
+          }
+        },
+        "modificationTime": "1 day",
+        "speedCanBeSelectedFromSizeColumn": true
+      },
+      "holdReason": "Core pp188-189 do not specify whether the one-tenth restricted-system discount applies to the extra-system surcharge when both rules apply.",
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-06",
+      "canonicalId": "droid-stationary",
+      "name": "Stationary",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "NO_SEPARATE_SALE",
+        "credits": null
+      },
+      "expectedWeight": {
+        "kind": "NO_SYSTEM",
+        "kg": null
+      },
+      "requiredHost": {
+        "type": "STATIONARY_CHASSIS_BASELINE",
+        "installablePurchasableComponent": false
+      },
+      "requiredMechanics": {
+        "speedSquares": 0,
+        "cannotTravelAwayFromFixedLocation": true,
+        "systemAbsent": "Not an installed locomotion system"
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-07",
+      "canonicalId": "droid-hardened-systems-x2",
+      "name": "Hardened Systems x2",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "SIZE_FACTOR",
+        "baseCredits": 1000
+      },
+      "expectedWeight": {
+        "kind": "SIZE_FACTOR",
+        "baseKg": 100
+      },
+      "requiredHost": {
+        "type": "DROID_CHASSIS_INTERNAL_PROTECTION",
+        "minimumSize": "large",
+        "differentTierStacking": "NOT_GRANTED"
+      },
+      "requiredMechanics": {
+        "multiplier": 2,
+        "formula": "multiply printed size extra HP and size damage threshold bonus by tier; replace rather than add to unmodified size bonus",
+        "bySize": {
+          "large": {
+            "totalSizeHpBonus": 20,
+            "totalSizeDtBonus": 10,
+            "additionalHpOverOrdinary": 10,
+            "additionalDtOverOrdinary": 5
+          },
+          "huge": {
+            "totalSizeHpBonus": 40,
+            "totalSizeDtBonus": 20,
+            "additionalHpOverOrdinary": 20,
+            "additionalDtOverOrdinary": 10
+          },
+          "gargantuan": {
+            "totalSizeHpBonus": 100,
+            "totalSizeDtBonus": 40,
+            "additionalHpOverOrdinary": 50,
+            "additionalDtOverOrdinary": 20
+          },
+          "colossal": {
+            "totalSizeHpBonus": 200,
+            "totalSizeDtBonus": 100,
+            "additionalHpOverOrdinary": 100,
+            "additionalDtOverOrdinary": 50
+          }
+        },
+        "excludes": "Does not create a general Reflex armor bonus"
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-08",
+      "canonicalId": "droid-hardened-systems-x3",
+      "name": "Hardened Systems x3",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "SIZE_FACTOR",
+        "baseCredits": 2500
+      },
+      "expectedWeight": {
+        "kind": "SIZE_FACTOR",
+        "baseKg": 250
+      },
+      "requiredHost": {
+        "type": "DROID_CHASSIS_INTERNAL_PROTECTION",
+        "minimumSize": "large",
+        "differentTierStacking": "NOT_GRANTED"
+      },
+      "requiredMechanics": {
+        "multiplier": 3,
+        "formula": "multiply printed size extra HP and size damage threshold bonus by tier; replace rather than add to unmodified size bonus",
+        "bySize": {
+          "large": {
+            "totalSizeHpBonus": 30,
+            "totalSizeDtBonus": 15,
+            "additionalHpOverOrdinary": 20,
+            "additionalDtOverOrdinary": 10
+          },
+          "huge": {
+            "totalSizeHpBonus": 60,
+            "totalSizeDtBonus": 30,
+            "additionalHpOverOrdinary": 40,
+            "additionalDtOverOrdinary": 20
+          },
+          "gargantuan": {
+            "totalSizeHpBonus": 150,
+            "totalSizeDtBonus": 60,
+            "additionalHpOverOrdinary": 100,
+            "additionalDtOverOrdinary": 40
+          },
+          "colossal": {
+            "totalSizeHpBonus": 300,
+            "totalSizeDtBonus": 150,
+            "additionalHpOverOrdinary": 200,
+            "additionalDtOverOrdinary": 100
+          }
+        },
+        "excludes": "Does not create a general Reflex armor bonus"
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-09",
+      "canonicalId": "droid-hardened-systems-x4",
+      "name": "Hardened Systems x4",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "SIZE_FACTOR",
+        "baseCredits": 4000
+      },
+      "expectedWeight": {
+        "kind": "SIZE_FACTOR",
+        "baseKg": 400
+      },
+      "requiredHost": {
+        "type": "DROID_CHASSIS_INTERNAL_PROTECTION",
+        "minimumSize": "large",
+        "differentTierStacking": "NOT_GRANTED"
+      },
+      "requiredMechanics": {
+        "multiplier": 4,
+        "formula": "multiply printed size extra HP and size damage threshold bonus by tier; replace rather than add to unmodified size bonus",
+        "bySize": {
+          "large": {
+            "totalSizeHpBonus": 40,
+            "totalSizeDtBonus": 20,
+            "additionalHpOverOrdinary": 30,
+            "additionalDtOverOrdinary": 15
+          },
+          "huge": {
+            "totalSizeHpBonus": 80,
+            "totalSizeDtBonus": 40,
+            "additionalHpOverOrdinary": 60,
+            "additionalDtOverOrdinary": 30
+          },
+          "gargantuan": {
+            "totalSizeHpBonus": 200,
+            "totalSizeDtBonus": 80,
+            "additionalHpOverOrdinary": 150,
+            "additionalDtOverOrdinary": 60
+          },
+          "colossal": {
+            "totalSizeHpBonus": 400,
+            "totalSizeDtBonus": 200,
+            "additionalHpOverOrdinary": 300,
+            "additionalDtOverOrdinary": 150
+          }
+        },
+        "excludes": "Does not create a general Reflex armor bonus"
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-10",
+      "canonicalId": "droid-hardened-systems-x5",
+      "name": "Hardened Systems x5",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "SIZE_FACTOR",
+        "baseCredits": 6250
+      },
+      "expectedWeight": {
+        "kind": "SIZE_FACTOR",
+        "baseKg": 650
+      },
+      "requiredHost": {
+        "type": "DROID_CHASSIS_INTERNAL_PROTECTION",
+        "minimumSize": "large",
+        "differentTierStacking": "NOT_GRANTED"
+      },
+      "requiredMechanics": {
+        "multiplier": 5,
+        "formula": "multiply printed size extra HP and size damage threshold bonus by tier; replace rather than add to unmodified size bonus",
+        "bySize": {
+          "large": {
+            "totalSizeHpBonus": 50,
+            "totalSizeDtBonus": 25,
+            "additionalHpOverOrdinary": 40,
+            "additionalDtOverOrdinary": 20
+          },
+          "huge": {
+            "totalSizeHpBonus": 100,
+            "totalSizeDtBonus": 50,
+            "additionalHpOverOrdinary": 80,
+            "additionalDtOverOrdinary": 40
+          },
+          "gargantuan": {
+            "totalSizeHpBonus": 250,
+            "totalSizeDtBonus": 100,
+            "additionalHpOverOrdinary": 200,
+            "additionalDtOverOrdinary": 80
+          },
+          "colossal": {
+            "totalSizeHpBonus": 500,
+            "totalSizeDtBonus": 250,
+            "additionalHpOverOrdinary": 400,
+            "additionalDtOverOrdinary": 200
+          }
+        },
+        "excludes": "Does not create a general Reflex armor bonus"
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-11",
+      "canonicalId": "droid-shield-generator-sr-5",
+      "name": "Shield Generator, SR 5",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "SIZE_FACTOR",
+        "baseCredits": 2500
+      },
+      "expectedWeight": {
+        "kind": "SIZE_FACTOR",
+        "baseKg": 10
+      },
+      "requiredHost": {
+        "type": "DROID_INSTALLED_SHIELD_GENERATOR",
+        "minSize": null,
+        "minSizeAuthority": "No explicit SR5 minimum given in source"
+      },
+      "requiredMechanics": {
+        "normalSR": 5,
+        "currentSRInitially": 5,
+        "damageReduction": "Subtract current SR from damage",
+        "degradation": "If incoming damage is >= current SR reduce rating by 5, floor 0",
+        "restoration": {
+          "actions": "3 swift, same or consecutive rounds",
+          "check": "DC20 Endurance",
+          "restoresSR": 5,
+          "cap": 5
+        }
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-12",
+      "canonicalId": "droid-shield-generator-sr-10",
+      "name": "Shield Generator, SR 10",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "SIZE_FACTOR",
+        "baseCredits": 5000
+      },
+      "expectedWeight": {
+        "kind": "SIZE_FACTOR",
+        "baseKg": 20
+      },
+      "requiredHost": {
+        "type": "DROID_INSTALLED_SHIELD_GENERATOR",
+        "minSize": "small",
+        "minSizeAuthority": "Core p197"
+      },
+      "requiredMechanics": {
+        "normalSR": 10,
+        "currentSRInitially": 10,
+        "damageReduction": "Subtract current SR from damage",
+        "degradation": "If incoming damage is >= current SR reduce rating by 5, floor 0",
+        "restoration": {
+          "actions": "3 swift, same or consecutive rounds",
+          "check": "DC20 Endurance",
+          "restoresSR": 5,
+          "cap": 10
+        }
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-13",
+      "canonicalId": "droid-shield-generator-sr-15",
+      "name": "Shield Generator, SR 15",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "SIZE_FACTOR",
+        "baseCredits": 7500
+      },
+      "expectedWeight": {
+        "kind": "SIZE_FACTOR",
+        "baseKg": 30
+      },
+      "requiredHost": {
+        "type": "DROID_INSTALLED_SHIELD_GENERATOR",
+        "minSize": "medium",
+        "minSizeAuthority": "Core p197"
+      },
+      "requiredMechanics": {
+        "normalSR": 15,
+        "currentSRInitially": 15,
+        "damageReduction": "Subtract current SR from damage",
+        "degradation": "If incoming damage is >= current SR reduce rating by 5, floor 0",
+        "restoration": {
+          "actions": "3 swift, same or consecutive rounds",
+          "check": "DC20 Endurance",
+          "restoresSR": 5,
+          "cap": 15
+        }
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-14",
+      "canonicalId": "droid-shield-generator-sr-20",
+      "name": "Shield Generator, SR 20",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "SIZE_FACTOR",
+        "baseCredits": 10000
+      },
+      "expectedWeight": {
+        "kind": "SIZE_FACTOR",
+        "baseKg": 40
+      },
+      "requiredHost": {
+        "type": "DROID_INSTALLED_SHIELD_GENERATOR",
+        "minSize": "large",
+        "minSizeAuthority": "Core p197"
+      },
+      "requiredMechanics": {
+        "normalSR": 20,
+        "currentSRInitially": 20,
+        "damageReduction": "Subtract current SR from damage",
+        "degradation": "If incoming damage is >= current SR reduce rating by 5, floor 0",
+        "restoration": {
+          "actions": "3 swift, same or consecutive rounds",
+          "check": "DC20 Endurance",
+          "restoresSR": 5,
+          "cap": 20
+        }
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-15",
+      "canonicalId": "droid-self-destruct-system",
+      "name": "Self-Destruct System",
+      "sourceDecision": "HOLD",
+      "expectedPrice": {
+        "kind": "MAXIMUM_DAMAGE_FACTOR",
+        "creditsMultiplier": 20,
+        "tinyOrSmallerPrice": "UNSPECIFIED"
+      },
+      "expectedWeight": {
+        "kind": "MAXIMUM_DAMAGE_FACTOR",
+        "kgMultiplier": 0.1,
+        "tinyOrSmallerMass": "UNSPECIFIED"
+      },
+      "requiredHost": {
+        "type": "DROID_CHASSIS_EXPLOSIVE",
+        "hostDestroyed": true
+      },
+      "requiredMechanics": {
+        "damageBySize": {
+          "small": "4d6",
+          "medium": "6d6",
+          "large": "8d6",
+          "huge": "10d6",
+          "gargantuan": "20d6",
+          "colossal": "20d6",
+          "tinyAndSmaller": "NO_COLLATERAL_DAMAGE"
+        },
+        "areaAttackBonus": 5,
+        "radius": "2 squares per 4d6 minimum 2 where explosion occurs",
+        "selfDamage": "Droid destroyed without roll; no repair or salvage",
+        "mediumPriceExample": {
+          "credits": 720,
+          "kg": 3.6
+        }
+      },
+      "holdReason": "Tiny and smaller produce no collateral-damage dice; source formula based on maximum damage does not establish a purchasable price/mass for those sizes.",
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-16",
+      "canonicalId": "droid-basic-processor",
+      "name": "Basic Processor",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "FACTORY_MINIMUM_NO_INDEPENDENT_PRICED_ROW"
+      },
+      "expectedWeight": {
+        "kind": "NOT_LISTED",
+        "kg": null
+      },
+      "requiredHost": {
+        "type": "LOCAL_BASIC_PROCESSOR",
+        "mandatoryMinimumProcessor": true,
+        "ordinaryPurchaseItem": false
+      },
+      "requiredMechanics": {
+        "untrainedSkillsAllowed": [
+          "Acrobatics",
+          "Climb",
+          "Jump",
+          "Perception"
+        ],
+        "otherSkillsUntrained": false,
+        "useUnproficientWeapons": false,
+        "literalInstructions": true,
+        "stockModelPCMayUse": true,
+        "customHeroicConstructionSeparate": true
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-17",
+      "canonicalId": "droid-remote-processor",
+      "name": "Remote Processor",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "RANGE_VARIANTS",
+        "variants": [
+          {
+            "rangeKm": 5,
+            "credits": 1000,
+            "kg": 10,
+            "availability": "-"
+          },
+          {
+            "rangeKm": 50,
+            "credits": 10000,
+            "kg": 100,
+            "availability": "-"
+          },
+          {
+            "rangeKm": 500,
+            "credits": 100000,
+            "kg": 1000,
+            "availability": "Military"
+          },
+          {
+            "rangeKm": 5000,
+            "credits": 1000000,
+            "kg": 10000,
+            "availability": "Military"
+          }
+        ]
+      },
+      "expectedWeight": {
+        "kind": "VARIANT_KG",
+        "variants": [
+          {
+            "rangeKm": 5,
+            "credits": 1000,
+            "kg": 10,
+            "availability": "-"
+          },
+          {
+            "rangeKm": 50,
+            "credits": 10000,
+            "kg": 100,
+            "availability": "-"
+          },
+          {
+            "rangeKm": 500,
+            "credits": 100000,
+            "kg": 1000,
+            "availability": "Military"
+          },
+          {
+            "rangeKm": 5000,
+            "credits": 1000000,
+            "kg": 10000,
+            "availability": "Military"
+          }
+        ]
+      },
+      "requiredHost": {
+        "type": "EXTERNAL_CONTROLLER_TRANSMITTER",
+        "integratedInDroidBody": false,
+        "requiresRemoteReceiverOnDrone": true
+      },
+      "requiredMechanics": {
+        "remoteDroneDexterityPenalty": -2,
+        "rangeKm": "chosen controller variant maximum",
+        "mayLinkToOneReceiverAtTime": "Each receiver can pair with only one processor",
+        "backupSupport": "Backup Processor maintains last orders on link loss"
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-18",
+      "canonicalId": "droid-remote-receiver",
+      "name": "Remote Receiver",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "CONSTRUCTION_DISCOUNT",
+        "credits": -500,
+        "cashBackNotAllowed": true
+      },
+      "expectedWeight": {
+        "kind": "FIXED",
+        "kg": 1
+      },
+      "requiredHost": {
+        "type": "DROID_INTERNAL_RECEIVER",
+        "onlyWhenNoInternalProcessor": true,
+        "remoteControllerExternal": true
+      },
+      "requiredMechanics": {
+        "pairOneController": true,
+        "changeController": {
+          "skill": "Mechanics",
+          "dc": 20,
+          "toolKit": true
+        },
+        "linkLoss": "No independent controller unless Backup Processor"
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-19",
+      "canonicalId": "droid-backup-processor",
+      "name": "Backup Processor",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "FIXED",
+        "credits": 100
+      },
+      "expectedWeight": {
+        "kind": "NOT_LISTED",
+        "kg": null
+      },
+      "requiredHost": {
+        "type": "DROID_RECEIVER_BACKUP",
+        "requires": "Remote Receiver",
+        "externalRemoteProcessorNotInstalledInDrone": true
+      },
+      "requiredMechanics": {
+        "onConnectionLost": "Execute last received orders until reconnected",
+        "notATrueLocalHeuristicProcessor": true
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-20",
+      "canonicalId": "droid-synchronized-fire-circuits",
+      "name": "Synchronized Fire Circuits",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "FIXED",
+        "credits": 150
+      },
+      "expectedWeight": {
+        "kind": "FIXED",
+        "kg": 1
+      },
+      "requiredHost": {
+        "type": "DROID_RECEIVER_CIRCUIT",
+        "requiresRemoteReceiver": true,
+        "targetMustUseSameRemoteController": true
+      },
+      "requiredMechanics": {
+        "trigger": "Successful Aid Another roll helping another droid connected to same remote processor",
+        "normalAidBonus": 2,
+        "extraBonus": 2,
+        "totalAidBonus": 4,
+        "noAidSuccessNoBonus": true
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-21",
+      "canonicalId": "droid-restraining-bolt",
+      "name": "Restraining Bolt",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "FIXED",
+        "credits": 5
+      },
+      "expectedWeight": {
+        "kind": "NOT_LISTED",
+        "kg": null
+      },
+      "requiredHost": {
+        "type": "CONTROL_ATTACHMENT_ON_DROID",
+        "requiresDroidCallerForMotorOverride": true
+      },
+      "requiredMechanics": {
+        "attachRemove": {
+          "action": "full-round",
+          "check": "Mechanics DC10"
+        },
+        "effect": "Motor impulse inhibited, processor remains on, prevents skills upgrading",
+        "heuristicDroidSelfRemove": {
+          "action": "standard",
+          "charismaDC": 20,
+          "mechanicsDC": 15,
+          "onFailedCharismaRetryAfterHours": 24
+        },
+        "resistSpecificCaller": {
+          "charismaDC": 20,
+          "immunityHours": 24
+        }
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-22",
+      "canonicalId": "droid-droid-caller",
+      "name": "Droid Caller",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "FIXED",
+        "credits": 10
+      },
+      "expectedWeight": {
+        "kind": "FIXED",
+        "kg": 0.2
+      },
+      "requiredHost": {
+        "type": "HANDHELD_TRANSMITTER",
+        "chassisComponent": false,
+        "requiresTargetBolt": true
+      },
+      "requiredMechanics": {
+        "activeSignal": "Controls motor impulse, draws target toward caller",
+        "doesNotControlWeaponsOrOtherDroidSystems": true,
+        "heuristicResistSpecificCaller": {
+          "charismaDC": 20,
+          "immunityHours": 24
+        }
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-23",
+      "canonicalId": "droid-diagnostics-package",
+      "name": "Diagnostics Package",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "FIXED",
+        "credits": 250
+      },
+      "expectedWeight": {
+        "kind": "FIXED",
+        "kg": 4
+      },
+      "requiredHost": {
+        "type": "DROID_BUILT_IN_DIAGNOSTIC_ACCESSORY"
+      },
+      "requiredMechanics": {
+        "equipmentBonus": 2,
+        "skill": "Mechanics",
+        "scope": "Diagnosing problems only",
+        "repairRollBonus": 0
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-24",
+      "canonicalId": "droid-secondary-battery",
+      "name": "Secondary Battery",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "FIXED",
+        "credits": 400
+      },
+      "expectedWeight": {
+        "kind": "FIXED",
+        "kg": 4
+      },
+      "requiredHost": {
+        "type": "DROID_SECONDARY_BATTERY",
+        "distinctFromBackupProcessor": true
+      },
+      "requiredMechanics": {
+        "operatingHoursPerRecharge": 200,
+        "baselineOperatingHours": 100,
+        "notAutomaticHPHealing": true
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    },
+    {
+      "caseId": "B002-25",
+      "canonicalId": "droid-internal-storage",
+      "name": "Internal Storage",
+      "sourceDecision": "PASS",
+      "expectedPrice": {
+        "kind": "CAPACITY_PRICE",
+        "creditsPerKg": 50,
+        "formula": "50 x selected kg storage capacity"
+      },
+      "expectedWeight": {
+        "kind": "NOT_LISTED",
+        "kg": null
+      },
+      "requiredHost": {
+        "type": "DROID_INTERNAL_COMPARTMENTS",
+        "minimumSize": "small",
+        "prohibitedSizes": [
+          "fine",
+          "diminutive",
+          "tiny"
+        ]
+      },
+      "requiredMechanics": {
+        "maxStorageKgBySize": {
+          "small": 5,
+          "medium": 10,
+          "large": 20,
+          "huge": 50,
+          "gargantuan": 500,
+          "colossal": 5000
+        },
+        "selectedCapacityKgCannotExceedLimit": true,
+        "contentsRequireActualEquipmentItems": true
+      },
+      "holdReason": null,
+      "executed": {
+        "sourceDataAssertion": "IN_MEMORY_CHECKED",
+        "node": false,
+        "garage": false,
+        "chargen": false,
+        "follower": false,
+        "store": false,
+        "foundryV13": false
+      }
+    }
+  ]
+}
