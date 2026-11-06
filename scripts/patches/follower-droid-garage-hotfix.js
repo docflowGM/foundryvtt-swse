@@ -26,12 +26,13 @@ function resolveWalletActor(assetActor) {
   return ownerId ? game.actors?.get(ownerId) || assetActor : assetActor;
 }
 
+// Wallet view only: the follower's affordability is the OWNER's wallet. Droid identity is no longer
+// impersonated (no `type` override) - consumers use the shared droid rules profile.
 function makeDroidCompatibilityProxy(actor) {
   if (!isFollowerDroid(actor)) return actor;
   const wallet = resolveWalletActor(actor);
   return new Proxy(actor, {
     get(target, property, receiver) {
-      if (property === 'type') return 'droid';
       if (property === 'system') {
         return {
           ...target.system,

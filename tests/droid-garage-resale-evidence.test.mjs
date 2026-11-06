@@ -87,4 +87,25 @@ for (const [label, make, message] of REFUSED) {
   assert.match(preview.error, /already installed/);
 }
 
+// Clean-break: droid identity for the Garage is the shared rules profile, so an npc-typed droid
+// follower is customized WITHOUT type impersonation, under the same confirmed-ledger rule.
+{
+  const follower = (extra) => { const a = droid(extra); a.type = 'npc'; a.system.isDroid = true; a.system.isFollower = true; return a; };
+  gm();
+  const confirmedF = follower({ ledger: { [PART]: { installedAt: 1 } } });
+  const ok = DroidCustomizationEngine.previewDroidCustomization(confirmedF, { remove: [PART] });
+  assert.equal(ok.success, true, ok.error);
+  const mirrorF = follower({ droidSystems: { armor: mirror } });
+  const refused = DroidCustomizationEngine.previewDroidCustomization(mirrorF, { remove: [PART] });
+  assert.equal(refused.success, false);
+  assert.match(refused.error, /no confirmed installation record/);
+  const notDroid = droid({}); notDroid.type = 'npc';
+  assert.equal(DroidCustomizationEngine.previewDroidCustomization(notDroid, { add: [PART] }).success, false, 'a non-droid npc is not customizable as a droid');
+  const fs = await import('node:fs');
+  const hot = fs.readFileSync('scripts/patches/follower-droid-garage-hotfix.js', 'utf8');
+  assert.doesNotMatch(hot, /property === 'type'/, 'the follower hotfix no longer impersonates actor.type');
+  const eng = fs.readFileSync('scripts/engine/customization/droid-customization-engine.js', 'utf8');
+  assert.doesNotMatch(eng, /actor\.type !== 'droid'/, 'the engine gates on the shared profile');
+}
+
 console.log('Droid Garage resale-evidence (F7) tests passed.');

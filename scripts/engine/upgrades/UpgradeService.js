@@ -8,6 +8,7 @@
  * - No direct item/actor mutation — mutations go through UpgradeCommands
  */
 
+import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { CustomizationWorkflow } from '/systems/foundryvtt-swse/scripts/engine/customization/customization-workflow.js';
 import { DroidCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/droid-customization-engine.js';
 import { VehicleCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/vehicle-customization-engine.js';
@@ -128,7 +129,7 @@ export class UpgradeService {
     }
 
     // Droid actors represent themselves as an upgradeable entity
-    if (actor.type === 'droid') {
+    if (followsDroidRules(actor)) {
       records.push({
         sourceType: 'droid-actor',
         id: `droid-actor-${actor.id}`,

@@ -24,6 +24,7 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
 import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId, resolveDroidPartQuoteDetailed, collectInstalledComponentEvidence, findConfirmedHostInstance } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { evaluateInstallationEligibility } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-eligibility.js';
 import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
 import {
@@ -359,7 +360,7 @@ export class DroidCustomizationEngine {
    * REUSE: Leverages canonical droid systems definitions from chargen authority
    */
   static getNormalizedDroidProfile(actor) {
-    if (!actor || actor.type !== 'droid') {
+    if (!actor || !followsDroidRules(actor)) {
       return { success: false, error: 'Not a droid actor' };
     }
 
@@ -391,7 +392,7 @@ export class DroidCustomizationEngine {
    * REUSE: Pulls from canonical DROID_SYSTEMS chargen authority
    */
   static getAvailableSystems(actor) {
-    if (!actor || actor.type !== 'droid') {
+    if (!actor || !followsDroidRules(actor)) {
       return {
         success: false,
         error: 'Not a droid actor',
@@ -458,7 +459,7 @@ export class DroidCustomizationEngine {
     const warnings = [];
     const walletActor = options.walletActor || actor;
 
-    if (!actor || actor.type !== 'droid') {
+    if (!actor || !followsDroidRules(actor)) {
       return { success: false, error: 'Not a droid actor', blockingReason: 'Invalid actor type' };
     }
 
@@ -594,7 +595,7 @@ export class DroidCustomizationEngine {
    *   debit/credit the owner instead of the droid.
    */
   static async applyDroidCustomization(actor, changeSet = {}, options = {}) {
-    if (!actor || actor.type !== 'droid') {
+    if (!actor || !followsDroidRules(actor)) {
       return { success: false, error: 'Not a droid actor' };
     }
     const walletActor = options.walletActor || actor;
