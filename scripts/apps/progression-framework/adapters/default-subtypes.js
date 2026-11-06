@@ -15,6 +15,7 @@
  * Each adapter has clearly marked boundaries for future phases.
  */
 
+import { applyInitialInstallationToPlan } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-initial-installation-service.js';
 import { ProgressionSubtypeAdapter, ParticipantKind } from './progression-subtype-adapter.js';
 import { seedNonheroicSession } from './nonheroic-session-seeder.js';
 import { shouldSuppressTalentSteps, describeTalentCadence } from './talent-cadence-helper.js';
@@ -254,7 +255,16 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
     mutationPlan.set['system.isDroid']      = true;
     mutationPlan.set['system.droidDegree']  = degree;
     mutationPlan.set['system.droidSize']    = size;
-    mutationPlan.set['system.droidSystems'] = droidBuild.droidSystems ?? null;
+    // GATE C-3A: the build draft (droidSystems) is finalized together with the
+    // authoritative installation ledger it implies, in this same mutation plan
+    // (ActorEngine applies it). Deterministic and idempotent: identities derive
+    // from the actor id, so a retry or repeated finalization writes the same
+    // records. Not a purchase: no credits move. A selection that cannot be mapped
+    // to a source-cleared canonical component aborts finalization here, before
+    // anything is committed. A droid in stock-statblock mode is never seeded.
+    applyInitialInstallationToPlan(mutationPlan, {
+      actor, seed: actor?.id ?? session?.id ?? session?.sessionId, droidSystems: droidBuild.droidSystems ?? null
+    });
     mutationPlan.set['system.droidCredits'] = droidBuild.droidCredits ?? null;
 
     // Derive and write behavioral profile from degree (RAW rule)
