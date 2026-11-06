@@ -8,7 +8,7 @@
  * - No direct item/actor mutation — mutations go through UpgradeCommands
  */
 
-import { resolveAssetOwnerId } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
+import { resolveAssetOwner } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { CustomizationWorkflow } from '/systems/foundryvtt-swse/scripts/engine/customization/customization-workflow.js';
 import { DroidCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/droid-customization-engine.js';
@@ -618,9 +618,11 @@ export class UpgradeService {
    * when one resolves to a real actor, otherwise the droid itself (unchanged default).
    */
   static #walletOptions(actor) {
-    const ownerId = resolveAssetOwnerId(actor);
-    const owner = ownerId && ownerId !== actor?.id ? game.actors?.get?.(ownerId) : null;
-    return owner ? { walletActor: owner } : {};
+    const owner = resolveAssetOwner(actor, { getActor: id => game.actors?.get?.(id) ?? null });
+    if (owner.status === 'CONTRADICTORY') throw new Error('This droid has contradictory ownership records; a GM must repair them before it can be customized.');
+    if (owner.status === 'MISSING_ACTOR') throw new Error('This droid\'s recorded owner no longer exists; a GM must reassign it before it can be customized.');
+    if (owner.status !== 'RESOLVED' || owner.ownerId === actor?.id) return {};
+    return { walletActor: game.actors.get(owner.ownerId) };
   }
 
   static async applyUpgrade({ actor, itemId, upgradeId }) {

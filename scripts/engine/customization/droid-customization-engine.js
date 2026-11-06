@@ -24,6 +24,7 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
 import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId, resolveDroidPartQuoteDetailed, collectInstalledComponentEvidence, findConfirmedHostInstance } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { authorizePayer } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { evaluateInstallationEligibility } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-eligibility.js';
 import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
@@ -461,6 +462,13 @@ export class DroidCustomizationEngine {
 
     if (!actor || !followsDroidRules(actor)) {
       return { success: false, error: 'Not a droid actor', blockingReason: 'Invalid actor type' };
+    }
+
+    // The payer must be the droid itself, a RECORDED owner, or (explicitly) a GM. No "whichever
+    // character the user controls" fallback; contradictory ownership records are refused for all.
+    const payer = authorizePayer(actor, walletActor, { isGM: Boolean(globalThis.game?.user?.isGM) });
+    if (!payer.ok) {
+      return { success: false, error: payer.reason, blockingReason: 'Unauthorized payer' };
     }
 
     const profile = this.getNormalizedDroidProfile(actor);

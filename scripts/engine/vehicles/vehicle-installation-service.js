@@ -6,6 +6,7 @@
  * actors). The published base flags are never written. Replaces the canonical path that
  * VehicleFactory blocks with VEHICLE_FACTORY_CANONICAL_MODIFICATION_REQUIRES_CERTIFIED_P2_PATH.
  */
+import { isRecordedOwnerId } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import {
   DEFAULT_VEHICLE_INSTALLATION_RULES, VEHICLE_INSTALLATION_FLAG_PATH,
@@ -83,12 +84,7 @@ export class VehicleInstallationService {
   }
   /** Is this character RECORDED as an owner of the vehicle (no GM override)? */
   static isRecordedOwner(ownerActor, vehicle) {
-    if (!ownerActor?.id) return false;
-    const s = vehicle.system ?? {};
-    return [s.ownedByActorId, s.storeAcquisition?.ownerActorId, s.assetOwnership?.primaryOwnerActorId,
-      vehicle.flags?.['foundryvtt-swse']?.storeAcquisition?.ownerActorId]
-      .some(id => id && id === ownerActor.id) ||
-      (Array.isArray(s.assetOwnership?.ownerActorIds) && s.assetOwnership.ownerActorIds.includes(ownerActor.id));
+    return isRecordedOwnerId(vehicle, ownerActor?.id);
   }
 
   static async #exclusive(vehicle, work) {
