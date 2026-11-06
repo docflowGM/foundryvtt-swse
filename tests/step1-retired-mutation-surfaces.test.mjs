@@ -14,7 +14,9 @@ const RETIRED = [
   ['scripts/apps/progression-framework/shell/mutation-plan.js', null], // generic name 'MutationPlan' is used elsewhere: import check only
   ['scripts/engine/core/UpdatePipeline.js', 'UpdatePipeline'],
   ['scripts/engine/core/commands/ActorCommands.js', 'ActorCommands'],
-  ['scripts/engine/core/ProgressionStatePersistence.js', 'ProgressionStatePersistence']
+  ['scripts/engine/core/ProgressionStatePersistence.js', 'ProgressionStatePersistence'],
+  ['scripts/apps/vehicle-modification-manager.js', 'VehicleModificationManager'],
+  ['scripts/infrastructure/hooks/assets-hooks.js', null]
 ];
 for (const [file] of RETIRED) assert.equal(fs.existsSync(file), false, `${file} must stay deleted`);
 

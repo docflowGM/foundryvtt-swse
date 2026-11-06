@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import * as R from '../scripts/domain/vehicles/vehicle-modification-rules.js';
 
@@ -287,8 +287,6 @@ test('catalog effect text follows the printed prose; unverifiable rows are marke
   assert.equal(r.status, 0, r.stdout + r.stderr);
 });
 
-test('the deprecated legacy manager doubles EP for nonstandard modifications', () => {
-  const code = readFileSync('scripts/apps/vehicle-modification-manager.js', 'utf8');
-  assert.match(code, /isNonstandard \? ep \* 2 : ep/);
-  assert.doesNotMatch(code, /they do not double EP/);
+test('the deprecated legacy modification manager stays retired (EP/nonstandard rules live only in vehicle-modification-rules.js)', () => {
+  assert.equal(existsSync('scripts/apps/vehicle-modification-manager.js'), false);
 });
