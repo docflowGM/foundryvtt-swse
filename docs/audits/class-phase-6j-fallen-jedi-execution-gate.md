@@ -7,7 +7,7 @@
 
 ## Source and requirement
 
-*Star Wars Saga Edition Core Rulebook*, printed **p. 223**, Sith Apprentice / Fallen Jedi: a Jedi who becomes a Sith Apprentice retains Jedi class features, including known Force powers, **except** Force powers with the **[Light Side] descriptor**, which the character may no longer use.
+*Star Wars Saga Edition Core Rulebook*, printed **p. 224**, Sith Apprentice / Fallen Jedi: a Jedi who becomes a Sith Apprentice retains Jedi class features, including known Force powers, **except** Force powers with the **[Light Side] descriptor**, which the character may no longer use.
 
 This is **not** a license to remove known powers from an actor, rewrite class levels, or treat a character's general Force alignment as a power's descriptor. The existing Sith Apprentice ownership source is `packs/classes.db` (record `1ba03b2d00245906`, checked against the actual pack). This is the same ID already present in the Phase 6H access resolver, not an invented replacement.
 
