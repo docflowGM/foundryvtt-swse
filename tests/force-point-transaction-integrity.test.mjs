@@ -29,7 +29,7 @@ assert.match(rollCore, /_refundForcePoints\(actor, forcePointDetails\.spent, 'ma
 //    ActorEngine (the sole mutation authority), roll after paying, and roll
 //    back via ActorEngine.gainForcePoints if the die roll fails.
 assert.match(coordinator, /ForcePointsService\.validateSpend\(/);
-assert.match(coordinator, /ActorEngine\.spendForcePoints\(actor, requested\)/);
+assert.match(coordinator, /ActorEngine\.spendForcePoints\(actor, requested, \{deferResourceEvent:true\}\)/);
 assert.match(coordinator, /ActorEngine\.gainForcePoints\(actor, amount\)/);
 assert.match(coordinator, /rolling back spend/);
 
