@@ -131,7 +131,7 @@ export function isExplicitFearEffect(context = {}) {
 }
 
 /**
- * Core p. 223, Fallen Jedi: an owned Sith Apprentice retains former Jedi
+ * Core p. 224, Fallen Jedi: an owned Sith Apprentice retains former Jedi
  * features EXCEPT use of powers with an explicit [Light Side] descriptor.
  * Do not infer the descriptor from a thematic power name, help text, or
  * the character's alignment. Tags are the live Force-power catalogue's
