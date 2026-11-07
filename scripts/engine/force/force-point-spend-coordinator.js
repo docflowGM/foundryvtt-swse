@@ -115,7 +115,7 @@ export class ForcePointSpendCoordinator {
     // formula, never a silently-degraded fallback.
     let spendReceipt;
     try {
-      spendReceipt = await ActorEngine.spendForcePoints(actor, requested);
+      spendReceipt = await ActorEngine.spendForcePoints(actor, requested, {deferResourceEvent:true});
     } catch (err) {
       swseLogger.error('[ForcePointSpendCoordinator] ActorEngine.spendForcePoints threw', err);
       return this._failure({ requested, before, after: before, reason: `Force Point spend failed: ${err.message}`, domain });
