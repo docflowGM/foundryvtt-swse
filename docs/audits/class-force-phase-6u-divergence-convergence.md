@@ -20,8 +20,9 @@ The useful independent functionality from #1127 is the **GM Prophet vision compl
 1. Port pure `planProphetVisionReview()` and GM-only `openProphetGmVisionReview()` from #1127, preserving the Prophet award ledger and ActorEngine mutation authority. Explicit GM text is recorded; **no automatic destiny selection, refund or additional award**.
 2. Expose `game.swse.classFeatures.forceDiscipleProphet.review(actor)` through existing `index.js` API.
 3. Add a GM-only actor-sheet V13 header control **only** when a genuine Force Disciple owns a recorded, unresolved Prophet vision choice. Player controls, ordinary feats and completed visions do not qualify.
-4. In Sith Lord Temptation resolution, reject condition-track options if `ConditionTrackRules.resolveConditionShift()` reports fewer applied worsening steps than the published consequence requires. Keep the event pending rather than falsely recording success at the condition cap.
-5. Carry the separate Prophet unit tests, extend header-control tests, and add a Temptation gate regression.
+4. Restore explicitly typed Fearless/Indomitable **ConditionEngine** admission by reusing `class-feature-effect-admission.js`, already the authority for both ActorEngine ActiveEffect writers. Only explicit `fearEffect`, `mindAffecting`, or matching descriptor metadata trigger suppression. Do not introduce the obsolete alternate `force-class-effect-ingress.js` policy.
+5. In Sith Lord Temptation resolution, reject condition-track options if `ConditionTrackRules.resolveConditionShift()` reports fewer applied worsening steps than the published consequence requires. Keep the event pending rather than falsely recording success at the condition cap.
+6. Carry the separate Prophet unit tests, extend header-control tests, and add both a Temptation gate regression and a typed ConditionEngine pre-mutation regression.
 
 ## Hardening still requiring real runtime evidence
 
