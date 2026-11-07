@@ -2066,7 +2066,12 @@ export const ActorEngine = {
       const bonusPool = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
       const bonusEntries = normalizeBonusEntries(bonusPool);
       const bonusCurrent = bonusEntries.reduce((sum, entry) => sum + entry.value, 0);
-      const bonusSpent = Math.min(bonusCurrent, amount);
+      // Some published talents require spending an ordinary, persistent FP
+      // and expressly forbid temporary/bonus points. Opting into normalOnly
+      // spends from the same governed pool authority (and emits its same
+      // post-commit typed receipt), without touching the bonus ledger.
+      // Default callers retain the existing bonus-first RAW policy.
+      const bonusSpent = options?.normalOnly === true ? 0 : Math.min(bonusCurrent, amount);
       const normalToSpend = Math.max(0, amount - bonusSpent);
 
       let remainingBonusSpend = bonusSpent;

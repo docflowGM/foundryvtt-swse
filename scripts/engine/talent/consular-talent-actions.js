@@ -204,8 +204,16 @@ export class ConsularTalentActions {
   static async _spendNormalForcePoint(actor, source = 'force-talent-normal-fp') {
     const current = SchemaAdapters.getForcePoints(actor);
     if (current <= 0) throw new Error('This talent requires 1 normal Force Point; temporary/bonus Force Points cannot be used.');
-    await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(Math.max(0, current - 1)), { source });
-    return { spent: 1, remaining: Math.max(0, current - 1) };
+    // Watchcircle Initiate requires one NORMAL Force Point. Use the same
+    // canonical authority and post-commit FP receipt used by Temptation,
+    // while explicitly preserving all temporary/bonus points.
+    const receipt = await ActorEngine.spendForcePoints(actor, 1, {
+      normalOnly: true, source
+    });
+    if (receipt?.spent !== 1 || receipt?.normalSpent !== 1) {
+      throw new Error('This talent requires 1 normal Force Point; the spend was not committed.');
+    }
+    return { spent: receipt.spent, remaining: receipt.remaining };
   }
 
   static async _grantNormalForcePoint(actor, amount = 1, source = 'force-talent-grant-fp') {
