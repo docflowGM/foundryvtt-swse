@@ -108,7 +108,7 @@ test('runtime action and target choice remain separate; no fake immediate DSP',(
  assert.match(service,/planTemptationSpend\(/);
  assert.match(service,/DSPEngine.getNextValue\(target,event.steps\)/);
  assert.match(service,/ConditionTrackRules.resolveConditionShift\(target,event.steps\)/);
- assert.match(service,/eventKey:event.receiptId\+':'\+x.id/);
+ assert.match(service,/eventKey:x.receiptId\+':'\+x.id/);
  assert.match(service,/registerSithLordTemptationHooks/);
  assert.match(service,/pending-target-choice/);
  assert.match(boot,/registerSithLordTemptationHooks\(\)/);
