@@ -2331,3 +2331,39 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Status | `IMPLEMENTED_PER_PRINT_REVIEW` (owner confirmation requested; one-flag change if the printed page differs) |
 | Decision authority | Project owner |
 | Resolution | |
+
+### CF-RD-008 - Executive Leadership: which turn does "until the end of their turn" cover? (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-008 |
+| Rules domain | Class features |
+| Feature | Executive Leadership (Corporate Agent) |
+| Source | Knights of the Old Republic Campaign Guide, Corporate Agent (OCR; page not verified) |
+| Evidence | Swift action, as many times per encounter as half the Corporate Agent level; an ally within line of sight gains, until the end of their turn, one of: +2 squares base speed, +2 morale bonus on attack rolls, or +2 morale bonus to all defenses (the Agent's choice). |
+| Confirmed behavior | Swift action; floor(level/2) uses per encounter; one of three listed benefits; morale bonuses; ally in line of sight. |
+| Unresolved question | Which of the ally's turns the benefit covers when the Agent acts during the ally's own turn, after the ally's turn, or before it in the round. |
+| Options | The ally's next turn; the ally's current turn if it has not ended; the remainder of the round. Only the printed phrase supports any of these; none is stated. |
+| Recommended ruling | None |
+| Implementation impact | Effect expiry for Executive Leadership is blocked; nothing is built. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### CF-RD-009 - Master of Movement under Athletics consolidation (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-009 |
+| Rules domain | Class features / house rules |
+| Feature | Master of Movement (Melee Duelist) |
+| Source | Knights of the Old Republic Campaign Guide (OCR); the world setting that consolidates Jump/Acrobatics/Climb/Swim into Athletics |
+| Evidence | The printed reroll applies to "a single Jump or Acrobatics check". With consolidation ON, requested Jump/Acrobatics rolls are executed as Athletics. |
+| Confirmed behavior | Jump and Acrobatics checks qualify. |
+| Unresolved question | Whether a roll made as a generic Athletics check (never requested as Jump or Acrobatics) qualifies. |
+| Options | Only checks requested as Jump or Acrobatics (implemented, fail-closed); any Athletics check. |
+| Recommended ruling | None |
+| Implementation impact | `isMasterOfMovementRerollSkill` (one list). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

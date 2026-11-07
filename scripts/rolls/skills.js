@@ -18,6 +18,7 @@ import { TeamFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/t
 import { RebellionSpeciesSkillFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js";
 import { resolveEquipmentForSkillUse } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-skill-hook-resolver.js";
 import { shaperLoreBonus } from "/systems/foundryvtt-swse/scripts/engine/skills/class-shaper-lore.js";
+import { spendMasterOfMovement } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-of-movement.js";
 import { observedSkillBonus, observedSkillRerolls, soleTargetedActor } from "/systems/foundryvtt-swse/scripts/engine/combat/class-target-observation.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 import { canMasterSaboteurReroll } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-saboteur-reroll.js";
@@ -276,13 +277,27 @@ export async function rollSkill(actor, skillKey, options = {}) {
     ? { source: 'Saboteur — Master Saboteur', application: saboteurUse.application, dice: '2d20kh1' }
     : null;
 
+  // Melee Duelist — Master of Movement: one use buys a single Jump or Acrobatics reroll (keep the better). Committed before the roll,
+  // refunded if the roll fails. The check is matched by the skill the player requested, not the consolidated Athletics key.
+  let masterOfMovement = null;
+  if (options?.masterOfMovementReroll === true) {
+    try {
+      masterOfMovement = await spendMasterOfMovement({ actor, choice: 'reroll', requestedSkillKey, checkMode: skillCheckMode });
+    } catch (error) {
+      ui.notifications.warn(error.message);
+      return null;
+    }
+  }
+
   const domain = `skill.${effectiveSkillKey}`;
-  const rollResult = await RollCore.execute({
+  let rollResult;
+  try {
+  rollResult = await RollCore.execute({
     actor,
     domain,
     baseBonus: canonicalTotal + observedSuspect + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0) + Number(equipmentSkill.total || 0) + shaperLore,
     rollOptions: {
-      baseDice: (masterSaboteurDice || observedScoreReroll) ? '2d20kh1' : '1d20',
+      baseDice: (masterSaboteurDice || observedScoreReroll || masterOfMovement) ? '2d20kh1' : '1d20',
       useForce: options?.useForcePoint === true,
       forcePointDieUpgradeSteps: forcePointDieUpgrade?.steps ?? 0,
       forcePointDieUpgradeSource: forcePointDieUpgrade?.source ?? null,
@@ -308,8 +323,13 @@ export async function rollSkill(actor, skillKey, options = {}) {
       takeXValue: skillIsTakeX ? skillTakeXValue : null
     }
   });
+  } catch (error) {
+    await masterOfMovement?.refund();
+    throw error;
+  }
 
   if (!rollResult.success) {
+    await masterOfMovement?.refund();
     ui.notifications.error(`Skill roll failed: ${rollResult.error}`);
     return null;
   }
