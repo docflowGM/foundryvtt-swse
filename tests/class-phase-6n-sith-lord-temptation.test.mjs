@@ -85,6 +85,20 @@ test('runtime event receipts originate only from post-commit spend authorities',
  assert.match(engine,/ActorEngine.spendForcePoints\(actor, 1\)/);
 });
 
+test('paid Force Point roll event happens after successful d20, never on provisional refund',()=>{
+ const core=read('scripts/engine/roll/roll-core.js');
+ const coordinator=read('scripts/engine/force/force-point-spend-coordinator.js');
+ const ae=read('scripts/governance/actor-engine/actor-engine.js');
+ assert.match(coordinator,/deferResourceEvent:true/);
+ assert.match(ae,/if\(options\?\.deferResourceEvent!==true\)/);
+ const roll=core.slice(core.indexOf('static async execute('),core.indexOf('static async _handleTakeX('));
+ assert.ok(roll.indexOf('roll = await this._executeRollWithSerenity(') <
+   roll.indexOf("source: 'RollCore.execute'"));
+ assert.ok(roll.indexOf("source: 'RollCore.execute'") <
+   roll.indexOf('return {\n        success: true'));
+ assert.ok(roll.includes("forcePointDetails?.success===true"));
+});
+
 test('runtime action and target choice remain separate; no fake immediate DSP',()=>{
  const service=read('scripts/engine/combat/sith-lord-temptation-service.js');
  const boot=read('index.js');
