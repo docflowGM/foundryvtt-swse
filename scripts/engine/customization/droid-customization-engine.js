@@ -24,6 +24,8 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
 import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId, resolveDroidPartQuoteDetailed, collectInstalledComponentEvidence, findConfirmedHostInstance } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { verifyDroidLedgerMatchesIntent, verifyItemsDeleted } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-postcondition.js';
+import { authorizePayer, payerAuditRecord } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { evaluateInstallationEligibility } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-eligibility.js';
 import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
@@ -463,6 +465,13 @@ export class DroidCustomizationEngine {
       return { success: false, error: 'Not a droid actor', blockingReason: 'Invalid actor type' };
     }
 
+    // The payer must be the droid itself, a RECORDED owner, or (explicitly) a GM. No "whichever
+    // character the user controls" fallback; contradictory ownership records are refused for all.
+    const payer = authorizePayer(actor, walletActor, { isGM: Boolean(globalThis.game?.user?.isGM) });
+    if (!payer.ok) {
+      return { success: false, error: payer.reason, blockingReason: 'Unauthorized payer' };
+    }
+
     const profile = this.getNormalizedDroidProfile(actor);
     if (!profile.success) {
       return { success: false, error: 'Failed to get droid profile' };
@@ -721,17 +730,29 @@ export class DroidCustomizationEngine {
         resaleCredit: Math.max(0, -netCost),
         transactionContext: 'owned-customization',
         reason: 'Droid customization',
+        // The charge is not success: the intended ledger must actually be on the asset afterwards.
+        verifyAsset: (asset) => {
+          const ledger = verifyDroidLedgerMatchesIntent(asset?.system?.installedSystems, installedSystems);
+          return ledger.ok ? verifyItemsDeleted(asset, itemIdsToDelete) : ledger;
+        },
         audit: {
           source: 'droid-customization',
           systemsAdded: appliedAdded,
           systemsRemoved: preview.preview.systemsRemoved,
           itemsDeleted: itemIdsToDelete,
-          assetActorId: actor.id
+          assetActorId: actor.id,
+          payerAuthorization: payerAuditRecord(actor, walletActor)
         }
       }, { source: 'DroidCustomizationEngine.applyDroidCustomization', validate: true, rederive: true });
 
       if (!txn?.success) {
-        return { success: false, error: txn?.error ?? 'Customization transaction failed' };
+        // Keep the commerce authority's honest outcome (verification failure, verified rollback, failed
+        // rollback, indeterminate, refusal) instead of flattening it into a bare error string.
+        const outcome = {};
+        for (const flag of ['verificationFailed', 'rolledBack', 'rollbackFailed', 'indeterminate', 'refused']) {
+          if (txn?.[flag] !== undefined) outcome[flag] = txn[flag];
+        }
+        return { success: false, error: txn?.error ?? 'Customization transaction failed', ...outcome };
       }
 
       return {

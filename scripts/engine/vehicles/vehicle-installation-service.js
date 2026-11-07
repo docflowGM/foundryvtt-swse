@@ -6,6 +6,8 @@
  * actors). The published base flags are never written. Replaces the canonical path that
  * VehicleFactory blocks with VEHICLE_FACTORY_CANONICAL_MODIFICATION_REQUIRES_CERTIFIED_P2_PATH.
  */
+import { verifyStoredPaths, verifyEmbeddedItemFlag } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-postcondition.js';
+import { isRecordedOwnerId, resolveAssetOwner, payerAuditRecord } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { classifyVehicleActorSource } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import {
   DEFAULT_VEHICLE_INSTALLATION_RULES, VEHICLE_INSTALLATION_FLAG_PATH,
@@ -78,17 +80,14 @@ export class VehicleInstallationService {
   /** The wallet actor must be the vehicle's recorded owner (or the user a GM). */
   static #ownerAssociated(ownerActor, vehicle) {
     if (!ownerActor?.id) return false;
+    // Contradictory current-ownership records block everyone (a GM repairs the data first); otherwise a GM may act.
+    if (resolveAssetOwner(vehicle).status === 'CONTRADICTORY') return false;
     if (globalThis.game?.user?.isGM === true) return true;
     return this.isRecordedOwner(ownerActor, vehicle);
   }
   /** Is this character RECORDED as an owner of the vehicle (no GM override)? */
   static isRecordedOwner(ownerActor, vehicle) {
-    if (!ownerActor?.id) return false;
-    const s = vehicle.system ?? {};
-    return [s.ownedByActorId, s.storeAcquisition?.ownerActorId, s.assetOwnership?.primaryOwnerActorId,
-      vehicle.flags?.['foundryvtt-swse']?.storeAcquisition?.ownerActorId]
-      .some(id => id && id === ownerActor.id) ||
-      (Array.isArray(s.assetOwnership?.ownerActorIds) && s.assetOwnership.ownerActorIds.includes(ownerActor.id));
+    return isRecordedOwnerId(vehicle, ownerActor?.id);
   }
 
   static async #exclusive(vehicle, work) {
@@ -121,8 +120,9 @@ export class VehicleInstallationService {
     try { tx = await TransactionEngine.executeAssetCustomizationTransaction({
       actor: ownerActor, assetActor: vehicle, cost: 0, resaleCredit: plan.refund,
       assetMutationPlan: { set: { [VEHICLE_INSTALLATION_FLAG_PATH]: plan.nextLedger } },
+      verifyAsset: verifyStoredPaths({ [VEHICLE_INSTALLATION_FLAG_PATH]: plan.nextLedger }),
       reason: `Remove ${plan.entry.name}`,
-      audit: { kind: 'vehicle-uninstall', installId, refundPolicyDecided: plan.refundPolicyDecided }
+      audit: { kind: 'vehicle-uninstall', installId, refundPolicyDecided: plan.refundPolicyDecided, payerAuthorization: payerAuditRecord(vehicle, ownerActor) }
     }); } finally { clearLedgerWrite(vehicle.id); }
     const weaponItems = await this.#afterLedgerChange(vehicle, tx);
     return this.#result(tx, { refundPolicyDecided: plan.refundPolicyDecided, weaponItems });
@@ -216,7 +216,10 @@ export class VehicleInstallationService {
     let tx;
     try {
       tx = await TransactionEngine.executeAssetCustomizationTransaction({
-        actor: ownerActor, assetActor: vehicle, cost, resaleCredit: 0, assetMutationPlan: { set }, reason, audit
+        actor: ownerActor, assetActor: vehicle, cost, resaleCredit: 0, assetMutationPlan: { set }, reason, audit: { ...audit, payerAuthorization: payerAuditRecord(vehicle, ownerActor) },
+        // A charge is not success: the jobs store (and ledger, when written) actually stored on the vehicle must be
+        // what this commit intended, otherwise both actors are restored by the transaction's verified rollback.
+        verifyAsset: verifyStoredPaths(set)
       });
     } finally { clearLedgerWrite(vehicle.id); }
     return tx;
@@ -273,8 +276,9 @@ export class VehicleInstallationService {
       tx = await TransactionEngine.executeAssetCustomizationTransaction({
         actor: ownerActor, assetActor: vehicle, cost: plan.cost, resaleCredit: 0,
         assetMutationPlan: { set: { [`flags.swse.${AFTERMARKET_AMMO_FLAG}`]: next } },
+        verifyAsset: verifyStoredPaths({ [`flags.swse.${AFTERMARKET_AMMO_FLAG}`]: next }),
         reason: `Buy ${plan.units} x ${family.ammunition} for ${entry.name}`,
-        audit: { kind: 'vehicle-ammunition-purchase', installId, catalogId: entry.catalogId, ammunition: family.ammunition, units: plan.units, unitPrice: family.unitPrice }
+        audit: { kind: 'vehicle-ammunition-purchase', installId, catalogId: entry.catalogId, ammunition: family.ammunition, units: plan.units, unitPrice: family.unitPrice, payerAuthorization: payerAuditRecord(vehicle, ownerActor) }
       });
     } finally { clearLedgerWrite(vehicle.id); }
     if (!tx.success) return { success: false, reasons: [/insufficient credits/i.test(tx.error ?? '') ? 'INSUFFICIENT_CREDITS' : 'TRANSACTION_FAILED'], error: tx.error };
@@ -315,8 +319,9 @@ export class VehicleInstallationService {
     tx = await TransactionEngine.executeAssetCustomizationTransaction({
       actor: ownerActor, assetActor: vehicle, cost: plan.cost, resaleCredit: 0,
       assetMutationPlan: { update: { items: [{ _id: item.id, [`flags.swse.==${LEDGER_FLAG}`]: plan.ledger }] } },
+      verifyAsset: verifyEmbeddedItemFlag(item.id, 'swse', LEDGER_FLAG, plan.ledger),
       reason: `Buy ${plan.units} x ${family.ammunition} for ${item.name}`,
-      audit: { kind: 'vehicle-ammunition-purchase', origin: 'stock', itemId: item.id, launcherId: family.launcherId, ammunition: family.ammunition, units: plan.units, unitPrice: price }
+      audit: { kind: 'vehicle-ammunition-purchase', origin: 'stock', itemId: item.id, launcherId: family.launcherId, ammunition: family.ammunition, units: plan.units, unitPrice: price, payerAuthorization: payerAuditRecord(vehicle, ownerActor) }
     });
     if (!tx.success) return { success: false, reasons: [/insufficient credits/i.test(tx.error ?? '') ? 'INSUFFICIENT_CREDITS' : 'TRANSACTION_FAILED'], error: tx.error };
     return { success: true, transactionId: tx.transactionId, units: plan.units, cost: plan.cost, ledger: plan.ledger };

@@ -24,6 +24,8 @@
  * This avoids parallel truth and keeps compatibility with existing vehicle systems.
  */
 
+import { authorizePayer, payerAuditRecord } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
+import { verifyStoredPaths } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-postcondition.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { VEHICLE_SYSTEM_DEFINITIONS } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-system-definitions.js';
 import { VehicleSlotGovernanceEngine } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-slot-governance.js';
@@ -136,6 +138,13 @@ export class VehicleCustomizationEngine {
       return { success: false, error: 'Not a vehicle actor', blockingReason: 'Invalid actor type' };
     }
     { const blocked = canonicalBlock(actor); if (blocked) return blocked; }
+
+    // The payer must be the vehicle itself, a RECORDED owner, or (explicitly) a GM; contradictory
+    // ownership records are refused for everyone. Same rule as the Droid Garage.
+    const payer = authorizePayer(actor, walletActor, { isGM: Boolean(globalThis.game?.user?.isGM) });
+    if (!payer.ok) {
+      return { success: false, error: payer.reason, blockingReason: 'Unauthorized payer' };
+    }
 
     const profile = this.getNormalizedVehicleProfile(actor);
     if (!profile.success) {
@@ -305,14 +314,21 @@ export class VehicleCustomizationEngine {
         resaleCredit: Math.max(0, -netCost),
         transactionContext: 'owned-customization',
         reason: 'Vehicle customization',
+        // The charge is not success: the intended legacy map must actually be stored on the (non-canonical) vehicle.
+        verifyAsset: verifyStoredPaths({ 'system.installedSystems': installedSystems }),
         audit: {
           source: 'vehicle-customization',
-          assetActorId: actor.id
+          assetActorId: actor.id,
+          payerAuthorization: payerAuditRecord(actor, walletActor)
         }
       }, { source: 'VehicleCustomizationEngine.applyVehicleCustomization', validate: true, rederive: true });
 
       if (!txn?.success) {
-        return { success: false, error: txn?.error ?? 'Customization transaction failed' };
+        const outcome = {};
+        for (const flag of ['verificationFailed', 'rolledBack', 'rollbackFailed', 'indeterminate', 'refused']) {
+          if (txn?.[flag] !== undefined) outcome[flag] = txn[flag];
+        }
+        return { success: false, error: txn?.error ?? 'Customization transaction failed', ...outcome };
       }
 
       return {

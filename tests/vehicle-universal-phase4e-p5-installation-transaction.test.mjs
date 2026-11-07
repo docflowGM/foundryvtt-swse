@@ -29,13 +29,21 @@ function world({ ownerOwns = 'owner1', gm = true } = {}) {
   return { vehicle, owner };
 }
 
-function patchEngines({ failAsset = false } = {}) {
+function patchEngines({ failAsset = false, dropFlags = false } = {}) {
   const log = { applied: [], snapshots: [], restores: [] };
   const orig = { apply: ActorEngine.applyMutationPlan, snap: SnapshotManager.createSnapshot, restore: SnapshotManager.restoreSnapshot };
   ActorEngine.applyMutationPlan = async (actor, plan) => {
     if (actor.id === 'veh1' && failAsset) throw new Error('asset write failed');
     log.applied.push({ actor: actor.id, keys: Object.keys(plan.set ?? {}) });
     if (plan.set?.['system.credits'] !== undefined) actor.system.credits = plan.set['system.credits'];
+    // Persist flag writes like ActorEngine does, so the transaction's postcondition (the intended jobs/ledger are
+    // really stored on the vehicle) is exercised against real state instead of being vacuously unobservable.
+    for (const [path, value] of Object.entries(plan.set ?? {})) {
+      if (dropFlags || !path.startsWith('flags.')) continue;
+      const keys = path.split('.'); let node = actor;
+      for (const k of keys.slice(0, -1)) node = node[k] ??= {};
+      node[keys.at(-1)] = structuredClone(value);
+    }
   };
   SnapshotManager.createSnapshot = async (actor) => { const s = { timestamp: log.snapshots.length + 1, credits: actor.system?.credits }; log.snapshots.push({ id: actor.id, ...s }); return s; };
   SnapshotManager.getSnapshot = (_actor, ts) => ({ schemaVersion: 2, scope: 'full-actor', timestamp: ts });   // TI-2: recovery must be retrievable from the actor
@@ -75,6 +83,38 @@ test('rollback: a failed asset write restores both actors and reports failure; n
     assert.ok(p.log.restores.includes('veh1'));
     // the ledger-write authorization does not outlive the failed transaction
     assert.equal(L.isLedgerUpdateAllowed('veh1', { flags: { swse: { vehicleInstallations: [] } } }), false);
+  } finally { p.restore(); VehicleInstallationService.rules = L.DEFAULT_VEHICLE_INSTALLATION_RULES; }
+});
+
+test('postcondition: a charged install whose ledger/jobs flags did not persist is reported as failed and both actors are restored', async () => {
+  const { vehicle, owner } = world();
+  const p = patchEngines({ dropFlags: true }); VehicleInstallationService.rules = fixtureRules;
+  try {
+    const r = await VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+    assert.equal(r.success, false, 'the charge alone must not be reported as an installation');
+    assert.equal(r.installationCompleted, false);
+    assert.match(r.error ?? '', /postcondition failed/);
+    assert.equal(owner.system.credits, 5000, 'wallet restored');
+    assert.ok(p.log.restores.includes('owner1') && p.log.restores.includes('veh1'));
+  } finally { p.restore(); VehicleInstallationService.rules = L.DEFAULT_VEHICLE_INSTALLATION_RULES; }
+});
+
+test('postcondition: an uninstall whose ledger write did not persist keeps the hardware and does not keep the refund', async () => {
+  const { vehicle, owner } = world();
+  let p = patchEngines(); VehicleInstallationService.rules = fixtureRules;
+  try {
+    const inst = await VehicleInstallationService.gmInstantInstall({ reason: 'test override', ownerActor: owner, vehicle, catalogId: 'fx', catalog });
+    assert.equal(inst.success, true, JSON.stringify(inst));
+    const ledgerNow = vehicle.flags.swse.vehicleInstallations;
+    const installId = (Array.isArray(ledgerNow) ? ledgerNow : ledgerNow?.entries ?? [])[0]?.installId;
+    assert.ok(installId, 'installed entry has an id');
+    p.restore();
+    const creditsBefore = owner.system.credits;
+    p = patchEngines({ dropFlags: true });
+    const r = await VehicleInstallationService.uninstall({ ownerActor: owner, vehicle, installId });
+    assert.equal(r.success, false, JSON.stringify(r));
+    assert.match(r.error ?? '', /postcondition failed/);
+    assert.equal(owner.system.credits, creditsBefore, 'no refund survives an unpersisted removal');
   } finally { p.restore(); VehicleInstallationService.rules = L.DEFAULT_VEHICLE_INSTALLATION_RULES; }
 });
 

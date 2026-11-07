@@ -11,6 +11,8 @@
  * Single source of truth for modifier math.
  */
 
+import { followsDroidRules, resolveDroidRulesProfile, componentMayContributeDroidModifiers } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
+import { legacyInstalledSystemsMayModify } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-legacy-modifier-gate.js';
 import { ModifierType, ModifierSource, createModifier, isValidModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import ModifierUtils from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
 import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js";
@@ -343,7 +345,7 @@ export class ModifierEngine {
       // Source 7: Droid Modifications (Phase A - droids only)
       // Droid identity is the shared rules profile (droid-rules-profile.js),
       // not the Foundry actor type: a droid follower is an `npc` actor.
-      if (await this._followsDroidRules(actor)) {
+      if (this._followsDroidRules(actor)) {
         modifiers.push(...this._safeArray(await this._getDroidModModifiers(actor)));
       }
 
@@ -1654,20 +1656,21 @@ export class ModifierEngine {
    * @param {Actor} actor - Must be a droid actor
    * @returns {Modifier[]}
    */
-  static async _followsDroidRules(actor) {
+  static _followsDroidRules(actor) {
+    // Fail closed: if the shared profile cannot answer, the actor is NOT treated as a droid.
+    // (This used to fall back to actor.type === 'droid' when a dynamic import failed.)
     try {
-      const { followsDroidRules } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js");
       return followsDroidRules(actor);
     } catch (err) {
-      swseLogger.warn('[ModifierEngine] droid rules profile unavailable; treating actor as non-droid.', err);
-      return actor?.type === 'droid';
+      swseLogger.warn('[ModifierEngine] droid rules profile failed; treating actor as non-droid.', err);
+      return false;
     }
   }
 
   static async _getDroidModModifiers(actor) {
     const modifiers = [];
 
-    if (!(await this._followsDroidRules(actor))) {
+    if (!this._followsDroidRules(actor)) {
       return modifiers;
     }
 
@@ -1685,7 +1688,6 @@ export class ModifierEngine {
       const { resolveInstalledDroidComponents } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js");
       const { getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } = await import("/systems/foundryvtt-swse/scripts/data/droid-part-schema.js");
       const { shouldSuppressComponentModifiers } = await import("/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js");
-      const { resolveDroidRulesProfile, componentMayContributeDroidModifiers } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js");
       const rulesProfile = resolveDroidRulesProfile(actor);
 
       const canonicalTarget = (target) => {
@@ -1810,6 +1812,12 @@ export class ModifierEngine {
     const modifiers = [];
 
     if (actor.type !== 'vehicle') {
+      return modifiers;
+    }
+
+    // Published and rules-legal custom hulls take installed-system effects from the sealed
+    // installation authority (getEffectiveVehicleDerived), never from the legacy field.
+    if (!legacyInstalledSystemsMayModify(actor)) {
       return modifiers;
     }
 

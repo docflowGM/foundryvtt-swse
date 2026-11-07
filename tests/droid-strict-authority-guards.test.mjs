@@ -99,13 +99,14 @@ ok('vehicle record-field exemption is narrow: path must be vehicle-domain and mu
 // ---- Task 4: installation write authority -----------------------------------------------------------
 const { writesOutsideBranch } = await import('../tools/check-droid-installation-write-authority.mjs');
 const upgrade = read('scripts/engine/upgrades/UpgradeService.js');
-assert.deepEqual(writesOutsideBranch(upgrade, 'vehicle-actor-'), [], 'UpgradeService writes only in vehicle branches');
+assert.deepEqual(writesOutsideBranch(upgrade, 'vehicle-actor-'), [], 'UpgradeService writes outside no branch');
+assert.doesNotMatch(upgrade, /'system\.(installedSystems|droidSystems)'\s*:/, 'UpgradeService no longer writes installation state at all (vehicle branch closed, N-01)');
 assert.ok(!/installedSystems\[targetId\]\s*;?\s*\n\s*await ActorEngine/.test(upgrade.slice(upgrade.indexOf("droid-actor-"), upgrade.indexOf('Vehicle actor system removal'))), 'no droid raw fallback text remains');
 const reintroduced = upgrade.replace("      throw new Error(result.error || `Failed to remove ${identified?.id ?? targetId}`);",
   "      const installedSystems = { ...(actor.system?.installedSystems ?? {}) };\n      delete installedSystems[targetId];\n      await ActorEngine.applyMutationPlan(actor, { set: { 'system.installedSystems': installedSystems } });\n      return { success: true };");
 assert.notEqual(reintroduced, upgrade);
 assert.ok(writesOutsideBranch(reintroduced, 'vehicle-actor-').some(o => /droid-actor-/.test(o)), 'a reintroduced droid fallback is detected');
 assert.ok(writesOutsideBranch("function f() { return {'system.installedSystems': x}; }", 'vehicle-actor-').length === 1, 'a write outside any branch is detected');
-ok('write-authority guard: UpgradeService scoped to vehicle branches; a reintroduced droid fallback is detected');
+ok('write-authority guard: UpgradeService holds no installation-write allowance; a reintroduced droid fallback is detected');
 
 console.log(`Droid strict authority guard tests passed (${n} groups).`);

@@ -44,13 +44,6 @@ export const AUTHORITY_BOUNDARY_STATE = [
     note: 'Primary legality gate for talent selection during chargen',
   },
   {
-    file: 'scripts/apps/progression-framework/shell/mutation-coordinator.js',
-    caller: 'MutationCoordinator._validateProjection',
-    calls: 'AbilityEngine.evaluateAcquisition',
-    disposition: 'canonical',
-    note: 'Validates feat legality against projected character state before applying mutations',
-  },
-  {
     file: 'scripts/governance/integrity/prerequisite-integrity-checker.js',
     caller: 'PrerequisiteIntegrityChecker._evaluateAllItems',
     calls: 'AbilityEngine.evaluateAcquisition (via AbilityEngine.evaluateAcquisition)',

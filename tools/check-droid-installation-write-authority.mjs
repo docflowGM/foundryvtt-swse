@@ -44,7 +44,6 @@ const STRICT = process.argv.includes('--strict');
 // its call site).
 const ALLOWLIST = new Map([
   ['scripts/engine/customization/droid-customization-engine.js', 'THE canonical installation authority: the only post-creation writer of system.installedSystems / system.droidSystems, always through TransactionEngine.executeAssetCustomizationTransaction and ActorEngine.'],
-  ['scripts/engine/upgrades/UpgradeService.js', 'SCOPED exception, verified structurally below: the Workshop routes every droid install/removal through DroidCustomizationEngine and has no droid fallback writer. Its only direct installedSystems writes are inside the vehicle-actor branches (out of scope for the droid ledger).'],
   ['scripts/apps/progression-framework/adapters/default-subtypes.js', 'one-time chargen finalization writer — seeds initial droid state, no pre-existing ledger to drift against'],
   ['scripts/domain/droids/droid-initial-installation-service.js', 'GATE C-3A one-time CREATION writer shared by droid chargen and droid-follower creation: it finalizes the build draft together with the matching installation ledger inside the creation lifecycle\'s own mutation plan / transaction. Deterministic and idempotent, never overwrites an existing record, charges nothing, skips stock-statblock droids, and is not a purchase path (no TransactionEngine / Store).'],
   ['scripts/apps/follower-creator.js', 'one-time follower-creation writer — same reasoning as chargen finalization'],
@@ -83,9 +82,9 @@ const WRITE_EVIDENCE = new Map([
   [path.join(ROOT, 'scripts/apps/progression-framework/adapters/default-subtypes.js'), /applyInitialInstallationToPlan\(\s*mutationPlan/]
 ]);
 
-const SCOPED_ALLOWANCES = new Map([
-  [path.join(ROOT, 'scripts/engine/upgrades/UpgradeService.js'), 'vehicle-actor-']
-]);
+// UpgradeService no longer writes installation state at all (its vehicle branch was closed: SSOT finding N-01),
+// so it holds neither an allowance nor a scoped one. The scoped-branch helper below stays for future reviewed cases.
+const SCOPED_ALLOWANCES = new Map([]);
 
 /**
  * For a file whose allowance is scoped to ONE actor-kind branch: every direct

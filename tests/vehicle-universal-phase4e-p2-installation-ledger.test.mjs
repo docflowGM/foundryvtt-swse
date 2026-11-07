@@ -137,6 +137,8 @@ test('size restriction: ordering, unparseable and ambiguous never guessed', () =
   assert.equal(e('Huge or Larger', 'Mystery'), 'unparseable');
 });
 
+import * as OWNER from '../scripts/domain/droids/droid-asset-owner.js';
+import * as POST from '../scripts/domain/vehicles/vehicle-postcondition.js';
 // ---- service wiring with fakes (module imports Foundry paths) ----
 function service(tx) {
   const code = readFileSync('scripts/engine/vehicles/vehicle-installation-service.js', 'utf8')
@@ -150,6 +152,8 @@ function service(tx) {
     VEHICLE_INSTALLATION_JOBS_FLAG: J.VEHICLE_INSTALLATION_JOBS_FLAG, VEHICLE_INSTALLATION_JOBS_FLAG_PATH: J.VEHICLE_INSTALLATION_JOBS_FLAG_PATH,
     readJobs: J.readJobs, planJobStart: J.planJobStart, planJobCheck: J.planJobCheck, planJobRetry: J.planJobRetry, planLogWorkDays: J.planLogWorkDays,
     planGmCompleteJob: J.planGmCompleteJob, planGmInstantInstall: J.planGmInstantInstall,
+    resolveAssetOwner: OWNER.resolveAssetOwner, isRecordedOwnerId: OWNER.isRecordedOwnerId, payerAuditRecord: OWNER.payerAuditRecord,
+    verifyStoredPaths: POST.verifyStoredPaths, verifyEmbeddedItemFlag: POST.verifyEmbeddedItemFlag,
     game: { user: { id: 'gm1', isGM: true } },
     LedgerService: { getCurrentCredits: a => a.credits },
     TransactionEngine: { executeAssetCustomizationTransaction: async c => { calls.push(c); return tx(c); } },
