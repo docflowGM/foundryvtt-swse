@@ -403,12 +403,15 @@ export class SWSEActorBase extends Actor {
       };
     }
 
-    const newValue = dp.value - 1;
-
-    // PHASE 5: ActorEngine is REQUIRED. No fallback to direct update.
-    // Failure here indicates a critical module loading issue that must be fixed.
+    // Spend through the canonical Destiny mutation authority so the
+    // resulting typed spend receipt can trigger Temptation exactly once.
     const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
-    await ActorEngine.updateActor(this, { 'system.destinyPoints.value': newValue });
+    const receipt = await ActorEngine.spendDestinyPoints(this, 1);
+    if(receipt?.spent!==1) return {
+      success:false,code:'INSUFFICIENT_DESTINY',
+      message:`${this.name} has no Destiny Points remaining.`,newValue:dp.value
+    };
+    const newValue = receipt.remaining;
 
     return {
       success: true,

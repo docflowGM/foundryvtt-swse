@@ -2004,7 +2004,7 @@ export const ActorEngine = {
    * @param {Actor} actor - target actor
    * @param {number} amount - number of points to spend
    */
-  async spendForcePoints(actor, amount = 1) {
+  async spendForcePoints(actor, amount = 1, options = {}) {
     try {
       if (!actor) {throw new Error('spendForcePoints() called with no actor');}
       if (typeof amount !== 'number' || amount < 0) {
@@ -2087,6 +2087,20 @@ export const ActorEngine = {
         bonusRemaining: remainingEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0)
       });
 
+      // Typed, post-commit receipt; only an actual positive authoritative
+      // spend may trigger Sith Lord Temptation. Never infer from pool deltas.
+      // RollCore may refund a Force Point when its paid d20 roll fails.
+      // Defer that particular event until RollCore confirms the roll.
+      // Direct spending is already committed at this boundary.
+      if(options?.deferResourceEvent!==true) {
+      globalThis.Hooks?.callAll?.('swse.resourceSpent', {
+        actor, actorId: String(actor?.uuid || actor?.id || ''),
+        resource: 'force', spent: actualSpent, committed: true,
+        receiptId: globalThis.crypto?.randomUUID?.()
+          ?? String(Date.now())+'-fp-'+String(actor?.id??'')+'-'+String(Math.random()),
+        source: 'ActorEngine.spendForcePoints',
+      });
+      }
       return { spent: actualSpent, remaining: newFP, bonusSpent, normalSpent, bonusRemaining: remainingEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0) };
 
     } catch (err) {
@@ -2127,6 +2141,13 @@ export const ActorEngine = {
         amount: actualSpent
       });
 
+      globalThis.Hooks?.callAll?.('swse.resourceSpent', {
+        actor, actorId: String(actor?.uuid || actor?.id || ''),
+        resource: 'destiny', spent: actualSpent, committed: true,
+        receiptId: globalThis.crypto?.randomUUID?.()
+          ?? String(Date.now())+'-dp-'+String(actor?.id??'')+'-'+String(Math.random()),
+        source: 'ActorEngine.spendDestinyPoints',
+      });
       return { spent: actualSpent, remaining: newDP };
 
     } catch (err) {
