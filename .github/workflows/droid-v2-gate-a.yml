@@ -58,6 +58,7 @@ jobs:
           node tools/check-droid-calculation-mode-authority.mjs --strict
           node tools/check-droid-reconciliation-authority.mjs --strict
           node tools/check-droid-installation-write-authority.mjs --strict
+          node tools/check-droid-customization-validation-authority.mjs --strict
           node tests/droid-strict-authority-guards.test.mjs
       - name: Droid Gate C-1 appendage identity
         run: |
@@ -74,4 +75,9 @@ jobs:
         run: |
           set -e
           node tests/droid-gate-c3a-initial-installation.test.mjs
+          node tests/droid-garage-resale-evidence.test.mjs
+          node tests/droid-rules-profile.test.mjs
+          node tests/droid-prerequisite-evidence.test.mjs
+          node tests/droid-factory-stock-contract.test.mjs
+          node tests/droid-dead-surface-removed.test.mjs
           node tests/follower-mutation-transaction.test.mjs

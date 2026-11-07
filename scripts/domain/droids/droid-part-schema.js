@@ -33,6 +33,7 @@
  */
 
 import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
+import { resolveInstalledDroidComponents } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js";
 
 const SIZE_ORDER = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
 
@@ -640,31 +641,34 @@ function addDroidSystemPartEntry(parts, value, options = {}) {
   if (def) parts.push({ ...def, definition: def });
 }
 
+/**
+ * Droid-system parts that satisfy feat/talent prerequisites.
+ *
+ * Clean-break rule (U-0/F2): two evidence contexts, never blended.
+ *  - COMPLETED actor: only components CONFIRMED in `system.installedSystems`
+ *    count. The `droidSystems` display mirror, embedded Items, legacy mods and
+ *    the stock-statblock snapshot are "present", never prerequisite evidence.
+ *  - CREATION draft (`pending` carries a droid-systems draft): the explicit
+ *    creation draft counts, in addition to any confirmed ledger components.
+ * Nothing is synthesized: a droid with no processor does NOT silently gain a
+ * Heuristic Processor, and a name/species/`droidSystems`-presence guess is not
+ * evidence of anything.
+ */
 export function collectActorDroidSystemParts(actor, pending = {}) {
   const parts = [];
   const add = (value, options = {}) => addDroidSystemPartEntry(parts, value, options);
 
-  add(actor?.system?.droidSystems || actor?.system?.systems || {});
-  add(collectPendingDroidSystems(pending));
-
-  const itemArray = typeof actor?.items?.toObject === 'function'
-    ? actor.items.contents ?? [...actor.items]
-    : Array.isArray(actor?.items) ? actor.items : [];
-  for (const item of itemArray) {
-    if (item?.system?.droidPart?.enabled || item?.system?.integrated || item?.flags?.swse?.integrated || item?.type === 'droid-system') {
-      add(item, { type: item.type });
+  const resolution = resolveInstalledDroidComponents(actor, {
+    normalizeId: (id) => resolveDroidSystemIdentity(id)?.id ?? slugify(id),
+    getDefinition: (id) => resolveDroidSystemIdentity(id)
+  });
+  for (const component of resolution.components) {
+    if (component.installed && component.primarySource?.kind === 'installedLedger') {
+      add({ id: component.canonicalId, name: component.definition?.name ?? component.canonicalId });
     }
   }
 
-  const actorType = String(actor?.type || '').toLowerCase();
-  const species = String(actor?.system?.species || actor?.system?.race || '').toLowerCase();
-  const looksDroid = actorType === 'droid' || /droid/.test(species) || !!actor?.system?.droidSystems || !!collectPendingDroidSystems(pending);
-  const hasProcessor = parts.some(part => normalizeDroidSystemIdentityKey(part.slot) === 'processor' || normalizeDroidSystemIdentityKey(part.category) === 'processor');
-  if (looksDroid && !hasProcessor) {
-    const heuristic = resolveDroidSystemIdentity('heuristic');
-    if (heuristic) parts.push({ ...heuristic, definition: heuristic });
-  }
-
+  add(collectPendingDroidSystems(pending));
   return parts;
 }
 
@@ -703,6 +707,25 @@ export function actorMeetsDroidSystemRequirement(actor, requirement = {}, pendin
           return actual.some(value => normalizeDroidSystemIdentityKey(value) === normalizeDroidSystemIdentityKey(system));
         })).length;
     return { met: count >= min, missing: count >= min ? [] : [label], actual: count, required: min };
+  }
+
+  // A requirement that NAMES a specific component ("Heuristic Processor") is
+  // satisfied only by that component's own identity. Matching through the
+  // shared identity set let any part sharing a generic alias/category/slot
+  // ("primary", "processor") satisfy it - e.g. a Basic Processor satisfying
+  // "Heuristic Processor". Category/slot-level requirements ("a processor")
+  // keep the broad match.
+  const namesSpecificPart = rawSystems.length > 0 && resolved.length === rawSystems.length
+    && rawSystems.every((raw, i) => {
+      const def = resolved[i];
+      const key = normalizeDroidSystemIdentityKey(raw);
+      return [def.uuid, def.id, def.key, def.name].some(v => normalizeDroidSystemIdentityKey(v) === key);
+    });
+  if (namesSpecificPart) {
+    const wanted = new Set(resolved.flatMap(def => [def.uuid, def.id, def.key].map(normalizeDroidSystemIdentityKey).filter(Boolean)));
+    const has = parts.some(part => [part.uuid, part.id, part.key, part.definition?.id, part.definition?.uuid]
+      .some(v => wanted.has(normalizeDroidSystemIdentityKey(v))));
+    return { met: has, missing: has ? [] : [label], actual: has ? 1 : 0, required: 1 };
   }
 
   const hasAny = identitySetHasAny(identities, expectedValues);

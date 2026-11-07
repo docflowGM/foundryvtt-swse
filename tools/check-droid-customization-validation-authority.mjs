@@ -9,7 +9,7 @@
  * Enforces that DroidCustomizationEngine.previewDroidCustomization() and
  * applyDroidCustomization() both route every add/remove change-set through
  * normalizeDroidCustomizationChangeSet() — the single function that
- * deduplicates ids and verifies a "remove" id is actually installed before
+ * deduplicates ids and verifies a "remove" id is CONFIRMED in the installation ledger before
  * any resale is computed. Before this authority existed, previewDroidCustomization()
  * paid resale for any catalog id without checking installation state and
  * without deduplication, letting a forged request repeat a "remove" id
@@ -62,8 +62,25 @@ function main() {
   if (normalizerBody && !/new Set\(/.test(normalizerBody)) {
     violations.push({ check: '4: deduplication', detail: 'normalizeDroidCustomizationChangeSet() must deduplicate add/remove ids (e.g. via Set)' });
   }
-  if (normalizerBody && !/collectInstalledDroidPartIds\(/.test(normalizerBody)) {
-    violations.push({ check: '5: installed-state verification', detail: 'normalizeDroidCustomizationChangeSet() must verify installed state via collectInstalledDroidPartIds() before allowing a remove/add' });
+  // F7 (U-0): removal/resale may be authorized ONLY by confirmed ledger
+  // evidence. The helper must filter on the resolver's deciding source being
+  // the installation ledger, and the normalizer's bare-id removal branch must
+  // gate on that confirmed set - not on the any-source "installed" set.
+  const confirmedHelper = source.match(/function collectConfirmedComponents\s*\([^)]*\)\s*\{[\s\S]*?\n\}/)?.[0] ?? '';
+  if (!/primarySource\??\.kind\s*===\s*['"]installedLedger['"]/.test(confirmedHelper)) {
+    violations.push({ check: '5a: confirmed-evidence helper', detail: "collectConfirmedComponents() must select components whose primarySource.kind === 'installedLedger'" });
+  }
+  if (normalizerBody) {
+    if (!/collectConfirmedComponents\(/.test(normalizerBody)) {
+      violations.push({ check: '5b: removal uses confirmed evidence', detail: 'normalizeDroidCustomizationChangeSet() must derive removable hardware from collectConfirmedComponents()' });
+    }
+    const removeBranch = normalizerBody.slice(normalizerBody.indexOf('const removeSpecs = []'));
+    if (!/!confirmed\.has\(id\)/.test(removeBranch)) {
+      violations.push({ check: '5c: removal gate', detail: 'the bare-id removal branch must refuse unless confirmed.has(id)' });
+    }
+    if (/!installed\.has\(id\)\s*\)\s*\{\s*return fail\([^)]*cannot be removed/.test(removeBranch)) {
+      violations.push({ check: '5d: no any-source removal gate', detail: 'removal must not be authorized by the any-source installed set' });
+    }
   }
 
   console.log('='.repeat(72));

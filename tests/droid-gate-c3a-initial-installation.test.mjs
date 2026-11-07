@@ -419,9 +419,11 @@ const ledgerOfHands = (...rows) => Object.fromEntries(rows.map(r => [`hand--${r.
   withStockFlag.flags = { swse: { stockDroidImport: { importMode: 'statblock' } } };
   assert.equal(resolveDroidCalculationMode(withStockFlag).reason, 'not-a-droid-actor', 'the resolver treats non-droid actor types as playable-derived (unchanged authority)');
   assert.equal(svc.resolveFollowerDroidInstallation(withStockFlag, droidConfig).installedSystems !== null, true, 'so a follower is seeded');
-  // modifier eligibility: the modifier collector only runs for actor.type === "droid"
+  // modifier eligibility (clean-break F1): the collector is gated by the shared droid rules profile, and an
+  // npc-typed follower is credited ONLY for hardware confirmed in the ledger (covered in droid-rules-profile.test.mjs)
   const mods = fs.readFileSync(path.join(ROOT, 'scripts/engine/effects/modifiers/ModifierEngine.js'), 'utf8');
-  assert.match(mods, /static async _getDroidModModifiers\(actor\) \{[\s\S]{0,200}actor\.type !== 'droid'[\s\S]{0,40}return modifiers/, 'droid-part modifiers are not collected for npc-typed followers, so seeding neither applies nor double-counts them');
+  assert.match(mods, /static async _getDroidModModifiers\(actor\) \{[\s\S]{0,200}_followsDroidRules\(actor\)/, 'droid-part modifiers are gated by the shared droid rules profile, not actor.type');
+  assert.match(mods, /componentMayContributeDroidModifiers\(actor, component, rulesProfile\)/, 'followers receive confirmed-ledger hardware only');
   // organic NPC follower: no droid build, nothing seeded
   const organic = { id: 'on1', type: 'npc', name: 'Organic', items: [], flags: {}, system: { isFollower: true, isDroid: false, installedSystems: {} } };
   const o = svc.resolveFollowerDroidInstallation(organic, {});

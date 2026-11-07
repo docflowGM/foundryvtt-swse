@@ -278,3 +278,32 @@ Local checks run: `node --check` on both tools; probe executed (results above). 
 ### H. Known limits of this addendum
 
 The probe uses the shim's fake ActorEngine, so wallet deltas prove the engine's returned mutation and net cost, not a live Foundry wallet. Case 6 (repeat) is shown as the second request on the same actor. Legacy `droidSystems.mods` and malformed mirror variants were not probed.
+
+## Owner ruling and F7 closure (clean-break convergence branch)
+
+Owner confirmed: no active users / no legacy Droid Actors to preserve; clean-break convergence authorized; F7 policy: **only confirmed `system.installedSystems` records authorize post-creation Garage removal and resale; no historical mirror exception, no automatic reconciliation.** F7 is closed on `feature/v2-unified-clean-break-convergence` (this audit PR #1116 stays the read-only record). The probe now reports the post-fix behavior (all unconfirmed-evidence cases refused).
+
+## Clean-break stage 2 (F1 / F2) - semantic changes recorded
+
+Owner-authorized (no legacy-Actor compatibility). Intentional behavior changes:
+1. **Droid identity** is `scripts/domain/droids/droid-rules-profile.js` (pure; dimensions independent; contradictory signals fail closed). `ModifierEngine` Source 7 and `follower-droid-garage-hotfix.js` delegate to it.
+2. **F1:** an `npc`-typed droid follower now receives droid-component modifiers, but ONLY for hardware confirmed in `system.installedSystems`; mirror-only, Item-only and legacy-mod components never contribute for profile-only droids. Stock-statblock suppression (`shouldSuppressComponentModifiers`) is unchanged. PC-type droids keep their existing resolver semantics; making their modifiers confirmed-ledger-only is a follow-up (stock-statblock droids rely on mirror evidence today, so it needs its own stage).
+3. **F2:** feat/talent droid-system prerequisites (`scripts/domain/droids/droid-part-schema.js`) read confirmed ledger components for completed actors and the explicit draft for creation; the synthetic Heuristic Processor, `droidSystems`-presence/species guessing, mirror and Item evidence are removed. A requirement that names a specific part (e.g. "Heuristic Processor") is now matched by that part's identity: previously a Basic Processor satisfied it via the shared alias `primary` (a defect, now covered by a test).
+4. Replaced the C-3A test assertion that pinned "no component modifiers for npc-typed followers".
+Not changed: F3 (zero-HP), the Store/pack convergence, the 194-record pack, Garage UI. Not Foundry-tested.
+
+## Clean-break stage 3 (Store / stock-model path) - F5 closed, convergence blocked on source evidence
+
+- **F5 closed:** `DroidFactory._buildDroidActorData` no longer falls back to a raw clone when a published stock droid fails normalization (a raw clone is not stock-statblock mode, so published totals would be recalculated and factory equipment double-counted). The creation now fails as a whole with `STOCK_DROID_NORMALIZATION_FAILED`. `tests/droid-factory-stock-contract.test.mjs` covers stock mode on a purchased stock droid, the failure path, and that a non-stock custom template keeps its ledger.
+- **Not done, and why (BLOCKED, not decided here):** replacing the Store's dependency on the 194-record `droids` pack (`store-constants.js` `STORE_PACKS.DROIDS`, `loader.js`, `index.js`) with the canonical component/model authority. A stock astromech's *factory configuration* (which canonical components it contains) is not established by the repository's source records (0/234 `data/canonical/droids/source-books` entries are mechanically certified; e.g. R2's `systems` is empty). Deriving it from names or prose is forbidden, and inventing configurations is forbidden by the standing rules. So the pack remains the Store's *statblock/price* source (a published stock model legitimately differs from a custom build); it is not promoted to a component authority, and it is not deleted because the Store still reads it. Component-level convergence for stock models proceeds per entry only as each is source-certified.
+- Custom builder, follower creation and Garage already share the canonical component/quote/ledger authorities (Wave 1 through C-3A, stage 1-2 here).
+
+## Clean-break stage 4 - Garage consumers migrated off type impersonation
+
+`DroidCustomizationEngine` (4 gates), `UpgradeService` (droid-actor record), and `CustomizationBayApp` (`actorMatchesMode`) now gate on the shared droid rules profile instead of `actor.type === 'droid'`. `follower-droid-garage-hotfix.js` no longer overrides `actor.type`; its Proxy remains only as an owner-wallet view (affordability reads the owner's credits; the commerce authority already supports wallet != asset). Runtime-only risk: `CustomizationBayApp._prepareContext` and the transaction wrapper cannot execute under Node; covered structurally and by engine-level follower tests, NOT Foundry-tested. Left unchanged on purpose: stock-conversion / reconciliation services and `droid-modification-factory`, which are about stock-imported `droid`-typed actors (a follower is never a stock import).
+
+## Clean-break stage 5 - one modifier-evidence rule; dead surfaces removed (C-3C)
+
+- `componentMayContributeDroidModifiers` is now one rule for every actor that follows Droid rules (PC droid, NPC droid, follower): only components confirmed in `system.installedSystems` contribute. Mirror-only / Item-only / legacy-mod components are present, never installed. Stock-statblock suppression is unchanged.
+- Removed after verifying no importer/template/manifest reference (static; Foundry runtime not run): `droid-builder-app.js`, `stock-droid-conversion-dialog.js` + `.hbs` + its CSS selectors + responsive-observer selector, `droid-modification-factory.js`, `droid-transaction-service.js`, `droid-slot-governance.js`, `droid-system-definitions.js`. Guards' allowlists updated; `tests/droid-dead-surface-removed.test.mjs` pins it. Historical audit ledgers under `data/audits/` still mention the old paths by design.
+- Open (unchanged): F3 zero-HP semantics (separate review, published-rules evidence required); G5 "Heuristic default" construction grants (a rules grant, not mine to consolidate without owner confirmation); 0/234 stock model entries certified; Foundry V13 runtime acceptance.

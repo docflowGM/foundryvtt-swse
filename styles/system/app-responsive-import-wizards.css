@@ -9,7 +9,6 @@
 .application.swse-shell-responsive:has(.swse-vehicle-import-wizard),
 .application.swse-shell-responsive:has(.swse-stock-droid-wizard),
 .application.swse-shell-responsive:has(.stock-droid-comparison-dialog),
-.application.swse-shell-responsive:has(.stock-droid-conversion-dialog),
 .application.swse-shell-responsive.swse-vehicle-import-wizard {
   --swse-import-gap: 6px;
   --swse-import-pad: 8px;
@@ -235,8 +234,7 @@
 /* Stock Droid Import Wizard ---------------------------------------------- */
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-stock-droid-wizard) .swse-stock-droid-wizard,
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .stock-droid-comparison-dialog,
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-conversion-dialog) .stock-droid-conversion-dialog {
+.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .stock-droid-comparison-dialog {
   min-height: 0 !important;
   height: 100% !important;
   overflow: hidden !important;
@@ -413,8 +411,7 @@
 
 /* Stock Droid Comparison / Conversion ------------------------------------ */
 
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-header,
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-conversion-dialog) .conversion-header {
+.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-header {
   flex: 0 0 auto !important;
   max-height: var(--swse-import-header-height) !important;
   min-height: 0 !important;
@@ -423,9 +420,7 @@
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-header h2,
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-header .subtitle,
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-conversion-dialog) .conversion-header h2,
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-conversion-dialog) .conversion-header .subtitle {
+.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-header .subtitle {
   min-width: 0 !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -434,9 +429,7 @@
 }
 
 .application.swse-shell-responsive.is-shell-tier-micro:has(.stock-droid-comparison-dialog) .comparison-header .subtitle,
-.application.swse-shell-responsive.is-shell-tiny:has(.stock-droid-comparison-dialog) .comparison-header .subtitle,
-.application.swse-shell-responsive.is-shell-tier-micro:has(.stock-droid-conversion-dialog) .conversion-header .subtitle,
-.application.swse-shell-responsive.is-shell-tiny:has(.stock-droid-conversion-dialog) .conversion-header .subtitle {
+.application.swse-shell-responsive.is-shell-tiny:has(.stock-droid-comparison-dialog) .comparison-header .subtitle {
   display: none !important;
 }
 
@@ -468,16 +461,14 @@
   padding: 5px !important;
 }
 
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-categories,
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-conversion-dialog) .conversion-content {
+.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-categories {
   flex: 1 1 auto !important;
   min-height: 0 !important;
   overflow-y: auto !important;
   padding: var(--swse-import-pad) !important;
 }
 
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-category,
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-conversion-dialog) .conversion-section {
+.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-category {
   margin-bottom: var(--swse-import-gap) !important;
   padding: 7px !important;
 }
@@ -495,8 +486,7 @@
   display: none !important;
 }
 
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-footer,
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-conversion-dialog) .conversion-footer {
+.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-comparison-dialog) .comparison-footer {
   flex: 0 0 auto !important;
   max-height: var(--swse-import-footer-height) !important;
   display: flex !important;
@@ -509,29 +499,12 @@
   scrollbar-width: thin;
 }
 
-.application.swse-shell-responsive.is-shell-compact:has(.stock-droid-conversion-dialog) .system-card {
-  display: grid !important;
-  grid-template-columns: minmax(0, 0.65fr) minmax(0, 1fr) !important;
-  gap: 5px !important;
-  margin-bottom: 5px !important;
-  padding: 6px !important;
-}
-
-.application.swse-shell-responsive.is-shell-short:has(.stock-droid-conversion-dialog) .source-note,
-.application.swse-shell-responsive.is-shell-short:has(.stock-droid-conversion-dialog) .confidence-note,
-.application.swse-shell-responsive.is-shell-tier-micro:has(.stock-droid-conversion-dialog) .system-confidence,
-.application.swse-shell-responsive.is-shell-tiny:has(.stock-droid-conversion-dialog) .insight-section {
-  display: none !important;
-}
-
 .application.swse-shell-responsive.is-shell-tier-micro:has(.swse-vehicle-import-wizard),
 .application.swse-shell-responsive.is-shell-tiny:has(.swse-vehicle-import-wizard),
 .application.swse-shell-responsive.is-shell-tier-micro:has(.swse-stock-droid-wizard),
 .application.swse-shell-responsive.is-shell-tiny:has(.swse-stock-droid-wizard),
 .application.swse-shell-responsive.is-shell-tier-micro:has(.stock-droid-comparison-dialog),
-.application.swse-shell-responsive.is-shell-tiny:has(.stock-droid-comparison-dialog),
-.application.swse-shell-responsive.is-shell-tier-micro:has(.stock-droid-conversion-dialog),
-.application.swse-shell-responsive.is-shell-tiny:has(.stock-droid-conversion-dialog) {
+.application.swse-shell-responsive.is-shell-tiny:has(.stock-droid-comparison-dialog) {
   --swse-import-gap: 4px;
   --swse-import-pad: 5px;
   --swse-import-header-height: 38px;

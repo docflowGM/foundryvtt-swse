@@ -41,8 +41,7 @@ const STRICT = process.argv.includes('--strict');
 const ALLOWLIST = new Set([
   'scripts/data/droid-part-schema.js',                    // canonical registry
   'scripts/data/droid-systems.js',                        // raw underlying data source the canonical registry overlays
-  'scripts/domain/droids/droid-part-schema.js',            // prerequisite/identity compatibility module (documented, unchanged in Phase 1)
-  'scripts/domain/droids/droid-system-definitions.js'      // compatibility facade merging the above + legacy catalog (documented, dormant consumers only)
+  'scripts/domain/droids/droid-part-schema.js'             // prerequisite/identity compatibility module (alias / UUID lookup; evidence now ledger-only)
 ].map(p => path.join(ROOT, p)));
 
 // Minimum number of distinct canonical ids that must co-occur as object keys

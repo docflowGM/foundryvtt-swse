@@ -24,6 +24,7 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
 import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId, resolveDroidPartQuoteDetailed, collectInstalledComponentEvidence, findConfirmedHostInstance } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { evaluateInstallationEligibility } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-eligibility.js';
 import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
 import {
@@ -66,6 +67,18 @@ function collectInstalledComponents(actor) {
     getDefinition: (id) => getDroidPartDefinition(id)
   });
   return resolution.components.filter(c => c.installed);
+}
+
+/**
+ * CONFIRMED hardware: components whose deciding (highest-precedence) evidence
+ * is a well-formed, installed `system.installedSystems` ledger record. This is
+ * the ONLY evidence that may authorize a removal or a resale credit. Mirror
+ * (`system.droidSystems`), embedded-Item and legacy-mod evidence only means the
+ * hardware is PRESENT: it still blocks a duplicate purchase (see
+ * collectInstalledComponents) but is never sellable (U-0 finding F7).
+ */
+function collectConfirmedComponents(actor) {
+  return collectInstalledComponents(actor).filter(c => c.primarySource?.kind === 'installedLedger');
 }
 
 function collectInstalledDroidPartIds(actor) {
@@ -262,6 +275,7 @@ function normalizeDroidCustomizationChangeSet(actor, changeSet = {}) {
 
   const components = collectInstalledComponents(actor);
   const installed = new Set(components.map(c => c.canonicalId));
+  const confirmed = new Set(collectConfirmedComponents(actor).map(c => c.canonicalId));
   const ledger = actor?.system?.installedSystems ?? {};
 
   const singletonAdds = new Map();
@@ -291,8 +305,13 @@ function normalizeDroidCustomizationChangeSet(actor, changeSet = {}) {
       }
       target = { id, instanceId: instance.instanceId, ledgerKey: instance.ledgerKey, hostInstanceId: instance.hostInstanceId };
     } else {
-      if (!installed.has(id)) {
-        return fail(`${humanize(id)} is not currently installed and cannot be removed.`, 'Not installed');
+      if (!confirmed.has(id)) {
+        // F7: present-but-unconfirmed hardware (mirror/Item/legacy only) is
+        // never removable and never earns resale; the Garage does not
+        // manufacture installation records to allow it.
+        return installed.has(id)
+          ? fail(`${humanize(id)} is present on this droid but has no confirmed installation record, so it cannot be removed or sold.`, 'Not confirmed installed')
+          : fail(`${humanize(id)} is not currently installed and cannot be removed.`, 'Not installed');
       }
       const instances = instancesOfPart(ledger, id).filter(i => normalizeDroidPartId(i.partId) === id);
       const unidentified = components.some(c => c.canonicalId === id && !c.instanceId);
@@ -341,7 +360,7 @@ export class DroidCustomizationEngine {
    * REUSE: Leverages canonical droid systems definitions from chargen authority
    */
   static getNormalizedDroidProfile(actor) {
-    if (!actor || actor.type !== 'droid') {
+    if (!actor || !followsDroidRules(actor)) {
       return { success: false, error: 'Not a droid actor' };
     }
 
@@ -373,7 +392,7 @@ export class DroidCustomizationEngine {
    * REUSE: Pulls from canonical DROID_SYSTEMS chargen authority
    */
   static getAvailableSystems(actor) {
-    if (!actor || actor.type !== 'droid') {
+    if (!actor || !followsDroidRules(actor)) {
       return {
         success: false,
         error: 'Not a droid actor',
@@ -440,7 +459,7 @@ export class DroidCustomizationEngine {
     const warnings = [];
     const walletActor = options.walletActor || actor;
 
-    if (!actor || actor.type !== 'droid') {
+    if (!actor || !followsDroidRules(actor)) {
       return { success: false, error: 'Not a droid actor', blockingReason: 'Invalid actor type' };
     }
 
@@ -576,7 +595,7 @@ export class DroidCustomizationEngine {
    *   debit/credit the owner instead of the droid.
    */
   static async applyDroidCustomization(actor, changeSet = {}, options = {}) {
-    if (!actor || actor.type !== 'droid') {
+    if (!actor || !followsDroidRules(actor)) {
       return { success: false, error: 'Not a droid actor' };
     }
     const walletActor = options.walletActor || actor;

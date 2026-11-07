@@ -12,6 +12,7 @@
  *   contexts without creating parallel store/progression logic.
  */
 
+import { followsDroidRules } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { DroidCustomizationEngine } from "/systems/foundryvtt-swse/scripts/engine/customization/droid-customization-engine.js";
 import { VehicleCustomizationEngine } from "/systems/foundryvtt-swse/scripts/engine/customization/vehicle-customization-engine.js";
@@ -343,7 +344,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     const config = MODE_CONFIG[this.mode] ?? MODE_CONFIG.garage;
-    const actorMatchesMode = !this.actor || this.actor.type === config.actorType;
+    const actorMatchesMode = !this.actor || (config.actorType === 'droid' ? followsDroidRules(this.actor) : this.actor.type === config.actorType);
 
     const themeKey = getActorSheetTheme(
       this.actor?.getFlag?.(SYSTEM_ID, "sheetTheme") ?? getSystemSetting("sheetTheme", undefined)

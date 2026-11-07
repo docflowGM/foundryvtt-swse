@@ -72,10 +72,17 @@ export class DroidFactory {
         });
         return this._stripDocumentIds(droidData);
       } catch (err) {
-        swseLogger.warn('DroidFactory: Stock droid normalization failed; falling back to source clone', {
+        // Clean-break (U-0 F5): a published stock droid that cannot be normalized
+        // is NEVER cloned raw. A raw clone is not in stock-statblock mode, so its
+        // baked published totals would be recalculated and its factory equipment
+        // double-counted. The purchase/creation transaction fails as a whole.
+        swseLogger.error('DroidFactory: stock droid normalization failed; refusing raw clone', {
           name: actorObj.name || actor?.name,
           error: err?.message || err
         });
+        const failure = new Error(`Stock droid "${actorObj.name || actor?.name || 'unknown'}" could not be normalized; it was not created (${err?.message || err}).`);
+        failure.code = 'STOCK_DROID_NORMALIZATION_FAILED';
+        throw failure;
       }
     }
 

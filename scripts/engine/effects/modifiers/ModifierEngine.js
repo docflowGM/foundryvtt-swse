@@ -341,7 +341,9 @@ export class ModifierEngine {
       modifiers.push(...this._safeArray(this._getWeaponModifiers(actor)));
 
       // Source 7: Droid Modifications (Phase A - droids only)
-      if (actor.type === 'droid') {
+      // Droid identity is the shared rules profile (droid-rules-profile.js),
+      // not the Foundry actor type: a droid follower is an `npc` actor.
+      if (await this._followsDroidRules(actor)) {
         modifiers.push(...this._safeArray(await this._getDroidModModifiers(actor)));
       }
 
@@ -1652,10 +1654,20 @@ export class ModifierEngine {
    * @param {Actor} actor - Must be a droid actor
    * @returns {Modifier[]}
    */
+  static async _followsDroidRules(actor) {
+    try {
+      const { followsDroidRules } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js");
+      return followsDroidRules(actor);
+    } catch (err) {
+      swseLogger.warn('[ModifierEngine] droid rules profile unavailable; treating actor as non-droid.', err);
+      return actor?.type === 'droid';
+    }
+  }
+
   static async _getDroidModModifiers(actor) {
     const modifiers = [];
 
-    if (actor.type !== 'droid') {
+    if (!(await this._followsDroidRules(actor))) {
       return modifiers;
     }
 
@@ -1673,6 +1685,8 @@ export class ModifierEngine {
       const { resolveInstalledDroidComponents } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js");
       const { getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } = await import("/systems/foundryvtt-swse/scripts/data/droid-part-schema.js");
       const { shouldSuppressComponentModifiers } = await import("/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js");
+      const { resolveDroidRulesProfile, componentMayContributeDroidModifiers } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js");
+      const rulesProfile = resolveDroidRulesProfile(actor);
 
       const canonicalTarget = (target) => {
         const raw = String(target || '').trim();
@@ -1704,6 +1718,7 @@ export class ModifierEngine {
 
       for (const component of resolution.components) {
         if (!component.active) continue;
+        if (!componentMayContributeDroidModifiers(actor, component, rulesProfile)) continue;
         if (!component.definition) {
           swseLogger.warn(`[ModifierEngine] Unresolvable droid component "${component.canonicalId}" (active in ${component.primarySource?.kind}); skipping its modifiers.`);
           continue;
