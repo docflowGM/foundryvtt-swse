@@ -49,10 +49,11 @@ export class ForceEngine {
       return { success: false, reason: 'No Force Points available' };
     }
 
-    const newFp = fpCurrent - 1;
-    await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(newFp));
-
-    return { success: true, fpRemaining: newFp };
+    // ActorEngine is authoritative for Force Point transactions and typed
+    // post-commit spend receipts. Do not write the pool independently.
+    const receipt = await ActorEngine.spendForcePoints(actor, 1);
+    if(receipt?.spent!==1)return {success:false,reason:'Force Point spend failed'};
+    return {success:true,fpRemaining:receipt.remaining};
   }
 
   /**
