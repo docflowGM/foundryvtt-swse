@@ -16,7 +16,8 @@ globalThis.game={
    sithLordTemptation:{
      open:async actor=>{calls.push(['temptation',actor.id]);return {success:true};},
      reviewConsequences:async actor=>{calls.push(['resolve',actor.id]);return {success:true};}
-   }
+   },
+   forceDiscipleProphet:{review:async actor=>{calls.push(['prophet',actor.id]);return {success:true};}}
  }}
 };
 const {HooksRegistry}=await import('/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js');
@@ -36,10 +37,10 @@ registerForceClassFeatureSheetHooks();
 HooksRegistry.register=orig;
 
 const cls=(name,id)=>({type:'class',name,system:{classId:id,level:1}});
-const actor=(classes=[],dsp=0,pending=false)=>({
+const actor=(classes=[],dsp=0,pending=false,vision=false)=>({
  documentName:'Actor',type:'character',id:'actor-1',name:'Character',
  items:classes,system:{darkSide:{value:dsp},attributes:{wis:{base:12}}},
- flags:{swse:{classFeatures:{sithLord:{
+ flags:{swse:{forceDiscipleProphetAwards:vision?{'1':{visionRequested:true,pendingGmVision:true}}:{},classFeatures:{sithLord:{
    temptationEvents:pending?[{state:'pending-target-choice',receiptId:'spent'}]:[]
  }}}},
  testUserPermission(){return true;}
@@ -51,10 +52,10 @@ test('single registration and no duplicated class controls across header calls',
  assert.equal(typeof handler,'function');
  const a=actor();
  const buttons=controls(a);
- assert.equal(buttons.length,3);
+ assert.equal(buttons.length,4);
  handler({actor:a},buttons);
  assert.equal(buttons.length,3);
- assert.equal(new Set(buttons.map(c=>c.action)).size,3);
+ assert.equal(new Set(buttons.map(c=>c.action)).size,4);
  handler({document:{documentName:'JournalEntry',id:'bad'}},buttons);
  assert.equal(buttons.length,3);
 });
@@ -89,6 +90,22 @@ test('target-owned pending consequence review appears without Sith ownership',as
  await row.handler();
  assert.deepEqual(calls.pop(),['resolve',target.id]);
  assert.equal(byName(controls(actor()),FORCE_CLASS_SHEET_ACTIONS.resolve).visible(),false);
+});
+
+test('pending Prophet vision appears only to GM on a true Force Disciple with a pending award',async()=>{
+ const disciple=actor([cls('Force Disciple','ef6fe8fdbbd884b4')],0,false,true);
+ const button=byName(controls(disciple),FORCE_CLASS_SHEET_ACTIONS.prophetVision);
+ assert.equal(button.visible(),true);
+ await button.handler();
+ assert.deepEqual(calls.pop(),['prophet',disciple.id]);
+ globalThis.game.user.isGM=false;
+ assert.equal(button.visible(),false);
+ globalThis.game.user.isGM=true;
+ assert.equal(byName(controls(actor()),FORCE_CLASS_SHEET_ACTIONS.prophetVision).visible(),false);
+ const spoof=actor([{type:'feat',name:'Force Disciple'}],0,false,true);
+ assert.equal(byName(controls(spoof),FORCE_CLASS_SHEET_ACTIONS.prophetVision).visible(),false);
+ disciple.flags.swse.forceDiscipleProphetAwards['1'].pendingGmVision=false;
+ assert.equal(button.visible(),false);
 });
 
 test('UIHooks owns registration; no parallel roll or resource mutation',()=>{
