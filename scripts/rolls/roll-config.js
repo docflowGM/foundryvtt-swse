@@ -8,6 +8,7 @@ import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/documen
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { canApplyShaperLore, shaperLoreBonus } from "/systems/foundryvtt-swse/scripts/engine/skills/class-shaper-lore.js";
+import { observedSkillBonus, hasObservedSkillTarget, soleTargetedActor } from "/systems/foundryvtt-swse/scripts/engine/combat/class-target-observation.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
@@ -1085,9 +1086,11 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
           biotechDevice:form.querySelector('[name="biotechDevice"]')?.checked === true
         })
       : 0;
-    const total = base + custom + classBonus;
+    const suspectBonus = model?.rollType === 'skill' && form.querySelector('[name="observedSuspect"]')?.checked === true
+      ? observedSkillBonus(actor, model.skillKey, soleTargetedActor()) : 0;
+    const total = base + custom + classBonus + suspectBonus;
     form.querySelector('[data-rcd-custom-bd]')?.replaceChildren(document.createTextNode(sign(custom)));
-    form.querySelector('[data-rcd-situational-bd]')?.replaceChildren(document.createTextNode(sign(classBonus)));
+    form.querySelector('[data-rcd-situational-bd]')?.replaceChildren(document.createTextNode(sign(classBonus + suspectBonus)));
     form.querySelector('[data-rcd-bd-total]')?.replaceChildren(document.createTextNode(sign(total)));
     form.querySelector('[data-rcd-preview-total]')?.replaceChildren(document.createTextNode(sign(total)));
     form.querySelector('[data-rcd-formula]')?.replaceChildren(document.createTextNode(`1d20 ${sign(total)}`));
@@ -1682,6 +1685,8 @@ export async function showRollModifiersDialog(options = {}) {
   const model = await buildRollConfigModel({ ...options, title, rollType, actor, weapon });
   const shaperLoreEligible = model.rollType === 'skill'
     && canApplyShaperLore(model.actor,model.skillKey);
+  const observedSuspectEligible = model.rollType === 'skill'
+    && hasObservedSkillTarget(model.actor, model.skillKey, soleTargetedActor());
   const abilityAccentClass = model.rollType === 'ability' && model.abilityAccentKey ? ` swse-roll-config-shell--ability swse-roll-config-ability--${model.abilityAccentKey}` : '';
   const abilityData = model.rollType === 'ability' && model.abilityAccentKey ? ` data-ability="${escapeHTML(model.abilityAccentKey)}"` : '';
   const content = `<div class="swse-roll-config-shell rcd${abilityAccentClass}"${abilityData} style="--accent-rgb:${escapeHTML(model.accentRgb)}">
@@ -1718,7 +1723,8 @@ export async function showRollModifiersDialog(options = {}) {
               <label>Custom Modifier<input type="number" name="customModifier" value="0" /></label>
               <label>Note<input type="text" name="rollNote" placeholder="Optional GM/player note" /></label>
             </div>
-            ${shaperLoreEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="biotechDevice" /> <span><b>Biotech device</b><small>Apply Shaper Lore +${shaperLoreBonus(model.actor,model.skillKey,{biotechDevice:true})} only if this check concerns a biotech device (GM adjudicated).</small></span></label>` : ''}
+            ${observedSuspectEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="observedSuspect" /> <span><b>Observed suspect</b><small>Apply Targeted Suspect +${observedSkillBonus(model.actor,model.skillKey,soleTargetedActor())} only if this check concerns your targeted, observed opponent (GM adjudicated).</small></span></label>` : ''}
+          ${shaperLoreEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="biotechDevice" /> <span><b>Biotech device</b><small>Apply Shaper Lore +${shaperLoreBonus(model.actor,model.skillKey,{biotechDevice:true})} only if this check concerns a biotech device (GM adjudicated).</small></span></label>` : ''}
             ${model.isAttackRoll ? `<div class="swse-roll-config-subpanel" data-rcd-attack-context>
               <h5>Attack Context</h5>
               ${model.attackContexts?.aim ? `<label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aim</b><small>No direct attack bonus. Enables Careful Shot/Deadeye and other Aim-gated feats/talents if you have them.</small></span></label>` : ''}
@@ -1777,6 +1783,7 @@ export async function showRollModifiersDialog(options = {}) {
               concealment,
               customModifier,
               biotechDevice: shaperLoreEligible && data.get('biotechDevice') === 'on',
+              observedSuspect: observedSuspectEligible && data.get('observedSuspect') === 'on',
               damageMode,
               stun: damageMode === 'stun',
               damageType: damageMode === 'stun' ? 'stun' : undefined,

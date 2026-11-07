@@ -228,8 +228,13 @@
     },
     "61876f91a1633cdf": {
       "name": "Enforcer",
-      "approvedFingerprint": "1814:efe24d8e68b8b351",
-      "reason": "Force Unleashed p. 44: Resources granted at level 1, then provides a per-level equipment allowance"
+      "approvedFingerprint": "2089:bb8c8bbfde24e6ac",
+      "reason": "Force Unleashed p. 44: Resources granted at level 1, then provides a per-level equipment allowance; Force Unleashed p.45: Targeted Suspect stable featureKey enforcer.targetedSuspect on the existing scaling grants"
+    },
+    "336bba6d1e517c92": {
+      "name": "Bounty Hunter",
+      "approvedFingerprint": "2248:06dd9c11a11bba94",
+      "reason": "Core p.209: Familiar Foe stable featureKey bountyHunter.familiarFoe on the existing scaling grants"
     }
   }
 }
