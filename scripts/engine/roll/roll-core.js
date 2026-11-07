@@ -3,6 +3,7 @@ import ModifierUtils from "/systems/foundryvtt-swse/scripts/engine/effects/modif
 import { buildSourceBreakdown, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { ForcePointSpendCoordinator } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-coordinator.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { serenityNatural20Eligible } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/serenity-state.js";
 
 export class RollCore {
   static async execute(options = {}) {
@@ -57,7 +58,11 @@ export class RollCore {
       const isTakeX = rollOptions.isTakeX || false;
       const takeXValue = rollOptions.takeXValue || 10;
 
-      if (isTakeX) {
+      // Serenity overrides the FIRST qualifying next-round UtF check;
+      // Take 10/20 must not silently skip consuming a natural-20 entitlement.
+      // Other rolls retain their original Take-X semantics.
+      const serenityCheck = serenityNatural20Eligible(actor, globalThis.game?.combat, domain, baseDice);
+      if (isTakeX && !serenityCheck) {
         return this._handleTakeX({ actor, domain, baseDice, baseBonus, takeXValue, modifierTotal, modifierBreakdown, modifierLedger, suppressedModifiers, context });
       }
 
@@ -85,7 +90,7 @@ export class RollCore {
 
       let roll;
       try {
-        roll = await this._executeRoll(formula, rollData);
+        roll = await this._executeRollWithSerenity(formula, rollData, actor, domain);
       } catch (err) {
         swseLogger.error(`[RollCore] Roll execution failed for domain "${domain}":`, err);
         // The Force Point (if any) was already spent to pay for forcePointBonus
@@ -166,7 +171,7 @@ export class RollCore {
       return { success: false, error: 'RollCore.executeFormula() requires a formula string', domain, context };
     }
     try {
-      const roll = await this._executeRoll(formula, rollData);
+      const roll = await this._executeRollWithSerenity(formula, rollData, actor, domain);
       const baseRoll = this._extractBaseRoll(roll, formula);
       return {
         success: true,
@@ -252,10 +257,27 @@ export class RollCore {
     return formula;
   }
 
-  static async _executeRoll(formula, rollData = {}) {
+  /**
+   * RollCore remains the single d20 execution authority for skill and
+   * attack check paths (RollEngine.safeRoll delegates through executeFormula).
+   * The Serenity service wraps only the first eligible claim; no combat
+   * caller manually fabricates a critical or check total.
+   */
+  static async _executeRollWithSerenity(formula, rollData, actor, domain) {
+    if (!serenityNatural20Eligible(actor, globalThis.game?.combat, domain, formula))
+      return this._executeRoll(formula, rollData);
+    const { JediMasterSerenityService } = await import(
+      '/systems/foundryvtt-swse/scripts/engine/combat/jedi-master-serenity-service.js'
+    );
+    return JediMasterSerenityService.roll(actor, domain, formula, ({maximize})=>
+      this._executeRoll(formula,rollData,{maximize})
+    );
+  }
+
+  static async _executeRoll(formula, rollData = {}, evaluateOptions = {}) {
     try {
       const roll = new Roll(formula, rollData);
-      await roll.evaluate();
+      await roll.evaluate(evaluateOptions);
       return roll;
     } catch (err) {
       throw new Error(`Failed to execute formula "${formula}": ${err.message}`);
