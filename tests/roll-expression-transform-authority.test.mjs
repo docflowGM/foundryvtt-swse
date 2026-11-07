@@ -380,7 +380,7 @@ ok('FORCE POINT 25: keep-highest transform construction matches ForcePointSpendC
   // 1. Structural proof: the transform-failure gate appears BEFORE the
   // spend call in source order, not after.
   const gateIndex = coordinatorSource.indexOf('transform.length > 0 && !transformLedger.some');
-  const spendIndex = coordinatorSource.indexOf('ActorEngine.spendForcePoints(actor, requested)');
+  const spendIndex = coordinatorSource.indexOf('ActorEngine.spendForcePoints(actor, requested, {deferResourceEvent:true})');
   assert.ok(gateIndex > -1, 'the transform-success gate must exist in the coordinator');
   assert.ok(spendIndex > -1, 'the spend call must exist in the coordinator');
   assert.ok(gateIndex < spendIndex, 'the transform-success gate must appear BEFORE the Force Point spend call, never after');
