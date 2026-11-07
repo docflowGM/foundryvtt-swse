@@ -130,6 +130,53 @@ export function isExplicitFearEffect(context = {}) {
   return false;
 }
 
+/**
+ * Core p. 223, Fallen Jedi: an owned Sith Apprentice retains former Jedi
+ * features EXCEPT use of powers with an explicit [Light Side] descriptor.
+ * Do not infer the descriptor from a thematic power name, help text, or
+ * the character's alignment. Tags are the live Force-power catalogue's
+ * explicit descriptors (e.g. light-side and light_side).
+ */
+export function isExplicitLightSideForcePower(power) {
+  const system = power?.system ?? {};
+  if (system.lightSideOption === true) return true;
+  const fields = [
+    system.descriptor, system.descriptors, system.tags,
+    system.keywords, system.discipline,
+  ];
+  return fields.some(field => {
+    const values = Array.isArray(field) ? field : [field];
+    return values.some(value => {
+      if (typeof value !== 'string') return false;
+      // Descriptor fields may be an array or a comma-delimited string,
+      // but arbitrary prose is never a qualifying source.
+      return value.split(',').some(token => normalize(token) === 'lightside');
+    });
+  });
+}
+
+/**
+ * This is a use-time restriction, not an inventory deletion or an entry
+ * prerequisite. Once an actor owns Sith Apprentice levels, retaining
+ * a former Jedi power never authorizes using its Light Side descriptor.
+ * DSP-based class-feature suspension does not silently restore power use.
+ */
+export function resolveFallenJediForcePowerAccess(actor, power) {
+  const apprenticeLevel = apexClassLevel(actor, 'sith_apprentice');
+  if (apprenticeLevel < 1) {
+    return { allowed: true, reason: 'not-sith-apprentice' };
+  }
+  if (!isExplicitLightSideForcePower(power)) {
+    return { allowed: true, reason: 'not-light-side-power' };
+  }
+  return {
+    allowed: false,
+    reason: 'fallen-jedi-light-side-prohibited',
+    classId: 'sith_apprentice',
+    classLevel: apprenticeLevel,
+  };
+}
+
 export function resolveApexFearImmunity(actor, context = {}) {
   if (!isExplicitFearEffect(context)) return { immune: false, reason: 'not-explicit-fear' };
   const source = apexFearlessSource(actor);
