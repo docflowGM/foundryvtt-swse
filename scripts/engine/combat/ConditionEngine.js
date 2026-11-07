@@ -157,6 +157,19 @@ export class ConditionEngine {
         throw new Error(`Invalid condition step: ${newStep}`);
       }
 
+      // Source-descriptor-only immunities: a caller must explicitly identify
+      // Fear / Mind-Affecting. Never infer immunity from a generic skill name,
+      // damage type, or an untyped narration string.
+      const {resolveForceClassTypedEffectImmunity} = await import(
+        '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-class-effect-ingress.js'
+      );
+      const immunity=resolveForceClassTypedEffectImmunity(actor,options);
+      if(immunity.immune)return {
+        success:false,reason:'Class feature immunity: '+immunity.reason,
+        immune:true,actor,oldStep:actor.system?.conditionTrack?.current??0,
+        newStep:actor.system?.conditionTrack?.current??0
+      };
+
       swseLogger.debug(`[ConditionEngine] Applying condition step change to ${actor.name}`, {
         newStep,
         options
