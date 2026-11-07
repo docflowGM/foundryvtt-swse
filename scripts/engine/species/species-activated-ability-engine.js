@@ -492,17 +492,14 @@ async function createStatusEffect(actor, data = {}) {
     }
   };
 
-  if (typeof actor?.createEmbeddedDocuments === 'function') {
-    try {
-      return ActorEngine.createActiveEffects(actor, [effectData], { source: 'SpeciesActivatedAbilityEngine.createStatusEffect' });
-    } catch (err) {
-      SWSELogger.warn?.('[SpeciesActivatedAbilityEngine] ActiveEffect creation failed; falling back to system.activeEffects.', err);
-    }
+  // V2 ActiveEffect authority: never bypass the central typed immunity gate
+  // by falling back to a legacy system.activeEffects array.
+  if (typeof actor?.createEmbeddedDocuments !== 'function') {
+    throw new Error('Species ability requires a Foundry Actor with ActiveEffect document support');
   }
-
-  const current = Array.isArray(actor.system?.activeEffects) ? [...actor.system.activeEffects] : [];
-  current.push({ enabled: true, ...data, id: data.id || `species-effect-${Date.now()}` });
-  return ActorEngine.updateActor(actor, { 'system.activeEffects': current });
+  return ActorEngine.createActiveEffects(actor, [effectData], {
+    source: 'SpeciesActivatedAbilityEngine.createStatusEffect'
+  });
 }
 
 function getForceBlastDamageDice(total) {
