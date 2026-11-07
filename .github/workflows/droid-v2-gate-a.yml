@@ -11,6 +11,8 @@ on:
       - 'tools/check-droid-*.mjs'
       - 'tools/lib/droid-explicit-action-sites.mjs'
       - 'scripts/engine/upgrades/UpgradeService.js'
+      - 'scripts/apps/follower-creator.js'
+      - 'scripts/apps/progression-framework/adapters/default-subtypes.js'
       - 'scripts/data/generated-droid-component-source-status.js'
       - 'scripts/sheets/v2/droid-actor-sheet.js'
       - 'scripts/sheets/v2/character-like-sheet.js'
@@ -68,3 +70,8 @@ jobs:
         run: |
           set -e
           node tests/droid-wave2b-installation-eligibility.test.mjs
+      - name: Droid Gate C-3A initial installation seeding
+        run: |
+          set -e
+          node tests/droid-gate-c3a-initial-installation.test.mjs
+          node tests/follower-mutation-transaction.test.mjs

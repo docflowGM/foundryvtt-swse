@@ -46,6 +46,7 @@ const ALLOWLIST = new Map([
   ['scripts/engine/customization/droid-customization-engine.js', 'THE canonical installation authority: the only post-creation writer of system.installedSystems / system.droidSystems, always through TransactionEngine.executeAssetCustomizationTransaction and ActorEngine.'],
   ['scripts/engine/upgrades/UpgradeService.js', 'SCOPED exception, verified structurally below: the Workshop routes every droid install/removal through DroidCustomizationEngine and has no droid fallback writer. Its only direct installedSystems writes are inside the vehicle-actor branches (out of scope for the droid ledger).'],
   ['scripts/apps/progression-framework/adapters/default-subtypes.js', 'one-time chargen finalization writer — seeds initial droid state, no pre-existing ledger to drift against'],
+  ['scripts/domain/droids/droid-initial-installation-service.js', 'GATE C-3A one-time CREATION writer shared by droid chargen and droid-follower creation: it finalizes the build draft together with the matching installation ledger inside the creation lifecycle\'s own mutation plan / transaction. Deterministic and idempotent, never overwrites an existing record, charges nothing, skips stock-statblock droids, and is not a purchase path (no TransactionEngine / Store).'],
   ['scripts/apps/follower-creator.js', 'one-time follower-creation writer — same reasoning as chargen finalization'],
   ['scripts/engine/import/stock-droid-importer-engine.js', 'one-time stock-droid import writer — seeds initial droid state from a published statblock'],
   ['scripts/domain/droids/droid-converted-system-reconciliation-service.js', 'PHASE 4 — narrow, reviewed exception: reconciliation finishes what the stock importer above started (mapping the same droid’s own already-imported system.droidSystems source records onto system.installedSystems), not a Garage/Workshop purchase — it charges no credits and must NOT route through DroidCustomizationEngine.applyDroidCustomization(), which is purchase/credit-transaction machinery reconciliation has no business triggering. See docs/audits/droid-converted-system-reconciliation-phase-4.md for the full reasoning; enforced as its own single-authority surface by tools/check-droid-reconciliation-authority.mjs.'],
@@ -79,7 +80,9 @@ function findAssignmentTargets(source) {
 // An allowlisted file whose write is NOT the literal 'system.x': key shape must
 // say exactly how it writes, so the entry cannot silently go stale.
 const WRITE_EVIDENCE = new Map([
-  [path.join(ROOT, 'scripts/engine/import/stock-droid-importer-engine.js'), /^\s*droidSystems,\s*$/m]
+  [path.join(ROOT, 'scripts/engine/import/stock-droid-importer-engine.js'), /^\s*droidSystems,\s*$/m],
+  // Chargen no longer writes the keys itself: it delegates to the creation service above.
+  [path.join(ROOT, 'scripts/apps/progression-framework/adapters/default-subtypes.js'), /applyInitialInstallationToPlan\(\s*mutationPlan/]
 ]);
 
 const SCOPED_ALLOWANCES = new Map([

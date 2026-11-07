@@ -13,6 +13,7 @@
  * Phase 3: Integrated as a DEPENDENT participant through the progression spine.
  */
 
+import { resolveFollowerDroidInstallation } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-initial-installation-service.js';
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -922,7 +923,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
 
         if (persistentChoices.droidConfig?.isDroid) {
             const droidConfig = persistentChoices.droidConfig;
-            const droidSystems = this._resolveFollowerDroidSystems(droidConfig);
+            const { draft: draftDroidSystems, droidSystems, installedSystems } = this._resolveFollowerDroidInstallation(follower, droidConfig);
             const droidCredits = this._resolveFollowerDroidCredits(persistentChoices, droidConfig);
             materialUpdates['system.isDroid'] = true;
             materialUpdates['system.noConstitution'] = true;
@@ -931,8 +932,9 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             materialUpdates['system.speed'] = droidConfig.speed || 6;
             materialUpdates['system.movement.walk'] = droidConfig.speed || 6;
             materialUpdates['system.droidSystems'] = droidSystems;
+            if (installedSystems) materialUpdates['system.installedSystems'] = installedSystems;
             materialUpdates['system.droidCredits'] = droidCredits;
-            materialUpdates['system.progression.droidConfig.droidSystems'] = droidSystems;
+            materialUpdates['system.progression.droidConfig.droidSystems'] = draftDroidSystems;
             materialUpdates['system.progression.droidConfig.droidCredits'] = droidCredits;
             materialUpdates['system.progression.droidConfig.spentCredits'] = droidCredits.spent;
             materialUpdates['system.progression.droidConfig.lostCredits'] = droidCredits.lost;
@@ -1239,6 +1241,19 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      */
     static _resolveFollowerDroidSystems(droidConfig = {}) {
         return resolveFollowerDroidSystems(droidConfig);
+    }
+
+    /**
+     * GATE C-3A: the follower's finalized droid build plus the authoritative
+     * installation ledger it implies. Deterministic (seeded by the follower id),
+     * so the materialize and update steps, retries and recovery all write the
+     * same identities. Not a purchase. Throws before the step writes anything if
+     * a selection cannot be mapped to a source-cleared component, which the
+     * follower mutation transaction rolls back like any other step failure.
+     * @private
+     */
+    static _resolveFollowerDroidInstallation(follower, droidConfig = {}) {
+        return resolveFollowerDroidInstallation(follower, droidConfig);
     }
 
     /** @private */
@@ -1548,7 +1563,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
 
             if (persistentChoices?.droidConfig?.isDroid) {
                 const droidConfig = persistentChoices.droidConfig;
-                const droidSystems = this._resolveFollowerDroidSystems(droidConfig);
+                const { draft: draftDroidSystems, droidSystems, installedSystems } = this._resolveFollowerDroidInstallation(follower, droidConfig);
                 const droidCredits = this._resolveFollowerDroidCredits(persistentChoices, droidConfig);
                 updateData['system.isDroid'] = true;
                 updateData['system.noConstitution'] = true;
@@ -1557,10 +1572,11 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 updateData['system.speed'] = droidConfig.speed || 6;
                 updateData['system.movement.walk'] = droidConfig.speed || 6;
                 updateData['system.droidSystems'] = droidSystems;
+                if (installedSystems) updateData['system.installedSystems'] = installedSystems;
                 updateData['system.droidCredits'] = droidCredits;
                 updateData['system.progression.droidConfig'] = {
                     ...droidConfig,
-                    droidSystems,
+                    droidSystems: draftDroidSystems,
                     droidCredits,
                     spentCredits: droidCredits.spent,
                     lostCredits: droidCredits.lost
