@@ -119,3 +119,51 @@ export class JediMasterSerenityService{
     });
   }
 }
+
+/**
+ * GM-only cleanup. The eligibility resolver already fails closed on a
+ * missing/stale encounter, but persisted temporary state must also be
+ * cleared so an abandoned trance never reappears after reload.
+ */
+function serenityActors(combat=null){
+  const actors=[
+    ...Array.from(globalThis.game?.actors??[]),
+    ...Array.from(combat?.combatants??[]).map(c=>c.actor).filter(Boolean),
+    ...Array.from(globalThis.canvas?.tokens?.placeables??[]).map(t=>t.actor).filter(Boolean)
+  ];
+  return [...new Map(actors.filter(Boolean).map(a=>[actorKey(a),a])).values()];
+}
+async function expireSerenityForCombat(combatId,{round=null,onlyPastRound=false}={}){
+  if(globalThis.game?.user?.isGM!==true)return;
+  if(!combatId)return;
+  for(const actor of serenityActors(globalThis.game?.combats?.get?.(combatId)??null)){
+    const s=readSerenityState(actor);
+    if(s?.encounterId!==combatId||s.phase==='expired'||s.phase==='consumed')continue;
+    if(onlyPastRound && !(s.phase==='prepared'&&Number(round)>Number(s.eligibleRound)))continue;
+    try{
+      await locked(actor,()=>ActorEngine.applyMutationPlan(actor,{
+        set:{[SERENITY_PATH]:{...s,phase:'expired',expired:true}}
+      },{source:'JediMasterSerenityService.expire',transactional:true}));
+    }catch(error){
+      globalThis.ui?.notifications?.error?.('Serenity cleanup requires GM review: '+error.message);
+    }
+  }
+}
+export function registerJediMasterSerenityCleanup(){
+  if(!globalThis.Hooks?.on)return;
+  globalThis.Hooks.on('deleteCombat',combat=>expireSerenityForCombat(combat?.id));
+  globalThis.Hooks.on('updateCombat',(combat,changes)=>{
+    if(changes?.started===false)return expireSerenityForCombat(combat?.id);
+  });
+  globalThis.Hooks.on('combatRound',combat=>
+    expireSerenityForCombat(combat?.id,{round:combat?.round,onlyPastRound:true})
+  );
+  globalThis.Hooks.once?.('ready',()=>{
+    if(globalThis.game?.user?.isGM!==true)return;
+    const active=new Set(Array.from(globalThis.game?.combats??[])
+      .filter(c=>c?.started===true).map(c=>c.id));
+    const stale=new Set(serenityActors().map(a=>readSerenityState(a)?.encounterId)
+      .filter(id=>id&&!active.has(id)));
+    for(const id of stale)expireSerenityForCombat(id);
+  });
+}
