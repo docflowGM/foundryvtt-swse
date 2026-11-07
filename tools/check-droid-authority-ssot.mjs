@@ -27,7 +27,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { DROID_SYSTEMS } from '../scripts/data/droid-systems.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -48,7 +48,7 @@ const ALLOWLIST = new Set([
 // Minimum number of distinct canonical ids that must co-occur as object keys
 // in a single file before it looks like a competing part-rule table rather
 // than a file that merely references one or two ids in passing.
-const MIN_MATCHING_KEYS = 3;
+export const MIN_MATCHING_KEYS = 3;
 
 // Locomotion-mode vocabulary ("wheeled", "tracked", ...) is legitimately
 // shared between the droid and vehicle domains in SWSE — vehicles have their
@@ -93,7 +93,7 @@ function collectSchemaOverlayIds() {
   return ids;
 }
 
-function collectCanonicalIds() {
+export function collectCanonicalIds() {
   const ids = new Set();
   const visit = (node) => {
     if (Array.isArray(node)) {
@@ -134,14 +134,30 @@ function walk(dir, out = []) {
 // only count identifiers actually used AS OBJECT KEYS, not id strings that
 // merely appear somewhere in a file (e.g. inside a comment or an unrelated
 // string literal).
-function objectKeysIn(source) {
+//
+// An entry whose VALUE is nothing but a bare identifier string
+// (`'old-id': 'canonical-id',`) is an IDENTITY ALIAS, not a part rule: it
+// cannot carry a price, mass, modifier or behavior, so it is not counted.
+// A real competing rule table has object, function, numeric or prose values
+// and is still counted. This narrows what counts as evidence; it exempts no
+// file and no directory.
+const ALIAS_VALUE = /^\s*(['"])[a-z0-9_-]+\1\s*,?\s*(?:\/\/.*)?$/;
+
+export function objectKeysIn(source) {
   const keys = new Set();
-  const pattern = /(?:^|[{,\n])\s*(?:['"]([a-zA-Z0-9_-]+)['"]|([a-zA-Z_$][a-zA-Z0-9_$]*))\s*:/g;
+  const pattern = /(?:^|[{,\n])\s*(?:['"]([a-zA-Z0-9_-]+)['"]|([a-zA-Z_$][a-zA-Z0-9_$]*))\s*:([^\n]*)/g;
   let match;
   while ((match = pattern.exec(source))) {
+    if (ALIAS_VALUE.test(match[3] ?? '')) continue;
     keys.add(slug(match[1] ?? match[2]));
   }
   return keys;
+}
+
+/** Canonical ids used as non-alias object keys in `source` (pure; for tests). */
+export function competingRuleKeys(source, canonicalIds) {
+  const ids = canonicalIds instanceof Set ? canonicalIds : new Set(canonicalIds);
+  return [...objectKeysIn(source)].filter(key => ids.has(key));
 }
 
 function main() {
@@ -152,8 +168,7 @@ function main() {
   for (const file of files) {
     if (ALLOWLIST.has(file)) continue;
     const source = fs.readFileSync(file, 'utf8');
-    const keys = objectKeysIn(source);
-    const matches = [...keys].filter(key => canonicalIds.has(key));
+    const matches = competingRuleKeys(source, canonicalIds);
     if (matches.length >= MIN_MATCHING_KEYS) {
       violations.push({ file: path.relative(ROOT, file), matches });
     }
@@ -186,4 +201,4 @@ function main() {
   process.exit(STRICT ? 1 : 0);
 }
 
-main();
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) main();

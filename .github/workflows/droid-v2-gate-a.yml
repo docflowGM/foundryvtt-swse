@@ -8,6 +8,12 @@ on:
       - 'scripts/engine/customization/droid-customization-engine.js'
       - 'scripts/apps/progression-framework/steps/droid-builder*.js'
       - 'tests/droid-*.test.mjs'
+      - 'tools/check-droid-*.mjs'
+      - 'tools/lib/droid-explicit-action-sites.mjs'
+      - 'scripts/engine/upgrades/UpgradeService.js'
+      - 'scripts/sheets/v2/droid-actor-sheet.js'
+      - 'scripts/sheets/v2/character-like-sheet.js'
+      - 'scripts/sheets/v2/droid-sheet/**'
       - '.github/workflows/droid-v2-gate-a.yml'
   push:
     branches:
@@ -42,3 +48,18 @@ jobs:
           set -e
           node tests/droid-customization-exploit.test.mjs
           node tests/customization-bay-foundation-contract.test.mjs
+      - name: Droid strict authority guards (enforced, --strict)
+        run: |
+          set -e
+          node tools/check-droid-authority-ssot.mjs --strict
+          node tools/check-droid-calculation-mode-authority.mjs --strict
+          node tools/check-droid-reconciliation-authority.mjs --strict
+          node tools/check-droid-installation-write-authority.mjs --strict
+          node tests/droid-strict-authority-guards.test.mjs
+      - name: Droid Gate C-1 appendage identity
+        run: |
+          set -e
+          node tests/droid-appendage-instance-identity.test.mjs
+          node tests/droid-gate-c1-appendage-instances.test.mjs
+          node tests/droid-gate-c1-sheet-rows.test.mjs
+          node tests/droid-gate-c1-workshop-removal.test.mjs

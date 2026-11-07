@@ -49,7 +49,8 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { checkApprovedHandlerCalls, checkHandlerDispatch, hasServiceCall } from './lib/droid-explicit-action-sites.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,12 +64,18 @@ const COMBAT_ROLL_MATH = path.join(ROOT, 'scripts/engine/combat/combat-roll-math
 const DROID_ACTOR = path.join(ROOT, 'scripts/actors/v2/droid-actor.js');
 const STOCK_IMPORTER = path.join(ROOT, 'scripts/engine/import/stock-droid-importer-engine.js');
 const CHARACTER_SHEET = path.join(ROOT, 'scripts/sheets/v2/character-sheet.js');
+// The registered live V2 droid sheet (index.js) owns the explicit handler; the
+// shared sheet base delegates the button click to it.
+const DROID_SHEET = path.join(ROOT, 'scripts/sheets/v2/droid-actor-sheet.js');
+const SHEET_DISPATCH = path.join(ROOT, 'scripts/sheets/v2/character-like-sheet.js');
+const CONVERT_HANDLERS = ['_convertDroidToPlayable'];
 
 // Files allowed to assign system.droidCalculationMode directly.
 const CALCULATION_MODE_WRITE_ALLOWLIST = new Set([STOCK_IMPORTER, CONVERSION_SERVICE]);
 
-// Files allowed to call convertToPlayableDerived(...).
-const CONVERT_CALL_ALLOWLIST = new Set([CHARACTER_SHEET, CONVERSION_SERVICE]);
+// convertToPlayableDerived(...) may be CALLED only inside the named,
+// confirmation-gated handler of the live droid sheet (verified structurally by
+// tools/lib/droid-explicit-action-sites.mjs), never by a whole-file allowance.
 
 // Files allowed to reference stockDroidAttack.publishedAttackTotal at all
 // (reading it for display/inspection/import is fine; only combat-roll-math.js
@@ -97,6 +104,11 @@ function walk(dir, out = []) {
   return out;
 }
 
+/** A vehicle-domain file naming the field only as its own record field (never the droid flag). Pure; exported for tests. */
+export function isVehicleRecordFieldOnly(relPath, source) {
+  return /vehicle/i.test(relPath) && !source.includes('stockDroidAttack');
+}
+
 function read(file) {
   return fs.readFileSync(file, 'utf8');
 }
@@ -123,6 +135,11 @@ function main() {
     const referencesDamage = source.includes('publishedDamage');
     if (!referencesAttackTotal && !referencesDamage) continue;
     if (STOCK_ATTACK_TOTAL_READ_ALLOWLIST.has(file)) continue;
+    // A VEHICLE-domain file that names the field only as its own record field
+    // (e.g. a preserved-field list in the vehicle import normalizer) is not a
+    // droid attack path. It stays a violation the moment it touches the droid
+    // flag (`stockDroidAttack`).
+    if (isVehicleRecordFieldOnly(path.relative(ROOT, file), source)) continue;
     const field = referencesAttackTotal ? 'publishedAttackTotal' : 'publishedDamage';
     violations.push({ check: '3: stock attack routing', file: path.relative(ROOT, file), detail: `references stockDroidAttack.${field} outside the approved read/write sites — a second attack/damage-math path may have been introduced` });
   }
@@ -133,13 +150,31 @@ function main() {
     violations.push({ check: '4: stock-total preservation seam', file: path.relative(ROOT, DROID_ACTOR), detail: 'computeDroidDerived() must call both isDroidStatblockMode() and computeStatblockDerivedOverrides()' });
   }
 
-  // Check 5: convertToPlayableDerived() call sites.
-  const convertCallPattern = /\bconvertToPlayableDerived\s*\(/;
+  // Check 5: convertToPlayableDerived() call sites. Only the live droid sheet's
+  // explicit, confirmation-gated handler may call it, and that handler may only
+  // be reached from the delegated click on its data-action button.
+  const CONVERT_CALLS = ['convertToPlayableDerived'];
   for (const file of files) {
     if (file === CONVERSION_SERVICE) continue; // definition site, not a call
     const source = read(file);
-    if (convertCallPattern.test(source) && !CONVERT_CALL_ALLOWLIST.has(file)) {
-      violations.push({ check: '5: no automatic conversion', file: path.relative(ROOT, file), detail: 'calls convertToPlayableDerived() outside the approved explicit-action call site' });
+    const rel = path.relative(ROOT, file);
+    if (hasServiceCall(source, CONVERT_CALLS)) {
+      if (file === DROID_SHEET) {
+        for (const problem of checkApprovedHandlerCalls(source, { callNames: CONVERT_CALLS, approvedMethods: CONVERT_HANDLERS }).problems) {
+          violations.push({ check: '5: no automatic conversion', file: rel, detail: problem });
+        }
+      } else {
+        violations.push({ check: '5: no automatic conversion', file: rel, detail: 'calls convertToPlayableDerived() outside the approved explicit-action handler' });
+      }
+    }
+    if (CONVERT_HANDLERS.some(name => source.includes(`${name}(`)) && file !== DROID_SHEET) {
+      if (file === SHEET_DISPATCH) {
+        for (const problem of checkHandlerDispatch(source, CONVERT_HANDLERS).problems) {
+          violations.push({ check: '5: no automatic conversion', file: rel, detail: problem });
+        }
+      } else {
+        violations.push({ check: '5: no automatic conversion', file: rel, detail: 'invokes the conversion handler outside the delegated click dispatch' });
+      }
     }
   }
 
@@ -181,4 +216,4 @@ function main() {
   process.exit(STRICT ? 1 : 0);
 }
 
-main();
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) main();

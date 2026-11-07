@@ -28,7 +28,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,8 +43,8 @@ const STRICT = process.argv.includes('--strict');
 // through the canonical authority as its primary path — see the comment at
 // its call site).
 const ALLOWLIST = new Map([
-  ['scripts/engine/customization/droid-customization-engine.js', 'canonical installation authority'],
-  ['scripts/engine/upgrades/UpgradeService.js', 'routes through DroidCustomizationEngine as its primary path; this file\'s only direct installedSystems write is a documented fallback for a droid system id that does not resolve against the canonical registry, plus the (out-of-scope) vehicle-actor branch'],
+  ['scripts/engine/customization/droid-customization-engine.js', 'THE canonical installation authority: the only post-creation writer of system.installedSystems / system.droidSystems, always through TransactionEngine.executeAssetCustomizationTransaction and ActorEngine.'],
+  ['scripts/engine/upgrades/UpgradeService.js', 'SCOPED exception, verified structurally below: the Workshop routes every droid install/removal through DroidCustomizationEngine and has no droid fallback writer. Its only direct installedSystems writes are inside the vehicle-actor branches (out of scope for the droid ledger).'],
   ['scripts/apps/progression-framework/adapters/default-subtypes.js', 'one-time chargen finalization writer — seeds initial droid state, no pre-existing ledger to drift against'],
   ['scripts/apps/follower-creator.js', 'one-time follower-creation writer — same reasoning as chargen finalization'],
   ['scripts/engine/import/stock-droid-importer-engine.js', 'one-time stock-droid import writer — seeds initial droid state from a published statblock'],
@@ -76,6 +76,40 @@ function findAssignmentTargets(source) {
   return [...fields];
 }
 
+// An allowlisted file whose write is NOT the literal 'system.x': key shape must
+// say exactly how it writes, so the entry cannot silently go stale.
+const WRITE_EVIDENCE = new Map([
+  [path.join(ROOT, 'scripts/engine/import/stock-droid-importer-engine.js'), /^\s*droidSystems,\s*$/m]
+]);
+
+const SCOPED_ALLOWANCES = new Map([
+  [path.join(ROOT, 'scripts/engine/upgrades/UpgradeService.js'), 'vehicle-actor-']
+]);
+
+/**
+ * For a file whose allowance is scoped to ONE actor-kind branch: every direct
+ * installedSystems/droidSystems assignment must be inside that branch (the
+ * nearest preceding `startsWith('<kind>')` test). Returns the offending
+ * assignment descriptions. Pure; exported for tests.
+ */
+export function writesOutsideBranch(source, branchPrefix) {
+  const offenders = [];
+  const pattern = new RegExp(TARGET_FIELD_PATTERN.source, 'g');
+  let match;
+  while ((match = pattern.exec(source))) {
+    const before = source.slice(0, match.index);
+    const branches = [...before.matchAll(/startsWith\(\s*'([^']+)'\s*\)/g)];
+    const nearest = branches.length ? branches[branches.length - 1][1] : null;
+    if (nearest !== branchPrefix) {
+      offenders.push(`${match[1] ?? match[2]} written ${nearest ? `in the "${nearest}" branch` : 'outside any actor-kind branch'}`);
+    }
+  }
+  return offenders;
+}
+
+/** Minimum length of a documented justification for an allowlist entry. */
+const MIN_REASON_LENGTH = 60;
+
 function isVehicleOnlyFile(relPath) {
   return /vehicle/i.test(relPath);
 }
@@ -93,6 +127,31 @@ function main() {
     if (targets.length === 0) continue;
     if (reason) continue;
     violations.push({ file: relPath, targets });
+  }
+
+  // Every exception needs narrowly documented evidence: a real justification,
+  // an existing file that still performs such a write (no stale entries), and,
+  // where scoped, writes confined to the declared branch.
+  for (const [file, reason] of ALLOWLIST) {
+    const relPath = path.relative(ROOT, file);
+    if (reason.length < MIN_REASON_LENGTH) {
+      violations.push({ file: relPath, targets: ['allowlist entry has no documented justification'] });
+    }
+    if (!fs.existsSync(file)) {
+      violations.push({ file: relPath, targets: ['stale allowlist entry: file no longer exists'] });
+      continue;
+    }
+    const source = fs.readFileSync(file, 'utf8');
+    const evidence = WRITE_EVIDENCE.get(file);
+    if (findAssignmentTargets(source).length === 0 && !(evidence && evidence.test(source))) {
+      violations.push({ file: relPath, targets: ['stale allowlist entry: file no longer writes droid installation state'] });
+    }
+    const scope = SCOPED_ALLOWANCES.get(file);
+    if (scope) {
+      for (const offender of writesOutsideBranch(source, scope)) {
+        violations.push({ file: relPath, targets: [offender] });
+      }
+    }
   }
 
   console.log('='.repeat(72));
@@ -120,4 +179,4 @@ function main() {
   process.exit(STRICT ? 1 : 0);
 }
 
-main();
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) main();
