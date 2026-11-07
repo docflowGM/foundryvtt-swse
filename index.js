@@ -39,6 +39,7 @@ import { openEnforcerResourceDelivery } from "./scripts/apps/enforcer-resource-d
 import { openOfficerShareTalentAction } from "./scripts/apps/officer-share-talent-dialog.js";
 import { openJediMasterSerenity } from "./scripts/apps/jedi-master-serenity-dialog.js";
 import { openSithLordTemptation, reviewSithLordTemptationConsequences } from "./scripts/apps/sith-lord-temptation-dialog.js";
+import { openProphetGmVisionReview } from "./scripts/apps/force-disciple-prophet-review-dialog.js";
 import { registerOfficerShareTalentCleanup } from "./scripts/engine/combat/officer-share-talent-service.js";
 import { registerJediMasterSerenityCleanup } from "./scripts/engine/combat/jedi-master-serenity-service.js";
 import { registerSithLordTemptationHooks } from "./scripts/engine/combat/sith-lord-temptation-service.js";
@@ -146,7 +147,8 @@ Hooks.once("init", async () => {
       sithLordTemptation: {
         open: openSithLordTemptation,
         reviewConsequences: reviewSithLordTemptationConsequences
-      }
+      },
+      forceDiscipleProphet: { review: openProphetGmVisionReview }
     }
   };
 
