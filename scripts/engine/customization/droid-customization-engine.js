@@ -25,6 +25,10 @@ import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
 import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
 import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
+import {
+  appendageMirrorBucket, auditAppendageMirror, dependentsOfInstance, findInstance, instancesOfPart, isPhysicalAppendageDefinition,
+  ledgerKeyForInstance, mintInstanceId, mintLocationId, takenIdentities
+} from '/systems/foundryvtt-swse/scripts/domain/droids/droid-appendage-instance.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 
 
@@ -55,12 +59,69 @@ function normalizedCredits(actor) {
  * check agrees with the sheet and with ModifierEngine (PHASE 1 — Droid
  * Authority Consolidation).
  */
-function collectInstalledDroidPartIds(actor) {
+function collectInstalledComponents(actor) {
   const resolution = resolveInstalledDroidComponents(actor, {
     normalizeId: normalizeDroidPartId,
     getDefinition: (id) => getDroidPartDefinition(id)
   });
-  return new Set(resolution.components.filter(c => c.installed).map(c => c.canonicalId));
+  return resolution.components.filter(c => c.installed);
+}
+
+function collectInstalledDroidPartIds(actor) {
+  return new Set(collectInstalledComponents(actor).map(c => c.canonicalId));
+}
+
+function definitionFor(systemId) {
+  const id = normalizeDroidPartId(systemId);
+  return getAllDroidPartDefinitions().find(def => normalizeDroidPartId(def.id) === id || normalizeDroidPartId(def.name) === id) ?? null;
+}
+
+function cleanIdentity(value) {
+  const text = String(value ?? '').trim();
+  return text || null;
+}
+
+/**
+ * Published appendage kinds a component must be fitted to (Gate A typed
+ * prerequisite `requiresAppendage`). The TYPE compatibility decision itself
+ * stays in droid-component-prerequisites.js; this only says whether a host
+ * must be selected at all.
+ */
+function requiredHostTypes(definition) {
+  const raw = definition?.source?.requiresAppendage;
+  return (Array.isArray(raw) ? raw : raw == null ? [] : [raw])
+    .map(value => String(value ?? '').trim().toLowerCase())
+    .filter(Boolean);
+}
+
+/**
+ * Resolve the appendage instance a component is to be fitted to, from the
+ * installation LEDGER (the display mirror is never consulted for identity).
+ * Returns the `selectedAppendage` the shared quote/prerequisite authority
+ * consumes. A price is not an installation permit: this only identifies the
+ * host; the typed prerequisites still decide whether it is an allowed one.
+ */
+function resolveHostForPart(actor, definition, hostInstanceId) {
+  const types = requiredHostTypes(definition);
+  const hostId = cleanIdentity(hostInstanceId);
+  if (!types.length) {
+    if (hostId) {
+      return { success: false, error: `${definition?.name ?? 'This component'} does not attach to a selected appendage.`, blockingReason: 'Host binding not supported' };
+    }
+    return { success: true, selectedAppendage: null, host: null };
+  }
+  if (!hostId) {
+    return { success: false, error: `Select the installed ${types.join(' or ')} appendage ${definition?.name ?? 'this component'} is fitted to.`, blockingReason: 'Host appendage required' };
+  }
+  const host = findInstance(actor?.system?.installedSystems, hostId);
+  if (!host) {
+    return { success: false, error: 'The selected appendage is not installed on this droid.', blockingReason: 'Host appendage not installed' };
+  }
+  return {
+    success: true,
+    host,
+    selectedAppendage: { id: normalizeDroidPartId(host.partId), instanceId: host.instanceId }
+  };
 }
 
 function hasBackupProcessorSlot(actor) {
@@ -73,8 +134,12 @@ function isPrimaryProcessor(def) {
 }
 
 function droidPartEntry(def, actor, extra = {}) {
-  const hydrated = hydrateDroidPart(def, { actor, installedIds: Array.from(collectInstalledDroidPartIds(actor)) });
-  const cost = computeDroidPartCost(actor, hydrated, extra);
+  // `selectedAppendage` is a quote/prerequisite INPUT (Gate A typed host), not
+  // part data: it is forwarded to the shared authority and never spread into
+  // the returned entry or the ledger payload.
+  const { selectedAppendage = null, ...entryExtra } = extra;
+  const hydrated = hydrateDroidPart(def, { actor, installedIds: Array.from(collectInstalledDroidPartIds(actor)), selectedAppendage });
+  const cost = computeDroidPartCost(actor, hydrated, { selectedAppendage });
   const quoteBlocked = hydrated.quoteStatus !== 'OK' || !Number.isFinite(cost) || cost < 0;
   return {
     id: normalizeDroidPartId(hydrated.ruleId ?? hydrated.id),
@@ -98,8 +163,26 @@ function droidPartEntry(def, actor, extra = {}) {
     restrictions: hydrated.restrictions ?? [],
     weaponProfile: hydrated.weaponProfile ?? null,
     rules: hydrated.rules ?? {},
-    ...extra
+    ...entryExtra
   };
+}
+
+function fail(error, blockingReason) {
+  return { success: false, error, blockingReason, add: [], remove: [], addSpecs: [], removeSpecs: [] };
+}
+
+function parseAddSpec(raw) {
+  if (raw && typeof raw === 'object') {
+    return { id: normalizeDroidPartId(raw.id ?? raw.name), hostInstanceId: cleanIdentity(raw.hostInstanceId) };
+  }
+  return { id: normalizeDroidPartId(raw), hostInstanceId: null };
+}
+
+function parseRemoveSpec(raw) {
+  if (raw && typeof raw === 'object') {
+    return { id: normalizeDroidPartId(raw.id ?? raw.name), instanceId: cleanIdentity(raw.instanceId) };
+  }
+  return { id: normalizeDroidPartId(raw), instanceId: null };
 }
 
 /**
@@ -109,9 +192,20 @@ function droidPartEntry(def, actor, extra = {}) {
  * nothing), repeat the same removal id to multiply resale, or request the
  * same id in both `add` and `remove`.
  *
+ * GATE C-1: entries are either a part id string (the original contract) or an
+ * object. `add` objects may name the appendage a component is fitted to
+ * (`{ id, hostInstanceId }`); `remove` objects name ONE physical instance
+ * (`{ id, instanceId }`). A bare part id that matches more than one physical
+ * instance is ambiguous and is refused rather than guessed, and a host with
+ * fitted components cannot be removed from under them.
+ *
+ * Every physical appendage the droid already has is irrelevant to a new
+ * purchase of that kind (Core p.190: any number of appendages); every other
+ * component keeps the one-per-droid "already installed" rule.
+ *
  * @param {Actor} actor
- * @param {{add?: string[], remove?: string[]}} changeSet
- * @returns {{success: boolean, error?: string, blockingReason?: string, add: string[], remove: string[]}}
+ * @param {{add?: Array<string|{id:string,hostInstanceId?:string}>, remove?: Array<string|{id:string,instanceId?:string}>}} changeSet
+ * @returns {{success: boolean, error?: string, blockingReason?: string, add: string[], remove: string[], addSpecs: object[], removeSpecs: object[]}}
  */
 function normalizeDroidCustomizationChangeSet(actor, changeSet = {}) {
   const rawAdd = Array.isArray(changeSet.add) ? changeSet.add : [];
@@ -119,28 +213,109 @@ function normalizeDroidCustomizationChangeSet(actor, changeSet = {}) {
 
   // Deduplicate each list independently (order-preserving) before any
   // cross-list or installed-state check runs.
-  const add = [...new Set(rawAdd.map(id => normalizeDroidPartId(id)))];
-  const remove = [...new Set(rawRemove.map(id => normalizeDroidPartId(id)))];
+  const addSpecs = [];
+  const seenAdd = new Set();
+  for (const spec of rawAdd.map(parseAddSpec)) {
+    const key = `${spec.id}|${spec.hostInstanceId ?? ''}`;
+    if (seenAdd.has(key)) continue;
+    seenAdd.add(key);
+    addSpecs.push(spec);
+  }
+  const removeRequests = [];
+  const seenRemoveRequest = new Set();
+  for (const spec of rawRemove.map(parseRemoveSpec)) {
+    const key = `${spec.id}|${spec.instanceId ?? ''}`;
+    if (seenRemoveRequest.has(key)) continue;
+    seenRemoveRequest.add(key);
+    removeRequests.push(spec);
+  }
 
-  const overlap = add.find(id => remove.includes(id));
+  const overlap = addSpecs.find(spec => removeRequests.some(r => r.id === spec.id));
   if (overlap) {
-    return { success: false, error: `"${overlap}" cannot be both added and removed in the same request.`, blockingReason: 'Conflicting add/remove request', add: [], remove: [] };
+    return fail(`"${overlap.id}" cannot be both added and removed in the same request.`, 'Conflicting add/remove request');
   }
 
-  const installed = collectInstalledDroidPartIds(actor);
+  // A droid whose instance records disagree with their display mirror is
+  // mutated by nothing until it is reconciled: writing on top would hide the
+  // disagreement.
+  const mirrorProblems = auditAppendageMirror(actor?.system?.installedSystems, actor?.system?.droidSystems);
+  if (mirrorProblems.length) {
+    return fail(`Appendage records disagree (${mirrorProblems.map(p => p.code).join(', ')}); reconcile them before customizing this droid.`, 'Inconsistent appendage records');
+  }
 
-  for (const id of add) {
-    if (installed.has(id)) {
-      return { success: false, error: `${humanize(id)} is already installed and cannot be purchased again.`, blockingReason: 'Already installed', add: [], remove: [] };
+  const components = collectInstalledComponents(actor);
+  const installed = new Set(components.map(c => c.canonicalId));
+  const ledger = actor?.system?.installedSystems ?? {};
+
+  const singletonAdds = new Map();
+  for (const spec of addSpecs) {
+    const definition = definitionFor(spec.id);
+    const physical = Boolean(definition) && isPhysicalAppendageDefinition(definition);
+    if (!physical) {
+      if (installed.has(spec.id)) {
+        return fail(`${humanize(spec.id)} is already installed and cannot be purchased again.`, 'Already installed');
+      }
+      singletonAdds.set(spec.id, (singletonAdds.get(spec.id) ?? 0) + 1);
+      if (singletonAdds.get(spec.id) > 1) {
+        return fail(`${humanize(spec.id)} can be installed only once; it is requested more than once in this change.`, 'Already installed');
+      }
     }
   }
-  for (const id of remove) {
-    if (!installed.has(id)) {
-      return { success: false, error: `${humanize(id)} is not currently installed and cannot be removed.`, blockingReason: 'Not installed', add: [], remove: [] };
+
+  const removeSpecs = [];
+  const seenTargets = new Set();
+  for (const request of removeRequests) {
+    const id = request.id;
+    let target;
+    if (request.instanceId) {
+      const instance = findInstance(ledger, request.instanceId);
+      if (!instance || normalizeDroidPartId(instance.partId) !== id) {
+        return fail(`${humanize(id)} (${request.instanceId}) is not currently installed and cannot be removed.`, 'Not installed');
+      }
+      target = { id, instanceId: instance.instanceId, ledgerKey: instance.ledgerKey, hostInstanceId: instance.hostInstanceId };
+    } else {
+      if (!installed.has(id)) {
+        return fail(`${humanize(id)} is not currently installed and cannot be removed.`, 'Not installed');
+      }
+      const instances = instancesOfPart(ledger, id).filter(i => normalizeDroidPartId(i.partId) === id);
+      const unidentified = components.some(c => c.canonicalId === id && !c.instanceId);
+      if (instances.length + (unidentified ? 1 : 0) > 1) {
+        return fail(`${humanize(id)} has more than one installed instance; name the instance to remove.`, 'Ambiguous instance');
+      }
+      target = instances.length === 1 && !unidentified
+        ? { id, instanceId: instances[0].instanceId, ledgerKey: instances[0].ledgerKey, hostInstanceId: instances[0].hostInstanceId }
+        : { id, instanceId: null, ledgerKey: null, hostInstanceId: null };
+    }
+    const targetKey = target.instanceId ? `instance:${target.instanceId}` : `part:${target.id}`;
+    if (seenTargets.has(targetKey)) continue;
+    seenTargets.add(targetKey);
+    removeSpecs.push(target);
+  }
+
+  // Never remove a host from under components fitted to it, unless those
+  // components are removed in the same change.
+  const removedPartIds = new Set(removeSpecs.filter(t => !t.instanceId).map(t => t.id));
+  for (const target of removeSpecs.filter(t => t.instanceId)) {
+    const orphans = dependentsOfInstance(ledger, target.instanceId)
+      .filter(d => !removedPartIds.has(normalizeDroidPartId(d.partId)));
+    if (orphans.length) {
+      return fail(`${humanize(target.id)} (${target.instanceId}) has ${orphans.map(o => humanize(normalizeDroidPartId(o.partId))).join(', ')} fitted to it; remove that first.`, 'Appendage has fitted components');
     }
   }
 
-  return { success: true, add, remove };
+  const removedInstanceIds = new Set(removeSpecs.filter(t => t.instanceId).map(t => t.instanceId));
+  const fittedToRemoved = addSpecs.find(spec => spec.hostInstanceId && removedInstanceIds.has(spec.hostInstanceId));
+  if (fittedToRemoved) {
+    return fail(`${humanize(fittedToRemoved.id)} cannot be fitted to an appendage that is being removed in the same change.`, 'Host appendage not installed');
+  }
+
+  return {
+    success: true,
+    add: addSpecs.map(spec => spec.id),
+    remove: removeSpecs.map(target => target.id),
+    addSpecs,
+    removeSpecs
+  };
 }
 
 export class DroidCustomizationEngine {
@@ -206,6 +381,12 @@ export class DroidCustomizationEngine {
     for (const def of getAllDroidPartDefinitions()) {
       const entry = droidPartEntry(def, actor);
       entry.installed = installed.has(entry.id);
+      if (isPhysicalAppendageDefinition(def)) {
+        // Core p.190: any number of appendages. Owning one does not make the
+        // kind "already installed"; expose the count instead.
+        entry.instanceCount = collectInstalledComponents(actor).filter(c => c.canonicalId === entry.id).length;
+        entry.installed = false;
+      }
       if (isPrimaryProcessor(def) && hasPrimaryProcessor && !entry.installed && !backupSlot) {
         entry.compatible = false;
         entry.blockingReason = 'A primary processor is already installed. Install a Backup Processor before purchasing a second inactive processor.';
@@ -252,7 +433,7 @@ export class DroidCustomizationEngine {
     if (!normalized.success) {
       return { success: false, error: normalized.error, blockingReason: normalized.blockingReason };
     }
-    const { add: systemsToAdd, remove: systemsToRemove } = normalized;
+    const { addSpecs, removeSpecs } = normalized;
     // Systems/eligibility are evaluated against the droid (`actor`); affordability
     // is evaluated against whoever is paying (`walletActor`) — see Phase 1 audit,
     // "Where are the systems? from Where are the credits?"
@@ -264,13 +445,23 @@ export class DroidCustomizationEngine {
     const removedSystems = [];
 
     // Validate systems to add
-    for (const systemId of systemsToAdd) {
+    for (const spec of addSpecs) {
+      const systemId = spec.id;
       const systemDef = this.#findSystemDefinition(systemId);
       if (!systemDef) {
         return { success: false, error: `Unknown system: ${systemId}`, blockingReason: 'System not found' };
       }
 
-      const candidate = droidPartEntry(systemDef, actor);
+      // GATE C-1: components fitted to an appendage must name the installed
+      // instance they attach to; the shared quote authority then applies the
+      // typed Gate A prerequisites (type, source status) to that exact host.
+      const hostResolution = resolveHostForPart(actor, systemDef, spec.hostInstanceId);
+      if (!hostResolution.success) {
+        return { success: false, error: hostResolution.error, blockingReason: hostResolution.blockingReason };
+      }
+      const quoteOptions = { selectedAppendage: hostResolution.selectedAppendage };
+
+      const candidate = droidPartEntry(systemDef, actor, quoteOptions);
       if (candidate.compatible === false) {
         return { success: false, error: candidate.blockingReason || `${candidate.name} is not compatible with this droid`, blockingReason: 'System incompatible' };
       }
@@ -281,28 +472,44 @@ export class DroidCustomizationEngine {
           blockingReason: 'Backup processor slot required'
         };
       }
-      const cost = this.#computeSystemCost(actor, systemDef);
+      const cost = this.#computeSystemCost(actor, systemDef, quoteOptions);
       if (!Number.isFinite(cost) || cost < 0) {
         return { success: false, error: `No valid source quote for ${systemDef.name}`, blockingReason: 'Unresolved droid component price' };
       }
       totalAddCost += cost;
-      addedSystems.push({ id: normalizeDroidPartId(systemId), name: systemDef.name, cost, category: candidate.category, slot: candidate.slot });
+      addedSystems.push({
+        id: normalizeDroidPartId(systemId), name: systemDef.name, cost, category: candidate.category, slot: candidate.slot,
+        hostInstanceId: hostResolution.host?.instanceId ?? null,
+        // Minted by the single mutation authority at apply time.
+        newPhysicalInstance: isPhysicalAppendageDefinition(systemDef)
+      });
     }
 
     // Validate systems to remove
-    for (const systemId of systemsToRemove) {
+    for (const target of removeSpecs) {
+      const systemId = target.id;
       const systemDef = this.#findSystemDefinition(systemId);
       if (!systemDef) {
         return { success: false, error: `Unknown system: ${systemId}`, blockingReason: 'System not found' };
       }
 
-      const removed = droidPartEntry(systemDef, actor);
-      const resale = this.#computeSystemResale(actor, systemDef);
+      // A fitted component is re-quoted against the host it is recorded on.
+      const recordedHost = cleanIdentity(target.hostInstanceId);
+      const hostResolution = recordedHost && requiredHostTypes(systemDef).length
+        ? resolveHostForPart(actor, systemDef, recordedHost)
+        : { success: true, selectedAppendage: null };
+      if (!hostResolution.success) {
+        return { success: false, error: hostResolution.error, blockingReason: hostResolution.blockingReason };
+      }
+      const quoteOptions = { selectedAppendage: hostResolution.selectedAppendage };
+
+      const removed = droidPartEntry(systemDef, actor, quoteOptions);
+      const resale = this.#computeSystemResale(actor, systemDef, quoteOptions);
       if (!Number.isFinite(resale) || resale < 0) {
         return { success: false, error: `No valid resale quote for ${systemDef.name}`, blockingReason: 'Unresolved droid component price' };
       }
       totalRemoveSale += resale;
-      removedSystems.push({ id: normalizeDroidPartId(systemId), name: systemDef.name, resale, category: removed.category, slot: removed.slot });
+      removedSystems.push({ id: normalizeDroidPartId(systemId), name: systemDef.name, resale, category: removed.category, slot: removed.slot, instanceId: target.instanceId ?? null });
     }
 
     const netCost = totalAddCost - totalRemoveSale;
@@ -372,7 +579,7 @@ export class DroidCustomizationEngine {
     }
 
     try {
-      const { add: systemsToAdd, remove: systemsToRemove } = revalidated;
+      const { addSpecs, removeSpecs } = revalidated;
       const installedSystems = { ...(actor.system.installedSystems ?? {}) };
       const droidSystems = foundry.utils.deepClone(actor.system?.droidSystems ?? {});
 
@@ -385,7 +592,7 @@ export class DroidCustomizationEngine {
       // entry is gone and the resolver would keep reporting the component as
       // installed and active (the "Garage removal does not reconcile
       // embedded Items" defect from docs/audits/droid-static-audit.md).
-      const preRemovalResolution = systemsToRemove.length
+      const preRemovalResolution = removeSpecs.length
         ? resolveInstalledDroidComponents(actor, {
             normalizeId: normalizeDroidPartId,
             getDefinition: (id) => getDroidPartDefinition(id)
@@ -394,22 +601,54 @@ export class DroidCustomizationEngine {
       const itemIdsToDelete = [];
 
       // Apply removals
-      for (const systemId of systemsToRemove) {
-        const normalized = normalizeDroidPartId(systemId);
+      for (const target of removeSpecs) {
+        const normalized = target.id;
+        if (target.instanceId) {
+          // GATE C-1: exactly one physical instance leaves; its siblings and
+          // their display-mirror rows are untouched.
+          delete installedSystems[target.ledgerKey];
+          this.#applyRemovalToDroidSystems(droidSystems, normalized, target.instanceId);
+          continue;
+        }
         delete installedSystems[normalized];
         this.#applyRemovalToDroidSystems(droidSystems, normalized);
-        const component = preRemovalResolution?.components.find(c => c.canonicalId === normalized);
+        const component = preRemovalResolution?.components.find(c => c.canonicalId === normalized && !c.instanceId);
         for (const source of component?.sources ?? []) {
           if (source.kind === 'embeddedItem' && source.itemId) itemIdsToDelete.push(source.itemId);
         }
       }
 
       // Apply additions
-      for (const systemId of systemsToAdd) {
-        const systemDef = this.#findSystemDefinition(systemId);
-        const entry = this.#buildInstalledPartPayload(systemDef, actor);
+      const taken = takenIdentities(installedSystems, droidSystems);
+      const idSource = typeof options.idSource === 'function' ? options.idSource : undefined;
+      const appliedAdded = [];
+      for (const spec of addSpecs) {
+        const systemDef = this.#findSystemDefinition(spec.id);
+        const hostResolution = resolveHostForPart(actor, systemDef, spec.hostInstanceId);
+        if (!hostResolution.success) {
+          return { success: false, error: hostResolution.error, blockingReason: hostResolution.blockingReason };
+        }
+        const payload = this.#buildInstalledPartPayload(systemDef, actor, { selectedAppendage: hostResolution.selectedAppendage });
+
+        if (isPhysicalAppendageDefinition(systemDef)) {
+          // One NEW physical appendage. Its identity is minted here, by the
+          // single mutation authority, and written to the ledger first; the
+          // droidSystems row is a display mirror of that same identity.
+          const instanceId = mintInstanceId(taken.instanceIds, idSource);
+          taken.instanceIds.add(instanceId);
+          const locationId = mintLocationId(taken.locationIds);
+          taken.locationIds.add(locationId);
+          const entry = { ...payload, instanceId, locationId };
+          installedSystems[ledgerKeyForInstance(entry.id, instanceId)] = entry;
+          droidSystems.appendages = [...asArray(droidSystems.appendages), { ...entry, location: locationId }];
+          appliedAdded.push({ id: entry.id, name: entry.name, cost: payload.cost, instanceId, locationId });
+          continue;
+        }
+
+        const entry = hostResolution.host ? { ...payload, hostInstanceId: hostResolution.host.instanceId } : payload;
         installedSystems[entry.id] = entry;
-        this.#applyAdditionToDroidSystems(actor, droidSystems, systemDef);
+        this.#applyAdditionToDroidSystems(actor, droidSystems, systemDef, entry);
+        appliedAdded.push({ id: entry.id, name: entry.name, cost: payload.cost, instanceId: null, hostInstanceId: entry.hostInstanceId ?? null });
       }
 
       // Route credit movement + asset mutation through TransactionEngine so the
@@ -445,7 +684,7 @@ export class DroidCustomizationEngine {
         reason: 'Droid customization',
         audit: {
           source: 'droid-customization',
-          systemsAdded: preview.preview.systemsAdded,
+          systemsAdded: appliedAdded,
           systemsRemoved: preview.preview.systemsRemoved,
           itemsDeleted: itemIdsToDelete,
           assetActorId: actor.id
@@ -459,7 +698,7 @@ export class DroidCustomizationEngine {
       return {
         success: true,
         applied: {
-          systemsAdded: preview.preview.systemsAdded,
+          systemsAdded: preview.preview.systemsAdded.map((added, index) => ({ ...added, ...(appliedAdded[index] ?? {}), cost: added.cost })),
           systemsRemoved: preview.preview.systemsRemoved,
           netCost: preview.preview.netCost,
           newCredits: preview.preview.newCredits
@@ -474,8 +713,10 @@ export class DroidCustomizationEngine {
   }
 
 
-  static #buildInstalledPartPayload(systemDef, actor, extra = {}) {
-    const entry = droidPartEntry(systemDef, actor, extra);
+  static #buildInstalledPartPayload(systemDef, actor, quoteOptions = {}) {
+    // `quoteOptions` (e.g. the Gate C-1 selected host appendage) only feeds the
+    // shared quote/prerequisite authority; it is never written to the ledger.
+    const entry = droidPartEntry(systemDef, actor, quoteOptions);
     return {
       id: entry.id,
       name: entry.name,
@@ -496,13 +737,11 @@ export class DroidCustomizationEngine {
       // which is the sole other writer of these fields — enforced by
       // tools/check-droid-reconciliation-authority.mjs).
       provenance: { origin: 'post-import-customization', bakedIntoPublishedTotals: false },
-      mechanicalState: { applyModifiers: true },
-      ...extra
+      mechanicalState: { applyModifiers: true }
     };
   }
 
-  static #applyAdditionToDroidSystems(actor, droidSystems, systemDef) {
-    const entry = this.#buildInstalledPartPayload(systemDef, actor);
+  static #applyAdditionToDroidSystems(actor, droidSystems, systemDef, entry) {
     const slot = String(entry.slot ?? '');
     const category = entry.category;
 
@@ -535,10 +774,18 @@ export class DroidCustomizationEngine {
       return;
     }
 
-    if (category === 'appendage') {
-      droidSystems.appendages ??= [];
-      const nextLocation = this.#nextAppendageLocation(droidSystems.appendages);
-      droidSystems.appendages = this.#upsertArrayEntry(droidSystems.appendages, { ...entry, location: entry.location ?? nextLocation });
+    const appendageBucket = appendageMirrorBucket({ category, slot });
+    if (appendageBucket === 'appendages') {
+      // Base appendages are minted with an identity by applyDroidCustomization();
+      // reaching here would write a limb with no instance.
+      throw new Error('A physical appendage must be added through the instance path.');
+    }
+    if (appendageBucket === 'appendageEnhancements') {
+      // GATE C-1: everything with the appendage category that is not a base
+      // appendage (enhancements, mounts, appendage weapons/shields/utilities)
+      // is FITTED TO an appendage and never enters the physical list.
+      droidSystems.appendageEnhancements ??= [];
+      droidSystems.appendageEnhancements = this.#upsertArrayEntry(droidSystems.appendageEnhancements, entry);
       return;
     }
 
@@ -563,8 +810,16 @@ export class DroidCustomizationEngine {
     droidSystems.accessories = this.#upsertArrayEntry(droidSystems.accessories, entry);
   }
 
-  static #applyRemovalToDroidSystems(droidSystems, systemId) {
+  static #applyRemovalToDroidSystems(droidSystems, systemId, instanceId = null) {
     const id = normalizeDroidPartId(systemId);
+    if (instanceId) {
+      // GATE C-1: one physical instance only. Matching by part id here would
+      // remove every sibling hand.
+      if (Array.isArray(droidSystems.appendages)) {
+        droidSystems.appendages = asArray(droidSystems.appendages).filter(entry => cleanIdentity(entry?.instanceId) !== instanceId);
+      }
+      return;
+    }
     const matches = (entry) => normalizeDroidPartId(entry?.id ?? entry?.name) === id;
     const removeFrom = (array) => asArray(array).filter(entry => !matches(entry));
 
@@ -572,7 +827,7 @@ export class DroidCustomizationEngine {
     if (matches(droidSystems.backupProcessor)) delete droidSystems.backupProcessor;
     if (matches(droidSystems.processorSlots?.backup)) delete droidSystems.processorSlots.backup;
     if (matches(droidSystems.armor)) delete droidSystems.armor;
-    for (const key of ['processorEnhancements', 'locomotionSystems', 'secondaryLocomotion', 'appendages', 'sensors', 'weapons', 'accessories', 'integratedSystems']) {
+    for (const key of ['processorEnhancements', 'locomotionSystems', 'secondaryLocomotion', 'appendages', 'appendageEnhancements', 'sensors', 'weapons', 'accessories', 'integratedSystems']) {
       if (Array.isArray(droidSystems[key])) droidSystems[key] = removeFrom(droidSystems[key]);
     }
   }
@@ -582,13 +837,6 @@ export class DroidCustomizationEngine {
     const out = asArray(array).filter(existing => normalizeDroidPartId(existing?.id ?? existing?.name) !== id);
     out.push(entry);
     return out;
-  }
-
-  static #nextAppendageLocation(appendages = []) {
-    const used = new Set(asArray(appendages).map(entry => normalizeDroidPartId(entry?.location ?? entry?.slot)));
-    if (!used.has('left-arm')) return 'left-arm';
-    if (!used.has('right-arm')) return 'right-arm';
-    return `additional-${asArray(appendages).length + 1}`;
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -609,15 +857,15 @@ export class DroidCustomizationEngine {
    * REUSE: Uses droid-part-schema, which wraps the canonical chargen DROID_SYSTEMS
    * source and understands cost factor, formulas, and x2/x5 dependent costs.
    */
-  static #computeSystemCost(actor, systemDef) {
-    return computeDroidPartCost(actor, systemDef);
+  static #computeSystemCost(actor, systemDef, quoteOptions = {}) {
+    return computeDroidPartCost(actor, systemDef, quoteOptions);
   }
 
   /**
    * Compute resale value of a system (50% of purchase cost)
    */
-  static #computeSystemResale(actor, systemDef) {
-    const purchaseCost = this.#computeSystemCost(actor, systemDef);
+  static #computeSystemResale(actor, systemDef, quoteOptions = {}) {
+    const purchaseCost = this.#computeSystemCost(actor, systemDef, quoteOptions);
     return Number.isFinite(purchaseCost) && purchaseCost >= 0 ? Math.floor(purchaseCost * 0.5) : null;
   }
 

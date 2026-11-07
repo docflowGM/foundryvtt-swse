@@ -121,6 +121,12 @@ function hasOwnId(entry) {
   return Boolean(entry && typeof entry === 'object' && (entry.id || entry.name));
 }
 
+/** A physical-instance / location / host identity: a non-empty trimmed string, else null. */
+function cleanIdentity(value) {
+  const text = String(value ?? '').trim();
+  return text ? text : null;
+}
+
 function itemHasCredibleDroidPartMetadata(item) {
   return Boolean(
     item?.system?.droidPartId ||
@@ -175,10 +181,25 @@ function collectCandidates(actor, { normalizeId, getDefinition, warnings }) {
         const installed = value.installed !== false;
         const enabled = value.enabled !== false;
         const active = value.active !== false;
+        // GATE C-1: an entry carrying an `instanceId` is ONE physical
+        // component. Its ledger key is opaque (see
+        // droid-appendage-instance.js), so the entry's own `id` is the
+        // authoritative part identity. Entries without an `instanceId` keep
+        // the original meaning: the key is the part id and the entry proves
+        // no physical instance.
+        const instanceId = cleanIdentity(value.instanceId);
+        const partCanonicalId = instanceId ? normalizeId(value.id) : canonicalId;
+        if (!partCanonicalId) {
+          warnings.push(`Skipped installedSystems instance entry "${key}" with no resolvable part id.`);
+          continue;
+        }
         candidates.push({
           kind: SOURCE_KIND.INSTALLED_LEDGER,
           rawId: value.id ?? key,
-          canonicalId,
+          canonicalId: partCanonicalId,
+          instanceId,
+          locationId: instanceId ? cleanIdentity(value.locationId) : null,
+          hostInstanceId: cleanIdentity(value.hostInstanceId),
           key,
           installed,
           enabled,
@@ -287,6 +308,10 @@ function collectCandidates(actor, { normalizeId, getDefinition, warnings }) {
         kind: SOURCE_KIND.DROID_SYSTEMS_RECORD,
         rawId: entry.id ?? entry.name,
         canonicalId,
+        // GATE C-1: the droidSystems display mirror carries the same
+        // instance identity as the ledger so both representations of one
+        // physical component group together instead of splitting.
+        instanceId: cleanIdentity(entry.instanceId),
         field,
         installed: true,
         enabled,
@@ -400,17 +425,25 @@ export function resolveInstalledDroidComponents(actor, options = {}) {
 
   const { candidates, legacyModifications } = collectCandidates(actor, { normalizeId, getDefinition, warnings });
 
+  // Group by physical identity: the canonical part id, plus the instance id
+  // when one is established (two hands are two components; a legacy
+  // part-keyed record never merges into a specific instance).
+  const groupKey = (candidate) => (candidate.instanceId
+    ? `${candidate.canonicalId}#${candidate.instanceId}`
+    : candidate.canonicalId);
   const groups = new Map();
   for (const candidate of candidates) {
-    if (!groups.has(candidate.canonicalId)) groups.set(candidate.canonicalId, []);
-    groups.get(candidate.canonicalId).push(candidate);
+    const key = groupKey(candidate);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(candidate);
   }
 
   const tierOf = (candidate) => SOURCE_PRECEDENCE.indexOf(candidate.kind);
   const conflicts = [];
   const components = [];
 
-  for (const [canonicalId, group] of groups) {
+  for (const group of groups.values()) {
+    const canonicalId = group[0].canonicalId;
     const sorted = [...group].sort((a, b) => tierOf(a) - tierOf(b));
     const primary = sorted[0];
 
@@ -441,6 +474,14 @@ export function resolveInstalledDroidComponents(actor, options = {}) {
 
     components.push({
       canonicalId,
+      // GATE C-1 physical identity. Only the installation LEDGER establishes
+      // locationId / hostInstanceId; `instanceId` is also read off the
+      // droidSystems display mirror so the two groups meet, but a component
+      // whose only evidence is the mirror is never promoted to a confirmed
+      // appendage downstream (primarySource.kind says which it is).
+      instanceId: primary.instanceId ?? ledgerSource?.instanceId ?? null,
+      locationId: ledgerSource?.locationId ?? null,
+      hostInstanceId: ledgerSource?.hostInstanceId ?? null,
       definition,
       installed: Boolean(primary.installed),
       enabled: Boolean(primary.enabled),
@@ -455,6 +496,7 @@ export function resolveInstalledDroidComponents(actor, options = {}) {
         itemId: s.itemId ?? null,
         key: s.key ?? null,
         field: s.field ?? null,
+        instanceId: s.instanceId ?? null,
         installed: Boolean(s.installed),
         enabled: Boolean(s.enabled),
         active: Boolean(s.active)

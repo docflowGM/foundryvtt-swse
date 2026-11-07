@@ -282,6 +282,10 @@ export class DroidSystemsResolver {
     const hydrated = this._hydrate({ ...data, ...extra });
     return {
       id: data.id ?? hydrated.ruleId ?? null,
+      // GATE C-1: one row per PHYSICAL component. Same-kind appendages share a
+      // ruleId and differ only by instance identity.
+      instanceId: data.instanceId ?? null,
+      locationId: data.locationId ?? null,
       ruleId: hydrated.ruleId,
       name: hydrated.name ?? '',
       img: null,
@@ -494,7 +498,9 @@ export class DroidSystemsResolver {
     const out = [];
     for (const entry of entries.filter(Boolean)) {
       const canonical = slug(entry.ruleId);
-      const key = canonical ? `rule:${canonical}` : (entry.id ? `id:${entry.id}` : `name:${slug(entry.name)}`);
+      const key = entry.instanceId
+        ? `instance:${entry.instanceId}`
+        : (canonical ? `rule:${canonical}` : (entry.id ? `id:${entry.id}` : `name:${slug(entry.name)}`));
       if (seen.has(key)) continue;
       seen.add(key);
       out.push(entry);

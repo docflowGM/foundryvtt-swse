@@ -28,6 +28,7 @@
 import { resolveInstalledDroidComponents } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js";
 import { getDroidPartDefinition, normalizeDroidPartId } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
+import { isPhysicalAppendageDefinition } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-appendage-instance.js";
 
 /** Embedded-Item source kind string used by the component resolver (`DROID_COMPONENT_SOURCE_KIND.EMBEDDED_ITEM`). */
 const EMBEDDED_ITEM = 'embeddedItem';
@@ -84,7 +85,7 @@ export function projectDroidAppendages(installedComponents, deps = {}) {
   const catalogEntryFor = typeof deps.catalogEntryFor === 'function' ? deps.catalogEntryFor : defaultCatalogEntryFor;
   const components = Array.isArray(installedComponents?.components) ? installedComponents.components : [];
 
-  const appendages = []; // always empty for legacy evidence (see identity policy above)
+  const appendages = []; // empty for legacy evidence; ledger-confirmed instances (Gate C-1) only
   const unresolvedRecords = [];
   const issues = [];
   const appendagePartIds = new Set();
@@ -95,7 +96,7 @@ export function projectDroidAppendages(installedComponents, deps = {}) {
     // utility parts are not appendages themselves and never contribute a manipulator.
     const slot = component?.slot ?? definition?.slot ?? null;
     const category = component?.category ?? definition?.category ?? null;
-    if (slot !== 'appendage' || category !== 'appendage') continue;
+    if (!isPhysicalAppendageDefinition({ slot, category })) continue;
 
     const partId = String(component.canonicalId);
     appendagePartIds.add(partId);
@@ -108,6 +109,25 @@ export function projectDroidAppendages(installedComponents, deps = {}) {
     }
 
     const componentState = stateOf({ installed: component.installed, enabled: component.enabled });
+
+    // GATE C-1 -- the producer of the evidence this module was waiting for. A component whose PRIMARY (highest-authority) source is
+    // the installation ledger and which carries BOTH a physical instance id and a location token IS a confirmed, distinct physical
+    // appendage (Core p.190: any number of appendages). Anything weaker -- a mirror-only record, an instance id with no location,
+    // an Item document, a part-keyed legacy record -- is still unresolved evidence and falls through unchanged. Capabilities stay
+    // tri-state from the catalog (canHold / canWield remain unknown); nothing here counts an extra action or attack.
+    if (component.instanceId && component.locationId && component.primarySource?.kind === 'installedLedger') {
+      appendages.push({
+        id: `${partId}:${component.instanceId}`,
+        kind: String(definition?.appendageType ?? partId),
+        source: 'droid-installation-ledger',
+        identity: { slot: String(component.locationId), instance: String(component.instanceId), part: partId },
+        capabilities,
+        functionalState: componentState,
+        functionalStateSource: 'droid-installation-ledger',
+      });
+      continue;
+    }
+
     const items = sources.filter((s) => s?.kind === EMBEDDED_ITEM && s?.itemId);
     const others = sources.filter((s) => !(s?.kind === EMBEDDED_ITEM && s?.itemId));
     const tierCounts = new Map();

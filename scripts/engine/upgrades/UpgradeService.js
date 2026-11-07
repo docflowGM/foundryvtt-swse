@@ -319,9 +319,14 @@ export class UpgradeService {
   static getCurrentUpgrades(actor, record) {
     try {
       if (record.sourceType === 'droid-actor') {
-        return Object.keys(record.system?.installedSystems ?? {}).map(key => ({
-          id: key, name: key, slotsUsed: 1, description: ''
-        }));
+        const ledger = record.system?.installedSystems ?? {};
+        return Object.keys(ledger).map(key => {
+          // GATE C-1: a physical appendage's ledger key is opaque
+          // ("hand--inst-..."); name it by the entry's own name instead.
+          const entry = ledger[key];
+          const identified = entry && typeof entry === 'object' && entry.instanceId;
+          return { id: key, name: identified ? (entry.name || entry.id || key) : key, slotsUsed: 1, description: '' };
+        });
       }
       if (record.sourceType === 'vehicle-actor') {
         return Object.keys(record.system?.installedSystems ?? {}).map(key => ({
@@ -710,12 +715,23 @@ export class UpgradeService {
     // GM can still clear an entry that DroidCustomizationEngine itself
     // cannot make sense of.
     if (itemId?.startsWith('droid-actor-')) {
-      const keys = Object.keys(actor.system?.installedSystems ?? {});
+      const ledger = actor.system?.installedSystems ?? {};
+      const keys = Object.keys(ledger);
       const targetId = keys[upgradeIndex];
       if (targetId === undefined) return { success: true };
 
-      const result = await DroidCustomizationEngine.applyDroidCustomization(actor, { remove: [targetId] });
+      // GATE C-1: a physical appendage is addressed by its own part id and
+      // instance id (its ledger key is opaque and names no part). An
+      // identified instance is NEVER raw-deleted: that would orphan its
+      // droidSystems mirror row, so a refusal is reported instead.
+      const targetEntry = ledger[targetId];
+      const identified = targetEntry && typeof targetEntry === 'object' && targetEntry.instanceId
+        ? { id: targetEntry.id, instanceId: targetEntry.instanceId }
+        : null;
+
+      const result = await DroidCustomizationEngine.applyDroidCustomization(actor, { remove: [identified ?? targetId] });
       if (result.success) return { success: true };
+      if (identified) throw new Error(result.error || `Failed to remove ${identified.id}`);
 
       swseLogger.warn(`[UpgradeService] Droid system "${targetId}" did not resolve through DroidCustomizationEngine (${result.error}); falling back to raw ledger removal.`);
       const installedSystems = { ...(actor.system?.installedSystems ?? {}) };

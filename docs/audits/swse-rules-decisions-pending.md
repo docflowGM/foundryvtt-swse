@@ -2147,3 +2147,59 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 47 (2026-11-05):** appended V-P6C-21 (with the payload / designation reconciliation that narrowed it to the single launcher-count fact).
+
+### DROID-RD-001 - Stabilized Mount: base appendage instance, or a fitting on a tool appendage? (QUESTION, 2026-11-06)
+
+| Field | Value |
+|---|---|
+| Decision ID | DROID-RD-001 |
+| Rules domain | Droid systems (appendage classification) |
+| Feature | Stabilized Mount (catalog id `mount`; a request for `stabilized-mount` resolves to it by name) |
+| Source | Core Rulebook, droid appendages section (printed page 190 per the repository's earlier source review; this session read the OCR only: "For five times the listed cost and weight, a tool appendage can be stabilized so that it can hold a larger weapon ... as if wielded in two hands") |
+| Evidence | The printed text describes the stabilized mount as something a TOOL appendage is given. The catalog (`scripts/data/droid-systems.js`, `appendages[]`) lists it among the BASE appendages with `canManipulate:false` and `canAttack:false`, and the E2A droid appendage projection (`droid-appendage-projection.js`) already reports every `slot:'appendage'` record as an appendage record. The catalog price and the component's Gate A source-review status (PASS) are not disputed here. |
+| Confirmed behavior | The component is purchasable today; it never becomes a manipulator (`canManipulate:false`); it grants no extra attack or action. |
+| Unresolved question | Whether a stabilized mount is (a) its own physical appendage instance, as the catalog files it, or (b) a fitting on an existing tool appendage (which would require a host appendage instance of kind `tool`, and would not be a limb or an appendage record at all). |
+| Options | (a) Keep the catalog classification: a purchased mount mints a physical-appendage instance with `canManipulate:false`. (b) Reclassify it as a fitting that requires a `tool` host instance (`requiresAppendage: ['tool']`), stored in `droidSystems.appendageEnhancements`. Both readings are supported by the evidence above; neither is chosen. |
+| Recommended ruling | None |
+| Implementation impact | Gate C-1 follows the repository's existing classification (a) so that no behavior changes without a ruling; this is pinned by `tests/droid-gate-c1-appendage-instances.test.mjs` section 16b. Option (b) is a catalog change (`requiresAppendage`) plus removal of `mount` from the base-appendage predicate's reach. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### DROID-RD-002 - Telescopic Appendage: which appendages can it be fitted to? (QUESTION, 2026-11-06)
+
+| Field | Value |
+|---|---|
+| Decision ID | DROID-RD-002 |
+| Rules domain | Droid systems (appendage enhancements, host kinds) |
+| Feature | Telescopic Appendage (Gate A source review: PASS) |
+| Source | Core Rulebook, droid appendages (printed page 190 per the repository's source review) and the accessory price table ("Telescopic appendage: appendage cost x 2; weight (normal weight x 2) kg"); Scavenger's Guide to Droids and Galaxy at War stock droid statblocks print "telescopic appendage (1 hand)" and "2 telescopic tool appendages". OCR read this session; the PDF page was not inspected. |
+| Evidence | The text says the droid "has an appendage that reaches farther from its body" with twice the normal reach for its size; the table prices it from the cost and weight of the appendage it is fitted to. Stock statblocks show it fitted to a hand and to tool appendages. No located source restricts the host kind. The catalog entry carries no `requiresAppendage`, and the shared quote authority needs the host appendage's price (`appendageBaseCost` / `appendageBaseWeight`) which no consumer supplies, so the component is currently fail-closed (unpurchasable). |
+| Confirmed behavior | The price and weight are functions of the host appendage's price and weight; Reach is doubled. It does not add actions or attacks. |
+| Unresolved question | Whether "an appendage" is unrestricted across every base-list appendage record (hand, claw, tool, instrument, probe, and the catalog's `mount`), or limited to some of them. |
+| Options | Unrestricted across all base-list appendage records (the literal text); a restricted set (no source located that names one). |
+| Recommended ruling | None |
+| Implementation impact | Gate C-1 supplies the host binding (a ledger-derived `selectedAppendage`); wiring the host-priced quote for this component waits on this answer so a host kind is not invented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### DROID-RD-003 - Upgrade Workshop hard-codes a 10-system cap on a droid's installed ledger (QUESTION, 2026-11-06)
+
+| Field | Value |
+|---|---|
+| Decision ID | DROID-RD-003 |
+| Rules domain | Droid systems (installation capacity) |
+| Feature | `UpgradeService.getSlotUsage` for `droid-actor` records (`max: 10`) and its use in the Workshop's apply gate (`hasSlots`) |
+| Source | Core Rulebook droid systems (pp. 188-197) as summarized by the repository's own source review (`docs/audits/droids/SWSE_Droid_Rules_to_Schema_v0_15.md` sections 1 and 5: "No generic numeric pool of droid system/component slots is established"; appendages: "any number", Core p. 190). OCR / repository review only. |
+| Evidence | The Workshop counts every `system.installedSystems` entry against a constant 10 and disables applying an 11th. The Garage (`DroidCustomizationEngine`) enforces no such cap. Since Gate C-1 each physical appendage is its own ledger entry, so a droid with several appendages reaches the Workshop cap sooner. |
+| Confirmed behavior | The repository's source review found no printed universal slot budget for droid systems and states that none should be invented. The cap is Workshop-only display/apply gating. |
+| Unresolved question | Whether the Workshop's constant 10 should be removed for droid records (consistent with the source review) or retained as a project convention. |
+| Options | Remove the cap for `droid-actor` records. Keep it as a deliberate project convention (it would then count physical components, as it now does). |
+| Recommended ruling | None |
+| Implementation impact | None until ruled; no code was changed for this. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 48 (2026-11-06):** appended DROID-RD-001, DROID-RD-002 and DROID-RD-003 (Gate C-1 appendage instance identity work).
