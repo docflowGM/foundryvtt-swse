@@ -4,8 +4,13 @@ import {readFileSync} from 'node:fs';
 import {registerFoundryPathLoader} from './helpers/foundry-shim/register.mjs';
 import {installFoundryShimGlobals} from './helpers/foundry-shim/globals.mjs';
 
+globalThis.window=globalThis.window??{};
 registerFoundryPathLoader();
 installFoundryShimGlobals();
+globalThis.foundry.applications=globalThis.foundry.applications??{};
+globalThis.foundry.applications.api=globalThis.foundry.applications.api??{
+ ApplicationV2:class {}, HandlebarsApplicationMixin:Base=>class extends Base {}
+};
 const {graftRealForcePointMethods,setPath}=await import('./helpers/real-force-point-engine.mjs');
 const events=[];
 globalThis.Hooks=globalThis.Hooks??{};
