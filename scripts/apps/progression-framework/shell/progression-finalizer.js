@@ -35,6 +35,7 @@ import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/prog
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEntitlementManifest } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
+import { promptProphetVisionDecision } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/prophet-vision-decision.js';
 import { planScalingClassFeatureUpdate } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-scaling-feature-upsert.js';
 import { getLevelSplit } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { pendingEnforcerResources, planEnforcerResourceEntitlement } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/enforcer-resources-entitlement.js';
@@ -370,6 +371,24 @@ export class ProgressionFinalizer {
 
       // PHASE 3: Validate actor document type matches progression subtype
       this._validateDocumentType(actor, sessionState.progressionSession);
+
+      // Prophet is an IMMEDIATE choice at this Force Disciple level-up:
+      // prompt before compiling the mutation plan, not after its Destiny Points
+      // have been committed. The pure entitlement planner remains the sole
+      // author of the eventual resource/ledger writes through ActorEngine.
+      if (sessionState.mode === 'levelup') {
+        const manifest = buildLevelUpEntitlementManifest(actor, sessionState.progressionSession);
+        const draft = sessionState.progressionSession?.draftSelections ?? {};
+        const choice = await promptProphetVisionDecision({
+          actor, manifest, mode: sessionState.mode,
+          existing: draft.prophet ?? null,
+        });
+        if (choice) {
+          sessionState.progressionSession.draftSelections = {
+            ...draft, prophet: choice
+          };
+        }
+      }
 
       // PHASE 4: Compile the authoritative mutation plan (WITHOUT applying yet)
       const mutationPlan = await this._compileMutationPlan(sessionState, actor, options);
