@@ -157,6 +157,24 @@ export class ConditionEngine {
         throw new Error(`Invalid condition step: ${newStep}`);
       }
 
+      // Source-typed class immunity must be checked before any Condition Track
+      // mutation. Do not infer Fear/Mind-Affecting from skill names or prose.
+      // Reuse the same admission policy as the ActorEngine ActiveEffect writers.
+      const { admitClassImmuneActiveEffects } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-feature-effect-admission.js'
+      );
+      const admission = admitClassImmuneActiveEffects(actor, [options]);
+      if (admission.suppressed.length) {
+        return {
+          success: false,
+          immune: true,
+          reason: admission.suppressed[0].reason,
+          actor,
+          oldStep: actor.system?.conditionTrack?.current ?? 0,
+          newStep: actor.system?.conditionTrack?.current ?? 0
+        };
+      }
+
       swseLogger.debug(`[ConditionEngine] Applying condition step change to ${actor.name}`, {
         newStep,
         options
