@@ -909,7 +909,19 @@ export const ActorEngine = {
         count: data.length
       });
 
-      const safeData = embeddedName === 'ActiveEffect' ? normalizeActiveEffectDataForRuntime(data) : data;
+      let safeData = embeddedName === 'ActiveEffect' ? normalizeActiveEffectDataForRuntime(data) : data;
+      if(embeddedName==='ActiveEffect'){
+        const {filterForceClassImmuneActiveEffects} = await import(
+          '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-class-effect-ingress.js'
+        );
+        const gate=filterForceClassImmuneActiveEffects(actor,safeData);
+        if(gate.suppressed.length)SWSELogger.log('Force-class immunity blocked typed ActiveEffects', {
+          actor:actor.name,count:gate.suppressed.length,
+          reasons:gate.suppressed.map(x=>x.decision.reason)
+        });
+        safeData=gate.accepted;
+        if(!safeData.length)return [];
+      }
 
       MutationInterceptor.setContext(`ActorEngine.createEmbeddedDocuments[${embeddedName}]`);
       try {
@@ -4163,7 +4175,16 @@ export const ActorEngine = {
       });
       try {
         const normalizedEffectData = normalizeActiveEffectDataForRuntime(effectData);
-        const result = await actor.createEmbeddedDocuments('ActiveEffect', normalizedEffectData, options);
+        const {filterForceClassImmuneActiveEffects} = await import(
+          '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-class-effect-ingress.js'
+        );
+        const gate=filterForceClassImmuneActiveEffects(actor,normalizedEffectData);
+        if(gate.suppressed.length)SWSELogger.log('Force-class immunity blocked typed ActiveEffects', {
+          actor:actor.name,count:gate.suppressed.length,
+          reasons:gate.suppressed.map(x=>x.decision.reason)
+        });
+        if(!gate.accepted.length)return [];
+        const result = await actor.createEmbeddedDocuments('ActiveEffect', gate.accepted, options);
         await this.recalcAll(actor);
         return result;
       } finally {
