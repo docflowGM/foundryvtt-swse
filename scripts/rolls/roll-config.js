@@ -1085,7 +1085,7 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
     const classBonus = model?.rollType === 'skill'
       ? shaperLoreBonus(actor,model.skillKey,{
           biotechDevice:form.querySelector('[name="biotechDevice"]')?.checked === true
-        }) + (form.querySelector('[name="observedSuspect"]')?.checked === true
+        }) + (form.querySelector('[name="observedTarget"]')?.checked === true
           ? observedSkillBonus(actor, model.skillKey, soleTargetedActor()) : 0)
       : 0;
     const total = base + custom + classBonus;
@@ -1685,7 +1685,7 @@ export async function showRollModifiersDialog(options = {}) {
   const model = await buildRollConfigModel({ ...options, title, rollType, actor, weapon });
   const shaperLoreEligible = model.rollType === 'skill'
     && canApplyShaperLore(model.actor,model.skillKey);
-  const observedSuspectEligible = model.rollType === 'skill'
+  const observedTargetEligible = model.rollType === 'skill'
     && hasObservedSkillTarget(model.actor, model.skillKey, soleTargetedActor());
   const abilityAccentClass = model.rollType === 'ability' && model.abilityAccentKey ? ` swse-roll-config-shell--ability swse-roll-config-ability--${model.abilityAccentKey}` : '';
   const abilityData = model.rollType === 'ability' && model.abilityAccentKey ? ` data-ability="${escapeHTML(model.abilityAccentKey)}"` : '';
@@ -1723,7 +1723,7 @@ export async function showRollModifiersDialog(options = {}) {
               <label>Custom Modifier<input type="number" name="customModifier" value="0" /></label>
               <label>Note<input type="text" name="rollNote" placeholder="Optional GM/player note" /></label>
             </div>
-            ${observedSuspectEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="observedSuspect" /> <span><b>Observed suspect</b><small>Apply Targeted Suspect +${observedSkillBonus(model.actor,model.skillKey,soleTargetedActor())} only if this check concerns your targeted, observed opponent (GM adjudicated).</small></span></label>` : ''}
+            ${observedTargetEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="observedTarget" /> <span><b>Observed target</b><small>Apply your observation benefits (Targeted Suspect +${observedSkillBonus(model.actor,model.skillKey,soleTargetedActor())}; Score: roll twice, keep the better) only if this check concerns your targeted, observed opponent (GM adjudicated).</small></span></label>` : ''}
           ${shaperLoreEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="biotechDevice" /> <span><b>Biotech device</b><small>Apply Shaper Lore +${shaperLoreBonus(model.actor,model.skillKey,{biotechDevice:true})} only if this check concerns a biotech device (GM adjudicated).</small></span></label>` : ''}
             ${model.isAttackRoll ? `<div class="swse-roll-config-subpanel" data-rcd-attack-context>
               <h5>Attack Context</h5>
@@ -1783,7 +1783,7 @@ export async function showRollModifiersDialog(options = {}) {
               concealment,
               customModifier,
               biotechDevice: shaperLoreEligible && data.get('biotechDevice') === 'on',
-              observedSuspect: observedSuspectEligible && data.get('observedSuspect') === 'on',
+              observedTarget: observedTargetEligible && data.get('observedTarget') === 'on',
               damageMode,
               stun: damageMode === 'stun',
               damageType: damageMode === 'stun' ? 'stun' : undefined,

@@ -70,10 +70,10 @@ test('Enforcer Resources is unlocked once at level 1 while the per-level allowan
   }
 });
 
-test('all eight approved class progression records and the other 30 are protected from drift', () => {
+test('all ten approved class progression records and the other 30 are protected from drift', () => {
   const guard = verifyClassPackProtectedState(root);
   assert.equal(guard.ok, true, guard.failures.join('; '));
   const baseline = JSON.parse(read('data/audits/class-mechanics-protected-baseline.json'));
-  assert.equal(Object.keys(baseline.approvedProgressionExceptions).length, 8); // +Bounty Hunter: Familiar Foe featureKey (Core p.209)
+  assert.equal(Object.keys(baseline.approvedProgressionExceptions).length, 10); // +Bounty Hunter (Familiar Foe), +Assassin (Mark), +Charlatan (Score) featureKeys
   assert.equal(classes.length, 37);
 });

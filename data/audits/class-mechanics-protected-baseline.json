@@ -235,6 +235,16 @@
       "name": "Bounty Hunter",
       "approvedFingerprint": "2248:06dd9c11a11bba94",
       "reason": "Core p.209: Familiar Foe stable featureKey bountyHunter.familiarFoe on the existing scaling grants"
+    },
+    "74fa04f5afb5f6e1": {
+      "name": "Assassin",
+      "approvedFingerprint": "2021:cc0184ecbf314393",
+      "reason": "Scum and Villainy p.30: Mark stable featureKey assassin.mark on the existing scaling grants"
+    },
+    "8da58194b3d58041": {
+      "name": "Charlatan",
+      "approvedFingerprint": "1592:f3a606c35705ea6a",
+      "reason": "Scum and Villainy p.32: Score stable featureKey charlatan.score on the existing level-2 grant"
     }
   }
 }

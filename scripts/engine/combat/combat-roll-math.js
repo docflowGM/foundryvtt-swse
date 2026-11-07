@@ -50,6 +50,7 @@ import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/r
 import { resolveTalentDamageContributions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-talent-contributions.js";
 import { infiltratorUnarmedStunDice } from "/systems/foundryvtt-swse/scripts/engine/combat/class-infiltrator-unarmed-stun.js";
 import { isPistolWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { markDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-assassin-mark.js";
 import { trustySidearmDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-gunslinger-trusty-sidearm.js";
 import { collectSharedDamageDiceTerms } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-item-dice-contributions.js";
 import { resolveVehicleWeaponDamage } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
@@ -801,7 +802,10 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   // Resolve through the same pistol authority used by other combat rules.
   const trustySidearm = trustySidearmDamageBonus(actor,{isPistol:isPistolWeapon(weapon)});
 
-  const total = halfLvl + enhancement + abilityMod + rageMod + rapidAlchemyMod + typedDamagePool.total + combatOptionDamage + scopedFeatDamage + trustySidearm;
+  // Assassin Mark: pre-critical, so the critical multiplier doubles it with the rest of the flat total.
+  const assassinMark = markDamageBonus(actor, getTargetActorFromOptions(context));
+
+  const total = halfLvl + enhancement + abilityMod + rageMod + rapidAlchemyMod + typedDamagePool.total + combatOptionDamage + scopedFeatDamage + trustySidearm + assassinMark;
 
   const components = {};
   if (halfLvl !== 0) components['½ Level'] = halfLvl;
@@ -813,6 +817,7 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   if (combatOptionDamage !== 0) components['Combat Option'] = combatOptionDamage;
   if (scopedFeatDamage !== 0) components['Scoped Feat'] = scopedFeatDamage;
   if (trustySidearm !== 0) components['Trusty Sidearm'] = trustySidearm;
+  if (assassinMark !== 0) components['Mark'] = assassinMark;
 
   return { total, components, flags: { damageBaseOnly: false }, typedModifierLedger: typedDamagePool.ledger };
 }

@@ -2313,3 +2313,21 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 49 (2026-11-07):** appended CF-RD-001 through CF-RD-006 (class-feature contract Wave A preflight).
+
+### CF-RD-007 - Score: no "after the target has acted" requirement? (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-007 |
+| Rules domain | Class features |
+| Feature | Score (Charlatan) |
+| Source | Scum and Villainy p.32, as summarized by the independent print review. Not re-read by the implementer (OCR unreadable). |
+| Evidence | Familiar Foe and Targeted Suspect print "cannot use this ability until after your opponent has acted". The review's wording of Score gives a full-round observation of one target and Deception rerolls keeping the better result, with no such gate. |
+| Confirmed behavior | Full-round action observing one target; Deception rerolls against that target through encounter end; keep the better result. |
+| Unresolved question | Confirm from the printed page that Score has no "target has acted" requirement. |
+| Options | No gate (the review's wording, implemented); the same gate as the other two observation features. |
+| Recommended ruling | None |
+| Implementation impact | `OBSERVATION_FEATURES['charlatan.score'].requiresActed` (one flag). |
+| Status | `IMPLEMENTED_PER_PRINT_REVIEW` (owner confirmation requested; one-flag change if the printed page differs) |
+| Decision authority | Project owner |
+| Resolution | |
