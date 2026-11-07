@@ -18,6 +18,7 @@ import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/h
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { createItemMacro } from "/systems/foundryvtt-swse/scripts/macros/item-macro.js";
 import registerLevelUpSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/levelup-sheet-hooks.js";
+import { registerForceClassFeatureSheetHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-class-feature-sheet-hooks.js";
 import registerChargenSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/chargen-sheet-hooks.js";
 import registerStoreSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/store-sheet-hooks.js";
 import registerMentorSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/mentor-sheet-hooks.js";
@@ -64,6 +65,9 @@ export function registerUIHooks() {
     // registerChargenSheetHooks();  // DISABLED: Template buttons are authoritative
     registerStoreSheetHooks();
     registerMentorSheetHooks();
+    // These are distinct prestige-class actions, not duplicate chargen/
+    // level-up controls already owned by the sheet template.
+    registerForceClassFeatureSheetHooks();
 
     // Actor sidebar controls (Chargen, Store, Templates)
     registerActorSidebarControls();
