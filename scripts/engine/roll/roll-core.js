@@ -102,6 +102,23 @@ export class RollCore {
         return { success: false, error: `Roll execution failed: ${err.message}`, domain, breakdown: {} };
       }
 
+      // A Force Point paid for a roll is finalized only when the roll
+      // actually evaluates. Failed paid rolls are refunded above and must
+      // never trigger a Sith Lord Temptation consequence.
+      if(forcePointDetails?.success===true && Number(forcePointDetails.spent)>0) {
+        try {
+          globalThis.Hooks?.callAll?.('swse.resourceSpent', {
+            actor, actorId: String(actor?.uuid || actor?.id || ''),
+            resource: 'force', spent: Number(forcePointDetails.spent),
+            committed: true,
+            receiptId: globalThis.crypto?.randomUUID?.()
+              ?? String(Date.now())+'-roll-fp-'+String(actor?.id??'')+'-'+String(Math.random()),
+            source: 'RollCore.execute',
+          });
+        } catch(eventError) {
+          swseLogger.error('[RollCore] Committed Force Point receipt dispatch failed; GM review required', eventError);
+        }
+      }
       const baseRollResult = this._extractBaseRoll(roll, baseDice);
       const breakdown = {
         baseRoll: baseRollResult,
