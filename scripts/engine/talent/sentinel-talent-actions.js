@@ -1,5 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -398,6 +399,17 @@ export class SentinelTalentActions {
     if (!roll) return null;
     const total = Number(roll.roll?.total ?? roll.total ?? 0) || 0;
     const success = total > dc;
+    // Dampen Presence is explicitly Mind-Affecting. Apply the same class
+    // immunity policy before creating a persistent memory-suppression effect.
+    const immune = success && target.actor
+      ? resolveForceDiscipleIndomitable(target.actor, { mindAffecting:true }).immune
+      : false;
+    if (immune) {
+      await postCard(actor, 'Dampen Presence',
+        `<p>${esc(actor.name)} exceeded the Will Defense of <strong>${esc(target.name)}</strong> (${total} vs DC ${dc}), but Indomitable prevents this Mind-Affecting effect.</p>`,
+        { talentName:'Dampen Presence',success:false,immune:true,roll:total,dc });
+      return { success:false,immune:true,roll:total,dc };
+    }
     if (success && target.actor) {
       await createEffectOnActor(target.actor, { name: `Dampen Presence (${actor.name})`, icon: 'icons/svg/silenced.svg', changes: [], disabled: false, duration: { rounds: 999 }, flags: { swse: { talentName: 'Dampen Presence', sourceActorId: actor.id, mindAffecting: true, memorySuppressed: true, note: 'Target does not remember interacting with the source once the source is gone.' } } }, { source: 'dampen-presence' });
     }
