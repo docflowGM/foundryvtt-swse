@@ -7,6 +7,7 @@
  */
 
 import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
+import { resolveApexFearImmunity } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/apex-class-feature-access.js";
 import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { negationExclusions } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-relations.js';
 import { shapeOfWeapon } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
@@ -624,6 +625,21 @@ export function isForceTypedDamageContext(packetOrContext = {}) {
 
 export function targetSuppressesForceEffect({ target = null, sourceItem = null, context = {}, packet = null } = {}) {
   if (!target) return { suppressed: false };
+  // Typed source immunity is resolved at the common target-suppression
+  // boundary. An exact Fear source or explicit fear descriptor qualifies;
+  // arbitrary emotional themes, power names and untyped Persuasion do not.
+  // This intentionally does not require a Force power: Fearless is an
+  // immunity to fear EFFECTS, regardless of their origin.
+  const fear = resolveApexFearImmunity(target, {
+    ...context, ...(packet ?? {}), sourceItem
+  });
+  if (fear.immune) return {
+    suppressed: true,
+    reason: `${target.name ?? 'Target'} is immune to fear effects (Fearless).`,
+    source: fear.classId === 'jedi_master' ? 'Jedi Master — Fearless' : 'Sith Lord — Fearless',
+    targetId: target.id ?? target._id ?? null,
+    targetName: target.name ?? '',
+  };
   // Indomitable is a descriptor immunity, independent of whether the origin
   // was a Force power. Never infer Mind-Affecting merely from source names or
   // from the fact that the actor is a Force-user.
