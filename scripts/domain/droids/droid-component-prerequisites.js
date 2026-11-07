@@ -51,11 +51,32 @@ function listed(value) {
  * @param {object} input.droidSystems      Draft chassis or authoritative base.
  * @param {string[]} input.installedComponentIds Explicit ledger-reconciled ids.
  * @param {object} input.selectedAppendage Explicit instance/slot target.
+ *
+ * EVIDENCE CONTRACT. Two modes, never mixed:
+ *  - DRAFT (default; chargen / follower builders): the in-progress
+ *    `droidSystems` selections ARE the thing being built, so they satisfy
+ *    requirements, and `selectedAppendage` is matched against
+ *    `droidSystems.appendages`.
+ *  - LEDGER (`ledgerEvidence: true`; any post-creation actor): only CONFIRMED
+ *    installed hardware satisfies a requirement. `installedComponentIds` must
+ *    be the ids of components the installation ledger records, and
+ *    `confirmedAppendages` the ledger's physical appendage instances
+ *    ({id, instanceId}). A `droidSystems` display mirror, a stock-import blob
+ *    or an embedded Item never satisfies a requirement. They still COUNT AS
+ *    PRESENT for the nonstacking check (`presentComponentIds` plus the
+ *    droidSystems ids), because blocking on a conflict is the safe direction.
+ *    The chassis's primary locomotion remains a `droidSystems` fact.
  */
 export function evaluateDroidComponentPrerequisites({
   definition, size, droidSystems = null, installedComponentIds = [],
-  selectedAppendage = null
+  selectedAppendage = null, ledgerEvidence = false,
+  confirmedAppendages = null, presentComponentIds = [], normalizeId = null
 } = {}) {
+  // Typed requirement ids are authored in the catalog's vocabulary ("remote")
+  // while installed records carry canonical ids ("remote-processor"). Callers
+  // that own the alias table pass `normalizeId` so both sides are compared in
+  // one vocabulary; the default is the identity (pure, no alias knowledge).
+  const canon = typeof normalizeId === 'function' ? (id => String(normalizeId(id) ?? '').trim().toLowerCase()) : (id => id);
   if (!definition || typeof definition !== 'object') {
     return fail('No published component definition', 'definition');
   }
@@ -81,8 +102,14 @@ export function evaluateDroidComponentPrerequisites({
     }
   }
 
-  const available = selectedIds(droidSystems, Array.isArray(installedComponentIds)
-    ? installedComponentIds : []);
+  const confirmedIds = Array.isArray(installedComponentIds) ? installedComponentIds : [];
+  const draftAndPresent = selectedIds(droidSystems, [...confirmedIds,
+    ...(Array.isArray(presentComponentIds) ? presentComponentIds : [])]);
+  // Positive requirements: draft mode accepts the draft; ledger mode accepts
+  // confirmed hardware only.
+  const available = ledgerEvidence
+    ? new Set(confirmedIds.map(id => namedId(id)).filter(Boolean))
+    : draftAndPresent;
   // Core Hardened Systems are levels of ONE chassis system, not cumulative
   // HP/DT bonuses. The source ledger expressly states tier stacking is
   // NOT GRANTED; a replacement requires a separate atomic remove-and-add.
@@ -91,15 +118,16 @@ export function evaluateDroidComponentPrerequisites({
     if (!Number.isInteger(definition.multiplier) || definition.multiplier !== tier) {
       return fail('Hardened Systems tier metadata conflicts with its source identity', 'multiplier');
     }
-    const otherTier = [...available].find(id =>
+    const otherTier = [...draftAndPresent].find(id =>
       /^(?:droid-)?hardened-systems-x[2-5]$/.test(id) &&
       !id.endsWith(namedId(definition)));
     if (otherTier) {
       return fail('Only one Hardened Systems tier may be installed; remove the previous tier first', 'multiplier');
     }
   }
+  const availableCanonical = new Set([...available].map(canon));
   const dependencies = listed(definition.requiredSystems ?? []);
-  const missing = dependencies.filter(dep => !available.has(dep));
+  const missing = dependencies.filter(dep => !available.has(dep) && !availableCanonical.has(canon(dep)));
   if (missing.length) {
     return fail(`Requires installed system: ${missing.join(', ')}`, 'requiredSystems');
   }
@@ -108,7 +136,12 @@ export function evaluateDroidComponentPrerequisites({
   if (compatibleAppendages.length) {
     const instanceId = String(selectedAppendage?.instanceId ?? '').trim();
     const type = namedId(selectedAppendage);
-    const matches = (droidSystems?.appendages || []).filter(entry =>
+    // LEDGER mode matches the confirmed ledger instances; DRAFT mode matches
+    // the draft's own appendage list.
+    const pool = ledgerEvidence
+      ? (Array.isArray(confirmedAppendages) ? confirmedAppendages : [])
+      : (droidSystems?.appendages || []);
+    const matches = pool.filter(entry =>
       String(entry?.instanceId ?? '') === instanceId
       && namedId(entry) === type);
     if (!instanceId || !compatibleAppendages.includes(type) || matches.length !== 1) {

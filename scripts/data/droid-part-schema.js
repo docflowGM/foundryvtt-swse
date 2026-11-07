@@ -29,7 +29,9 @@
  */
 
 import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
-import { getDroidPriceFactor, resolveSourceReviewedDroidQuote } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-quote-authority.js";
+import { getDroidPriceFactor, resolveSourceReviewedDroidQuoteStaged } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-quote-authority.js";
+import { resolveInstalledDroidComponents } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js";
+import { auditAppendageMirror, isPhysicalAppendageDefinition, listLedgerInstances } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-appendage-instance.js";
 import { DROID_SIZE_PACKAGES } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js";
 
 export const DROID_PART_CATEGORIES = Object.freeze({
@@ -603,35 +605,171 @@ function getActorDroidSize(actor, explicitSize = null) {
 }
 
 /**
+ * The ONE definition of a host appendage that is genuinely there: a well-formed
+ * ledger instance that (a) is not recorded `installed: false`, (b) has a
+ * confirmed location token, (c) is not itself fitted to another host, and
+ * (d) names a part whose catalog definition is a PHYSICAL appendage. If the
+ * ledger and the droidSystems display mirror disagree about the physical
+ * appendages, NO host is confirmed (fail closed until reconciled). Used by the
+ * quote evidence, host pricing and the customization engine, so they cannot
+ * disagree.
+ */
+export function listConfirmedHostInstances(actor) {
+  const ledger = actor?.system?.installedSystems;
+  if (auditAppendageMirror(ledger, actor?.system?.droidSystems).length) return [];
+  return listLedgerInstances(ledger).instances.filter(instance => {
+    if (instance.hostInstanceId) return false;
+    if (instance.entry?.installed === false) return false;
+    if (!instance.locationId) return false;
+    const definition = getDroidPartDefinition(instance.partId);
+    return Boolean(definition) && isPhysicalAppendageDefinition(definition);
+  });
+}
+
+export function findConfirmedHostInstance(actor, instanceId) {
+  const wanted = String(instanceId ?? '').trim();
+  if (!wanted) return null;
+  return listConfirmedHostInstances(actor).find(instance => instance.instanceId === wanted) ?? null;
+}
+
+/**
+ * The shield rating of the droid's installed shield generator, derived from
+ * CONFIRMED installed hardware. Exactly one rated generator is an unambiguous
+ * base; none or several yield null (never a guess).
+ */
+export function deriveInstalledShieldRating(confirmedIds) {
+  const ratings = (Array.isArray(confirmedIds) ? confirmedIds : [])
+    .map(id => getDroidPartDefinition(id)?.source?.sr)
+    .filter(sr => Number.isInteger(sr));
+  return ratings.length === 1 ? ratings[0] : null;
+}
+
+/**
+ * Installed-component EVIDENCE for a post-creation actor, read from the
+ * authoritative records, never from ledger KEYS (a key may be opaque, e.g.
+ * "hand--inst-...").
+ *   confirmedIds        components the installation LEDGER records as installed
+ *   presentIds          components present in ANY source (ledger, embedded
+ *                       Item, droidSystems mirror/stock blob, legacy mods) -
+ *                       used only to BLOCK conflicts, never to satisfy a need
+ *   confirmedAppendages the ledger's physical appendage instances {id, instanceId}
+ */
+export function collectInstalledComponentEvidence(actor) {
+  const resolution = resolveInstalledDroidComponents(actor, {
+    normalizeId: normalizeDroidPartId,
+    getDefinition: (id) => getDroidPartDefinition(id)
+  });
+  const confirmedIds = new Set();
+  const presentIds = new Set();
+  for (const component of resolution.components) {
+    if (!component.installed) continue;
+    presentIds.add(component.canonicalId);
+    if (component.sources.some(src => src.kind === 'installedLedger' && src.installed)) confirmedIds.add(component.canonicalId);
+  }
+  const confirmedAppendages = listConfirmedHostInstances(actor)
+    .map(instance => ({ id: normalizeDroidPartId(instance.partId), instanceId: instance.instanceId }));
+  return { confirmedIds: [...confirmedIds], presentIds: [...presentIds], confirmedAppendages };
+}
+
+/**
+ * Host-dependent quotation base. For a component whose published host
+ * requirement is TYPED (`requiresAppendage`), the base cost and mass are those
+ * of the selected host appendage as quoted by the canonical authority for this
+ * droid's size. Nothing is taken from the caller, from the display mirror, or
+ * from a ledger entry's stored `cost`. A host that is not installed on THIS
+ * actor's ledger, whose kind does not match the id presented, or whose kind
+ * the definition does not allow, yields no base. A component with no typed
+ * host requirement is never host-priced (it is not guessed from prose or from
+ * its price function).
+ *
+ * @returns {{status:'OK'|'BLOCKED'|'NOT_HOST_PRICED', cost:number|null, kg:number|null, reason:string|null}}
+ */
+export function deriveHostAppendageBase(actor, definition, selectedAppendage) {
+  const none = (status, reason) => ({ status, cost: null, kg: null, reason });
+  const raw = definition?.source?.requiresAppendage ?? definition?.requiresAppendage;
+  const kinds = (Array.isArray(raw) ? raw : raw == null ? [] : [raw]).map(v => String(v).trim().toLowerCase()).filter(Boolean);
+  if (!kinds.length) return none('NOT_HOST_PRICED', null);
+  const instanceId = String(selectedAppendage?.instanceId ?? '').trim();
+  if (!instanceId) return none('BLOCKED', 'No host appendage instance was selected');
+  const host = findConfirmedHostInstance(actor, instanceId);
+  if (!host) return none('BLOCKED', 'The selected host appendage is not a confirmed, installed physical appendage on this droid');
+  const hostKind = normalizeDroidPartId(host.partId);
+  if (normalizeDroidPartId(selectedAppendage?.id) !== hostKind) return none('BLOCKED', 'The selected host appendage does not match the installed instance');
+  if (!kinds.includes(hostKind)) return none('BLOCKED', `This component is not published for a ${hostKind} appendage`);
+  const hostQuote = resolveDroidPartQuoteDetailed(actor, hostKind).quote;
+  if (hostQuote.status !== 'OK') return none('BLOCKED', 'The host appendage has no certified quote');
+  return { status: 'OK', cost: hostQuote.credits, kg: hostQuote.kg, reason: null };
+}
+
+/**
  * One read-only adapter from live droid-part identities to the V2 source
  * quote authority. Installed instance cost/weight are deliberately NOT inputs:
  * they cannot override canonical source calculations.
+ *
+ * POST-CREATION evidence contract: prerequisites are judged against CONFIRMED
+ * ledger records (see collectInstalledComponentEvidence), host prices are
+ * derived (deriveHostAppendageBase) and any caller-supplied appendageBaseCost /
+ * appendageBaseWeight is IGNORED. Returns the quote and the staged decision.
  */
-export function resolveDroidPartQuote(actor, part, options = {}) {
+export function resolveDroidPartQuoteDetailed(actor, part, options = {}) {
   const def = getDroidPartDefinition(part?.ruleId ?? part?.id ?? part?.name ?? part);
   if (!def?.source) {
-    return { status: 'BLOCKED', credits: null, kg: null, blockingReason: 'No canonical source definition for this droid component' };
+    return {
+      quote: { status: 'BLOCKED', credits: null, kg: null, blockingReason: 'No canonical source definition for this droid component' },
+      stages: null
+    };
   }
-  return resolveSourceReviewedDroidQuote({
+  const evidence = collectInstalledComponentEvidence(actor);
+  const host = deriveHostAppendageBase(actor, def, options.selectedAppendage ?? null);
+  // TRUST BOUNDARY. This is the POST-CREATION actor path. The following are
+  // facts about the actor or the operation, never caller claims, so they are
+  // derived here and any caller-supplied value is ignored:
+  //   size                 the actor's own chassis size
+  //   operationPhase       always POST_CREATION_INSTALL (the INITIAL_BUILD
+  //                        subset of locomotion HOLDs is for the draft builders
+  //                        only, which use resolveDroidBuilderQuote)
+  //   locomotionSlotOrdinal / restrictedLocomotion   not applicable post-creation
+  //   baseLocomotionCost   the quote of the actor's current locomotion
+  //   selectedInstalledShieldRating   from confirmed installed hardware
+  //   appendage base cost / mass      from the verified ledger host
+  // `speed` and `variant` remain PURCHASE SELECTIONS: the quote authority
+  // validates them against the published options (a numeric speed; an exact
+  // printed variant) and rejects anything else.
+  const isLocomotionEnhancement = String(def.sourcePath ?? '').toLowerCase().includes('locomotionenhancement');
+  let baseLocomotionCost = null;
+  if (isLocomotionEnhancement) {
+    const chassisLocomotion = actor?.system?.droidSystems?.locomotion;
+    if (chassisLocomotion?.id) {
+      const base = resolveDroidPartQuoteDetailed(actor, chassisLocomotion.id, { speed: chassisLocomotion.speed }).quote;
+      baseLocomotionCost = base.status === 'OK' ? base.credits : null;
+    }
+  }
+  return resolveSourceReviewedDroidQuoteStaged({
     definition: def.source,
-    size: getActorDroidSize(actor, options.size),
+    size: getActorDroidSize(actor, null),
     category: def.category,
     sourcePath: def.sourcePath,
     speed: options.speed,
     variant: options.variant,
-    appendageBaseCost: options.appendageBaseCost,
-    appendageBaseWeight: options.appendageBaseWeight,
-    baseLocomotionCost: options.baseLocomotionCost,
-    selectedInstalledShieldRating: options.selectedInstalledShieldRating,
-    operationPhase: options.operationPhase ?? 'POST_CREATION_INSTALL',
-    locomotionSlotOrdinal: options.locomotionSlotOrdinal ?? null,
-    restrictedLocomotion: options.restrictedLocomotion ?? null,
+    appendageBaseCost: host.status === 'OK' ? host.cost : null,
+    appendageBaseWeight: host.status === 'OK' ? host.kg : null,
+    baseLocomotionCost,
+    selectedInstalledShieldRating: deriveInstalledShieldRating(evidence.confirmedIds),
+    operationPhase: 'POST_CREATION_INSTALL',
+    locomotionSlotOrdinal: null,
+    restrictedLocomotion: null,
     droidSystems: actor?.system?.droidSystems ?? null,
-    // The postcreation installation ledger is the only authoritative source
-    // for additional installed systems; this is not a draft-grant fallback.
-    installedComponentIds: Object.keys(actor?.system?.installedSystems ?? {}),
+    ledgerEvidence: true,
+    normalizeId: normalizeDroidPartId,
+    installedComponentIds: evidence.confirmedIds,
+    presentComponentIds: evidence.presentIds,
+    confirmedAppendages: evidence.confirmedAppendages,
     selectedAppendage: options.selectedAppendage ?? null
   });
+}
+
+export function resolveDroidPartQuote(actor, part, options = {}) {
+  return resolveDroidPartQuoteDetailed(actor, part, options).quote;
 }
 
 export function computeDroidLocomotionCost(actor, locomotionId = null, options = {}) {

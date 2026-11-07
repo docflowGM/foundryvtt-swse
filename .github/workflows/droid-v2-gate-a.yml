@@ -11,6 +11,7 @@ on:
       - 'tools/check-droid-*.mjs'
       - 'tools/lib/droid-explicit-action-sites.mjs'
       - 'scripts/engine/upgrades/UpgradeService.js'
+      - 'scripts/data/generated-droid-component-source-status.js'
       - 'scripts/sheets/v2/droid-actor-sheet.js'
       - 'scripts/sheets/v2/character-like-sheet.js'
       - 'scripts/sheets/v2/droid-sheet/**'
@@ -63,3 +64,7 @@ jobs:
           node tests/droid-gate-c1-appendage-instances.test.mjs
           node tests/droid-gate-c1-sheet-rows.test.mjs
           node tests/droid-gate-c1-workshop-removal.test.mjs
+      - name: Droid Gate C-2 installation eligibility
+        run: |
+          set -e
+          node tests/droid-wave2b-installation-eligibility.test.mjs

@@ -178,6 +178,21 @@ export function resolveDroidComponentQuote(input = {}) {
  * Returning OK here certifies NEITHER installation host NOR commerce.
  */
 export function resolveSourceReviewedDroidQuote(input = {}) {
+  return resolveSourceReviewedDroidQuoteStaged(input).quote;
+}
+
+/**
+ * Same decision, plus WHICH gate decided it. A valid price is not an
+ * installation permit, so callers that need to tell "no published source
+ * clearance" from "prerequisite unmet" from "price not exact" (installation
+ * eligibility) read `stages`; `quote` is byte-for-byte what
+ * resolveSourceReviewedDroidQuote has always returned.
+ *
+ *   stages.sourceReview  PASS | BLOCKED
+ *   stages.prerequisites MET  | BLOCKED | NOT_EVALUATED
+ *   stages.numeric       OK   | INVALID | NOT_EVALUATED
+ */
+export function resolveSourceReviewedDroidQuoteStaged(input = {}) {
   const review = resolveDroidComponentSourceReview(input.definition, {
     operationPhase: input.operationPhase,
     locomotionSlotOrdinal: input.locomotionSlotOrdinal,
@@ -185,19 +200,29 @@ export function resolveSourceReviewedDroidQuote(input = {}) {
   });
   if (review.decision === 'BLOCKED') {
     return {
-      status: 'NEEDS_SOURCE_ADJUDICATION',
-      credits: null, kg: null,
-      blockingReason: review.blockingReason
+      quote: {
+        status: 'NEEDS_SOURCE_ADJUDICATION',
+        credits: null, kg: null,
+        blockingReason: review.blockingReason
+      },
+      stages: { sourceReview: 'BLOCKED', prerequisites: 'NOT_EVALUATED', numeric: 'NOT_EVALUATED' }
     };
   }
   const prerequisites = evaluateDroidComponentPrerequisites(input);
   if (prerequisites.status !== 'PREREQUISITES_MET') {
     return {
-      status: 'BLOCKED', credits: null, kg: null,
-      blockingReason: prerequisites.blockingReason
+      quote: {
+        status: 'BLOCKED', credits: null, kg: null,
+        blockingReason: prerequisites.blockingReason
+      },
+      stages: { sourceReview: 'PASS', prerequisites: 'BLOCKED', numeric: 'NOT_EVALUATED' }
     };
   }
-  return resolveDroidComponentQuote(input);
+  const quote = resolveDroidComponentQuote(input);
+  return {
+    quote,
+    stages: { sourceReview: 'PASS', prerequisites: 'MET', numeric: quote.status === 'OK' ? 'OK' : 'INVALID' }
+  };
 }
 
 /**
