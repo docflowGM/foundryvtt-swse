@@ -27,7 +27,8 @@ function requireTurn(actor,combat){
   if(!combat?.started||globalThis.game?.combat?.id!==combat.id)
     throw new Error('Serenity requires the active combat');
   const combatant=Array.from(combat.combatants||[]).find(c=>
-    c.actor?.uuid===actor.uuid||c.actor?.id===actor.id);
+    (actor.uuid && c.actor?.uuid===actor.uuid)
+    || (actor.id && c.actor?.id===actor.id));
   if(!combatant||combat.combatant?.id!==combatant.id||combatant.canAct===false)
     throw new Error('Serenity requires this Jedi Master to act on their current turn');
 }
