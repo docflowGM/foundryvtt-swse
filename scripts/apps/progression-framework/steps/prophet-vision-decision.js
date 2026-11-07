@@ -6,7 +6,9 @@
  * the EXTRA point immediately at this Force Disciple level-up. The dialog is
  * deliberately before ProgressionFinalizer compiles/commits the plan.
  */
-import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
+// Lazy-load the Foundry V13 application only when the player is prompted.
+// Pure eligibility/testing and ProgressionFinalizer module imports must run
+// under the headless Node shim without Foundry ApplicationV2 APIs.
 
 const classKey = value => String(value ?? '').toLowerCase().replace(/[^a-z0-9]/g,'');
 
@@ -35,7 +37,7 @@ export function prophetChoiceEligibility({actor,manifest,mode}={}) {
  * Returns {visionRequested:boolean} or throws. A cancelled/closed dialog
  * never silently chooses the default two points.
  */
-export async function promptProphetVisionDecision({actor,manifest,mode,existing=null,dialog=SWSEDialogV2}={}) {
+export async function promptProphetVisionDecision({actor,manifest,mode,existing=null,dialog=null}={}) {
   const status=prophetChoiceEligibility({actor,manifest,mode});
   if(!status.applicable)return null;
   if(!status.valid)throw new Error('Prophet choice blocked: '+status.reason);
@@ -43,7 +45,10 @@ export async function promptProphetVisionDecision({actor,manifest,mode,existing=
     if(existing.classLevel===status.classLevel) return {visionRequested:existing.visionRequested,classLevel:status.classLevel};
     // Any prior decision for another level must be re-confirmed.
   }
-  const result=await dialog.wait({
+  const Dialog = dialog ?? (await import(
+    '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js'
+  )).SWSEDialogV2;
+  const result=await Dialog.wait({
     title:'Force Disciple — Prophet (Level '+status.classLevel+')',
     content:`<div class="swse-prophet-decision">
       <p>At each Force Disciple level, you receive <strong>two Destiny Points</strong> instead of one.</p>
