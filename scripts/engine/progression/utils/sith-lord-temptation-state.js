@@ -60,7 +60,12 @@ export function planTemptationSpend({target,combat,event}={}){
     return {eligible:false,reason:'invalid-spend-receipt'};
   const entries=currentTemptations(target).filter(x=>
     x.state==='active'&&x.targetActorId===actorIdentity(target)
-    &&x.encounterId===combat.id);
+    &&x.encounterId===combat.id
+    // Even if the GM's cleanup hook has not run yet, the pending effect
+    // cannot extend past the source Sith Lord's NEXT turn.
+    && combat.round>=x.createdRound && combat.round<=x.createdRound+1
+    && !(combat.round===x.createdRound+1
+      && combat.turn>=x.createdTurn));
   if(!entries.length)return {eligible:false,reason:'no-active-temptation'};
   const events=currentTemptationEvents(target);
   if(events.some(x=>x.receiptId===event.receiptId))
@@ -81,7 +86,9 @@ export function expireTemptationEntries(actor,combat,{nextTurn=false,encounterEn
   const updated=current.map(e=>{
     if(e.state!=='active')return e;
     const stale=encounterEnd || e.encounterId!==combat?.id
-      || (nextTurn && e.sourceCombatantId===String(combat?.combatant?.id||''));
+      || (nextTurn && e.sourceCombatantId===String(combat?.combatant?.id||'')
+        && (Number(combat?.round)>Number(e.createdRound)
+          || Number(combat?.turn)!==Number(e.createdTurn)));
     return stale?{...e,state:'expired',expiredRound:combat?.round??null}:e;
   });
   return {changed:updated.some((x,i)=>x!==current[i]),entries:updated};
