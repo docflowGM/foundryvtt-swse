@@ -909,7 +909,25 @@ export const ActorEngine = {
         count: data.length
       });
 
-      const safeData = embeddedName === 'ActiveEffect' ? normalizeActiveEffectDataForRuntime(data) : data;
+      // ActiveEffect admission: reject only effects with explicit, typed
+      // Fear or Mind-Affecting descriptors against a genuinely immune class.
+      // This is a shared mutation boundary for createEffectOnActor callers.
+      // No name/prose inference and no second effect-creation authority.
+      let admittedData = data;
+      if (embeddedName === 'ActiveEffect') {
+        const { admitClassImmuneActiveEffects } = await import(
+          '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-feature-effect-admission.js'
+        );
+        const admission = admitClassImmuneActiveEffects(actor, data);
+        if (admission.suppressed.length) {
+          SWSELogger.log('[ActorEngine] Typed ActiveEffects suppressed by class immunity', {
+            actorId: actor.id, suppressed: admission.suppressed
+          });
+        }
+        if (!admission.permitted.length) return [];
+        admittedData = admission.permitted;
+      }
+      const safeData = embeddedName === 'ActiveEffect' ? normalizeActiveEffectDataForRuntime(admittedData) : admittedData;
 
       MutationInterceptor.setContext(`ActorEngine.createEmbeddedDocuments[${embeddedName}]`);
       try {
@@ -4167,7 +4185,17 @@ export const ActorEngine = {
         suppressRecalc: options.suppressRecalc ?? false
       });
       try {
-        const normalizedEffectData = normalizeActiveEffectDataForRuntime(effectData);
+        const { admitClassImmuneActiveEffects } = await import(
+          '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-feature-effect-admission.js'
+        );
+        const admission = admitClassImmuneActiveEffects(actor, effectData);
+        if (admission.suppressed.length) {
+          SWSELogger.log('[ActorEngine] Typed ActiveEffects suppressed by class immunity', {
+            actorId: actor.id, suppressed: admission.suppressed
+          });
+        }
+        if (!admission.permitted.length) return [];
+        const normalizedEffectData = normalizeActiveEffectDataForRuntime(admission.permitted);
         const result = await actor.createEmbeddedDocuments('ActiveEffect', normalizedEffectData, options);
         await this.recalcAll(actor);
         return result;
