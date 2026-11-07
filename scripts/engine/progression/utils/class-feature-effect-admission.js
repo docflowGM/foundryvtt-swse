@@ -18,7 +18,9 @@ const asArray=v=>Array.isArray(v)?v:(v==null?[]:[v]);
 /** Only explicit boolean fields and exact descriptor tokens qualify. */
 export function typedActiveEffectDescriptors(effect){
   const flags=effect?.flags??{};
-  const sources=[flags.swse,flags['foundryvtt-swse'],effect?.system].filter(x=>x&&typeof x==='object');
+  // A direct caller may pass typed condition metadata rather than an ActiveEffect.
+  // Include only explicit descriptor fields: never classify by name or prose.
+  const sources=[effect,flags.swse,flags['foundryvtt-swse'],effect?.system].filter(x=>x&&typeof x==='object');
   const tokens=sources.flatMap(source=>[
     ...asArray(source.descriptor),
     ...asArray(source.descriptors),
