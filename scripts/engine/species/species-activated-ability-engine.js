@@ -1,5 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionEngine.js";
+import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
@@ -118,7 +119,11 @@ export class SpeciesActivatedAbilityEngine {
     for (const targetActor of targets) {
       const will = getDefense(targetActor, 'will');
       const success = roll.total >= will;
-      if (success) {
+      // Yarkora Confusion is explicitly Mind-Affecting. Indomitable
+      // suppresses both the persisted effect and the claimed outcome.
+      const immune = success
+        && resolveForceDiscipleIndomitable(targetActor, { mindAffecting: true }).immune;
+      if (success && !immune) {
         await createStatusEffect(targetActor, {
           name: 'Confused',
           icon: 'icons/svg/daze.svg',
@@ -131,7 +136,7 @@ export class SpeciesActivatedAbilityEngine {
           flags: { swse: { speciesAbility: 'confusion', mindAffecting: true, doesNotThreaten: true } }
         });
       }
-      results.push(`<li>${escapeHtml(targetActor.name)}: Will ${will}; ${success ? '<strong>confused</strong>' : 'resists'}.</li>`);
+      results.push(`<li>${escapeHtml(targetActor.name)}: Will ${will}; ${immune ? 'immune (Indomitable)' : success ? '<strong>confused</strong>' : 'resists'}.</li>`);
     }
 
     await ChatMessage.create({
@@ -155,7 +160,13 @@ export class SpeciesActivatedAbilityEngine {
       return { success: false, reason: 'No target selected' };
     }
     const will = getDefense(targetActor, 'will');
-    const success = roll.total >= will;
+    const checkSucceeds = roll.total >= will;
+    // Caamasi Pacifism is both language-dependent and explicitly
+    // Mind-Affecting. Its Condition Track shift happens BEFORE the effect
+    // creation path, so ActiveEffect admission alone cannot protect this.
+    const immune = checkSucceeds
+      && resolveForceDiscipleIndomitable(targetActor, { mindAffecting: true }).immune;
+    const success = checkSucceeds && !immune;
     if (success) {
       await applyConditionSteps(targetActor, 1, { source: 'Caamasi Pacifism', nonPhysical: true, mindAffecting: true });
       await createStatusEffect(targetActor, {
@@ -171,9 +182,9 @@ export class SpeciesActivatedAbilityEngine {
     }
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<h2>${escapeHtml(actor.name)} uses Pacifism</h2><p>Persuasion ${roll.total} vs ${escapeHtml(targetActor.name)}'s Will ${will}: ${success ? '<strong>success</strong>; target moves -1 step on the Condition Track.' : 'no effect'}.</p>`
+      content: `<h2>${escapeHtml(actor.name)} uses Pacifism</h2><p>Persuasion ${roll.total} vs ${escapeHtml(targetActor.name)}'s Will ${will}: ${immune ? 'immune (Indomitable); no Condition Track movement.' : success ? '<strong>success</strong>; target moves -1 step on the Condition Track.' : 'no effect'}.</p>`
     });
-    return { success, abilityId: 'pacifism', total: roll.total, target: targetActor.id };
+    return { success, immune: !!immune, abilityId: 'pacifism', total: roll.total, target: targetActor.id };
   }
 
   static async usePheromones(actor, item, options = {}) {
