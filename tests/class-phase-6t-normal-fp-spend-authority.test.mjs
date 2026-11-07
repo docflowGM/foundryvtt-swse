@@ -9,8 +9,9 @@ registerFoundryPathLoader();
 installFoundryShimGlobals();
 globalThis.foundry.applications=globalThis.foundry.applications??{};
 globalThis.foundry.applications.api=globalThis.foundry.applications.api??{
- ApplicationV2:class {}, HandlebarsApplicationMixin:Base=>class extends Base {}
+ ApplicationV2:class {}, HandlebarsApplicationV2:class {}, HandlebarsApplicationMixin:Base=>class extends Base {}
 };
+globalThis.ChatMessage=globalThis.ChatMessage??{getSpeaker:()=>({}),create:async()=>({})};
 const {graftRealForcePointMethods,setPath}=await import('./helpers/real-force-point-engine.mjs');
 const events=[];
 globalThis.Hooks=globalThis.Hooks??{};
