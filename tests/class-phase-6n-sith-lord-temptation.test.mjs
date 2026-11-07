@@ -112,6 +112,18 @@ test('paid Force Point roll finalizes through the V2 receipt; no coordinator def
    roll.indexOf('ActorEngine.finalizeForcePointSpend('),'finality only after the paid d20 executed');
 });
 
+test('truncated condition consequence cannot silently close a pending Temptation choice',()=>{
+ const service=read('scripts/engine/combat/sith-lord-temptation-service.js');
+ const start=service.indexOf('const shift=ConditionTrackRules.resolveConditionShift(target,event.steps)');
+ const end=service.indexOf("set['system.conditionTrack.current']=shift.next",start);
+ assert.ok(start>=0&&end>start);
+ const gate=service.slice(start,end);
+ assert.match(gate,/shift\.appliedShift<event\.steps/);
+ assert.match(gate,/throw new Error\('Temptation condition consequence cannot fully apply/);
+ // The mutation which marks a spend resolved follows the eligibility check.
+ assert.ok(end<service.indexOf("state:'resolved'",end));
+});
+
 test('runtime action and target choice remain separate; no fake immediate DSP',()=>{
  const service=read('scripts/engine/combat/sith-lord-temptation-service.js');
  const boot=read('index.js');
