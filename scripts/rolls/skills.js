@@ -290,14 +290,14 @@ export async function rollSkill(actor, skillKey, options = {}) {
   }
 
   const domain = `skill.${effectiveSkillKey}`;
-  let rollResult;
-  try {
-  rollResult = await RollCore.execute({
+  const rollResult = await RollCore.execute({
     actor,
     domain,
     baseBonus: canonicalTotal + observedSuspect + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0) + Number(equipmentSkill.total || 0) + shaperLore,
     rollOptions: {
-      baseDice: (masterSaboteurDice || observedScoreReroll || masterOfMovement) ? '2d20kh1' : '1d20',
+      baseDice: masterSaboteurDice ? '2d20kh1' : '1d20',
+      // Score and Master of Movement use the same keep-better primitive (two d20s, keep the higher)
+      ...((observedScoreReroll || masterOfMovement) ? { baseDice: '2d20kh1' } : {}),
       useForce: options?.useForcePoint === true,
       forcePointDieUpgradeSteps: forcePointDieUpgrade?.steps ?? 0,
       forcePointDieUpgradeSource: forcePointDieUpgrade?.source ?? null,
@@ -322,11 +322,10 @@ export async function rollSkill(actor, skillKey, options = {}) {
       checkMode: skillCheckMode,
       takeXValue: skillIsTakeX ? skillTakeXValue : null
     }
-  });
-  } catch (error) {
-    await masterOfMovement?.refund();
+  }).catch(async (error) => {
+    await masterOfMovement?.refund(); // a thrown roll never keeps the spent use
     throw error;
-  }
+  });
 
   if (!rollResult.success) {
     await masterOfMovement?.refund();

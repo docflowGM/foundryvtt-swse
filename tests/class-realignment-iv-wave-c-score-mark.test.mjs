@@ -194,6 +194,6 @@ test('rolls consume the Mark and Score authorities once each', () => {
   assert.equal((math.match(/\+ trustySidearm \+ assassinMark/g) || []).length, 1, 'inside the pre-critical flat total');
   assert.match(math, /components\['Mark'\] = assassinMark/);
   const skills = read('scripts/rolls/skills.js');
-  assert.match(skills, /\(masterSaboteurDice \|\| observedScoreReroll \|\| masterOfMovement\) \? '2d20kh1' : '1d20'/);
+  assert.match(skills, /\.\.\.\(\(observedScoreReroll \|\| masterOfMovement\) \? \{ baseDice: '2d20kh1' \} : \{\}\)/);
   assert.match(read('scripts/infrastructure/hooks/combat-hooks.js'), /pruneMarks\(actor, combat\.id\)/);
 });
