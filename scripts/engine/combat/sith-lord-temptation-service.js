@@ -159,6 +159,10 @@ export class SithLordTemptationService {
         }else{
           const shift=ConditionTrackRules.resolveConditionShift(target,event.steps);
           if(!Number.isSafeInteger(shift.next))throw new Error('Condition Track unavailable');
+          // A blocked/capped condition track cannot be used to evade the
+          // printed penalty. Leave this choice pending for DSP or GM review.
+          if(shift.appliedShift<event.steps)
+            throw new Error('Temptation condition consequence cannot fully apply; choose DSP or GM review');
           set['system.conditionTrack.current']=shift.next;
         }
         set[TEMPTATION_EVENTS_PATH]=rows.map(x=>x.eventKey===event.eventKey
