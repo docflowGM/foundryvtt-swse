@@ -54,10 +54,10 @@ test('single registration and no duplicated class controls across header calls',
  const buttons=controls(a);
  assert.equal(buttons.length,4);
  handler({actor:a},buttons);
- assert.equal(buttons.length,3);
+ assert.equal(buttons.length,4);
  assert.equal(new Set(buttons.map(c=>c.action)).size,4);
  handler({document:{documentName:'JournalEntry',id:'bad'}},buttons);
- assert.equal(buttons.length,3);
+ assert.equal(buttons.length,4);
 });
 
 test('Jedi Master Serenity button requires owned class and actor owner',async()=>{
