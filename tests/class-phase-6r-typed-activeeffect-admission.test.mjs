@@ -75,3 +75,30 @@ test('effect wrapper routes through ActorEngine createEmbeddedDocuments rather t
  const body=src.slice(start,end);
  assert.match(body,/ActorEngine\.createEmbeddedDocuments\(actor, 'ActiveEffect', dataArray, options\)/);
 });
+
+
+test('explicit typed ConditionEngine proposals use the SAME class immunity policy',()=>{
+ const disciple=actor('Force Disciple');
+ const jedi=actor('Jedi Master');
+ const fear={fearEffect:true,source:'published-fear-condition'};
+ const mind={mindAffecting:true,source:'published-mind-condition'};
+ assert.deepEqual(typedActiveEffectDescriptors(mind),{mindAffecting:true,fear:false});
+ assert.deepEqual(typedActiveEffectDescriptors(fear),{mindAffecting:false,fear:true});
+ assert.equal(admitClassImmuneActiveEffects(disciple,[mind]).suppressed.length,1);
+ assert.equal(admitClassImmuneActiveEffects(jedi,[fear]).suppressed.length,1);
+ assert.equal(admitClassImmuneActiveEffects(disciple,[{source:'fear effect',name:'Mind-Affecting'}]).permitted.length,1);
+ assert.equal(admitClassImmuneActiveEffects(jedi,[mind]).permitted.length,1);
+});
+
+test('ConditionEngine invokes typed immunity admission before ActorEngine condition writes',()=>{
+ const src=readFileSync(new URL('../scripts/engine/combat/ConditionEngine.js',import.meta.url),'utf8');
+ const start=src.indexOf('static async applyConditionStep(actor, newStep, options = {})');
+ const end=src.indexOf('static async improveCondition(',start);
+ const body=src.slice(start,end);
+ assert.ok(start>=0 && end>start);
+ assert.ok(body.includes('admitClassImmuneActiveEffects(actor, [options])'));
+ assert.ok(body.includes('if (admission.suppressed.length)'));
+ assert.ok(body.indexOf('admitClassImmuneActiveEffects(actor, [options])')
+   <body.indexOf('ActorEngine.setConditionStep(actor, clampedStep, options.source'));
+ assert.doesNotMatch(body,/resolveForceClassTypedEffectImmunity/);
+});

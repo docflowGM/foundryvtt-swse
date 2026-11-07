@@ -11,11 +11,13 @@
 import { HooksRegistry } from '/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js';
 import { apexClassFeatureAccess } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/apex-class-feature-access.js';
 import { currentTemptationEvents } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/sith-lord-temptation-state.js';
+import { forceDiscipleClassLevel } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js';
 
 const ACTIONS = Object.freeze({
   serenity: 'swse-force-class-serenity',
   temptation: 'swse-force-class-temptation',
   resolve: 'swse-force-class-resolve-temptation',
+  prophetVision: 'swse-force-class-review-prophet-vision',
 });
 
 function usableActor(app) {
@@ -34,6 +36,12 @@ function hasActiveFeature(actor,classId) {
 function pendingChoiceCount(actor) {
   return currentTemptationEvents(actor)
     .filter(entry=>entry.state==='pending-target-choice').length;
+}
+function hasPendingProphetVision(actor) {
+  const awards=actor?.flags?.swse?.forceDiscipleProphetAwards;
+  return forceDiscipleClassLevel(actor)>0
+    && awards && typeof awards==='object' && !Array.isArray(awards)
+    && Object.values(awards).some(row=>row?.visionRequested===true && row?.pendingGmVision===true);
 }
 function actionControl({action,label,icon,visible,handler}) {
   return {action,label,icon,ownership:CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER??3,visible,handler};
@@ -80,6 +88,13 @@ export function registerForceClassFeatureSheetHooks(){
         visible:()=>isOwner(actor)&&pendingChoiceCount(actor)>0,
         handler:()=>runAction(actor,'sithLordTemptation','reviewConsequences')
       }),
+      actionControl({
+        action:ACTIONS.prophetVision,
+        label:'Prophet — Review Vision',
+        icon:'fa-solid fa-eye',
+        visible:()=>globalThis.game?.user?.isGM===true && hasPendingProphetVision(actor),
+        handler:()=>runAction(actor,'forceDiscipleProphet','review')
+      }),
     ];
 
     const existing=new Set(controls.map(control=>control?.action));
@@ -93,7 +108,7 @@ export function registerForceClassFeatureSheetHooks(){
     id:'swse-force-class-feature-actions',
     priority:5,
     category:'ui',
-    description:'Expose owned Jedi Master Serenity, Sith Lord Temptation and target consequence review',
+    description:'Expose Serenity, Temptation and pending GM Prophet vision review',
   });
 }
 
