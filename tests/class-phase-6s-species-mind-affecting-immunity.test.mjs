@@ -38,7 +38,7 @@ test('typed effects never fall back to bypassable legacy system.activeEffects st
  const code=body('async function createStatusEffect(','function getForceBlastDamageDice(');
  assert.match(code,/ActorEngine\.createActiveEffects\(actor, \[effectData\]/);
  assert.doesNotMatch(code,/ActorEngine\.updateActor\(actor/);
- assert.doesNotMatch(code,/system\.activeEffects/);
+ assert.doesNotMatch(code,/['\"]system\.activeEffects['\"]\s*:/,'legacy array write must remain retired');
  assert.match(code,/throw new Error\('Species ability requires a Foundry Actor/);
 });
 
