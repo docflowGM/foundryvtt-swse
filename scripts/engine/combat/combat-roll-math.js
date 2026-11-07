@@ -50,7 +50,7 @@ import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/r
 import { resolveTalentDamageContributions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-talent-contributions.js";
 import { infiltratorUnarmedStunDice } from "/systems/foundryvtt-swse/scripts/engine/combat/class-infiltrator-unarmed-stun.js";
 import { isPistolWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
-import { markDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-assassin-mark.js";
+import { markBonusFor, markDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-assassin-mark.js";
 import { trustySidearmDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-gunslinger-trusty-sidearm.js";
 import { collectSharedDamageDiceTerms } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-item-dice-contributions.js";
 import { resolveVehicleWeaponDamage } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
@@ -803,7 +803,7 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   const trustySidearm = trustySidearmDamageBonus(actor,{isPistol:isPistolWeapon(weapon)});
 
   // Assassin Mark: pre-critical, so the critical multiplier doubles it with the rest of the flat total.
-  const assassinMark = markDamageBonus(actor, getTargetActorFromOptions(context));
+  const assassinMark = markBonusFor(actor) > 0 ? markDamageBonus(actor, getTargetActorFromOptions(context)) : 0; // only an Assassin resolves a target here
 
   const total = halfLvl + enhancement + abilityMod + rageMod + rapidAlchemyMod + typedDamagePool.total + combatOptionDamage + scopedFeatDamage + trustySidearm + assassinMark;
 

@@ -190,7 +190,7 @@ test('the swift sacrifice option is deliberately not implemented (blocked on a f
 // ---- wiring (static evidence only) -----------------------------------------
 test('rolls consume the Mark and Score authorities once each', () => {
   const math = read('scripts/engine/combat/combat-roll-math.js');
-  assert.match(math, /assassinMark = markDamageBonus\(actor, getTargetActorFromOptions\(context\)\)/);
+  assert.match(math, /assassinMark = markBonusFor\(actor\) > 0 \? markDamageBonus\(actor, getTargetActorFromOptions\(context\)\) : 0/);
   assert.equal((math.match(/\+ trustySidearm \+ assassinMark/g) || []).length, 1, 'inside the pre-critical flat total');
   assert.match(math, /components\['Mark'\] = assassinMark/);
   const skills = read('scripts/rolls/skills.js');
