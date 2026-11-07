@@ -1,5 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionEngine.js";
+import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -281,11 +282,26 @@ export class ConsularTalentActions {
       return { success: false, roll: total, dc };
     }
 
+    const targetActor = target?.actor ?? null;
+    // Adept Negotiator and Master Negotiator are explicitly Mind-Affecting.
+    // This is the active Consular talent path, distinct from the older
+    // LightSideTalentMechanics implementation. A succeeded check must never
+    // create a CT shift, embedded effect, or mark on an Indomitable target.
+    const immunity = targetActor
+      ? resolveForceDiscipleIndomitable(targetActor, { mindAffecting: true })
+      : { immune: false };
+    if (immunity.immune) {
+      await postCard(actor, 'Adept Negotiator',
+        `<p>${esc(actor.name)} succeeded against <strong>${esc(targetName)}</strong> (${total} vs Will DC ${dc}), but the target is immune to Mind-Affecting effects (Force Disciple — Indomitable).</p><p>No Condition Track movement or Broken Resolve is applied.</p>`,
+        { talentName:'Adept Negotiator',success:false,immune:true,roll:total,dc,
+          targetActorId:targetActor?.id??null });
+      return { success:false,immune:true,roll:total,dc,conditionTrackOnly:true };
+    }
+
     const hasMaster = hasTalent(actor, 'Master Negotiator');
     const steps = AdeptNegotiatorSchema.conditionTrack.baseSteps + (hasMaster ? AdeptNegotiatorSchema.conditionTrack.masterNegotiatorAdditionalSteps : 0);
     let conditionResult = null;
     let brokenResolve = false;
-    const targetActor = target?.actor ?? null;
     if (targetActor) {
       const before = ConditionEngine.calculateConditionStep(targetActor, { source: 'adept-negotiator-precheck' });
       const oldStep = Number(before?.currentStep ?? 0) || 0;
