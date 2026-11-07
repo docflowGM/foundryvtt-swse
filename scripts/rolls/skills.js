@@ -277,7 +277,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
   const rollResult = await RollCore.execute({
     actor,
     domain,
-    baseBonus: canonicalTotal + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0) + Number(equipmentSkill.total || 0) + shaperLore + observedSuspect,
+    baseBonus: canonicalTotal + observedSuspect + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0) + Number(equipmentSkill.total || 0) + shaperLore,
     rollOptions: {
       baseDice: masterSaboteurDice ? '2d20kh1' : '1d20',
       useForce: options?.useForcePoint === true,
@@ -359,7 +359,8 @@ export async function rollSkill(actor, skillKey, options = {}) {
         // Display class-granted skill bonuses by provenance, separately
         // from other situational modifiers, feat and equipment sources.
         situationalMods: rollResult.modifierTotal,
-        classSkillBonuses: [...(shaperLore ? [{name:'Shaper Lore',value:shaperLore}] : []), ...(observedSuspect ? [{name:'Targeted Suspect',value:observedSuspect}] : [])],
+        classSkillBonuses: shaperLore ? [{name:'Shaper Lore',value:shaperLore}] : [],
+        observedSuspectBonus: observedSuspect,
         shaperLoreBonus: shaperLore,
         biotechDevice:options?.biotechDevice === true,
         customModifier: Number(options?.customModifier || 0),

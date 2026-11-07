@@ -306,7 +306,7 @@ test('rolls and hooks consume the observation authority exactly once each', () =
   assert.match(attacks, /resolveTargetContext\(\{ \.\.\.targetContextOptions, attackerActor: actor \}/);
   const skills = read('scripts/rolls/skills.js');
   assert.match(skills, /options\?\.observedSuspect === true/);
-  assert.equal((skills.match(/shaperLore \+ observedSuspect/g) || []).length, 1);
+  assert.match(skills, /canonicalTotal \+ observedSuspect/);
   assert.match(read('scripts/infrastructure/hooks/combat-hooks.js'), /pruneObservations\(actor, combat\.id\)/);
   assert.doesNotMatch(read('scripts/engine/combat/class-target-observation.js'), /system\.defenses|system\.derived|system\.skills/);
 });

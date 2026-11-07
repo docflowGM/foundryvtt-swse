@@ -1081,16 +1081,16 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
     // situational contribution for a non-attack roll here any more; the
     // preview is exactly base + custom, matching what rollSkill()/friends
     // actually compute.
+    // Shaper Lore plus Targeted Suspect: both are opt-in class-feature skill bonuses, previewed together
     const classBonus = model?.rollType === 'skill'
       ? shaperLoreBonus(actor,model.skillKey,{
           biotechDevice:form.querySelector('[name="biotechDevice"]')?.checked === true
-        })
+        }) + (form.querySelector('[name="observedSuspect"]')?.checked === true
+          ? observedSkillBonus(actor, model.skillKey, soleTargetedActor()) : 0)
       : 0;
-    const suspectBonus = model?.rollType === 'skill' && form.querySelector('[name="observedSuspect"]')?.checked === true
-      ? observedSkillBonus(actor, model.skillKey, soleTargetedActor()) : 0;
-    const total = base + custom + classBonus + suspectBonus;
+    const total = base + custom + classBonus;
     form.querySelector('[data-rcd-custom-bd]')?.replaceChildren(document.createTextNode(sign(custom)));
-    form.querySelector('[data-rcd-situational-bd]')?.replaceChildren(document.createTextNode(sign(classBonus + suspectBonus)));
+    form.querySelector('[data-rcd-situational-bd]')?.replaceChildren(document.createTextNode(sign(classBonus)));
     form.querySelector('[data-rcd-bd-total]')?.replaceChildren(document.createTextNode(sign(total)));
     form.querySelector('[data-rcd-preview-total]')?.replaceChildren(document.createTextNode(sign(total)));
     form.querySelector('[data-rcd-formula]')?.replaceChildren(document.createTextNode(`1d20 ${sign(total)}`));
