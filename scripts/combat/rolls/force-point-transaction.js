@@ -36,6 +36,39 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
   let rollbackRun = null;
   let announceRun = null;
   const poolNow = () => ({ normal: Number(actor.system?.forcePoints?.value ?? 0), bonus: bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints')).reduce((n, e) => n + e.value, 0) });
+
+  // This transaction is provisional until finalize()/announce(). Sending
+  // a Temptation event in commit() is incorrect: the attack can still fail
+  // and refund its Force Point. Emit only once when rollback is disabled.
+  function publishFinalResourceSpend(tx) {
+    if (!tx.committed || !tx.final || tx.closed || tx.rollbackAccepted
+      || tx.finalSpendDispatched) return false;
+    const bonusSpent = tx.gaveBonus.reduce((n, x) => n + x.amount, 0);
+    const spent = tx.spentNormal + bonusSpent;
+    if (spent !== 1) return false;
+    tx.finalSpendDispatched = true;
+    const receiptId = tx.finalSpendReceiptId ?? (
+      globalThis.crypto?.randomUUID?.()
+      ?? String(Date.now()) + '-attack-fp-' + String(actor?.id ?? '') + '-' + String(Math.random())
+    );
+    tx.finalSpendReceiptId = receiptId;
+    try {
+      if (!globalThis.Hooks?.callAll)
+        throw new Error('Hook dispatcher not available');
+      globalThis.Hooks.callAll('swse.resourceSpent', {
+        actor, actorId: String(actor?.uuid || actor?.id || ''),
+        resource: 'force', spent, committed: true, receiptId,
+        source: 'ForcePointTransaction.finalized',
+      });
+      return true;
+    } catch (error) {
+      tx.finalSpendError = error;
+      console.error('Final Force Point spend receipt could not be dispatched; GM review required', error);
+      globalThis.ui?.notifications?.warn?.('Force Point was spent, but its Temptation event could not be confirmed. GM review required.');
+      return false;
+    }
+  }
+
   const tx = {
     result,
     formula,
@@ -51,6 +84,9 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     hookRan: false,
     announced: false,
     announceError: null,
+    finalSpendDispatched: false,
+    finalSpendReceiptId: null,
+    finalSpendError: null,
     commit() {
       if (tx.closed || tx.rollbackAccepted) {return Promise.resolve(false);}
       if (tx.committed) {return Promise.resolve(true);}
@@ -66,7 +102,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       let spent;
       try {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        spent = await ActorEngine.spendForcePoints(actor, 1);   // PHASE 3: Route through ActorEngine
+        spent = await ActorEngine.spendForcePoints(actor, 1, { deferResourceEvent: true });   // Provisional until finalize()/announce()
       } catch (err) {
         console.error('Failed to spend Force Point:', err);
         const after = poolNow();
@@ -99,6 +135,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     finalize() {
       if (!tx.committed || tx.closed || tx.rollbackAccepted) {return false;}
       tx.final = true;
+      publishFinalResourceSpend(tx);
       return true;
     },
     rollback() {
@@ -151,6 +188,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     announce() {
       if (!tx.committed || tx.closed || tx.rollbackAccepted) {return Promise.resolve(false);}
       tx.final = true;   // synchronously: from here a refund is refused
+      publishFinalResourceSpend(tx);
       if (tx.announced) {return Promise.resolve(true);}
       announceRun ??= tx._announce().finally(() => { announceRun = null; });
       return announceRun;
