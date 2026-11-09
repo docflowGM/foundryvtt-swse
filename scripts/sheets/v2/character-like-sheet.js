@@ -1,3 +1,4 @@
+import { activateEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-ui.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { SWSEV2ActorSheetBase, canUseActorSheetEditControls, applySheetInteractionMode, setStoredSheetMode } from "/systems/foundryvtt-swse/scripts/sheets/v2/actor-sheet-base.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
@@ -3555,6 +3556,8 @@ const forcePoints = [];
 
     // Inventory Panel Handlers
     this._activateInventoryUI(html, { signal });
+    // Gear tab equipment workspace: UI state + routing to the existing equipment authorities
+    activateEquipmentWorkspace(this, html, { signal });
 
     // SWSE Combat UI Wiring
     this._activateCombatUI(html, { signal });

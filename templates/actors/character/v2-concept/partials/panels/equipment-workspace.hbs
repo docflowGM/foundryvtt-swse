@@ -1,0 +1,200 @@
+{{!-- Equipment workspace (Gear tab). Presentation only: every value comes from conceptLayout.gear.workspace (equipment-workspace-context.js).
+     Every state-changing control reuses an existing data-action handled by the sheet (InventoryEngine / FireStateStore / customization router),
+     or a data-eqw-* control handled by equipment-workspace-ui.js, which only calls the same authorities. --}}
+{{#with conceptLayout.gear.workspace as |ws|}}
+<section class="swse-eqw" data-eqw aria-label="Equipment workspace">
+  {{#each ws.notices as |n|}}
+    <p class="swse-eqw__notice is-{{n.tone}}" role="note">{{n.text}}</p>
+  {{/each}}
+
+  <div class="swse-eqw__layout">
+    <div class="swse-eqw__main">
+
+      {{!-- REGION A: character equipment (slots come from the actor's resolved anatomy) --}}
+      <section class="swse-eqw__panel swse-eqw__figure" aria-labelledby="eqw-figure-title">
+        <header class="swse-eqw__panel-head">
+          <h3 id="eqw-figure-title">Loadout</h3>
+          {{#if ws.anatomy}}<span class="swse-eqw__meta">Anatomy: {{ws.anatomy.status}}</span>{{/if}}
+        </header>
+
+        <div class="swse-eqw__figure-grid">
+          {{#if ws.portrait}}<img class="swse-eqw__portrait" src="{{ws.portrait}}" alt="" loading="lazy">{{/if}}
+
+          <div class="swse-eqw__col" role="group" aria-label="Hands and appendages">
+            {{#each ws.slotsLeft as |slot|}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-slot.hbs" slot=slot}}{{/each}}
+          </div>
+
+          <div class="swse-eqw__col swse-eqw__col--stations" role="group" aria-label="Worn and installed">
+            {{#each ws.stations as |st|}}
+              <button type="button" class="swse-eqw__slot swse-eqw__slot--station{{#if st.empty}} is-empty{{else}} is-occupied{{/if}}" data-eqw-station="{{st.tab}}" aria-pressed="false">
+                <span class="swse-eqw__slot-name">{{st.label}}</span>
+                {{#if st.primary}}
+                  {{#if st.primary.img}}<img class="swse-eqw__slot-img" src="{{st.primary.img}}" alt="" loading="lazy">{{/if}}
+                  <strong class="swse-eqw__slot-item">{{st.primary.name}}</strong>
+                  <span class="swse-eqw__slot-sub">{{st.primary.status.label}}{{#if st.primary.activated}} · active{{/if}}</span>
+                {{else}}<strong class="swse-eqw__slot-item">None</strong>{{/if}}
+              </button>
+            {{/each}}
+          </div>
+
+          <div class="swse-eqw__col" role="group" aria-label="Hands and appendages (continued)">
+            {{#each ws.slotsRight as |slot|}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-slot.hbs" slot=slot}}{{/each}}
+          </div>
+        </div>
+        {{#unless ws.hasSlots}}<p class="swse-eqw__empty">No usable hands or appendages are established for this actor, so no hand slots are shown (see the notice above).</p>{{/unless}}
+      </section>
+
+      {{!-- REGION B: inventory browser --}}
+      <section class="swse-eqw__panel swse-eqw__browser" aria-labelledby="eqw-inv-title">
+        <header class="swse-eqw__panel-head">
+          <h3 id="eqw-inv-title">Inventory</h3>
+          <span class="swse-eqw__context" data-eqw-context hidden></span>
+          <button type="button" class="swse-eqw__link" data-eqw-clear hidden>Clear selection</button>
+        </header>
+        <div class="swse-eqw__tabs" role="tablist" aria-label="Inventory categories">
+          {{#each ws.tabs as |tab|}}
+            <button type="button" role="tab" class="swse-eqw__tab" data-eqw-tab="{{tab.id}}" aria-selected="{{#if (eq tab.id 'all')}}true{{else}}false{{/if}}">{{tab.label}} <span class="swse-eqw__count">{{tab.count}}</span></button>
+          {{/each}}
+        </div>
+        <div class="swse-eqw__tools">
+          <label class="swse-eqw__search"><span class="swse-eqw__sr">Search inventory</span><input type="search" data-eqw-search placeholder="Search by name…" autocomplete="off"></label>
+          <label class="swse-eqw__toggle" data-eqw-incompat-toggle hidden><input type="checkbox" data-eqw-show-incompatible> Show incompatible (<span data-eqw-incompat-count>0</span>)</label>
+        </div>
+
+        <ul class="swse-eqw__list" data-eqw-list role="list">
+          {{#each ws.items as |it|}}
+            <li class="swse-eqw__row" data-eqw-row="{{it.id}}" data-eqw-cat="{{it.category}}" data-eqw-text="{{it.searchText}}">
+              <button type="button" class="swse-eqw__row-main" data-eqw-select="{{it.id}}" aria-pressed="false">
+                {{#if it.img}}<img class="swse-eqw__row-img" src="{{it.img}}" alt="" loading="lazy">{{/if}}
+                <span class="swse-eqw__row-copy">
+                  <strong>{{it.name}}{{#if it.showQuantity}} <span class="swse-eqw__qty">×{{it.quantity}}</span>{{/if}}</strong>
+                  <small>{{it.typeLabel}}{{#if it.heldInLabel}} · in {{it.heldInLabel}}{{/if}}{{#if it.ammoLabel}} · ammo {{it.ammoLabel}}{{/if}}</small>
+                </span>
+                <span class="swse-eqw__chip is-{{it.status.tone}}">{{it.status.label}}</span>
+                <span class="swse-eqw__verdict" data-eqw-verdict hidden></span>
+              </button>
+            </li>
+          {{/each}}
+        </ul>
+        <p class="swse-eqw__empty" data-eqw-empty {{#if ws.hasItems}}hidden{{/if}}>{{#if ws.hasItems}}Nothing matches this category and search.{{else}}No gear logged. Use the add controls above to create weapons, armor or gear.{{/if}}</p>
+      </section>
+    </div>
+
+    {{!-- REGION C + D: item inspector with contextual operations --}}
+    <aside class="swse-eqw__inspector" aria-label="Item inspector" data-eqw-inspector>
+      <div class="swse-eqw__inspector-empty" data-eqw-detail-empty>
+        <strong>Select an item or a slot</strong>
+        <p>Choose a slot to see the weapons that can go there, or choose an item to inspect it, change how it is used, and manage its modifications.</p>
+      </div>
+
+      {{#each ws.items as |it|}}
+      <article class="swse-eqw__detail" data-eqw-detail="{{it.id}}" hidden>
+        <header class="swse-eqw__detail-head">
+          {{#if it.img}}<img class="swse-eqw__detail-img" src="{{it.img}}" alt="" loading="lazy">{{/if}}
+          <div>
+            <h3>{{it.name}}</h3>
+            <p class="swse-eqw__meta">{{it.typeLabel}} <span class="swse-eqw__chip is-{{it.status.tone}}">{{it.status.label}}</span>{{#if it.isWeapon}}{{#if it.attackReady}} <span class="swse-eqw__chip is-ready">Attack-ready</span>{{/if}}{{/if}}</p>
+            {{#if it.status.reason}}<p class="swse-eqw__reason">{{it.status.reason}}</p>{{/if}}
+          </div>
+        </header>
+
+        <div class="swse-eqw__itabs" role="tablist">
+          <button type="button" role="tab" class="swse-eqw__itab" data-eqw-itab="details" aria-selected="true">Details</button>
+          <button type="button" role="tab" class="swse-eqw__itab" data-eqw-itab="operations" aria-selected="false">Operations</button>
+          <button type="button" role="tab" class="swse-eqw__itab" data-eqw-itab="mods" aria-selected="false">Modifications{{#if it.hasModifications}} <span class="swse-eqw__count">{{it.modifications.length}}</span>{{/if}}</button>
+        </div>
+
+        {{!-- DETAILS: authoritative values already computed elsewhere; nothing recalculated --}}
+        <div class="swse-eqw__pane" data-eqw-pane="details">
+          <dl class="swse-eqw__facts">
+            {{#if it.isWeapon}}
+              {{#if it.attack}}
+                <div><dt>Attack</dt><dd>{{#if it.attack.hasProfile}}{{numberFormat it.attack.attackTotal decimals=0 sign=true}}{{else}}—{{/if}}</dd></div>
+                <div><dt>Damage</dt><dd>{{#if it.attack.damageFormula}}{{it.attack.damageFormula}}{{else}}—{{/if}}</dd></div>
+                <div><dt>Crit</dt><dd>{{#if it.attack.critRange}}{{it.attack.critRange}}×{{it.attack.critMult}}{{else}}—{{/if}}</dd></div>
+                <div><dt>Range</dt><dd>{{#if it.attack.rangeLabel}}{{it.attack.rangeLabel}}{{else}}—{{/if}}</dd></div>
+              {{else}}
+                <div class="swse-eqw__wide"><dt>Attack profile</dt><dd>Shown once the weapon has an attack entry (draw it to see it).</dd></div>
+              {{/if}}
+              {{#if it.ammoLabel}}<div><dt>Ammunition</dt><dd>{{it.ammoLabel}}</dd></div>{{/if}}
+              {{#if it.heldInLabel}}<div><dt>Held in</dt><dd>{{it.heldInLabel}}</dd></div>{{/if}}
+              {{#if it.gripLabel}}<div><dt>Grip</dt><dd>{{it.gripLabel}}</dd></div>{{/if}}
+              {{#if it.weaponReadiness.isLightsaber}}<div><dt>Blade</dt><dd>{{it.weaponReadiness.bladeStateLabel}}</dd></div>{{/if}}
+              {{#if it.weaponConfiguration}}<div><dt>Configuration</dt><dd>{{it.weaponConfiguration.currentLabel}}</dd></div>{{/if}}
+              {{#if it.weaponPowerSource}}<div><dt>Power source</dt><dd>{{it.weaponPowerSource.requirementLabel}} · {{it.weaponPowerSource.stateLabel}}</dd></div>{{/if}}
+            {{/if}}
+            {{#if it.armorStats}}
+              <div><dt>Type</dt><dd>{{it.armorStats.armorTypeLabel}}</dd></div>
+              <div><dt>Reflex</dt><dd>{{numberFormat it.armorStats.reflexBonus decimals=0 sign=true}}</dd></div>
+              <div><dt>Fortitude</dt><dd>{{numberFormat it.armorStats.fortitudeBonus decimals=0 sign=true}}</dd></div>
+              <div><dt>Max Dex</dt><dd>{{it.armorStats.maxDexLabel}}</dd></div>
+              <div><dt>Check penalty</dt><dd>{{it.armorStats.armorCheckPenalty}}</dd></div>
+              <div><dt>Speed penalty</dt><dd>{{it.armorStats.speedPenalty}}</dd></div>
+              {{#if it.isEnergyShield}}<div><dt>Shield rating</dt><dd>{{it.currentSR}} / {{it.shieldRating}}</dd></div>{{/if}}
+            {{/if}}
+            {{#if it.implantStatusLabel}}<div><dt>Implant</dt><dd>{{it.implantStatusLabel}}</dd></div>{{/if}}
+            <div><dt>Quantity</dt><dd>{{it.quantity}}</dd></div>
+            <div><dt>Weight</dt><dd>{{#if it.weight}}{{numberFormat it.weight decimals=1}} kg{{else}}—{{/if}}</dd></div>
+            <div><dt>Value</dt><dd>{{numberFormat it.value decimals=0}} cr</dd></div>
+          </dl>
+          {{#if it.tags.length}}<p class="swse-eqw__tags">{{#each it.tags as |tag|}}<span class="swse-eqw__chip">{{tag}}</span>{{/each}}</p>{{/if}}
+        </div>
+
+        {{!-- OPERATIONS (REGION D): only controls the item supports; each is an existing authority entry point --}}
+        <div class="swse-eqw__pane" data-eqw-pane="operations" hidden>
+          <div class="swse-eqw__actions">
+            {{#if it.isWeapon}}
+              {{#if it.weaponReadiness}}
+                {{#if it.weaponReadiness.canDrawAndIgnite}}<button type="button" class="swse-concept-btn" data-action="draw-and-ignite-lightsaber" data-item-id="{{it.id}}">Draw &amp; Ignite</button>{{/if}}
+                {{#if it.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn" data-action="toggle-weapon-readiness" data-item-id="{{it.id}}"{{#if it.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}>{{it.weaponReadiness.drawStowLabel}}</button>{{/if}}
+                {{#if it.weaponReadiness.canToggleActivated}}<button type="button" class="swse-concept-btn {{#if it.weaponReadiness.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{it.id}}">{{it.weaponReadiness.activationLabel}}</button>{{/if}}
+                {{#if it.weaponReadiness.canReconcile}}<button type="button" class="swse-concept-btn" data-action="reconcile-weapon-transaction" data-item-id="{{it.id}}" title="An equipment change on this weapon did not finish (GM only).">Resolve</button>{{/if}}
+              {{/if}}
+              {{#if it.weaponConfiguration}}<button type="button" class="swse-concept-btn" data-action="change-weapon-configuration" data-item-id="{{it.id}}">Configure: {{it.weaponConfiguration.currentLabel}}</button>{{/if}}
+              {{#if it.weaponPowerSource}}<button type="button" class="swse-concept-btn" data-action="set-power-source" data-item-id="{{it.id}}" title="{{it.weaponPowerSource.title}}">Power: {{it.weaponPowerSource.stateLabel}}</button>{{/if}}
+              {{#if it.ammoLabel}}<button type="button" class="swse-concept-btn" data-eqw-action="reload" data-item-id="{{it.id}}">Reload</button>{{/if}}
+              <button type="button" class="swse-concept-btn" data-action="roll-attack" data-weapon-id="{{it.id}}">Attack…</button>
+            {{else}}
+              {{#if it.canToggleEquip}}
+                {{#if it.isImplant}}
+                  <button type="button" class="swse-concept-btn" data-action="toggle-implant-installed" data-item-id="{{it.id}}">{{#if it.equipped}}Remove{{else}}Install{{/if}}</button>
+                  <button type="button" class="swse-concept-btn" data-action="toggle-implant-active" data-item-id="{{it.id}}">{{#if it.isActiveImplant}}Deactivate{{else}}Activate{{/if}}</button>
+                {{else}}
+                  <button type="button" class="swse-concept-btn" data-action="equip" data-item-id="{{it.id}}">{{#if it.equipped}}{{#if it.armorStats}}Remove{{else}}Unequip{{/if}}{{else}}{{#if it.armorStats}}Wear{{else}}Equip{{/if}}{{/if}}</button>
+                {{/if}}
+              {{/if}}
+              {{#if it.canToggleActivated}}<button type="button" class="swse-concept-btn {{#if it.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{it.id}}">{{it.activationLabel}}</button>{{/if}}
+            {{/if}}
+          </div>
+
+          {{#if it.isWeapon}}
+            {{!-- slot-first and item-first placement share one panel; filled by equipment-workspace-ui.js from the coordinator's read-only plan --}}
+            <div class="swse-eqw__placement" data-eqw-placement="{{it.id}}" aria-live="polite"></div>
+          {{/if}}
+        </div>
+
+        {{!-- MODIFICATIONS: installed instances come from the customization authority; managing them opens the existing workbench --}}
+        <div class="swse-eqw__pane" data-eqw-pane="mods" hidden>
+          {{#if it.hasModifications}}
+            <ul class="swse-eqw__mods">{{#each it.modifications as |m|}}<li><strong>{{m.name}}</strong> <span class="swse-eqw__chip{{#if m.provisional}} is-warn{{/if}}">{{#if m.provisional}}Provisional · effects not automated{{else}}{{m.state}}{{/if}}</span></li>{{/each}}</ul>
+          {{else}}
+            <p class="swse-eqw__empty">No installed modifications.</p>
+          {{/if}}
+          {{#if it.alchemy.hasAlchemy}}<p class="swse-eqw__tags">{{#each it.alchemy.badges as |badge|}}<span class="swse-eqw__chip">&#9959; {{badge.label}}</span>{{/each}}</p>{{/if}}
+          <div class="swse-eqw__actions">
+            {{#if it.canCustomize}}<button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="configure" data-item-id="{{it.id}}">Open modification workshop</button>{{/if}}
+            {{#if it.canOpenForceAlchemy}}<button type="button" class="swse-concept-btn" data-action="force-alchemy" data-item-id="{{it.id}}">Alchemy</button>{{/if}}
+          </div>
+        </div>
+
+        <footer class="swse-eqw__detail-foot">
+          {{#if it.canEdit}}<button type="button" class="swse-concept-btn swse-edit-only" data-action="edit" data-item-id="{{it.id}}">Edit</button>{{else}}<button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{it.id}}">Open item sheet</button>{{/if}}
+          {{#if it.canEdit}}<button type="button" class="swse-concept-btn swse-edit-only" data-action="sell-item" data-item-id="{{it.id}}">Sell</button>{{/if}}
+          {{#if it.canDelete}}<button type="button" class="swse-concept-btn swse-concept-btn--danger swse-edit-only" data-action="delete" data-item-id="{{it.id}}">Delete</button>{{/if}}
+        </footer>
+      </article>
+      {{/each}}
+    </aside>
+  </div>
+</section>
+{{/with}}

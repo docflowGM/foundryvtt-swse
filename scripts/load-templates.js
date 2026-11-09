@@ -44,6 +44,8 @@ const CHARACTER_V2_CONCEPT_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/class-features-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/dossier-summary-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-ledger-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-slot.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/feats-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-powers-known-panel.hbs',

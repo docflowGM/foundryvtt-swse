@@ -15,7 +15,7 @@ let n = 0;
 const ok = (msg) => console.log(`  [${++n}] ${msg} OK`);
 
 // ---- static ----
-const card = read(`${P}panels/inventory-weapon-card.hbs`), gear = read(`${P}tabs/gear-tab.hbs`), attacks = read(`${P}panels/attacks-panel.hbs`), armor = read(`${P}panels/inventory-armor-card.hbs`);
+const card = read(`${P}panels/inventory-weapon-card.hbs`), gear = read(`${P}tabs/gear-tab.hbs`) + read(`${P}panels/equipment-workspace.hbs`) /* the Gear tab renders the equipment workspace partial */, attacks = read(`${P}panels/attacks-panel.hbs`), armor = read(`${P}panels/inventory-armor-card.hbs`);
 for (const a of ['toggle-weapon-readiness', 'toggle-activated', 'change-weapon-configuration']) assert.ok(card.includes(a), `weapon card exposes ${a}`);
 ok('weapon card exposes draw/stow, activation and configuration controls');
 assert.ok(gear.includes('toggle-weapon-readiness') && gear.includes('draw-and-ignite-lightsaber'), 'gear ledger has Draw/Stow and Draw & Ignite');

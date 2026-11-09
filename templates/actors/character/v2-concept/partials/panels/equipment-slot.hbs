@@ -1,0 +1,19 @@
+{{!-- One anatomy-driven appendage slot tile. Presentation only (equipment-workspace-context.js). --}}
+<button type="button"
+  class="swse-eqw__slot{{#if slot.empty}} is-empty{{else}} is-occupied{{/if}}{{#if slot.unavailable}} is-unavailable{{/if}}{{#if slot.conflict}} is-conflict{{/if}}{{#if slot.occupant.shared}} is-shared{{/if}}"
+  data-eqw-slot="{{slot.id}}" data-eqw-slot-label="{{slot.label}}"
+  {{#if slot.occupant}}data-eqw-slot-item="{{slot.occupant.itemId}}"{{/if}}
+  {{#if slot.unavailable}}aria-disabled="true" title="{{slot.label}} is {{slot.stateLabel}}"{{/if}}
+  aria-pressed="false">
+  <span class="swse-eqw__slot-name">{{slot.label}}</span>
+  {{#if slot.occupant}}
+    {{#if slot.occupant.img}}<img class="swse-eqw__slot-img" src="{{slot.occupant.img}}" alt="" loading="lazy">{{/if}}
+    <strong class="swse-eqw__slot-item">{{slot.occupant.name}}</strong>
+    <span class="swse-eqw__slot-sub">{{#if slot.occupant.purpose}}{{slot.occupant.purpose}}{{/if}}{{#if slot.occupant.shared}} · shares {{#each slot.occupant.withSlotIds as |w|}}{{w}} {{/each}}{{/if}}</span>
+    {{#if slot.occupant.damageLabel}}<span class="swse-eqw__readout"><b>{{slot.occupant.damageLabel}}</b> dmg · <b>{{slot.occupant.attackLabel}}</b> to hit</span>{{/if}}
+  {{else}}
+    <strong class="swse-eqw__slot-item">{{#if slot.unavailable}}{{slot.stateLabel}}{{else}}Empty{{/if}}</strong>
+  {{/if}}
+  {{#if slot.conflict}}<span class="swse-eqw__flag">Conflict</span>{{/if}}
+  {{#if slot.stateLabel}}{{#unless slot.unavailable}}<span class="swse-eqw__flag">{{slot.stateLabel}}</span>{{/unless}}{{/if}}
+</button>
