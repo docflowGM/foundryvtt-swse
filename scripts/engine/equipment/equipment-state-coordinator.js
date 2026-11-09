@@ -21,6 +21,7 @@
  */
 import { readActorEquipmentState } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-state-reader.js';
 import { loadActorSpeciesProfile } from '/systems/foundryvtt-swse/scripts/engine/equipment/species-evidence-adapter.js';
+import { resolveDroidRulesProfile } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { fingerprintIntent, canonicalize } from '/systems/foundryvtt-swse/scripts/engine/equipment/intent-fingerprint.js';
 import {
   readJournal, toStored, addPreparedEntry, transitionEntry, annotateEntry, classifyTransaction, findEntry, isUnresolved, JournalError, JOURNAL_STATUS, TXN_PHASE,
@@ -289,9 +290,18 @@ async function buildPlan(actor, intent, deps, requestIntentDigest) {
     action = { required: true, actionType, direction };
   }
 
-  // fail closed on missing authoritative species evidence: without it the anatomy resolver would apply its provisional two-arm default, and a
-  // posture that holds appendages must never be established from a default. Stowing needs no anatomy.
-  if (species.status !== 'resolved' && targetPosture !== EQUIPMENT_POSTURE.STOWED) {
+  // Evidence contract. A posture that holds appendages is established only from certified anatomy; stowing needs none.
+  //  - Contradictory Droid classification fails closed (never treated as either kind).
+  //  - An actor that follows Droid rules (the Droid rules profile decides, an NPC-type Droid Follower included) has no biological species: its
+  //    anatomy is the confirmed installed-component evidence, which the reader and the anatomy/occupancy/grip authorities certify (an unresolved
+  //    appendage or unknown capability still yields no posture). It is exempt from species evidence only, nothing else.
+  //  - Every other actor must still present resolved species evidence: without it the anatomy resolver would apply its provisional two-arm default.
+  const droidProfile = resolveDroidRulesProfile(actor);
+  if (droidProfile.confidence === 'CONTRADICTORY' && targetPosture !== EQUIPMENT_POSTURE.STOWED) {
+    return planResult(OUTCOME.NOT_ESTABLISHED, { ...base, issues: [issue('droid-classification-contradictory', 'blocking', 'The actor carries contradictory Droid classification evidence, so neither biological nor Droid anatomy is certified and nothing is written.', { droid: droidProfile.droidRules.evidence, notDroid: droidProfile.droidRules.conflicting })] });
+  }
+  const speciesRequired = droidProfile.droidRules.isDroid !== true;
+  if (speciesRequired && species.status !== 'resolved' && targetPosture !== EQUIPMENT_POSTURE.STOWED) {
     return planResult(OUTCOME.NOT_ESTABLISHED, { ...base, issues: [issue('species-evidence-unavailable', 'blocking', 'The actor\'s species evidence could not be obtained from the registry authorities, so no appendage is certified and nothing is written.', { itemId: intent.itemId, reason: species.reason })] });
   }
 
@@ -309,7 +319,7 @@ async function buildPlan(actor, intent, deps, requestIntentDigest) {
   }
   if (hypEntry.status !== 'established' || hypEntry.effectivePosture !== targetPosture) {
     const reasons = [...(hypEntry.effective?.issues ?? []), ...hypEntry.issues].filter((i) => i.severity !== 'info').map((i) => i.code);
-    if (species.status !== 'resolved' && targetPosture !== EQUIPMENT_POSTURE.STOWED) reasons.push(`species-evidence-unavailable:${species.reason}`);
+    if (speciesRequired && species.status !== 'resolved' && targetPosture !== EQUIPMENT_POSTURE.STOWED) reasons.push(`species-evidence-unavailable:${species.reason}`);
     return planResult(OUTCOME.NOT_ESTABLISHED, { ...base, hypothetical, issues: [issue('target-posture-not-established', 'blocking', 'The canonical resolvers do not establish the requested posture for this explicit configuration; nothing is written.', { itemId: intent.itemId, reasons: [...new Set(reasons)].sort() })] });
   }
 

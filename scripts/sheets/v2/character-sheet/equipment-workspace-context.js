@@ -123,7 +123,9 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       const msg = asArray(anatomy.issues).find((i) => i.severity === 'blocking') ?? asArray(anatomy.issues)[0];
       notices.push({ tone: 'warn', text: `Anatomy is ${anatomy.status}${msg ? `: ${msg.message}` : '.'}` });
     }
-    if (rd?.speciesEvidence?.status && rd.speciesEvidence.status !== 'resolved') notices.push({ tone: 'warn', text: `Species evidence unavailable (${rd.speciesEvidence.reason ?? rd.speciesEvidence.status}); drawing a weapon is withheld until it resolves.` });
+    if (state.droidRules?.confidence === 'CONTRADICTORY') notices.push({ tone: 'conflict', text: 'This actor carries contradictory Droid classification evidence, so no anatomy is certified and drawing a weapon is withheld.' });
+    // a Droid-rules actor (NPC-type Droid Follower included) has no biological species: its anatomy is the installed-component evidence (stated above when unresolved)
+    if (rd?.speciesEvidence?.status && rd.speciesEvidence.status !== 'resolved' && state.droidRules?.isDroid !== true) notices.push({ tone: 'warn', text: `Species evidence unavailable (${rd.speciesEvidence.reason ?? rd.speciesEvidence.status}); drawing a weapon is withheld until it resolves.` });
     if (state.transactions?.journalStatus === 'invalid') notices.push({ tone: 'conflict', text: 'The equipment transaction journal is unreadable; readiness is withheld.' });
     if (state.conflicts?.length) notices.push({ tone: 'conflict', text: 'Two items claim the same hand or appendage. Nothing was moved automatically; stow one of them.' });
   }

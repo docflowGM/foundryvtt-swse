@@ -40,6 +40,9 @@ import { resolveEffectiveEquipmentPosture, EFFECTIVE_POSTURE_STATUS } from '/sys
 import { shapeOfWeapon } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
 import { readFireState, ownedConfigurationSelection } from '/systems/foundryvtt-swse/scripts/engine/combat/fire-state-store.js';
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js';
+import { resolveDroidRulesProfile } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
+import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
+import { getDroidPartDefinition, normalizeDroidPartId } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
 
 /** Codes: INVALID_ACTOR, INVALID_ITEMS, INVALID_ITEM, DUPLICATE_ITEM_ID, INVALID_DEPS. */
 export class EquipmentStateInputError extends Error {
@@ -162,10 +165,20 @@ export function readActorEquipmentState(actor, deps) {
   const issues = [];
 
   const speciesProfile = d.resolveSpeciesProfile ? d.resolveSpeciesProfile(actor) : undefined;
+  // WHO follows Droid rules is the Droid rules profile's answer (an NPC-type Droid Follower included), not the raw Foundry actor type. Contradictory
+  // classification evidence is NOT a droid and is reported so every positive posture is withheld (fail closed).
+  const droidProfile = resolveDroidRulesProfile(actor);
+  const followsDroidRules = droidProfile.droidRules.isDroid === true;
+  const droidClassificationContradictory = droidProfile.confidence === 'CONTRADICTORY';
+  // A droid's appendages come ONLY from the confirmed installed-component evidence. The existing resolver is the default supplier (a caller may
+  // still inject its own); nothing is inferred from a species, a name or a default arm count.
+  const droidComponents = followsDroidRules
+    ? (d.getInstalledComponents ? d.getInstalledComponents(actor) : resolveInstalledDroidComponents(actor, { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition }))
+    : undefined;
   const anatomy = resolveEffectiveAnatomy({
-    actorType: typeof actor.type === 'string' ? actor.type : undefined,
+    actorType: followsDroidRules ? 'droid' : (typeof actor.type === 'string' ? actor.type : undefined),
     ...(speciesProfile ? { speciesProfile } : {}),
-    ...(d.getInstalledComponents ? (() => { const ic = d.getInstalledComponents(actor); return ic ? { installedComponents: ic } : {}; })() : {}),
+    ...(droidComponents ? { installedComponents: droidComponents } : (d.getInstalledComponents ? (() => { const ic = d.getInstalledComponents(actor); return ic ? { installedComponents: ic } : {}; })() : {})),
     ...(d.getFunctionalOverrides ? (() => { const fo = d.getFunctionalOverrides(actor); return fo ? { functionalOverrides: fo } : {}; })() : {}),
   });
   const speciesPermissions = resolveSpeciesEquipmentPermissions(speciesProfile ?? {});
@@ -262,7 +275,8 @@ export function readActorEquipmentState(actor, deps) {
 
   // a biological actor with no authoritative species evidence has no certified anatomy: the resolver's provisional default arms must never
   // establish a held or ready posture. (Droid anatomy comes from installed components, which are certified separately and stay deferred.)
-  const speciesEvidenceMissing = !speciesProfile && actor.type !== 'droid';
+  // (A droid-rules actor is exempt: its anatomy is the installed-component evidence. Contradictory classification is not exempt, and is gated below.)
+  const speciesEvidenceMissing = !speciesProfile && !followsDroidRules;
 
   // ---- fail-closed gates: an unresolved transaction withholds every posture; incomplete or uncertain occupancy withholds positive readiness ----
   for (const w of weapons) {
@@ -273,6 +287,7 @@ export function readActorEquipmentState(actor, deps) {
     if (evaluateTxn && journal.status === JOURNAL_STATUS.INVALID && positive) gates.push({ code: 'equipment-journal-unreadable', details: { issues: journal.issues } });
     if (positive && occupancyEvidence.completeness === 'incomplete') gates.push({ code: 'occupancy-completeness-unestablished', details: { unreadableClaims: occupancyEvidence.unreadableClaims } });
     if (positive && speciesEvidenceMissing) gates.push({ code: 'species-evidence-unavailable', details: { actorType: typeof actor.type === 'string' ? actor.type : '' } });
+    if (positive && droidClassificationContradictory) gates.push({ code: 'droid-classification-contradictory', details: { droid: droidProfile.droidRules.evidence, notDroid: droidProfile.droidRules.conflicting } });
     const collisions = uncertainCollisions.filter((c) => c.itemId === w.itemId);
     if (positive && collisions.length) gates.push({ code: 'uncertain-occupancy-collision', details: { collisions } });
     if (!gates.length) continue;
@@ -295,7 +310,7 @@ export function readActorEquipmentState(actor, deps) {
     stowed: weapons.filter((w) => w.effectivePosture === 'STOWED').map((w) => w.itemId),
     withheld: weapons.filter((w) => w.gates.length).map((w) => w.itemId),
   };
-  if (!speciesProfile) issues.push(issue('species-profile-not-supplied', 'warning', 'No effective species profile adapter result was supplied; anatomy and species permissions are evaluated without it and nothing is certified beyond that evidence.'));
+  if (!speciesProfile && !followsDroidRules) issues.push(issue('species-profile-not-supplied', 'warning', 'No effective species profile adapter result was supplied; anatomy and species permissions are evaluated without it and nothing is certified beyond that evidence.'));
   if (occupancy.conflicts.length) issues.push(issue('cross-item-appendage-conflicts', 'blocking', 'Several weapons claim the same appendage or physical slot; nothing is displaced or reassigned.', { appendageIds: occupancy.conflicts.map((c) => c.appendageId).sort() }));
   if (occupancyEvidence.completeness === 'incomplete') issues.push(issue('occupancy-completeness-unestablished', 'blocking', 'At least one weapon record claims appendages in a way that cannot be read; occupancy is incomplete, so no EQUIPPED or READIED posture is certified.', { itemIds: occupancyEvidence.unreadableClaims }));
   if (uncertainCollisions.length) issues.push(issue('uncertain-occupancy-collisions', 'warning', 'A malformed or identity-uncertified weapon still claims an appendage that another weapon uses; the claim is kept as evidence and withholds that weapon\'s readiness.', { collisions: uncertainCollisions }));
@@ -304,6 +319,7 @@ export function readActorEquipmentState(actor, deps) {
   return deepFreeze(clone({
     actorId: nonEmpty(actor.id) ? actor.id : null,
     actorType: typeof actor.type === 'string' ? actor.type : '',
+    droidRules: { isDroid: followsDroidRules, confidence: droidProfile.confidence },
     wielderSize,
     anatomy,
     speciesPermissions,
