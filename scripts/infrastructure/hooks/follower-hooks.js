@@ -3,6 +3,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FollowerManager } from "/systems/foundryvtt-swse/scripts/apps/follower-manager.js";
 import { MinionManager } from "/systems/foundryvtt-swse/scripts/apps/minion-manager.js";
 import { runFollowerMutationTransaction } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-transaction.js";
+import { RECRUITING_TALENTS, followerCapLimit, canAddRecruitingSlot, evaluateFollowerCap, FOLLOWER_MAX_SETTING } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-house-rules.js";
 import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 import { computeGrantedItemIdsForTalent, buildOwnerRegistryDetachPatch, buildSlotRemovalPatch } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-talent-detach-plan.js";
 
@@ -55,6 +56,19 @@ async function _setSlots(actor, slots) {
   await ActorEngine.updateActor(actor, {
     'flags.foundryvtt-swse.followerSlots': slots
   }, { source: 'FollowerHooks.setSlots' });
+}
+
+function _followerCapLimit() {
+  return followerCapLimit(game.settings?.get?.('foundryvtt-swse', FOLLOWER_MAX_SETTING));
+}
+
+/** Tell the GM (once per reconcile) when slots exceed a lowered cap. Nothing is deleted. */
+function _reportOverCap(actor, slots) {
+  if (game.user?.isGM !== true) return;
+  const status = evaluateFollowerCap(slots, _followerCapLimit());
+  if (status.over) {
+    ui.notifications?.warn?.(`${actor.name} has ${status.used} recruited follower slots but the follower cap is ${status.limit}. Existing followers were kept; the GM must resolve the ${status.excessSlotIds.length} excess slot(s).`);
+  }
 }
 
 function _slotsForTalent(slots, talentName) {
@@ -190,6 +204,7 @@ async function _setPendingDetachment(ownerActor, talentItem, filledFollowerIds) 
 export async function reconcileFollowerEnhancementsForActor(actor) {
   if (!_isFollowerOwnerActor(actor)) return;
   await FollowerManager.reconcileEnhancementsForOwner(actor);
+  await FollowerManager.reconcileSharedBenefitsForOwner(actor);
   await MinionManager.reconcileTalentsForOwner(actor);
 }
 
@@ -206,7 +221,8 @@ export async function reconcileFollowerSlotsForActor(actor) {
     const existingForItem = slots.filter(slot => slot.talentItemId === talent.id);
     const existingForTalent = slots.filter(slot => slot.talentName === talent.name);
 
-    if (existingForItem.length === 0 && (max <= 0 || existingForTalent.length < max)) {
+    if (existingForItem.length === 0 && (max <= 0 || existingForTalent.length < max)
+      && canAddRecruitingSlot(slots, talent.name, _followerCapLimit())) {
       slots.push(_buildSlot(talent, cfg));
       changed = true;
       continue;
@@ -273,6 +289,8 @@ export async function reconcileFollowerSlotsForActor(actor) {
 
   if (filtered.length !== slots.length) changed = true;
 
+  _reportOverCap(actor, filtered);
+
   if (changed) {
     await _setSlots(actor, filtered);
     swseLogger?.debug?.('[FollowerHooks] Reconciled follower slots', {
@@ -299,6 +317,10 @@ export function initializeFollowerHooks() {
     if (MinionManager.isMinionTalent(item.name)) {
       await MinionManager.applyTalent(actor, item);
     }
+    // Shared Follower Benefits: a new recruiting talent changes what every follower should have
+    if (RECRUITING_TALENTS.includes(item.name)) {
+      await FollowerManager.reconcileSharedBenefitsForOwner(actor);
+    }
 
     const cfg = getFollowerTalentConfig(item.name, item);
     if (!cfg) return;
@@ -309,6 +331,11 @@ export function initializeFollowerHooks() {
 
     if (max > 0 && current >= max) {
       // Slot cap reached; do nothing (UI shows locked create buttons).
+      return;
+    }
+    // GM house rule: combined cap across the recruiting talents. The talent stays legal; no slot is created.
+    if (!canAddRecruitingSlot(slots, item.name, _followerCapLimit())) {
+      ui.notifications?.info?.(`${actor.name}: follower cap reached; ${item.name} was kept but created no follower slot.`);
       return;
     }
 
@@ -331,6 +358,9 @@ export function initializeFollowerHooks() {
     }
     if (MinionManager.isMinionTalent(item.name)) {
       await MinionManager.removeTalent(actor, item);
+    }
+    if (RECRUITING_TALENTS.includes(item.name)) {
+      await FollowerManager.reconcileSharedBenefitsForOwner(actor);
     }
 
     const cfg = getFollowerTalentConfig(item.name, item);

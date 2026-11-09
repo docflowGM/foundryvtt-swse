@@ -12,6 +12,8 @@
  * Only legal follower feats shown.
  */
 
+import { resolveEffectiveGrantConfig } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/follower-house-rule-settings.js";
+import { armorLadderGrants } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-house-rules.js";
 import { FollowerStepBase } from './follower-step-base.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
@@ -44,13 +46,18 @@ export class FollowerFeatStep extends FollowerStepBase {
         || shell?.progressionSession?.draftSelections?.slotTalentTreeId
         || null;
       const fixedProfile = choices.fixedFollowerProfile || null;
-      const talentConfig = getFollowerTalentConfig(slotTalentName, { treeId: slotTalentTreeId });
+      const talentConfig = resolveEffectiveGrantConfig(this.getOwnerActor(shell), getFollowerTalentConfig(slotTalentName, { treeId: slotTalentTreeId }), slotTalentName); // shared-benefits house rule when ON
       const suppressBaseFeat = fixedProfile?.suppressBaseFollowerFeat === true || talentConfig?.suppressBaseFollowerFeat === true;
 
       this._grantedFeats = this._uniqueFeats([
         ...(suppressBaseFeat ? [] : ['Weapon Proficiency (Simple Weapons)']),
         ...(template.feats || []),
         ...(talentConfig?.additionalFeats || [])
+      ]);
+      // Shared-benefits house rule: cumulative armor grants (Light -> Medium -> Heavy), never duplicating a held feat
+      this._grantedFeats = this._uniqueFeats([
+        ...this._grantedFeats,
+        ...armorLadderGrants(talentConfig?.armorLadderGrants || 0, this._grantedFeats)
       ]);
 
       // Load legal optional feats for this template, then add granting-talent armor picks.

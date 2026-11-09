@@ -2,6 +2,9 @@ import { FollowerCreator } from "/systems/foundryvtt-swse/scripts/apps/follower-
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { RECRUITING_TALENTS, ownedRecruitingTalentNames, planSharedBenefitReconcile } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-house-rules.js";
+import { followerSharedBenefitsEnabled } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/follower-house-rule-settings.js";
+import { resolveSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
 
 const AKK_DOG_FIXED_PROFILE_ID = 'akk-dog-follower';
 
@@ -194,6 +197,52 @@ export class FollowerManager {
         }
 
         await this._removeStaleOwnerEnhancementFlags(owner, ownedNames);
+    }
+
+    /**
+     * Follower house rule (Shared Follower Benefits): bring EXISTING recruited followers in line with
+     * the current setting and the owner's talents. Additive when ON; when OFF or a talent is lost it
+     * removes only what this rule previously placed (tracked on the follower), never earned benefits.
+     * Followers created later are handled at creation (FollowerCreator), which uses the same rules module.
+     *
+     * @param {Actor} owner
+     */
+    static async reconcileSharedBenefitsForOwner(owner) {
+        if (!owner || !['character', 'droid'].includes(owner.type)) return;
+        const shared = followerSharedBenefitsEnabled();
+        const ownedNames = ownedRecruitingTalentNames(owner.items);
+
+        for (const follower of FollowerCreator.getFollowers(owner)) {
+            const recruiter = follower.flags?.swse?.follower?.grantingTalent
+                ?? follower.system?.progression?.grantingTalentName
+                ?? follower.system?.npcProfile?.owner?.talent?.name ?? null;
+            if (!RECRUITING_TALENTS.includes(recruiter)) continue; // Akk Dog, minions, etc. are outside the rule
+
+            const skillState = new Set();
+            for (const name of ['Perception', 'Stealth']) {
+                const key = await resolveSkillKey(name);
+                if (key && follower.system?.skills?.[key]?.trained === true) skillState.add(name);
+            }
+            const feats = Array.from(follower.items || []).filter(item => item.type === 'feat');
+            const recorded = follower.flags?.swse?.follower?.houseRuleShared || {};
+            const plan = planSharedBenefitReconcile({
+                shared, ownedTalentNames: ownedNames, followerFeatNames: feats.map(item => item.name),
+                followerTrainedSkillNames: [...skillState], recorded,
+            });
+            if (!plan.addFeats.length && !plan.removeFeats.length && !plan.addSkills.length && !plan.removeSkills.length
+                && JSON.stringify(plan.record) === JSON.stringify({ feats: recorded.feats || [], skills: recorded.skills || [] })) continue;
+
+            const meta = { source: 'follower-house-rule-shared', talentName: recruiter, grantedAt: Date.now() };
+            for (const featName of plan.addFeats) await FollowerCreator._addFeatByName(follower, featName, meta);
+            const removeIds = feats.filter(item => plan.removeFeats.includes(item.name)).map(item => item.id);
+            if (removeIds.length) await ActorEngine.deleteEmbeddedDocuments(follower, 'Item', removeIds, { source: 'FollowerManager.reconcileSharedBenefits' });
+            for (const skillName of plan.addSkills) await FollowerCreator._trainSkill(follower, skillName);
+            for (const skillName of plan.removeSkills) {
+                const key = await resolveSkillKey(skillName);
+                if (key) await ActorEngine.updateActor(follower, { [`system.skills.${key}.trained`]: false }, { source: 'FollowerManager.reconcileSharedBenefits' });
+            }
+            await ActorEngine.updateActor(follower, { 'flags.swse.follower.houseRuleShared': plan.record }, { source: 'FollowerManager.reconcileSharedBenefits' });
+        }
     }
 
     /**
