@@ -7,7 +7,9 @@
  * Printed shape shared by both: a full-round action spent observing one
  * opponent in combat, usable only after that opponent has acted; the bonus is
  * one-half the class level (rounded down) and lasts until the encounter ends.
- * They differ in WHAT the bonus is:
+ * Score (Charlatan, Scum and Villainy p.32) reuses the same lifecycle but has no numeric bonus and no acted gate: its
+ * effect is a Deception reroll (keep the better) against the observed target.
+ * They differ in WHAT the benefit is:
  *   Familiar Foe     attack rolls AGAINST the opponent and Reflex Defense
  *                    AGAINST attacks MADE BY the opponent.
  *   Targeted Suspect attack rolls AGAINST the opponent and Deception,
@@ -28,7 +30,7 @@
  * no line-of-sight or awareness engine is involved.
  */
 // ActorEngine and ActionEconomyConsumption are loaded lazily (and injectable) so the pure rules below stay importable offline.
-async function runtimeDeps(deps = {}, { needSpend = true } = {}) {
+export async function runtimeDeps(deps = {}, { needSpend = true } = {}) {
   const [engineMod, actionMod] = await Promise.all([
     deps.actorEngine ? null : import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js'),
     (deps.spend || !needSpend) ? null : import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js'),
@@ -45,11 +47,20 @@ export const OBSERVATION_FLAG_KEY = 'targetObservations';
 export const OBSERVATION_FEATURES = Object.freeze({
   'bountyHunter.familiarFoe': Object.freeze({
     label: 'Familiar Foe', className: 'Bounty Hunter', source: 'Core Rulebook p.209',
-    attack: true, reflexVsTarget: true, skills: Object.freeze([]),
+    attack: true, reflexVsTarget: true, skills: Object.freeze([]), rerollSkills: Object.freeze([]),
+    scaling: true, requiresActed: true,
   }),
   'enforcer.targetedSuspect': Object.freeze({
     label: 'Targeted Suspect', className: 'Enforcer', source: 'Force Unleashed Campaign Guide p.45',
-    attack: true, reflexVsTarget: false, skills: Object.freeze(['deception', 'perception', 'persuasion']),
+    attack: true, reflexVsTarget: false, skills: Object.freeze(['deception', 'perception', 'persuasion']), rerollSkills: Object.freeze([]),
+    scaling: true, requiresActed: true,
+  }),
+  // Score: no numeric bonus and no printed "after the opponent has acted" gate (per the independent print review of
+  // Scum and Villainy p.32); a full-round observation enables Deception rerolls against that target, keeping the better result.
+  'charlatan.score': Object.freeze({
+    label: 'Score', className: 'Charlatan', source: 'Scum and Villainy p.32',
+    attack: false, reflexVsTarget: false, skills: Object.freeze([]), rerollSkills: Object.freeze(['deception']),
+    scaling: false, requiresActed: false,
   }),
 });
 
@@ -87,8 +98,16 @@ export function ownsObservationFeature(actor, featureKey) {
 /** One-half the owning class level, rounded down. Zero unless the keyed feature is owned. */
 export function observationBonusFor(actor, featureKey) {
   const def = OBSERVATION_FEATURES[featureKey];
-  if (!def || !ownsObservationFeature(actor, featureKey)) return 0;
+  if (!def || def.scaling !== true || !ownsObservationFeature(actor, featureKey)) return 0;
   return Math.floor(observationClassLevel(actor, def.className) / 2);
+}
+
+/** The keyed feature is owned and its owning class is present at a level that can use it. */
+export function observationFeatureUsable(actor, featureKey) {
+  const def = OBSERVATION_FEATURES[featureKey];
+  if (!def || !ownsObservationFeature(actor, featureKey)) return false;
+  const level = observationClassLevel(actor, def.className);
+  return def.scaling === true ? Math.floor(level / 2) >= 1 : level >= 1;
 }
 
 function readStore(actor) {
@@ -114,7 +133,7 @@ function qualifying(observer, target, combat, predicate) {
   const targetId = observationIdentity(target);
   if (!combatId || !targetId || !observer) return [];
   return activeObservations(observer, combatId).filter(r => r.targetId === targetId
-    && predicate(OBSERVATION_FEATURES[r.featureKey]) && observationBonusFor(observer, r.featureKey) > 0);
+    && predicate(OBSERVATION_FEATURES[r.featureKey]) && observationFeatureUsable(observer, r.featureKey));
 }
 
 const sumBonus = (observer, records) => records.reduce((n, r) => n + observationBonusFor(observer, r.featureKey), 0);
@@ -135,9 +154,15 @@ export function observedSkillBonus(actor, skillKey, target, combat = null) {
   return sumBonus(actor, qualifying(actor, target, combat, def => def.skills.includes(key)));
 }
 
+/** Score: true when a Deception (or other rerollSkills) check against this target keeps the better of two d20s. */
+export function observedSkillRerolls(actor, skillKey, target, combat = null) {
+  const key = norm(skillKey);
+  return qualifying(actor, target, combat, def => def.rerollSkills.includes(key)).length > 0;
+}
+
 /** True when the actor has an active observation on this target that applies to the skill (for UI gating). */
 export function hasObservedSkillTarget(actor, skillKey, target, combat = null) {
-  return observedSkillBonus(actor, skillKey, target, combat) > 0;
+  return observedSkillBonus(actor, skillKey, target, combat) > 0 || observedSkillRerolls(actor, skillKey, target, combat);
 }
 
 function combatantFor(combat, actor) {
@@ -165,7 +190,7 @@ export function planObservation({ observer, featureKey, target, combat, confirme
   if (!def) errors.push(`Unknown observation feature: ${featureKey}`);
   if (!observer) errors.push('An observing actor is required');
   if (def && observer && !ownsObservationFeature(observer, featureKey)) errors.push(`${def.label} is not owned as a granted class feature`);
-  if (def && observer && observationBonusFor(observer, featureKey) < 1) errors.push(`${def.label} grants no bonus at the current ${def.className} class level`);
+  if (def && observer && !observationFeatureUsable(observer, featureKey)) errors.push(`${def.label} is not usable at the current ${def.className} class level`);
   if (!combat?.id || combat.started !== true) errors.push('Observation requires a started encounter');
   const targetId = observationIdentity(target);
   if (!targetId) errors.push('A designated target is required');
@@ -176,7 +201,7 @@ export function planObservation({ observer, featureKey, target, combat, confirme
     if (!own) errors.push('The observer is not in this encounter');
     else if (combat.combatant?.id !== own.id) errors.push('The observer can only observe during their own turn');
     if (target && !combatantFor(combat, target)) errors.push('The target is not in this encounter');
-    else if (target && !targetHasActed(combat, target, { gmConfirmedActed })) errors.push('The target has not yet acted in this encounter');
+    else if (target && def?.requiresActed && !targetHasActed(combat, target, { gmConfirmedActed })) errors.push('The target has not yet acted in this encounter');
   }
   if (errors.length === 0 && activeObservations(observer, combat.id).some(r => r.featureKey === featureKey && r.targetId === targetId)) {
     errors.push(`${def.label} is already active against this target`);
@@ -244,6 +269,12 @@ export function soleTargetedActor(user = gameRef()?.user) {
  * Player-facing entry: observe the single currently targeted token. The confirm dialog is the player/GM
  * statement that the target is an opponent being observed; the "has acted" fact is computed from initiative order.
  */
+export async function confirmTargetDialog(title, content) {
+  const { SWSEDialogV2 } = await import('/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js').catch(() => ({}));
+  const Dialog = SWSEDialogV2?.confirm ? SWSEDialogV2 : globalThis.foundry?.applications?.api?.DialogV2;
+  return Dialog?.confirm ? await Dialog.confirm({ title, content, rejectClose: false }) : false;
+}
+
 export async function observeTargetedOpponent(observer, featureKey) {
   const def = OBSERVATION_FEATURES[featureKey];
   const target = soleTargetedActor();
@@ -252,13 +283,7 @@ export async function observeTargetedOpponent(observer, featureKey) {
     globalThis.ui?.notifications?.warn?.(`${def.label}: target exactly one opponent first.`);
     return null;
   }
-  const { SWSEDialogV2 } = await import('/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js').catch(() => ({}));
-  const confirmFn = SWSEDialogV2?.confirm ?? globalThis.foundry?.applications?.api?.DialogV2?.confirm;
-  const ok = confirmFn ? await confirmFn.call(SWSEDialogV2 ?? globalThis.foundry.applications.api.DialogV2, {
-    title: def.label,
-    content: `<p>Spend a full-round action observing <b>${foundryEscape(target.name)}</b> as an opponent?</p>`,
-    rejectClose: false,
-  }) : false;
+  const ok = await confirmTargetDialog(def.label, `<p>Spend a full-round action observing <b>${foundryEscape(target.name)}</b> as an opponent?</p>`);
   if (ok !== true) return null;
   try {
     return await activateObservation({ observer, featureKey, target, confirmed: true });

@@ -18,7 +18,7 @@ import { TeamFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/t
 import { RebellionSpeciesSkillFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js";
 import { resolveEquipmentForSkillUse } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-skill-hook-resolver.js";
 import { shaperLoreBonus } from "/systems/foundryvtt-swse/scripts/engine/skills/class-shaper-lore.js";
-import { observedSkillBonus, soleTargetedActor } from "/systems/foundryvtt-swse/scripts/engine/combat/class-target-observation.js";
+import { observedSkillBonus, observedSkillRerolls, soleTargetedActor } from "/systems/foundryvtt-swse/scripts/engine/combat/class-target-observation.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 import { canMasterSaboteurReroll } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-saboteur-reroll.js";
 import { resolveSaboteurSkillUse } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/saboteur-quick-sabotage.js";
@@ -255,8 +255,11 @@ export async function rollSkill(actor, skillKey, options = {}) {
     biotechDevice:options?.biotechDevice === true,
   });
   // Targeted Suspect is opt-in for the designated suspect: the player/GM states the check concerns the observed opponent.
-  const observedSuspect = options?.observedSuspect === true
-    ? observedSkillBonus(actor, effectiveSkillKey, options?.targetActor ?? soleTargetedActor()) : 0;
+  // Score (Charlatan) uses the same designation: Deception against the observed target rolls two d20s and keeps the better.
+  const observedTargetActor = options?.observedTarget === true ? (options?.targetActor ?? soleTargetedActor()) : null;
+  const observedSuspect = observedTargetActor ? observedSkillBonus(actor, effectiveSkillKey, observedTargetActor) : 0;
+  const observedScoreReroll = observedTargetActor !== null && String(options?.checkMode || 'roll').toLowerCase() === 'roll'
+    && observedSkillRerolls(actor, effectiveSkillKey, observedTargetActor);
   const skillCheckMode = String(options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll')).toLowerCase();
   const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
   const skillIsTakeX = skillCheckMode === 'take10' || skillCheckMode === 'take20';
@@ -280,6 +283,8 @@ export async function rollSkill(actor, skillKey, options = {}) {
     baseBonus: canonicalTotal + observedSuspect + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0) + Number(equipmentSkill.total || 0) + shaperLore,
     rollOptions: {
       baseDice: masterSaboteurDice ? '2d20kh1' : '1d20',
+      // Score uses the same keep-better primitive (two d20s, keep the higher)
+      ...(observedScoreReroll ? { baseDice: '2d20kh1' } : {}),
       useForce: options?.useForcePoint === true,
       forcePointDieUpgradeSteps: forcePointDieUpgrade?.steps ?? 0,
       forcePointDieUpgradeSource: forcePointDieUpgrade?.source ?? null,
@@ -297,6 +302,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
       equipmentSkillModifiers: equipmentSkill.modifiers,
       shaperLoreBonus: shaperLore,
       observedSuspectBonus: observedSuspect,
+      observedScoreReroll,
       biotechDevice:options?.biotechDevice === true,
       teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
       forcePointDieUpgrade: forcePointDieUpgrade ?? null,

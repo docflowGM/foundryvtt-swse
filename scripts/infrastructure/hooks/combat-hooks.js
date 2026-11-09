@@ -23,6 +23,7 @@ import { isResponsibleGM } from "/systems/foundryvtt-swse/scripts/engine/vehicle
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 import { pruneObservations, observeTargetedOpponent } from "/systems/foundryvtt-swse/scripts/engine/combat/class-target-observation.js";
+import { pruneMarks, markTargetedOpponent } from "/systems/foundryvtt-swse/scripts/engine/combat/class-assassin-mark.js";
 
 
 let lastCombatBannerKey = '';
@@ -133,7 +134,7 @@ export function registerCombatHooks() {
 
     // Class observation features (Familiar Foe, Targeted Suspect): game.swse.classFeatures.observeTarget(actor, featureKey)
     game.swse = game.swse || {};
-    game.swse.classFeatures = { ...(game.swse.classFeatures || {}), observeTarget: observeTargetedOpponent };
+    game.swse.classFeatures = { ...(game.swse.classFeatures || {}), observeTarget: observeTargetedOpponent, markTarget: markTargetedOpponent };
 
     // Add an initiative-tracker context menu action for quick sheet access.
     registerCombatTrackerSheetContextAction();
@@ -363,7 +364,7 @@ async function handleCombatEnd(combat, options, userId) {
             await EffectIntentEngine.expireManagedEffectsForActor(actor, { combat, timing: 'combat-end' });
 
             // Familiar Foe / Targeted Suspect last until the end of the encounter (reads already ignore other combats; this is hygiene)
-            if (actor.isOwner) {await pruneObservations(actor, combat.id);}
+            if (actor.isOwner) {await pruneObservations(actor, combat.id); await pruneMarks(actor, combat.id);}
 
             // Reset species encounter traits
             await SpeciesRerollHandler.resetEncounterTraits(actor);
