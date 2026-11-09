@@ -57,14 +57,12 @@ const PARTIALS = [
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs",
 
   // Droid V2 Partials
-  "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs",
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-status-card.hbs",
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs",

@@ -61,7 +61,7 @@ function epSummary(schema) {
 export function buildVehicleSystemsBrowser({ actor, schema = null, publication = null, mountPanel = null, weaponOps = schema?.weaponOps ?? null, canAct = false } = {}) {
   if (!schema || schema.origin === 'PUBLISHED_SOURCE_INVALID') return null;
   const entries = [];
-  const push = (e) => entries.push({ ...e, order: CAT[e.category].rank * 1000 + entries.length, art: { src: null, glyph: CAT[e.category].glyph }, categoryLabel: CAT[e.category].label, modifications: null, modificationsNote: '', operationsHint: e.operationsHint ?? '' });
+  const push = (e) => entries.push({ ...e, order: CAT[e.category].rank * 1000 + entries.length, art: { src: null, glyph: CAT[e.category].glyph }, categoryLabel: CAT[e.category].label, showMods: false, modifications: [], modificationsNote: '', operationsHint: e.operationsHint ?? '' });
   const mounts = new Map((mountPanel?.mounts ?? []).filter((m) => m?.source === 'item' && m.weaponId).map((m) => [m.weaponId, m]));
   const gmConfigured = new Set((weaponOps?.ammoRows ?? []).filter((r) => r?.isConfigured === true).map((r) => r.itemId ?? r.weaponId).filter(Boolean));
   const items = actor?.items?.contents ?? (actor?.items ? [...actor.items] : []);

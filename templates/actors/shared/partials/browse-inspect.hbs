@@ -7,7 +7,7 @@
      browser = { id, title, hint?, summary?:[{label,value}], emptyText, categories:[{id,label,count}], statuses:[{id,label}],
                  entries:[{ key, name, art:{src,glyph}, category, categoryLabel, status:{key,label,tone}, summary, searchText, order,
                             facts:[{label,value}], notes:[string], operations:[{label,icon,action?,cls?,attrs:[{k,v}],disabled,reason}],
-                            operationsHint?, modifications: null | [{label,state,detail}], modificationsNote? }] } --}}
+                            operationsHint?, showMods:boolean, modifications:[{label,state,detail}], modificationsNote? }] } --}}
 {{#with browser as |bi|}}
 <section class="swse-eqw swse-concept-panel swse-eqw__panel swse-bi" data-bi="{{bi.id}}" aria-label="{{bi.title}}">
   <div class="swse-eqw__layout">
@@ -70,7 +70,7 @@
         <div class="swse-eqw__itabs" role="tablist" aria-label="Inspector sections">
           <button type="button" role="tab" class="swse-eqw__itab" data-bi-itab="details" aria-selected="true">Details</button>
           <button type="button" role="tab" class="swse-eqw__itab" data-bi-itab="operations" aria-selected="false">Operations</button>
-          {{#if it.modifications}}<button type="button" role="tab" class="swse-eqw__itab" data-bi-itab="mods" aria-selected="false">Mods <span class="swse-eqw__count">{{it.modifications.length}}</span></button>{{/if}}
+          {{#if it.showMods}}<button type="button" role="tab" class="swse-eqw__itab" data-bi-itab="mods" aria-selected="false">Mods <span class="swse-eqw__count">{{it.modifications.length}}</span></button>{{/if}}
         </div>
         <div class="swse-eqw__pane" data-bi-pane="details">
           {{#if it.facts.length}}<dl class="swse-eqw__facts">{{#each it.facts as |f|}}<div><dt>{{f.label}}</dt><dd>{{f.value}}</dd></div>{{/each}}</dl>{{/if}}
@@ -85,7 +85,7 @@
           {{#unless it.operations.length}}<p class="swse-eqw__hint">No operations are available for this entry.</p>{{/unless}}
           {{#if it.operationsHint}}<p class="swse-eqw__hint">{{it.operationsHint}}</p>{{/if}}
         </div>
-        {{#if it.modifications}}
+        {{#if it.showMods}}
         <div class="swse-eqw__pane" data-bi-pane="mods" hidden>
           <ul class="swse-eqw__list">
             {{#each it.modifications as |m|}}<li class="swse-eqw__row"><span class="swse-eqw__row-copy"><strong>{{m.label}}</strong>{{#if m.detail}}<small>{{m.detail}}</small>{{/if}}</span>{{#if m.state}}<span class="swse-eqw__state is-held">{{m.state}}</span>{{/if}}</li>{{/each}}

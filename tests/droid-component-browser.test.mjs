@@ -73,7 +73,7 @@ const by = (b, pred) => b.entries.filter(pred);
   const a = droid({ installedSystems: ledger([host]) }); a.system.installedSystems['magnetic-hands--inst-m1'] = hosted;
   const b = browse(a);
   const h = by(b, (e) => e.key === 'appendage:inst:inst-h1')[0];
-  assert.ok(Array.isArray(h.modifications), 'a host instance exposes the Mods tab');
+  assert.equal(h.showMods, true, 'a host instance exposes the Mods tab'); assert.ok(Array.isArray(h.modifications));
   const garage = h.operations.find((o) => o.action === 'customize-droid');
   assert.deepEqual(garage.attrs, [{ k: 'garage-region', v: 'appendage' }, { k: 'garage-slot', v: 'inst-h1' }]); assert.ok(!garage.disabled);
   assert.equal(browse(a, { canOpenGarage: false }).entries[0].operations.find((o) => o.action === 'customize-droid').disabled, true);

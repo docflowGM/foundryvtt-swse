@@ -40,7 +40,7 @@ const STATUS = Object.freeze({
   unresolved: { key: 'unresolved', label: 'Not established', tone: 'warn' },
 });
 const slug = (v) => normalizeDroidPartId(v);
-const humanize = (v) => String(v ?? '').replace(/[-_:]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+const humanize = (v) => String(v ?? '').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[-_:]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 const capText = (v) => (v === true ? 'Yes' : v === false ? 'No' : 'Not established');
 
 /** The resolver component (if any) that stands behind a region item: by physical instance first, else by canonical part id. */
@@ -140,7 +140,8 @@ export function buildDroidComponentBrowser(actor, resolvedSystems, { canOpenGara
         order: cat.rank * 1000 + entries.length,
         facts, notes, operations,
         operationsHint: 'Paid installation, removal and modification happen in the Garage; this sheet only operates installed systems.',
-        modifications: hosted ? hosted.map((c) => ({ label: c.definition?.name ?? c.canonicalId, state: c.installed ? 'Installed' : 'Not installed', detail: c.instanceId ? `Instance ${c.instanceId}` : '' })) : null,
+        showMods: Array.isArray(hosted),
+        modifications: (hosted ?? []).map((c) => ({ label: c.definition?.name ?? c.canonicalId, state: c.installed ? 'Installed' : 'Not installed', detail: c.instanceId ? `Instance ${c.instanceId}` : '' })),
         modificationsNote: hosted && !hosted.length ? 'No component is recorded as hosted by this instance.' : '',
       });
     }
@@ -156,7 +157,7 @@ export function buildDroidComponentBrowser(actor, resolvedSystems, { canOpenGara
       facts: [{ label: 'Identity', value: String(rec.identityStatus ?? 'unresolved') }, { label: 'Can manipulate', value: capText(rec.capabilities?.canManipulate ?? null) }, { label: 'Can hold', value: capText(rec.capabilities?.canHold ?? null) }, { label: 'Can wield', value: capText(rec.capabilities?.canWield ?? null) }],
       notes: ['The evidence names this appendage but does not establish a distinct physical instance and location, so it is not counted as a manipulator.'],
       operations: [{ label: 'Open Garage', icon: 'fa-screwdriver-wrench', action: 'customize-droid', attrs: [{ k: 'garage-region', v: 'appendage' }, { k: 'garage-slot', v: '' }], disabled: canOpenGarage !== true, reason: canOpenGarage === true ? '' : 'The Garage is not available for this actor.' }],
-      operationsHint: '', modifications: null, modificationsNote: '',
+      operationsHint: '', showMods: false, modifications: [], modificationsNote: '',
     });
   }
 
