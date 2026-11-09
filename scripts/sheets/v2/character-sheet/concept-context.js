@@ -1746,6 +1746,60 @@ function buildRelationshipsTab(context) {
   };
 }
 
+/** Attack view builder over the actor's live Items (authoritative attack/ammo display values per weapon). Shared by every actor type's workspace. */
+function createAttackViewBuilder(actor, itemById) {
+  return (attack = {}) => {
+    const weaponId = attack?.weaponId ?? attack?.itemId ?? attack?.sourceId ?? null;
+    const item = weaponId ? itemById.get(weaponId) : null;
+    const visualProfile = item ? WeaponVisualProfileResolver.resolve(item, { actor }) : null;
+    const railHex = visualProfile?.primaryHex || attack?.visualColorHex || attack?.colorHex || '';
+    const rangeLabel = normalizeText(attack?.range || attack?.rangeLabel || item?.system?.rangeFormatted || item?.system?.range?.label || item?.system?.range?.value || 'Melee');
+    const ammoCurrent = item?.system?.ammo?.current ?? item?.system?.ammunition?.current ?? item?.system?.charges?.value ?? item?.system?.charges?.current ?? attack?.ammoCurrent;
+    // the tracked pool shows its EFFECTIVE capacity (Modification V2 effects are derived, never written into the Item)
+    const ammoMax = item?.system?.ammo?.max ?? (item?.system?.ammunition?.max !== undefined && item?.system?.ammunition?.max !== null ? effectiveShotCapacity(item, item.system.ammunition.max) : undefined) ?? item?.system?.charges?.max ?? attack?.ammoMax;
+    const ammoLabel = ammoCurrent !== undefined && ammoCurrent !== null && ammoCurrent !== ''
+      ? `${ammoCurrent}${ammoMax !== undefined && ammoMax !== null && ammoMax !== '' ? ` / ${ammoMax}` : ''}`
+      : '';
+    const damageType = normalizeText(attack?.damageType || item?.system?.damageType || item?.system?.weapon?.damageType || '');
+    return {
+      ...attack,
+      weaponId,
+      weaponName: attack?.weaponName ?? attack?.name ?? '',
+      weaponType: attack?.weaponType ?? attack?.type ?? attack?.sourceType ?? '',
+      attackTotalClass: toSignedClass(attack?.attackTotal),
+      tags: asArray(attack?.tags),
+      rangeLabel,
+      ammoLabel,
+      damageType,
+      visualKind: visualProfile?.kind || '',
+      weaponReadiness: item ? buildWeaponReadinessView(item, actor) : null,
+      weaponConfiguration: item ? buildWeaponConfigurationView(item) : null,
+      weaponPowerSource: item ? buildWeaponPowerSourceView(item) : null,
+      visualColorHex: railHex,
+      weaponRailStyle: railHex ? `--weapon-rail: ${railHex};` : ''
+    };
+  };
+}
+
+/**
+ * ONE assembly of the equipment workspace view model for every character-like actor (Character, Droid, NPC, Follower).
+ * Pass either the sheet's inventory panel + attack rows (shared hydration) or already-built groups / attack views.
+ * Everything is read from the actor's existing authorities; nothing here is actor-type specific.
+ */
+export function buildActorEquipmentWorkspace(actor, { inventoryPanel = null, attacks = [], unarmed = null, groups = null, attackViews = null, readiness = null } = {}) {
+  const itemById = new Map(Array.from(actor?.items ?? []).map((item) => [item.id, item]));
+  const buildView = createAttackViewBuilder(actor, itemById);
+  return buildEquipmentWorkspace(actor, {
+    groups: groups ?? buildInventoryGroups(inventoryPanel, actor),
+    attackViews: attackViews ?? new Map(asArray(attacks).map(buildView).filter((a) => a.weaponId).map((a) => [a.weaponId, a])),
+    isGM: globalThis.game?.user?.isGM === true,
+    unarmed,
+    readiness,
+    // droids / vehicles come from the Asset Bay's established owner association; world actors the user can merely see are never included
+    assets: listOwnedAssets(actor)
+  });
+}
+
 export function buildConceptSheetViewModel(context = {}) {
   const actor = context.actor ?? {};
   const isDroidActor = context.isDroidActor === true || actor?.type === 'droid' || actor?.system?.isDroid === true;
@@ -1812,37 +1866,7 @@ export function buildConceptSheetViewModel(context = {}) {
   const actionGroups = buildActionGroups(context.combatActions, context.actionEconomy);
   const actorItems = Array.from(actor?.items ?? []);
   const itemById = new Map(actorItems.map((item) => [item.id, item]));
-  const buildAttackView = (attack = {}) => {
-    const weaponId = attack?.weaponId ?? attack?.itemId ?? attack?.sourceId ?? null;
-    const item = weaponId ? itemById.get(weaponId) : null;
-    const visualProfile = item ? WeaponVisualProfileResolver.resolve(item, { actor }) : null;
-    const railHex = visualProfile?.primaryHex || attack?.visualColorHex || attack?.colorHex || '';
-    const rangeLabel = normalizeText(attack?.range || attack?.rangeLabel || item?.system?.rangeFormatted || item?.system?.range?.label || item?.system?.range?.value || 'Melee');
-    const ammoCurrent = item?.system?.ammo?.current ?? item?.system?.ammunition?.current ?? item?.system?.charges?.value ?? item?.system?.charges?.current ?? attack?.ammoCurrent;
-    // the tracked pool shows its EFFECTIVE capacity (Modification V2 effects are derived, never written into the Item)
-    const ammoMax = item?.system?.ammo?.max ?? (item?.system?.ammunition?.max !== undefined && item?.system?.ammunition?.max !== null ? effectiveShotCapacity(item, item.system.ammunition.max) : undefined) ?? item?.system?.charges?.max ?? attack?.ammoMax;
-    const ammoLabel = ammoCurrent !== undefined && ammoCurrent !== null && ammoCurrent !== ''
-      ? `${ammoCurrent}${ammoMax !== undefined && ammoMax !== null && ammoMax !== '' ? ` / ${ammoMax}` : ''}`
-      : '';
-    const damageType = normalizeText(attack?.damageType || item?.system?.damageType || item?.system?.weapon?.damageType || '');
-    return {
-      ...attack,
-      weaponId,
-      weaponName: attack?.weaponName ?? attack?.name ?? '',
-      weaponType: attack?.weaponType ?? attack?.type ?? attack?.sourceType ?? '',
-      attackTotalClass: toSignedClass(attack?.attackTotal),
-      tags: asArray(attack?.tags),
-      rangeLabel,
-      ammoLabel,
-      damageType,
-      visualKind: visualProfile?.kind || '',
-      weaponReadiness: item ? buildWeaponReadinessView(item, actor) : null,
-      weaponConfiguration: item ? buildWeaponConfigurationView(item) : null,
-      weaponPowerSource: item ? buildWeaponPowerSourceView(item) : null,
-      visualColorHex: railHex,
-      weaponRailStyle: railHex ? `--weapon-rail: ${railHex};` : ''
-    };
-  };
+  const buildAttackView = createAttackViewBuilder(actor, itemById);
   const virtualUnarmedLoadoutEntry = unarmedAttackEntry ? {
     ...unarmedAttackEntry,
     id: 'swse-virtual-unarmed',
@@ -2077,13 +2101,10 @@ export function buildConceptSheetViewModel(context = {}) {
       lightsaberConstructionDeferred: !!context.lightsaberConstructionDeferred,
       lightsaberConstructionBlockedReason: context.lightsaberConstructionBlockedReason || null,
       // Equipment workspace: presentation-only mapping of the equipment authorities (see equipment-workspace-context.js)
-      workspace: buildEquipmentWorkspace(actor, {
+      workspace: buildActorEquipmentWorkspace(actor, {
         groups: gearGroups,
         attackViews: new Map(attackEntries.map(buildAttackView).filter((a) => a.weaponId).map((a) => [a.weaponId, a])),
-        isGM: globalThis.game?.user?.isGM === true,
-        unarmed: virtualUnarmedLoadoutEntry,
-        // droids / vehicles come from the Asset Bay's established owner association; world actors the user can merely see are never included
-        assets: listOwnedAssets(actor)
+        unarmed: virtualUnarmedLoadoutEntry
       })
     },
     biography: {

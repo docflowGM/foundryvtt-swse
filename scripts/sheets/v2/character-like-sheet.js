@@ -2298,7 +2298,10 @@ const forcePoints = [];
         context,
         derived,
         conceptLayout,
-        actionEconomy
+        actionEconomy,
+        // already-hydrated shared inputs the NPC Gear tab's equipment workspace reads (same adapter the Character/Droid Gear tab uses)
+        panelContexts,
+        combat
       });
     }
 

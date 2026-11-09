@@ -1,9 +1,9 @@
-{{!-- Equipment workspace (Gear tab). Presentation only: every value comes from conceptLayout.gear.workspace (equipment-workspace-context.js).
+{{!-- Equipment workspace (Gear tab). Presentation only: every value comes from the `workspace` argument (Character/Droid: conceptLayout.gear.workspace; NPC/Follower: npcConcept.workspace), built by buildActorEquipmentWorkspace (equipment-workspace-context.js).
      Every state-changing control reuses an existing data-action handled by the sheet (InventoryEngine / FireStateStore / customization router),
      or a data-eqw-* control handled by equipment-workspace-ui.js, which only calls the same authorities.
      Visual language: the sheet's own concept panel primitives (.swse-concept-panel / __header / __title, .swse-concept-btn) plus
      styles/sheets/equipment-workspace.css, which reads the live sheet theme tokens. --}}
-{{#with conceptLayout.gear.workspace as |ws|}}
+{{#with workspace as |ws|}}
 <section class="swse-eqw" data-eqw aria-label="Equipment workspace">
   {{#if ws.notices.length}}
   <div class="swse-eqw__bulletins" role="list">

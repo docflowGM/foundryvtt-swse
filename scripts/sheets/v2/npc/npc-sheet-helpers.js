@@ -970,7 +970,7 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
   const isDependent = ['follower', 'minion', 'privateer'].includes(context?.npcKind);
   const isCreature = context?.isBeastNpc === true || context?.isMountNpc === true;
   const showForceTab = system?.forceSensitive === true || forcePowerRows.length > 0;
-  const showGearTab = gearRows.length > 0 || credits !== 0 || game.user?.isGM === true;
+  const showGearTab = gearRows.length > 0 || credits !== 0 || game.user?.isGM === true || actor?.isOwner === true;
   const showGmTab = game.user?.isGM === true;
 
   const conditionCurrent = displayValue(

@@ -1,3 +1,4 @@
+import { buildActorEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
 import { SWSEV2CharacterLikeSheet } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-like-sheet.js";
 import { canUseActorSheetEditControls } from "/systems/foundryvtt-swse/scripts/sheets/v2/actor-sheet-base.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -72,9 +73,9 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
    * (only the parameter shape changed — from separate locals to one
    * options object, per the hook contract's JSDoc on the base method).
    */
-  _buildNpcConceptSheetContext(actor, { context, derived, conceptLayout, actionEconomy } = {}) {
+  _buildNpcConceptSheetContext(actor, { context, derived, conceptLayout, actionEconomy, panelContexts, combat } = {}) {
     try {
-      return ActorPerfDiagnostics.time(
+      const npcConcept = ActorPerfDiagnostics.time(
         ms => ActorPerfDiagnostics.recordSheetContext('npc-context-builder', ms),
         () => buildNpcConceptSheetContext(actor, {
           ...context,
@@ -83,6 +84,10 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
           actionEconomy
         })
       );
+      // Gear tab: the SAME equipment workspace (possessions browser + inspector) the Character and Droid sheets use, fed by the NPC's own
+      // hydrated inventory panel and attack rows. Statblock attacks without an owned Item stay in the Combat tab; no Item is fabricated here.
+      npcConcept.workspace = this._buildNpcEquipmentWorkspace(actor, { panelContexts, combat });
+      return npcConcept;
     } catch (err) {
       swseLogger.warn('[SWSEV2NpcSheet] NPC concept sheet context failed', {
         actorId: actor?.id,
@@ -98,6 +103,16 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
         defenseChips: [],
         showGmTab: game.user?.isGM === true
       };
+    }
+  }
+
+  /** Shared equipment workspace view model for NPC and Follower actors (null when it cannot be built; the tab then shows its own notice). */
+  _buildNpcEquipmentWorkspace(actor, { panelContexts, combat } = {}) {
+    try {
+      return buildActorEquipmentWorkspace(actor, { inventoryPanel: panelContexts?.inventoryPanel ?? null, attacks: combat?.attacks ?? [] });
+    } catch (err) {
+      swseLogger.warn('[SWSEV2NpcSheet] NPC equipment workspace failed', { actorId: actor?.id, actorName: actor?.name, error: err?.message });
+      return null;
     }
   }
 
