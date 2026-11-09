@@ -50,6 +50,7 @@ import { resolveVehicleCrewStationEvidence } from "/systems/foundryvtt-swse/scri
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { sceneCommandCoverBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-command-cover.js";
+import { observedAttackBonus, observedReflexBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/class-target-observation.js";
 import { isSuppressCoverContext } from "/systems/foundryvtt-swse/scripts/combat/combat-status.js";
 import { normalizeRangeBand } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/canonical-range.js";
 import { SIZE_RANK } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/condition-policy.js";
@@ -181,7 +182,9 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
   // is honored as an explicit untyped override, kept separate from the typed
   // contributions above rather than treated as their primary semantic source.
   const legacySituationalBonus = Number(rollOptions.situationalBonus || 0);
-  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + grappleStatePenalty + Number(rollOptions.customModifier || 0) + situationalDetail.total + legacySituationalBonus + sequencePenalty;
+  // Familiar Foe / Targeted Suspect: a per-target bonus read from the observer's encounter record at roll time; never baked into derived data.
+  const observedTargetBonus = isVehicleAttack ? 0 : observedAttackBonus(actor, getTargetActorFromOptions(rollOptions));
+  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + grappleStatePenalty + Number(rollOptions.customModifier || 0) + situationalDetail.total + legacySituationalBonus + sequencePenalty + observedTargetBonus;
   // Component ledger: baseline (resolver) components plus invocation-only
   // additions, clearly separated so a tooltip never claims an invocation-only
   // modifier is part of the static weapon baseline. Vehicle attacks already
@@ -193,6 +196,7 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
     ...(isVehicleAttack ? attackBonusResolution.ledger : buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline')),
     buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
     buildInvocationLedgerEntry('grapple-state-penalty', 'Grabbed/Grappled', grappleStatePenalty, attackLedgerDomain),
+    buildInvocationLedgerEntry('observed-target', 'Observed Opponent', observedTargetBonus, attackLedgerDomain),
     buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
     ...(isVehicleAttack ? buildModifierLedger(situationalDetail.applied, suppressedSituational, attackLedgerDomain) : (attackBonusResolution.typedModifierLedger ?? [])),
     buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus (legacy)', legacySituationalBonus, attackLedgerDomain),
@@ -617,7 +621,7 @@ export function getTargetDefense(actor = null, defenseType = 'reflex', options =
   // alter or cache the actor's permanent derived Reflex Defense.
   const commandCover = sceneCommandCoverBonus(actor, { tokenId: options.tokenId ?? null });
   const otherCover = Math.max(0, Number(options.existingCoverBonus) || 0);
-  return base + Math.max(commandCover, otherCover); // cover does not stack
+  return base + Math.max(commandCover, otherCover) + observedReflexBonus(actor, options.attackerActor ?? null); // cover does not stack
 }
 
 export function resolveTargetContext(options = {}, fallbackTarget = null) {
@@ -651,7 +655,9 @@ export function resolveTargetContext(options = {}, fallbackTarget = null) {
   // Phase 5D-I-C-C: attack-contextual PASSIVE defense of the target's held weapon (Dual-Phase extended blade vs an adjacent attacker, a disarm-defense
   // equipment bonus against a disarm attack). Reflex only, computed once per attack by resolveTargetSideDefense; the target's stored defense is never changed.
   const passive = defenseType === 'reflex' ? (Number(options.passiveDefenseAdjustment ?? 0) || 0) : 0;
-  const adjustment = (Number(ctx?.defenseAdjustment ?? 0) || 0) + passive + coverBonus;
+  // Familiar Foe: Reflex against attacks made BY the observed opponent only (the attacker is named by the caller, never inferred).
+  const observed = defenseType === 'reflex' ? observedReflexBonus(target, options.attackerActor ?? null) : 0;
+  const adjustment = (Number(ctx?.defenseAdjustment ?? 0) || 0) + passive + coverBonus + observed;
   const defenseValue = Number.isFinite(base) ? base + adjustment : base;
   return { target, targetName: target?.name ?? '', defenseType, defenseValue,
     mode: target ? 'token' : 'none', adjustment, coverBonus, commandCoverBonus: commandCover };
@@ -1036,7 +1042,7 @@ export async function rollAttack(actor, weapon, options = {}) {
   const targetContextOptions = resolvedDefenseType && !rollOptions.targetContext
     ? { ...rollOptions, targetContext: { defenseType: resolvedDefenseType } }
     : rollOptions;
-  const resolvedTarget = resolveTargetContext(targetContextOptions, getTargetActorFromOptions(rollOptions));
+  const resolvedTarget = resolveTargetContext({ ...targetContextOptions, attackerActor: actor }, getTargetActorFromOptions(rollOptions));
   const target = resolvedTarget.target;
   const targetReflex = resolvedTarget.defenseValue;
   const d20 = roll?.dice?.[0]?.results?.[0]?.result ?? null;
@@ -1456,7 +1462,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
 
   // Post attack roll card
   const target = getTargetActorFromOptions(rollOptions);
-  const targetReflex = getTargetReflex(target);
+  const targetReflex = getTargetReflex(target, { attackerActor: actor });
   const attackD20 = attackRoll?.dice?.[0]?.results?.[0]?.result ?? null;
   const attackCritThreshold = Number(optionModifiers.criticalThreatNaturalMin ?? 20);
   const attackCritMultiplier = resolveCriticalMultiplier(actor, weapon, rollOptions, optionModifiers);

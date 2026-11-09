@@ -727,6 +727,9 @@ export class SWSERollEngine {
         parts.push({ kind: 'bonus', label: this._stripHtml(bonus?.name || 'Class Feature'), value: this._formatSigned(value) });
       }
     }
+    if (category === 'skill' && Number(context?.observedSuspectBonus) > 0) {
+      parts.push({ kind: 'bonus', label: 'Targeted Suspect', value: this._formatSigned(context.observedSuspectBonus) });
+    }
     // the aggregate feat line is shown only when the per-feat lines are not (listing both counted every feat twice)
     if (!Array.isArray(context?.featSkillBonuses) && Number.isFinite(Number(context?.featSkillBonus)) && Number(context.featSkillBonus) !== 0) {
       parts.push({ kind: 'bonus', label: 'Feat Bonus', value: this._formatSigned(context.featSkillBonus) });
