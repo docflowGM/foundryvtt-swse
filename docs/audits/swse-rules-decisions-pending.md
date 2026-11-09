@@ -2386,3 +2386,41 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 50 (2026-11-09):** appended EQ-W-001 (equipment weight scope). EQ-001, EQ-002 and EQ-003 were re-reviewed against the existing source evidence; no new evidence was found and all three remain `DEFERRED_RULES_REVIEW` and fail closed.
+
+## WPN-W1-001 — Minimum-1 weapon-hit damage versus the Saboteur Destructive multiplier (weapon three-gate audit W1)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-W1-001 |
+| Rules domain | Combat / damage; Saboteur class feature |
+| Feature | "A successful weapon hit always deals at least 1 point" (Core Rulebook, Combat Statistics > Damage) combined with Saboteur Destructive (damage roll doubled against vehicles / unattended objects) |
+| Source | Core Rulebook, Combat Statistics > Damage (minimum-1 on a hit); Saboteur Destructive per `data/class-features.json` `cf.saboteur.destructive` |
+| Evidence | The minimum applies to damage a successful hit deals. Destructive multiplies the damage roll before target defenses. Neither source states which is applied first when the roll is below 1. |
+| Confirmed behavior | A confirmed ordinary weapon hit never reaches mitigation below 1. Destructive multiplies a positive roll by 2 before mitigation. |
+| Unresolved question | When the damage roll is 0 or negative and Destructive applies: is the floor applied to the doubled roll (result 1) or to the roll before doubling (1 doubled = 2)? |
+| Options | (a) floor after doubling: effective 1. (b) floor before doubling: effective 2. Both are consistent with the wording; neither is stated. |
+| Recommended ruling | None |
+| Implementation impact | `buildDamagePacket` currently takes (a) as the more conservative reading so no extra damage is created without a ruling. One line (`unfloored` / `minimumHitDamageApplied`). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## WPN-W1-002 — Minimum-1 weapon-hit damage when the hit was adjudicated by hand (no target defense carried)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-W1-002 |
+| Rules domain | Combat / damage workflow policy |
+| Feature | Applying the minimum-1 rule to a damage roll whose attack had no resolved hit state |
+| Source | Core Rulebook, Combat Statistics > Damage; existing packet policy ("No hit state; damage is GM/adjudication-controlled", `resolveDamageDisposition`) |
+| Evidence | When an attack is rolled without a target defense to compare against, `isHit` is null and the damage roll carries no hit evidence. The player and GM then decide the hit by hand. |
+| Confirmed behavior | The minimum-1 floor is applied only when a confirmed hit is carried in the workflow context. A detached damage roll is not assumed to be a hit. |
+| Unresolved question | Whether pressing Roll Damage on an attack with no resolved hit state should be treated as a GM-declared hit (floor applies) or remain unfloored until a hit is recorded. |
+| Options | (a) unfloored until a hit state is carried (current). (b) the damage card offers an explicit "hit confirmed by GM" toggle that sets the evidence. |
+| Recommended ruling | None |
+| Implementation impact | Without a target, a non-positive roll displays as 0 damage; the GM can type the amount manually. No code beyond the carried-evidence check exists. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 51 (2026-11-09):** appended WPN-W1-001 and WPN-W1-002 from the weapon three-gate W1 minimum-damage correction.

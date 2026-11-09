@@ -322,12 +322,12 @@ export function buildDamagePacket({
   // The damage packet is the shared pre-mitigation authority. Apply
   // Destructive to the damage roll before any damage-type/target defenses,
   // rather than doubling the target's post-DR hit point loss.
-  const baseRollAmount = Math.max(0, asNumber(amount ?? roll?.total, 0));
+  const rolledTotal = asNumber(amount ?? roll?.total, 0);
+  const baseRollAmount = Math.max(0, rolledTotal);
   const destructive = resolveSaboteurDestructive({
     attacker, target, targetCategory: getDamageTargetCategory(target),
     unattendedTarget: options.unattendedTarget === true
   });
-  const rawAmount = baseRollAmount * destructive.multiplier;
   const context = normalizeDamageWorkflowContext(workflowContext ?? options.combatContext ?? options.workflowContext ?? null, {
     ...options,
     actor: attacker,
@@ -341,6 +341,16 @@ export function buildDamagePacket({
     critMultiplier: options.critMultiplier ?? undefined
   });
   const disposition = resolveDamageDisposition(context, { ...options, target });
+  // Weapon-hit minimum (Core Rulebook, Combat Statistics > Damage; weapon three-gate audit C-DMG-01): a CONFIRMED hit with an
+  // ordinary damaging weapon always deals at least 1 point, even when penalties push the roll below 1. The floor is applied here, at the
+  // shared pre-mitigation seam, so shields/DR/temp HP/HP/threshold all see the effective amount; the original roll total rides in flags.
+  // Needs carried hit evidence (disposition.hit === true), a weapon, full-damage disposition; a miss, half-damage, no-damage form or
+  // hit-less detached roll is never floored.
+  const hitFloorApplies = disposition.hit === true && disposition.damageAllowed !== false && weapon != null
+    && asNumber(options.damageMultiplier ?? disposition.multiplier, disposition.multiplier) === 1;
+  const unfloored = baseRollAmount * destructive.multiplier;
+  const minimumHitDamageApplied = hitFloorApplies && unfloored < 1;
+  const rawAmount = minimumHitDamageApplied ? 1 : unfloored;
   const type = resolveDamagePacketType({ weapon, workflowContext: context, options });
   const basePacket = buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, disposition, type, options });
   const weaponPacket = enhanceWeaponDamagePacket(basePacket, {
@@ -352,7 +362,10 @@ export function buildDamagePacket({
     workflowContext: context,
     options
   });
-  const packet=finalizeDamagePacketForTarget(weaponPacket, target);
+  const finalized=finalizeDamagePacketForTarget(weaponPacket, target);
+  const packet = minimumHitDamageApplied
+    ? { ...finalized, flags: { ...(finalized.flags ?? {}), minimumHitDamageApplied: true, rolledTotal } }
+    : finalized;
   if (!destructive.applies) return packet;
   return {
     ...packet,

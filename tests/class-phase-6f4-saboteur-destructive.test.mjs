@@ -61,7 +61,7 @@ test('feature cannot be obtained from an inventory item or a different class',()
 test('canonical damage-packet builder applies the multiplier before target mitigation and provides trace flags',()=>{
  const code=fs.readFileSync(path.join(root,'scripts/engine/combat/damage-packet-builder.js'),'utf8');
  assert.match(code,/resolveSaboteurDestructive\(\{/);
- assert.match(code,/const rawAmount = baseRollAmount \* destructive\.multiplier/);
+ assert.match(code,/const unfloored = baseRollAmount \* destructive\.multiplier/);
  assert.match(code,/buildBaseDamagePacket\(\{ attacker, target, weapon, rawAmount/);
  assert.match(code,/finalizeDamagePacketForTarget\(weaponPacket, target\)/);
  assert.match(code,/saboteurDestructiveApplied:true/);
