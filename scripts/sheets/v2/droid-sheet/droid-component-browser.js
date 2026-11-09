@@ -18,6 +18,7 @@
  */
 import { resolveInstalledDroidComponents, DROID_COMPONENT_SOURCE_KIND as KIND } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
 import { getDroidPartDefinition, normalizeDroidPartId } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { authorizeDroidComponentOperation } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js';
 import { projectActorDroidAppendages } from '/systems/foundryvtt-swse/scripts/engine/equipment/droid-appendage-projection.js';
 
 export const DROID_COMPONENT_CATEGORIES = Object.freeze([
@@ -119,9 +120,13 @@ export function buildDroidComponentBrowser(actor, resolvedSystems, { canOpenGara
       if (Number(item.cost) > 0) notes.push('A price quote does not establish installation eligibility; installation is decided in the Garage.');
 
       const operations = [];
+      // Operations with a mechanical effect (an attack, a self-destruct) mirror the execution gate (the handlers enforce it independently): only
+      // hardware the installation ledger confirms as installed and enabled can be operated. Inspecting and describing stay available.
+      const mechanical = item.canRoll === true || categoryId === 'weapon' || Boolean(item.weaponProfile?.damage || item.weaponProfile?.damageBySize || item.weaponProfile?.selfDestruct);
+      const gate = mechanical ? authorizeDroidComponentOperation(actor, { instanceId, ruleId: item.ruleId, partId: item.id, name: item.name }, { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition }) : { ok: true, reason: null };
       if (item.source === 'item' && item.id) operations.push({ label: 'Open item', icon: 'fa-up-right-from-square', action: 'open-droid-system-item', attrs: [{ k: 'item-id', v: item.id }] });
-      if (item.canRoll && item.id) operations.push({ label: 'Roll', icon: 'fa-dice-d20', action: 'roll-weapon', attrs: [{ k: 'item-id', v: item.id }] });
-      operations.push({ label: 'Use', icon: 'fa-bolt', action: 'use-droid-part', attrs: [{ k: 'part-id', v: item.id ?? item.ruleId ?? '' }, { k: 'part-name', v: item.name ?? '' }] });
+      if (item.canRoll && item.id) operations.push({ label: 'Roll', icon: 'fa-dice-d20', action: 'roll-weapon', attrs: [{ k: 'item-id', v: item.id }], disabled: !gate.ok, reason: gate.reason ?? '' });
+      operations.push({ label: mechanical ? 'Use' : 'Describe', icon: 'fa-bolt', action: 'use-droid-part', attrs: [{ k: 'part-id', v: item.id ?? item.ruleId ?? '' }, { k: 'part-name', v: item.name ?? '' }, { k: 'instance-id', v: instanceId ?? '' }], disabled: mechanical && !gate.ok, reason: mechanical ? (gate.reason ?? '') : '' });
       operations.push({
         label: 'Open Garage', icon: 'fa-screwdriver-wrench', action: 'customize-droid',
         attrs: [{ k: 'garage-region', v: categoryId }, { k: 'garage-slot', v: instanceId ?? slug(item.ruleId) ?? '' }],

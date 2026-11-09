@@ -1,8 +1,9 @@
 import { SWSEV2CharacterLikeSheet } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-like-sheet.js";
+import { authorizeDroidComponentOperation } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { getDroidPartDefinition, getSelfDestructBurstSquares, getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
+import { getDroidPartDefinition, normalizeDroidPartId, getSelfDestructBurstSquares, getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { DroidSheetContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/context-builder.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
 
@@ -238,6 +239,19 @@ export class SWSEV2DroidSheet extends SWSEV2CharacterLikeSheet {
         ?? definition.weaponProfile
         ?? (hasDatasetWeaponProfile ? datasetWeaponProfile : null)
     };
+
+    // Execution gate: seeing a component, hydrating its catalog definition or holding a weapon profile is not permission. Describing a part is
+    // informational and stays open; a mechanical effect (self-destruct, attack) needs hardware the installation ledger confirms as installed and enabled.
+    const hasMechanicalEffect = part.weaponProfile?.selfDestruct === true || Boolean(part.weaponProfile?.damage || part.weaponProfile?.damageBySize || datasetWeaponProfile.damage);
+    if (hasMechanicalEffect) {
+      const gate = authorizeDroidComponentOperation(this.actor, { instanceId: button.dataset?.instanceId ?? null, ruleId: hydrated.ruleId ?? definition?.ruleId ?? lookupId, partId: lookupId, name: part.name },
+        { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition });
+      if (!gate.ok) {
+        ui.notifications?.warn?.(`${part.name}: ${gate.reason}`);
+        await postDroidPartChat(this.actor, part);
+        return null;
+      }
+    }
 
     if (part.weaponProfile?.selfDestruct === true) {
       const confirmed = await Dialog.confirm({

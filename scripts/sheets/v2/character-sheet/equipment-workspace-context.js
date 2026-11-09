@@ -260,8 +260,10 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       art: artOf(a?.img, CATEGORY_GLYPH[tab]),
       typeLabel: a?.kindLabel || (kind === 'vehicle' ? 'Ship / Vehicle' : 'Droid'),
       detail: a?.detail || '', summary: a?.status || '',
-      status: linkedOk ? { label: 'Linked', tone: 'held' } : { label: 'Link unresolved', tone: 'warn' },
-      statusLabel: linkedOk ? 'Linked' : 'Link unresolved',
+      // 'Linked' is the Asset Bay association; ownership is a separate, canonical fact: an association without recorded ownership says so
+      status: !linkedOk ? { label: 'Link unresolved', tone: 'warn' } : (['OWNER', 'CO_OWNER'].includes(a?.ownershipStatus) || !a?.ownershipStatus ? { label: 'Linked', tone: 'held' } : { label: 'Linked · ownership not established', tone: 'warn' }),
+      statusLabel: !linkedOk ? 'Link unresolved' : (['OWNER', 'CO_OWNER'].includes(a?.ownershipStatus) || !a?.ownershipStatus ? 'Linked' : 'Linked · ownership not established'),
+      ownershipLabel: a?.ownershipLabel ?? '',
       quantity: null, weight: null, canOpen,
       searchText: `${a?.name ?? ''} ${a?.kindLabel ?? ''} ${a?.detail ?? ''}`.toLowerCase(),
     };
