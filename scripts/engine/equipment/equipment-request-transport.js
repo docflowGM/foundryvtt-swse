@@ -12,7 +12,7 @@
  * A player that gets no reply in time receives UNKNOWN_OUTCOME with the SAME request id: retrying with that id is safe (the coordinator never runs
  * a journaled request twice), and the GM can reconcile an unresolved entry.
  */
-import { handleEquipmentRequest, CHAT_AUTHOR_MECHANISM, VERIFIED_IDENTITY_MECHANISMS, ENVELOPE_KIND } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-player-request-route.js';
+import { handleEquipmentRequest, CHAT_AUTHOR_MECHANISM, VERIFIED_IDENTITY_MECHANISMS, ENVELOPE_KIND, ROUTE_OUTCOME } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-player-request-route.js';
 import { logEquipmentEvent } from '/systems/foundryvtt-swse/scripts/engine/equipment/equipment-diagnostics.js';
 
 export const REQUEST_FLAG = 'equipmentRequest';
@@ -27,19 +27,38 @@ export function senderFromCreatedMessage(message, hookUserId) {
 }
 
 /**
+ * Player side: the executor reply carried by a created message, or null. A reply is trusted only when the server-stamped author equals the hook
+ * user AND that author is a GM (a player can whisper themselves a forged reply flag; it must never be taken as the executor's answer).
+ * Even an authenticated reply is advisory: the caller must confirm the outcome against authoritative actor state.
+ */
+export function replyFromCreatedMessage(message, hookUserId, isGmUser) {
+  const reply = message?.flags?.swse?.[REPLY_FLAG];
+  if (!reply || typeof reply !== 'object') return null;
+  const authorId = message?.author?.id ?? null;
+  if (!authorId || !hookUserId || authorId !== hookUserId) return null;
+  let gm = false;
+  try { gm = isGmUser?.(authorId) === true; } catch { gm = false; }
+  return gm ? { ...reply, authenticated: true } : null;
+}
+
+const HANDLED_MAX = 512;
+
+/**
  * GM side: a createChatMessage handler. deps = route deps + { createMessage(data), gmUserIds() }.
  * Returns the route result (or null for messages that are not equipment requests).
  */
 export function createRequestMessageHandler(deps) {
-  const handled = new Set();
+  const handled = new Set(); // bounded per-client delivery guard; durable duplicate protection is the coordinator journal
   return async (message, _options, hookUserId) => {
     const envelope = message?.flags?.swse?.[REQUEST_FLAG];
     if (!envelope || envelope.kind !== ENVELOPE_KIND) return null;
     if (handled.has(message.id)) return null; // one delivery per created message on this client
     handled.add(message.id);
+    while (handled.size > HANDLED_MAX) handled.delete(handled.values().next().value);
     const sender = senderFromCreatedMessage(message, hookUserId);
     const result = await handleEquipmentRequest(envelope, sender, deps);
-    if (sender) {
+    // Only the executor answers. A GM client that does not hold the lease stays silent: its refusal is not the request's outcome and would race the real reply.
+    if (sender && result.status !== ROUTE_OUTCOME.NOT_EXECUTOR) {
       try {
         await deps.createMessage?.({
           content: `<p>Equipment request ${String(result.requestId ?? '')}: ${result.outcome?.status ?? result.status}</p>`,
@@ -56,13 +75,14 @@ export function createRequestMessageHandler(deps) {
 
 /**
  * Player side: send an envelope and wait for the matching reply.
- * deps = { createMessage(data), gmUserIds(), onReply(fn) -> unsubscribe, timeoutMs? }
+ * deps = { createMessage(data), gmUserIds(), onReply(fn) -> unsubscribe, timeoutMs? }; onReply must feed only replyFromCreatedMessage() results.
+ * Replies lacking `authenticated: true` are ignored.
  */
 export async function sendEquipmentRequest(envelope, deps) {
   const timeoutMs = deps.timeoutMs ?? DEFAULT_REPLY_TIMEOUT_MS;
   let unsubscribe = () => {};
   const reply = new Promise((resolve) => {
-    unsubscribe = deps.onReply((r) => { if (r?.requestId === envelope.requestId) resolve(r); }) ?? (() => {});
+    unsubscribe = deps.onReply((r) => { if (r?.authenticated === true && r?.requestId === envelope.requestId) resolve(r); }) ?? (() => {});
   });
   try {
     await deps.createMessage({ content: '<p>Equipment request</p>', whisper: deps.gmUserIds(), flags: { swse: { [REQUEST_FLAG]: envelope } } });
@@ -90,4 +110,4 @@ export function installEquipmentRequestTransport({ hooks = globalThis.Hooks, ena
   return { installed: true, hookId: id };
 }
 
-export default { senderFromCreatedMessage, createRequestMessageHandler, sendEquipmentRequest, installEquipmentRequestTransport, REQUEST_FLAG, REPLY_FLAG };
+export default { senderFromCreatedMessage, replyFromCreatedMessage, createRequestMessageHandler, sendEquipmentRequest, installEquipmentRequestTransport, REQUEST_FLAG, REPLY_FLAG };
