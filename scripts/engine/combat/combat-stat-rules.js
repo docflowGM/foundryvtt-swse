@@ -409,8 +409,19 @@ export function getRangePenalty(weapon, context = {}) {
   // never override it. An explicit caller-supplied penalty still wins; a facet with no structured table ('pending') falls
   // through to the existing generic band arithmetic below. Legacy weapons are unchanged.
   const canonicalRuntime = context?.weaponRuntime?.source === 'canonical' ? context.weaponRuntime : null;
-  const explicit = Number(context.rangePenalty ?? context.modifiers?.rangePenalty ?? (canonicalRuntime ? undefined : (weapon?.system?.rangePenalty ?? weapon?.system?.currentRangePenalty)));
-  if (Number.isFinite(explicit)) return explicit;
+  // Weapon three-gate W2 (C-RNG-02): for a canonical BANDED form the selected profile's band table is the penalty authority. A bare caller
+  // number (context.rangePenalty / modifiers.rangePenalty) cannot replace it; the only override is an explicit GM adjudication record
+  // ({ penalty, reason }) honored for a GM user, so the replacement is deliberate and auditable. Legacy / non-banded forms keep the
+  // caller-supplied penalty exactly as before.
+  const canonicalBanded = canonicalRuntime?.range?.status === 'banded';
+  if (canonicalBanded) {
+    const adj = context.rangeAdjudication;
+    const adjPenalty = Number(adj?.penalty);
+    if (adj && Number.isFinite(adjPenalty) && String(adj.reason ?? '').trim() && globalThis.game?.user?.isGM === true) return adjPenalty;
+  } else {
+    const explicit = Number(context.rangePenalty ?? context.modifiers?.rangePenalty ?? (canonicalRuntime ? undefined : (weapon?.system?.rangePenalty ?? weapon?.system?.currentRangePenalty)));
+    if (Number.isFinite(explicit)) return explicit;
+  }
   if (canonicalRuntime) {
     const canonical = canonicalRangePenalty(canonicalRuntime.range, context.rangeBand ?? context.range);
     if (canonical !== null) return canonical;

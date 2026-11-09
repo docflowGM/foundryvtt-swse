@@ -121,7 +121,7 @@ const census = { identities: 0, forms: 0, refusedForms: [], range: {}, resource:
   const pen = (band) => getRangePenalty(pistol, { weaponRuntime: pr, rangeBand: band });
   assert.deepEqual([pen('pointBlank'), pen('short'), pen('medium'), pen('long')], [0, -2, -5, -10], 'canonical band table; stale Item rangePenalty:0 cannot erase it');
   assert.equal(pr.range.status, 'banded'); assert.equal(pr.range.family, 'pistols');
-  assert.equal(getRangePenalty(pistol, { weaponRuntime: pr, rangeBand: 'medium', rangePenalty: -1 }), -1, 'explicit caller penalty still wins');
+  assert.equal(getRangePenalty(pistol, { weaponRuntime: pr, rangeBand: 'medium', rangePenalty: -1 }), -5, 'W2 (C-RNG-02): a bare caller penalty no longer replaces the canonical band table (explicit GM adjudication only; see weapon-3gate-w2-range-authority.test.mjs)');
   // a canonical profile whose short band is overridden (Accurate-style) -- found in the registry, not hard-coded by name
   const over = registry.getAll().flatMap((r) => resolver.resolveIdentity(r.identityKey).profiles.filter((p) => p.definition.range?.qualityEffects?.shortPenaltyOverride === 0 && p.definition.range?.mode === 'ranged').map((p) => [r.identityKey, p.id]))[0];
   assert.ok(over, 'registry contains a short-penalty override profile');

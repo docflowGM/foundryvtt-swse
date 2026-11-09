@@ -157,6 +157,8 @@ export function applyAbilityRangeGrants(range, resolved, heldTalentIdentities, r
 export function bandForDistance(range, squares) {
   const d = Math.floor(Number(squares));
   if (!range || range.status !== 'banded' || !range.bandSquares || !Number.isFinite(d) || d < 0) return null;
+  // weapon three-gate W2 (C-RNG-04): a stated maximum range (hardMaxSquares) cuts off the part of a band that lies beyond it, not only the bands that begin beyond it
+  if (Number.isFinite(range.hardMaxSquares) && d > range.hardMaxSquares) return null;
   for (const band of RANGE_BANDS) {
     const span = range.bandSquares[band];
     if (Array.isArray(span) && range.allowedBands.includes(band) && d >= span[0] && d <= span[1]) return band;

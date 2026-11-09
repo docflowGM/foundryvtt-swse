@@ -10,7 +10,7 @@ import { resolveCanonicalIdentity } from './canonical-identity.js';
 import { WeaponRuntimeResolver, getProfile } from './weapon-runtime-resolver.js';
 import { resolveProficiency, resolveAbilityAttackBonus } from './proficiency-resolver.js';
 import { resolveDamageProfile } from './damage-profile-resolver.js';
-import { resolveCanonicalRange, assertRangeSelectionResolvable, applyAbilityRangeGrants, bandForDistance } from './canonical-range.js';
+import { resolveCanonicalRange, assertRangeSelectionResolvable, applyAbilityRangeGrants, bandForDistance, normalizeRangeBand } from './canonical-range.js';
 import { ownedTalentIdentities, talentIdentityOfReference } from './talent-identity.js';
 import { resolveCanonicalResourceCost } from './canonical-resource.js';
 import { extractSpecialMechanics, damageShapeFromMechanics, summarizeMechanics } from './special-mechanics.js';
@@ -185,20 +185,26 @@ export function assertAttackFormResolvable(runtime, { damageMode = null, rangeBa
 }
 
 /**
- * Phase 5D-I-D-F: a STATED distance (squares) beyond every band the form (with the wielder's range grants) allows is an attack out of range:
- * it is refused, never rolled with no range penalty. An explicit range band wins over a distance (the player named the band); no distance
- * stated means nothing to validate (unknown is not out of range).
+ * Phase 5D-I-D-F + weapon three-gate W2 (C-RNG-01): a STATED distance (squares) beyond every band the form (with the wielder's range
+ * grants and the form's hard maximum) allows is an attack out of range: it is refused, never rolled with no range penalty. When a
+ * distance AND a named band are both supplied they must agree: a band label never cancels a distance (the band the distance falls in
+ * is the effective band). No distance stated means nothing to validate (unknown is not out of range; a band alone is theater-of-mind
+ * play). An unrecognized band label (e.g. the dialog's "custom") names no band, so the distance alone decides.
  */
 export function assertDistanceInRange(runtime, actor, rangeBand, distanceSquares) {
   if (distanceSquares === null || distanceSquares === undefined || distanceSquares === '') return;
-  if (rangeBand !== null && rangeBand !== undefined && rangeBand !== '') return;
   const d = Number(distanceSquares);
   const range = resolveActorRange(runtime, actor);
   if (!Number.isFinite(d) || d < 0) {
     throw new WeaponRuntimeError(ERROR_CODES.RANGE_DISTANCE_OUT_OF_RANGE, `${distanceSquares} is not a valid distance in squares`, { distanceSquares });
   }
-  if (bandForDistance(range, d) === null) {
+  const derived = bandForDistance(range, d);
+  if (derived === null) {
     throw new WeaponRuntimeError(ERROR_CODES.RANGE_DISTANCE_OUT_OF_RANGE, `a target ${Math.floor(d)} squares away is out of range for the selected attack form`, { distanceSquares: d, allowedBands: [...(range?.allowedBands ?? [])] });
+  }
+  const named = normalizeRangeBand(rangeBand);
+  if (named && named !== derived) {
+    throw new WeaponRuntimeError(ERROR_CODES.RANGE_BAND_DISTANCE_MISMATCH, `a target ${Math.floor(d)} squares away is at ${derived} range, not ${named}`, { distanceSquares: d, rangeBand: named, distanceBand: derived });
   }
 }
 
