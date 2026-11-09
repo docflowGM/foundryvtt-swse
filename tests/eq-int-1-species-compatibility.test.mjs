@@ -178,7 +178,9 @@ check('I. no unauthorized runtime consumer: the seven new equipment modules are 
   const offenders = [];
   for (const f of files) {
     const src = readFileSync(new URL(f, ROOT), 'utf8');
-    if (!f.startsWith('scripts/engine/equipment/')) for (const m of NEW) if (src.includes(`engine/equipment/${m}.js`)) offenders.push(`${f} -> ${m}`);
+    // Droid Systems UI (read-only presentation adapter) is the one approved consumer outside the engine: it reads appendage identity/capability from the projection
+    const APPROVED = new Set(['scripts/sheets/v2/droid-sheet/droid-component-browser.js->droid-appendage-projection']);
+    if (!f.startsWith('scripts/engine/equipment/')) for (const m of NEW) if (src.includes(`engine/equipment/${m}.js`) && !APPROVED.has(`${f}->${m}`)) offenders.push(`${f} -> ${m}`);
     if (src.includes('species-anatomy-schema-v1.js') && !SCHEMA_USERS.has(f) && f !== 'scripts/species/species-anatomy-schema-v1.js') offenders.push(`${f} -> species-anatomy-schema-v1`);
   }
   assert.deepEqual(offenders, []);
