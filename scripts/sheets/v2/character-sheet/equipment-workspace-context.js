@@ -123,7 +123,9 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       const msg = asArray(anatomy.issues).find((i) => i.severity === 'blocking') ?? asArray(anatomy.issues)[0];
       notices.push({ tone: 'warn', text: `Anatomy is ${anatomy.status}${msg ? `: ${msg.message}` : '.'}` });
     }
-    if (rd?.speciesEvidence?.status && rd.speciesEvidence.status !== 'resolved') notices.push({ tone: 'warn', text: `Species evidence unavailable (${rd.speciesEvidence.reason ?? rd.speciesEvidence.status}); drawing a weapon is withheld until it resolves.` });
+    if (state.droidRules?.confidence === 'CONTRADICTORY') notices.push({ tone: 'conflict', text: 'This actor carries contradictory Droid classification evidence, so no anatomy is certified and drawing a weapon is withheld.' });
+    // a Droid-rules actor (NPC-type Droid Follower included) has no biological species: its anatomy is the installed-component evidence (stated above when unresolved)
+    if (rd?.speciesEvidence?.status && rd.speciesEvidence.status !== 'resolved' && state.droidRules?.isDroid !== true) notices.push({ tone: 'warn', text: `Species evidence unavailable (${rd.speciesEvidence.reason ?? rd.speciesEvidence.status}); drawing a weapon is withheld until it resolves.` });
     if (state.transactions?.journalStatus === 'invalid') notices.push({ tone: 'conflict', text: 'The equipment transaction journal is unreadable; readiness is withheld.' });
     if (state.conflicts?.length) notices.push({ tone: 'conflict', text: 'Two items claim the same hand or appendage. Nothing was moved automatically; stow one of them.' });
   }
@@ -258,8 +260,10 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       art: artOf(a?.img, CATEGORY_GLYPH[tab]),
       typeLabel: a?.kindLabel || (kind === 'vehicle' ? 'Ship / Vehicle' : 'Droid'),
       detail: a?.detail || '', summary: a?.status || '',
-      status: linkedOk ? { label: 'Linked', tone: 'held' } : { label: 'Link unresolved', tone: 'warn' },
-      statusLabel: linkedOk ? 'Linked' : 'Link unresolved',
+      // 'Linked' is the Asset Bay association; ownership is a separate, canonical fact: an association without recorded ownership says so
+      status: !linkedOk ? { label: 'Link unresolved', tone: 'warn' } : (['OWNER', 'CO_OWNER'].includes(a?.ownershipStatus) || !a?.ownershipStatus ? { label: 'Linked', tone: 'held' } : { label: 'Linked · ownership not established', tone: 'warn' }),
+      statusLabel: !linkedOk ? 'Link unresolved' : (['OWNER', 'CO_OWNER'].includes(a?.ownershipStatus) || !a?.ownershipStatus ? 'Linked' : 'Linked · ownership not established'),
+      ownershipLabel: a?.ownershipLabel ?? '',
       quantity: null, weight: null, canOpen,
       searchText: `${a?.name ?? ''} ${a?.kindLabel ?? ''} ${a?.detail ?? ''}`.toLowerCase(),
     };

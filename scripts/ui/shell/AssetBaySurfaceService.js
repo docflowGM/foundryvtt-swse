@@ -7,6 +7,7 @@
  * customization surface.
  */
 
+import { listRecordedOwnerIds, listAcquisitionProvenanceIds, isRecordedOwnerId, resolveAssetOwner } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-asset-owner.js';
 import { buildVehicleAssetSummary, loadUnusedEpTable } from '/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js';
 
 function asArray(value) {
@@ -107,87 +108,63 @@ function normalizeReferenceId(value) {
   return normalizeId(value).replace(/^\s+|\s+$/g, '');
 }
 
-function candidateActorIdsFromValue(value) {
-  const ids = new Set();
-  const add = (candidate) => {
-    const id = normalizeReferenceId(candidate);
-    if (id) ids.add(id);
-  };
-
-  if (!value) return ids;
-  if (Array.isArray(value)) {
-    for (const entry of value) {
-      if (typeof entry === 'object') {
-        add(entry?.id ?? entry?.actorId ?? entry?.ownerActorId ?? entry?.uuid);
-      } else {
-        add(entry);
-      }
-    }
-    return ids;
+/**
+ * Relationship of `ownerActor` to a droid/vehicle asset, decided by the CANONICAL recorded-owner authority (droid-asset-owner.js: the same
+ * contract VehicleInstallationService / payer authorization use). No second owner parser lives here. The relations stay apart:
+ *   OWNER / CO_OWNER   current primary owner; explicit co-owner only while assetOwnership.shared === true
+ *   ACCESS_ONLY        accessActorIds / assetGrant.recipientActorIds: permission to see or open it, never possession
+ *   FORMER_OWNER       the historical purchaser of an asset since transferred: evidence only
+ *   CONTRADICTORY      records name different primary owners: nobody is the owner (fails closed, GM included, a GM repairs the data)
+ *   NAME_ONLY          no stable owner identity at all, but a display name matches: unresolved, never ownership
+ *   NOT_LINKED         anything else (visibility, document permission, a shared Foundry user and a shared name are NOT relations)
+ * @returns {{status:string, matches:boolean, nameOnly:boolean, accessOnly:boolean}}
+ */
+export function assetOwnershipEvidence(asset, ownerActor) {
+  const none = { status: 'NOT_LINKED', matches: false, nameOnly: false, accessOnly: false };
+  if (!asset || !['vehicle', 'droid'].includes(asset.type) || !ownerActor?.id) return none;
+  const id = String(ownerActor.id).trim();
+  const resolved = resolveAssetOwner(asset);
+  if (resolved.status === 'CONTRADICTORY') return { ...none, status: 'CONTRADICTORY' };
+  if (isRecordedOwnerId(asset, id)) {
+    return { status: listRecordedOwnerIds(asset).single.includes(id) ? 'OWNER' : 'CO_OWNER', matches: true, nameOnly: false, accessOnly: false };
   }
-
-  if (typeof value === 'object') {
-    add(value.id ?? value.actorId ?? value.ownerActorId ?? value.uuid);
-    for (const key of ['ownerActorIds', 'accessActorIds', 'recipientActorIds']) {
-      for (const entry of asArray(value[key])) add(entry);
-    }
-    return ids;
-  }
-
-  add(value);
-  return ids;
-}
-
-function vehicleOwnerMatchesActor(vehicle, ownerActor) {
-  if (!vehicle || vehicle.type !== 'vehicle' || !ownerActor?.id) return false;
-  const system = vehicle.system ?? {};
-  const flags = vehicle.flags ?? {};
-  const sysOwner = system.owner;
-  const assetOwnership = system.assetOwnership ?? {};
-  const storeAcquisition = system.storeAcquisition ?? {};
-  const grantFlag = flags['foundryvtt-swse']?.assetGrant ?? flags.swse?.assetGrant ?? {};
-  const storeFlag = flags['foundryvtt-swse']?.storeAcquisition ?? flags.swse?.storeAcquisition ?? {};
-
-  const ids = new Set();
-  for (const value of [
-    system.ownedByActorId,
-    system.ownerActorId,
-    system.ownerId,
-    system.ownerUuid,
-    system.ownedBy,
-    storeAcquisition.ownerActorId,
-    assetOwnership.primaryOwnerActorId,
-    grantFlag.primaryOwnerActorId,
-    storeFlag.ownerActorId,
-    sysOwner
-  ]) {
-    for (const id of candidateActorIdsFromValue(value)) ids.add(id);
-  }
-
-  for (const id of asArray(assetOwnership.ownerActorIds)) ids.add(normalizeReferenceId(id));
-  for (const id of asArray(assetOwnership.accessActorIds)) ids.add(normalizeReferenceId(id));
-  for (const id of asArray(grantFlag.recipientActorIds)) ids.add(normalizeReferenceId(id));
-
-  ids.delete('');
-  if (ids.has(ownerActor.id)) return true;
-
+  const system = asset.system ?? {};
+  const flags = asset.flags ?? {};
+  const grant = flags['foundryvtt-swse']?.assetGrant ?? flags.swse?.assetGrant ?? {};
+  const accessIds = [...asArray(system.assetOwnership?.accessActorIds), ...asArray(grant.recipientActorIds)].map(v => String(v ?? '').trim());
+  if (accessIds.includes(id)) return { ...none, status: 'ACCESS_ONLY', accessOnly: true };
+  if (listAcquisitionProvenanceIds(asset).includes(id)) return { ...none, status: 'FORMER_OWNER' };
+  const recorded = listRecordedOwnerIds(asset);
+  const hasStableIdentity = recorded.single.length > 0 || recorded.co.length > 0 || accessIds.some(Boolean) || listAcquisitionProvenanceIds(asset).length > 0;
   const ownerName = String(ownerActor.name || '').trim().toLowerCase();
+  const sysOwner = system.owner;
   const names = [
-    system.ownedByActorName,
-    system.ownerActorName,
-    system.ownerName,
-    typeof sysOwner === 'string' ? sysOwner : sysOwner?.name,
-    assetOwnership.primaryOwnerActorName,
-    storeAcquisition.ownerActorName,
-    storeFlag.ownerActorName
+    system.ownedByActorName, system.ownerActorName, system.ownerName, typeof sysOwner === 'string' ? sysOwner : sysOwner?.name,
+    system.assetOwnership?.primaryOwnerActorName, system.storeAcquisition?.ownerActorName,
+    (flags['foundryvtt-swse']?.storeAcquisition ?? flags.swse?.storeAcquisition ?? {}).ownerActorName
   ].map(value => String(value || '').trim().toLowerCase()).filter(Boolean);
-  return !!ownerName && names.includes(ownerName);
+  // A name record never establishes possession, and is "unresolved" only when the asset carries no stable identity at all.
+  return { ...none, status: !hasStableIdentity && !!ownerName && names.includes(ownerName) ? 'NAME_ONLY' : 'NOT_LINKED', nameOnly: !hasStableIdentity && !!ownerName && names.includes(ownerName) };
 }
 
-function ownedVehicleReferencesFromActorOwnership(ownerActor) {
+const OWNERSHIP_LABEL = Object.freeze({
+  OWNER: 'Owned', CO_OWNER: 'Shared co-owner', ACCESS_ONLY: 'Access only (not owned)', FORMER_OWNER: 'Former owner (not owned)',
+  CONTRADICTORY: 'Ownership records contradict', NAME_ONLY: 'Owner recorded by name only (unresolved)', NOT_LINKED: 'Linked, ownership not recorded'
+});
+
+/** Vehicles the actor OWNS per the canonical authority (current owner / active co-owner). */
+function vehicleOwnerMatchesActor(vehicle, ownerActor) {
+  return vehicle?.type === 'vehicle' && assetOwnershipEvidence(vehicle, ownerActor).matches;
+}
+
+function ownedVehicleReferencesFromActorOwnership(ownerActor, { includeAccessOnly = false } = {}) {
   if (!ownerActor?.id) return [];
   return asArray(game?.actors?.contents ?? game?.actors ?? [])
-    .filter(actor => vehicleOwnerMatchesActor(actor, ownerActor))
+    .filter(actor => {
+      if (actor?.type !== 'vehicle') return false;
+      const evidence = assetOwnershipEvidence(actor, ownerActor);
+      return evidence.matches || (includeAccessOnly && evidence.accessOnly);
+    })
     .map(actor => ({
       id: actor.id,
       actorId: actor.id,
@@ -195,7 +172,7 @@ function ownedVehicleReferencesFromActorOwnership(ownerActor) {
       name: actor.name,
       img: actor.img,
       type: 'vehicle',
-      source: 'vehicle-owner-link',
+      source: assetOwnershipEvidence(actor, ownerActor).matches ? 'vehicle-owner-link' : 'vehicle-access-grant',
       role: 'vehicle',
       ownerActorId: ownerActor.id
     }));
@@ -208,10 +185,16 @@ function ownedVehicleReferencesFromActorOwnership(ownerActor) {
  */
 export function assetModifyAuthorization({ user, ownerActor, assetActor }) {
   if (!assetActor?.id) return { allowed: false, reason: 'LINK_UNRESOLVED' };
+  const owned = ['vehicle', 'droid'].includes(assetActor.type);
+  const evidence = owned ? assetOwnershipEvidence(assetActor, ownerActor) : null;
+  // contradictory ownership records are refused for everyone, a GM included (a GM repairs the data), exactly like payer authorization
+  if (evidence?.status === 'CONTRADICTORY') return { allowed: false, reason: 'OWNERSHIP_CONTRADICTORY' };
   if (user?.isGM) return { allowed: true, reason: null };
   if (assetActor.isOwner !== true) return { allowed: false, reason: 'NO_DOCUMENT_PERMISSION' };
-  if (assetActor.type === 'vehicle' && !vehicleOwnerMatchesActor(assetActor, ownerActor))
-    return { allowed: false, reason: 'NOT_LINKED_AS_PROPERTY' };
+  if (owned && !evidence.matches) {
+    const reason = { ACCESS_ONLY: 'ACCESS_ONLY', FORMER_OWNER: 'FORMER_OWNER', NAME_ONLY: 'OWNER_IDENTITY_UNRESOLVED' }[evidence.status] ?? 'NOT_LINKED_AS_PROPERTY';
+    return { allowed: false, reason };
+  }
   return { allowed: true, reason: null };
 }
 
@@ -258,7 +241,7 @@ function statusLine(entry, actor = null, mode = 'garage', vehicle = null) {
   return `${hpText} · ${source}`;
 }
 
-function collectOwnedEntries(ownerActor, mode, epTable = null, user = null) {
+function collectOwnedEntries(ownerActor, mode, epTable = null, user = null, { includeAccessOnly = false } = {}) {
   const normalizedMode = normalizeBayMode(mode);
   const system = ownerActor?.system ?? {};
   const candidates = [
@@ -276,7 +259,7 @@ function collectOwnedEntries(ownerActor, mode, epTable = null, user = null) {
     ...asArray(ownerActor?.getFlag?.('foundryvtt-swse', 'followers')),
     ...followerSlotReferences(ownerActor),
     ...ownedItemReferences(ownerActor),
-    ...ownedVehicleReferencesFromActorOwnership(ownerActor)
+    ...ownedVehicleReferencesFromActorOwnership(ownerActor, { includeAccessOnly })
   ];
 
   const seen = new Set();
@@ -321,6 +304,12 @@ function collectOwnedEntries(ownerActor, mode, epTable = null, user = null) {
       epLine: vehicle?.epLabel ?? null,
       ownership: documentPermissionLabel(actor),
       ownedByThisActor: isShipyard ? vehicleOwnerMatchesActor(actor, ownerActor) : null,
+      // the canonical relation of this actor to the asset, shown accurately (access is not ownership; a name alone is unresolved)
+      ownershipStatus: actor ? assetOwnershipEvidence(actor, ownerActor).status : 'NOT_LINKED',
+      ownershipLabel: OWNERSHIP_LABEL[actor ? assetOwnershipEvidence(actor, ownerActor).status : 'NOT_LINKED'],
+      accessOnly: actor ? assetOwnershipEvidence(actor, ownerActor).accessOnly : false,
+      // a vehicle whose only owner record is a display name (no stable id) is shown as unresolved, never as owned
+      ownerIdentityUnresolved: isShipyard && actor ? assetOwnershipEvidence(actor, ownerActor).nameOnly : false,
       modifyBlockedReason: modifyAuth.reason,
       isLinked: Boolean(actor?.id),
       canOpenSheet: Boolean(actor?.id),
@@ -343,14 +332,15 @@ function collectOwnedEntries(ownerActor, mode, epTable = null, user = null) {
  * for compact consumers such as the character sheet's possessions browser. Read-only; the EP table is only needed by the Shipyard view.
  */
 export function listOwnedAssets(ownerActor, { user = game?.user ?? null } = {}) {
-  try { return collectOwnedEntries(ownerActor, 'all', null, user); } catch (_err) { return []; }
+  // possessions: an access-only asset is never counted (it is shown, labelled, by the Asset Bay itself)
+  try { return collectOwnedEntries(ownerActor, 'all', null, user).filter(a => a.accessOnly !== true); } catch (_err) { return []; }
 }
 
 export class AssetBaySurfaceService {
   static async buildViewModel(actor, options = {}) {
     const mode = normalizeBayMode(options.bayMode || options.mode || 'all');
     const epTable = options.epTable !== undefined ? options.epTable : await loadUnusedEpTable();
-    const assets = collectOwnedEntries(actor, mode, epTable, game.user);
+    const assets = collectOwnedEntries(actor, mode, epTable, game.user, { includeAccessOnly: true });
     const droidCount = assets.filter(asset => asset.bayMode === 'garage').length;
     const shipCount = assets.filter(asset => asset.bayMode === 'shipyard').length;
     const isShipyard = mode === 'shipyard';

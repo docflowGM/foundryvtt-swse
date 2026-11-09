@@ -88,8 +88,7 @@ const wsOf = (a, { editable = true, readiness } = {}) => {
   const { ws } = wsOf(droid, { readiness: ready });
   assert.equal(ws.slots.length, 4, JSON.stringify(ws.notices)); assert.equal(ws.manyAppendages, true);
   assert.equal(ws.anatomy.status, 'resolved', 'ledger-confirmed manipulators with explicit capabilities resolve the droid anatomy');
-  // existing fail-closed gate, pinned (not changed here): a droid has no recorded species, and the coordinator withholds every non-stowed posture without species evidence
-  assert.ok(ws.notices.some((x) => /Species evidence unavailable/.test(x.text)), 'the workspace states that drawing is withheld rather than offering a working-looking control');
+  assert.ok(!ws.notices.some((x) => /Species evidence unavailable/.test(x.text)), 'a Droid-rules actor is not asked for biological species evidence (droid convergence)');
   assert.deepEqual(ws.slots.map((s) => s.id), ready.state.anatomy.appendages.map((a) => a.id));
   ok('Multi-armed droid: four ledger-confirmed manipulators become four slots in the authority\'s order');
 }

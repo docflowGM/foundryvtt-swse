@@ -1,4 +1,8 @@
 import { activateEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-ui.js";
+import { authorizeDroidComponentOperation } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js";
+import { isIntegratedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-item-classification.js";
+import { normalizeDroidPartId, getDroidPartDefinition } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
+import { activateBrowseInspect } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/browse-inspect-ui.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { SWSEV2ActorSheetBase, canUseActorSheetEditControls, applySheetInteractionMode, setStoredSheetMode } from "/systems/foundryvtt-swse/scripts/sheets/v2/actor-sheet-base.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
@@ -2896,6 +2900,12 @@ const forcePoints = [];
           ui.notifications?.warn?.('That integrated weapon could not be found on this droid.');
           return;
         }
+        // Integrated droid hardware fires only when the installation ledger confirms it (installed and enabled). An ordinary handheld weapon is not
+        // droid hardware and is not evaluated here.
+        if (isIntegratedWeaponItem(item)) {
+          const gate = authorizeDroidComponentOperation(this.actor, { itemId: item.id, instanceId: rollButton.dataset?.instanceId ?? null, ruleId: item.system?.droidPartId ?? item.flags?.swse?.droidPartId ?? null, name: item.name }, { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition });
+          if (!gate.ok) { ui.notifications?.warn?.(`${item.name}: ${gate.reason}`); return; }
+        }
         if (typeof item.roll === 'function') {
           await item.roll();
         } else {
@@ -3569,6 +3579,8 @@ const forcePoints = [];
     this._activateInventoryUI(html, { signal });
     // Gear tab equipment workspace: UI state + routing to the existing equipment authorities
     activateEquipmentWorkspace(this, html, { signal });
+    // shared browse/inspect surfaces (Droid Systems components; Vehicle systems): UI state only, operations stay existing data-action handlers
+    activateBrowseInspect(this, html, { signal });
 
     // SWSE Combat UI Wiring
     this._activateCombatUI(html, { signal });

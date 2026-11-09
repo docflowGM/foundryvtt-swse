@@ -38,6 +38,7 @@ import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/st
 import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
 import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 import { SWSEV2ActorSheetBase } from "/systems/foundryvtt-swse/scripts/sheets/v2/actor-sheet-base.js";
+import { activateBrowseInspect } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/browse-inspect-ui.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 
 /**
@@ -288,6 +289,8 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
    */
   _onRenderActorSheet(root, signal) {
     this._wireVehicleActorModeEvents(root, signal);
+    // shared browse/inspect surface (weapons + installed systems): UI state only; operations are the existing data-action handlers
+    activateBrowseInspect(this, root, { signal });
 
     if (this.actor?.id && !this._shellRouterRegistered) {
       ShellRouter.register(this.actor.id, this);

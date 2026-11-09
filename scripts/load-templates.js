@@ -162,12 +162,10 @@ export const SWSE_TEMPLATES = [
   // Live subsystem partials for droid sheet systems tab
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs',
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history-panel.hbs',
   // Phase 3B: Subsystem detail enrichment partials
-  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs',
   // Phase 4: Armor detail and budget analysis partials
@@ -206,6 +204,7 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Shared Partials
   // ==============================
+  'systems/foundryvtt-swse/templates/actors/shared/partials/browse-inspect.hbs',
   'systems/foundryvtt-swse/templates/actors/shared/partials/current-conditions-panel.hbs',
   'systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs',
   'systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs',

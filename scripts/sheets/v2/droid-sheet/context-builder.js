@@ -28,6 +28,7 @@
  */
 
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { buildDroidComponentBrowser } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-component-browser.js";
 import { DroidValidationEngine } from "/systems/foundryvtt-swse/scripts/engine/droid-validation-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
@@ -188,6 +189,8 @@ export class DroidSheetContextBuilder {
         systems: droidPanels,
         requiredSystems,
         resolvedSystems,
+        // installed-system browser + inspector (shared browse/inspect surface); built from the installed-component and appendage authorities
+        componentBrowser: this.buildComponentBrowser(resolvedSystems, garage),
         garage,
         flags,
         sourceStatus,
@@ -986,6 +989,15 @@ export class DroidSheetContextBuilder {
    * Receives already-resolved systems to avoid a second DroidSystemsResolver pass.
    * Pure read — no actor mutations.
    */
+  buildComponentBrowser(resolvedSystems, garage) {
+    try {
+      return buildDroidComponentBrowser(this.actor, resolvedSystems, { canOpenGarage: garage?.canOpenGarage === true && this.actor?.type === 'droid' });
+    } catch (err) {
+      SWSELogger.warn?.('[DroidSheet] component browser failed', { actorId: this.actor?.id, error: err?.message });
+      return null;
+    }
+  }
+
   buildSourceStatus(resolvedSystems) {
     const swseFlags = this.actor?.flags?.swse ?? {};
     const droidSystems = this.system?.droidSystems ?? {};

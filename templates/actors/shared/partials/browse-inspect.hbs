@@ -1,0 +1,101 @@
+{{!-- Shared browse -> select -> inspect -> close surface (Droid Systems components, Vehicle installed systems / weapon systems).
+     PRESENTATION ONLY. The `browser` argument is a normalized view model built by a domain adapter from that domain's own authorities
+     (droid-component-browser.js, vehicle-systems-browser.js); this partial owns no rule, no state and no mutation.
+     Behaviour (search, category/status filter, sort, selection, collapsible inspector, keyboard) is scripts/sheets/v2/shared/browse-inspect-ui.js.
+     Styling reuses the equipment workspace's Holopad classes. Every operation is an existing `data-action` handled by the sheet.
+
+     browser = { id, title, hint?, summary?:[{label,value}], emptyText, categories:[{id,label,count}], statuses:[{id,label}],
+                 entries:[{ key, name, art:{src,glyph}, category, categoryLabel, status:{key,label,tone}, summary, searchText, order,
+                            facts:[{label,value}], notes:[string], operations:[{label,icon,action?,cls?,attrs:[{k,v}],disabled,reason}],
+                            operationsHint?, showMods:boolean, modifications:[{label,state,detail}], modificationsNote? }] } --}}
+{{#with browser as |bi|}}
+<section class="swse-eqw swse-concept-panel swse-eqw__panel swse-bi" data-bi="{{bi.id}}" aria-label="{{bi.title}}">
+  <div class="swse-eqw__layout">
+    <div class="swse-eqw__main">
+      <section class="swse-eqw__browser" aria-labelledby="bi-title-{{bi.id}}">
+        <header class="swse-concept-panel__header swse-eqw__panel-head">
+          <h3 class="swse-concept-panel__title" id="bi-title-{{bi.id}}">{{bi.title}}</h3>
+          <div class="swse-eqw__tools">
+            <label class="swse-eqw__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="swse-eqw__sr">Search {{bi.title}}</span><input type="search" data-bi-search placeholder="Search…" autocomplete="off" spellcheck="false"></label>
+          </div>
+        </header>
+        {{#if bi.summary.length}}<p class="swse-eqw__chips">{{#each bi.summary as |chip|}}<span class="swse-eqw__state is-held">{{chip.label}}: {{chip.value}}</span> {{/each}}</p>{{/if}}
+        {{#if bi.hint}}<p class="swse-eqw__hint">{{bi.hint}}</p>{{/if}}
+        <div class="swse-eqw__tabs" role="tablist" aria-label="{{bi.title}} categories">
+          <button type="button" role="tab" class="swse-eqw__tab" data-bi-tab="all" aria-selected="true"><span>All</span><span class="swse-eqw__count">{{bi.entries.length}}</span></button>
+          {{#each bi.categories as |cat|}}
+            <button type="button" role="tab" class="swse-eqw__tab" data-bi-tab="{{cat.id}}" aria-selected="false" aria-label="{{cat.label}} ({{cat.count}})"><span>{{cat.label}}</span><span class="swse-eqw__count">{{cat.count}}</span></button>
+          {{/each}}
+        </div>
+        <div class="swse-eqw__toolbar" role="group" aria-label="Filter and sort {{bi.title}}">
+          <label class="swse-eqw__field"><span>Status</span><select data-bi-status><option value="">All statuses</option>{{#each bi.statuses as |st|}}<option value="{{st.id}}">{{st.label}}</option>{{/each}}</select></label>
+          <label class="swse-eqw__field"><span>Sort by</span>
+            <select data-bi-sort><option value="default">Default</option><option value="name">Name</option><option value="category">Category</option><option value="status">Status</option></select>
+          </label>
+          <button type="button" class="swse-eqw__chipbtn" data-bi-dir aria-pressed="false" title="Toggle sort direction" aria-label="Sort ascending"><i class="fa-solid fa-arrow-up-short-wide" aria-hidden="true"></i></button>
+          <button type="button" class="swse-eqw__chipbtn" data-bi-reset title="Clear search, filters and sorting"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset</button>
+          <span class="swse-eqw__result-count" data-bi-count role="status" aria-live="polite"></span>
+        </div>
+        <ul class="swse-eqw__list" data-bi-list role="list">
+          {{#each bi.entries as |it|}}
+            <li class="swse-eqw__row is-tone-{{it.status.tone}}" data-bi-entry data-bi-key="{{it.key}}" data-bi-cat="{{it.category}}" data-bi-status="{{it.status.key}}" data-bi-status-label="{{it.status.label}}" data-bi-name="{{it.name}}" data-bi-text="{{it.searchText}}" data-bi-order="{{it.order}}">
+              <button type="button" class="swse-eqw__row-main" data-bi-select="{{it.key}}" aria-pressed="false" aria-controls="bi-inspector-{{bi.id}}">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=it.art size="sm"}}
+                <span class="swse-eqw__row-copy">
+                  <strong>{{it.name}}</strong>
+                  <small>{{it.categoryLabel}}{{#if it.summary}} · {{it.summary}}{{/if}}</small>
+                </span>
+                <span class="swse-eqw__state is-{{it.status.tone}}">{{it.status.label}}</span>
+                <span class="swse-eqw__open-hint"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
+              </button>
+            </li>
+          {{/each}}
+        </ul>
+        <p class="swse-eqw__empty" data-bi-empty {{#if bi.entries.length}}hidden{{/if}}>{{bi.emptyText}}</p>
+      </section>
+    </div>
+
+    <aside class="swse-concept-panel swse-eqw__panel swse-eqw__inspector" aria-label="{{bi.title}} inspector" data-bi-inspector id="bi-inspector-{{bi.id}}" hidden>
+      {{#each bi.entries as |it|}}
+      <article class="swse-eqw__detail" data-bi-detail="{{it.key}}" hidden>
+        <button type="button" class="swse-eqw__close" data-bi-close title="Close" aria-label="Close inspector"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        <header class="swse-eqw__detail-head">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=it.art size="lg"}}
+          <div class="swse-eqw__detail-id">
+            <span class="swse-eqw__kicker">{{it.categoryLabel}}</span>
+            <h3 tabindex="-1" data-bi-heading>{{it.name}}</h3>
+            <p class="swse-eqw__chips"><span class="swse-eqw__state is-{{it.status.tone}}">{{it.status.label}}</span></p>
+          </div>
+        </header>
+        <div class="swse-eqw__itabs" role="tablist" aria-label="Inspector sections">
+          <button type="button" role="tab" class="swse-eqw__itab" data-bi-itab="details" aria-selected="true">Details</button>
+          <button type="button" role="tab" class="swse-eqw__itab" data-bi-itab="operations" aria-selected="false">Operations</button>
+          {{#if it.showMods}}<button type="button" role="tab" class="swse-eqw__itab" data-bi-itab="mods" aria-selected="false">Mods <span class="swse-eqw__count">{{it.modifications.length}}</span></button>{{/if}}
+        </div>
+        <div class="swse-eqw__pane" data-bi-pane="details">
+          {{#if it.facts.length}}<dl class="swse-eqw__facts">{{#each it.facts as |f|}}<div><dt>{{f.label}}</dt><dd>{{f.value}}</dd></div>{{/each}}</dl>{{/if}}
+          {{#each it.notes as |note|}}<p class="swse-eqw__hint">{{note}}</p>{{/each}}
+        </div>
+        <div class="swse-eqw__pane" data-bi-pane="operations" hidden>
+          <div class="swse-eqw__quick">
+            {{#each it.operations as |op|}}
+              <button type="button" class="swse-concept-btn{{#if op.cls}} {{op.cls}}{{/if}}"{{#if op.action}} data-action="{{op.action}}"{{/if}}{{#each op.attrs as |a|}} data-{{a.k}}="{{a.v}}"{{/each}}{{#if op.disabled}} disabled{{/if}}{{#if op.reason}} title="{{op.reason}}"{{/if}}>{{#if op.icon}}<i class="fa-solid {{op.icon}}" aria-hidden="true"></i> {{/if}}{{op.label}}</button>
+            {{/each}}
+          </div>
+          {{#unless it.operations.length}}<p class="swse-eqw__hint">No operations are available for this entry.</p>{{/unless}}
+          {{#if it.operationsHint}}<p class="swse-eqw__hint">{{it.operationsHint}}</p>{{/if}}
+        </div>
+        {{#if it.showMods}}
+        <div class="swse-eqw__pane" data-bi-pane="mods" hidden>
+          <ul class="swse-eqw__list">
+            {{#each it.modifications as |m|}}<li class="swse-eqw__row"><span class="swse-eqw__row-copy"><strong>{{m.label}}</strong>{{#if m.detail}}<small>{{m.detail}}</small>{{/if}}</span>{{#if m.state}}<span class="swse-eqw__state is-held">{{m.state}}</span>{{/if}}</li>{{/each}}
+          </ul>
+          {{#if it.modificationsNote}}<p class="swse-eqw__hint">{{it.modificationsNote}}</p>{{/if}}
+        </div>
+        {{/if}}
+      </article>
+      {{/each}}
+    </aside>
+  </div>
+</section>
+{{/with}}
