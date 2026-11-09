@@ -77,4 +77,24 @@ ok('listOwnedAssets reuses the Asset Bay association: linked droid only; unlinke
   assert.ok(!/gear-tab[\s\S]*inventory-panel/.test(fs.readFileSync('templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs', 'utf8')), 'no legacy inventory beneath the workspace');
 }
 ok('static: one list and toolbar, seven tabs, association via the Asset Bay, no ownership inference or legacy inventory');
+
+// 7. contextual inspector: zero space until a selection exists, X closes it, assets get an actor summary, a11y hooks present
+{
+  const tpl = fs.readFileSync('templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs', 'utf8');
+  const css = fs.readFileSync('styles/sheets/equipment-workspace.css', 'utf8');
+  const ui = fs.readFileSync('scripts/sheets/v2/character-sheet/equipment-workspace-ui.js', 'utf8');
+  assert.match(tpl, /<aside[^>]*data-eqw-inspector[^>]* hidden>/, 'inspector starts hidden');
+  assert.ok(!tpl.includes('swse-eqw__overview') && !tpl.includes('data-eqw-detail-empty'), 'no placeholder panel');
+  assert.ok(/\.swse-eqw\.has-selection \.swse-eqw__layout \{ grid-template-columns: minmax\(0, 2fr\) minmax\(280px, 1fr\)/.test(css));
+  assert.ok(/\.swse-eqw__inspector\[hidden\] \{ display: none !important/.test(css));
+  assert.ok(/\.swse-eqw__layout \{ display: grid; grid-template-columns: minmax\(0, 1fr\)/.test(css), 'full width by default');
+  assert.equal((tpl.match(/data-eqw-close/g) ?? []).length >= 2, true, 'items and linked actors both have an X');
+  assert.ok(tpl.includes('data-eqw-detail="asset:{{it.id}}"') && tpl.includes('data-eqw-open-asset'));
+  assert.ok(tpl.includes('swse-eqw__quick'), 'quick actions');
+  const quick = tpl.slice(tpl.indexOf('QUICK ACTIONS'), tpl.indexOf('role="tablist" aria-label="Inspector sections"'));
+  for (const a of [...quick.matchAll(/data-action="([a-z-]+)"/g)].map((m) => m[1])) assert.ok(tpl.indexOf(`data-action="${a}"`) !== tpl.lastIndexOf(`data-action="${a}"`), `quick action ${a} reuses the Operations handler (same data-action)`);
+  assert.ok(ui.includes('function closeInspector') && ui.includes('selectionExists') && ui.includes("'ArrowRight'") && ui.includes('tabIndex'), 'close, invalid-selection cleanup, keyboard tab navigation');
+  assert.ok(!/\.update\(|setFlag|ActorEngine/.test(ui));
+}
+ok('static: inspector hidden by default / zero space, 2fr:1fr when selected, X on items and actors, quick actions reuse handlers, keyboard + cleanup present');
 console.log(`equipment-possessions-browser: ${n} checks ok`);

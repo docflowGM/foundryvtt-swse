@@ -38,7 +38,7 @@ const EMPTY_TAB = { weapons: 'No weapons owned.', armor: 'No armor owned.', shie
 const num = (v) => { if (v === undefined || v === null || v === '') return null; const n = Number(v); return Number.isFinite(n) ? n : null; };
 
 function freshState() {
-  return { tab: loadTab(), status: '', sort: 'default', dir: 'asc', sortSig: null, statusSig: null, search: '', slotId: null, itemId: null, itab: 'details', showIncompatible: false, listScroll: 0, searchFocus: false, selStart: null, selEnd: null, verdicts: {}, busy: false, token: 0, message: null };
+  return { tab: loadTab(), status: '', sort: 'default', dir: 'asc', sortSig: null, statusSig: null, search: '', focusKey: null, slotId: null, itemId: null, itab: 'details', showIncompatible: false, listScroll: 0, searchFocus: false, selStart: null, selEnd: null, verdicts: {}, busy: false, token: 0, message: null };
 }
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
@@ -126,6 +126,7 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
 
     let visible = 0; let incompatible = 0;
     entries.forEach((row) => {
+      const selKey = row.dataset.eqwRow ?? (row.dataset.eqwAsset ? `asset:${row.dataset.eqwAsset}` : null);
       const id = row.dataset.eqwRow ?? null; // items only; linked droid/vehicle entries have no placement verdict
       const v = id ? st.verdicts[id] ?? null : null;
       const isIncompat = filtering && v && v.best === V.INCOMPATIBLE;
@@ -135,6 +136,7 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
       const show = inTab(row) && inSearch && inStatus && (!isIncompat || st.showIncompatible);
       row.hidden = !show;
       if (show) visible += 1;
+      if (selKey) { row.querySelector('[data-eqw-select]')?.setAttribute('aria-pressed', selKey === st.itemId ? 'true' : 'false'); row.classList.toggle('is-selected', selKey === st.itemId); }
       if (!id) return;
       const badge = $('[data-eqw-verdict]', row);
       if (badge) {
@@ -162,7 +164,12 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     if (tog) { tog.hidden = !filtering || incompatible === 0; const c = $('[data-eqw-incompat-count]', tog); if (c) c.textContent = String(incompatible); const cb = $('input', tog); if (cb) cb.checked = st.showIncompatible; }
 
     // inspector
-    $('[data-eqw-detail-empty]').hidden = !!st.itemId;
+    // the inspector takes layout space only while something is selected
+    const insp = $('[data-eqw-inspector]');
+    ws.classList.toggle('has-selection', !!st.itemId);
+    if (insp) insp.hidden = !st.itemId;
+    // roving tabindex for both tab rails (arrow keys move between tabs)
+    $$('[role="tablist"]').forEach((list) => { Array.from(list.querySelectorAll('[role="tab"]')).forEach((tb) => { tb.tabIndex = tb.getAttribute('aria-selected') === 'true' ? 0 : -1; }); });
     $$('[data-eqw-detail]').forEach((d) => {
       const on = d.dataset.eqwDetail === st.itemId;
       d.hidden = !on;
@@ -260,12 +267,24 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     apply(); if (itemId) renderPlacement(itemId);
   }
 
-  function selectItem(id, { fromSlot = false } = {}) {
+  /** Selection is UI state only. `keyboard` moves focus into the inspector heading so keyboard users land on what they opened. */
+  function selectItem(id, { fromSlot = false, keyboard = false } = {}) {
     st.itemId = id; st.message = null;
     const cat = catOf(id);
     st.itab = cat === 'weapons' && (st.slotId || fromSlot) ? 'operations' : st.itab === 'operations' && cat !== 'weapons' ? 'details' : st.itab;
     apply();
     if (cat === 'weapons') renderPlacement(id);
+    if (keyboard) $(`[data-eqw-detail="${CSS.escape(id)}"] [data-eqw-heading]`)?.focus({ preventScroll: false });
+  }
+
+  /** Close the inspector: clears only the inspected selection (category, search, status, sort and list scroll are untouched) and returns focus to where it was opened. */
+  function closeInspector({ alsoSlot = false } = {}) {
+    const hadFocusInside = !!$('[data-eqw-inspector]')?.contains(document.activeElement);
+    st.itemId = null; st.message = null;
+    if (alsoSlot) { st.slotId = null; st.verdicts = {}; st.token++; }
+    apply();
+    if (listEl) listEl.scrollTop = st.listScroll;
+    if (hadFocusInside || alsoSlot) { const back = st.focusKey ? $(st.focusKey) : null; (back && !back.closest('[hidden]') ? back : listEl?.querySelector('[data-eqw-select]:not([hidden])') ?? ws).focus?.({ preventScroll: true }); }
   }
 
   ws.addEventListener('click', async (event) => {
@@ -286,17 +305,22 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     if ((b = t.closest('[data-eqw-dir]'))) { st.dir = st.dir === 'desc' ? 'asc' : 'desc'; apply(); return; }
     if ((b = t.closest('[data-eqw-reset]'))) { st.search = ''; st.status = ''; st.sort = 'default'; st.dir = 'asc'; apply(); return; }
     if ((b = t.closest('[data-eqw-itab]'))) { st.itab = b.dataset.eqwItab; apply(); return; }
-    if ((b = t.closest('[data-eqw-close]'))) { st.itemId = null; st.message = null; apply(); return; }
+    if ((b = t.closest('[data-eqw-close]'))) { closeInspector(); return; }
     if ((b = t.closest('[data-eqw-clear]'))) { st.slotId = null; st.itemId = null; st.verdicts = {}; st.token++; st.message = null; apply(); return; }
     if ((b = t.closest('[data-eqw-station]'))) { st.slotId = null; st.verdicts = {}; st.token++; st.tab = stationTab(b.dataset.eqwStation); st.itemId = null; apply(); return; }
     if ((b = t.closest('[data-eqw-slot]'))) {
       if (b.getAttribute('aria-disabled') === 'true') return;
       st.slotId = b.dataset.eqwSlot; st.tab = 'weapons'; st.itab = 'operations';
       const held = b.dataset.eqwSlotItem;
-      if (held) { selectItem(held, { fromSlot: true }); } else { st.itemId = null; apply(); }
+      st.focusKey = `[data-eqw-slot="${CSS.escape(b.dataset.eqwSlot)}"]`;
+      if (held) { selectItem(held, { fromSlot: true, keyboard: event.detail === 0 }); } else { st.itemId = null; apply(); }
       runEligibility(); return;
     }
-    if ((b = t.closest('[data-eqw-select]'))) { selectItem(b.dataset.eqwSelect); return; }
+    if ((b = t.closest('[data-eqw-select]'))) {
+      // remember the opener so closing the inspector returns focus there; event.detail === 0 marks a keyboard activation
+      st.focusKey = `[data-eqw-select="${CSS.escape(b.dataset.eqwSelect)}"]`;
+      selectItem(b.dataset.eqwSelect, { keyboard: event.detail === 0 }); return;
+    }
     if ((b = t.closest('[data-eqw-place-slot]'))) { st.slotId = b.dataset.eqwPlaceSlot; apply(); if (st.itemId) renderPlacement(st.itemId); runEligibility(); return; }
     if ((b = t.closest('[data-eqw-place]'))) {
       if (st.busy) return;
@@ -335,7 +359,17 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     else if (t?.matches?.('[data-eqw-status]')) { st.status = t.value; apply(); }
     else if (t?.matches?.('[data-eqw-sort]')) { st.sort = t.value; apply(); }
   }, { signal });
-  ws.addEventListener('keydown', (event) => { if (event.key === 'Escape' && (st.slotId || st.itemId)) { event.stopPropagation(); st.slotId = null; st.itemId = null; st.verdicts = {}; st.token++; apply(); } }, { signal });
+  ws.addEventListener('keydown', (event) => {
+    // Escape closes the inspector and leaves slot-driven filtering (selection context only), returning focus to the opener
+    if (event.key === 'Escape' && (st.slotId || st.itemId)) { event.stopPropagation(); closeInspector({ alsoSlot: true }); return; }
+    // tab rails: arrow keys / Home / End move between tabs (automatic activation, roving tabindex)
+    const tab = event.target instanceof Element ? event.target.closest('[role="tab"]') : null;
+    if (!tab || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    const tabs = Array.from(tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]')).filter((x) => !x.hidden);
+    const i = tabs.indexOf(tab);
+    const next = event.key === 'Home' ? tabs[0] : event.key === 'End' ? tabs.at(-1) : tabs[(i + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+    event.preventDefault(); next?.focus(); next?.click();
+  }, { signal });
   searchEl?.addEventListener('focus', () => { st.searchFocus = true; }, { signal });
   searchEl?.addEventListener('blur', () => { st.searchFocus = false; }, { signal });
   searchEl?.addEventListener('keyup', () => { st.selStart = searchEl.selectionStart; st.selEnd = searchEl.selectionEnd; }, { signal });
@@ -343,7 +377,11 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
 
   // ------------------------------------------------------------------ restore after render
   // a selection whose item or slot no longer exists (removed by another consumer) is dropped
-  if (st.itemId && !$(`[data-eqw-row="${CSS.escape(st.itemId)}"]`)) st.itemId = null;
+  // Invalid-selection cleanup: the selection survives a render only while its target is still in the view model, i.e. the owned Item still exists or
+  // the droid/vehicle is still a linked asset of this character (the view model lists nothing else). Otherwise the inspector closes (zero space),
+  // category/search/sort/filters are kept, and focus that was inside the vanished inspector moves to the list.
+  const selectionExists = (id) => (String(id).startsWith('asset:') ? !!$(`[data-eqw-asset="${CSS.escape(String(id).slice(6))}"]`) : !!$(`[data-eqw-row="${CSS.escape(id)}"]`));
+  if (st.itemId && !selectionExists(st.itemId)) { st.itemId = null; st.message = null; st.focusKey = null; }
   if (st.slotId && !$(`[data-eqw-slot="${CSS.escape(st.slotId)}"]`)) st.slotId = null;
   apply();
   if (listEl) listEl.scrollTop = st.listScroll;
