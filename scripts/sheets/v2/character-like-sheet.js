@@ -1,3 +1,4 @@
+import { activateEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-ui.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { SWSEV2ActorSheetBase, canUseActorSheetEditControls, applySheetInteractionMode, setStoredSheetMode } from "/systems/foundryvtt-swse/scripts/sheets/v2/actor-sheet-base.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
@@ -2299,6 +2300,8 @@ const forcePoints = [];
         conceptLayout,
         actionEconomy
       });
+      // Gear tab: the shared equipment workspace, fed by the already-hydrated inventory panel and attack rows (separate hook; the context hook above keeps its shape)
+      if (context.npcConcept) context.npcConcept.workspace = this._buildNpcEquipmentWorkspace(actor, { panelContexts, combat });
     }
 
     const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor });
@@ -2460,6 +2463,15 @@ const forcePoints = [];
    */
   _buildNpcConceptAbilitiesContext(_context, _actor) {
     // Intentionally empty — see SWSEV2NpcSheet override.
+  }
+
+  /**
+   * NPC/Follower equipment workspace hook. No-op default (the call site is behind the `useNpcConceptSheet` guard, only true for NPC-type actors);
+   * overridden by SWSEV2NpcSheet, which builds the SAME view model the Character and Droid Gear tab uses.
+   * @returns {object|null}
+   */
+  _buildNpcEquipmentWorkspace(_actor, _inputs) {
+    return null;
   }
 
   /**
@@ -3555,6 +3567,8 @@ const forcePoints = [];
 
     // Inventory Panel Handlers
     this._activateInventoryUI(html, { signal });
+    // Gear tab equipment workspace: UI state + routing to the existing equipment authorities
+    activateEquipmentWorkspace(this, html, { signal });
 
     // SWSE Combat UI Wiring
     this._activateCombatUI(html, { signal });

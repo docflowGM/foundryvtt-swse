@@ -147,11 +147,7 @@ const PARTIALS = [
 
   // V2-Concept Character Panels
   "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/defense-breakdown-tooltip.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-row.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-powers-known-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-weapon-card.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-armor-card.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-card.hbs",
 
   // Shell / Datapad Surface Partials
   "systems/foundryvtt-swse/templates/shell/shell-surface.hbs",

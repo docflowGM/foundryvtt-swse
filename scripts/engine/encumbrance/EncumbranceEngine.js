@@ -2,7 +2,7 @@
  * Encumbrance Engine — Weight & Load Calculation
  *
  * Calculates character encumbrance based on:
- * 1. Total carried weight (items + armor)
+ * 1. Total carried weight in kg (all carried gear incl. unworn armor; see calculateCarriedWeight)
  * 2. Strength-based carrying capacity
  * 3. Load category (light/medium/heavy/overloaded)
  * 4. Movement and skill penalties from encumbrance
@@ -120,30 +120,79 @@ export class EncumbranceEngine {
   }
 
   /**
-   * Calculate total weight carried by actor
-   * Includes equipped armor + inventory items
+   * SINGLE AUTHORITY for carried weight. Canonical unit: kilograms (system.weight, the equipment schema's unit).
+   * Consumers (sheet Gear tab, equipment ledger, derived encumbrance) must read this; none may re-sum item weights.
+   * @param {Actor} actor
+   * @returns {number} total carried weight in kg (rounded to 2 dp)
+   */
+  static calculateCarriedWeight(actor) {
+    return this._calculateTotalWeight(actor);
+  }
+
+  /** Item types that are physical carried gear. Worn and carried-but-unworn armor both count (it is carried either way). */
+  static CARRIED_ITEM_TYPES = Object.freeze(['weapon', 'lightsaber', 'armor', 'equipment', 'gear', 'weaponUpgrade', 'poison']);
+
+  /** Unit weight (kg) of one item: canonical system.weight, else system.economics.weight (normalizer fallback); invalid/negative -> 0. */
+  static itemUnitWeight(item) {
+    return this.parseWeightKg(item?.system?.weight ?? item?.system?.economics?.weight) ?? 0;
+  }
+
+  /**
+   * Strict full-value weight parser (kg). Accepts a finite non-negative number, or a string that is ENTIRELY a plain decimal
+   * (optionally with well-formed thousands commas such as "1,200.5"). Anything else (unit suffixes like "2kg", mixed text, exponent/hex forms,
+   * misplaced commas, booleans, objects, NaN/Infinity, negatives, blank) is not a recorded weight and returns null.
+   * @returns {number|null}
+   */
+  static parseWeightKg(raw) {
+    if (typeof raw === 'number') return Number.isFinite(raw) && raw >= 0 ? raw : null;
+    if (typeof raw !== 'string') return null;
+    const t = raw.trim();
+    if (!/^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/.test(t)) return null;
+    const n = Number(t.replace(/,/g, ''));
+    return Number.isFinite(n) ? n : null;
+  }
+
+  /**
+   * Is the item's weight an explicit, valid recorded value? An explicit 0 is a verified zero; absent, blank, malformed or negative is NOT
+   * (it contributes 0 to the total but is reported by carriedWeightReport so it is never presented as a verified zero).
+   */
+  static itemWeightVerified(item) {
+    return this.parseWeightKg(item?.system?.weight ?? item?.system?.economics?.weight) !== null;
+  }
+
+  /** Carried weight plus the carried items whose weight is not a verified recorded value. */
+  static carriedWeightReport(actor) {
+    const unverified = [];
+    for (const item of (actor?.items ?? [])) {
+      if (this.CARRIED_ITEM_TYPES.includes(item?.type) && this.itemQuantity(item) > 0 && !this.itemWeightVerified(item)) unverified.push({ id: item.id, name: item.name ?? '' });
+    }
+    return { total: this._calculateTotalWeight(actor), unverified, complete: unverified.length === 0 };
+  }
+
+  /** Quantity: absent/invalid -> 1 (schema default); an explicit 0 stays 0 (zero units carry zero weight). */
+  static itemQuantity(item) {
+    const raw = item?.system?.quantity;
+    if (raw === undefined || raw === null || raw === '') return 1;
+    const n = Number(raw);
+    return Number.isFinite(n) && n >= 0 ? n : 1;
+  }
+
+  /** Total carried weight of one item row (kg) = unit weight x quantity. */
+  static itemCarriedWeight(item) {
+    return this.itemUnitWeight(item) * this.itemQuantity(item);
+  }
+
+  /**
+   * Calculate total weight carried by actor (kg).
    * @private
    */
   static _calculateTotalWeight(actor) {
     let total = 0;
-
-    // Add equipped armor weight
-    const armor = actor.items
-      ?.filter(i => i.type === 'armor' && i.system?.equipped)
-      ?.forEach(armor => {
-        total += (armor.system?.weight || 0);
-      });
-
-    // Add inventory item weights
-    const items = actor.items
-      ?.filter(i => !['armor', 'background', 'feat', 'talent', 'class', 'species'].includes(i.type))
-      ?.forEach(item => {
-        const weight = item.system?.weight || 0;
-        const quantity = item.system?.quantity || 1;
-        total += weight * quantity;
-      });
-
-    return total;
+    for (const item of (actor?.items ?? [])) {
+      if (!this.CARRIED_ITEM_TYPES.includes(item?.type)) continue;
+      total += this.itemCarriedWeight(item);
+    }
+    return Math.round(total * 100) / 100;
   }
 
   /**

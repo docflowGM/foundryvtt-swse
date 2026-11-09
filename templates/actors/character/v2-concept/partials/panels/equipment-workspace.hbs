@@ -1,0 +1,314 @@
+{{!-- Equipment workspace (Gear tab). Presentation only: every value comes from the `workspace` argument (Character/Droid: conceptLayout.gear.workspace; NPC/Follower: npcConcept.workspace), built by buildActorEquipmentWorkspace (equipment-workspace-context.js).
+     Every state-changing control reuses an existing data-action handled by the sheet (InventoryEngine / FireStateStore / customization router),
+     or a data-eqw-* control handled by equipment-workspace-ui.js, which only calls the same authorities.
+     Visual language: the sheet's own concept panel primitives (.swse-concept-panel / __header / __title, .swse-concept-btn) plus
+     styles/sheets/equipment-workspace.css, which reads the live sheet theme tokens. --}}
+{{#with workspace as |ws|}}
+<section class="swse-eqw" data-eqw aria-label="Equipment workspace">
+  {{#if ws.notices.length}}
+  <div class="swse-eqw__bulletins" role="list">
+    {{#each ws.notices as |n|}}
+      <p class="swse-eqw__notice is-{{n.tone}}" role="listitem"><i class="fa-solid {{#if (eq n.tone 'conflict')}}fa-circle-exclamation{{else if (eq n.tone 'info')}}fa-circle-info{{else}}fa-triangle-exclamation{{/if}}" aria-hidden="true"></i><span>{{n.text}}</span></p>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  <div class="swse-eqw__layout">
+    <div class="swse-eqw__main">
+
+      {{!-- REGION A: loadout, equipment first. The sheet header already shows the character, so the tab spends its space on positions:
+           hands & manipulators (one per resolved appendage, in authority order), protection (armor and personal shield as two independent
+           positions), implants (installed rows only). Arrangement is presentation only. --}}
+      <section class="swse-concept-panel swse-eqw__panel swse-eqw__loadout" aria-label="Loadout">
+
+        <section class="swse-eqw__group" aria-labelledby="eqw-hands-title">
+          <h4 class="swse-eqw__group-title" id="eqw-hands-title"><i class="fa-solid fa-hand" aria-hidden="true"></i> Hands &amp; manipulators{{#if ws.anatomy}}{{#unless ws.anatomy.resolved}}<span class="swse-eqw__meta is-warn"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Anatomy {{ws.anatomy.statusLabel}}</span>{{/unless}}{{/if}}</h4>
+          <div class="swse-eqw__hands{{#if ws.manyAppendages}} is-many{{/if}}" role="group" aria-labelledby="eqw-hands-title">
+            {{#each ws.slots as |slot|}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-slot.hbs" slot=slot}}{{/each}}
+            {{#if ws.unarmed}}<div class="swse-eqw__unarmed"><i class="fa-solid fa-hand-fist" aria-hidden="true"></i><span><strong>{{ws.unarmed.name}}</strong> <span class="swse-eqw__readout">Always available{{#if ws.unarmed.attackLabel}} · <b>{{ws.unarmed.attackLabel}}</b>{{/if}}{{#if ws.unarmed.damageLabel}} · <b>{{ws.unarmed.damageLabel}}</b>{{/if}}</span></span><button type="button" class="swse-concept-btn" data-action="roll-unarmed-attack"><i class="fa-solid fa-dice-d20" aria-hidden="true"></i> Roll</button></div>{{/if}}
+            {{#unless ws.hasSlots}}<p class="swse-eqw__no-hands"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> No hands or manipulators are established for this character, so nothing can be held yet.</p>{{/unless}}
+          </div>
+        </section>
+
+        <section class="swse-eqw__group" aria-labelledby="eqw-prot-title">
+          <h4 class="swse-eqw__group-title" id="eqw-prot-title"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Protection</h4>
+          {{!-- armor and personal shield are independent positions; each shows its own state (worn / activation) --}}
+          <div class="swse-eqw__protection">
+            {{#with ws.protection.armor as |pa|}}
+            <button type="button" class="swse-eqw__guard swse-eqw__guard--armor{{#if pa.item}} is-occupied{{else}} is-empty{{/if}}" {{#if pa.item}}data-eqw-select="{{pa.item.id}}" aria-controls="eqw-inspector"{{else}}data-eqw-station="armor"{{/if}} aria-pressed="false">
+              {{#if pa.item}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=pa.item.art size="md"}}{{else}}<span class="swse-eqw__art swse-eqw__art--md is-glyph is-socket" aria-hidden="true"><i class="fa-solid fa-user-shield"></i></span>{{/if}}
+              <span class="swse-eqw__slot-copy">
+                <span class="swse-eqw__slot-name">Armor</span>
+                {{#if pa.item}}
+                  <strong class="swse-eqw__slot-item">{{pa.item.name}}{{#if pa.extra}} <span class="swse-eqw__qty">+{{pa.extra}}</span>{{/if}}</strong>
+                  <span class="swse-eqw__slot-meta">
+                    <span class="swse-eqw__state is-{{pa.item.status.tone}}">{{pa.item.status.label}}</span>
+                    {{#if pa.item.armorStats}}<span class="swse-eqw__readout">Ref <b>{{numberFormat pa.item.armorStats.reflexBonus decimals=0 sign=true}}</b> · Fort <b>{{numberFormat pa.item.armorStats.fortitudeBonus decimals=0 sign=true}}</b></span>{{/if}}
+                  </span>
+                {{else}}<strong class="swse-eqw__slot-item is-dim">No armor worn</strong>{{/if}}
+              </span>
+            </button>
+            {{/with}}
+            {{#with ws.protection.shield as |ps|}}
+            <button type="button" class="swse-eqw__guard swse-eqw__guard--shield{{#if ps.item}} is-occupied{{#if ps.item.activated}} is-energized{{/if}}{{else}} is-empty{{/if}}" {{#if ps.item}}data-eqw-select="{{ps.item.id}}" aria-controls="eqw-inspector"{{else}}data-eqw-station="shields"{{/if}} aria-pressed="false">
+              {{#if ps.item}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=ps.item.art size="md"}}{{else}}<span class="swse-eqw__art swse-eqw__art--md is-glyph is-socket" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>{{/if}}
+              <span class="swse-eqw__slot-copy">
+                <span class="swse-eqw__slot-name">Personal shield</span>
+                {{#if ps.item}}
+                  <strong class="swse-eqw__slot-item">{{ps.item.name}}{{#if ps.extra}} <span class="swse-eqw__qty">+{{ps.extra}}</span>{{/if}}</strong>
+                  <span class="swse-eqw__slot-meta">
+                    <span class="swse-eqw__state is-held">Worn</span>
+                    <span class="swse-eqw__state {{#if ps.item.activated}}is-ready{{else}}is-stowed{{/if}}">{{#if ps.item.activated}}Active{{else}}Inactive{{/if}}</span>
+                    <span class="swse-eqw__readout">SR <b>{{ps.item.currentSR}} / {{ps.item.shieldRating}}</b></span>
+                  </span>
+                {{else}}<strong class="swse-eqw__slot-item is-dim">No shield</strong>{{/if}}
+              </span>
+            </button>
+            {{/with}}
+          </div>
+        </section>
+
+        <section class="swse-eqw__group swse-eqw__implants" aria-labelledby="eqw-imp-title">
+          <h4 class="swse-eqw__group-title" id="eqw-imp-title"><button type="button" class="swse-eqw__implants-head" data-eqw-station="implants" aria-pressed="false"><i class="fa-solid fa-microchip" aria-hidden="true"></i> Implants &amp; accessories</button></h4>
+            {{#if ws.worn.implants.length}}
+              <ul class="swse-eqw__implant-list" role="list">
+                {{#each ws.worn.implants as |im|}}<li><button type="button" class="swse-eqw__implant" data-eqw-select="{{im.id}}" aria-pressed="false">{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=im.art size="xs"}}<span>{{im.name}}</span>{{#if im.isActiveImplant}}<span class="swse-eqw__led is-on" title="Active"></span>{{/if}}</button></li>{{/each}}
+              </ul>
+            {{else}}<span class="swse-eqw__open is-inline">None installed</span>{{/if}}
+        </section>
+      </section>
+
+      {{!-- REGION B: possessions browser. One shared list (owned Items + linked droid/vehicle actors from the Asset Bay association), one toolbar, seven tabs.
+           Only the selected tab's entries are shown; search/status/sort are DOM-only presentation (equipment-workspace-ui.js) and change no game state. --}}
+      <section class="swse-concept-panel swse-eqw__panel swse-eqw__browser" aria-labelledby="eqw-inv-title">
+        <header class="swse-concept-panel__header swse-eqw__panel-head">
+          <h3 class="swse-concept-panel__title" id="eqw-inv-title">Possessions</h3>
+          <span class="swse-eqw__context" data-eqw-context hidden></span>
+          <button type="button" class="swse-eqw__clear" data-eqw-clear hidden><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear</button>
+          <div class="swse-eqw__tools">
+            <label class="swse-eqw__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="swse-eqw__sr">Search possessions</span><input type="search" data-eqw-search placeholder="Search possessions…" autocomplete="off" spellcheck="false"></label>
+            <label class="swse-eqw__toggle" data-eqw-incompat-toggle hidden><input type="checkbox" data-eqw-show-incompatible><span>Show incompatible (<span data-eqw-incompat-count>0</span>)</span></label>
+          </div>
+        </header>
+        <div class="swse-eqw__tabs" role="tablist" aria-label="Possession categories">
+          {{#each ws.tabs as |tab|}}
+            <button type="button" role="tab" class="swse-eqw__tab" data-eqw-tab="{{tab.id}}" aria-label="{{tab.label}} ({{tab.count}})" aria-selected="{{#if (eq tab.id 'all')}}true{{else}}false{{/if}}"><i class="fa-solid {{tab.icon}}" aria-hidden="true"></i><span>{{tab.label}}</span><span class="swse-eqw__count">{{tab.count}}</span></button>
+          {{/each}}
+        </div>
+        <div class="swse-eqw__toolbar" role="group" aria-label="Filter and sort possessions">
+          <label class="swse-eqw__field"><span>Status</span><select data-eqw-status><option value="">All statuses</option></select></label>
+          <label class="swse-eqw__field"><span>Sort by</span>
+            <select data-eqw-sort>
+              <option value="default">Default</option><option value="name">Name</option><option value="category">Category</option><option value="status">Status</option><option value="weight">Weight</option><option value="quantity">Quantity</option>
+            </select>
+          </label>
+          <button type="button" class="swse-eqw__chipbtn" data-eqw-dir aria-pressed="false" title="Toggle sort direction" aria-label="Sort ascending"><i class="fa-solid fa-arrow-up-short-wide" aria-hidden="true"></i></button>
+          <button type="button" class="swse-eqw__chipbtn" data-eqw-reset title="Clear search, status filter and sorting"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset</button>
+          <span class="swse-eqw__result-count" data-eqw-count role="status" aria-live="polite"></span>
+        </div>
+
+        <ul class="swse-eqw__list" data-eqw-list role="list">
+          {{#each ws.entries as |it|}}
+            {{#if it.isAsset}}
+            <li class="swse-eqw__row swse-eqw__row--asset is-tone-{{it.status.tone}}" data-eqw-entry data-eqw-asset="{{it.id}}" data-eqw-cat="{{it.tab}}" data-eqw-text="{{it.searchText}}" data-eqw-status="{{it.statusLabel}}" data-eqw-name="{{it.sortName}}" data-eqw-order="{{it.order}}">
+              <button type="button" class="swse-eqw__row-main" data-eqw-select="asset:{{it.id}}" aria-pressed="false" aria-controls="eqw-inspector">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=it.art size="sm"}}
+                <span class="swse-eqw__row-copy">
+                  <strong>{{it.name}}</strong>
+                  <small>{{it.typeLabel}}{{#if it.detail}} · {{it.detail}}{{/if}}{{#if it.summary}} · {{it.summary}}{{/if}}</small>
+                </span>
+                <span class="swse-eqw__state is-{{it.status.tone}}">{{it.status.label}}</span>
+                <span class="swse-eqw__open-hint"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></span>
+              </button>
+            </li>
+            {{else}}
+            <li class="swse-eqw__row is-tone-{{it.status.tone}}" data-eqw-entry data-eqw-row="{{it.id}}" data-eqw-cat="{{it.tab}}" data-eqw-text="{{it.searchText}}" data-eqw-status="{{it.statusLabel}}" data-eqw-name="{{it.sortName}}" data-eqw-weight="{{it.weight}}" data-eqw-qty="{{it.quantity}}" data-eqw-order="{{it.order}}">
+              <button type="button" class="swse-eqw__row-main" data-eqw-select="{{it.id}}" aria-pressed="false" aria-controls="eqw-inspector">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=it.art size="sm"}}
+                <span class="swse-eqw__row-copy">
+                  <strong>{{it.name}}{{#if it.showQuantity}} <span class="swse-eqw__qty">×{{it.quantity}}</span>{{/if}}</strong>
+                  <small>{{it.typeLabel}}{{#if it.heldInLabel}} · {{it.heldInLabel}}{{/if}}{{#if it.ammoLabel}} · {{it.ammoLabel}}{{/if}}</small>
+                </span>
+                <span class="swse-eqw__state is-{{it.status.tone}}">{{it.status.label}}</span>
+                <span class="swse-eqw__verdict" data-eqw-verdict hidden></span>
+              </button>
+            </li>
+            {{/if}}
+          {{/each}}
+        </ul>
+        <p class="swse-eqw__empty" data-eqw-empty {{#if ws.hasEntries}}hidden{{/if}}>{{#if ws.hasEntries}}Nothing matches this category, search and filter.{{else}}No gear logged. Use the add controls above to create weapons, armor or gear.{{/if}}</p>
+      </section>
+    </div>
+
+    {{!-- REGION C + D: contextual item inspector. Hidden (zero layout space) until an item or linked actor is selected; the X in its header clears the selection. --}}
+    <aside class="swse-concept-panel swse-eqw__panel swse-eqw__inspector" aria-label="Item inspector" data-eqw-inspector id="eqw-inspector" hidden>
+      {{#each ws.items as |it|}}
+      <article class="swse-eqw__detail" data-eqw-detail="{{it.id}}" hidden>
+        <button type="button" class="swse-eqw__close" data-eqw-close title="Close" aria-label="Close inspector"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        <header class="swse-eqw__detail-head">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=it.art size="lg"}}
+          <div class="swse-eqw__detail-id">
+            <span class="swse-eqw__kicker">{{it.typeLabel}}{{#if it.gripLabel}} · {{it.gripLabel}}{{/if}}</span>
+            <h3 tabindex="-1" data-eqw-heading>{{it.name}}</h3>
+            <p class="swse-eqw__chips">
+              <span class="swse-eqw__state is-{{it.status.tone}}">{{it.status.label}}</span>
+              {{#if it.isWeapon}}{{#if it.attackReady}}<span class="swse-eqw__state is-ready">Can attack</span>{{else}}<span class="swse-eqw__state is-stowed">Cannot attack</span>{{/if}}{{/if}}
+              {{#if it.activated}}<span class="swse-eqw__state is-ready">Activated</span>{{/if}}
+              {{#if it.heldInLabel}}<span class="swse-eqw__state is-held"><i class="fa-solid fa-hand" aria-hidden="true"></i> {{it.heldInLabel}}</span>{{/if}}
+            </p>
+          </div>
+        </header>
+        {{#if it.status.reason}}<p class="swse-eqw__reason"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> {{it.status.reason}}</p>{{/if}}
+
+        {{!-- QUICK ACTIONS: the most frequent operations, reachable without switching tabs. The same data-action controls the Operations tab uses
+             (handled by the sheet's existing delegated handlers); nothing here executes anything itself. --}}
+        <div class="swse-eqw__quick" role="group" aria-label="Quick actions">
+          {{#if it.isWeapon}}
+            {{#if it.weaponReadiness}}
+              {{#if it.weaponReadiness.canDrawAndIgnite}}<button type="button" class="swse-concept-btn" data-action="draw-and-ignite-lightsaber" data-item-id="{{it.id}}"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Draw &amp; Ignite</button>{{/if}}
+              {{#if it.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn" data-action="toggle-weapon-readiness" data-item-id="{{it.id}}"{{#if it.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}><i class="fa-solid fa-hand" aria-hidden="true"></i> {{it.weaponReadiness.drawStowLabel}}</button>{{/if}}
+            {{/if}}
+            {{#if it.ammoLabel}}<button type="button" class="swse-concept-btn" data-eqw-action="reload" data-item-id="{{it.id}}"><i class="fa-solid fa-battery-full" aria-hidden="true"></i> Reload</button>{{/if}}
+            <button type="button" class="swse-concept-btn" data-action="roll-attack" data-weapon-id="{{it.id}}"><i class="fa-solid fa-dice-d20" aria-hidden="true"></i> Attack…</button>
+          {{else}}
+            {{#if it.canToggleEquip}}
+              {{#if it.isImplant}}
+                <button type="button" class="swse-concept-btn" data-action="toggle-implant-installed" data-item-id="{{it.id}}"><i class="fa-solid fa-microchip" aria-hidden="true"></i> {{#if it.equipped}}Remove{{else}}Install{{/if}}</button>
+              {{else}}
+                <button type="button" class="swse-concept-btn" data-action="equip" data-item-id="{{it.id}}"><i class="fa-solid {{#if it.armorStats}}fa-user-shield{{else}}fa-check{{/if}}" aria-hidden="true"></i> {{#if it.equipped}}{{#if it.armorStats}}Remove{{else}}Unequip{{/if}}{{else}}{{#if it.armorStats}}Wear{{else}}Equip{{/if}}{{/if}}</button>
+              {{/if}}
+            {{/if}}
+            {{#if it.canToggleActivated}}<button type="button" class="swse-concept-btn {{#if it.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{it.id}}"><i class="fa-solid fa-power-off" aria-hidden="true"></i> {{it.activationLabel}}</button>{{/if}}
+          {{/if}}
+        </div>
+
+        <div class="swse-eqw__itabs" role="tablist" aria-label="Inspector sections">
+          <button type="button" role="tab" class="swse-eqw__itab" data-eqw-itab="details" aria-selected="true">Details</button>
+          <button type="button" role="tab" class="swse-eqw__itab" data-eqw-itab="operations" aria-selected="false">Operations</button>
+          <button type="button" role="tab" class="swse-eqw__itab" data-eqw-itab="mods" aria-selected="false">Mods{{#if it.hasModifications}} <span class="swse-eqw__count">{{it.modifications.length}}</span>{{/if}}</button>
+        </div>
+
+        {{!-- DETAILS: authoritative values already computed elsewhere; nothing recalculated --}}
+        <div class="swse-eqw__pane" data-eqw-pane="details">
+          <dl class="swse-eqw__facts">
+            {{#if it.isWeapon}}
+              {{#if it.attack}}
+                <div class="is-key"><dt>Attack</dt><dd>{{#if it.attack.hasProfile}}{{numberFormat it.attack.attackTotal decimals=0 sign=true}}{{else}}—{{/if}}</dd></div>
+                <div class="is-key"><dt>Damage</dt><dd>{{#if it.attack.damageFormula}}{{it.attack.damageFormula}}{{else}}—{{/if}}</dd></div>
+                <div><dt>Crit</dt><dd>{{#if it.attack.critRange}}{{it.attack.critRange}}×{{it.attack.critMult}}{{else}}—{{/if}}</dd></div>
+                <div><dt>Range</dt><dd>{{#if it.attack.rangeLabel}}{{it.attack.rangeLabel}}{{else}}—{{/if}}</dd></div>
+              {{else}}
+                <div class="swse-eqw__wide"><dt>Attack profile</dt><dd>Shown once the weapon has an attack entry (draw it to see it).</dd></div>
+              {{/if}}
+              {{#if it.ammoLabel}}<div><dt>Ammunition</dt><dd>{{it.ammoLabel}}</dd></div>{{/if}}
+              {{#if it.gripLabel}}<div><dt>Grip</dt><dd>{{it.gripLabel}}</dd></div>{{/if}}
+              {{#if it.weaponReadiness.isLightsaber}}<div><dt>Blade</dt><dd>{{it.weaponReadiness.bladeStateLabel}}</dd></div>{{/if}}
+              {{#if it.weaponConfiguration}}<div><dt>Configuration</dt><dd>{{it.weaponConfiguration.currentLabel}}</dd></div>{{/if}}
+              {{#if it.weaponPowerSource}}<div class="swse-eqw__wide"><dt>Power source</dt><dd>{{it.weaponPowerSource.requirementLabel}} · {{it.weaponPowerSource.stateLabel}}</dd></div>{{/if}}
+            {{/if}}
+            {{#if it.armorStats}}
+              <div class="is-key"><dt>Reflex</dt><dd>{{numberFormat it.armorStats.reflexBonus decimals=0 sign=true}}</dd></div>
+              <div class="is-key"><dt>Fortitude</dt><dd>{{numberFormat it.armorStats.fortitudeBonus decimals=0 sign=true}}</dd></div>
+              <div><dt>Type</dt><dd>{{it.armorStats.armorTypeLabel}}</dd></div>
+              <div><dt>Max Dex</dt><dd>{{it.armorStats.maxDexLabel}}</dd></div>
+              <div><dt>Check penalty</dt><dd>{{it.armorStats.armorCheckPenalty}}</dd></div>
+              <div><dt>Speed penalty</dt><dd>{{it.armorStats.speedPenalty}}</dd></div>
+              {{#if it.isEnergyShield}}<div><dt>Shield rating</dt><dd>{{it.currentSR}} / {{it.shieldRating}}</dd></div>{{/if}}
+            {{/if}}
+            {{#if it.implantStatusLabel}}<div><dt>Implant</dt><dd>{{it.implantStatusLabel}}</dd></div>{{/if}}
+            <div><dt>Quantity</dt><dd>{{it.quantity}}</dd></div>
+            <div><dt>Weight</dt><dd>{{#if it.weight}}{{numberFormat it.weight decimals=1}} kg{{else}}—{{/if}}</dd></div>
+            <div><dt>Value</dt><dd>{{numberFormat it.value decimals=0}} cr</dd></div>
+          </dl>
+          {{#if it.tags.length}}<p class="swse-eqw__tags">{{#each it.tags as |tag|}}<span class="swse-eqw__tag">{{tag}}</span>{{/each}}</p>{{/if}}
+        </div>
+
+        {{!-- OPERATIONS (REGION D): only controls the item supports; each is an existing authority entry point.
+             Grouping into primary / secondary is visual only; handlers and their order of authority are unchanged. --}}
+        <div class="swse-eqw__pane" data-eqw-pane="operations" hidden>
+          <div class="swse-eqw__ops">
+            <div class="swse-eqw__ops-primary">
+              {{#if it.isWeapon}}
+                {{#if it.weaponReadiness}}
+                  {{#if it.weaponReadiness.canDrawAndIgnite}}<button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="draw-and-ignite-lightsaber" data-item-id="{{it.id}}"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Draw &amp; Ignite</button>{{/if}}
+                  {{#if it.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="toggle-weapon-readiness" data-item-id="{{it.id}}"{{#if it.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}><i class="fa-solid fa-hand" aria-hidden="true"></i> {{it.weaponReadiness.drawStowLabel}}</button>{{/if}}
+                {{/if}}
+              {{else}}
+                {{#if it.canToggleEquip}}
+                  {{#if it.isImplant}}
+                    <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="toggle-implant-installed" data-item-id="{{it.id}}"><i class="fa-solid fa-microchip" aria-hidden="true"></i> {{#if it.equipped}}Remove{{else}}Install{{/if}}</button>
+                  {{else}}
+                    <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="equip" data-item-id="{{it.id}}"><i class="fa-solid {{#if it.armorStats}}fa-user-shield{{else}}fa-check{{/if}}" aria-hidden="true"></i> {{#if it.equipped}}{{#if it.armorStats}}Remove{{else}}Unequip{{/if}}{{else}}{{#if it.armorStats}}Wear{{else}}Equip{{/if}}{{/if}}</button>
+                  {{/if}}
+                {{/if}}
+              {{/if}}
+            </div>
+            <div class="swse-eqw__ops-secondary">
+              {{#if it.isWeapon}}
+                {{#if it.weaponReadiness}}
+                  {{#if it.weaponReadiness.canToggleActivated}}<button type="button" class="swse-concept-btn {{#if it.weaponReadiness.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{it.id}}"><i class="fa-solid fa-power-off" aria-hidden="true"></i> {{it.weaponReadiness.activationLabel}}</button>{{/if}}
+                  {{#if it.weaponReadiness.canReconcile}}<button type="button" class="swse-concept-btn" data-action="reconcile-weapon-transaction" data-item-id="{{it.id}}" title="An equipment change on this weapon did not finish (GM only)."><i class="fa-solid fa-rotate" aria-hidden="true"></i> Resolve</button>{{/if}}
+                {{/if}}
+                {{#if it.ammoLabel}}<button type="button" class="swse-concept-btn" data-eqw-action="reload" data-item-id="{{it.id}}"><i class="fa-solid fa-battery-full" aria-hidden="true"></i> Reload</button>{{/if}}
+                {{#if it.weaponConfiguration}}<button type="button" class="swse-concept-btn" data-action="change-weapon-configuration" data-item-id="{{it.id}}"><i class="fa-solid fa-sliders" aria-hidden="true"></i> {{it.weaponConfiguration.currentLabel}}</button>{{/if}}
+                {{#if it.weaponPowerSource}}<button type="button" class="swse-concept-btn" data-action="set-power-source" data-item-id="{{it.id}}" title="{{it.weaponPowerSource.title}}"><i class="fa-solid fa-plug" aria-hidden="true"></i> Power: {{it.weaponPowerSource.stateLabel}}</button>{{/if}}
+                <button type="button" class="swse-concept-btn swse-eqw__attack" data-action="roll-attack" data-weapon-id="{{it.id}}"><i class="fa-solid fa-dice-d20" aria-hidden="true"></i> Attack…</button>
+              {{else}}
+                {{#if it.canToggleEquip}}{{#if it.isImplant}}<button type="button" class="swse-concept-btn" data-action="toggle-implant-active" data-item-id="{{it.id}}"><i class="fa-solid fa-power-off" aria-hidden="true"></i> {{#if it.isActiveImplant}}Deactivate{{else}}Activate{{/if}}</button>{{/if}}{{/if}}
+                {{#if it.canToggleActivated}}<button type="button" class="swse-concept-btn {{#if it.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{it.id}}"><i class="fa-solid fa-power-off" aria-hidden="true"></i> {{it.activationLabel}}</button>{{/if}}
+              {{/if}}
+            </div>
+          </div>
+
+          {{#if it.isWeapon}}
+            {{!-- slot-first and item-first placement share one panel; filled by equipment-workspace-ui.js from the coordinator's read-only plan --}}
+            <div class="swse-eqw__placement" data-eqw-placement="{{it.id}}" aria-live="polite"></div>
+          {{/if}}
+        </div>
+
+        {{!-- MODIFICATIONS: installed instances come from the customization authority; managing them opens the existing workbench --}}
+        <div class="swse-eqw__pane" data-eqw-pane="mods" hidden>
+          {{#if it.hasModifications}}
+            <ul class="swse-eqw__mods">{{#each it.modifications as |m|}}<li><i class="fa-solid fa-gear" aria-hidden="true"></i><strong>{{m.name}}</strong><span class="swse-eqw__state{{#if m.provisional}} is-warn{{else}} is-held{{/if}}">{{#if m.provisional}}Provisional · effects not automated{{else}}{{m.state}}{{/if}}</span></li>{{/each}}</ul>
+          {{else}}
+            <p class="swse-eqw__empty-note"><i class="fa-solid fa-gears" aria-hidden="true"></i> No modifications installed.</p>
+          {{/if}}
+          {{#if it.alchemy.hasAlchemy}}<p class="swse-eqw__tags">{{#each it.alchemy.badges as |badge|}}<span class="swse-eqw__tag">&#9959; {{badge.label}}</span>{{/each}}</p>{{/if}}
+          <div class="swse-eqw__ops-secondary">
+            {{#if it.canCustomize}}<button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="configure" data-item-id="{{it.id}}"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i> Modification workshop</button>{{/if}}
+            {{#if it.canOpenForceAlchemy}}<button type="button" class="swse-concept-btn" data-action="force-alchemy" data-item-id="{{it.id}}"><i class="fa-solid fa-flask" aria-hidden="true"></i> Alchemy</button>{{/if}}
+          </div>
+        </div>
+
+        <footer class="swse-eqw__detail-foot">
+          {{#if it.canEdit}}<button type="button" class="swse-eqw__admin swse-edit-only" data-action="edit" data-item-id="{{it.id}}"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit</button>{{else}}<button type="button" class="swse-eqw__admin" data-action="open-item" data-item-id="{{it.id}}"><i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i> Item sheet</button>{{/if}}
+          {{#if it.canEdit}}<button type="button" class="swse-eqw__admin swse-edit-only" data-action="sell-item" data-item-id="{{it.id}}"><i class="fa-solid fa-coins" aria-hidden="true"></i> Sell</button>{{/if}}
+          {{#if it.canDelete}}<button type="button" class="swse-eqw__admin is-danger swse-edit-only" data-action="delete" data-item-id="{{it.id}}"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>{{/if}}
+        </footer>
+      </article>
+      {{/each}}
+      {{#each ws.entries as |it|}}{{#if it.isAsset}}
+      <article class="swse-eqw__detail swse-eqw__detail--asset" data-eqw-detail="asset:{{it.id}}" hidden>
+        <button type="button" class="swse-eqw__close" data-eqw-close title="Close" aria-label="Close inspector"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        <header class="swse-eqw__detail-head">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=it.art size="lg"}}
+          <div class="swse-eqw__detail-id">
+            <span class="swse-eqw__kicker">{{it.typeLabel}}</span>
+            <h3 tabindex="-1" data-eqw-heading>{{it.name}}</h3>
+            <p class="swse-eqw__chips"><span class="swse-eqw__state is-{{it.status.tone}}">{{it.status.label}}</span></p>
+          </div>
+        </header>
+        <dl class="swse-eqw__facts">
+          {{#if it.detail}}<div><dt>Model</dt><dd>{{it.detail}}</dd></div>{{/if}}
+          {{#if it.summary}}<div><dt>Status</dt><dd>{{it.summary}}</dd></div>{{/if}}
+        </dl>
+        <p class="swse-eqw__hint">Linked property, not carried gear: it does not add to carried weight.</p>
+        <div class="swse-eqw__quick">
+          <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-eqw-open-asset="{{it.id}}" {{#unless it.canOpen}}disabled title="This actor cannot be opened (no link or no permission)."{{/unless}}><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Open sheet</button>
+        </div>
+      </article>
+      {{/if}}{{/each}}
+    </aside>
+  </div>
+</section>
+{{/with}}

@@ -2,6 +2,9 @@ import { isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
 import { getWeaponReadiness } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
+import { buildEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js";
+import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js";
+import { listOwnedAssets } from "/systems/foundryvtt-swse/scripts/ui/shell/AssetBaySurfaceService.js";
 import { effectiveShotCapacity } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
@@ -481,7 +484,8 @@ function buildInventoryGroups(inventoryPanel, actor) {
 
         return {
           ...entry,
-          quantity: Number(entry?.quantity) || 1,
+          // canonical reader (explicit 0 stays 0; only a missing/invalid value takes the schema default of 1); the same reader the carried-weight total uses
+          quantity: EncumbranceEngine.itemQuantity({ system: { quantity: entry?.quantity } }),
           weight: Number(entry?.weight) || 0,
           value: Number(entry?.value) || 0,
           tags: asArray(entry?.tags),
@@ -1743,6 +1747,60 @@ function buildRelationshipsTab(context) {
   };
 }
 
+/** Attack view builder over the actor's live Items (authoritative attack/ammo display values per weapon). Shared by every actor type's workspace. */
+function createAttackViewBuilder(actor, itemById) {
+  return (attack = {}) => {
+    const weaponId = attack?.weaponId ?? attack?.itemId ?? attack?.sourceId ?? null;
+    const item = weaponId ? itemById.get(weaponId) : null;
+    const visualProfile = item ? WeaponVisualProfileResolver.resolve(item, { actor }) : null;
+    const railHex = visualProfile?.primaryHex || attack?.visualColorHex || attack?.colorHex || '';
+    const rangeLabel = normalizeText(attack?.range || attack?.rangeLabel || item?.system?.rangeFormatted || item?.system?.range?.label || item?.system?.range?.value || 'Melee');
+    const ammoCurrent = item?.system?.ammo?.current ?? item?.system?.ammunition?.current ?? item?.system?.charges?.value ?? item?.system?.charges?.current ?? attack?.ammoCurrent;
+    // the tracked pool shows its EFFECTIVE capacity (Modification V2 effects are derived, never written into the Item)
+    const ammoMax = item?.system?.ammo?.max ?? (item?.system?.ammunition?.max !== undefined && item?.system?.ammunition?.max !== null ? effectiveShotCapacity(item, item.system.ammunition.max) : undefined) ?? item?.system?.charges?.max ?? attack?.ammoMax;
+    const ammoLabel = ammoCurrent !== undefined && ammoCurrent !== null && ammoCurrent !== ''
+      ? `${ammoCurrent}${ammoMax !== undefined && ammoMax !== null && ammoMax !== '' ? ` / ${ammoMax}` : ''}`
+      : '';
+    const damageType = normalizeText(attack?.damageType || item?.system?.damageType || item?.system?.weapon?.damageType || '');
+    return {
+      ...attack,
+      weaponId,
+      weaponName: attack?.weaponName ?? attack?.name ?? '',
+      weaponType: attack?.weaponType ?? attack?.type ?? attack?.sourceType ?? '',
+      attackTotalClass: toSignedClass(attack?.attackTotal),
+      tags: asArray(attack?.tags),
+      rangeLabel,
+      ammoLabel,
+      damageType,
+      visualKind: visualProfile?.kind || '',
+      weaponReadiness: item ? buildWeaponReadinessView(item, actor) : null,
+      weaponConfiguration: item ? buildWeaponConfigurationView(item) : null,
+      weaponPowerSource: item ? buildWeaponPowerSourceView(item) : null,
+      visualColorHex: railHex,
+      weaponRailStyle: railHex ? `--weapon-rail: ${railHex};` : ''
+    };
+  };
+}
+
+/**
+ * ONE assembly of the equipment workspace view model for every character-like actor (Character, Droid, NPC, Follower).
+ * Pass either the sheet's inventory panel + attack rows (shared hydration) or already-built groups / attack views.
+ * Everything is read from the actor's existing authorities; nothing here is actor-type specific.
+ */
+export function buildActorEquipmentWorkspace(actor, { inventoryPanel = null, attacks = [], unarmed = null, groups = null, attackViews = null, readiness = null } = {}) {
+  const itemById = new Map(Array.from(actor?.items ?? []).map((item) => [item.id, item]));
+  const buildView = createAttackViewBuilder(actor, itemById);
+  return buildEquipmentWorkspace(actor, {
+    groups: groups ?? buildInventoryGroups(inventoryPanel, actor),
+    attackViews: attackViews ?? new Map(asArray(attacks).map(buildView).filter((a) => a.weaponId).map((a) => [a.weaponId, a])),
+    isGM: globalThis.game?.user?.isGM === true,
+    unarmed,
+    readiness,
+    // droids / vehicles come from the Asset Bay's established owner association; world actors the user can merely see are never included
+    assets: listOwnedAssets(actor)
+  });
+}
+
 export function buildConceptSheetViewModel(context = {}) {
   const actor = context.actor ?? {};
   const isDroidActor = context.isDroidActor === true || actor?.type === 'droid' || actor?.system?.isDroid === true;
@@ -1809,37 +1867,7 @@ export function buildConceptSheetViewModel(context = {}) {
   const actionGroups = buildActionGroups(context.combatActions, context.actionEconomy);
   const actorItems = Array.from(actor?.items ?? []);
   const itemById = new Map(actorItems.map((item) => [item.id, item]));
-  const buildAttackView = (attack = {}) => {
-    const weaponId = attack?.weaponId ?? attack?.itemId ?? attack?.sourceId ?? null;
-    const item = weaponId ? itemById.get(weaponId) : null;
-    const visualProfile = item ? WeaponVisualProfileResolver.resolve(item, { actor }) : null;
-    const railHex = visualProfile?.primaryHex || attack?.visualColorHex || attack?.colorHex || '';
-    const rangeLabel = normalizeText(attack?.range || attack?.rangeLabel || item?.system?.rangeFormatted || item?.system?.range?.label || item?.system?.range?.value || 'Melee');
-    const ammoCurrent = item?.system?.ammo?.current ?? item?.system?.ammunition?.current ?? item?.system?.charges?.value ?? item?.system?.charges?.current ?? attack?.ammoCurrent;
-    // the tracked pool shows its EFFECTIVE capacity (Modification V2 effects are derived, never written into the Item)
-    const ammoMax = item?.system?.ammo?.max ?? (item?.system?.ammunition?.max !== undefined && item?.system?.ammunition?.max !== null ? effectiveShotCapacity(item, item.system.ammunition.max) : undefined) ?? item?.system?.charges?.max ?? attack?.ammoMax;
-    const ammoLabel = ammoCurrent !== undefined && ammoCurrent !== null && ammoCurrent !== ''
-      ? `${ammoCurrent}${ammoMax !== undefined && ammoMax !== null && ammoMax !== '' ? ` / ${ammoMax}` : ''}`
-      : '';
-    const damageType = normalizeText(attack?.damageType || item?.system?.damageType || item?.system?.weapon?.damageType || '');
-    return {
-      ...attack,
-      weaponId,
-      weaponName: attack?.weaponName ?? attack?.name ?? '',
-      weaponType: attack?.weaponType ?? attack?.type ?? attack?.sourceType ?? '',
-      attackTotalClass: toSignedClass(attack?.attackTotal),
-      tags: asArray(attack?.tags),
-      rangeLabel,
-      ammoLabel,
-      damageType,
-      visualKind: visualProfile?.kind || '',
-      weaponReadiness: item ? buildWeaponReadinessView(item, actor) : null,
-      weaponConfiguration: item ? buildWeaponConfigurationView(item) : null,
-      weaponPowerSource: item ? buildWeaponPowerSourceView(item) : null,
-      visualColorHex: railHex,
-      weaponRailStyle: railHex ? `--weapon-rail: ${railHex};` : ''
-    };
-  };
+  const buildAttackView = createAttackViewBuilder(actor, itemById);
   const virtualUnarmedLoadoutEntry = unarmedAttackEntry ? {
     ...unarmedAttackEntry,
     id: 'swse-virtual-unarmed',
@@ -2063,15 +2091,22 @@ export function buildConceptSheetViewModel(context = {}) {
     gear: {
       credits,
       totalWeight,
+      // carried items with no verified recorded weight (counted as 0 in the total, never shown as a verified zero)
+      weightUnverifiedCount: EncumbranceEngine.carriedWeightReport(actor).unverified.length,
       totalItems: inventoryEntries.length,
       equippedEntries,
       groups: gearGroups,
       equippedArmor: context.armorSummaryPanel?.equippedArmor || null,
-      ledgerWeight: context.equipmentLedgerPanel?.totalEquipmentWeight || '',
       hasUpgradeableItems: !!context.inventoryPanel?.hasUpgradeableItems,
       lightsaberConstructionAvailable: !!context.lightsaberConstructionAvailable,
       lightsaberConstructionDeferred: !!context.lightsaberConstructionDeferred,
-      lightsaberConstructionBlockedReason: context.lightsaberConstructionBlockedReason || null
+      lightsaberConstructionBlockedReason: context.lightsaberConstructionBlockedReason || null,
+      // Equipment workspace: presentation-only mapping of the equipment authorities (see equipment-workspace-context.js)
+      workspace: buildActorEquipmentWorkspace(actor, {
+        groups: gearGroups,
+        attackViews: new Map(attackEntries.map(buildAttackView).filter((a) => a.weaponId).map((a) => [a.weaponId, a])),
+        unarmed: virtualUnarmedLoadoutEntry
+      })
     },
     biography: {
       profileCards: isDroidActor ? [

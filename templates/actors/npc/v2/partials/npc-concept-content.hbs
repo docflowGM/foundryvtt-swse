@@ -357,16 +357,12 @@
           <div><h3 class="swse-section-title">{{localize "SWSE.ActorUI.Inventory"}}</h3></div>
           <div class="swse-npc-badges"><span class="swse-npc-badge swse-npc-badge--subtype">{{npcConcept.creditsDisplay}}</span></div>
         </header>
+        {{!-- Same equipment workspace as the Character/Droid Gear tab (loadout, possessions browser, collapsible inspector). The old flat list is retired. --}}
         <div class="swse-npc-card__body swse-npc-gear-stack">
-          {{#if npcConcept.hasGear}}
-            {{#each npcConcept.gear as |item|}}
-              <div class="swse-npc-gear-row">
-                <button type="button" class="swse-npc-gear-name {{#if item.canOpen}}swse-v2-open-item{{/if}}" data-item-id="{{item.id}}">{{item.name}}</button>
-                <div class="swse-npc-gear-meta"><span>{{item.typeLabel}}</span><span>×{{item.quantity}}</span></div>
-              </div>
-            {{/each}}
+          {{#if npcConcept.workspace}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs" workspace=npcConcept.workspace}}
           {{else}}
-            <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoItemizedGearAddItemsViaTheItem"}}</p>
+            <p class="swse-npc-empty-state">The equipment workspace could not be built for this actor.</p>
           {{/if}}
         </div>
       </section>

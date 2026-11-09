@@ -26,6 +26,7 @@ import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey } from '/systems/foundryvtt-
 import { isFeatLikeItem, isForcePowerItem, isPlaceholderSheetItem, isTalentLikeItem } from '/systems/foundryvtt-swse/scripts/utils/item-classification.js';
 import { addItemEditorTrace, summarizeActorItems } from '/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js';
 import { ImplantRules } from '/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js';
+import { EncumbranceEngine } from '/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js';
 import { buildDarkSidePanelContext } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/dark-side-panel-context.js';
 import { resolveGrappleBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js';
 
@@ -496,12 +497,8 @@ export class PanelContextBuilder {
       grouped[category].push(entry);
     });
 
-    // Calculate total weight
-    const totalWeight = entries.reduce((sum, item) => {
-      const weight = Number(item.weight) || 0;
-      const qty = Number(item.quantity) || 1;
-      return sum + (weight * qty);
-    }, 0);
+    // Total carried weight (kg): single authority is EncumbranceEngine; the sheet never sums item weights itself
+    const totalWeight = EncumbranceEngine.calculateCarriedWeight(this.actor);
 
     // Find equipped armor
     const equippedArmorItem = items.find(item =>
@@ -1223,26 +1220,26 @@ export class PanelContextBuilder {
    *
    * Contract: equipmentLedgerPanel
    * - allEquipment: [ { id, name, category, quantity, weight, cost, equipped } ]
-   * - totalEquipmentWeight: string (e.g., "45 lbs")
+   * - totalEquipmentWeight: string (e.g., "45 kg")
    * - canEdit: boolean
    */
   buildEquipmentLedgerPanel() {
-    let totalEquipmentWeightNum = 0;
+    // Per-row weight/quantity and the total all come from EncumbranceEngine (canonical unit: kg)
+    const fmtKg = (n) => `${Number.isInteger(n) ? n : Number(n.toFixed(2))} kg`;
 
     const allEquipment = this._actorItems()
       .filter(item => ['weapon', 'armor', 'equipment'].includes(item.type))
       .map(item => {
-        const itemWeight = safePanelNumber(item.system?.weight, 0);
-        const itemQty = safePanelNumber(item.system?.quantity, 1) || 1;
+        const itemWeight = EncumbranceEngine.itemUnitWeight(item);
+        const itemQty = EncumbranceEngine.itemQuantity(item);
         const itemCost = safePanelNumber(item.system?.cost ?? item.system?.value, 0);
-        totalEquipmentWeightNum += itemWeight * itemQty;
         return {
           id: item.id,
           name: item.name,
           category: item.type === 'weapon' ? 'Weapon' :
                     item.type === 'armor' ? 'Armor' : 'Equipment',
           quantity: itemQty,
-          weight: itemWeight ? `${itemWeight} lbs` : '—',
+          weight: itemWeight ? fmtKg(itemWeight) : '—',
           cost: itemCost > 0 ? itemCost.toLocaleString() : '—',
           equipped: item.system?.equipped ?? false
         };
@@ -1253,9 +1250,10 @@ export class PanelContextBuilder {
         return a.name.localeCompare(b.name);
       });
 
+    const totalCarried = EncumbranceEngine.calculateCarriedWeight(this.actor);
     const panel = {
       allEquipment,
-      totalEquipmentWeight: totalEquipmentWeightNum > 0 ? `${totalEquipmentWeightNum} lbs` : '',
+      totalEquipmentWeight: totalCarried > 0 ? fmtKg(totalCarried) : '',
       canEdit: this.sheet.isEditable
     };
 

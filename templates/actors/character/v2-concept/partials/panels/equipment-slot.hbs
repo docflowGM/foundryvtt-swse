@@ -1,0 +1,41 @@
+{{!-- One anatomy-driven appendage position (compact horizontal card). Presentation only (equipment-workspace-context.js): the slot list,
+     occupant, state label and shared-grip partners come from the resolved anatomy + occupancy assignments. An item held across several
+     appendages is shown in full on its anchor position (first appendage in the assignment's own order); the others read "Occupied by …",
+     so the weapon never appears duplicated. --}}
+<button type="button"
+  class="swse-eqw__slot{{#if slot.empty}} is-empty{{else}} is-occupied is-tone-{{slot.occupant.tone}}{{#if slot.occupant.isAnchor}} is-anchor{{else}} is-linked{{/if}}{{/if}}{{#if slot.unavailable}} is-unavailable{{/if}}{{#if slot.conflict}} is-conflict{{/if}}{{#if slot.occupant.shared}} is-shared{{/if}}{{#if slot.occupant.activated}} is-activated{{/if}}"
+  data-eqw-slot="{{slot.id}}" data-eqw-slot-label="{{slot.label}}"
+  {{#if slot.occupant}}data-eqw-slot-item="{{slot.occupant.itemId}}"{{/if}}
+  {{#if slot.unavailable}}aria-disabled="true" title="{{slot.label}} is {{slot.stateLabel}}"{{/if}}
+  aria-pressed="false">
+  {{#if slot.occupant}}
+    {{#if slot.occupant.isAnchor}}
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=slot.occupant.art size="md"}}
+    {{else}}
+      <span class="swse-eqw__art swse-eqw__art--md is-glyph is-socket" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
+    {{/if}}
+  {{else}}
+    <span class="swse-eqw__art swse-eqw__art--md is-glyph is-socket" aria-hidden="true"><i class="fa-solid {{#if slot.unavailable}}fa-ban{{else}}{{slot.glyph}}{{/if}}"></i></span>
+  {{/if}}
+  <span class="swse-eqw__slot-copy">
+    <span class="swse-eqw__slot-name">{{slot.label}}</span>
+    {{#if slot.occupant}}
+      {{#if slot.occupant.isAnchor}}
+        <strong class="swse-eqw__slot-item">{{slot.occupant.name}}</strong>
+        <span class="swse-eqw__slot-meta">
+          <span class="swse-eqw__state is-{{slot.occupant.tone}}">{{#if slot.occupant.stateLabel}}{{slot.occupant.stateLabel}}{{else}}{{slot.occupant.purposeLabel}}{{/if}}</span>
+          {{#if slot.occupant.shared}}<span class="swse-eqw__grip-tag"><i class="fa-solid fa-link" aria-hidden="true"></i> with {{slot.occupant.withSlotLabels}}</span>{{/if}}
+          {{#if slot.occupant.damageLabel}}<span class="swse-eqw__readout"><b>{{slot.occupant.attackLabel}}</b> · <b>{{slot.occupant.damageLabel}}</b></span>{{/if}}
+        </span>
+      {{else}}
+        <strong class="swse-eqw__slot-item is-dim">Occupied</strong>
+        <span class="swse-eqw__slot-meta"><span class="swse-eqw__readout">by {{slot.occupant.name}}</span></span>
+      {{/if}}
+    {{else}}
+      <strong class="swse-eqw__slot-item is-dim">{{#if slot.unavailable}}{{slot.stateLabel}}{{else}}Empty{{/if}}</strong>
+    {{/if}}
+  </span>
+  {{#if slot.occupant.activated}}<span class="swse-eqw__led is-on swse-eqw__corner" title="Activated"><span class="swse-eqw__sr">Activated</span></span>{{/if}}
+  {{#if slot.conflict}}<span class="swse-eqw__flag is-conflict swse-eqw__corner">Conflict</span>{{/if}}
+  {{#if slot.stateLabel}}{{#unless slot.unavailable}}<span class="swse-eqw__flag swse-eqw__corner">{{slot.stateLabel}}</span>{{/unless}}{{/if}}
+</button>

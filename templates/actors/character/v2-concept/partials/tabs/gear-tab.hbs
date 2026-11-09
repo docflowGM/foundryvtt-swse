@@ -1,18 +1,4 @@
 <div class="swse-concept-dashboard">
-  <section class="swse-concept-panel swse-concept-panel--gear-actions swse-edit-reveal">
-    <header class="swse-concept-panel__header">
-      <div>
-        <h3 class="swse-concept-panel__title">Inventory Controls</h3>
-        <p class="swse-concept-panel__hint">Create blank actor-local items, then inspect them to fill in details.</p>
-      </div>
-    </header>
-    <div class="swse-concept-action-rail swse-concept-action-rail--gear">
-      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="weapon">Add Weapon</button>
-      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="armor">Add Armor</button>
-      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="equipment">Add Gear</button>
-    </div>
-  </section>
-
   {{#if conceptLayout.gear.lightsaberConstructionAvailable}}
     <section class="swse-concept-panel swse-concept-panel--saber-ready">
       <header class="swse-concept-panel__header">
@@ -25,229 +11,27 @@
     </section>
   {{/if}}
 
-  <div class="swse-concept-card-grid swse-concept-card-grid--gear-top">
-    <article class="swse-concept-info-card swse-concept-info-card--stat swse-concept-info-card--editable">
-      <span>Credits</span>
+  {{!-- One compact summary strip (values and controls unchanged: credits field, item count, ledger weight, workshop, add-item actions). --}}
+  <section class="swse-eqw-strip" aria-label="Gear summary">
+    <div class="swse-eqw-strip__stat swse-eqw-strip__stat--credits">
+      <i class="fa-solid fa-coins" aria-hidden="true"></i>
+      <span class="swse-eqw-strip__label">Credits</span>
       <strong>{{numberFormat conceptLayout.gear.credits decimals=0}}</strong>
       <label class="swse-concept-toolfield swse-concept-toolfield--compact swse-concept-toolfield--number swse-edit-reveal">
-        <span>Edit Credits</span>
+        <span>Edit credits</span>
         <input type="number" name="system.credits" value="{{conceptLayout.gear.credits}}" min="0">
       </label>
-    </article>
-    <article class="swse-concept-info-card swse-concept-info-card--stat">
-      <span>Inventory Items</span>
-      <strong>{{conceptLayout.gear.totalItems}}</strong>
-    </article>
-    <article class="swse-concept-info-card swse-concept-info-card--stat">
-      <span>Total Weight</span>
-      <strong>{{#if conceptLayout.gear.ledgerWeight}}{{conceptLayout.gear.ledgerWeight}}{{else}}{{numberFormat conceptLayout.gear.totalWeight decimals=1}} kg{{/if}}</strong>
-    </article>
-    <article class="swse-concept-info-card swse-concept-info-card--stat">
-      <span>Workshop</span>
-      <strong>{{#if conceptLayout.gear.hasUpgradeableItems}}Upgrade Ready{{else}}No Eligible Mods{{/if}}</strong>
-    </article>
-  </div>
+    </div>
+    <div class="swse-eqw-strip__stat"><i class="fa-solid fa-weight-hanging" aria-hidden="true"></i><span class="swse-eqw-strip__label">Weight</span><strong>{{numberFormat conceptLayout.gear.totalWeight decimals=1}} kg</strong>{{#if conceptLayout.gear.weightUnverifiedCount}}<span class="swse-eqw-strip__flag" title="{{conceptLayout.gear.weightUnverifiedCount}} carried item(s) have no recorded weight and are not included in this total.">+{{conceptLayout.gear.weightUnverifiedCount}} unweighed</span>{{/if}}</div>
+    <div class="swse-eqw-strip__stat"><i class="fa-solid fa-box-open" aria-hidden="true"></i><span class="swse-eqw-strip__label">Items</span><strong>{{conceptLayout.gear.totalItems}}</strong></div>
+    <div class="swse-eqw-strip__stat"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><span class="swse-eqw-strip__label">Workshop</span><strong>{{#if conceptLayout.gear.hasUpgradeableItems}}Upgrade ready{{else}}No eligible mods{{/if}}</strong></div>
+    <div class="swse-eqw-strip__actions swse-edit-reveal">
+      <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="weapon"><i class="fa-solid fa-plus" aria-hidden="true"></i> Weapon</button>
+      <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="armor"><i class="fa-solid fa-plus" aria-hidden="true"></i> Armor</button>
+      <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="equipment"><i class="fa-solid fa-plus" aria-hidden="true"></i> Gear</button>
+    </div>
+  </section>
 
-  <div class="swse-concept-grid swse-concept-grid--gear-top">
-    <section class="swse-concept-panel">
-      <header class="swse-concept-panel__header">
-        <div>
-          <h3 class="swse-concept-panel__title">Equipped Loadout</h3>
-          <p class="swse-concept-panel__hint">Currently active weapons, armor, and field gear.</p>
-        </div>
-      </header>
-
-      {{#if conceptLayout.gear.equippedEntries.length}}
-        <div class="swse-concept-list-stack">
-          {{#each conceptLayout.gear.equippedEntries as |entry|}}
-            <article class="swse-concept-simple-row">
-              <div class="swse-concept-simple-row__copy">
-                <strong>{{entry.name}}</strong>
-                <small>{{entry.typeLabel}} · Qty {{entry.quantity}}</small>
-                {{#if entry.alchemy.hasAlchemy}}
-                  <div class="swse-alchemy-badge-row swse-alchemy-badge-row--compact">
-                    {{#each entry.alchemy.badges as |badge|}}<span class="swse-concept-chip swse-concept-chip--alchemy {{badge.tone}}">&#9959; {{badge.label}}</span>{{/each}}
-                  </div>
-                {{/if}}
-              </div>
-              <div class="swse-concept-ledger-row__actions">
-                {{#if entry.virtual}}
-                  <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="roll-unarmed-attack">Roll</button>
-                {{else}}
-                  {{#if entry.canEdit}}
-                    <button type="button" class="swse-concept-btn swse-edit-only" data-action="edit" data-item-id="{{entry.id}}">Edit</button>
-                  {{else}}
-                    <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{entry.id}}">Inspect</button>
-                  {{/if}}
-{{#if entry.weaponReadiness}}
-  {{#if entry.weaponReadiness.canDrawAndIgnite}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation" data-action="draw-and-ignite-lightsaber" data-item-id="{{entry.id}}">Draw &amp; Ignite</button>{{/if}}
-  {{#if entry.weaponReadiness.canToggleActivated}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.weaponReadiness.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}">{{entry.weaponReadiness.activationLabel}}</button>{{/if}}
-  {{#if entry.weaponConfiguration}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--configuration" data-action="change-weapon-configuration" data-item-id="{{entry.id}}">Configure</button>{{/if}}
-  {{#if entry.weaponPowerSource}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--power is-{{entry.weaponPowerSource.state}}" data-action="set-power-source" data-item-id="{{entry.id}}" title="{{entry.weaponPowerSource.title}}">Power: {{entry.weaponPowerSource.stateLabel}}</button>{{/if}}
-  {{#if entry.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--readiness {{#if entry.weaponReadiness.drawn}}is-ready{{else}}is-inactive{{/if}}" data-action="toggle-weapon-readiness" data-item-id="{{entry.id}}"{{#if entry.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}>{{entry.weaponReadiness.drawStowLabel}}</button>{{/if}}
-  {{#if entry.weaponReadiness.canReconcile}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--reconcile" data-action="reconcile-weapon-transaction" data-item-id="{{entry.id}}" title="An equipment change on this weapon did not finish. Review the evidence and decide how to close it (GM only).">Resolve</button>{{/if}}
-{{else}}
-                  {{#if entry.canToggleActivated}}
-                    <button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}" title="{{entry.activationTitle}}">{{entry.activationLabel}}</button>
-                  {{/if}}
-                  {{#if entry.canToggleEquip}}
-                    <button type="button" class="swse-concept-btn" data-action="equip" data-item-id="{{entry.id}}">Unequip</button>
-                  {{/if}}
-{{/if}}
-                  {{#if entry.canOpenForceAlchemy}}
-                    <button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>
-                  {{/if}}
-                {{/if}}
-              </div>
-            </article>
-          {{/each}}
-        </div>
-      {{else}}
-        <div class="swse-concept-empty-state swse-concept-empty-state--guided">
-          <span class="swse-concept-empty-state__eyebrow">Nothing equipped</span>
-          <strong>Equip weapons, armor, or field gear from the ledger below to populate the active loadout.</strong>
-          <div class="swse-concept-empty-state__actions swse-edit-only">
-            <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="weapon">Add Weapon</button>
-            <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="equipment">Add Gear</button>
-          </div>
-        </div>
-      {{/if}}
-    </section>
-
-    <section class="swse-concept-panel">
-      <header class="swse-concept-panel__header">
-        <div>
-          <h3 class="swse-concept-panel__title">Armor Profile</h3>
-          <p class="swse-concept-panel__hint">Current equipped armor summary and modifiers.</p>
-        </div>
-      </header>
-
-      {{#if conceptLayout.gear.equippedArmor}}
-        <div class="swse-concept-card-grid swse-concept-card-grid--armor">
-          <article class="swse-concept-info-card swse-concept-info-card--wide">
-            <span>Equipped Armor</span>
-            <strong>{{conceptLayout.gear.equippedArmor.name}}</strong>
-          </article>
-          <article class="swse-concept-info-card">
-            <span>Type</span>
-            <strong>{{conceptLayout.gear.equippedArmor.armorType}}</strong>
-          </article>
-          <article class="swse-concept-info-card">
-            <span>Reflex</span>
-            <strong>{{numberFormat conceptLayout.gear.equippedArmor.reflexBonus decimals=0 sign=true}}</strong>
-          </article>
-          <article class="swse-concept-info-card">
-            <span>Fort</span>
-            <strong>{{numberFormat conceptLayout.gear.equippedArmor.fortBonus decimals=0 sign=true}}</strong>
-          </article>
-          <article class="swse-concept-info-card">
-            <span>Max Dex</span>
-            <strong>{{conceptLayout.gear.equippedArmor.maxDexBonus}}</strong>
-          </article>
-          <article class="swse-concept-info-card">
-            <span>ACP</span>
-            <strong>{{conceptLayout.gear.equippedArmor.armorCheckPenalty}}</strong>
-          </article>
-        </div>
-      {{else}}
-        <div class="swse-concept-empty-state swse-concept-empty-state--guided">
-          <span class="swse-concept-empty-state__eyebrow">No armor equipped</span>
-          <strong>Armor can modify Reflex Defense, Fortitude Defense, Max Dex, and armor check penalties.</strong>
-          <div class="swse-concept-empty-state__actions swse-edit-only">
-            <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="armor">Add Armor</button>
-          </div>
-        </div>
-      {{/if}}
-    </section>
-  </div>
-
-  {{#unless conceptLayout.gear.groups.length}}
-    <section class="swse-concept-panel swse-concept-panel--ledger swse-concept-gear-ledger-empty">
-      <div class="swse-concept-empty-state swse-concept-empty-state--guided">
-        <span class="swse-concept-empty-state__eyebrow">No gear logged</span>
-        <strong>Create actor-local weapons, armor, or equipment to begin the inventory ledger.</strong>
-        <div class="swse-concept-empty-state__actions swse-edit-only">
-          <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="weapon">Add Weapon</button>
-          <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="armor">Add Armor</button>
-          <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="equipment">Add Gear</button>
-        </div>
-      </div>
-    </section>
-  {{/unless}}
-
-  {{#each conceptLayout.gear.groups as |group|}}
-    <section class="swse-concept-panel swse-concept-panel--ledger">
-      <header class="swse-concept-panel__header">
-        <div>
-          <h3 class="swse-concept-panel__title">{{group.label}}</h3>
-          <p class="swse-concept-panel__hint">{{group.count}} entries in this category.</p>
-        </div>
-      </header>
-
-      <div class="swse-concept-ledger">
-        {{#each group.entries as |entry|}}
-          <article class="swse-concept-ledger-row">
-            <div class="swse-concept-ledger-row__main">
-              <div class="swse-concept-ledger-row__title">{{entry.name}}</div>
-              <div class="swse-concept-ledger-row__meta">
-                <span>{{entry.typeLabel}}</span>
-                {{#if entry.equipped}}<span>Equipped</span>{{/if}}
-                {{#if entry.activated}}<span>{{entry.activationStateLabel}}</span>{{/if}}
-                {{#if entry.isNaturalWeapon}}<span>Natural</span>{{/if}}
-                {{#each entry.tags as |tag|}}<span>{{tag}}</span>{{/each}}
-                {{#if entry.alchemy.hasAlchemy}}{{#each entry.alchemy.badges as |badge|}}<span class="swse-alchemy-row-tag">&#9959; {{badge.label}}</span>{{/each}}{{/if}}
-              </div>
-            </div>
-
-            <div class="swse-concept-ledger-row__stats">
-              <div>
-                <span>Qty</span>
-                <strong>{{entry.quantity}}</strong>
-              </div>
-              <div>
-                <span>Weight</span>
-                <strong>{{#if entry.weight}}{{numberFormat entry.weight decimals=1}} kg{{else}}-{{/if}}</strong>
-              </div>
-              <div>
-                <span>Value</span>
-                <strong>{{numberFormat entry.value decimals=0}}</strong>
-              </div>
-            </div>
-
-            <div class="swse-concept-ledger-row__actions">
-              {{#if entry.canEdit}}
-                <button type="button" class="swse-concept-btn swse-edit-only" data-action="edit" data-item-id="{{entry.id}}">Edit</button>
-              {{else}}
-                <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{entry.id}}">Inspect</button>
-              {{/if}}
-{{#if entry.weaponReadiness}}
-  {{#if entry.weaponReadiness.canDrawAndIgnite}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation" data-action="draw-and-ignite-lightsaber" data-item-id="{{entry.id}}">Draw &amp; Ignite</button>{{/if}}
-  {{#if entry.weaponReadiness.canToggleActivated}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.weaponReadiness.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}">{{entry.weaponReadiness.activationLabel}}</button>{{/if}}
-  {{#if entry.weaponConfiguration}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--configuration" data-action="change-weapon-configuration" data-item-id="{{entry.id}}">Configure</button>{{/if}}
-  {{#if entry.weaponPowerSource}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--power is-{{entry.weaponPowerSource.state}}" data-action="set-power-source" data-item-id="{{entry.id}}" title="{{entry.weaponPowerSource.title}}">Power: {{entry.weaponPowerSource.stateLabel}}</button>{{/if}}
-  {{#if entry.weaponReadiness.canDrawStow}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--readiness {{#if entry.weaponReadiness.drawn}}is-ready{{else}}is-inactive{{/if}}" data-action="toggle-weapon-readiness" data-item-id="{{entry.id}}"{{#if entry.weaponReadiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}>{{entry.weaponReadiness.drawStowLabel}}</button>{{/if}}
-  {{#if entry.weaponReadiness.canReconcile}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--reconcile" data-action="reconcile-weapon-transaction" data-item-id="{{entry.id}}" title="An equipment change on this weapon did not finish. Review the evidence and decide how to close it (GM only).">Resolve</button>{{/if}}
-{{else}}
-              {{#if entry.canToggleActivated}}
-                <button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation {{#if entry.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{entry.id}}" title="{{entry.activationTitle}}">{{entry.activationLabel}}</button>
-              {{/if}}
-              {{#if entry.canToggleEquip}}
-                <button type="button" class="swse-concept-btn" data-action="equip" data-item-id="{{entry.id}}">{{#if entry.equipped}}Unequip{{else}}Equip{{/if}}</button>
-              {{/if}}
-{{/if}}
-              {{#if entry.canEdit}}
-                <button type="button" class="swse-concept-btn swse-edit-only" data-action="configure" data-item-id="{{entry.id}}">Customize</button>
-                {{#if entry.modificationV2.hasInstalled}}<span class="swse-concept-mods">{{#each entry.modificationV2.installed}}<span class="swse-concept-chip swse-concept-chip--mod{{#if provisional}} is-provisional{{/if}}" title="{{#if provisional}}Provisional GM-adjudicated install; effects are not automated{{/if}}">{{label}}</span>{{/each}}</span>{{/if}}
-                {{#if entry.canOpenForceAlchemy}}<button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>{{/if}}
-                <button type="button" class="swse-concept-btn swse-edit-only" data-action="sell-item" data-item-id="{{entry.id}}">Sell</button>
-              {{/if}}
-              {{#if entry.canDelete}}
-                <button type="button" class="swse-concept-btn swse-concept-btn--danger swse-edit-only" data-action="delete" data-item-id="{{entry.id}}">Delete</button>
-              {{/if}}
-            </div>
-          </article>
-        {{/each}}
-      </div>
-    </section>
-  {{/each}}
+  {{!-- Equipment workspace: the single equipment surface of this tab (loadout, armor, ledger and per-item controls all live in it). --}}
+  {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs" workspace=conceptLayout.gear.workspace}}
 </div>
