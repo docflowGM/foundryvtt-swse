@@ -138,8 +138,14 @@ function candidateActorIdsFromValue(value) {
   return ids;
 }
 
-function vehicleOwnerMatchesActor(vehicle, ownerActor) {
-  if (!vehicle || vehicle.type !== 'vehicle' || !ownerActor?.id) return false;
+/**
+ * Ownership evidence for a vehicle, from STABLE IDENTITY only (actor id / uuid fields written by acquisition, grants and store approval).
+ * A matching display NAME is never possession: two characters can share a name. Name-only evidence is reported separately (`nameOnly`) so callers
+ * can show the link as unresolved instead of claiming ownership or enabling modification.
+ * @returns {{matches:boolean, nameOnly:boolean}}
+ */
+function vehicleOwnershipEvidence(vehicle, ownerActor) {
+  if (!vehicle || vehicle.type !== 'vehicle' || !ownerActor?.id) return { matches: false, nameOnly: false };
   const system = vehicle.system ?? {};
   const flags = vehicle.flags ?? {};
   const sysOwner = system.owner;
@@ -169,8 +175,9 @@ function vehicleOwnerMatchesActor(vehicle, ownerActor) {
   for (const id of asArray(grantFlag.recipientActorIds)) ids.add(normalizeReferenceId(id));
 
   ids.delete('');
-  if (ids.has(ownerActor.id)) return true;
+  if (ids.has(ownerActor.id)) return { matches: true, nameOnly: false };
 
+  // Name-only records (legacy / hand-edited) carry no stable identity: they never establish possession.
   const ownerName = String(ownerActor.name || '').trim().toLowerCase();
   const names = [
     system.ownedByActorName,
@@ -181,7 +188,12 @@ function vehicleOwnerMatchesActor(vehicle, ownerActor) {
     storeAcquisition.ownerActorName,
     storeFlag.ownerActorName
   ].map(value => String(value || '').trim().toLowerCase()).filter(Boolean);
-  return !!ownerName && names.includes(ownerName);
+  // Unresolved only when the record has NO stable owner identity at all; a recorded id that is someone else's is a definite "not this owner".
+  return { matches: false, nameOnly: ids.size === 0 && !!ownerName && names.includes(ownerName) };
+}
+
+function vehicleOwnerMatchesActor(vehicle, ownerActor) {
+  return vehicleOwnershipEvidence(vehicle, ownerActor).matches;
 }
 
 function ownedVehicleReferencesFromActorOwnership(ownerActor) {
@@ -210,8 +222,10 @@ export function assetModifyAuthorization({ user, ownerActor, assetActor }) {
   if (!assetActor?.id) return { allowed: false, reason: 'LINK_UNRESOLVED' };
   if (user?.isGM) return { allowed: true, reason: null };
   if (assetActor.isOwner !== true) return { allowed: false, reason: 'NO_DOCUMENT_PERMISSION' };
-  if (assetActor.type === 'vehicle' && !vehicleOwnerMatchesActor(assetActor, ownerActor))
-    return { allowed: false, reason: 'NOT_LINKED_AS_PROPERTY' };
+  if (assetActor.type === 'vehicle') {
+    const evidence = vehicleOwnershipEvidence(assetActor, ownerActor);
+    if (!evidence.matches) return { allowed: false, reason: evidence.nameOnly ? 'OWNER_IDENTITY_UNRESOLVED' : 'NOT_LINKED_AS_PROPERTY' };
+  }
   return { allowed: true, reason: null };
 }
 
@@ -321,6 +335,8 @@ function collectOwnedEntries(ownerActor, mode, epTable = null, user = null) {
       epLine: vehicle?.epLabel ?? null,
       ownership: documentPermissionLabel(actor),
       ownedByThisActor: isShipyard ? vehicleOwnerMatchesActor(actor, ownerActor) : null,
+      // a vehicle whose only owner record is a display name (no stable id) is shown as unresolved, never as owned
+      ownerIdentityUnresolved: isShipyard && actor ? vehicleOwnershipEvidence(actor, ownerActor).nameOnly : false,
       modifyBlockedReason: modifyAuth.reason,
       isLinked: Boolean(actor?.id),
       canOpenSheet: Boolean(actor?.id),
