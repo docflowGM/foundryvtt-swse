@@ -2,7 +2,7 @@
  * Encumbrance Engine — Weight & Load Calculation
  *
  * Calculates character encumbrance based on:
- * 1. Total carried weight (items + armor)
+ * 1. Total carried weight in kg (all carried gear incl. unworn armor; see calculateCarriedWeight)
  * 2. Strength-based carrying capacity
  * 3. Load category (light/medium/heavy/overloaded)
  * 4. Movement and skill penalties from encumbrance
@@ -120,30 +120,49 @@ export class EncumbranceEngine {
   }
 
   /**
-   * Calculate total weight carried by actor
-   * Includes equipped armor + inventory items
+   * SINGLE AUTHORITY for carried weight. Canonical unit: kilograms (system.weight, the equipment schema's unit).
+   * Consumers (sheet Gear tab, equipment ledger, derived encumbrance) must read this; none may re-sum item weights.
+   * @param {Actor} actor
+   * @returns {number} total carried weight in kg (rounded to 2 dp)
+   */
+  static calculateCarriedWeight(actor) {
+    return this._calculateTotalWeight(actor);
+  }
+
+  /** Item types that are physical carried gear. Worn and carried-but-unworn armor both count (it is carried either way). */
+  static CARRIED_ITEM_TYPES = Object.freeze(['weapon', 'lightsaber', 'armor', 'equipment', 'gear', 'weaponUpgrade', 'poison']);
+
+  /** Unit weight (kg) of one item: canonical system.weight, else system.economics.weight (normalizer fallback); invalid/negative -> 0. */
+  static itemUnitWeight(item) {
+    const raw = item?.system?.weight ?? item?.system?.economics?.weight;
+    const n = typeof raw === 'number' ? raw : parseFloat(String(raw ?? '').replace(/,/g, ''));
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  }
+
+  /** Quantity: absent/invalid -> 1 (schema default); an explicit 0 stays 0 (zero units carry zero weight). */
+  static itemQuantity(item) {
+    const raw = item?.system?.quantity;
+    if (raw === undefined || raw === null || raw === '') return 1;
+    const n = Number(raw);
+    return Number.isFinite(n) && n >= 0 ? n : 1;
+  }
+
+  /** Total carried weight of one item row (kg) = unit weight x quantity. */
+  static itemCarriedWeight(item) {
+    return this.itemUnitWeight(item) * this.itemQuantity(item);
+  }
+
+  /**
+   * Calculate total weight carried by actor (kg).
    * @private
    */
   static _calculateTotalWeight(actor) {
     let total = 0;
-
-    // Add equipped armor weight
-    const armor = actor.items
-      ?.filter(i => i.type === 'armor' && i.system?.equipped)
-      ?.forEach(armor => {
-        total += (armor.system?.weight || 0);
-      });
-
-    // Add inventory item weights
-    const items = actor.items
-      ?.filter(i => !['armor', 'background', 'feat', 'talent', 'class', 'species'].includes(i.type))
-      ?.forEach(item => {
-        const weight = item.system?.weight || 0;
-        const quantity = item.system?.quantity || 1;
-        total += weight * quantity;
-      });
-
-    return total;
+    for (const item of (actor?.items ?? [])) {
+      if (!this.CARRIED_ITEM_TYPES.includes(item?.type)) continue;
+      total += this.itemCarriedWeight(item);
+    }
+    return Math.round(total * 100) / 100;
   }
 
   /**

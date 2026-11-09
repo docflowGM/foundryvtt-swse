@@ -84,7 +84,7 @@ function fillFormFields(form, exportModel) {
         if (Array.isArray(items)) {
           // For equipment, join with weight; for others, simple join
           if (listKey === 'equipment') {
-            text = items.map((e) => `${e.name} (${e.weight} lbs)`).join('\n');
+            text = items.map((e) => `${e.name} (${e.weight} kg)`).join('\n');
           } else {
             text = items.join('\n');
           }

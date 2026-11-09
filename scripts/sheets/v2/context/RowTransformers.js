@@ -1,6 +1,7 @@
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 import { isAlwaysReadiedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js";
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 
@@ -233,8 +234,8 @@ export class RowTransformers {
       typeLabel: item.type.charAt(0).toUpperCase() + item.type.slice(1),
       label: item.name,
       value: safeNumber(item.system?.value ?? item.system?.cost, 0),
-      quantity: safeNumber(item.system?.quantity, 1) || 1,
-      weight: safeNumber(item.system?.weight, 0),
+      quantity: EncumbranceEngine.itemQuantity(item),
+      weight: EncumbranceEngine.itemUnitWeight(item),
       rarity: item.system?.rarity || 'common',
       equipped,
       activated,
@@ -298,7 +299,7 @@ export class RowTransformers {
       type: 'armor',
       armorType: armor.armorTypeLabel,
       armorTypeKey: armor.armorType,
-      weight: safeNumber(item.system?.weight, 0),
+      weight: EncumbranceEngine.itemUnitWeight(item),
       isPowered: Boolean(item.system?.isPowered),
       isEnergyShield: armor.isEnergyShield,
       upgradeSlots: safeNumber(item.system?.upgradeSlots, 0),
