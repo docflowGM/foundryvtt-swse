@@ -45,7 +45,6 @@ const vmOf = (actor, extra = {}) => buildEquipmentWorkspace(actor, { groups: gro
   assert.ok(vm.slots.length >= 2, 'anatomy supplies appendage slots');
   assert.deepEqual(vm.slots.map((s) => s.id), readCombatReadiness(a, { resolveSpecies: h.deps.resolveSpecies }).state.anatomy.appendages.map((x) => x.id), 'one slot per authoritative appendage, same order');
   assert.ok(vm.slots.every((s) => s.empty && s.occupant === null), 'no occupancy before anything is drawn');
-  assert.equal(vm.slotsLeft.length + vm.slotsRight.length, vm.slots.length);
   assert.equal(vm.items.find((i) => i.id === 's1').category, 'weapons');
   assert.equal(vm.items.find((i) => i.id === 'ar').category, 'armor');
   assert.equal(vm.items.find((i) => i.id === 's1').status.label, 'Stowed');
@@ -158,9 +157,7 @@ ok('static: no document writes, no hardcoded hand layout, every template control
   assert.equal(held.find((s) => s.occupant.isAnchor).id, 'natural-arm-1', 'the anchor is the first appendage in the assignment order');
   assert.equal(vm.heldCount, 1);
   assert.equal(vm.protection.armor.item.id, 'arm'); assert.equal(vm.protection.shield.item, null, 'armor and shield are independent positions');
-  assert.deepEqual(vm.grips.map((g) => [g.itemId, g.count]), [['t1', 2]], 'the grip beam comes straight from the assignment');
   assert.equal(held[0].occupant.art.glyph, 'fa-jedi'); assert.equal(held[0].occupant.art.src, null);
-  assert.equal(vm.portrait.src, 'portrait.webp', 'the actor portrait is used when it is real artwork');
   assert.ok(vm.tabs.every((t) => /^fa-/.test(t.icon)));
   const css = fs.readFileSync('styles/sheets/equipment-workspace.css', 'utf8');
   const ws2 = buildEquipmentWorkspace(a, { groups: [{ entries: [{ id: 'arm', name: 'Armor', type: 'armor', equipped: true }, { id: 'sh', name: 'Shield', type: 'armor', equipped: true, isEnergyShield: true, activated: true }] }], isGM: true, readiness: readCombatReadiness(a, { resolveSpecies: h.deps.resolveSpecies }) });

@@ -1,9 +1,9 @@
 /* ============================================================================
    EQUIPMENT WORKSPACE (Gear tab) — presentation only, scoped to .swse-eqw / .swse-eqw-strip.
 
-   Composition: an equipment bay with the character at the centre, appendage sockets beside it (from the resolved anatomy),
-   armor and personal shield as two independent positions, implants as a supporting row; inventory below; a contextual
-   inspector beside it (wide) or as a bottom drawer (narrow).
+   Composition: equipment first (the sheet header already shows the character). Loadout = hands & manipulators (one card per
+   resolved appendage), protection (armor and personal shield as two independent positions), implants (one wrapping row);
+   inventory below; a contextual inspector beside it (wide) or as a bottom drawer (narrow).
 
    Theme: no palette of its own. Colours, fonts and glow read the LIVE sheet theme tokens written by the actor-sheet theme
    registry (--vapor-cyan / --vapor-pink / --vapor-purple, --ink*, --screen*, --pos / --zero / --neg, --font-*, --glow-mult),
@@ -136,70 +136,42 @@
 .swse-eqw .swse-eqw__meta { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 12.5px; color: var(--eqw-ink-2); }
 .swse-eqw .swse-eqw__meta.is-warn { color: var(--eqw-warn); }
 
-/* ─── REGION A: the equipment bay ──────────────────────────────────────────── */
-.swse-eqw .swse-eqw__bay {
-  display: grid; gap: 12px 16px; align-items: start;
-  grid-template-columns: minmax(150px, 1fr) minmax(210px, 1.45fr) minmax(150px, 1fr);
-  grid-template-areas: "a fig b" "armor fig shield" "imp imp imp";
-  grid-template-rows: auto 1fr auto;
-}
-.swse-eqw .swse-eqw__hands { display: grid; gap: 10px; align-content: start; min-width: 0; }
-.swse-eqw .swse-eqw__hands--a { grid-area: a; }
-.swse-eqw .swse-eqw__hands--b { grid-area: b; }
-.swse-eqw .swse-eqw__guard--armor { grid-area: armor; align-self: end; }
-.swse-eqw .swse-eqw__guard--shield { grid-area: shield; align-self: end; }
-.swse-eqw .swse-eqw__implants { grid-area: imp; }
-
-/* Character */
-.swse-eqw .swse-eqw__figure { grid-area: fig; display: grid; gap: 8px; align-content: start; min-width: 0; }
-.swse-eqw .swse-eqw__holo {
-  position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 10px;
-  border: 1px solid var(--eqw-line);
-  background:
-    radial-gradient(ellipse 70% 18% at 50% 100%, color-mix(in oklab, var(--eqw-accent) 26%, transparent), transparent 70%),
-    radial-gradient(ellipse at 50% 38%, color-mix(in oklab, var(--eqw-deep) 26%, transparent), transparent 72%),
-    linear-gradient(180deg, var(--eqw-screen-2), var(--eqw-well));
-}
-.swse-eqw .swse-eqw__holo::after {
-  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklab, var(--eqw-accent) 6%, transparent) 3px 4px);
-}
-.swse-eqw .swse-eqw__holo > img {
-  position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; border: 0;
-  -webkit-mask-image: linear-gradient(180deg, black 78%, transparent 100%); mask-image: linear-gradient(180deg, black 78%, transparent 100%);
-}
-.swse-eqw .swse-eqw__holo > i { z-index: 1; font-size: clamp(64px, 12cqi, 120px); color: color-mix(in oklab, var(--eqw-accent) 50%, transparent); }
-.swse-eqw .swse-eqw__holo.is-glyph > img { display: none; }
-.swse-eqw .swse-eqw__holo:not(.is-glyph) > i { display: none; }
-.swse-eqw .swse-eqw__figure figcaption { display: grid; gap: 4px; justify-items: center; text-align: center; }
-.swse-eqw .swse-eqw__figure figcaption > strong { font-family: var(--eqw-font-title); font-size: 14px; font-weight: 600; letter-spacing: 0.06em; color: var(--eqw-ink); }
-.swse-eqw .swse-eqw__grip-note { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--eqw-accent); }
+/* ─── REGION A: loadout (equipment first; the sheet header already shows the character) ─── */
+.swse-eqw .swse-eqw__loadout { display: grid; gap: 14px; }
+.swse-eqw .swse-eqw__group { display: grid; gap: 8px; min-width: 0; }
+.swse-eqw .swse-eqw__group-title { display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--eqw-accent); }
+.swse-eqw .swse-eqw__group-title > i { font-size: 11px; opacity: 0.85; }
+/* one card per resolved appendage; two per row, so four manipulators make two rows and odd counts simply leave a gap */
+.swse-eqw .swse-eqw__hands { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; min-width: 0; }
+.swse-eqw .swse-eqw__hands > .swse-eqw__no-hands { grid-column: 1 / -1; }
+.swse-eqw .swse-eqw__protection { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; min-width: 0; }
 
 /* Appendage sockets (primary) and protection positions (secondary) share one tile shape */
 .swse-eqw :is(.swse-eqw__slot, .swse-eqw__guard) {
-  position: relative; display: grid; gap: 8px; align-content: start; width: 100%; min-width: 0; padding: 10px 12px 11px;
+  position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 12px; align-items: center; width: 100%; min-width: 0; padding: 9px 12px;
   border: 1px solid var(--eqw-line); border-radius: 8px;
   background: linear-gradient(180deg, color-mix(in oklab, var(--eqw-screen-2) 70%, transparent), color-mix(in oklab, var(--eqw-well) 85%, transparent));
   transition: border-color 140ms ease, background-color 140ms ease;
 }
 .swse-eqw :is(.swse-eqw__slot, .swse-eqw__guard):hover:not([aria-disabled="true"]) { border-color: var(--eqw-line-strong); }
-/* sockets connect to the figure: a short accent tab on the side that faces the character */
-.swse-eqw .swse-eqw__hands--a .swse-eqw__slot.is-occupied { box-shadow: inset -3px 0 0 var(--rail, var(--eqw-accent)); }
-.swse-eqw .swse-eqw__hands--b .swse-eqw__slot.is-occupied { box-shadow: inset 3px 0 0 var(--rail, var(--eqw-accent)); }
+/* occupied positions carry a state rail on the left (green ready, cyan held, amber withheld) */
+.swse-eqw .swse-eqw__slot.is-occupied { box-shadow: inset 3px 0 0 var(--rail, var(--eqw-accent)); }
 .swse-eqw .swse-eqw__slot.is-tone-ready { --rail: var(--eqw-ok); }
 .swse-eqw .swse-eqw__slot.is-tone-warn { --rail: var(--eqw-warn); }
 
-.swse-eqw .swse-eqw__slot-label { display: flex; align-items: center; gap: 7px; min-width: 0; }
-.swse-eqw .swse-eqw__slot-label > i { font-size: 12px; color: var(--eqw-accent); }
-.swse-eqw .swse-eqw__slot-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 600; letter-spacing: 0.03em; color: var(--eqw-ink-2); }
-.swse-eqw .swse-eqw__slot-label .swse-eqw__led, .swse-eqw .swse-eqw__slot-label .swse-eqw__flag { margin-left: auto; }
+.swse-eqw .swse-eqw__slot-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 600; letter-spacing: 0.03em; color: var(--eqw-ink-3); }
+.swse-eqw .swse-eqw__slot-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; min-width: 0; }
+.swse-eqw .swse-eqw__corner { position: absolute; top: 8px; right: 10px; }
+.swse-eqw .swse-eqw__slot-item.is-dim { font-weight: 500; color: var(--eqw-ink-3); }
+.swse-eqw .swse-eqw__art.is-socket { border-style: dashed; background: transparent; }
+.swse-eqw .swse-eqw__art.is-socket > i { color: color-mix(in oklab, var(--eqw-accent) 45%, transparent); }
+.swse-eqw .swse-eqw__slot.is-linked .swse-eqw__art.is-socket > i { color: var(--eqw-accent); }
 .swse-eqw .swse-eqw__flag { flex: none; padding: 0 6px; font-size: 11px; font-weight: 600; color: var(--eqw-warn); border: 1px solid color-mix(in oklab, var(--eqw-warn) 40%, transparent); border-radius: 4px; }
 .swse-eqw .swse-eqw__flag.is-conflict { color: var(--eqw-danger); border-color: color-mix(in oklab, var(--eqw-danger) 45%, transparent); }
 
-.swse-eqw .swse-eqw__slot-body { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.swse-eqw .swse-eqw__slot-copy { display: grid; gap: 3px; min-width: 0; }
-.swse-eqw .swse-eqw__slot-item { font-size: 15px; font-weight: 600; line-height: 1.2; color: var(--eqw-ink); overflow-wrap: anywhere; }
-.swse-eqw .swse-eqw__readout { font-size: 12.5px; color: var(--eqw-ink-3); }
+.swse-eqw .swse-eqw__slot-copy { display: grid; gap: 1px; min-width: 0; }
+.swse-eqw .swse-eqw__slot-item { font-size: 15px; font-weight: 600; line-height: 1.25; color: var(--eqw-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.swse-eqw .swse-eqw__readout { font-size: 12.5px; color: var(--eqw-ink-3); white-space: nowrap; }
 .swse-eqw .swse-eqw__readout b { color: var(--eqw-ink); font-weight: 600; }
 .swse-eqw .swse-eqw__grip-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--eqw-accent); }
 
@@ -210,15 +182,10 @@
 }
 .swse-eqw .swse-eqw__open.is-inline { display: inline-grid; min-height: 0; padding: 4px 12px; }
 .swse-eqw :is(.swse-eqw__slot, .swse-eqw__guard).is-empty { background: transparent; border-style: dashed; border-color: color-mix(in oklab, var(--eqw-accent) 16%, transparent); }
-.swse-eqw :is(.swse-eqw__slot, .swse-eqw__guard).is-empty .swse-eqw__open { border: 0; min-height: 40px; }
-.swse-eqw .swse-eqw__slot.is-empty:hover .swse-eqw__open { color: var(--eqw-accent); }
 
 /* An item held across several appendages: the non-anchor socket reads "occupied by" (no duplicated weapon) */
+.swse-eqw .swse-eqw__slot.is-empty:hover .swse-eqw__art.is-socket > i { color: var(--eqw-accent); }
 .swse-eqw .swse-eqw__slot.is-linked { background: repeating-linear-gradient(135deg, transparent 0 7px, color-mix(in oklab, var(--eqw-accent) 5%, transparent) 7px 8px), color-mix(in oklab, var(--eqw-well) 70%, transparent); }
-.swse-eqw .swse-eqw__linked { display: flex; align-items: center; gap: 10px; min-height: 46px; }
-.swse-eqw .swse-eqw__linked > i { display: grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 50%; font-size: 13px; color: var(--eqw-accent); border: 1px solid var(--eqw-line-strong); }
-.swse-eqw .swse-eqw__linked strong { display: block; font-size: 14px; font-weight: 600; color: var(--eqw-ink-2); }
-.swse-eqw .swse-eqw__linked small { display: block; font-size: 12.5px; color: var(--eqw-ink-3); }
 
 .swse-eqw .swse-eqw__slot.is-activated .swse-eqw__art { border-color: color-mix(in oklab, var(--eqw-ok) 60%, transparent); }
 .swse-eqw .swse-eqw__slot.is-unavailable { cursor: not-allowed; opacity: 0.6; }
@@ -228,7 +195,7 @@
 
 /* Protection: armor reads as a worn plate, the personal shield as an energy device */
 .swse-eqw .swse-eqw__guard--armor.is-occupied { border-top: 2px solid color-mix(in oklab, var(--eqw-accent) 45%, transparent); }
-.swse-eqw .swse-eqw__guard--shield.is-occupied { border-style: solid; border-radius: 8px 8px 22px 22px; }
+.swse-eqw .swse-eqw__guard--shield.is-occupied .swse-eqw__art { border-radius: 50%; }
 .swse-eqw .swse-eqw__guard--shield.is-energized { border-color: color-mix(in oklab, var(--eqw-ok) 50%, transparent); background: radial-gradient(ellipse 90% 70% at 50% 0%, color-mix(in oklab, var(--eqw-ok) 10%, transparent), transparent 70%), linear-gradient(180deg, color-mix(in oklab, var(--eqw-screen-2) 70%, transparent), color-mix(in oklab, var(--eqw-well) 85%, transparent)); }
 
 /* Selected position: brighter frame + inner glow (one restrained treatment for every position) */
@@ -237,12 +204,12 @@
   box-shadow: 0 0 0 1px var(--eqw-accent), var(--eqw-glow);
 }
 .swse-eqw :is(.swse-eqw__slot, .swse-eqw__guard)[aria-pressed="true"] .swse-eqw__slot-name { color: var(--eqw-accent); }
+.swse-eqw .swse-eqw__group-title .swse-eqw__meta { font-size: 12px; letter-spacing: 0; text-transform: none; font-weight: 600; }
 
-/* Implants (tertiary) */
-.swse-eqw .swse-eqw__implants { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 12px; border-top: 1px solid var(--eqw-line); }
-.swse-eqw .swse-eqw__implants-head { display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px; font-size: 12px; font-weight: 600; color: var(--eqw-ink-2); border: 1px solid transparent; border-radius: 6px; }
-.swse-eqw .swse-eqw__implants-head > i { color: var(--eqw-accent); }
-.swse-eqw .swse-eqw__implants-head:hover { border-color: var(--eqw-line); }
+/* Implants & accessories (tertiary): one compact wrapping row */
+.swse-eqw .swse-eqw__implants { display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; }
+.swse-eqw .swse-eqw__implants-head { display: inline-flex; align-items: center; gap: 8px; padding: 2px 6px 2px 0; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; border-radius: 4px; }
+.swse-eqw .swse-eqw__implants-head:hover { color: var(--eqw-ink); }
 .swse-eqw .swse-eqw__implant-list { display: flex; gap: 6px; flex-wrap: wrap; }
 .swse-eqw .swse-eqw__implant { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px 4px 5px; font-size: 13px; color: var(--eqw-ink); border: 1px solid var(--eqw-line); border-radius: 6px; background: var(--eqw-well); }
 .swse-eqw .swse-eqw__implant:hover { border-color: var(--eqw-line-strong); }
@@ -253,8 +220,8 @@
 .swse-eqw .swse-eqw__clear { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 12.5px; color: var(--eqw-ink-2); border: 1px solid var(--eqw-line); border-radius: 6px; }
 .swse-eqw .swse-eqw__clear:hover { color: var(--eqw-ink); border-color: var(--eqw-line-strong); }
 
-.swse-eqw .swse-eqw__tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--eqw-line); margin-bottom: 10px; }
-.swse-eqw .swse-eqw__tab { position: relative; display: inline-flex; align-items: center; gap: 7px; flex: none; padding: 8px 12px 10px; font-size: 13px; font-weight: 600; color: var(--eqw-ink-3); transition: color 140ms ease; }
+.swse-eqw .swse-eqw__tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--eqw-line); margin-bottom: 6px; }
+.swse-eqw .swse-eqw__tab { position: relative; display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 7px 8px 9px; font-size: 13px; font-weight: 600; color: var(--eqw-ink-3); transition: color 140ms ease; }
 .swse-eqw .swse-eqw__tab > i { font-size: 12px; }
 .swse-eqw .swse-eqw__tab::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--eqw-accent); transform: scaleX(0); transition: transform 160ms var(--eqw-ease); }
 .swse-eqw .swse-eqw__tab:hover { color: var(--eqw-ink); }
@@ -263,11 +230,12 @@
 .swse-eqw .swse-eqw__tab[aria-selected="true"]::after { transform: scaleX(1); }
 .swse-eqw .swse-eqw__tab[aria-selected="true"] .swse-eqw__count { color: var(--eqw-accent); background: var(--eqw-fill-strong); }
 
-.swse-eqw .swse-eqw__tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
-.swse-eqw .swse-eqw__search { position: relative; flex: 1 1 220px; display: flex; align-items: center; }
+.swse-eqw .swse-eqw__tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; flex: 1 1 200px; max-width: 300px; margin-left: auto; }
+.swse-eqw .swse-eqw__clear + .swse-eqw__tools, .swse-eqw .swse-eqw__clear:not([hidden]) ~ .swse-eqw__tools { margin-left: 0; }
+.swse-eqw .swse-eqw__search { position: relative; flex: 1 1 180px; display: flex; align-items: center; }
 .swse-eqw .swse-eqw__search > i { position: absolute; left: 11px; font-size: 12px; color: var(--eqw-ink-3); pointer-events: none; }
 .swse-eqw .swse-eqw__search input {
-  width: 100%; height: 34px; margin: 0; padding: 0 10px 0 32px; font-family: var(--eqw-font-body); font-size: 13.5px; color: var(--eqw-ink);
+  width: 100%; height: 30px; margin: 0; padding: 0 10px 0 32px; font-family: var(--eqw-font-body); font-size: 13.5px; color: var(--eqw-ink);
   background: var(--eqw-well); border: 1px solid var(--eqw-line); border-radius: 6px; box-shadow: none; transition: border-color 140ms ease;
 }
 .swse-eqw .swse-eqw__search input::placeholder { color: var(--eqw-ink-3); opacity: 1; }
@@ -275,14 +243,14 @@
 .swse-eqw .swse-eqw__toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--eqw-ink-2); cursor: pointer; }
 .swse-eqw .swse-eqw__toggle input { accent-color: var(--eqw-accent); margin: 0; }
 
-.swse-eqw .swse-eqw__list { display: grid; gap: 2px; max-height: min(24rem, 50vh); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--eqw-line-strong) transparent; }
+.swse-eqw .swse-eqw__list { display: grid; gap: 1px; max-height: min(26rem, 52vh); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--eqw-line-strong) transparent; }
 .swse-eqw .swse-eqw__row { --tone: transparent; }
 .swse-eqw .swse-eqw__row.is-tone-ready { --tone: var(--eqw-ok); }
 .swse-eqw .swse-eqw__row.is-tone-held { --tone: var(--eqw-accent); }
 .swse-eqw .swse-eqw__row.is-tone-warn { --tone: var(--eqw-warn); }
 .swse-eqw .swse-eqw__row.is-tone-conflict { --tone: var(--eqw-danger); }
 .swse-eqw .swse-eqw__row-main {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 12px; width: 100%; padding: 7px 12px 7px 9px;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 12px; width: 100%; padding: 5px 12px 5px 9px;
   border-left: 3px solid var(--tone); border-radius: 0 6px 6px 0; transition: background-color 120ms ease;
 }
 .swse-eqw .swse-eqw__row-main:hover { background: var(--eqw-fill); }
@@ -303,7 +271,10 @@
 .swse-eqw .swse-eqw__empty { color: var(--eqw-ink-3); font-size: 13px; margin: 8px 0 0; }
 
 /* ─── REGION C: inspector ──────────────────────────────────────────────────── */
-.swse-eqw .swse-eqw__inspector { position: sticky; top: 8px; display: grid; min-width: 0; }
+/* The sheet forces `position: relative !important` on every .swse-concept-panel; the inspector needs sticky positioning,
+   so this one rule is raised (scoped to the workspace's own inspector) instead of changing the global panel rule. */
+.swse-eqw > .swse-eqw__layout > .swse-eqw__inspector.swse-concept-panel { position: sticky !important; top: 8px; }
+.swse-eqw .swse-eqw__inspector { display: grid; min-width: 0; }
 
 /* Overview when nothing is selected (compact, made from the same view model) */
 .swse-eqw .swse-eqw__overview { display: grid; gap: 8px; }
@@ -431,22 +402,19 @@
 /* ─── Responsive (container-based) ─────────────────────────────────────────── */
 @container (max-width: 860px) {
   .swse-eqw .swse-eqw__layout { grid-template-columns: minmax(0, 1fr) minmax(250px, 280px); }
-  .swse-eqw .swse-eqw__bay { grid-template-columns: minmax(0, 1fr) minmax(150px, 1fr) minmax(0, 1fr); gap: 10px 12px; }
 }
 @container (max-width: 700px) {
   .swse-eqw .swse-eqw__layout { grid-template-columns: minmax(0, 1fr); }
   .swse-eqw .swse-eqw__inspector:has(> .swse-eqw__overview:not([hidden])) { display: none; }
   /* the inspector becomes a drawer pinned to the bottom of the visible sheet while an item is selected */
+  .swse-eqw > .swse-eqw__layout > .swse-eqw__inspector.swse-concept-panel { top: auto; bottom: 0; background: color-mix(in oklab, var(--eqw-screen) 94%, black) !important; }
   .swse-eqw .swse-eqw__inspector {
-    position: sticky; bottom: 0; top: auto; z-index: 5; max-height: min(70vh, 560px); overflow-y: auto;
+    z-index: 5; max-height: min(70vh, 560px); overflow-y: auto;
     border-radius: 12px 12px 0 0; box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.55), 0 -1px 0 var(--eqw-line-strong);
-    background: color-mix(in oklab, var(--eqw-screen) 94%, black) !important;
   }
 }
-@container (max-width: 640px) {
-  .swse-eqw .swse-eqw__bay { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "fig fig" "a b" "armor shield" "imp imp"; grid-template-rows: none; }
-  .swse-eqw .swse-eqw__figure { justify-self: center; width: min(220px, 70%); }
-  .swse-eqw .swse-eqw__guard--armor, .swse-eqw .swse-eqw__guard--shield { align-self: stretch; }
+@container (max-width: 420px) {
+  .swse-eqw .swse-eqw__hands, .swse-eqw .swse-eqw__protection { grid-template-columns: minmax(0, 1fr); }
 }
 @container (max-width: 520px) {
   .swse-eqw .swse-eqw__row-main { grid-template-columns: auto minmax(0, 1fr) auto; }

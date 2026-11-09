@@ -16,79 +16,65 @@
   <div class="swse-eqw__layout">
     <div class="swse-eqw__main">
 
-      {{!-- REGION A: the equipment bay. The character sits at the centre; appendage sockets come from the resolved anatomy, armor and
-           personal shield are separate, always-visible positions, implants are a supporting row. Arrangement is presentation only. --}}
-      <section class="swse-concept-panel swse-eqw__panel swse-eqw__bay-panel" aria-labelledby="eqw-figure-title">
-        <header class="swse-concept-panel__header swse-eqw__panel-head">
-          <h3 class="swse-concept-panel__title" id="eqw-figure-title">Loadout</h3>
-          {{#if ws.anatomy}}{{#unless ws.anatomy.resolved}}<span class="swse-eqw__meta is-warn"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Anatomy {{ws.anatomy.statusLabel}}</span>{{/unless}}{{/if}}
-        </header>
+      {{!-- REGION A: loadout, equipment first. The sheet header already shows the character, so the tab spends its space on positions:
+           hands & manipulators (one per resolved appendage, in authority order), protection (armor and personal shield as two independent
+           positions), implants (installed rows only). Arrangement is presentation only. --}}
+      <section class="swse-concept-panel swse-eqw__panel swse-eqw__loadout" aria-label="Loadout">
 
-        <div class="swse-eqw__bay{{#unless ws.hasSlots}} is-slotless{{/unless}}{{#if ws.manyAppendages}} is-many{{/if}}">
-          <div class="swse-eqw__hands swse-eqw__hands--a" role="group" aria-label="Hands and appendages">
-            {{#each ws.slotsLeft as |slot|}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-slot.hbs" slot=slot}}{{/each}}
-            {{#unless ws.hasSlots}}<p class="swse-eqw__no-hands"><i class="fa-solid fa-hand" aria-hidden="true"></i> No hands or manipulators are established for this character, so nothing can be held yet.</p>{{/unless}}
+        <section class="swse-eqw__group" aria-labelledby="eqw-hands-title">
+          <h4 class="swse-eqw__group-title" id="eqw-hands-title"><i class="fa-solid fa-hand" aria-hidden="true"></i> Hands &amp; manipulators{{#if ws.anatomy}}{{#unless ws.anatomy.resolved}}<span class="swse-eqw__meta is-warn"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Anatomy {{ws.anatomy.statusLabel}}</span>{{/unless}}{{/if}}</h4>
+          <div class="swse-eqw__hands{{#if ws.manyAppendages}} is-many{{/if}}" role="group" aria-labelledby="eqw-hands-title">
+            {{#each ws.slots as |slot|}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-slot.hbs" slot=slot}}{{/each}}
+            {{#unless ws.hasSlots}}<p class="swse-eqw__no-hands"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> No hands or manipulators are established for this character, so nothing can be held yet.</p>{{/unless}}
           </div>
+        </section>
 
-          <figure class="swse-eqw__figure">
-            <div class="swse-eqw__holo{{#unless ws.portrait.src}} is-glyph{{/unless}}">
-              <i class="fa-solid {{ws.portrait.glyph}}" aria-hidden="true"></i>
-              {{#if ws.portrait.src}}<img src="{{ws.portrait.src}}" alt="" loading="lazy" decoding="async" data-eqw-img>{{/if}}
-            </div>
-            <figcaption>
-              <strong>{{ws.portrait.name}}</strong>
-              {{#each ws.grips as |g|}}<span class="swse-eqw__grip-note"><i class="fa-solid fa-link" aria-hidden="true"></i> {{g.name}} · {{g.slotLabels}}</span>{{/each}}
-            </figcaption>
-          </figure>
-
-          <div class="swse-eqw__hands swse-eqw__hands--b" role="group" aria-label="Hands and appendages (continued)">
-            {{#each ws.slotsRight as |slot|}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-slot.hbs" slot=slot}}{{/each}}
-          </div>
-
-          {{!-- Protection: armor and personal shield are independent positions; each shows its own state (worn / activation). --}}
-          {{#with ws.protection.armor as |pa|}}
-          <button type="button" class="swse-eqw__guard swse-eqw__guard--armor{{#if pa.item}} is-occupied{{else}} is-empty{{/if}}" data-eqw-station="armor" aria-pressed="false">
-            <span class="swse-eqw__slot-label"><i class="fa-solid fa-user-shield" aria-hidden="true"></i><span class="swse-eqw__slot-name">Armor</span></span>
-            {{#if pa.item}}
-              <span class="swse-eqw__slot-body">
-                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=pa.item.art size="md"}}
-                <span class="swse-eqw__slot-copy">
+        <section class="swse-eqw__group" aria-labelledby="eqw-prot-title">
+          <h4 class="swse-eqw__group-title" id="eqw-prot-title"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Protection</h4>
+          {{!-- armor and personal shield are independent positions; each shows its own state (worn / activation) --}}
+          <div class="swse-eqw__protection">
+            {{#with ws.protection.armor as |pa|}}
+            <button type="button" class="swse-eqw__guard swse-eqw__guard--armor{{#if pa.item}} is-occupied{{else}} is-empty{{/if}}" data-eqw-station="armor" aria-pressed="false">
+              {{#if pa.item}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=pa.item.art size="md"}}{{else}}<span class="swse-eqw__art swse-eqw__art--md is-glyph is-socket" aria-hidden="true"><i class="fa-solid fa-user-shield"></i></span>{{/if}}
+              <span class="swse-eqw__slot-copy">
+                <span class="swse-eqw__slot-name">Armor</span>
+                {{#if pa.item}}
                   <strong class="swse-eqw__slot-item">{{pa.item.name}}{{#if pa.extra}} <span class="swse-eqw__qty">+{{pa.extra}}</span>{{/if}}</strong>
-                  <span class="swse-eqw__state is-{{pa.item.status.tone}}">{{pa.item.status.label}}</span>
-                </span>
+                  <span class="swse-eqw__slot-meta">
+                    <span class="swse-eqw__state is-{{pa.item.status.tone}}">{{pa.item.status.label}}</span>
+                    {{#if pa.item.armorStats}}<span class="swse-eqw__readout">Ref <b>{{numberFormat pa.item.armorStats.reflexBonus decimals=0 sign=true}}</b> · Fort <b>{{numberFormat pa.item.armorStats.fortitudeBonus decimals=0 sign=true}}</b></span>{{/if}}
+                  </span>
+                {{else}}<strong class="swse-eqw__slot-item is-dim">No armor worn</strong>{{/if}}
               </span>
-              {{#if pa.item.armorStats}}<span class="swse-eqw__readout">Reflex <b>{{numberFormat pa.item.armorStats.reflexBonus decimals=0 sign=true}}</b> · Fortitude <b>{{numberFormat pa.item.armorStats.fortitudeBonus decimals=0 sign=true}}</b></span>{{/if}}
-            {{else}}<span class="swse-eqw__open">No armor worn</span>{{/if}}
-          </button>
-          {{/with}}
-          {{#with ws.protection.shield as |ps|}}
-          <button type="button" class="swse-eqw__guard swse-eqw__guard--shield{{#if ps.item}} is-occupied{{#if ps.item.activated}} is-energized{{/if}}{{else}} is-empty{{/if}}" data-eqw-station="shields" aria-pressed="false">
-            <span class="swse-eqw__slot-label"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span class="swse-eqw__slot-name">Personal shield</span></span>
-            {{#if ps.item}}
-              <span class="swse-eqw__slot-body">
-                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=ps.item.art size="md"}}
-                <span class="swse-eqw__slot-copy">
+            </button>
+            {{/with}}
+            {{#with ws.protection.shield as |ps|}}
+            <button type="button" class="swse-eqw__guard swse-eqw__guard--shield{{#if ps.item}} is-occupied{{#if ps.item.activated}} is-energized{{/if}}{{else}} is-empty{{/if}}" data-eqw-station="shields" aria-pressed="false">
+              {{#if ps.item}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=ps.item.art size="md"}}{{else}}<span class="swse-eqw__art swse-eqw__art--md is-glyph is-socket" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>{{/if}}
+              <span class="swse-eqw__slot-copy">
+                <span class="swse-eqw__slot-name">Personal shield</span>
+                {{#if ps.item}}
                   <strong class="swse-eqw__slot-item">{{ps.item.name}}{{#if ps.extra}} <span class="swse-eqw__qty">+{{ps.extra}}</span>{{/if}}</strong>
-                  <span class="swse-eqw__state-pair">
+                  <span class="swse-eqw__slot-meta">
                     <span class="swse-eqw__state is-held">Worn</span>
                     <span class="swse-eqw__state {{#if ps.item.activated}}is-ready{{else}}is-stowed{{/if}}">{{#if ps.item.activated}}Active{{else}}Inactive{{/if}}</span>
+                    <span class="swse-eqw__readout">SR <b>{{ps.item.currentSR}} / {{ps.item.shieldRating}}</b></span>
                   </span>
-                </span>
+                {{else}}<strong class="swse-eqw__slot-item is-dim">No shield</strong>{{/if}}
               </span>
-              <span class="swse-eqw__readout">Shield rating <b>{{ps.item.currentSR}} / {{ps.item.shieldRating}}</b></span>
-            {{else}}<span class="swse-eqw__open">No shield</span>{{/if}}
-          </button>
-          {{/with}}
+            </button>
+            {{/with}}
+          </div>
+        </section>
 
-          <div class="swse-eqw__implants" role="group" aria-label="Implants">
-            <button type="button" class="swse-eqw__implants-head" data-eqw-station="implants" aria-pressed="false"><i class="fa-solid fa-microchip" aria-hidden="true"></i><span>Implants</span></button>
+        <section class="swse-eqw__group swse-eqw__implants" aria-labelledby="eqw-imp-title">
+          <h4 class="swse-eqw__group-title" id="eqw-imp-title"><button type="button" class="swse-eqw__implants-head" data-eqw-station="implants" aria-pressed="false"><i class="fa-solid fa-microchip" aria-hidden="true"></i> Implants &amp; accessories</button></h4>
             {{#if ws.worn.implants.length}}
               <ul class="swse-eqw__implant-list" role="list">
                 {{#each ws.worn.implants as |im|}}<li><button type="button" class="swse-eqw__implant" data-eqw-select="{{im.id}}" aria-pressed="false">{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=im.art size="xs"}}<span>{{im.name}}</span>{{#if im.isActiveImplant}}<span class="swse-eqw__led is-on" title="Active"></span>{{/if}}</button></li>{{/each}}
               </ul>
             {{else}}<span class="swse-eqw__open is-inline">None installed</span>{{/if}}
-          </div>
-        </div>
+        </section>
       </section>
 
       {{!-- REGION B: inventory manifest --}}
@@ -97,15 +83,15 @@
           <h3 class="swse-concept-panel__title" id="eqw-inv-title">Inventory</h3>
           <span class="swse-eqw__context" data-eqw-context hidden></span>
           <button type="button" class="swse-eqw__clear" data-eqw-clear hidden><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear</button>
+          <div class="swse-eqw__tools">
+            <label class="swse-eqw__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="swse-eqw__sr">Search inventory</span><input type="search" data-eqw-search placeholder="Search manifest…" autocomplete="off" spellcheck="false"></label>
+            <label class="swse-eqw__toggle" data-eqw-incompat-toggle hidden><input type="checkbox" data-eqw-show-incompatible><span>Show incompatible (<span data-eqw-incompat-count>0</span>)</span></label>
+          </div>
         </header>
         <div class="swse-eqw__tabs" role="tablist" aria-label="Inventory categories">
           {{#each ws.tabs as |tab|}}
             <button type="button" role="tab" class="swse-eqw__tab" data-eqw-tab="{{tab.id}}" aria-selected="{{#if (eq tab.id 'all')}}true{{else}}false{{/if}}"><i class="fa-solid {{tab.icon}}" aria-hidden="true"></i><span>{{tab.label}}</span><span class="swse-eqw__count">{{tab.count}}</span></button>
           {{/each}}
-        </div>
-        <div class="swse-eqw__tools">
-          <label class="swse-eqw__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="swse-eqw__sr">Search inventory</span><input type="search" data-eqw-search placeholder="Search manifest…" autocomplete="off" spellcheck="false"></label>
-          <label class="swse-eqw__toggle" data-eqw-incompat-toggle hidden><input type="checkbox" data-eqw-show-incompatible><span>Show incompatible (<span data-eqw-incompat-count>0</span>)</span></label>
         </div>
 
         <ul class="swse-eqw__list" data-eqw-list role="list">

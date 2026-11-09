@@ -227,13 +227,6 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       } : null,
     };
   });
-  // items held across more than one appendage, straight from the occupancy assignments (shown as a grip link on the figure)
-  const grips = assignments.filter((a) => asArray(a.appendageIds).length > 1).map((a) => ({
-    itemId: a.itemId,
-    name: itemById.get(a.itemId)?.name ?? 'Unknown item',
-    slotLabels: asArray(a.appendageIds).map(humanize).join(' + '),
-    count: asArray(a.appendageIds).length,
-  }));
 
   const counts = { all: items.length };
   for (const t of WORKSPACE_TABS) if (t.id !== 'all') counts[t.id] = items.filter((i) => i.category === t.id).length;
@@ -247,20 +240,13 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
     implants: items.filter((i) => i.category === 'implants' && (i.isActiveImplant || i.status.label === 'Installed')),
   };
 
-  // figure layout is presentation only: appendage slots are split around the central stations in authoritative order
-  const half = Math.ceil(slots.length / 2);
   const stations = [
     { id: 'armor', label: 'Armor', tab: 'armor', items: worn.armor },
     { id: 'shields', label: 'Shield', tab: 'shields', items: worn.shields },
     { id: 'implants', label: 'Implants', tab: 'implants', items: worn.implants },
   ].map((st) => ({ ...st, glyph: CATEGORY_GLYPH[st.tab], empty: st.items.length === 0, primary: st.items[0] ?? null, extra: Math.max(0, st.items.length - 1) }));
-  const droidLike = String(actor?.type ?? '').toLowerCase() === 'droid' || /droid/i.test(String(anatomy?.anatomyKind ?? ''));
 
   return {
-    // the actor's own artwork; Foundry's default silhouette (or none) shows a themed placeholder glyph instead
-    portrait: { ...artOf(actor?.img, droidLike ? 'fa-robot' : 'fa-user-astronaut'), name: actor?.name ?? '' },
-    grips,
-    hasGrips: grips.length > 0,
     // armor and personal shield are independent display positions (both may be filled at once); rows already classified by the armor SSOT
     protection: {
       armor: { item: worn.armor[0] ?? null, extra: Math.max(0, worn.armor.length - 1) },
@@ -269,8 +255,6 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
     heldCount: slots.filter((s) => s.occupant?.isAnchor).length,
     manyAppendages: slots.length > 2,
     appendageCount: slots.length,
-    slotsLeft: slots.slice(0, half),
-    slotsRight: slots.slice(half),
     stations,
     available: !!state,
     notices,

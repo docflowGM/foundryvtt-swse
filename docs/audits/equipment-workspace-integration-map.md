@@ -69,5 +69,24 @@ A was chosen. Its positions sit physically around the character, so a weapon spa
 
 Droid note: in the harness, the droid scenario's anatomy is unresolved with no manipulators (the anatomy authority's fail-closed result for legacy droid parts). The bay shows that honestly instead of inventing hands.
 
+## Composition revision: portrait removed (equipment first)
+The sheet header already shows the character's portrait and identity, so the workspace no longer repeats it. The loadout is now three groups:
+- **Hands & manipulators:** one compact card per resolved appendage in authority order, two per row; four appendages make two rows.
+- **Protection:** armor and personal shield, side by side and independent.
+- **Implants & accessories:** a single wrapping row.
+
+Inventory search moved into the inventory header. Measured at the default sheet width (980px tab), the first inventory row now starts:
+
+| Scenario | Before | After |
+|---|---|---|
+| Two weapons | 676px | 474px |
+| Two-handed | 715px | 474px |
+| Four arms | 723px | 559px |
+| Implants | 688px | 514px |
+
+The view-model fields that only fed the portrait layout (`portrait`, `slotsLeft`/`slotsRight`, `grips`) were removed.
+
+Inspector positioning: the sheet forces `position: relative !important` and a translucent background on every `.swse-concept-panel`. The workspace raises only its own inspector's rule, to keep it sticky beside the inventory on wide layouts and to make it an opaque bottom drawer on narrow ones. Global panel CSS is unchanged.
+
 ## Not verified
 Live Foundry v13 rendering, real drag/scroll/focus preservation across a real `requestSurfaceRender`, real placement submission by a GM, portrait asset and icon loading. Layout QA rendered the real `gear-tab.hbs` with a real view model in Chromium, inside the real sheet ancestry classes, with every stylesheet in `system.json`, the theme registry's inline tokens, the system fonts and Font Awesome. Only the placement module was stubbed, replaying real coordinator verdicts. This is not a Foundry runtime test.
