@@ -144,6 +144,11 @@
 /* one card per resolved appendage; two per row, so four manipulators make two rows and odd counts simply leave a gap */
 .swse-eqw .swse-eqw__hands { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; min-width: 0; }
 .swse-eqw .swse-eqw__hands > .swse-eqw__no-hands { grid-column: 1 / -1; }
+.swse-eqw .swse-eqw__unarmed { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; padding: 4px 4px 0 12px; font-size: 13px; color: var(--eqw-ink-2); }
+.swse-eqw .swse-eqw__unarmed > i { color: var(--eqw-accent); }
+.swse-eqw .swse-eqw__unarmed > span { flex: 1; min-width: 0; }
+.swse-eqw .swse-eqw__unarmed strong { color: var(--eqw-ink); font-weight: 600; }
+.swse-eqw .swse-eqw__unarmed .swse-concept-btn { min-height: 28px; padding: 3px 12px; font-size: 12.5px; }
 .swse-eqw .swse-eqw__protection { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; min-width: 0; }
 
 /* Appendage sockets (primary) and protection positions (secondary) share one tile shape */

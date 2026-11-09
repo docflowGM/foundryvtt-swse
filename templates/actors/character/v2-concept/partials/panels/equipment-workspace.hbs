@@ -25,6 +25,7 @@
           <h4 class="swse-eqw__group-title" id="eqw-hands-title"><i class="fa-solid fa-hand" aria-hidden="true"></i> Hands &amp; manipulators{{#if ws.anatomy}}{{#unless ws.anatomy.resolved}}<span class="swse-eqw__meta is-warn"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Anatomy {{ws.anatomy.statusLabel}}</span>{{/unless}}{{/if}}</h4>
           <div class="swse-eqw__hands{{#if ws.manyAppendages}} is-many{{/if}}" role="group" aria-labelledby="eqw-hands-title">
             {{#each ws.slots as |slot|}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-slot.hbs" slot=slot}}{{/each}}
+            {{#if ws.unarmed}}<div class="swse-eqw__unarmed"><i class="fa-solid fa-hand-fist" aria-hidden="true"></i><span><strong>{{ws.unarmed.name}}</strong> <span class="swse-eqw__readout">Always available{{#if ws.unarmed.attackLabel}} · <b>{{ws.unarmed.attackLabel}}</b>{{/if}}{{#if ws.unarmed.damageLabel}} · <b>{{ws.unarmed.damageLabel}}</b>{{/if}}</span></span><button type="button" class="swse-concept-btn" data-action="roll-unarmed-attack"><i class="fa-solid fa-dice-d20" aria-hidden="true"></i> Roll</button></div>{{/if}}
             {{#unless ws.hasSlots}}<p class="swse-eqw__no-hands"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> No hands or manipulators are established for this character, so nothing can be held yet.</p>{{/unless}}
           </div>
         </section>

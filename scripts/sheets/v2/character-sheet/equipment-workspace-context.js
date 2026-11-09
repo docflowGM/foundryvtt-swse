@@ -92,12 +92,12 @@ function wornStatus(row) {
 
 /**
  * @param {Actor} actor
- * @param {{groups?:object[], attackViews?:Map<string,object>, isGM?:boolean, readiness?:object}} input
+ * @param {{groups?:object[], attackViews?:Map<string,object>, isGM?:boolean, readiness?:object, unarmed?:object}} input
  *   groups      the sheet's inventory groups (rows already carry weaponReadiness / weaponConfiguration / weaponPowerSource / modificationV2)
  *   attackViews the sheet's attack views keyed by weapon id (authoritative attack/damage/range/ammo display values)
  *   readiness   optional pre-read readCombatReadiness(actor) (tests / callers that already hold one)
  */
-export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new Map(), isGM = false, readiness = null } = {}) {
+export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new Map(), isGM = false, readiness = null, unarmed = null } = {}) {
   let rd = readiness;
   if (!rd) { try { rd = readCombatReadiness(actor); } catch (_err) { rd = null; } }
   const state = rd?.state ?? null;
@@ -135,7 +135,8 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       img: row.img,
       art: artOf(row.img, glyphOfRow(row, category)),
       category,
-      typeLabel: row.typeLabel,
+      // player-facing label: an energy shield is an armor-type item mechanically but is presented as a personal shield (classification unchanged)
+      typeLabel: category === 'shields' ? 'Personal shield' : row.typeLabel,
       quantity: Number(row.quantity) || 1,
       showQuantity: (Number(row.quantity) || 1) > 1,
       weight: row.weight,
@@ -253,6 +254,8 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       shield: { item: worn.shields[0] ?? null, extra: Math.max(0, worn.shields.length - 1) },
     },
     heldCount: slots.filter((s) => s.occupant?.isAnchor).length,
+    // the sheet's always-available unarmed attack (virtual loadout entry built by concept-context); rolled by the existing roll-unarmed-attack action
+    unarmed: unarmed ? { name: unarmed.name || 'Unarmed Strike', attackLabel: signed(unarmed.attackTotal), damageLabel: unarmed.damageFormula || '' } : null,
     manyAppendages: slots.length > 2,
     appendageCount: slots.length,
     stations,

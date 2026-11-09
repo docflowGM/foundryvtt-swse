@@ -162,6 +162,11 @@ ok('static: no document writes, no hardcoded hand layout, every template control
   const css = fs.readFileSync('styles/sheets/equipment-workspace.css', 'utf8');
   const ws2 = buildEquipmentWorkspace(a, { groups: [{ entries: [{ id: 'arm', name: 'Armor', type: 'armor', equipped: true }, { id: 'sh', name: 'Shield', type: 'armor', equipped: true, isEnergyShield: true, activated: true }] }], isGM: true, readiness: readCombatReadiness(a, { resolveSpecies: h.deps.resolveSpecies }) });
   assert.equal(ws2.protection.armor.item.id, 'arm'); assert.equal(ws2.protection.shield.item.id, 'sh', 'armor and an energy shield are shown at the same time');
+  assert.equal(ws2.items.find((i) => i.id === 'sh').typeLabel, 'Personal shield', 'an energy shield is labelled as a personal shield');
+  assert.equal(ws2.items.find((i) => i.id === 'sh').category, 'shields'); assert.equal(ws2.items.find((i) => i.id === 'arm').category, 'armor');
+  const wsU = buildEquipmentWorkspace(a, { groups: [], isGM: true, readiness: readCombatReadiness(a, { resolveSpecies: h.deps.resolveSpecies }), unarmed: { name: 'Unarmed Strike', attackTotal: 3, damageFormula: '1d4' } });
+  assert.deepEqual(wsU.unarmed, { name: 'Unarmed Strike', attackLabel: '+3', damageLabel: '1d4' }, 'the always-available unarmed attack is surfaced from the sheet entry');
+  assert.ok(fs.readFileSync('templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs', 'utf8').includes('data-action="roll-unarmed-attack"'), 'unarmed attack keeps its Gear-tab roll control');
   const tplA = fs.readFileSync('templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs', 'utf8');
   assert.ok(tplA.includes('data-eqw-station="armor"') && tplA.includes('data-eqw-station="shields"'), 'armor and shield have separate positions');
   const gearTab2 = fs.readFileSync('templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs', 'utf8');

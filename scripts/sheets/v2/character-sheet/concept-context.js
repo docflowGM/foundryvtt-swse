@@ -2077,7 +2077,8 @@ export function buildConceptSheetViewModel(context = {}) {
       workspace: buildEquipmentWorkspace(actor, {
         groups: gearGroups,
         attackViews: new Map(attackEntries.map(buildAttackView).filter((a) => a.weaponId).map((a) => [a.weaponId, a])),
-        isGM: globalThis.game?.user?.isGM === true
+        isGM: globalThis.game?.user?.isGM === true,
+        unarmed: virtualUnarmedLoadoutEntry
       })
     },
     biography: {
