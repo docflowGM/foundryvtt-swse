@@ -98,4 +98,21 @@ assert.equal(inv.totalWeight, authority); ok('inventory panel total comes from t
   assert.ok(compared > 100, `compared ${compared}`); assert.deepEqual(diff, []);
   ok(`weapon pack system.weight equals registry canonicalStats.weightKg for all ${compared} comparable records (registry has ${[...kg.values()].filter((v) => v == null).length} unrecorded)`);
 }
+// strict full-value parsing: malformed weights are never "verified" and never contribute a partial number
+{
+  const good = { 2: 2, 0: 0, 1.5: 1.5, '2': 2, ' 2.5 ': 2.5, '0': 0, '1,200': 1200, '1,200.5': 1200.5, '12': 12 };
+  for (const [raw, want] of Object.entries(good)) { const v = E.parseWeightKg(isNaN(raw) ? raw : (raw.includes('.') || raw.includes(',') || raw.trim() !== raw ? raw : Number(raw))); assert.equal(v, want, `${JSON.stringify(raw)}`); }
+  for (const raw of ['2kg', '2 kg', 'kg', '2abc', '1,2,3', '1,20', '1,2000', ',5', '5,', '1e3', '0x10', '2 3', '2.', '.5', '--2', '+2', '-2', -2, NaN, Infinity, -Infinity, '', '   ', null, undefined, true, false, [], [2], {}, { v: 2 }, () => 2]) {
+    assert.equal(E.parseWeightKg(raw), null, `malformed ${typeof raw === 'string' ? JSON.stringify(raw) : String(raw)}`);
+    const row = it('equipment', { weight: raw }, 'm');
+    assert.equal(E.itemWeightVerified(row), false);
+    assert.equal(E.itemUnitWeight(row), 0, 'malformed weight contributes nothing (never a partial parse)');
+  }
+  assert.equal(E.calculateCarriedWeight(actor([it('equipment', { weight: '2kg', quantity: 3 })])), 0);
+  assert.deepEqual(E.carriedWeightReport(actor([it('equipment', { weight: '2kg' }, 'u')])).unverified.map((x) => x.id), ['u']);
+  assert.equal(E.itemWeightVerified(it('equipment', { weight: '2.5' })), true); assert.equal(E.itemWeightVerified(it('equipment', { weight: 0 })), true);
+  // the unit weight and the verified flag can never disagree
+  for (const raw of [2, '2', '2kg', 'x', '', null, -1, 0, '1,200']) { const row = it('equipment', { weight: raw }); assert.equal(E.itemWeightVerified(row), E.parseWeightKg(raw) !== null); assert.equal(E.itemUnitWeight(row), E.parseWeightKg(raw) ?? 0); }
+  ok('strict weight parsing: unit suffixes, mixed text, bad commas, exponent/hex, signs, booleans, objects and NaN are never verified and contribute 0');
+}
 console.log(`equipment-weight-convergence: ${n} checks ok`);

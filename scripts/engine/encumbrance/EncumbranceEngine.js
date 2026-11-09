@@ -134,20 +134,30 @@ export class EncumbranceEngine {
 
   /** Unit weight (kg) of one item: canonical system.weight, else system.economics.weight (normalizer fallback); invalid/negative -> 0. */
   static itemUnitWeight(item) {
-    const raw = item?.system?.weight ?? item?.system?.economics?.weight;
-    const n = typeof raw === 'number' ? raw : parseFloat(String(raw ?? '').replace(/,/g, ''));
-    return Number.isFinite(n) && n > 0 ? n : 0;
+    return this.parseWeightKg(item?.system?.weight ?? item?.system?.economics?.weight) ?? 0;
   }
 
   /**
-   * Is the item's weight an explicit, valid recorded value? An explicit 0 is a verified zero; absent, blank, non-numeric or negative is NOT
+   * Strict full-value weight parser (kg). Accepts a finite non-negative number, or a string that is ENTIRELY a plain decimal
+   * (optionally with well-formed thousands commas such as "1,200.5"). Anything else (unit suffixes like "2kg", mixed text, exponent/hex forms,
+   * misplaced commas, booleans, objects, NaN/Infinity, negatives, blank) is not a recorded weight and returns null.
+   * @returns {number|null}
+   */
+  static parseWeightKg(raw) {
+    if (typeof raw === 'number') return Number.isFinite(raw) && raw >= 0 ? raw : null;
+    if (typeof raw !== 'string') return null;
+    const t = raw.trim();
+    if (!/^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/.test(t)) return null;
+    const n = Number(t.replace(/,/g, ''));
+    return Number.isFinite(n) ? n : null;
+  }
+
+  /**
+   * Is the item's weight an explicit, valid recorded value? An explicit 0 is a verified zero; absent, blank, malformed or negative is NOT
    * (it contributes 0 to the total but is reported by carriedWeightReport so it is never presented as a verified zero).
    */
   static itemWeightVerified(item) {
-    const raw = item?.system?.weight ?? item?.system?.economics?.weight;
-    if (raw === undefined || raw === null || (typeof raw === 'string' && raw.trim() === '')) return false;
-    const n = typeof raw === 'number' ? raw : parseFloat(String(raw).replace(/,/g, ''));
-    return Number.isFinite(n) && n >= 0;
+    return this.parseWeightKg(item?.system?.weight ?? item?.system?.economics?.weight) !== null;
   }
 
   /** Carried weight plus the carried items whose weight is not a verified recorded value. */
