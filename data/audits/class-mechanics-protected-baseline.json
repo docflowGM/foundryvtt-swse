@@ -245,6 +245,11 @@
       "name": "Charlatan",
       "approvedFingerprint": "1592:f3a606c35705ea6a",
       "reason": "Scum and Villainy p.32: Score stable featureKey charlatan.score on the existing level-2 grant"
+    },
+    "d87c05d2a34f5627": {
+      "name": "Melee Duelist",
+      "approvedFingerprint": "2202:ac6078b30478f8cf",
+      "reason": "Knights of the Old Republic CG: Master of Movement stable featureKey meleeDuelist.masterOfMovement on the existing scaling grants"
     }
   }
 }
