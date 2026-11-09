@@ -102,12 +102,12 @@ const wsOf = (a, { editable = true, readiness } = {}) => {
   assert.ok(npc.includes('swse-npc-card__header') && npc.includes('swse-npc-badges'), 'the gear card header (credits, follower Store injection point) is kept');
   assert.equal((npc.match(/equipment-workspace\.hbs/g) ?? []).length, 1, 'one workspace in the NPC template');
   const sheet = fs.readFileSync('scripts/sheets/v2/npc-actor-sheet.js', 'utf8');
-  assert.ok(sheet.includes('buildActorEquipmentWorkspace(actor') && sheet.includes('npcConcept.workspace ='));
+  assert.ok(sheet.includes('_buildNpcEquipmentWorkspace(actor, { panelContexts, combat } = {})') && sheet.includes('buildActorEquipmentWorkspace(actor'));
   const cx = fs.readFileSync('scripts/sheets/v2/character-sheet/concept-context.js', 'utf8');
   assert.equal((cx.match(/buildEquipmentWorkspace\(/g) ?? []).length, 1, 'exactly one call site of the low-level builder');
   assert.ok(fs.readFileSync('scripts/sheets/v2/npc/npc-sheet-helpers.js', 'utf8').includes('game.user?.isGM === true || actor?.isOwner === true'), 'an editing user always reaches the Gear tab');
   const shared = fs.readFileSync('scripts/sheets/v2/character-like-sheet.js', 'utf8');
-  assert.ok(shared.includes('panelContexts,\n        combat'), 'the shared sheet passes hydrated panels to the NPC hook');
+  assert.ok(shared.includes('context.npcConcept.workspace = this._buildNpcEquipmentWorkspace(actor, { panelContexts, combat })') && shared.includes('_buildNpcEquipmentWorkspace(_actor, _inputs) {\n    return null;'), 'a separate hook (no-op default on the shared sheet) carries the hydrated panels; the context hook keeps its shape');
   assert.ok(!/ActorEngine|\.update\(|setFlag/.test(fs.readFileSync('scripts/sheets/v2/character-sheet/equipment-workspace-ui.js', 'utf8')));
   ok('static: NPC/Follower use the shared workspace partial (no legacy list), one low-level call site, Gear tab reachable for editors, follower header kept');
 }

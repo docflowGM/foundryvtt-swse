@@ -73,9 +73,9 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
    * (only the parameter shape changed — from separate locals to one
    * options object, per the hook contract's JSDoc on the base method).
    */
-  _buildNpcConceptSheetContext(actor, { context, derived, conceptLayout, actionEconomy, panelContexts, combat } = {}) {
+  _buildNpcConceptSheetContext(actor, { context, derived, conceptLayout, actionEconomy } = {}) {
     try {
-      const npcConcept = ActorPerfDiagnostics.time(
+      return ActorPerfDiagnostics.time(
         ms => ActorPerfDiagnostics.recordSheetContext('npc-context-builder', ms),
         () => buildNpcConceptSheetContext(actor, {
           ...context,
@@ -84,10 +84,6 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
           actionEconomy
         })
       );
-      // Gear tab: the SAME equipment workspace (possessions browser + inspector) the Character and Droid sheets use, fed by the NPC's own
-      // hydrated inventory panel and attack rows. Statblock attacks without an owned Item stay in the Combat tab; no Item is fabricated here.
-      npcConcept.workspace = this._buildNpcEquipmentWorkspace(actor, { panelContexts, combat });
-      return npcConcept;
     } catch (err) {
       swseLogger.warn('[SWSEV2NpcSheet] NPC concept sheet context failed', {
         actorId: actor?.id,
@@ -106,7 +102,11 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
     }
   }
 
-  /** Shared equipment workspace view model for NPC and Follower actors (null when it cannot be built; the tab then shows its own notice). */
+  /**
+   * Override of the no-op default. The SAME equipment workspace (possessions browser + inspector) the Character and Droid sheets use, fed by the NPC's own
+   * hydrated inventory panel and attack rows. Statblock attacks without an owned Item stay in the Combat tab; no Item is fabricated here.
+   * Null when it cannot be built (the tab then shows its own notice).
+   */
   _buildNpcEquipmentWorkspace(actor, { panelContexts, combat } = {}) {
     try {
       return buildActorEquipmentWorkspace(actor, { inventoryPanel: panelContexts?.inventoryPanel ?? null, attacks: combat?.attacks ?? [] });
