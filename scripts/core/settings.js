@@ -1,6 +1,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { registerMetaTuningSettings } from "/systems/foundryvtt-swse/scripts/engine/MetaTuning.js";
 import { registerEpicOverrideSetting } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
+import { registerFollowerHouseRuleSettings } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/follower-house-rule-settings.js";
 import { registerActionEconomySettings } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-settings.js";
 import { getActorSheetThemeOptions } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { getActorSheetMotionStyleOptions } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
@@ -507,6 +508,9 @@ game.settings.register('foundryvtt-swse', 'performanceDiagnostics', {
 
   // Action Economy Enforcement Settings
   registerActionEconomySettings();
+
+  // Follower house rules (combined follower cap, shared recruiting benefits)
+  registerFollowerHouseRuleSettings();
 
   // Phase 1: Chat narration setting
   game.settings.register('foundryvtt-swse', 'enableChatNarrationForRolls', {

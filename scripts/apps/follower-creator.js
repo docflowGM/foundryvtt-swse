@@ -23,6 +23,8 @@ import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { getFollowerTalentConfig } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
+import { resolveEffectiveGrantConfig } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/follower-house-rule-settings.js";
+import { armorLadderGrants } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-house-rules.js";
 import { resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 import {
     runFollowerMutationTransaction,
@@ -377,7 +379,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
 
         // Apply talent-specific bonuses
         if (grantingTalent) {
-            await this._applyTalentBonuses(follower, grantingTalent);
+            await this._applyTalentBonuses(follower, grantingTalent, owner);
         }
 
         // Apply template defense bonuses
@@ -632,9 +634,9 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * Apply talent-specific bonuses
      * @private
      */
-    static async _applyTalentBonuses(follower, grantingTalent) {
+    static async _applyTalentBonuses(follower, grantingTalent, owner = null) {
         const talentName = typeof grantingTalent === 'string' ? grantingTalent : grantingTalent?.name;
-        const cfg = getFollowerTalentConfig(talentName);
+        const cfg = resolveEffectiveGrantConfig(owner, getFollowerTalentConfig(talentName), talentName);
         if (!cfg) return;
 
         const grantMetadata = {
@@ -645,6 +647,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         };
 
         for (const featName of cfg.additionalFeats || []) {
+            await this._addFeatByName(follower, featName, grantMetadata);
+        }
+
+        for (const featName of armorLadderGrants(cfg.armorLadderGrants || 0, Array.from(follower.items || []).filter(i => i.type === 'feat').map(i => i.name))) {
             await this._addFeatByName(follower, featName, grantMetadata);
         }
 
@@ -832,7 +838,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         const template = templates[templateType] || {};
         const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation);
         const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
-        const grantingTalentConfig = this._getFollowerGrantConfig(followerMutation, persistentChoices);
+        const grantingTalentConfig = resolveEffectiveGrantConfig(owner, this._getFollowerGrantConfig(followerMutation, persistentChoices), grantingTalentName);
         const fixedProfile = this._getFixedFollowerProfileFromChoices(persistentChoices, followerMutation);
         const noStartingCredits = this._usesNoStartingCredits(persistentChoices, followerMutation);
         const skipLanguages = fixedProfile?.skipLanguages === true || grantingTalentConfig?.skipLanguages === true;
@@ -864,6 +870,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             ...featChoices,
             ...(grantingTalentConfig?.additionalFeats || [])
         ]);
+        // Shared-benefits house rule: cumulative Light -> Medium -> Heavy armor grants (no-op when OFF)
+        featsToApply.push(...armorLadderGrants(grantingTalentConfig?.armorLadderGrants || 0, featsToApply));
 
         const appliedFeats = [];
         for (const featName of featsToApply) {

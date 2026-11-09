@@ -6,6 +6,7 @@
  * choices into the canonical ProgressionSession.
  */
 
+import { resolveEffectiveGrantConfig } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/follower-house-rule-settings.js";
 import { ProgressionStepPlugin } from '../step-plugin-base.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
@@ -64,9 +65,11 @@ export class FollowerStepBase extends ProgressionStepPlugin {
 
   getFollowerGrantConfig(shell) {
     const ctx = shell?.progressionSession?.dependencyContext || {};
-    return getFollowerTalentConfig(ctx.slotTalentName, { treeId: ctx.slotTalentTreeId })
+    const base = getFollowerTalentConfig(ctx.slotTalentName, { treeId: ctx.slotTalentTreeId })
       || getFollowerTalentConfig(ctx.slotTalentName)
       || null;
+    // GM house rule: shared recruiting benefits (no-op unless the setting is ON)
+    return resolveEffectiveGrantConfig(this.getOwnerActor(shell), base, ctx.slotTalentName);
   }
 
   getFixedFollowerProfile(shell) {

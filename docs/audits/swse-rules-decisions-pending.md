@@ -2204,6 +2204,170 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 
 - **Revision 48 (2026-11-06):** appended DROID-RD-001, DROID-RD-002 and DROID-RD-003 (Gate C-1 appendage instance identity work).
 
+### CF-RD-001 - Class features whose printed text could not be read (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-001 |
+| Rules domain | Class features (non-Force contract, Wave A) |
+| Feature | Tough as Durasteel (Martial Arts Master), Fugitive (Outlaw), Mark (Assassin), Score (Charlatan), No Tools Required (Improviser) |
+| Source | Galaxy at War; Scum and Villainy; Rebellion Era Campaign Guide. Printed pages not verified. |
+| Evidence | The repository OCR text has no legible rule text for these features. Only the registry paraphrase (`data/class-features.json` `sourceText`) exists, which is not a printed source. |
+| Confirmed behavior | Feature names and owning classes only. |
+| Unresolved question | The exact printed wording (levels, bonus values, action costs, scaling, limits). |
+| Options | None. This is a source-access gap, not a ruling choice. |
+| Recommended ruling | None |
+| Implementation impact | All five blocked until the printed text is supplied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### CF-RD-002 - Veteran Privateer: which attack rolls? (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-002 |
+| Rules domain | Class features |
+| Feature | Veteran Privateer (Master Privateer) |
+| Source | Force Unleashed Campaign Guide (OCR). Page not verified. |
+| Evidence | OCR says "When you make an attack roll, as a free action you can grant yourself a +2 competence bonus on that attack roll", uses per encounter = one-half class level, rounded down. The contract and registry say "melee attack roll". |
+| Confirmed behavior | Free action, +2 competence, floor(class level/2) uses per encounter. |
+| Unresolved question | Whether the bonus applies to all attack rolls (OCR) or only melee (contract/registry). |
+| Options | All attack rolls (OCR wording); melee only (contract/registry wording). |
+| Recommended ruling | None |
+| Implementation impact | Attack-roll eligibility filter blocked. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### CF-RD-003 - Independent Spirit: scope of the reaction (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-003 |
+| Rules domain | Class features |
+| Feature | Independent Spirit (Independent Droid) |
+| Source | Force Unleashed Campaign Guide (OCR). Page not verified. |
+| Evidence | OCR: at 2nd level, once per encounter, as a reaction, a morale bonus to any defense score (your choice), equal to one-half class level rounded down. Registry adds "against a single skill check or attack roll". The OCR gives no duration. |
+| Confirmed behavior | Once per encounter, reaction, morale bonus, any defense, floor(level/2). |
+| Unresolved question | How long the bonus lasts and whether it is limited to one incoming check or attack. |
+| Options | Limited to a single incoming roll (registry); duration unspecified in the printed text located. |
+| Recommended ruling | None |
+| Implementation impact | Bonus expiry blocked. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### CF-RD-004 - Unflinching: bonus size and uses (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-004 |
+| Rules domain | Class features |
+| Feature | Unflinching (Gladiator) |
+| Source | Knights of the Old Republic Campaign Guide (OCR). Page not verified. |
+| Evidence | OCR: at 2nd level, once per encounter, add gladiator level to Fortitude Defense (and damage threshold) or Will Defense until the start of your next turn, as a reaction; declare before the outcome is known; one additional use per encounter at each even-numbered level thereafter. Registry and contract say half-level uses and a half-level scaled bonus. |
+| Confirmed behavior | Reaction, choice of Fortitude (with damage threshold) or Will, duration to start of next turn, declare before outcome. |
+| Unresolved question | Bonus = full gladiator level (OCR) vs scaled (registry); use count rule (OCR "one additional use at each even level" vs registry "half level"). |
+| Options | OCR wording; registry wording. |
+| Recommended ruling | None |
+| Implementation impact | Bonus value and uses blocked. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### CF-RD-005 - Surprise Attack: legibility of the bonus timing (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-005 |
+| Rules domain | Class features |
+| Feature | Surprise Attack (Vanguard) |
+| Source | Clone Wars Campaign Guide (OCR). Page not verified. |
+| Evidence | OCR is garbled: "first attack roll in 4 round against that target equal to one-half your class level". Registry reads "first attack roll in a round". |
+| Confirmed behavior | Target unaware or denied Dex to Reflex; bonus = one-half class level. |
+| Unresolved question | Confirm "in a round" from the printed page. |
+| Options | None beyond reading the printed page. |
+| Recommended ruling | None |
+| Implementation impact | Round-reset logic blocked pending the printed wording. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### CF-RD-006 - Vehicle Dodge: stacking (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-006 |
+| Rules domain | Class features |
+| Feature | Vehicle Dodge (Ace Pilot) |
+| Source | Core Rulebook (OCR). Page not verified. |
+| Evidence | OCR: dodge bonus to Reflex Defense of any vehicle you pilot, one-half class level rounded down; Dex-bonus loss also loses dodge bonuses; "dodge bonuses stack with each other, unlike most other types of bonuses". The contract says "no double stacking". |
+| Confirmed behavior | Bonus size, piloted vehicle, lost with Dex-bonus loss, dodge bonuses stack. |
+| Unresolved question | Whether the contract's "no double stacking" means no duplicate application of the same feature, or contradicts the printed dodge-stacking rule. |
+| Options | Dodge bonuses stack generally (printed); one instance of this feature only. |
+| Recommended ruling | None |
+| Implementation impact | Stacking policy blocked. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 49 (2026-11-07):** appended CF-RD-001 through CF-RD-006 (class-feature contract Wave A preflight).
+
+### CF-RD-007 - Score: no "after the target has acted" requirement? (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-007 |
+| Rules domain | Class features |
+| Feature | Score (Charlatan) |
+| Source | Scum and Villainy p.32, as summarized by the independent print review. Not re-read by the implementer (OCR unreadable). |
+| Evidence | Familiar Foe and Targeted Suspect print "cannot use this ability until after your opponent has acted". The review's wording of Score gives a full-round observation of one target and Deception rerolls keeping the better result, with no such gate. |
+| Confirmed behavior | Full-round action observing one target; Deception rerolls against that target through encounter end; keep the better result. |
+| Unresolved question | Confirm from the printed page that Score has no "target has acted" requirement. |
+| Options | No gate (the review's wording, implemented); the same gate as the other two observation features. |
+| Recommended ruling | None |
+| Implementation impact | `OBSERVATION_FEATURES['charlatan.score'].requiresActed` (one flag). |
+| Status | `IMPLEMENTED_PER_PRINT_REVIEW` (owner confirmation requested; one-flag change if the printed page differs) |
+| Decision authority | Project owner |
+| Resolution | |
+
+### CF-RD-008 - Executive Leadership: which turn does "until the end of their turn" cover? (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-008 |
+| Rules domain | Class features |
+| Feature | Executive Leadership (Corporate Agent) |
+| Source | Knights of the Old Republic Campaign Guide, Corporate Agent (OCR; page not verified) |
+| Evidence | Swift action, as many times per encounter as half the Corporate Agent level; an ally within line of sight gains, until the end of their turn, one of: +2 squares base speed, +2 morale bonus on attack rolls, or +2 morale bonus to all defenses (the Agent's choice). |
+| Confirmed behavior | Swift action; floor(level/2) uses per encounter; one of three listed benefits; morale bonuses; ally in line of sight. |
+| Unresolved question | Which of the ally's turns the benefit covers when the Agent acts during the ally's own turn, after the ally's turn, or before it in the round. |
+| Options | The ally's next turn; the ally's current turn if it has not ended; the remainder of the round. Only the printed phrase supports any of these; none is stated. |
+| Recommended ruling | None |
+| Implementation impact | Effect expiry for Executive Leadership is blocked; nothing is built. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### CF-RD-009 - Master of Movement under Athletics consolidation (QUESTION, 2026-11-07)
+
+| Field | Value |
+|---|---|
+| Decision ID | CF-RD-009 |
+| Rules domain | Class features / house rules |
+| Feature | Master of Movement (Melee Duelist) |
+| Source | Knights of the Old Republic Campaign Guide (OCR); the world setting that consolidates Jump/Acrobatics/Climb/Swim into Athletics |
+| Evidence | The printed reroll applies to "a single Jump or Acrobatics check". With consolidation ON, requested Jump/Acrobatics rolls are executed as Athletics. |
+| Confirmed behavior | Jump and Acrobatics checks qualify. |
+| Unresolved question | Whether a roll made as a generic Athletics check (never requested as Jump or Acrobatics) qualifies. |
+| Options | Only checks requested as Jump or Acrobatics (implemented, fail-closed); any Athletics check. |
+| Recommended ruling | None |
+| Implementation impact | `isMasterOfMovementRerollSkill` (one list). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
 ## EQ-W-001 — Which owned equipment counts toward carried weight (installed, integrated, implanted, contained, stored)
 
 | Field | Content |
@@ -2221,4 +2385,4 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Decision authority | Project owner |
 | Resolution | |
 
-- **Revision 49 (2026-11-09):** appended EQ-W-001 (equipment weight scope). EQ-001, EQ-002 and EQ-003 were re-reviewed against the existing source evidence; no new evidence was found and all three remain `DEFERRED_RULES_REVIEW` and fail closed.
+- **Revision 50 (2026-11-09):** appended EQ-W-001 (equipment weight scope). EQ-001, EQ-002 and EQ-003 were re-reviewed against the existing source evidence; no new evidence was found and all three remain `DEFERRED_RULES_REVIEW` and fail closed.

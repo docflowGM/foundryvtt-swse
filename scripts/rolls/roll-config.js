@@ -8,6 +8,8 @@ import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/documen
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { canApplyShaperLore, shaperLoreBonus } from "/systems/foundryvtt-swse/scripts/engine/skills/class-shaper-lore.js";
+import { masterOfMovementRemaining, isMasterOfMovementRerollSkill } from "/systems/foundryvtt-swse/scripts/engine/combat/class-master-of-movement.js";
+import { observedSkillBonus, hasObservedSkillTarget, soleTargetedActor } from "/systems/foundryvtt-swse/scripts/engine/combat/class-target-observation.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
@@ -1080,10 +1082,12 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
     // situational contribution for a non-attack roll here any more; the
     // preview is exactly base + custom, matching what rollSkill()/friends
     // actually compute.
+    // Shaper Lore plus Targeted Suspect: both are opt-in class-feature skill bonuses, previewed together
     const classBonus = model?.rollType === 'skill'
       ? shaperLoreBonus(actor,model.skillKey,{
           biotechDevice:form.querySelector('[name="biotechDevice"]')?.checked === true
-        })
+        }) + (form.querySelector('[name="observedTarget"]')?.checked === true
+          ? observedSkillBonus(actor, model.skillKey, soleTargetedActor()) : 0)
       : 0;
     const total = base + custom + classBonus;
     form.querySelector('[data-rcd-custom-bd]')?.replaceChildren(document.createTextNode(sign(custom)));
@@ -1682,6 +1686,11 @@ export async function showRollModifiersDialog(options = {}) {
   const model = await buildRollConfigModel({ ...options, title, rollType, actor, weapon });
   const shaperLoreEligible = model.rollType === 'skill'
     && canApplyShaperLore(model.actor,model.skillKey);
+  // Master of Movement: eligible when a use remains and the REQUESTED skill is Jump or Acrobatics
+  const masterOfMovementEligible = model.rollType === 'skill'
+    && isMasterOfMovementRerollSkill(model.skillKey) && masterOfMovementRemaining(model.actor) > 0;
+  const observedTargetEligible = model.rollType === 'skill'
+    && hasObservedSkillTarget(model.actor, model.skillKey, soleTargetedActor());
   const abilityAccentClass = model.rollType === 'ability' && model.abilityAccentKey ? ` swse-roll-config-shell--ability swse-roll-config-ability--${model.abilityAccentKey}` : '';
   const abilityData = model.rollType === 'ability' && model.abilityAccentKey ? ` data-ability="${escapeHTML(model.abilityAccentKey)}"` : '';
   const content = `<div class="swse-roll-config-shell rcd${abilityAccentClass}"${abilityData} style="--accent-rgb:${escapeHTML(model.accentRgb)}">
@@ -1718,7 +1727,9 @@ export async function showRollModifiersDialog(options = {}) {
               <label>Custom Modifier<input type="number" name="customModifier" value="0" /></label>
               <label>Note<input type="text" name="rollNote" placeholder="Optional GM/player note" /></label>
             </div>
-            ${shaperLoreEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="biotechDevice" /> <span><b>Biotech device</b><small>Apply Shaper Lore +${shaperLoreBonus(model.actor,model.skillKey,{biotechDevice:true})} only if this check concerns a biotech device (GM adjudicated).</small></span></label>` : ''}
+            ${masterOfMovementEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="masterOfMovementReroll" /> <span><b>Master of Movement</b><small>Spend one use (${masterOfMovementRemaining(model.actor)} left this encounter) to roll twice and keep the better result.</small></span></label>` : ''}
+            ${observedTargetEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="observedTarget" /> <span><b>Observed target</b><small>Apply your observation benefits (Targeted Suspect +${observedSkillBonus(model.actor,model.skillKey,soleTargetedActor())}; Score: roll twice, keep the better) only if this check concerns your targeted, observed opponent (GM adjudicated).</small></span></label>` : ''}
+          ${shaperLoreEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="biotechDevice" /> <span><b>Biotech device</b><small>Apply Shaper Lore +${shaperLoreBonus(model.actor,model.skillKey,{biotechDevice:true})} only if this check concerns a biotech device (GM adjudicated).</small></span></label>` : ''}
             ${model.isAttackRoll ? `<div class="swse-roll-config-subpanel" data-rcd-attack-context>
               <h5>Attack Context</h5>
               ${model.attackContexts?.aim ? `<label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aim</b><small>No direct attack bonus. Enables Careful Shot/Deadeye and other Aim-gated feats/talents if you have them.</small></span></label>` : ''}
@@ -1777,6 +1788,8 @@ export async function showRollModifiersDialog(options = {}) {
               concealment,
               customModifier,
               biotechDevice: shaperLoreEligible && data.get('biotechDevice') === 'on',
+              masterOfMovementReroll: masterOfMovementEligible && data.get('masterOfMovementReroll') === 'on',
+              observedTarget: observedTargetEligible && data.get('observedTarget') === 'on',
               damageMode,
               stun: damageMode === 'stun',
               damageType: damageMode === 'stun' ? 'stun' : undefined,
