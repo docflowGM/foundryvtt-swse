@@ -2203,3 +2203,22 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 48 (2026-11-06):** appended DROID-RD-001, DROID-RD-002 and DROID-RD-003 (Gate C-1 appendage instance identity work).
+
+## EQ-W-001 — Which owned equipment counts toward carried weight (installed, integrated, implanted, contained, stored)
+
+| Field | Content |
+|---|---|
+| Rules domain | Equipment / encumbrance |
+| Feature | Carried-weight scope for equipment that is installed, integrated, implanted, inside a container, or kept somewhere other than the character's carried inventory |
+| Source | Not located for these categories in the project's certified authorities. The canonical weight field is `system.weight` in kilograms (equipment normalizer); no canonical "stored / left behind" location state exists on owned items |
+| Evidence | `EncumbranceEngine` (now the single carried-weight authority) sums every owned item of a gear type: weapon, lightsaber, armor (worn or not), equipment, gear, weaponUpgrade, poison. The pre-convergence engine summed the same set except it dropped unequipped armor. Container records carry `container.contents` but owned items are summed individually, so nothing is double-counted. |
+| Confirmed behavior | Worn and carried-but-unworn armor are both carried and count (engineering correction: the earlier exclusion had no source). Quantity multiplies weight; an explicit quantity of 0 contributes 0; absent quantity is 1; missing, invalid or negative weight is 0. |
+| Unresolved question | Whether installed droid components, integrated weapons, implants, container contents (and any container capacity/weight rule), and gear stored outside the character's carried inventory should be included, excluded, or counted differently |
+| Options | None supported by a located source |
+| Recommended ruling | None |
+| Implementation impact | Behavior for these categories is unchanged from before convergence (owned items still count); no new inclusion or exclusion rule was invented. A ruling is needed before any category-specific weight rule, stored-location state or container accounting is added to `EncumbranceEngine`. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 49 (2026-11-09):** appended EQ-W-001 (equipment weight scope). EQ-001, EQ-002 and EQ-003 were re-reviewed against the existing source evidence; no new evidence was found and all three remain `DEFERRED_RULES_REVIEW` and fail closed.
