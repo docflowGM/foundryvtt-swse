@@ -62,7 +62,7 @@ import { resolveWielding, resolveOpportunityEligibility, crewRegulationFor } fro
 import { resolveEffectiveWieldingSize } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
 import { evaluateProfileRequirements, forgoesDoubleStrength, slugOfIdentity } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/activation-requirements.js";
 import { abilityKeysOfActor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
-import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackWeaponRuntime, assertAttackFormResolvable, rangeBandForDistance, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { passiveDefenseAdjustment, resolveDisarmProtection } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js";
 import { rangeGate, grabAttackPenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/control-rules.js";
 import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf, canonicalSizeName, resolveTargetRequirements, askSpecialQuestion, thresholdAdjustmentOf, targetRulesOf, isEffectOnlyForm } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
@@ -254,6 +254,16 @@ function withCanonicalWeaponRuntime(weapon, rollOptions, actor = null) {
     const infiltratorStun = damageMode === 'stun' && canDeclareInfiltratorUnarmedStun(actor,weapon);
     const weaponProfileMode = infiltratorStun ? 'normal' : damageMode;
     assertAttackFormResolvable(weaponRuntime, { damageMode: weaponProfileMode ?? null, rangeBand: rollOptions.rangeBand ?? null, distanceSquares: rollOptions.distanceSquares ?? null, actor });
+    // Weapon three-gate W3 (C-RNG-03): ONE effective range band per attack. When only a stated distance names the band (or the named band is
+    // not a recognized one, e.g. the dialog's "custom"), the band that distance falls in (already validated above, through the wielder's range
+    // grants and the form's maximum) is written into the attack options, so the attack penalty, the point-blank conditional damage, the
+    // damage-side range penalty and the serialized workflow context all read the same band instead of re-deriving it (or losing it).
+    let effectiveBand = null;
+    if (weaponRuntime.range?.status === 'banded' && weaponRuntime.branch === 'ranged' && !normalizeRangeBand(rollOptions.rangeBand)
+      && rollOptions.distanceSquares !== null && rollOptions.distanceSquares !== undefined && rollOptions.distanceSquares !== '') {
+      effectiveBand = rangeBandForDistance(weaponRuntime, actor, rollOptions.distanceSquares);
+    }
+    if (effectiveBand) rollOptions = { ...rollOptions, rangeBand: effectiveBand, rangeBandSource: 'distance' };
     // Phase 5D-D: the selected form's canonical per-attack resource units feed the existing AmmoSystem cost rule (read-only here;
     // spending still happens exactly once, in AmmoSystem.spendForWorkflow). 'pending' leaves the existing rule untouched.
     // Phase 5D-F: attack-shape legality of the selected form (firing constraints / fire modes) -- refused BEFORE any cost is spent
