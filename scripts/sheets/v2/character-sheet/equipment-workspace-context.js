@@ -11,6 +11,7 @@
  * flags that the authorities already resolved on each row (type, isEnergyShield, isImplant); nothing is inferred from names.
  * Placement eligibility is NOT computed here: it comes from the read-only coordinator plan (equipment-workspace-placement.js) on demand.
  */
+import { EncumbranceEngine } from '/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js';
 import { readCombatReadiness, describeWeaponReadiness } from '/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js';
 
 /** Possessions browser tabs, in display order. Droids/Vehicles are linked actors (Asset Bay association), the rest are owned Items. */
@@ -132,6 +133,8 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
   const items = rows.map((row) => {
     const category = categoryOfRow(row);
     const isWeapon = category === 'weapons';
+    // authoritative quantity (never `|| 1`: a recorded 0 must stay 0 so the list, sort and carried weight agree)
+    const quantity = EncumbranceEngine.itemQuantity({ system: { quantity: row.quantity } });
     const r = isWeapon ? describeWeaponReadiness(rd, row.id, null) : null;
     const status = isWeapon ? weaponStatus(row, r) : { ...wornStatus(row), reason: null };
     const occupancy = r?.occupancy ?? null;
@@ -147,8 +150,8 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       kind: 'item', key: `item:${row.id}`, tab: tabOfCategory(category),
       // player-facing label: an energy shield is an armor-type item mechanically but is presented as a personal shield (classification unchanged)
       typeLabel: category === 'shields' ? 'Personal shield' : row.typeLabel,
-      quantity: Number(row.quantity) || 1,
-      showQuantity: (Number(row.quantity) || 1) > 1,
+      quantity,
+      showQuantity: quantity !== 1,
       weight: row.weight,
       value: row.value,
       tags: asArray(row.tags),

@@ -87,6 +87,9 @@ const wsOf = (a, { editable = true, readiness } = {}) => {
   const ready = readCombatReadiness(droid, { resolveSpecies: () => ({ status: 'unavailable', reason: 'droid' }), reader: { getInstalledComponents: () => ({ components: [1, 2, 3, 4].map(comp) }) } });
   const { ws } = wsOf(droid, { readiness: ready });
   assert.equal(ws.slots.length, 4, JSON.stringify(ws.notices)); assert.equal(ws.manyAppendages, true);
+  assert.equal(ws.anatomy.status, 'resolved', 'ledger-confirmed manipulators with explicit capabilities resolve the droid anatomy');
+  // existing fail-closed gate, pinned (not changed here): a droid has no recorded species, and the coordinator withholds every non-stowed posture without species evidence
+  assert.ok(ws.notices.some((x) => /Species evidence unavailable/.test(x.text)), 'the workspace states that drawing is withheld rather than offering a working-looking control');
   assert.deepEqual(ws.slots.map((s) => s.id), ready.state.anatomy.appendages.map((a) => a.id));
   ok('Multi-armed droid: four ledger-confirmed manipulators become four slots in the authority\'s order');
 }
@@ -110,5 +113,28 @@ const wsOf = (a, { editable = true, readiness } = {}) => {
   assert.ok(shared.includes('context.npcConcept.workspace = this._buildNpcEquipmentWorkspace(actor, { panelContexts, combat })') && shared.includes('_buildNpcEquipmentWorkspace(_actor, _inputs) {\n    return null;'), 'a separate hook (no-op default on the shared sheet) carries the hydrated panels; the context hook keeps its shape');
   assert.ok(!/ActorEngine|\.update\(|setFlag/.test(fs.readFileSync('scripts/sheets/v2/character-sheet/equipment-workspace-ui.js', 'utf8')));
   ok('static: NPC/Follower use the shared workspace partial (no legacy list), one low-level call site, Gear tab reachable for editors, follower header kept');
+}
+
+// 7. quantities: the list shows the AUTHORITATIVE quantity (explicit 0 stays 0) and cannot contradict the carried-weight total
+{
+  const { EncumbranceEngine: E } = await import('/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js');
+  const cases = { zero: 0, one: 1, many: 3, missing: undefined, junk: 'abc', blank: '', negative: -2, text3: '3' };
+  const items = Object.entries(cases).map(([id, q]) => gear(id, id, 'equipment', { weight: 2, ...(q === undefined ? {} : { quantity: q }) }));
+  for (const t of ['character', 'npc', 'droid']) {
+    const a = mk(t, items.map((i) => ({ ...i, system: { ...i.system } })));
+    const { ws } = wsOf(a);
+    const expect = { zero: 0, one: 1, many: 3, missing: 1, junk: 1, blank: 1, negative: 1, text3: 3 };
+    for (const [id, q] of Object.entries(expect)) {
+      const e = ws.entries.find((x) => x.id === id);
+      assert.equal(e.quantity, q, `${t}/${id} displays ${q}`);
+      assert.equal(e.quantity, E.itemQuantity(a.items.get(id)), `${t}/${id} equals the canonical reader`);
+    }
+    assert.equal(ws.entries.find((x) => x.id === 'zero').showQuantity, true, 'a recorded 0 is shown (x0), not hidden as if it were 1');
+    assert.equal(ws.entries.find((x) => x.id === 'one').showQuantity, false);
+    // displayed unit weight x displayed quantity == the authority's carried total: the list and the total cannot disagree
+    const shown = ws.entries.reduce((sum, e) => sum + e.weight * e.quantity, 0);
+    assert.equal(Math.round(shown * 100) / 100, E.calculateCarriedWeight(a));
+  }
+  ok('quantity zero/one/many/missing/invalid/blank/negative/"3": displayed value equals the canonical reader; list weight x quantity equals the carried total (all actor types)');
 }
 console.log(`equipment-actor-parity: ${n} checks ok`);

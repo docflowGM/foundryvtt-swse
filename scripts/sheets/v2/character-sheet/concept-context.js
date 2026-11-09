@@ -484,7 +484,8 @@ function buildInventoryGroups(inventoryPanel, actor) {
 
         return {
           ...entry,
-          quantity: Number(entry?.quantity) || 1,
+          // canonical reader (explicit 0 stays 0; only a missing/invalid value takes the schema default of 1); the same reader the carried-weight total uses
+          quantity: EncumbranceEngine.itemQuantity({ system: { quantity: entry?.quantity } }),
           weight: Number(entry?.weight) || 0,
           value: Number(entry?.value) || 0,
           tags: asArray(entry?.tags),
