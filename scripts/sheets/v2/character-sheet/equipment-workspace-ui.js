@@ -15,7 +15,17 @@ import { assessPlacement, submitPlacement, PLACEMENT_VERDICT as V } from '/syste
 const RANK = [V.AVAILABLE, V.CURRENT, V.REQUIRES_CHANGE, V.DEFERRED, V.CHOICE, V.UNKNOWN, V.INCOMPATIBLE];
 const bestOf = (results) => results.map((r) => r.verdict).sort((a, b) => RANK.indexOf(a) - RANK.indexOf(b))[0] ?? V.UNKNOWN;
 const LABEL = { [V.AVAILABLE]: 'Available', [V.CURRENT]: 'Already set', [V.REQUIRES_CHANGE]: 'Requires change', [V.DEFERRED]: 'Deferred', [V.CHOICE]: 'Needs a choice', [V.UNKNOWN]: 'Not established', [V.INCOMPATIBLE]: 'Incompatible' };
-const ACTION_LABEL = (a) => (a ? `${String(a.direction ?? 'draw')} costs a ${String(a.actionType)} action` : 'no action cost');
+const ACTION_LABEL = (a) => (a ? `${String(a.direction ?? 'draw').replace(/^./, (c) => c.toUpperCase())} costs a ${String(a.actionType)} action.` : 'No action cost.');
+// Plain one-line reading of each coordinator verdict category for the card face; the engine's own wording sits under "Details".
+const PLAIN = {
+  [V.AVAILABLE]: (r) => ACTION_LABEL(r.action),
+  [V.CURRENT]: () => 'Already set up this way.',
+  [V.REQUIRES_CHANGE]: () => 'Another item is in the way.',
+  [V.DEFERRED]: () => 'Not available yet: this change is waiting on a rules ruling.',
+  [V.CHOICE]: () => 'Needs a choice before it can be done.',
+  [V.UNKNOWN]: () => 'Can’t be confirmed right now.',
+  [V.INCOMPATIBLE]: () => 'Can’t be held this way here.',
+};
 
 function freshState() {
   return { tab: 'all', search: '', slotId: null, itemId: null, itab: 'details', showIncompatible: false, listScroll: 0, searchFocus: false, selStart: null, selEnd: null, verdicts: {}, busy: false, token: 0, message: null };
@@ -122,7 +132,7 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     if (st.message?.itemId === itemId) host.append(el('p', `swse-eqw__result is-${st.message.tone}`, st.message.text));
     host.append(el('h4', 'swse-eqw__sub', `Placement · ${slotLabel(st.slotId)}`));
     for (const r of res.results) host.append(verdictCard(itemId, r));
-    host.append(el('p', 'swse-eqw__hint', 'Grips that need more hands than this slot offers: use Draw above, which asks for the hands.'));
+    host.append(el('p', 'swse-eqw__hint', 'To use more than one hand, choose Draw above.'));
     apply();
   }
 
@@ -133,13 +143,10 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
   function verdictCard(itemId, r) {
     const card = el('div', `swse-eqw__vcard is-${r.verdict}`);
     const head = el('div', 'swse-eqw__vhead');
-    head.append(el('strong', '', GRIP_LABEL(r.grip)), el('span', '', r.label));
+    head.append(el('strong', '', GRIP_LABEL(r.grip)), el('span', '', LABEL[r.verdict] ?? r.label));
     card.append(head);
     const reasons = r.reasons.map((x) => x.message).filter(Boolean);
-    let summary;
-    if (r.verdict === V.AVAILABLE) summary = ACTION_LABEL(r.action);
-    else if (r.decisionId) summary = `Rules decision ${r.decisionId} is pending; nothing is changed.`;
-    else summary = reasons[0] ?? '';
+    const summary = PLAIN[r.verdict]?.(r) ?? '';
     if (summary) card.append(el('p', 'swse-eqw__vsum', summary));
     if (r.verdict === V.AVAILABLE) {
       const go = btn('swse-concept-btn swse-concept-btn--primary', `Draw ${GRIP_LABEL(r.grip).toLowerCase()}`, 'fa-hand');
@@ -153,11 +160,11 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
       }
       card.append(block);
     }
-    // the summary line is clamped to two lines, so a long engine reason is also repeated in full under "Why"
-    const detail = summary && reasons.includes(summary) && summary.length > 100 ? reasons : reasons.filter((m) => m !== summary);
+    // the coordinator's own label, reasons and rules-decision id, collapsed by default
+    const detail = [...(r.label && r.label !== LABEL[r.verdict] ? [`Result: ${r.label}`] : []), ...reasons, ...(r.decisionId ? [`Rules decision ${r.decisionId} is pending; nothing is changed.`] : [])];
     if (detail.length) {
       const d = el('details');
-      d.append(el('summary', '', r.verdict === V.DEFERRED ? 'Technical details' : 'Why'));
+      d.append(el('summary', '', 'Details'));
       for (const m of detail) d.append(el('p', '', m));
       card.append(d);
     }
@@ -200,6 +207,7 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     let b;
     if ((b = t.closest('[data-eqw-tab]'))) { st.tab = b.dataset.eqwTab; apply(); return; }
     if ((b = t.closest('[data-eqw-itab]'))) { st.itab = b.dataset.eqwItab; apply(); return; }
+    if ((b = t.closest('[data-eqw-close]'))) { st.itemId = null; st.message = null; apply(); return; }
     if ((b = t.closest('[data-eqw-clear]'))) { st.slotId = null; st.itemId = null; st.verdicts = {}; st.token++; st.message = null; apply(); return; }
     if ((b = t.closest('[data-eqw-station]'))) { st.slotId = null; st.verdicts = {}; st.token++; st.tab = b.dataset.eqwStation; st.itemId = null; apply(); return; }
     if ((b = t.closest('[data-eqw-slot]'))) {

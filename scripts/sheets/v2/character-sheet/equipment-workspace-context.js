@@ -192,6 +192,9 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
     const fs = app.functionalState ?? 'unresolved';
     const unavailable = fs === 'disabled' || fs === 'missing';
     const withSlotIds = a ? asArray(a.appendageIds).filter((id) => id !== app.id) : [];
+    // Visual anchor for an item held across several appendages: the first appendage in the assignment's own (authority) order shows the
+    // item; the others show "occupied by". A display convention only; grip and occupancy are never recomputed.
+    const anchorId = a ? asArray(a.appendageIds)[0] ?? app.id : null;
     return {
       id: app.id,
       label: humanize(app.id),
@@ -216,6 +219,8 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
         shared: withSlotIds.length > 0,
         withSlotIds,
         withSlotLabels: withSlotIds.map(humanize).join(' + '),
+        isAnchor: anchorId === app.id,
+        anchorLabel: anchorId ? humanize(anchorId) : '',
         // display of the sheet's authoritative attack view for the held weapon (KOTOR-style per-hand readout); never computed here
         attackLabel: attackViews.get(a.itemId)?.attackTotal !== undefined ? signed(attackViews.get(a.itemId).attackTotal) : '',
         damageLabel: attackViews.get(a.itemId)?.damageFormula ?? '',
@@ -256,6 +261,13 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
     portrait: { ...artOf(actor?.img, droidLike ? 'fa-robot' : 'fa-user-astronaut'), name: actor?.name ?? '' },
     grips,
     hasGrips: grips.length > 0,
+    // armor and personal shield are independent display positions (both may be filled at once); rows already classified by the armor SSOT
+    protection: {
+      armor: { item: worn.armor[0] ?? null, extra: Math.max(0, worn.armor.length - 1) },
+      shield: { item: worn.shields[0] ?? null, extra: Math.max(0, worn.shields.length - 1) },
+    },
+    heldCount: slots.filter((s) => s.occupant?.isAnchor).length,
+    manyAppendages: slots.length > 2,
     appendageCount: slots.length,
     slotsLeft: slots.slice(0, half),
     slotsRight: slots.slice(half),

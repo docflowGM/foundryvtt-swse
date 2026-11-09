@@ -1,18 +1,4 @@
 <div class="swse-concept-dashboard">
-  <section class="swse-concept-panel swse-concept-panel--gear-actions swse-edit-reveal">
-    <header class="swse-concept-panel__header">
-      <div>
-        <h3 class="swse-concept-panel__title">Inventory Controls</h3>
-        <p class="swse-concept-panel__hint">Create blank actor-local items, then inspect them to fill in details.</p>
-      </div>
-    </header>
-    <div class="swse-concept-action-rail swse-concept-action-rail--gear">
-      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="weapon">Add Weapon</button>
-      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="armor">Add Armor</button>
-      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="equipment">Add Gear</button>
-    </div>
-  </section>
-
   {{#if conceptLayout.gear.lightsaberConstructionAvailable}}
     <section class="swse-concept-panel swse-concept-panel--saber-ready">
       <header class="swse-concept-panel__header">
@@ -25,28 +11,26 @@
     </section>
   {{/if}}
 
-  <div class="swse-concept-card-grid swse-concept-card-grid--gear-top">
-    <article class="swse-concept-info-card swse-concept-info-card--stat swse-concept-info-card--editable">
-      <span>Credits</span>
+  {{!-- One compact summary strip (values and controls unchanged: credits field, item count, ledger weight, workshop, add-item actions). --}}
+  <section class="swse-eqw-strip" aria-label="Gear summary">
+    <div class="swse-eqw-strip__stat swse-eqw-strip__stat--credits">
+      <i class="fa-solid fa-coins" aria-hidden="true"></i>
+      <span class="swse-eqw-strip__label">Credits</span>
       <strong>{{numberFormat conceptLayout.gear.credits decimals=0}}</strong>
       <label class="swse-concept-toolfield swse-concept-toolfield--compact swse-concept-toolfield--number swse-edit-reveal">
-        <span>Edit Credits</span>
+        <span>Edit credits</span>
         <input type="number" name="system.credits" value="{{conceptLayout.gear.credits}}" min="0">
       </label>
-    </article>
-    <article class="swse-concept-info-card swse-concept-info-card--stat">
-      <span>Inventory Items</span>
-      <strong>{{conceptLayout.gear.totalItems}}</strong>
-    </article>
-    <article class="swse-concept-info-card swse-concept-info-card--stat">
-      <span>Total Weight</span>
-      <strong>{{#if conceptLayout.gear.ledgerWeight}}{{conceptLayout.gear.ledgerWeight}}{{else}}{{numberFormat conceptLayout.gear.totalWeight decimals=1}} kg{{/if}}</strong>
-    </article>
-    <article class="swse-concept-info-card swse-concept-info-card--stat">
-      <span>Workshop</span>
-      <strong>{{#if conceptLayout.gear.hasUpgradeableItems}}Upgrade Ready{{else}}No Eligible Mods{{/if}}</strong>
-    </article>
-  </div>
+    </div>
+    <div class="swse-eqw-strip__stat"><i class="fa-solid fa-weight-hanging" aria-hidden="true"></i><span class="swse-eqw-strip__label">Weight</span><strong>{{#if conceptLayout.gear.ledgerWeight}}{{conceptLayout.gear.ledgerWeight}}{{else}}{{numberFormat conceptLayout.gear.totalWeight decimals=1}} kg{{/if}}</strong></div>
+    <div class="swse-eqw-strip__stat"><i class="fa-solid fa-box-open" aria-hidden="true"></i><span class="swse-eqw-strip__label">Items</span><strong>{{conceptLayout.gear.totalItems}}</strong></div>
+    <div class="swse-eqw-strip__stat"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><span class="swse-eqw-strip__label">Workshop</span><strong>{{#if conceptLayout.gear.hasUpgradeableItems}}Upgrade ready{{else}}No eligible mods{{/if}}</strong></div>
+    <div class="swse-eqw-strip__actions swse-edit-reveal">
+      <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="weapon"><i class="fa-solid fa-plus" aria-hidden="true"></i> Weapon</button>
+      <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="armor"><i class="fa-solid fa-plus" aria-hidden="true"></i> Armor</button>
+      <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="equipment"><i class="fa-solid fa-plus" aria-hidden="true"></i> Gear</button>
+    </div>
+  </section>
 
   {{!-- Equipment workspace: the single equipment surface of this tab (loadout, armor, ledger and per-item controls all live in it). --}}
   {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs"}}

@@ -49,5 +49,25 @@ Specificity note: the sheet styles bare `.swse-concept-main button` (pill radius
 
 Defect fixed: `scripts/sheets/v2/context/RowTransformers.js` defaulted missing item art to `/images/icons/svg/mystery-man.svg`, which does not exist in Foundry, so those images broke on every inventory surface. It now uses Foundry's real core path, `icons/svg/mystery-man.svg`.
 
+## Composition (equipment bay, chosen over a console layout)
+Two concepts were rendered with real engine data at real sheet widths:
+- Concept A: character-centred equipment bay.
+- Concept B: console, with a portrait card beside a list of positions and an overlay inspector.
+
+A was chosen. Its positions sit physically around the character, so a weapon spanning two hands reads from where it sits. B read as a list beside a picture, and its overlay fought the sheet's forced panel positioning.
+
+| Region | Source |
+|---|---|
+| Hand / appendage sockets | `state.anatomy.appendages` (one per appendage, authority order), split around the figure for display |
+| Item held in several appendages | `state.occupancy.assignments[].appendageIds`. The first id is the display anchor and shows the item; the other sockets read "Occupied by …". Display only; grip and occupancy are not recomputed. |
+| Armor / personal shield | Two independent positions from the rows the armor SSOT already classified (`isEnergyShield`). Both can be filled at once. The shield shows worn plus activation plus SR from the row. Always displayed, because no authority defines a shield-capability position (no capacity is assumed). |
+| Implants | Installed implant rows (`isActiveImplant` / installed). No canonical implant-slot model exists, so none is invented. |
+| Inspector, nothing selected | Loadout overview built from the same view model (held items, armor, shield) |
+| Inspector, narrow | Sticky bottom drawer while an item is selected, with a close control (UI state only) |
+| Gear summary strip | Same credits field, item count, ledger weight, workshop flag and add-item actions as the four former cards |
+| Placement cards | The verdict category is shown in plain words. The coordinator's label, reasons and rules-decision id are under "Details" (collapsed). Fail-closed and GM-only behaviour are unchanged. |
+
+Droid note: in the harness, the droid scenario's anatomy is unresolved with no manipulators (the anatomy authority's fail-closed result for legacy droid parts). The bay shows that honestly instead of inventing hands.
+
 ## Not verified
 Live Foundry v13 rendering, real drag/scroll/focus preservation across a real `requestSurfaceRender`, real placement submission by a GM, portrait asset and icon loading. Layout QA rendered the real `gear-tab.hbs` with a real view model in Chromium, inside the real sheet ancestry classes, with every stylesheet in `system.json`, the theme registry's inline tokens, the system fonts and Font Awesome. Only the placement module was stubbed, replaying real coordinator verdicts. This is not a Foundry runtime test.

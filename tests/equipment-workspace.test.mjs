@@ -154,11 +154,21 @@ ok('static: no document writes, no hardcoded hand layout, every template control
   const held = vm.slots.filter((s) => s.occupant?.itemId === 't1');
   assert.equal(held.length, 2, 'both appendages named by the occupancy assignment show the item');
   assert.ok(held.every((s) => s.occupant.shared && s.occupant.withSlotLabels.length > 0), 'each slot names its grip partner');
+  assert.equal(held.filter((s) => s.occupant.isAnchor).length, 1, 'a multi-appendage item is shown in full on exactly one anchor socket (never duplicated)');
+  assert.equal(held.find((s) => s.occupant.isAnchor).id, 'natural-arm-1', 'the anchor is the first appendage in the assignment order');
+  assert.equal(vm.heldCount, 1);
+  assert.equal(vm.protection.armor.item.id, 'arm'); assert.equal(vm.protection.shield.item, null, 'armor and shield are independent positions');
   assert.deepEqual(vm.grips.map((g) => [g.itemId, g.count]), [['t1', 2]], 'the grip beam comes straight from the assignment');
   assert.equal(held[0].occupant.art.glyph, 'fa-jedi'); assert.equal(held[0].occupant.art.src, null);
   assert.equal(vm.portrait.src, 'portrait.webp', 'the actor portrait is used when it is real artwork');
   assert.ok(vm.tabs.every((t) => /^fa-/.test(t.icon)));
   const css = fs.readFileSync('styles/sheets/equipment-workspace.css', 'utf8');
+  const ws2 = buildEquipmentWorkspace(a, { groups: [{ entries: [{ id: 'arm', name: 'Armor', type: 'armor', equipped: true }, { id: 'sh', name: 'Shield', type: 'armor', equipped: true, isEnergyShield: true, activated: true }] }], isGM: true, readiness: readCombatReadiness(a, { resolveSpecies: h.deps.resolveSpecies }) });
+  assert.equal(ws2.protection.armor.item.id, 'arm'); assert.equal(ws2.protection.shield.item.id, 'sh', 'armor and an energy shield are shown at the same time');
+  const tplA = fs.readFileSync('templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs', 'utf8');
+  assert.ok(tplA.includes('data-eqw-station="armor"') && tplA.includes('data-eqw-station="shields"'), 'armor and shield have separate positions');
+  const gearTab2 = fs.readFileSync('templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs', 'utf8');
+  for (const k of ['name="system.credits"', 'data-action="add-item"', 'conceptLayout.gear.totalItems', 'conceptLayout.gear.hasUpgradeableItems']) assert.ok(gearTab2.includes(k), `summary strip keeps ${k}`);
   for (const t of ['--vapor-cyan', '--ink', '--screen', '--swse-concept-accent', '--swse-concept-ink', 'prefers-reduced-motion']) assert.ok(css.includes(t), `workspace CSS reads ${t}`);
   assert.ok(!/--swse-concept-(?:line|text)\b/.test(css), 'no stop-gap token aliases');
 }
