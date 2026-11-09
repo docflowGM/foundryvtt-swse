@@ -531,7 +531,9 @@ async function buildWeaponRangeProfile(weapon) {
 function canonicalRangeBands(range) {
   if (!range?.bandSquares) return null;
   const penalty = (b) => (b === 'short' && range.shortPenaltyOverride !== null ? range.shortPenaltyOverride : (range.basePenalties?.[b] ?? 0));
-  const mk = (b) => (range.bandSquares[b] && range.allowedBands.includes(b) ? { min: range.bandSquares[b][0], max: range.bandSquares[b][1], attackMod: penalty(b) } : null);
+  // weapon three-gate W5/C-RNG-05: a form whose band penalty is a DAMAGE penalty (CR-1 blast cannon) must not be previewed as an attack-roll penalty
+  const stage = range.penaltyApplication === 'damage' ? 'damage' : 'attack';
+  const mk = (b) => (range.bandSquares[b] && range.allowedBands.includes(b) ? { min: range.bandSquares[b][0], max: range.bandSquares[b][1], attackMod: penalty(b), appliesTo: stage } : null);
   return { pb: mk('pointBlank'), short: mk('short'), medium: mk('medium'), long: mk('long') };
 }
 function rangeChipsHtml(ranges) {
@@ -542,8 +544,9 @@ const ammoNoteText = (units) => (Number.isFinite(units) && units > 1 ? `Uses ${u
 function formatBandChip(label, band) {
   if (!band) return '';
   const mod = Number(band.attackMod ?? 0) || 0;
-  return `<span class="swse-roll-config-chip"><b>${escapeHTML(label)}</b> ${escapeHTML(band.min)}-${escapeHTML(band.max)} ${mod ? `(${mod})` : ''}</span>`;
+  return `<span class="swse-roll-config-chip"><b>${escapeHTML(label)}</b> ${escapeHTML(band.min)}-${escapeHTML(band.max)} ${mod ? `(${band.appliesTo === 'damage' ? 'damage ' : ''}${mod})` : ''}</span>`;
 }
+export { canonicalRangeBands, rangeChipsHtml }; // test seam: the preview chips are derived purely from the canonical range facet
 
 // Math Integrity Freeze, Attack Bonus round 8 (Part 5, option visibility
 // state model): an option arriving here from getAttackOptionsWithState()

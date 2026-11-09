@@ -93,3 +93,17 @@ test('C-RNG-03: an unrecognized band label (dialog "custom") with a stated dista
   assert.ok(await attack(A, pw, { distanceSquares: 3, rangeBand: 'custom' }));
   assert.equal(wf().attack.rangeBand, 'pointBlank');
 });
+
+test('C-RNG-05: the roll dialog previews a damage-side band penalty as a DAMAGE penalty, an ordinary one as an attack penalty', async () => {
+  // roll-config's escapeHTML is the only DOM touch on the chip path; a minimal shim keeps the test headless
+  globalThis.document ??= { createElement: () => ({ set textContent(v) { this.t = String(v); }, get innerHTML() { return this.t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); } }) };
+  const { canonicalRangeBands, rangeChipsHtml } = await import('/systems/foundryvtt-swse/scripts/rolls/roll-config.js');
+  const crRange = rt.resolveAttackWeaponRuntime(canon('weapon-cr-1-blast-cannon'), {}).range;
+  const crChips = rangeChipsHtml(canonicalRangeBands(crRange));
+  assert.match(crChips, /\(damage -2\)/, 'CR-1 Short chip labelled as a damage penalty');
+  assert.match(crChips, /\(damage -5\)/);
+  const bpRange = rt.resolveAttackWeaponRuntime(canon('weapon-blaster-pistol'), {}).range;
+  const bpChips = rangeChipsHtml(canonicalRangeBands(bpRange));
+  assert.match(bpChips, /\(-2\)/);
+  assert.doesNotMatch(bpChips, /damage/, 'an ordinary pistol keeps the attack-roll preview');
+});
