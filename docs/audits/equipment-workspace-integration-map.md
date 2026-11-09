@@ -34,5 +34,20 @@ Selected slot/item, active tab, inspector pane, search text, show-incompatible t
 - **Saved loadouts**: no saved-loadout infrastructure exists, so no loadout controls were added (gap recorded, per directive).
 - Combat feats are not shown as weapon firing modes.
 
+## Visual layer (Holopad theme integration)
+| Concern | Source reused |
+|---|---|
+| Colours, glow, fonts | Live sheet theme tokens written by `scripts/theme/actor-sheet-theme-registry.js` on the shell (`--vapor-cyan/-pink/-purple`, `--ink*`, `--screen*`, `--pos/--zero/--neg`, `--font-*`, `--glow-mult`), falling back to `styles/system/concept-surface-contract.css` (`--swse-concept-*`). The workspace defines no palette of its own and follows the per-actor theme (verified with Holo Blue, Vaporwave and Sith). |
+| Panels | The sheet's `.swse-concept-panel` / `__header` / `__title` primitives; the workspace adds a frame and corner brackets on `::after` only. |
+| Buttons | The sheet's `.swse-concept-btn` / `--primary` (notched like the Gear tab's Inventory Controls). |
+| Icons | Font Awesome classes, as the sheet's own tab bar uses. |
+| Artwork | Real item and actor art is shown. Foundry's generic core placeholders (`icons/svg/*`) and failed loads show a themed category glyph instead. Display only; item data is untouched. |
+
+Replaced token aliases: the previous stylesheet read `--swse-concept-line` / `--swse-concept-text`, older stop-gap aliases in `v2-concept-sheet.css` derived from `--swse-accent`. Those resolve, but they ignore the per-actor theme. All references now go to the live tokens above.
+
+Specificity note: the sheet styles bare `.swse-concept-main button` (pill radius, uppercase) and `.swse-sheet button`. Every workspace rule is rooted at `.swse-eqw`, so it wins locally without editing global sheet CSS.
+
+Defect fixed: `scripts/sheets/v2/context/RowTransformers.js` defaulted missing item art to `/images/icons/svg/mystery-man.svg`, which does not exist in Foundry, so those images broke on every inventory surface. It now uses Foundry's real core path, `icons/svg/mystery-man.svg`.
+
 ## Not verified
-Live Foundry v13 rendering, real drag/scroll/focus preservation across a real `requestSurfaceRender`, real placement submission by a GM, portrait asset and icon loading. Layout QA rendered the real template with a real view model in Chromium, with only the placement module stubbed using replayed real verdicts.
+Live Foundry v13 rendering, real drag/scroll/focus preservation across a real `requestSurfaceRender`, real placement submission by a GM, portrait asset and icon loading. Layout QA rendered the real `gear-tab.hbs` with a real view model in Chromium, inside the real sheet ancestry classes, with every stylesheet in `system.json`, the theme registry's inline tokens, the system fonts and Font Awesome. Only the placement module was stubbed, replaying real coordinator verdicts. This is not a Foundry runtime test.

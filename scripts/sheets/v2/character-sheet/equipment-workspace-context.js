@@ -14,13 +14,30 @@
 import { readCombatReadiness, describeWeaponReadiness } from '/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js';
 
 export const WORKSPACE_TABS = Object.freeze([
-  { id: 'all', label: 'All' },
-  { id: 'weapons', label: 'Weapons' },
-  { id: 'armor', label: 'Armor' },
-  { id: 'shields', label: 'Shields' },
-  { id: 'implants', label: 'Implants' },
-  { id: 'gear', label: 'Gear' },
+  { id: 'all', label: 'All', icon: 'fa-layer-group' },
+  { id: 'weapons', label: 'Weapons', icon: 'fa-crosshairs' },
+  { id: 'armor', label: 'Armor', icon: 'fa-user-shield' },
+  { id: 'shields', label: 'Shields', icon: 'fa-shield-halved' },
+  { id: 'implants', label: 'Implants', icon: 'fa-microchip' },
+  { id: 'gear', label: 'Gear', icon: 'fa-toolbox' },
 ]);
+
+// ---- display artwork (presentation only; item data is never changed) ----
+// Foundry's core `icons/svg/*` set is the generic placeholder most compendium items ship with (sword.svg, shield.svg, ...). It carries no
+// item-specific art, so the workspace shows its themed category glyph instead. Any other image path is treated as real artwork; if it fails
+// to load, equipment-workspace-ui.js swaps the tile to the same glyph. Glyphs are Font Awesome classes, which Foundry already ships.
+const CATEGORY_GLYPH = Object.freeze({ weapons: 'fa-gun', armor: 'fa-user-shield', shields: 'fa-shield-halved', implants: 'fa-microchip', gear: 'fa-toolbox' });
+const isGenericArt = (src) => !src || /^\/?(?:images\/)?icons\/svg\//.test(String(src));
+export function artOf(src, glyph) { return { src: isGenericArt(src) ? null : String(src), glyph }; }
+const glyphOfRow = (row, category) => (row?.isLightsaber === true || row?.weaponReadiness?.isLightsaber === true ? 'fa-jedi' : CATEGORY_GLYPH[category] ?? 'fa-box');
+/** Display glyph of an appendage, keyed only by the kind string the anatomy authority already resolved. */
+function glyphOfAppendage(kind) {
+  const k = String(kind ?? '').toLowerCase();
+  if (/arm|hand/.test(k)) return 'fa-hand';
+  if (/claw|grasp|grip/.test(k)) return 'fa-hand-back-fist';
+  if (/tool|probe|instrument|manipulator/.test(k)) return 'fa-screwdriver-wrench';
+  return 'fa-circle-nodes';
+}
 
 const asArray = (v) => (Array.isArray(v) ? v : []);
 const isWeaponType = (t) => ['weapon', 'lightsaber'].includes(String(t ?? '').toLowerCase());
@@ -86,41 +103,7 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
   const state = rd?.state ?? null;
   const notices = [];
 
-  // ---- slots: one per authoritative appendage; occupancy comes from the resolved assignments ----
   const rows = groups.flatMap((g) => asArray(g.entries));
-  const rowById = new Map(rows.map((r) => [r.id, r]));
-  const assignments = asArray(state?.occupancy?.assignments);
-  const byAppendage = new Map();
-  for (const a of assignments) for (const id of asArray(a.appendageIds)) byAppendage.set(id, a);
-  const conflictAppendages = new Set(asArray(state?.conflicts).map((c) => c.appendageId));
-  const slots = asArray(state?.anatomy?.appendages).map((app) => {
-    const a = byAppendage.get(app.id) ?? null;
-    const row = a ? rowById.get(a.itemId) ?? null : null;
-    const fs = app.functionalState ?? 'unresolved';
-    const unavailable = fs === 'disabled' || fs === 'missing';
-    return {
-      id: app.id,
-      label: humanize(app.id),
-      kind: app.kind ?? null,
-      functionalState: fs,
-      stateLabel: fs === 'functional' ? '' : humanize(fs),
-      unavailable,
-      conflict: conflictAppendages.has(app.id),
-      empty: !a,
-      occupant: a ? {
-        itemId: a.itemId,
-        name: row?.name ?? 'Unknown item',
-        img: row?.img ?? null,
-        purpose: a.purpose ?? null,
-        status: a.status ?? null,
-        shared: asArray(a.appendageIds).length > 1,
-        withSlotIds: asArray(a.appendageIds).filter((id) => id !== app.id),
-        // display of the sheet's authoritative attack view for the held weapon (KOTOR-style per-hand readout); never computed here
-        attackLabel: attackViews.get(a.itemId)?.attackTotal !== undefined ? signed(attackViews.get(a.itemId).attackTotal) : '',
-        damageLabel: attackViews.get(a.itemId)?.damageFormula ?? '',
-      } : null,
-    };
-  });
 
   // ---- notices (engine-sourced messages only) ----
   const anatomy = state?.anatomy ?? null;
@@ -134,7 +117,7 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
     if (state.transactions?.journalStatus === 'invalid') notices.push({ tone: 'conflict', text: 'The equipment transaction journal is unreadable; readiness is withheld.' });
     if (state.conflicts?.length) notices.push({ tone: 'conflict', text: 'Two items claim the same hand or appendage. Nothing was moved automatically; stow one of them.' });
   }
-  if (!isGM) notices.push({ tone: 'info', text: 'Draw and stow are executed by the equipment authority on a GM client; from a player client a request is refused and nothing changes.' });
+  if (!isGM) notices.push({ tone: 'info', text: 'Draw and stow are carried out by the equipment authority on a GM client. From a player client the request is refused and nothing changes.' });
 
   // ---- items ----
   const items = rows.map((row) => {
@@ -150,6 +133,7 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       id: row.id,
       name: row.name,
       img: row.img,
+      art: artOf(row.img, glyphOfRow(row, category)),
       category,
       typeLabel: row.typeLabel,
       quantity: Number(row.quantity) || 1,
@@ -196,6 +180,56 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
     };
   });
 
+  // ---- slots: one per authoritative appendage; occupancy comes from the resolved assignments ----
+  const itemById = new Map(items.map((i) => [i.id, i]));
+  const assignments = asArray(state?.occupancy?.assignments);
+  const byAppendage = new Map();
+  for (const a of assignments) for (const id of asArray(a.appendageIds)) byAppendage.set(id, a);
+  const conflictAppendages = new Set(asArray(state?.conflicts).map((c) => c.appendageId));
+  const slots = asArray(state?.anatomy?.appendages).map((app) => {
+    const a = byAppendage.get(app.id) ?? null;
+    const it = a ? itemById.get(a.itemId) ?? null : null;
+    const fs = app.functionalState ?? 'unresolved';
+    const unavailable = fs === 'disabled' || fs === 'missing';
+    const withSlotIds = a ? asArray(a.appendageIds).filter((id) => id !== app.id) : [];
+    return {
+      id: app.id,
+      label: humanize(app.id),
+      kind: app.kind ?? null,
+      glyph: glyphOfAppendage(app.kind),
+      functionalState: fs,
+      stateLabel: fs === 'functional' ? '' : humanize(fs),
+      unavailable,
+      conflict: conflictAppendages.has(app.id),
+      empty: !a,
+      occupant: a ? {
+        itemId: a.itemId,
+        name: it?.name ?? 'Unknown item',
+        art: it?.art ?? artOf(null, 'fa-box'),
+        purpose: a.purpose ?? null,
+        purposeLabel: a.purpose ? humanize(a.purpose) : '',
+        status: a.status ?? null,
+        // the item's own readiness label/tone (Drawn, Held, ...) as already derived above from describeWeaponReadiness
+        stateLabel: it?.status?.label ?? '',
+        tone: it?.status?.tone ?? 'neutral',
+        activated: it?.activated === true || it?.weaponReadiness?.activated === true,
+        shared: withSlotIds.length > 0,
+        withSlotIds,
+        withSlotLabels: withSlotIds.map(humanize).join(' + '),
+        // display of the sheet's authoritative attack view for the held weapon (KOTOR-style per-hand readout); never computed here
+        attackLabel: attackViews.get(a.itemId)?.attackTotal !== undefined ? signed(attackViews.get(a.itemId).attackTotal) : '',
+        damageLabel: attackViews.get(a.itemId)?.damageFormula ?? '',
+      } : null,
+    };
+  });
+  // items held across more than one appendage, straight from the occupancy assignments (shown as a grip link on the figure)
+  const grips = assignments.filter((a) => asArray(a.appendageIds).length > 1).map((a) => ({
+    itemId: a.itemId,
+    name: itemById.get(a.itemId)?.name ?? 'Unknown item',
+    slotLabels: asArray(a.appendageIds).map(humanize).join(' + '),
+    count: asArray(a.appendageIds).length,
+  }));
+
   const counts = { all: items.length };
   for (const t of WORKSPACE_TABS) if (t.id !== 'all') counts[t.id] = items.filter((i) => i.category === t.id).length;
   const tabs = WORKSPACE_TABS.filter((t) => t.id === 'all' || counts[t.id] > 0 || ['weapons', 'armor'].includes(t.id)).map((t) => ({ ...t, count: counts[t.id] ?? 0 }));
@@ -211,19 +245,24 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
   // figure layout is presentation only: appendage slots are split around the central stations in authoritative order
   const half = Math.ceil(slots.length / 2);
   const stations = [
-    { id: 'implants', label: 'Implants', tab: 'implants', items: worn.implants },
     { id: 'armor', label: 'Armor', tab: 'armor', items: worn.armor },
     { id: 'shields', label: 'Shield', tab: 'shields', items: worn.shields },
-  ].map((st) => ({ ...st, empty: st.items.length === 0, primary: st.items[0] ?? null }));
+    { id: 'implants', label: 'Implants', tab: 'implants', items: worn.implants },
+  ].map((st) => ({ ...st, glyph: CATEGORY_GLYPH[st.tab], empty: st.items.length === 0, primary: st.items[0] ?? null, extra: Math.max(0, st.items.length - 1) }));
+  const droidLike = String(actor?.type ?? '').toLowerCase() === 'droid' || /droid/i.test(String(anatomy?.anatomyKind ?? ''));
 
   return {
-    portrait: actor?.img ?? null,
+    // the actor's own artwork; Foundry's default silhouette (or none) shows a themed placeholder glyph instead
+    portrait: { ...artOf(actor?.img, droidLike ? 'fa-robot' : 'fa-user-astronaut'), name: actor?.name ?? '' },
+    grips,
+    hasGrips: grips.length > 0,
+    appendageCount: slots.length,
     slotsLeft: slots.slice(0, half),
     slotsRight: slots.slice(half),
     stations,
     available: !!state,
     notices,
-    anatomy: anatomy ? { status: anatomy.status, kind: anatomy.anatomyKind, source: anatomy.source } : null,
+    anatomy: anatomy ? { status: anatomy.status, statusLabel: humanize(anatomy.status), resolved: anatomy.status === 'resolved', kind: anatomy.anatomyKind, kindLabel: humanize(anatomy.anatomyKind), source: anatomy.source } : null,
     slots,
     hasSlots: slots.length > 0,
     worn,
@@ -235,4 +274,4 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
   };
 }
 
-export default { buildEquipmentWorkspace, categoryOfRow, WORKSPACE_TABS };
+export default { buildEquipmentWorkspace, categoryOfRow, artOf, WORKSPACE_TABS };

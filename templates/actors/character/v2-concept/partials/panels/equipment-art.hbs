@@ -1,0 +1,7 @@
+{{!-- Item/actor artwork tile. Presentation only: `art` = { src, glyph } from equipment-workspace-context.js (artOf).
+     The themed Font Awesome glyph always sits underneath; real artwork (when present) covers it. If the image fails to load,
+     equipment-workspace-ui.js marks the tile `is-glyph`, which hides the image, so no broken-image icon ever shows. --}}
+<span class="swse-eqw__art{{#if size}} swse-eqw__art--{{size}}{{/if}}{{#unless art.src}} is-glyph{{/unless}}" aria-hidden="true">
+  <i class="fa-solid {{art.glyph}}"></i>
+  {{#if art.src}}<img src="{{art.src}}" alt="" loading="lazy" decoding="async" data-eqw-img>{{/if}}
+</span>

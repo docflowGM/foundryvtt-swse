@@ -22,6 +22,12 @@ function freshState() {
 }
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
+const icon = (name) => { const i = el('i', `fa-solid ${name}`); i.setAttribute('aria-hidden', 'true'); return i; };
+const btn = (cls, label, glyph) => { const b = el('button', cls); b.type = 'button'; if (glyph) b.append(icon(glyph), ' '); b.append(label); return b; };
+const GRIP_LABEL = (g) => (g === 'two-handed' ? 'Two-handed' : 'One-handed');
+
+/** Artwork that fails to load falls back to the tile's themed glyph (display only; item data is untouched). */
+function markBrokenArt(img) { img?.closest?.('.swse-eqw__art, .swse-eqw__holo')?.classList.add('is-glyph'); }
 
 export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
   const ws = root?.querySelector?.('[data-eqw]');
@@ -63,6 +69,7 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
         const showBadge = filtering && v;
         badge.hidden = !showBadge;
         badge.textContent = showBadge ? LABEL[v.best] : '';
+        badge.title = showBadge ? `${LABEL[v.best]} for ${slotLabel(st.slotId)}` : '';
         badge.className = `swse-eqw__verdict${showBadge ? ` is-${v.best}` : ''}`;
       }
       $('[data-eqw-select]', row)?.setAttribute('aria-pressed', id === st.itemId ? 'true' : 'false');
@@ -97,10 +104,11 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     host.replaceChildren();
     if (st.message?.itemId === itemId) host.append(el('p', `swse-eqw__result is-${st.message.tone}`, st.message.text));
     if (!st.slotId) {
-      host.append(el('p', 'swse-eqw__hint', 'Choose where to draw this weapon:'));
-      const row = el('div', 'swse-eqw__actions');
+      host.append(el('h4', 'swse-eqw__sub', 'Placement'));
+      host.append(el('p', 'swse-eqw__hint', 'Choose a hand or appendage to check this weapon against:'));
+      const row = el('div', 'swse-eqw__vblock');
       $$('[data-eqw-slot]').filter((b) => b.getAttribute('aria-disabled') !== 'true').forEach((b) => {
-        const btn = el('button', 'swse-concept-btn', b.dataset.eqwSlotLabel); btn.type = 'button'; btn.dataset.eqwPlaceSlot = b.dataset.eqwSlot; row.append(btn);
+        const chip = btn('swse-eqw__chipbtn', b.dataset.eqwSlotLabel, 'fa-hand'); chip.dataset.eqwPlaceSlot = b.dataset.eqwSlot; row.append(chip);
       });
       host.append(row.childElementCount ? row : el('p', 'swse-eqw__empty', 'No usable hands or appendages are established.'));
       return;
@@ -112,27 +120,48 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     st.verdicts[itemId] = { best: bestOf(res.results), results: res.results };
     host.replaceChildren();
     if (st.message?.itemId === itemId) host.append(el('p', `swse-eqw__result is-${st.message.tone}`, st.message.text));
-    host.append(el('h4', 'swse-eqw__sub', `Into ${slotLabel(st.slotId)}`));
-    for (const r of res.results) {
-      const box = el('div', `swse-eqw__verdict-box is-${r.verdict}`);
-      box.append(el('strong', '', `${r.grip === 'two-handed' ? 'Two-handed' : 'One-handed'}: ${r.label}`));
-      if (r.verdict === V.AVAILABLE) {
-        box.append(el('small', '', ACTION_LABEL(r.action)));
-        const go = el('button', 'swse-concept-btn swse-concept-btn--primary', `Draw ${r.grip === 'two-handed' ? 'two-handed' : 'one-handed'}`);
-        go.type = 'button'; go.dataset.eqwPlace = `${itemId}|${st.slotId}|${r.grip}`; go.disabled = st.busy; box.append(go);
-      }
-      for (const reason of r.reasons.slice(0, 3)) box.append(el('small', 'swse-eqw__reason', reason.message));
-      if (r.decisionId) box.append(el('small', 'swse-eqw__reason', `Rules decision ${r.decisionId} is pending; nothing is changed.`));
-      if (r.verdict === V.REQUIRES_CHANGE) {
-        box.append(el('small', '', 'Stow the conflicting item first (nothing is moved automatically):'));
-        for (const id of r.blockingItemIds.filter((x) => x !== itemId)) {
-          const b = el('button', 'swse-concept-btn', `Stow ${rowName(id)}`); b.type = 'button'; b.dataset.eqwStow = id; b.disabled = st.busy; box.append(b);
-        }
-      }
-      host.append(box);
-    }
-    host.append(el('small', 'swse-eqw__hint', 'A grip that needs more hands than this slot offers is chosen with Draw in the actions above, which asks for the hands.'));
+    host.append(el('h4', 'swse-eqw__sub', `Placement · ${slotLabel(st.slotId)}`));
+    for (const r of res.results) host.append(verdictCard(itemId, r));
+    host.append(el('p', 'swse-eqw__hint', 'Grips that need more hands than this slot offers: use Draw above, which asks for the hands.'));
     apply();
+  }
+
+  /**
+   * One compact card per coordinator result: grip + verdict label up front, a one-line summary, the authorised control (if any),
+   * and every engine reason available on demand. Labels, reasons and decision ids are the coordinator's own; nothing is reinterpreted.
+   */
+  function verdictCard(itemId, r) {
+    const card = el('div', `swse-eqw__vcard is-${r.verdict}`);
+    const head = el('div', 'swse-eqw__vhead');
+    head.append(el('strong', '', GRIP_LABEL(r.grip)), el('span', '', r.label));
+    card.append(head);
+    const reasons = r.reasons.map((x) => x.message).filter(Boolean);
+    let summary;
+    if (r.verdict === V.AVAILABLE) summary = ACTION_LABEL(r.action);
+    else if (r.decisionId) summary = `Rules decision ${r.decisionId} is pending; nothing is changed.`;
+    else summary = reasons[0] ?? '';
+    if (summary) card.append(el('p', 'swse-eqw__vsum', summary));
+    if (r.verdict === V.AVAILABLE) {
+      const go = btn('swse-concept-btn swse-concept-btn--primary', `Draw ${GRIP_LABEL(r.grip).toLowerCase()}`, 'fa-hand');
+      go.dataset.eqwPlace = `${itemId}|${st.slotId}|${r.grip}`; go.disabled = st.busy; card.append(go);
+    }
+    if (r.verdict === V.REQUIRES_CHANGE) {
+      const block = el('div', 'swse-eqw__vblock');
+      block.append(el('span', 'swse-eqw__hint', 'Stow first (nothing moves automatically):'));
+      for (const id of r.blockingItemIds.filter((x) => x !== itemId)) {
+        const b = btn('swse-eqw__chipbtn', `Stow ${rowName(id)}`, 'fa-box-archive'); b.dataset.eqwStow = id; b.disabled = st.busy; block.append(b);
+      }
+      card.append(block);
+    }
+    // the summary line is clamped to two lines, so a long engine reason is also repeated in full under "Why"
+    const detail = summary && reasons.includes(summary) && summary.length > 100 ? reasons : reasons.filter((m) => m !== summary);
+    if (detail.length) {
+      const d = el('details');
+      d.append(el('summary', '', r.verdict === V.DEFERRED ? 'Technical details' : 'Why'));
+      for (const m of detail) d.append(el('p', '', m));
+      card.append(d);
+    }
+    return card;
   }
 
   // ------------------------------------------------------------------ slot-first eligibility (coordinator plan per weapon)
@@ -204,6 +233,10 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
       if (result && result.skipped !== true) await sheet.requestSurfaceRender?.({ reason: 'equipment-workspace-reload' });
     }
   }, { signal });
+
+  ws.addEventListener('error', (event) => { if (event.target instanceof HTMLImageElement && event.target.matches('[data-eqw-img]')) markBrokenArt(event.target); }, { capture: true, signal });
+  // images that already failed before these listeners attached
+  $$('img[data-eqw-img]').forEach((img) => { if (img.complete && img.naturalWidth === 0) markBrokenArt(img); });
 
   ws.addEventListener('input', (event) => {
     if (event.target === searchEl) { st.search = searchEl.value; st.selStart = searchEl.selectionStart; st.selEnd = searchEl.selectionEnd; apply(); }

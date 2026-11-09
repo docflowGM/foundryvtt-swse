@@ -18,7 +18,7 @@ rt.setSharedWeaponAuthorityRegistry(registry);
 const { InventoryEngine } = await import('/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js');
 const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
 const { readCombatReadiness } = await import('/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js');
-const { buildEquipmentWorkspace, categoryOfRow } = await import('/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js');
+const { buildEquipmentWorkspace, categoryOfRow, artOf } = await import('/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js');
 const P = await import('/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-placement.js');
 const { installCoordinatorHarness, REC } = await import('./helpers/equipment-coordinator-harness.mjs');
 
@@ -131,9 +131,37 @@ ok('unreadable state and non-GM clients produce honest notices, not working-look
   const gearTab = fs.readFileSync('templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs', 'utf8');
   assert.ok(gearTab.includes('equipment-workspace.hbs') && !gearTab.includes('Equipped Loadout'), 'the retired loadout/ledger sections are gone from the Gear tab');
   const preload = fs.readFileSync('scripts/load-templates.js', 'utf8');
-  for (const p of ['equipment-workspace.hbs', 'equipment-slot.hbs']) assert.ok(preload.includes(p), `${p} is preloaded`);
+  for (const p of ['equipment-workspace.hbs', 'equipment-slot.hbs', 'equipment-art.hbs']) assert.ok(preload.includes(p), `${p} is preloaded`);
   assert.ok(JSON.parse(fs.readFileSync('system.json', 'utf8')).styles.includes('styles/sheets/equipment-workspace.css'));
 }
 ok('static: no document writes, no hardcoded hand layout, every template control has a handler, retired panels removed, assets registered');
+
+// 7. presentation: artwork fallback, shared-grip display and theme integration are display-only and follow the authorities
+{
+  assert.deepEqual(artOf('icons/svg/sword.svg', 'fa-gun'), { src: null, glyph: 'fa-gun' }, 'Foundry core placeholder art shows the themed glyph');
+  assert.deepEqual(artOf('/images/icons/svg/mystery-man.svg', 'fa-gun').src, null);
+  assert.equal(artOf('', 'fa-gun').src, null);
+  assert.equal(artOf('worlds/x/blaster.webp', 'fa-gun').src, 'worlds/x/blaster.webp', 'real artwork is kept');
+  const row = fs.readFileSync('scripts/sheets/v2/context/RowTransformers.js', 'utf8');
+  assert.ok(!row.includes('/images/icons/svg/'), 'row defaults use Foundry\'s real core icon path');
+
+  const a = mkActor([saber('t1', 'Twin Blade'), armor('arm')]);
+  const deps = { ...h.deps, isGm: () => true, ledger: new Map(), resolveActionCost: async () => 'move', isLightsaber: async () => false, spendAction: async () => ({ allowed: true, committed: true }), spendMarkerPresent: async () => false };
+  await InventoryEngine.requestWeaponPosture(a, { type: 'stow', itemId: 't1' }, { deps });
+  const two = await InventoryEngine.requestWeaponPosture(a, { type: 'ready', itemId: 't1', appendageIds: ['natural-arm-1', 'natural-arm-2'], grip: 'two-handed' }, { deps });
+  assert.equal(two.ok, true, 'the authority commits the two-appendage grip');
+  const vm = buildEquipmentWorkspace(a, { groups: [{ entries: [{ id: 't1', name: 'Twin Blade', type: 'weapon', img: 'icons/svg/sword.svg', isLightsaber: true }, { id: 'arm', name: 'Armor', type: 'armor', equipped: true }] }], isGM: true, readiness: readCombatReadiness(a, { resolveSpecies: h.deps.resolveSpecies }) });
+  const held = vm.slots.filter((s) => s.occupant?.itemId === 't1');
+  assert.equal(held.length, 2, 'both appendages named by the occupancy assignment show the item');
+  assert.ok(held.every((s) => s.occupant.shared && s.occupant.withSlotLabels.length > 0), 'each slot names its grip partner');
+  assert.deepEqual(vm.grips.map((g) => [g.itemId, g.count]), [['t1', 2]], 'the grip beam comes straight from the assignment');
+  assert.equal(held[0].occupant.art.glyph, 'fa-jedi'); assert.equal(held[0].occupant.art.src, null);
+  assert.equal(vm.portrait.src, 'portrait.webp', 'the actor portrait is used when it is real artwork');
+  assert.ok(vm.tabs.every((t) => /^fa-/.test(t.icon)));
+  const css = fs.readFileSync('styles/sheets/equipment-workspace.css', 'utf8');
+  for (const t of ['--vapor-cyan', '--ink', '--screen', '--swse-concept-accent', '--swse-concept-ink', 'prefers-reduced-motion']) assert.ok(css.includes(t), `workspace CSS reads ${t}`);
+  assert.ok(!/--swse-concept-(?:line|text)\b/.test(css), 'no stop-gap token aliases');
+}
+ok('presentation: art fallback, shared-grip display and theme tokens are display-only and authority-driven');
 
 console.log(`equipment-workspace: ${n} checks ok`);
