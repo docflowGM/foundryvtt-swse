@@ -100,4 +100,60 @@ const runUse = async (actor, dataset) => {
   assert.ok(src.indexOf('item.roll', i) > src.indexOf('gate.ok', i), 'gate precedes the roll');
   ok('shared roll-weapon handler gates integrated hardware before rolling; ordinary handheld weapons stay outside the gate');
 }
+// 6. identity must agree exactly (each case failed against the previous fallback behavior)
+{
+  const inst = (id, instanceId, over = {}) => [`${id}--${instanceId}`, { id, instanceId, locationId: `loc-${instanceId}`, installed: true, enabled: true, category: 'weapon', ...over }];
+  const two = droid({ installedSystems: Object.fromEntries([inst('taser', 'iA'), inst('taser', 'iB')]) });
+  // a stale/wrong instance never falls back to another installation of the same part
+  let r = gate(two, { instanceId: 'iZ', ruleId: 'taser' }, deps);
+  assert.equal(r.ok, false); assert.equal(r.status, S.UNRESOLVED);
+  // exact instance works
+  assert.equal(gate(two, { instanceId: 'iA', ruleId: 'taser' }, deps).ok, true);
+  // instance + canonical that disagree: refuse
+  const mixed = droid({ installedSystems: Object.fromEntries([inst('taser', 'iA'), inst('flamethrower', 'iB')]) });
+  assert.equal(gate(mixed, { instanceId: 'iA', ruleId: 'flamethrower' }, deps).ok, false, 'iA is a taser, not a flamethrower');
+  assert.equal(gate(mixed, { instanceId: 'iA', ruleId: 'taser' }, deps).ok, true);
+  // several identical installations need the instance
+  assert.equal(gate(two, { ruleId: 'taser' }, deps).ok, false);
+  // an instance-less bare reference to a single installation still works
+  assert.equal(gate(droid(ledger('taser')), { ruleId: 'taser' }, deps).ok, true);
+  ok('wrong instance, mismatched canonical, and ambiguous identical installations are refused; exact identity still works');
+}
+
+// 7. an uninstalled integrated Item never inherits a same-type installation
+{
+  const item = (id) => ({ id, type: 'droid-system', name: 'Taser', system: { droidPartId: 'taser', category: 'weapon', integrated: true }, flags: {} });
+  const hw = { installedSystems: { 'taser--iA': { id: 'taser', instanceId: 'iA', locationId: 'loc-A', installed: true, enabled: true, category: 'weapon' } } };
+  const actor = droid(hw, [item('stray')]);
+  // the stray Item is not behind the installed instance: it is item-only, not operable
+  const stray = gate(actor, { itemId: 'stray', ruleId: 'taser' }, deps);
+  assert.equal(stray.ok, false); assert.equal(stray.status, S.ITEM_ONLY);
+  // naming the installed instance together with the stray Item is an identity mismatch
+  assert.equal(gate(actor, { itemId: 'stray', instanceId: 'iA', ruleId: 'taser' }, deps).ok, false);
+  // an Item id that is not in any record is refused (cannot fall back to canonical type)
+  assert.equal(gate(actor, { itemId: 'ghost', ruleId: 'taser' }, deps).ok, false);
+  // a single ledger entry (no instance) with exactly one Item: that Item is the installation
+  assert.equal(gate(droid(ledger('taser'), [item('only')]), { itemId: 'only', ruleId: 'taser' }, deps).ok, true);
+  // two Items collapsing into one non-instance installation cannot be told apart: fail closed
+  assert.equal(gate(droid(ledger('taser'), [item('a'), item('b')]), { itemId: 'b', ruleId: 'taser' }, deps).ok, false);
+  // handler level: the Use handler passes the Item identity, so the stray Item cannot attack
+  reset();
+  const out = await runUse(actor, { partId: 'stray' });
+  assert.equal(out, null); assert.equal(calls.attack, 0);
+  ok('an uninstalled integrated Item sharing a type with installed hardware is item-only and cannot attack; ambiguous Item sets fail closed');
+}
+
+// 8. browser presentation uses the same exact matcher (no stale-instance fallback)
+{
+  const { buildDroidComponentBrowser } = await import('../scripts/sheets/v2/droid-sheet/droid-component-browser.js');
+  const { DroidSystemsResolver } = await import('../scripts/sheets/v2/droid-sheet/droid-systems-resolver.js');
+  const hand = (i) => [`hand--inst-h${i}`, { id: 'hand', instanceId: `inst-h${i}`, locationId: `slot-${i}`, installed: true, enabled: true, category: 'appendage', slot: 'appendage' }];
+  const actor = droid({ installedSystems: Object.fromEntries([hand(1), hand(2)]) });
+  const b = buildDroidComponentBrowser(actor, new DroidSystemsResolver(actor).resolve(), { canOpenGarage: true });
+  assert.equal(b.entries.filter((e) => e.category === 'appendage' && e.status.key === 'confirmed').length, 2);
+  const { findInstalledComponent } = await import('../scripts/domain/droids/droid-component-operation-gate.js');
+  const comps = (await import('../scripts/domain/droids/droid-installed-component-resolver.js')).resolveInstalledDroidComponents(actor, { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition }).components;
+  assert.equal(findInstalledComponent(comps, { instanceId: 'inst-gone', ruleId: 'hand' }, normalizeDroidPartId).component, null, 'stale instance resolves to nothing, not to another hand');
+  ok('the browser and the gate share one exact matcher; a stale instance resolves to nothing');
+}
 console.log(`droid-component-operation-gate: ${n} checks passed`);

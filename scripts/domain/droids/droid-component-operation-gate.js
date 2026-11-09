@@ -32,8 +32,46 @@ const REASON = Object.freeze({
 });
 
 /**
+ * Identity matching shared by the execution gate and the component browser (one matcher, no stale-instance fallback).
+ *   - a supplied instanceId must match EXACTLY; a wrong/stale instance never falls back to another installation
+ *   - a supplied canonical part must agree with whatever the instance / Item resolved to
+ *   - a supplied embedded-Item id resolves only through the resolver's own Item-to-component association (`sources[].itemId`); an Item that is
+ *     not part of an installation never inherits a same-type installation. If the relationship cannot be established it fails closed
+ *   - a bare canonical id is accepted only when it names exactly one component (several installations require an instance)
+ * @returns {{component:object|null, refusal:string|null}}
+ */
+export function findInstalledComponent(components, ref = {}, normalizeId = (v) => String(v ?? '').trim().toLowerCase()) {
+  const list = Array.isArray(components) ? components : [];
+  const instanceId = ref.instanceId ? String(ref.instanceId) : null;
+  const itemId = ref.itemId ? String(ref.itemId) : null;
+  const rawCanonical = ref.ruleId ?? ref.partId ?? null;
+  const canonical = rawCanonical ? normalizeId(rawCanonical) : '';
+  const nameCanonical = !canonical && ref.name ? normalizeId(ref.name) : '';
+  const want = canonical || nameCanonical;
+  let component = null;
+  if (instanceId) {
+    component = list.find((c) => c.instanceId === instanceId) ?? null;
+    if (!component) return { component: null, refusal: 'No installed component has that physical instance; the reference is stale or wrong.' };
+  } else if (itemId) {
+    component = list.find((c) => (c.sources ?? []).some((src) => src.itemId && String(src.itemId) === itemId)) ?? null;
+    if (!component) return { component: null, refusal: 'This Item is not part of any installation record.' };
+    // several Items collapsing into one installation cannot be told apart (no per-Item installation identity exists): fail closed
+    if (!component.instanceId && (component.sources ?? []).filter((src) => src.itemId).length > 1) return { component: null, refusal: 'Several Items share this installation record; which one is installed is not established.' };
+  } else if (want) {
+    const matches = list.filter((c) => c.canonicalId === want);
+    if (matches.length > 1) return { component: null, refusal: 'Several installed instances match; name the physical instance.' };
+    component = matches[0] ?? null;
+  }
+  if (component && want && component.canonicalId !== want) return { component: null, refusal: 'The requested component does not match the installed component at that identity.' };
+  if (component && itemId && instanceId && !(component.sources ?? []).some((src) => src.itemId && String(src.itemId) === itemId)) {
+    return { component: null, refusal: 'This Item is not the Item behind that installed instance.' };
+  }
+  return { component, refusal: null };
+}
+
+/**
  * @param {object} actor
- * @param {{instanceId?:string|null, ruleId?:string|null, partId?:string|null, name?:string|null}} ref  what the caller knows about the component
+ * @param {{instanceId?:string|null, itemId?:string|null, ruleId?:string|null, partId?:string|null, name?:string|null}} ref  what the caller knows about the component
  * @param {{normalizeId?:(v:any)=>string, getDefinition?:(id:string)=>object|null}} [deps] injected so this module stays pure (production: droid-part-schema)
  * @returns {{ok:boolean, status:string, reason:string|null, component:object|null}}
  */
@@ -43,16 +81,9 @@ export function authorizeDroidComponentOperation(actor, ref = {}, deps = {}) {
   const normalizeId = typeof deps.normalizeId === 'function' ? deps.normalizeId : (v) => String(v ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const resolution = resolveInstalledDroidComponents(actor, { normalizeId, getDefinition: deps.getDefinition });
   const components = Array.isArray(resolution?.components) ? resolution.components : [];
-  const instanceId = ref.instanceId ? String(ref.instanceId) : null;
-  const canonical = normalizeId(ref.ruleId ?? ref.partId ?? ref.name ?? '');
-  let component = null;
-  if (instanceId) component = components.find((c) => c.instanceId === instanceId) ?? null;
-  if (!component && canonical) {
-    const matches = components.filter((c) => c.canonicalId === canonical);
-    // a part with several physical instances must be named by instance: an ambiguous reference is not resolved by guessing one
-    if (matches.length > 1 && !instanceId) return { ok: false, status: DROID_OPERATION_STATUS.UNRESOLVED, reason: 'Several installed instances match; name the physical instance.', component: null };
-    component = matches[0] ?? null;
-  }
+  const found = findInstalledComponent(components, ref, normalizeId);
+  if (found.refusal) return { ok: false, status: DROID_OPERATION_STATUS.UNRESOLVED, reason: found.refusal, component: null };
+  const component = found.component;
   if (!component) return { ok: false, status: DROID_OPERATION_STATUS.UNRESOLVED, reason: REASON.UNRESOLVED, component: null };
 
   const kind = component.primarySource?.kind;
@@ -66,4 +97,4 @@ export function authorizeDroidComponentOperation(actor, ref = {}, deps = {}) {
   return { ok: false, status: DROID_OPERATION_STATUS.UNRESOLVED, reason: REASON.UNRESOLVED, component };
 }
 
-export default { authorizeDroidComponentOperation, DROID_OPERATION_STATUS };
+export default { authorizeDroidComponentOperation, findInstalledComponent, DROID_OPERATION_STATUS };

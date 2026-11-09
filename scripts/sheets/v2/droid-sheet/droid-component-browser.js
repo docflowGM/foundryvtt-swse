@@ -18,7 +18,7 @@
  */
 import { resolveInstalledDroidComponents, DROID_COMPONENT_SOURCE_KIND as KIND } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
 import { getDroidPartDefinition, normalizeDroidPartId } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
-import { authorizeDroidComponentOperation } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js';
+import { authorizeDroidComponentOperation, findInstalledComponent } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js';
 import { projectActorDroidAppendages } from '/systems/foundryvtt-swse/scripts/engine/equipment/droid-appendage-projection.js';
 
 export const DROID_COMPONENT_CATEGORIES = Object.freeze([
@@ -46,9 +46,8 @@ const capText = (v) => (v === true ? 'Yes' : v === false ? 'No' : 'Not establish
 
 /** The resolver component (if any) that stands behind a region item: by physical instance first, else by canonical part id. */
 function componentFor(item, components) {
-  if (item?.instanceId) { const hit = components.find((c) => c.instanceId === item.instanceId); if (hit) return hit; }
-  const id = slug(item?.ruleId ?? item?.id ?? '');
-  return id ? components.find((c) => c.canonicalId === id && !c.instanceId) ?? components.find((c) => c.canonicalId === id) ?? null : null;
+  // the shared exact matcher: a wrong/stale instance, a mismatched canonical part or an ambiguous multi-instance reference resolves to nothing
+  return findInstalledComponent(components, { instanceId: item?.instanceId, itemId: item?.source === 'item' ? item?.id : null, ruleId: item?.ruleId ?? (item?.source === 'item' ? null : item?.id) }, slug).component;
 }
 
 export function statusOf(item, component) {
@@ -123,7 +122,7 @@ export function buildDroidComponentBrowser(actor, resolvedSystems, { canOpenGara
       // Operations with a mechanical effect (an attack, a self-destruct) mirror the execution gate (the handlers enforce it independently): only
       // hardware the installation ledger confirms as installed and enabled can be operated. Inspecting and describing stay available.
       const mechanical = item.canRoll === true || categoryId === 'weapon' || Boolean(item.weaponProfile?.damage || item.weaponProfile?.damageBySize || item.weaponProfile?.selfDestruct);
-      const gate = mechanical ? authorizeDroidComponentOperation(actor, { instanceId, ruleId: item.ruleId, partId: item.id, name: item.name }, { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition }) : { ok: true, reason: null };
+      const gate = mechanical ? authorizeDroidComponentOperation(actor, { instanceId, itemId: item.source === 'item' ? item.id : null, ruleId: item.ruleId, partId: item.id, name: item.name }, { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition }) : { ok: true, reason: null };
       if (item.source === 'item' && item.id) operations.push({ label: 'Open item', icon: 'fa-up-right-from-square', action: 'open-droid-system-item', attrs: [{ k: 'item-id', v: item.id }] });
       if (item.canRoll && item.id) operations.push({ label: 'Roll', icon: 'fa-dice-d20', action: 'roll-weapon', attrs: [{ k: 'item-id', v: item.id }], disabled: !gate.ok, reason: gate.reason ?? '' });
       operations.push({ label: mechanical ? 'Use' : 'Describe', icon: 'fa-bolt', action: 'use-droid-part', attrs: [{ k: 'part-id', v: item.id ?? item.ruleId ?? '' }, { k: 'part-name', v: item.name ?? '' }, { k: 'instance-id', v: instanceId ?? '' }], disabled: mechanical && !gate.ok, reason: mechanical ? (gate.reason ?? '') : '' });

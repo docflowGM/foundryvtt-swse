@@ -244,7 +244,7 @@ export class SWSEV2DroidSheet extends SWSEV2CharacterLikeSheet {
     // informational and stays open; a mechanical effect (self-destruct, attack) needs hardware the installation ledger confirms as installed and enabled.
     const hasMechanicalEffect = part.weaponProfile?.selfDestruct === true || Boolean(part.weaponProfile?.damage || part.weaponProfile?.damageBySize || datasetWeaponProfile.damage);
     if (hasMechanicalEffect) {
-      const gate = authorizeDroidComponentOperation(this.actor, { instanceId: button.dataset?.instanceId ?? null, ruleId: hydrated.ruleId ?? definition?.ruleId ?? lookupId, partId: lookupId, name: part.name },
+      const gate = authorizeDroidComponentOperation(this.actor, { instanceId: button.dataset?.instanceId ?? null, itemId: item?.id ?? null, ruleId: hydrated.ruleId ?? definition?.ruleId ?? lookupId, partId: lookupId, name: part.name },
         { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition });
       if (!gate.ok) {
         ui.notifications?.warn?.(`${part.name}: ${gate.reason}`);

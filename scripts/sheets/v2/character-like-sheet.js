@@ -2903,7 +2903,7 @@ const forcePoints = [];
         // Integrated droid hardware fires only when the installation ledger confirms it (installed and enabled). An ordinary handheld weapon is not
         // droid hardware and is not evaluated here.
         if (isIntegratedWeaponItem(item)) {
-          const gate = authorizeDroidComponentOperation(this.actor, { ruleId: item.system?.droidPartId ?? item.flags?.swse?.droidPartId ?? null, name: item.name }, { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition });
+          const gate = authorizeDroidComponentOperation(this.actor, { itemId: item.id, instanceId: rollButton.dataset?.instanceId ?? null, ruleId: item.system?.droidPartId ?? item.flags?.swse?.droidPartId ?? null, name: item.name }, { normalizeId: normalizeDroidPartId, getDefinition: getDroidPartDefinition });
           if (!gate.ok) { ui.notifications?.warn?.(`${item.name}: ${gate.reason}`); return; }
         }
         if (typeof item.roll === 'function') {
