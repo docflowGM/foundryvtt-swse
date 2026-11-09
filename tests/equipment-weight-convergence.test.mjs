@@ -54,4 +54,48 @@ const ledger = b.buildEquipmentLedgerPanel();
 assert.equal(ledger.totalEquipmentWeight, `${authority} kg`); assert.ok(!JSON.stringify(ledger).includes('lbs')); ok('ledger total comes from the engine, in kg');
 const inv = b.buildInventoryPanel();
 assert.equal(inv.totalWeight, authority); ok('inventory panel total comes from the engine');
+
+// verified vs unverified weight: an explicit 0 is a verified zero; absent/blank/invalid/negative is counted as 0 but REPORTED
+{
+  const rep = E.carriedWeightReport(actor([
+    it('equipment', { weight: 0 }, 'zero'), it('equipment', {}, 'missing'), it('equipment', { weight: '' }, 'blank'), it('equipment', { weight: 'abc' }, 'junk'),
+    it('equipment', { weight: -2 }, 'neg'), it('equipment', { weight: 2 }, 'ok'), it('equipment', { economics: { weight: 1 } }, 'econ'), it('equipment', { quantity: 0 }, 'none-carried'),
+  ]));
+  assert.equal(rep.total, 3);
+  assert.deepEqual(rep.unverified.map((x) => x.id).sort(), ['blank', 'junk', 'missing', 'neg']);
+  assert.equal(rep.complete, false);
+  assert.equal(E.carriedWeightReport(actor([it('equipment', { weight: 0 }), it('armor', { weight: 5 })])).complete, true);
+  ok('explicit zero is verified; missing/blank/invalid/negative weight is flagged (and still contributes 0), zero-quantity rows are not flagged');
+}
+// shipped pack data contract: every weapon/armor/equipment record carries an explicit numeric system.weight (so nothing ships as an unverified zero)
+{
+  const fsx = await import('node:fs'); const path = await import('node:path');
+  const bad = []; let n = 0;
+  for (const f of fsx.readdirSync('packs').filter((x) => /^(weapons-|armor-|equipment-).*\.db$/.test(x) && !/vehicle/.test(x))) {
+    for (const line of fsx.readFileSync(path.join('packs', f), 'utf8').split('\n')) {
+      if (!line.trim()) continue; let r; try { r = JSON.parse(line); } catch { continue; }
+      if (!['weapon', 'armor', 'equipment'].includes(r.type)) continue; n++;
+      if (!E.itemWeightVerified({ system: r.system })) bad.push(`${f}:${r.name}`);
+    }
+  }
+  assert.ok(n > 300, `scanned ${n} records`); assert.deepEqual(bad, [], 'records without a verified recorded weight');
+  ok(`shipped gear packs: ${n} weapon/armor/equipment records all carry an explicit numeric weight`);
+}
+// canonical weapon registry parity: system.weight (what the engine reads) must equal canonicalStats.weightKg wherever both exist
+{
+  const fsx = await import('node:fs');
+  const reg = JSON.parse(fsx.readFileSync('data/weapons/canonical-weapon-registry.json', 'utf8')).identities;
+  const kg = new Map(reg.map((x) => [x.identityKey, x.canonicalStats?.weightKg ?? null]));
+  let compared = 0; const diff = [];
+  for (const f of fsx.readdirSync('packs').filter((x) => /^weapons-.*\.db$/.test(x))) {
+    for (const line of fsx.readFileSync(`packs/${f}`, 'utf8').split('\n')) {
+      if (!line.trim()) continue; let r; try { r = JSON.parse(line); } catch { continue; }
+      const k = r.flags?.swse?.canonicalWeapon?.identityKey; const w = kg.get(k);
+      if (r.type !== 'weapon' || w == null || r.system?.weight == null) continue;
+      compared++; if (Number(r.system.weight) !== Number(w)) diff.push(`${r.name}: ${r.system.weight} vs ${w}`);
+    }
+  }
+  assert.ok(compared > 100, `compared ${compared}`); assert.deepEqual(diff, []);
+  ok(`weapon pack system.weight equals registry canonicalStats.weightKg for all ${compared} comparable records (registry has ${[...kg.values()].filter((v) => v == null).length} unrecorded)`);
+}
 console.log(`equipment-weight-convergence: ${n} checks ok`);

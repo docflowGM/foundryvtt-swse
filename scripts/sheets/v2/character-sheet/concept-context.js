@@ -3,6 +3,7 @@ import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/invento
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
 import { getWeaponReadiness } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { buildEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js";
+import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js";
 import { listOwnedAssets } from "/systems/foundryvtt-swse/scripts/ui/shell/AssetBaySurfaceService.js";
 import { effectiveShotCapacity } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
@@ -2065,6 +2066,8 @@ export function buildConceptSheetViewModel(context = {}) {
     gear: {
       credits,
       totalWeight,
+      // carried items with no verified recorded weight (counted as 0 in the total, never shown as a verified zero)
+      weightUnverifiedCount: EncumbranceEngine.carriedWeightReport(actor).unverified.length,
       totalItems: inventoryEntries.length,
       equippedEntries,
       groups: gearGroups,

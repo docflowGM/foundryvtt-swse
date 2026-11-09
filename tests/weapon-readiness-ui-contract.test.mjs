@@ -15,18 +15,18 @@ let n = 0;
 const ok = (msg) => console.log(`  [${++n}] ${msg} OK`);
 
 // ---- static ----
-const card = read(`${P}panels/inventory-weapon-card.hbs`), gear = read(`${P}tabs/gear-tab.hbs`) + read(`${P}panels/equipment-workspace.hbs`) /* the Gear tab renders the equipment workspace partial */, attacks = read(`${P}panels/attacks-panel.hbs`), armor = read(`${P}panels/inventory-armor-card.hbs`);
+const card = read(`${P}panels/equipment-workspace.hbs`) /* the retired inventory-weapon-card/-armor-card were pruned: the workspace is the sole Gear-tab surface */, gear = read(`${P}tabs/gear-tab.hbs`) + read(`${P}panels/equipment-workspace.hbs`) /* the Gear tab renders the equipment workspace partial */, attacks = read(`${P}panels/attacks-panel.hbs`), armor = card;
 for (const a of ['toggle-weapon-readiness', 'toggle-activated', 'change-weapon-configuration']) assert.ok(card.includes(a), `weapon card exposes ${a}`);
-ok('weapon card exposes draw/stow, activation and configuration controls');
+ok('workspace exposes draw/stow, activation and configuration controls');
 assert.ok(gear.includes('toggle-weapon-readiness') && gear.includes('draw-and-ignite-lightsaber'), 'gear ledger has Draw/Stow and Draw & Ignite');
 ok('Gear ledger exposes Draw/Stow and Draw & Ignite');
 assert.ok(attacks.includes('toggle-weapon-readiness') && attacks.includes('toggle-activated'), 'attack panel controls');
 ok('Combat attack panel exposes readiness / activation');
 assert.ok(armor.includes('toggle-activated'), 'shield card activation');
 ok('energy shield card exposes activation');
-for (const t of [card, gear, attacks]) assert.ok(/swse-weapon-control/.test(t) || t === gear);
-assert.ok(/swse-weapon-control/.test(card) && /swse-weapon-state/.test(card), 'template classes');
-ok('templates use swse-weapon-control / swse-weapon-state classes');
+assert.ok(/swse-weapon-control/.test(attacks));
+assert.ok(/swse-weapon-control/.test(attacks), 'attack panel template classes');
+ok('attack panel uses the swse-weapon-control class');
 for (const t of [card, gear, attacks, armor]) assert.ok(!/\.update\(|setFlag|data-flag/.test(t), 'no template writes');
 ok('templates write no item or flag state');
 

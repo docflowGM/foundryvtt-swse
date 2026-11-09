@@ -35,7 +35,7 @@
           {{!-- armor and personal shield are independent positions; each shows its own state (worn / activation) --}}
           <div class="swse-eqw__protection">
             {{#with ws.protection.armor as |pa|}}
-            <button type="button" class="swse-eqw__guard swse-eqw__guard--armor{{#if pa.item}} is-occupied{{else}} is-empty{{/if}}" data-eqw-station="armor" aria-pressed="false">
+            <button type="button" class="swse-eqw__guard swse-eqw__guard--armor{{#if pa.item}} is-occupied{{else}} is-empty{{/if}}" {{#if pa.item}}data-eqw-select="{{pa.item.id}}" aria-controls="eqw-inspector"{{else}}data-eqw-station="armor"{{/if}} aria-pressed="false">
               {{#if pa.item}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=pa.item.art size="md"}}{{else}}<span class="swse-eqw__art swse-eqw__art--md is-glyph is-socket" aria-hidden="true"><i class="fa-solid fa-user-shield"></i></span>{{/if}}
               <span class="swse-eqw__slot-copy">
                 <span class="swse-eqw__slot-name">Armor</span>
@@ -50,7 +50,7 @@
             </button>
             {{/with}}
             {{#with ws.protection.shield as |ps|}}
-            <button type="button" class="swse-eqw__guard swse-eqw__guard--shield{{#if ps.item}} is-occupied{{#if ps.item.activated}} is-energized{{/if}}{{else}} is-empty{{/if}}" data-eqw-station="shields" aria-pressed="false">
+            <button type="button" class="swse-eqw__guard swse-eqw__guard--shield{{#if ps.item}} is-occupied{{#if ps.item.activated}} is-energized{{/if}}{{else}} is-empty{{/if}}" {{#if ps.item}}data-eqw-select="{{ps.item.id}}" aria-controls="eqw-inspector"{{else}}data-eqw-station="shields"{{/if}} aria-pressed="false">
               {{#if ps.item}}{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=ps.item.art size="md"}}{{else}}<span class="swse-eqw__art swse-eqw__art--md is-glyph is-socket" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>{{/if}}
               <span class="swse-eqw__slot-copy">
                 <span class="swse-eqw__slot-name">Personal shield</span>

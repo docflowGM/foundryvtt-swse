@@ -97,4 +97,18 @@ ok('static: one list and toolbar, seven tabs, association via the Asset Bay, no 
   assert.ok(!/\.update\(|setFlag|ActorEngine/.test(ui));
 }
 ok('static: inspector hidden by default / zero space, 2fr:1fr when selected, X on items and actors, quick actions reuse handlers, keyboard + cleanup present');
+
+// 8. equipped protection cards select the item when occupied and only switch category when empty; orphaned legacy inventory templates are gone
+{
+  const tpl = fs.readFileSync('templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs', 'utf8');
+  assert.ok(tpl.includes('{{#if pa.item}}data-eqw-select="{{pa.item.id}}" aria-controls="eqw-inspector"{{else}}data-eqw-station="armor"{{/if}}'));
+  assert.ok(tpl.includes('{{#if ps.item}}data-eqw-select="{{ps.item.id}}" aria-controls="eqw-inspector"{{else}}data-eqw-station="shields"{{/if}}'));
+  const a = vm({}); // vm() rows include a worn armor and a worn energy shield
+  assert.equal(a.protection.armor.item?.id, 'a1'); assert.equal(a.protection.shield.item?.id, 's1');
+  for (const n of ['inventory-panel', 'equipment-ledger-panel', 'armor-summary-panel', 'inventory-weapon-card', 'inventory-armor-card', 'inventory-item-card', 'inventory-item-row']) {
+    assert.ok(!fs.existsSync(`templates/actors/character/v2-concept/partials/panels/${n}.hbs`), `${n}.hbs pruned`);
+    for (const f of ['scripts/load-templates.js', 'helpers/handlebars/partials-auto.js']) assert.ok(!fs.readFileSync(f, 'utf8').includes(`v2-concept/partials/panels/${n}.hbs`), `${f} no longer lists ${n}`);
+  }
+}
+ok('static: occupied Armor/Shield cards select the item (empty ones switch category); seven orphaned legacy inventory templates and their preload/registry entries are gone');
 console.log(`equipment-possessions-browser: ${n} checks ok`);

@@ -139,6 +139,26 @@ export class EncumbranceEngine {
     return Number.isFinite(n) && n > 0 ? n : 0;
   }
 
+  /**
+   * Is the item's weight an explicit, valid recorded value? An explicit 0 is a verified zero; absent, blank, non-numeric or negative is NOT
+   * (it contributes 0 to the total but is reported by carriedWeightReport so it is never presented as a verified zero).
+   */
+  static itemWeightVerified(item) {
+    const raw = item?.system?.weight ?? item?.system?.economics?.weight;
+    if (raw === undefined || raw === null || (typeof raw === 'string' && raw.trim() === '')) return false;
+    const n = typeof raw === 'number' ? raw : parseFloat(String(raw).replace(/,/g, ''));
+    return Number.isFinite(n) && n >= 0;
+  }
+
+  /** Carried weight plus the carried items whose weight is not a verified recorded value. */
+  static carriedWeightReport(actor) {
+    const unverified = [];
+    for (const item of (actor?.items ?? [])) {
+      if (this.CARRIED_ITEM_TYPES.includes(item?.type) && this.itemQuantity(item) > 0 && !this.itemWeightVerified(item)) unverified.push({ id: item.id, name: item.name ?? '' });
+    }
+    return { total: this._calculateTotalWeight(actor), unverified, complete: unverified.length === 0 };
+  }
+
   /** Quantity: absent/invalid -> 1 (schema default); an explicit 0 stays 0 (zero units carry zero weight). */
   static itemQuantity(item) {
     const raw = item?.system?.quantity;

@@ -149,6 +149,8 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
       $('[data-eqw-select]', row)?.setAttribute('aria-pressed', id === st.itemId ? 'true' : 'false');
       row.classList.toggle('is-selected', id === st.itemId);
     });
+    // every selection control (list rows, occupied armor/shield cards, implant chips) reflects the one inspected selection
+    $$('[data-eqw-select]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.eqwSelect === st.itemId ? 'true' : 'false'));
     const empty = $('[data-eqw-empty]');
     if (empty) { empty.hidden = visible > 0; empty.textContent = tabEntries.length ? 'Nothing matches this category, search and filter.' : (EMPTY_TAB[st.tab] ?? EMPTY_TAB.all); }
     const count = $('[data-eqw-count]');

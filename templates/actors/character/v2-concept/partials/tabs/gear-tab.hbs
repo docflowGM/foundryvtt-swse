@@ -22,7 +22,7 @@
         <input type="number" name="system.credits" value="{{conceptLayout.gear.credits}}" min="0">
       </label>
     </div>
-    <div class="swse-eqw-strip__stat"><i class="fa-solid fa-weight-hanging" aria-hidden="true"></i><span class="swse-eqw-strip__label">Weight</span><strong>{{numberFormat conceptLayout.gear.totalWeight decimals=1}} kg</strong></div>
+    <div class="swse-eqw-strip__stat"><i class="fa-solid fa-weight-hanging" aria-hidden="true"></i><span class="swse-eqw-strip__label">Weight</span><strong>{{numberFormat conceptLayout.gear.totalWeight decimals=1}} kg</strong>{{#if conceptLayout.gear.weightUnverifiedCount}}<span class="swse-eqw-strip__flag" title="{{conceptLayout.gear.weightUnverifiedCount}} carried item(s) have no recorded weight and are not included in this total.">+{{conceptLayout.gear.weightUnverifiedCount}} unweighed</span>{{/if}}</div>
     <div class="swse-eqw-strip__stat"><i class="fa-solid fa-box-open" aria-hidden="true"></i><span class="swse-eqw-strip__label">Items</span><strong>{{conceptLayout.gear.totalItems}}</strong></div>
     <div class="swse-eqw-strip__stat"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><span class="swse-eqw-strip__label">Workshop</span><strong>{{#if conceptLayout.gear.hasUpgradeableItems}}Upgrade ready{{else}}No eligible mods{{/if}}</strong></div>
     <div class="swse-eqw-strip__actions swse-edit-reveal">

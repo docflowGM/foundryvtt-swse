@@ -47,7 +47,7 @@ sw.fail = 0;
   globalThis.game.user.isGM = true;
   assert.equal(readinessOf(actor).canReconcile, true);
   assert.equal(isWeaponReadied(actor, 's', { resolveSpecies: h.deps.resolveSpecies }), false, 'withheld while unresolved');
-  for (const t of ['templates/actors/character/v2-concept/partials/panels/inventory-weapon-card.hbs', 'templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs']) { // the Gear tab now renders the equipment workspace (gear-tab.hbs only includes it)
+  for (const t of ['templates/actors/character/v2-concept/partials/panels/equipment-workspace.hbs']) { // the Gear tab now renders the equipment workspace (gear-tab.hbs only includes it)
     assert.match(fs.readFileSync(t, 'utf8'), /\{\{#if (?:entry|it)\.weaponReadiness\.canReconcile\}\}<button[^>]*data-action="reconcile-weapon-transaction"/);
   }
   assert.match(fs.readFileSync('scripts/sheets/v2/character-like-sheet.js', 'utf8'), /\[data-action="reconcile-weapon-transaction"\]/, 'the sheet binds the action');
