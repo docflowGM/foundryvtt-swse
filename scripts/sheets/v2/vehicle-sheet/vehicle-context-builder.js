@@ -11,6 +11,7 @@ import { getEffectiveVehicleDerived } from "/systems/foundryvtt-swse/scripts/dom
 import { getVehicleRuntimeProjection, classifyVehicleActorRuntime } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-runtime-contract.js";
 import { attachAmmunitionShortcuts } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-ammunition-shortcuts.js";
 import { buildVehicleSchemaViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-schema-view-model.js";
+import { buildVehicleSystemsBrowser } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-systems-browser.js";
 import { buildVehiclePublicationViewModel, buildPublishedCrewSummary, describeShield, SOURCE_UNKNOWN } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-publication-view-model.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
 import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
@@ -1352,13 +1353,18 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const vehicleResourceStrip = buildVehicleResourceStrip(actor, panelSet, vehicleTypeFlags, parsedCargo);
   const vehicleConceptTabs = buildVehicleConceptTabs(vehicleTypeFlags, rawContext?.editable ?? actor?.isOwner === true);
   const vehicleAnnotation = buildVehicleAnnotationBar(vehicleTypeFlags);
+  const schemaView = buildVehicleSchemaViewModel(actor, { epTable: options.epTable ?? null, catalog: options.catalog ?? null, isGM: globalThis.game?.user?.isGM === true });
+  let vehicleSystemsBrowser = null;
+  try { vehicleSystemsBrowser = buildVehicleSystemsBrowser({ actor, schema: schemaView, publication: publicationView, mountPanel: weaponMountPanel, canAct: actor?.isOwner === true || globalThis.game?.user?.isGM === true }); } catch (_err) { vehicleSystemsBrowser = null; }
 
   return {
     vehicleTypeFlags,
     vehicleRuntimeProjection,
     vehiclePublication,
     publicationView,
-    schemaView: buildVehicleSchemaViewModel(actor, { epTable: options.epTable ?? null, catalog: options.catalog ?? null, isGM: globalThis.game?.user?.isGM === true }),
+    schemaView,
+    // weapons + installed systems as one browse/inspect surface (classified by the existing weapon authority and the sealed installation ledger)
+    vehicleSystemsBrowser,
     vehicleResourceStrip,
     vehicleConceptTabs,
     vehicleAnnotation,

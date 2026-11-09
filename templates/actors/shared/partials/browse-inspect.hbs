@@ -4,9 +4,9 @@
      Behaviour (search, category/status filter, sort, selection, collapsible inspector, keyboard) is scripts/sheets/v2/shared/browse-inspect-ui.js.
      Styling reuses the equipment workspace's Holopad classes. Every operation is an existing `data-action` handled by the sheet.
 
-     browser = { id, title, hint?, emptyText, categories:[{id,label,count}], statuses:[{id,label}],
+     browser = { id, title, hint?, summary?:[{label,value}], emptyText, categories:[{id,label,count}], statuses:[{id,label}],
                  entries:[{ key, name, art:{src,glyph}, category, categoryLabel, status:{key,label,tone}, summary, searchText, order,
-                            facts:[{label,value}], notes:[string], operations:[{label,icon,action,attrs:[{k,v}],disabled,reason}],
+                            facts:[{label,value}], notes:[string], operations:[{label,icon,action?,cls?,attrs:[{k,v}],disabled,reason}],
                             operationsHint?, modifications: null | [{label,state,detail}], modificationsNote? }] } --}}
 {{#with browser as |bi|}}
 <section class="swse-eqw swse-concept-panel swse-eqw__panel swse-bi" data-bi="{{bi.id}}" aria-label="{{bi.title}}">
@@ -19,6 +19,7 @@
             <label class="swse-eqw__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="swse-eqw__sr">Search {{bi.title}}</span><input type="search" data-bi-search placeholder="Search…" autocomplete="off" spellcheck="false"></label>
           </div>
         </header>
+        {{#if bi.summary.length}}<p class="swse-eqw__chips">{{#each bi.summary as |chip|}}<span class="swse-eqw__state is-held">{{chip.label}}: {{chip.value}}</span> {{/each}}</p>{{/if}}
         {{#if bi.hint}}<p class="swse-eqw__hint">{{bi.hint}}</p>{{/if}}
         <div class="swse-eqw__tabs" role="tablist" aria-label="{{bi.title}} categories">
           <button type="button" role="tab" class="swse-eqw__tab" data-bi-tab="all" aria-selected="true"><span>All</span><span class="swse-eqw__count">{{bi.entries.length}}</span></button>
@@ -78,7 +79,7 @@
         <div class="swse-eqw__pane" data-bi-pane="operations" hidden>
           <div class="swse-eqw__quick">
             {{#each it.operations as |op|}}
-              <button type="button" class="swse-concept-btn" data-action="{{op.action}}"{{#each op.attrs as |a|}} data-{{a.k}}="{{a.v}}"{{/each}}{{#if op.disabled}} disabled{{/if}}{{#if op.reason}} title="{{op.reason}}"{{/if}}>{{#if op.icon}}<i class="fa-solid {{op.icon}}" aria-hidden="true"></i> {{/if}}{{op.label}}</button>
+              <button type="button" class="swse-concept-btn{{#if op.cls}} {{op.cls}}{{/if}}"{{#if op.action}} data-action="{{op.action}}"{{/if}}{{#each op.attrs as |a|}} data-{{a.k}}="{{a.v}}"{{/each}}{{#if op.disabled}} disabled{{/if}}{{#if op.reason}} title="{{op.reason}}"{{/if}}>{{#if op.icon}}<i class="fa-solid {{op.icon}}" aria-hidden="true"></i> {{/if}}{{op.label}}</button>
             {{/each}}
           </div>
           {{#unless it.operations.length}}<p class="swse-eqw__hint">No operations are available for this entry.</p>{{/unless}}
