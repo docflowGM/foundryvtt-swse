@@ -23,10 +23,7 @@ import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engi
 import { resolveInstalledDroidComponents } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js";
 import { isIntegratedWeaponItem, isIntegratedEquipmentItem, partitionWeaponizedParts, matchesDroidPartTypeHint } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-item-classification.js";
 
-const DEFAULT_APPENDAGE_SLOTS = [
-  { id: 'left-arm', label: 'Left Arm', defaultName: 'Droid Arm / Hand' },
-  { id: 'right-arm', label: 'Right Arm', defaultName: 'Droid Arm / Hand' }
-];
+// Appendage positions are never invented: one slot per ESTABLISHED appendage (its own location/instance), plus a Garage-managed add socket.
 
 function asArray(collection) {
   if (!collection) return [];
@@ -80,7 +77,7 @@ const REGION_META = {
     label: 'Processor',
     description: 'Computing core and cognitive matrix',
     required: true,
-    defaultName: 'Heuristic Processor',
+    defaultName: null, // no processor is implied when none is established
     defaultLabel: 'Type',
   },
   locomotion: {
@@ -88,7 +85,7 @@ const REGION_META = {
     label: 'Locomotion',
     description: 'Primary movement system',
     required: true,
-    defaultName: 'Walking',
+    defaultName: null, // no locomotion is implied when none is established
     defaultLabel: 'Type',
   },
   appendages: {
@@ -96,7 +93,7 @@ const REGION_META = {
     label: 'Appendages',
     description: 'Manipulators and structural limbs',
     required: true,
-    defaultName: '2 × Standard Droid Arms',
+    defaultName: null, // no number of arms is implied when none is established
     defaultLabel: 'Manipulators',
   },
   armor: {
@@ -237,9 +234,16 @@ export class DroidSystemsResolver {
     }
     for (const item of this.items) { add(item?.system?.droidPartId); add(item?.flags?.swse?.droidPartId); add(item?.name); }
 
+    // A physical instance is known by its INSTANCE identity (two hands share a canonical id); only an instance-less record is known by part id.
+    const knownInstances = new Set();
+    for (const key of ['appendages', 'sensors', 'weapons', 'accessories', 'integratedSystems', 'processorEnhancements', 'locomotionSystems', 'secondaryLocomotion']) {
+      for (const entry of Array.isArray(this.droidSystems[key]) ? this.droidSystems[key] : []) { if (entry?.instanceId) knownInstances.add(String(entry.instanceId)); }
+    }
+
     return (this.componentResolution?.components ?? [])
-      .filter(component => component.active && component.primarySource?.kind === 'installedLedger' && !knownIds.has(component.canonicalId))
-      .map(component => this._fromBuilder({ id: component.canonicalId, name: component.definition?.name ?? component.canonicalId }, { cost: computeDroidPartCost(this.actor, component.canonicalId) }));
+      .filter(component => component.installed === true && component.primarySource?.kind === 'installedLedger'
+        && (component.instanceId ? !knownInstances.has(String(component.instanceId)) : !knownIds.has(component.canonicalId)))
+      .map(component => this._fromBuilder({ id: component.canonicalId, name: component.definition?.name ?? component.canonicalId, instanceId: component.instanceId ?? null, locationId: component.locationId ?? null }, { cost: computeDroidPartCost(this.actor, component.canonicalId) }));
   }
 
   _ledgerOnlyEntriesByCategory() {
@@ -370,7 +374,7 @@ export class DroidSystemsResolver {
       isConfigured: items.length > 0,
       isDefault: items.length === 0,
       isEmpty: items.length === 0,
-      warning: items.length === 0 ? 'No processor installed — heroic droids require a Heuristic Processor.' : null,
+      warning: items.length === 0 ? 'No processor is established by the installation evidence.' : null,
     };
   }
 
@@ -408,24 +412,20 @@ export class DroidSystemsResolver {
   _resolveAppendages() {
     const meta = REGION_META.appendages;
     const builderAppendages = Array.isArray(this.droidSystems.appendages) ? this.droidSystems.appendages : [];
-    const items = builderAppendages.map((a, index) => this._fromBuilder(a, { cost: computeDroidPartCost(this.actor, a), location: a.location ?? a.slot ?? DEFAULT_APPENDAGE_SLOTS[index]?.id ?? `appendage-${index + 1}` }));
+    const items = builderAppendages.map((a, index) => this._fromBuilder(a, { cost: computeDroidPartCost(this.actor, a), location: a.location ?? a.slot ?? null }));
     const itemAppendages = this.items.filter(i => slug(i.system?.droidSystemType ?? i.system?.droidPartType ?? i.flags?.swse?.droidPartType ?? i.name).includes('appendage')).map(i => this._fromActorItem(i));
     const all = this._mergeDedupe([...items, ...itemAppendages]);
     const slots = this._buildAppendageSlots(all);
-    return { ...meta, items: all, slots, allowsAdd: true, allowsReplace: true, unarmedAttack: buildUnarmedAttackContext(this.actor), isConfigured: all.length > 0, isDefault: all.length === 0, isEmpty: all.length === 0, warning: all.length === 0 ? 'No appendages installed — baseline two droid arms shown for heroic droids.' : null };
+    return { ...meta, items: all, slots, allowsAdd: true, allowsReplace: true, unarmedAttack: buildUnarmedAttackContext(this.actor), isConfigured: all.length > 0, isDefault: all.length === 0, isEmpty: all.length === 0, warning: all.length === 0 ? 'No appendage is established by the installation evidence.' : null };
   }
 
   _buildAppendageSlots(items) {
-    const assigned = new Set();
-    const slots = DEFAULT_APPENDAGE_SLOTS.map((slot, index) => {
-      const item = items.find(entry => slug(entry.location ?? entry.slot).includes(slug(slot.id))) ?? items[index] ?? null;
-      if (item) assigned.add(item.id);
-      return { ...slot, item, isEmpty: !item, canReplace: true, canUse: Boolean(item), defaultName: slot.defaultName };
-    });
-    for (const item of items) {
-      if (assigned.has(item.id)) continue;
-      slots.push({ id: slug(item.location ?? item.slot ?? item.name ?? item.id), label: item.location ? humanize(item.location) : 'Additional Appendage', item, isEmpty: false, canReplace: true, canUse: true });
-    }
+    // one slot per ESTABLISHED appendage, labelled from its own identity (location / instance); no default arms, no left/right assumption
+    const slots = items.map((item, index) => ({
+      id: item.instanceId ? `instance-${item.instanceId}` : (slug(item.location ?? item.slot ?? item.name ?? item.id) || `appendage-${index + 1}`),
+      label: item.location ? humanize(item.location) : (item.instanceId ? `Instance ${item.instanceId}` : 'Appendage (instance not established)'),
+      item, isEmpty: false, canReplace: true, canUse: true
+    }));
     slots.push({ id: 'add-appendage', label: 'Additional Limb Socket', item: null, isEmpty: true, canReplace: false, canAdd: true, defaultName: 'Garage-managed limb slot' });
     return slots;
   }

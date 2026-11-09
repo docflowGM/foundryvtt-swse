@@ -48,7 +48,7 @@
       <section class="swse-droid-system-node node-processor {{#unless droid.resolvedSystems.processor.isConfigured}}is-default{{/unless}}">
         <header>
           <span class="node-label">{{localize "SWSE.ActorUI.Processor"}}</span>
-          {{#unless droid.resolvedSystems.processor.isConfigured}}<span class="node-badge">{{localize "SWSE.ActorUI.Default"}}</span>{{/unless}}
+          {{#unless droid.resolvedSystems.processor.isConfigured}}<span class="node-badge">Not established</span>{{/unless}}
         </header>
         <div class="node-body">
           {{#if droid.resolvedSystems.processor.isConfigured}}
@@ -60,7 +60,7 @@
               </div>
             {{/each}}
           {{else}}
-            <div class="system-chip ghost"><strong>{{droid.resolvedSystems.processor.defaultName}}</strong><small>{{droid.resolvedSystems.processor.warning}}</small></div>
+            <div class="system-chip ghost"><strong>Not established</strong><small>{{droid.resolvedSystems.processor.warning}}</small></div>
           {{/if}}
         </div>
       </section>
@@ -85,15 +85,15 @@
       <section class="swse-droid-system-node node-left-arm {{#unless droid.resolvedSystems.appendages.isConfigured}}is-default{{/unless}}">
         <header>
           <span class="node-label">{{localize "SWSE.ActorUI.Appendages"}}</span>
-          {{#unless droid.resolvedSystems.appendages.isConfigured}}<span class="node-badge">{{localize "SWSE.ActorUI.Default"}}</span>{{/unless}}
+          {{#unless droid.resolvedSystems.appendages.isConfigured}}<span class="node-badge">Not established</span>{{/unless}}
         </header>
         <div class="node-body">
           {{#if droid.resolvedSystems.appendages.isConfigured}}
             {{#each droid.resolvedSystems.appendages.items as |item|}}
-              <div class="system-chip"><div><strong>{{item.name}}</strong>{{#if item.cost}}<small>{{item.cost}} cr</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">{{localize "SWSE.ActorUI.Use"}}</button></div>
+              <div class="system-chip"><div><strong>{{item.name}}</strong>{{#if item.instanceId}}<small>Instance {{item.instanceId}}{{#if item.location}} · {{item.location}}{{/if}}</small>{{else if item.cost}}<small>{{item.cost}} cr</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">{{localize "SWSE.ActorUI.Use"}}</button></div>
             {{/each}}
           {{else}}
-            <div class="system-chip ghost"><strong>{{droid.resolvedSystems.appendages.defaultName}}</strong><small>{{droid.resolvedSystems.appendages.warning}}</small></div>
+            <div class="system-chip ghost"><strong>Not established</strong><small>{{droid.resolvedSystems.appendages.warning}}</small></div>
           {{/if}}
         </div>
       </section>
@@ -159,7 +159,7 @@
       <section class="swse-droid-system-node node-locomotion {{#unless droid.resolvedSystems.locomotion.isConfigured}}is-default{{/unless}}">
         <header>
           <span class="node-label">{{localize "SWSE.ActorUI.Locomotion"}}</span>
-          {{#unless droid.resolvedSystems.locomotion.isConfigured}}<span class="node-badge">{{localize "SWSE.ActorUI.Default"}}</span>{{/unless}}
+          {{#unless droid.resolvedSystems.locomotion.isConfigured}}<span class="node-badge">Not established</span>{{/unless}}
         </header>
         <div class="node-body">
           {{#if droid.resolvedSystems.locomotion.isConfigured}}
@@ -167,11 +167,17 @@
               <div class="system-chip"><div><strong>{{item.name}}</strong>{{#if item.speed}}<small>Speed {{item.speed}}</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">{{localize "SWSE.ActorUI.Use"}}</button></div>
             {{/each}}
           {{else}}
-            <div class="system-chip ghost"><strong>{{droid.resolvedSystems.locomotion.defaultName}}</strong><small>{{droid.resolvedSystems.locomotion.warning}}</small></div>
+            <div class="system-chip ghost"><strong>Not established</strong><small>{{droid.resolvedSystems.locomotion.warning}}</small></div>
           {{/if}}
         </div>
       </section>
     </div>
+
+    {{!-- Installed-systems browser + collapsible inspector (shared browse/inspect surface). Built from the installed-component and appendage
+         authorities: confirmed hardware, draft/item-only records and unresolved evidence are labelled apart. Garage owns paid changes. --}}
+    {{#if droid.componentBrowser}}
+      {{> "systems/foundryvtt-swse/templates/actors/shared/partials/browse-inspect.hbs" browser=droid.componentBrowser}}
+    {{/if}}
   </main>
 
   <aside class="swse-droid-right-rail">

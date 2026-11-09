@@ -143,6 +143,7 @@ const PARTIALS = [
 
   // Shared Actor Partials
   "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
+  "systems/foundryvtt-swse/templates/actors/shared/partials/browse-inspect.hbs",
   "systems/foundryvtt-swse/templates/actors/shared/partials/current-conditions-panel.hbs",
 
   // V2-Concept Character Panels
