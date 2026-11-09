@@ -61,3 +61,20 @@ Full `tests/*.test.mjs`: 633 pass / 6 fail in the first parallel run. Five (`for
 - **Missing / follow-up:** NPC-shell weight panel retirement; message expiry design; GM-only lease store.
 
 **Next action:** run Gate 1 live, then review the evidence before any change to `VERIFIED_IDENTITY_MECHANISMS`.
+
+## 8. Possessions browser (follow-up, presentation only)
+The Gear tab's inventory region is now one possessions browser: **Weapons | Armor | Shields | Gear | Droids | Vehicles | All** (All default and last; the viewer's last manual choice is remembered per browser). One list, one toolbar (search, status filter, sort field, direction, Reset, "N of M" count). Only the selected tab's rows are visible.
+
+| Rule | Implementation |
+|---|---|
+| Categories from resolved row flags | `categoryOfRow` unchanged; implants map to the Gear tab (`tabOfCategory`); shields stay out of Armor; a row repeated across sheet groups is listed once |
+| Droids / Vehicles = established association only | `listOwnedAssets()` (new thin export over the Asset Bay's own `collectOwnedEntries`); a world actor the user can merely see or own is not included; unresolved links show "Link unresolved" and cannot be opened |
+| Assets are not Items | actor references keyed `droid:<uuid>` / `vehicle:<uuid>`; no weight, no quantity, never in carried weight, no inspector entry |
+| Open | existing actor sheet via `actor.sheet.render(true)` (Foundry enforces permission) |
+| Status filter | options are the status labels the authorities already produced for the tab's entries (items: weapon-readiness / worn / implant labels; assets: Linked) |
+| Sort | name, category, status, weight, quantity; missing values always last; assets leave weight/quantity empty |
+| Slot context | hand -> Weapons with the coordinator's placement preview (unchanged); Armor / Personal Shield / Implants positions -> Armor / Shields / Gear; choosing a tab by hand clears the slot context without touching equipment state |
+
+**Verification:** `tests/equipment-possessions-browser.test.mjs` (6 checks: tab order, mapping, dedupe, asset references, unlinked-actor exclusion, static guarantees). A Chromium harness (real templates rendered with Handlebars, real UI module, Foundry globals stubbed) ran 34 checks: all seven tabs, per-category contents, search within/across tabs, status filter, combined search+status, sort asc/desc incl. missing-last, Reset, slot-driven tab switch and manual clear, station-to-tab mapping, asset open, empty states, no write/render requests while browsing, 420 px tab rail without page overflow. **That harness is not live Foundry**: FontAwesome icons, real sheet theming, permissions and the Asset Bay data on a real world were not exercised.
+
+**Legacy surfaces still on disk, unreferenced by any rendered template (follow-up prune, needs `helpers/handlebars/partials-auto.js`, `scripts/load-templates.js` and one test updated):** `v2-concept/partials/panels/{inventory-panel, equipment-ledger-panel, armor-summary-panel, inventory-weapon-card, inventory-armor-card, inventory-item-card, inventory-item-row}.hbs`. The Gear tab itself contains no duplicate inventory.

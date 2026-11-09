@@ -225,8 +225,8 @@
 .swse-eqw .swse-eqw__clear { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 12.5px; color: var(--eqw-ink-2); border: 1px solid var(--eqw-line); border-radius: 6px; }
 .swse-eqw .swse-eqw__clear:hover { color: var(--eqw-ink); border-color: var(--eqw-line-strong); }
 
-.swse-eqw .swse-eqw__tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--eqw-line); margin-bottom: 6px; }
-.swse-eqw .swse-eqw__tab { position: relative; display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 7px 8px 9px; font-size: 13px; font-weight: 600; color: var(--eqw-ink-3); transition: color 140ms ease; }
+.swse-eqw .swse-eqw__tabs { position: relative; display: flex; gap: 0; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; border-bottom: 1px solid var(--eqw-line); margin-bottom: 6px; }
+.swse-eqw .swse-eqw__tab { position: relative; display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 7px 7px 9px; font-size: 12.5px; font-weight: 600; color: var(--eqw-ink-3); transition: color 140ms ease; }
 .swse-eqw .swse-eqw__tab > i { font-size: 12px; }
 .swse-eqw .swse-eqw__tab::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--eqw-accent); transform: scaleX(0); transition: transform 160ms var(--eqw-ease); }
 .swse-eqw .swse-eqw__tab:hover { color: var(--eqw-ink); }
@@ -404,6 +404,21 @@
 .swse-eqw-strip .swse-concept-btn > i { color: var(--eqw-accent); font-size: 11px; }
 .swse-eqw-strip .swse-concept-btn:hover { border-color: var(--eqw-line-strong); }
 
+/* ─── Possessions toolbar (shared by all seven tabs) and linked-asset rows ─── */
+.swse-eqw .swse-eqw__toolbar { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px 10px; margin: 0 0 6px; min-width: 0; }
+.swse-eqw .swse-eqw__field { display: grid; gap: 2px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--eqw-ink-3); min-width: 0; }
+.swse-eqw .swse-eqw__field select {
+  min-height: 28px; max-width: 100%; padding: 2px 8px; font-size: 12.5px; letter-spacing: normal; text-transform: none; color: var(--eqw-ink);
+  background: var(--eqw-well); border: 1px solid var(--eqw-line); border-radius: 6px;
+}
+.swse-eqw .swse-eqw__field select:focus-visible { outline: 2px solid var(--eqw-accent); outline-offset: 1px; }
+.swse-eqw .swse-eqw__toolbar .swse-eqw__chipbtn { min-height: 28px; }
+.swse-eqw .swse-eqw__toolbar .swse-eqw__chipbtn:disabled { opacity: 0.45; cursor: default; }
+.swse-eqw .swse-eqw__result-count { margin-left: auto; align-self: center; font-size: 12px; color: var(--eqw-ink-2); white-space: nowrap; }
+.swse-eqw .swse-eqw__row--asset .swse-eqw__row-main:disabled { opacity: 0.6; cursor: default; }
+.swse-eqw .swse-eqw__open-hint { color: var(--eqw-ink-3); font-size: 12px; }
+.swse-eqw .swse-eqw__row--asset .swse-eqw__row-main:not(:disabled):hover .swse-eqw__open-hint { color: var(--eqw-accent); }
+
 /* ─── Responsive (container-based) ─────────────────────────────────────────── */
 @container (max-width: 860px) {
   .swse-eqw .swse-eqw__layout { grid-template-columns: minmax(0, 1fr) minmax(250px, 280px); }
@@ -424,7 +439,6 @@
 @container (max-width: 520px) {
   .swse-eqw .swse-eqw__row-main { grid-template-columns: auto minmax(0, 1fr) auto; }
   .swse-eqw .swse-eqw__row-main .swse-eqw__verdict { grid-column: 2 / -1; justify-self: start; }
-  .swse-eqw .swse-eqw__tab > span:not(.swse-eqw__count) { display: none; }
 }
 
 /* ─── Motion preferences (OS setting and the sheet's own motion style) ────── */

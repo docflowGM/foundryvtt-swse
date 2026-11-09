@@ -78,26 +78,51 @@
         </section>
       </section>
 
-      {{!-- REGION B: inventory manifest --}}
+      {{!-- REGION B: possessions browser. One shared list (owned Items + linked droid/vehicle actors from the Asset Bay association), one toolbar, seven tabs.
+           Only the selected tab's entries are shown; search/status/sort are DOM-only presentation (equipment-workspace-ui.js) and change no game state. --}}
       <section class="swse-concept-panel swse-eqw__panel swse-eqw__browser" aria-labelledby="eqw-inv-title">
         <header class="swse-concept-panel__header swse-eqw__panel-head">
-          <h3 class="swse-concept-panel__title" id="eqw-inv-title">Inventory</h3>
+          <h3 class="swse-concept-panel__title" id="eqw-inv-title">Possessions</h3>
           <span class="swse-eqw__context" data-eqw-context hidden></span>
           <button type="button" class="swse-eqw__clear" data-eqw-clear hidden><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear</button>
           <div class="swse-eqw__tools">
-            <label class="swse-eqw__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="swse-eqw__sr">Search inventory</span><input type="search" data-eqw-search placeholder="Search manifest…" autocomplete="off" spellcheck="false"></label>
+            <label class="swse-eqw__search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="swse-eqw__sr">Search possessions</span><input type="search" data-eqw-search placeholder="Search possessions…" autocomplete="off" spellcheck="false"></label>
             <label class="swse-eqw__toggle" data-eqw-incompat-toggle hidden><input type="checkbox" data-eqw-show-incompatible><span>Show incompatible (<span data-eqw-incompat-count>0</span>)</span></label>
           </div>
         </header>
-        <div class="swse-eqw__tabs" role="tablist" aria-label="Inventory categories">
+        <div class="swse-eqw__tabs" role="tablist" aria-label="Possession categories">
           {{#each ws.tabs as |tab|}}
-            <button type="button" role="tab" class="swse-eqw__tab" data-eqw-tab="{{tab.id}}" aria-selected="{{#if (eq tab.id 'all')}}true{{else}}false{{/if}}"><i class="fa-solid {{tab.icon}}" aria-hidden="true"></i><span>{{tab.label}}</span><span class="swse-eqw__count">{{tab.count}}</span></button>
+            <button type="button" role="tab" class="swse-eqw__tab" data-eqw-tab="{{tab.id}}" aria-label="{{tab.label}} ({{tab.count}})" aria-selected="{{#if (eq tab.id 'all')}}true{{else}}false{{/if}}"><i class="fa-solid {{tab.icon}}" aria-hidden="true"></i><span>{{tab.label}}</span><span class="swse-eqw__count">{{tab.count}}</span></button>
           {{/each}}
+        </div>
+        <div class="swse-eqw__toolbar" role="group" aria-label="Filter and sort possessions">
+          <label class="swse-eqw__field"><span>Status</span><select data-eqw-status><option value="">All statuses</option></select></label>
+          <label class="swse-eqw__field"><span>Sort by</span>
+            <select data-eqw-sort>
+              <option value="default">Default</option><option value="name">Name</option><option value="category">Category</option><option value="status">Status</option><option value="weight">Weight</option><option value="quantity">Quantity</option>
+            </select>
+          </label>
+          <button type="button" class="swse-eqw__chipbtn" data-eqw-dir aria-pressed="false" title="Toggle sort direction" aria-label="Sort ascending"><i class="fa-solid fa-arrow-up-short-wide" aria-hidden="true"></i></button>
+          <button type="button" class="swse-eqw__chipbtn" data-eqw-reset title="Clear search, status filter and sorting"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset</button>
+          <span class="swse-eqw__result-count" data-eqw-count role="status" aria-live="polite"></span>
         </div>
 
         <ul class="swse-eqw__list" data-eqw-list role="list">
-          {{#each ws.items as |it|}}
-            <li class="swse-eqw__row is-tone-{{it.status.tone}}" data-eqw-row="{{it.id}}" data-eqw-cat="{{it.category}}" data-eqw-text="{{it.searchText}}">
+          {{#each ws.entries as |it|}}
+            {{#if it.isAsset}}
+            <li class="swse-eqw__row swse-eqw__row--asset is-tone-{{it.status.tone}}" data-eqw-entry data-eqw-asset="{{it.id}}" data-eqw-cat="{{it.tab}}" data-eqw-text="{{it.searchText}}" data-eqw-status="{{it.statusLabel}}" data-eqw-name="{{it.sortName}}" data-eqw-order="{{it.order}}">
+              <button type="button" class="swse-eqw__row-main" data-eqw-open-asset="{{it.id}}" {{#unless it.canOpen}}disabled aria-disabled="true"{{/unless}} title="{{#if it.canOpen}}Open {{it.name}}{{else}}Cannot be opened{{/if}}">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=it.art size="sm"}}
+                <span class="swse-eqw__row-copy">
+                  <strong>{{it.name}}</strong>
+                  <small>{{it.typeLabel}}{{#if it.detail}} · {{it.detail}}{{/if}}{{#if it.summary}} · {{it.summary}}{{/if}}</small>
+                </span>
+                <span class="swse-eqw__state is-{{it.status.tone}}">{{it.status.label}}</span>
+                <span class="swse-eqw__open-hint"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+              </button>
+            </li>
+            {{else}}
+            <li class="swse-eqw__row is-tone-{{it.status.tone}}" data-eqw-entry data-eqw-row="{{it.id}}" data-eqw-cat="{{it.tab}}" data-eqw-text="{{it.searchText}}" data-eqw-status="{{it.statusLabel}}" data-eqw-name="{{it.sortName}}" data-eqw-weight="{{it.weight}}" data-eqw-qty="{{it.quantity}}" data-eqw-order="{{it.order}}">
               <button type="button" class="swse-eqw__row-main" data-eqw-select="{{it.id}}" aria-pressed="false">
                 {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/equipment-art.hbs" art=it.art size="sm"}}
                 <span class="swse-eqw__row-copy">
@@ -108,9 +133,10 @@
                 <span class="swse-eqw__verdict" data-eqw-verdict hidden></span>
               </button>
             </li>
+            {{/if}}
           {{/each}}
         </ul>
-        <p class="swse-eqw__empty" data-eqw-empty {{#if ws.hasItems}}hidden{{/if}}>{{#if ws.hasItems}}Nothing matches this category and search.{{else}}No gear logged. Use the add controls above to create weapons, armor or gear.{{/if}}</p>
+        <p class="swse-eqw__empty" data-eqw-empty {{#if ws.hasEntries}}hidden{{/if}}>{{#if ws.hasEntries}}Nothing matches this category, search and filter.{{else}}No gear logged. Use the add controls above to create weapons, armor or gear.{{/if}}</p>
       </section>
     </div>
 

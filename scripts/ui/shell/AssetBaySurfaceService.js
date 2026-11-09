@@ -338,6 +338,14 @@ function collectOwnedEntries(ownerActor, mode, epTable = null, user = null) {
   });
 }
 
+/**
+ * Synchronous read of the Asset Bay's owned droid / vehicle association (the same collectOwnedEntries the Bay renders, mode 'all'),
+ * for compact consumers such as the character sheet's possessions browser. Read-only; the EP table is only needed by the Shipyard view.
+ */
+export function listOwnedAssets(ownerActor, { user = game?.user ?? null } = {}) {
+  try { return collectOwnedEntries(ownerActor, 'all', null, user); } catch (_err) { return []; }
+}
+
 export class AssetBaySurfaceService {
   static async buildViewModel(actor, options = {}) {
     const mode = normalizeBayMode(options.bayMode || options.mode || 'all');

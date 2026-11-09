@@ -13,20 +13,26 @@
  */
 import { readCombatReadiness, describeWeaponReadiness } from '/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js';
 
+/** Possessions browser tabs, in display order. Droids/Vehicles are linked actors (Asset Bay association), the rest are owned Items. */
 export const WORKSPACE_TABS = Object.freeze([
-  { id: 'all', label: 'All', icon: 'fa-layer-group' },
   { id: 'weapons', label: 'Weapons', icon: 'fa-crosshairs' },
   { id: 'armor', label: 'Armor', icon: 'fa-user-shield' },
   { id: 'shields', label: 'Shields', icon: 'fa-shield-halved' },
-  { id: 'implants', label: 'Implants', icon: 'fa-microchip' },
   { id: 'gear', label: 'Gear', icon: 'fa-toolbox' },
+  { id: 'droids', label: 'Droids', icon: 'fa-robot' },
+  { id: 'vehicles', label: 'Vehicles', icon: 'fa-rocket' },
+  { id: 'all', label: 'All', icon: 'fa-layer-group' },
 ]);
+const TAB_ORDER = WORKSPACE_TABS.filter((t) => t.id !== 'all').map((t) => t.id);
+
+/** Browser tab of a resolved row category: implants are general gear in the browser (the row keeps its implant flags). */
+export const tabOfCategory = (category) => (category === 'implants' ? 'gear' : category);
 
 // ---- display artwork (presentation only; item data is never changed) ----
 // Foundry's core `icons/svg/*` set is the generic placeholder most compendium items ship with (sword.svg, shield.svg, ...). It carries no
 // item-specific art, so the workspace shows its themed category glyph instead. Any other image path is treated as real artwork; if it fails
 // to load, equipment-workspace-ui.js swaps the tile to the same glyph. Glyphs are Font Awesome classes, which Foundry already ships.
-const CATEGORY_GLYPH = Object.freeze({ weapons: 'fa-gun', armor: 'fa-user-shield', shields: 'fa-shield-halved', implants: 'fa-microchip', gear: 'fa-toolbox' });
+const CATEGORY_GLYPH = Object.freeze({ droids: 'fa-robot', vehicles: 'fa-rocket', weapons: 'fa-gun', armor: 'fa-user-shield', shields: 'fa-shield-halved', implants: 'fa-microchip', gear: 'fa-toolbox' });
 const isGenericArt = (src) => !src || /^\/?(?:images\/)?icons\/svg\//.test(String(src));
 export function artOf(src, glyph) { return { src: isGenericArt(src) ? null : String(src), glyph }; }
 const glyphOfRow = (row, category) => (row?.isLightsaber === true || row?.weaponReadiness?.isLightsaber === true ? 'fa-jedi' : CATEGORY_GLYPH[category] ?? 'fa-box');
@@ -92,18 +98,21 @@ function wornStatus(row) {
 
 /**
  * @param {Actor} actor
- * @param {{groups?:object[], attackViews?:Map<string,object>, isGM?:boolean, readiness?:object, unarmed?:object}} input
+ * @param {{groups?:object[], attackViews?:Map<string,object>, isGM?:boolean, readiness?:object, unarmed?:object, assets?:object[]}} input
  *   groups      the sheet's inventory groups (rows already carry weaponReadiness / weaponConfiguration / weaponPowerSource / modificationV2)
  *   attackViews the sheet's attack views keyed by weapon id (authoritative attack/damage/range/ammo display values)
+ *   assets      linked droid / vehicle records from the Asset Bay association authority (listOwnedAssets); never inferred from world actors
  *   readiness   optional pre-read readCombatReadiness(actor) (tests / callers that already hold one)
  */
-export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new Map(), isGM = false, readiness = null, unarmed = null } = {}) {
+export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new Map(), isGM = false, readiness = null, unarmed = null, assets = [] } = {}) {
   let rd = readiness;
   if (!rd) { try { rd = readCombatReadiness(actor); } catch (_err) { rd = null; } }
   const state = rd?.state ?? null;
   const notices = [];
 
-  const rows = groups.flatMap((g) => asArray(g.entries));
+  // one entry per owned Item id (a row repeated across sheet groups must not be listed twice)
+  const seenRows = new Set();
+  const rows = groups.flatMap((g) => asArray(g.entries)).filter((r) => r?.id && !seenRows.has(r.id) && seenRows.add(r.id));
 
   // ---- notices (engine-sourced messages only) ----
   const anatomy = state?.anatomy ?? null;
@@ -135,6 +144,7 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       img: row.img,
       art: artOf(row.img, glyphOfRow(row, category)),
       category,
+      kind: 'item', key: `item:${row.id}`, tab: tabOfCategory(category),
       // player-facing label: an energy shield is an armor-type item mechanically but is presented as a personal shield (classification unchanged)
       typeLabel: category === 'shields' ? 'Personal shield' : row.typeLabel,
       quantity: Number(row.quantity) || 1,
@@ -177,6 +187,7 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
       canEdit: row.canEdit === true, canDelete: row.canDelete === true,
       alchemy: row.alchemy ?? null,
       canOpenForceAlchemy: row.canOpenForceAlchemy === true,
+      statusLabel: status.label,
       searchText: `${row.name ?? ''} ${row.typeLabel ?? ''} ${asArray(row.tags).join(' ')}`.toLowerCase(),
     };
   });
@@ -229,9 +240,36 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
     };
   });
 
-  const counts = { all: items.length };
-  for (const t of WORKSPACE_TABS) if (t.id !== 'all') counts[t.id] = items.filter((i) => i.category === t.id).length;
-  const tabs = WORKSPACE_TABS.filter((t) => t.id === 'all' || counts[t.id] > 0 || ['weapons', 'armor'].includes(t.id)).map((t) => ({ ...t, count: counts[t.id] ?? 0 }));
+  // ---- linked droids / vehicles: the Asset Bay association records, shown as actor references (never converted to Items, never carried weight) ----
+  const seenAssets = new Set();
+  const linked = asArray(assets).map((a) => {
+    const kind = a?.bayMode === 'shipyard' ? 'vehicle' : 'droid';
+    const tab = kind === 'vehicle' ? 'vehicles' : 'droids';
+    const id = a?.actorId ?? a?.id ?? '';
+    const linkedOk = a?.isLinked === true;
+    let canOpen = linkedOk && a?.canOpenSheet === true;
+    if (canOpen) { try { const doc = globalThis.game?.actors?.get?.(id); if (doc && typeof doc.testUserPermission === 'function' && globalThis.game?.user) canOpen = doc.testUserPermission(globalThis.game.user, 'LIMITED') === true; } catch (_e) { canOpen = false; } }
+    return {
+      kind, key: `${kind}:${a?.uuid || id}`, id, tab, category: tab, isAsset: true,
+      name: a?.name || 'Unlinked Asset',
+      art: artOf(a?.img, CATEGORY_GLYPH[tab]),
+      typeLabel: a?.kindLabel || (kind === 'vehicle' ? 'Ship / Vehicle' : 'Droid'),
+      detail: a?.detail || '', summary: a?.status || '',
+      status: linkedOk ? { label: 'Linked', tone: 'held' } : { label: 'Link unresolved', tone: 'warn' },
+      statusLabel: linkedOk ? 'Linked' : 'Link unresolved',
+      quantity: null, weight: null, canOpen,
+      searchText: `${a?.name ?? ''} ${a?.kindLabel ?? ''} ${a?.detail ?? ''}`.toLowerCase(),
+    };
+  }).filter((a) => a.id && !seenAssets.has(a.key) && seenAssets.add(a.key));
+
+  // ---- one presentation list, no second collection: default order = tab order, then name ----
+  const entries = [...items, ...linked]
+    .sort((a, b) => (TAB_ORDER.indexOf(a.tab) - TAB_ORDER.indexOf(b.tab)) || String(a.name).localeCompare(String(b.name)))
+    .map((e, i) => ({ ...e, order: i, sortName: String(e.name ?? '').toLowerCase() }));
+
+  const counts = { all: entries.length };
+  for (const t of TAB_ORDER) counts[t] = entries.filter((e) => e.tab === t).length;
+  const tabs = WORKSPACE_TABS.map((t) => ({ ...t, count: counts[t.id] ?? 0 }));
 
   // ---- worn stations (armor / shield / implant). No canonical body-slot model exists beyond the armor predicate and implant flags, so these are
   // display groupings of rows the authorities already classified, not mechanical slots. ----
@@ -244,8 +282,8 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
   const stations = [
     { id: 'armor', label: 'Armor', tab: 'armor', items: worn.armor },
     { id: 'shields', label: 'Shield', tab: 'shields', items: worn.shields },
-    { id: 'implants', label: 'Implants', tab: 'implants', items: worn.implants },
-  ].map((st) => ({ ...st, glyph: CATEGORY_GLYPH[st.tab], empty: st.items.length === 0, primary: st.items[0] ?? null, extra: Math.max(0, st.items.length - 1) }));
+    { id: 'implants', label: 'Implants', tab: 'gear', glyphTab: 'implants', items: worn.implants },
+  ].map((st) => ({ ...st, glyph: CATEGORY_GLYPH[st.glyphTab ?? st.tab], empty: st.items.length === 0, primary: st.items[0] ?? null, extra: Math.max(0, st.items.length - 1) }));
 
   return {
     // armor and personal shield are independent display positions (both may be filled at once); rows already classified by the armor SSOT
@@ -267,7 +305,9 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
     worn,
     tabs,
     items,
+    entries,
     hasItems: items.length > 0,
+    hasEntries: entries.length > 0,
     isGM: isGM === true,
     summary: state ? { readied: state.summary.readied.length, equipped: state.summary.equipped.length, withheld: state.summary.withheld.length } : null,
   };

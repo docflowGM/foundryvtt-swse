@@ -3,6 +3,7 @@ import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/invento
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
 import { getWeaponReadiness } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
 import { buildEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js";
+import { listOwnedAssets } from "/systems/foundryvtt-swse/scripts/ui/shell/AssetBaySurfaceService.js";
 import { effectiveShotCapacity } from "/systems/foundryvtt-swse/scripts/engine/customization/modification-v2-runtime/modification-effects.js";
 import { resolveActionCost } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
@@ -2077,7 +2078,9 @@ export function buildConceptSheetViewModel(context = {}) {
         groups: gearGroups,
         attackViews: new Map(attackEntries.map(buildAttackView).filter((a) => a.weaponId).map((a) => [a.weaponId, a])),
         isGM: globalThis.game?.user?.isGM === true,
-        unarmed: virtualUnarmedLoadoutEntry
+        unarmed: virtualUnarmedLoadoutEntry,
+        // droids / vehicles come from the Asset Bay's established owner association; world actors the user can merely see are never included
+        assets: listOwnedAssets(actor)
       })
     },
     biography: {

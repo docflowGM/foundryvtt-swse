@@ -27,8 +27,18 @@ const PLAIN = {
   [V.INCOMPATIBLE]: () => 'Can’t be held this way here.',
 };
 
+const TABS = ['weapons', 'armor', 'shields', 'gear', 'droids', 'vehicles', 'all'];
+const TAB_KEY = 'swse.eqw.tab';
+/** Last category the viewer chose (per-viewer convenience only; absent/blocked storage just means the default "All"). */
+function loadTab() { try { const t = globalThis.localStorage?.getItem(TAB_KEY); return TABS.includes(t) ? t : 'all'; } catch (_e) { return 'all'; } }
+function saveTab(t) { try { globalThis.localStorage?.setItem(TAB_KEY, t); } catch (_e) { /* storage unavailable */ } }
+/** Armor/shield/implant stations point at a browser tab (implants are general gear). */
+const stationTab = (s) => (s === 'implants' ? 'gear' : s);
+const EMPTY_TAB = { weapons: 'No weapons owned.', armor: 'No armor owned.', shields: 'No personal shields owned.', gear: 'No gear owned.', droids: 'No droids are linked to this character.', vehicles: 'No vehicles or starships are linked to this character.', all: 'No possessions logged.' };
+const num = (v) => { if (v === undefined || v === null || v === '') return null; const n = Number(v); return Number.isFinite(n) ? n : null; };
+
 function freshState() {
-  return { tab: 'all', search: '', slotId: null, itemId: null, itab: 'details', showIncompatible: false, listScroll: 0, searchFocus: false, selStart: null, selEnd: null, verdicts: {}, busy: false, token: 0, message: null };
+  return { tab: loadTab(), status: '', sort: 'default', dir: 'asc', sortSig: null, statusSig: null, search: '', slotId: null, itemId: null, itab: 'details', showIncompatible: false, listScroll: 0, searchFocus: false, selStart: null, selEnd: null, verdicts: {}, busy: false, token: 0, message: null };
 }
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
@@ -39,11 +49,36 @@ const GRIP_LABEL = (g) => (g === 'two-handed' ? 'Two-handed' : 'One-handed');
 /** Artwork that fails to load falls back to the tile's themed glyph (display only; item data is untouched). */
 function markBrokenArt(img) { img?.closest?.('.swse-eqw__art, .swse-eqw__holo')?.classList.add('is-glyph'); }
 
+/** Presentation sort over the entries' data attributes. Missing values sort last in either direction; "default" is the view model's own order. */
+function sortEntries(entries, field, dir) {
+  const sign = dir === 'desc' ? -1 : 1;
+  const catIdx = (e) => { const i = TABS.indexOf(e.dataset.eqwCat); return i < 0 ? TABS.length : i; };
+  const byName = (a, b) => String(a.dataset.eqwName ?? '').localeCompare(String(b.dataset.eqwName ?? ''));
+  const byOrder = (a, b) => (num(a.dataset.eqwOrder) ?? 0) - (num(b.dataset.eqwOrder) ?? 0);
+  const numeric = (key) => (a, b) => {
+    const x = num(a.dataset[key]); const y = num(b.dataset[key]);
+    if (x === null && y === null) return byOrder(a, b);
+    if (x === null) return 1;
+    if (y === null) return -1;
+    return (x - y) * sign || byOrder(a, b);
+  };
+  const cmp = {
+    default: (a, b) => byOrder(a, b) * sign,
+    name: (a, b) => (byName(a, b) * sign) || byOrder(a, b),
+    category: (a, b) => ((catIdx(a) - catIdx(b)) * sign) || byName(a, b),
+    status: (a, b) => (String(a.dataset.eqwStatus ?? '').localeCompare(String(b.dataset.eqwStatus ?? '')) * sign) || byName(a, b),
+    weight: numeric('eqwWeight'),
+    quantity: numeric('eqwQty'),
+  }[field] ?? byOrder;
+  return [...entries].sort(cmp);
+}
+
 export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
   const ws = root?.querySelector?.('[data-eqw]');
   if (!ws || !sheet?.actor) return;
   const actor = sheet.actor;
   const st = (sheet._eqwState ??= freshState());
+  st.sortSig = null; st.statusSig = null; // a fresh render restores the view model's order and status options: re-apply the viewer's sort
   st.verdicts = {}; // eligibility is authoritative state-derived: always recomputed after a render, never reused across one
   const $ = (sel, scope = ws) => scope.querySelector(sel);
   const $$ = (sel, scope = ws) => Array.from(scope.querySelectorAll(sel));
@@ -58,22 +93,49 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     ws.classList.toggle('is-busy', st.busy);
     ws.setAttribute('aria-busy', st.busy ? 'true' : 'false');
     $$('[data-eqw-tab]').forEach((b) => b.setAttribute('aria-selected', b.dataset.eqwTab === st.tab ? 'true' : 'false'));
+    // keep the selected category visible in the (horizontally scrollable) tab rail
+    const rail = $('.swse-eqw__tabs'); const cur = $('[data-eqw-tab][aria-selected="true"]');
+    if (rail && cur) { const l = cur.offsetLeft; const r = l + cur.offsetWidth; if (l < rail.scrollLeft) rail.scrollLeft = Math.max(0, l - 8); else if (r > rail.scrollLeft + rail.clientWidth) rail.scrollLeft = r - rail.clientWidth + 8; }
     $$('[data-eqw-slot]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.eqwSlot === st.slotId ? 'true' : 'false'));
-    $$('[data-eqw-station]').forEach((b) => b.setAttribute('aria-pressed', !st.slotId && b.dataset.eqwStation === st.tab && st.tab !== 'all' ? 'true' : 'false'));
+    $$('[data-eqw-station]').forEach((b) => b.setAttribute('aria-pressed', !st.slotId && stationTab(b.dataset.eqwStation) === st.tab && st.tab !== 'all' ? 'true' : 'false'));
 
     const filtering = !!st.slotId;
     const q = st.search.trim().toLowerCase();
+    const entries = $$('[data-eqw-entry]');
+    const inTab = (e) => st.tab === 'all' || e.dataset.eqwCat === st.tab;
+    const tabEntries = entries.filter(inTab);
+
+    // status filter options = the statuses the authorities reported for this tab's entries (nothing is inferred or enumerated here)
+    const statuses = [...new Set(tabEntries.map((e) => e.dataset.eqwStatus).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    if (st.status && !statuses.includes(st.status)) st.status = '';
+    const statusEl = $('[data-eqw-status]');
+    const sig = statuses.join('|');
+    if (statusEl && sig !== st.statusSig) {
+      st.statusSig = sig; statusEl.replaceChildren();
+      const all = el('option', '', 'All statuses'); all.value = ''; statusEl.append(all);
+      for (const x of statuses) { const o = el('option', '', x); o.value = x; statusEl.append(o); }
+    }
+    if (statusEl) statusEl.value = st.status;
+    const sortEl = $('[data-eqw-sort]'); if (sortEl) sortEl.value = st.sort;
+    const dirEl = $('[data-eqw-dir]');
+    if (dirEl) { dirEl.setAttribute('aria-pressed', st.dir === 'desc' ? 'true' : 'false'); dirEl.setAttribute('aria-label', st.dir === 'desc' ? 'Sort descending' : 'Sort ascending'); const ic = dirEl.querySelector('i'); if (ic) ic.className = `fa-solid ${st.dir === 'desc' ? 'fa-arrow-down-wide-short' : 'fa-arrow-up-short-wide'}`; }
+
+    // order (DOM reorder only; entries are never duplicated or removed)
+    const orderSig = `${st.sort}|${st.dir}`;
+    if (listEl && orderSig !== st.sortSig) { st.sortSig = orderSig; listEl.append(...sortEntries(entries, st.sort, st.dir)); }
+
     let visible = 0; let incompatible = 0;
-    $$('[data-eqw-row]').forEach((row) => {
-      const id = row.dataset.eqwRow;
-      const v = st.verdicts[id] ?? null;
+    entries.forEach((row) => {
+      const id = row.dataset.eqwRow ?? null; // items only; linked droid/vehicle entries have no placement verdict
+      const v = id ? st.verdicts[id] ?? null : null;
       const isIncompat = filtering && v && v.best === V.INCOMPATIBLE;
       if (isIncompat) incompatible += 1;
-      const inTab = st.tab === 'all' || row.dataset.eqwCat === st.tab;
       const inSearch = !q || (row.dataset.eqwText ?? '').includes(q);
-      const show = inTab && inSearch && (!isIncompat || st.showIncompatible);
+      const inStatus = !st.status || row.dataset.eqwStatus === st.status;
+      const show = inTab(row) && inSearch && inStatus && (!isIncompat || st.showIncompatible);
       row.hidden = !show;
       if (show) visible += 1;
+      if (!id) return;
       const badge = $('[data-eqw-verdict]', row);
       if (badge) {
         const showBadge = filtering && v;
@@ -86,7 +148,11 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
       row.classList.toggle('is-selected', id === st.itemId);
     });
     const empty = $('[data-eqw-empty]');
-    if (empty) empty.hidden = visible > 0;
+    if (empty) { empty.hidden = visible > 0; empty.textContent = tabEntries.length ? 'Nothing matches this category, search and filter.' : (EMPTY_TAB[st.tab] ?? EMPTY_TAB.all); }
+    const count = $('[data-eqw-count]');
+    if (count) count.textContent = `${visible} of ${tabEntries.length} possession${tabEntries.length === 1 ? '' : 's'}`;
+    const reset = $('[data-eqw-reset]');
+    if (reset) reset.disabled = !st.search && !st.status && st.sort === 'default' && st.dir === 'asc';
 
     const ctx = $('[data-eqw-context]');
     const clear = $('[data-eqw-clear]');
@@ -205,11 +271,24 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
   ws.addEventListener('click', async (event) => {
     const t = event.target instanceof Element ? event.target : null; if (!t) return;
     let b;
-    if ((b = t.closest('[data-eqw-tab]'))) { st.tab = b.dataset.eqwTab; apply(); return; }
+    if ((b = t.closest('[data-eqw-tab]'))) {
+      // choosing a category by hand leaves slot-driven filtering (selection context only; equipment state is untouched)
+      st.tab = b.dataset.eqwTab; saveTab(st.tab);
+      if (st.slotId) { st.slotId = null; st.verdicts = {}; st.token++; st.message = null; }
+      apply(); return;
+    }
+    if ((b = t.closest('[data-eqw-open-asset]'))) {
+      const doc = globalThis.game?.actors?.get?.(b.dataset.eqwOpenAsset);
+      if (!doc?.sheet?.render) { globalThis.ui?.notifications?.warn?.('That actor has no openable sheet.'); return; }
+      try { doc.sheet.render(true); } catch (err) { globalThis.ui?.notifications?.warn?.(`${doc.name} could not be opened (${err?.message ?? 'permission'}).`); }
+      return;
+    }
+    if ((b = t.closest('[data-eqw-dir]'))) { st.dir = st.dir === 'desc' ? 'asc' : 'desc'; apply(); return; }
+    if ((b = t.closest('[data-eqw-reset]'))) { st.search = ''; st.status = ''; st.sort = 'default'; st.dir = 'asc'; apply(); return; }
     if ((b = t.closest('[data-eqw-itab]'))) { st.itab = b.dataset.eqwItab; apply(); return; }
     if ((b = t.closest('[data-eqw-close]'))) { st.itemId = null; st.message = null; apply(); return; }
     if ((b = t.closest('[data-eqw-clear]'))) { st.slotId = null; st.itemId = null; st.verdicts = {}; st.token++; st.message = null; apply(); return; }
-    if ((b = t.closest('[data-eqw-station]'))) { st.slotId = null; st.verdicts = {}; st.token++; st.tab = b.dataset.eqwStation; st.itemId = null; apply(); return; }
+    if ((b = t.closest('[data-eqw-station]'))) { st.slotId = null; st.verdicts = {}; st.token++; st.tab = stationTab(b.dataset.eqwStation); st.itemId = null; apply(); return; }
     if ((b = t.closest('[data-eqw-slot]'))) {
       if (b.getAttribute('aria-disabled') === 'true') return;
       st.slotId = b.dataset.eqwSlot; st.tab = 'weapons'; st.itab = 'operations';
@@ -250,7 +329,12 @@ export function activateEquipmentWorkspace(sheet, root, { signal } = {}) {
     if (event.target === searchEl) { st.search = searchEl.value; st.selStart = searchEl.selectionStart; st.selEnd = searchEl.selectionEnd; apply(); }
     else if (event.target?.matches?.('[data-eqw-show-incompatible]')) { st.showIncompatible = event.target.checked; apply(); }
   }, { signal });
-  ws.addEventListener('change', (event) => { if (event.target?.matches?.('[data-eqw-show-incompatible]')) { st.showIncompatible = event.target.checked; apply(); } }, { signal });
+  ws.addEventListener('change', (event) => {
+    const t = event.target;
+    if (t?.matches?.('[data-eqw-show-incompatible]')) { st.showIncompatible = t.checked; apply(); }
+    else if (t?.matches?.('[data-eqw-status]')) { st.status = t.value; apply(); }
+    else if (t?.matches?.('[data-eqw-sort]')) { st.sort = t.value; apply(); }
+  }, { signal });
   ws.addEventListener('keydown', (event) => { if (event.key === 'Escape' && (st.slotId || st.itemId)) { event.stopPropagation(); st.slotId = null; st.itemId = null; st.verdicts = {}; st.token++; apply(); } }, { signal });
   searchEl?.addEventListener('focus', () => { st.searchFocus = true; }, { signal });
   searchEl?.addEventListener('blur', () => { st.searchFocus = false; }, { signal });
