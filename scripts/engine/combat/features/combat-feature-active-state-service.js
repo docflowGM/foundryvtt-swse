@@ -231,3 +231,20 @@ export async function clearCombatFeatureState(actor, featureId) {
   ui?.notifications?.info?.(`${existing.name ?? activeStateName(id)} ended.`);
   return { success: true };
 }
+
+/**
+ * Workflow handler for combat-action records whose resolution mode is `combatState` (e.g. the library's "Fight defensively"). The two effect-backed
+ * stances are established through activateCombatFeatureState (the combat-action effect authority; the stance action is paid exactly once there), so the
+ * generic sheet route -- which spends an action but has no resolver that applies the stance -- is never reached for them. Every other combatState action
+ * keeps `fallback` (the existing generic route).
+ */
+export function createCombatStateWorkflowHandler(actor, fallback) {
+  return async (context = {}) => {
+    const id = canonicalCombatFeatureKey(context?.action?.id ?? context?.actionId ?? '');
+    if (!effectKeyFor(id)) return fallback(context);
+    const result = await activateCombatFeatureState(actor, id);
+    if (result?.success) return { success: true, stance: id, state: result.state };
+    if (result?.reason === 'already-active') ui?.notifications?.info?.(`${activeStateName(id)} is already active.`);
+    return { cancelled: true, reason: result?.reason ?? 'stance-not-activated' };
+  };
+}

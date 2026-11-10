@@ -1,6 +1,6 @@
 import { SWSEChat } from '/systems/foundryvtt-swse/scripts/chat/swse-chat.js';
 import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js';
-import { actorEntitledToMultiAttackPackage, buildFullAttackSequence, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { actorEntitledToMultiAttackPackage, buildFullAttackSequence, multiAttackChargeViolation, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
 import {
@@ -550,13 +550,17 @@ async function executeMultiAttackFromElement(element, kind) {
       sourceElement: element,
       showCover: true,
       showConcealment: true,
-      showForcePoint: true
+      showForcePoint: true,
+      sequence: true
     });
 
     if (!options) {
       if (!rolled && spend?.rollback) await spend.rollback();
       return;
     }
+
+    { const chargeBlock = multiAttackChargeViolation({ packageType, ...options });
+      if (chargeBlock) { ui?.notifications?.warn?.(chargeBlock); if (!rolled && spend?.rollback) await spend.rollback(); return; } }
 
     if (!spend) {
       spend = await ActionEconomyConsumption.spend(actor, 'full-round', {

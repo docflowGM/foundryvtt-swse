@@ -2611,3 +2611,11 @@ No provisional recommendation has been converted into a ruling.
 - **Status:** implemented per owner direction; the residual question above stays `DEFERRED_RULES_REVIEW`.
 
 - **Revision 59 (2026-11-10):** appended the MODAL-001 resolution addendum.
+
+### MODAL-001 residual — resolution addendum (2026-11-10; earlier entries preserved)
+- **Question (from the MODAL-001 addendum):** should a Charge-gated option combined with Double/Triple Attack or Full Attack pay the Charge in addition to the full-round action?
+- **Owner ruling received:** no. An ordinary Charge (Standard action, one attack; Core Rulebook p. 152) is not combined with Double Attack, Triple Attack or Full Attack (full-round; p. 154) unless a specific, verified rule permits it. Charging Fire changes the kind of attack at the end of a charge; it does not authorize a Full Attack. Page references are the owner's, not independently verified in this repository pass.
+- **Implemented:** `multiAttackChargeViolation` (see the convergence doc, "Final routing closure"); rejected before any spend. **Resolved rule:** Charge and multi-attack packages are mutually exclusive. **Future exceptions:** none source-certified; any verified exception (a specific feat, talent or weapon rule) is to be added to that function with its source.
+- **Status:** resolved and implemented. MODAL-001 is closed; CAE-001, CAE-002 and CAE-003 remain `DEFERRED_RULES_REVIEW`.
+
+- **Revision 60 (2026-11-10):** recorded the MODAL-001 residual ruling and its implementation.

@@ -37,6 +37,7 @@ import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/c
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
 import { AbilityCombatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/ability-combat-action-resolver.js";
+import { createCombatStateWorkflowHandler } from "/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-active-state-service.js";
 import { evaluateCombatActionEligibility, gateCombatActionRequest, isActorCombatActionGrant } from "/systems/foundryvtt-swse/scripts/engine/combat/features/combat-action-eligibility.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/talent/guardian-spirit-actions.js";
@@ -6824,7 +6825,7 @@ const forcePoints = [];
       reference: async (context) => this._executeManualCombatWorkflow(context, options),
       skillAction: async (context) => this._executeSkillActionCombatWorkflow(context, options),
       attack: routeLegacy,
-      combatState: routeLegacy,
+      combatState: createCombatStateWorkflowHandler(this.actor, routeLegacy),
       secondWind: routeLegacy,
       grapple: async (context) => this._executeGrappleCombatWorkflow(context, options),
       aidAnother: routeLegacy,

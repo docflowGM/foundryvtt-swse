@@ -8,6 +8,7 @@ import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowConte
 import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { canDeclareInfiltratorUnarmedStun } from "/systems/foundryvtt-swse/scripts/engine/combat/class-infiltrator-unarmed-stun.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
+import { multiAttackChargeViolation } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { prepareCoreAttackOptionRollContext, spendCoreAttackOptionCosts } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { damageContextForReaction, damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
@@ -805,6 +806,8 @@ export async function rollAttack(actor, weapon, options = {}) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
+  // Charge (Standard, one attack) cannot be combined with Double / Triple / Full Attack (full-round): refused before anything is committed.
+  { const chargeBlock = multiAttackChargeViolation(rollOptions); if (chargeBlock) { ui?.notifications?.warn?.(chargeBlock); return null; } }
   { const gate = checkAttackSourceReadiness(actor, weapon, rollOptions); if (!gate.ok) return refuseUnreadyAttack(weapon, gate); }
 
   // Phase 2C, immediate strict stock mode (approved DENY): every vehicle-

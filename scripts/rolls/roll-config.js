@@ -1024,7 +1024,7 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
       // (ranged -> melee, melee -> thrown, ...) can neither keep a control that no longer applies nor leave a stale declaration in the roll.
       const earlyTarget = getTargetActorFromOptions({ targetTokenId: form.querySelector('[name="targetTokenId"]')?.value || null, targetActorId: form.querySelector('[name="targetActorId"]')?.value || null });
       const attackType = melee ? 'melee' : 'ranged';
-      applyAttackModalState(form, deriveAttackModalState(actor, weapon, { attackType, selection: live.selection, target: earlyTarget }), { actor, parts: ['contexts', 'autofire'] });
+      applyAttackModalState(form, deriveAttackModalState(actor, weapon, { attackType, selection: live.selection, target: earlyTarget, sequence: model?.sequence === true }), { actor, parts: ['contexts', 'autofire'] });
       const { aim, charge, isPointBlank, situationalContributions } = computeAttackSituationalContext(form, melee);
       // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker
       // 3): thread the dialog's own Target Context selection (Selected
@@ -1072,7 +1072,7 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
       // rollOptions.aim/charge/attackOptions.autofire this same update()
       // pass just built for the real composition, so the option-state
       // recompute can never disagree with what the roll itself would see.
-      applyAttackModalState(form, deriveAttackModalState(actor, weapon, { attackType, selection: live.selection, aim, charge, autofire: rollOptions.attackOptions?.autofire === true, combatOptions: rollOptions.combatOptions, attackOptions: rollOptions.attackOptions, target: resolvedTargetActor }), { actor, parts: ['options'] });
+      applyAttackModalState(form, deriveAttackModalState(actor, weapon, { attackType, selection: live.selection, aim, charge, autofire: rollOptions.attackOptions?.autofire === true, combatOptions: rollOptions.combatOptions, attackOptions: rollOptions.attackOptions, target: resolvedTargetActor, sequence: model?.sequence === true }), { actor, parts: ['options'] });
       // read-only ammunition status: the production preflight on the selected form and chosen options (spends nothing; rollAttack stays authoritative)
       try {
         const { previewAmmoPreflight } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
@@ -1153,10 +1153,13 @@ export function deriveAttackModalState(actor, weapon, live = {}) {
   const attackType = live.attackType ?? (live.melee ? 'melee' : 'ranged');
   const selection = requestedAttackSelection(live.selection ?? {});
   const base = { attackType, ...selection, target: live.target ?? null, targetActor: live.target ?? null };
+  const sequence = live.sequence === true;
   const contexts = CombatOptionResolver.getAvailableAttackContexts(actor, weapon, base);
+  // an attack inside Double / Triple / Full Attack cannot be a Charge attack (a Charge is a Standard action with one attack): no Charge control
+  if (sequence) contexts.charge = false;
   const combatOptions = live.combatOptions ?? {};
   const ctx = { ...base, aim: live.aim === true, charge: live.charge === true, autofire: live.autofire === true, combatOptions, attackOptions: live.attackOptions ?? {} };
-  const resolved = CombatOptionResolver.getAttackOptionsWithState(actor, weapon, ctx).map((o) => {
+  const resolved = CombatOptionResolver.getAttackOptionsWithState(actor, weapon, ctx).filter((o) => !(sequence && (o.requiresCharge === true || getCoreAttackOptionEconomy(o.id)?.economy === 'autoChargeIfMissing'))).map((o) => {
     // MODAL-001: an Aim- or Charge-gated option whose ONLY unmet gate is the prerequisite action is selectable; the roll pays the prerequisite through the
     // existing action economy (prepareCoreAttackOptionRollContext / spendCoreAttackOptionCosts) unless the player declares it was already taken.
     if (o.state !== 'disabled') return o;
@@ -1300,7 +1303,7 @@ export async function buildRollConfigModel(options = {}) {
   // ONE derivation for the model AND the live recompute (deriveAttackModalState): option discovery, context relevance and Autofire capability are all
   // evaluated for the SELECTED attack form (profile / configuration / mode / payload), never the weapon's default form.
   const modalState = isAttackRoll && weapon
-    ? deriveAttackModalState(actor, weapon, { melee: attackTypeKey === 'melee', selection: attackSelection, target: initialTargetActor })
+    ? deriveAttackModalState(actor, weapon, { melee: attackTypeKey === 'melee', selection: attackSelection, target: initialTargetActor, sequence: options.sequence === true })
     : null;
   const combatOptions = modalState?.options ?? [];
   // Aim/Charge/Flanking relevance per the melee/ranged split plus the Charging-Fire-style ranged-charge exception (CombatOptionResolver owns it).
@@ -1390,6 +1393,7 @@ export async function buildRollConfigModel(options = {}) {
     selectedPayloadId,
     attackSelection,
     attackFormError,
+    sequence: options.sequence === true,
     supportsAutofire: modalState?.autofire?.supported === true,
     autofireReason: modalState?.autofire?.reason ?? '',
     hasStunSetting: weaponHasStunSetting(weapon) || canDeclareInfiltratorUnarmedStun(actor,weapon),
