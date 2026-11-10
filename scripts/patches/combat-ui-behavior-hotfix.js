@@ -1,6 +1,6 @@
 import { SWSEChat } from '/systems/foundryvtt-swse/scripts/chat/swse-chat.js';
 import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js';
-import { buildFullAttackSequence, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { actorEntitledToMultiAttackPackage, buildFullAttackSequence, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
 import {
@@ -522,7 +522,14 @@ async function executeMultiAttackFromElement(element, kind) {
   const equipped = getReadiedWeaponSelection(actor);
   const packageType = kind === 'triple' ? FULL_ATTACK_PACKAGES.TRIPLE_ATTACK : FULL_ATTACK_PACKAGES.DOUBLE_ATTACK;
   let plan = buildFullAttackSequence(actor, { requestedPackage: packageType, primaryWeapon: equipped.primary });
-  if (!plan?.legal) plan = fallbackMultiAttackPlan(actor, packageType, equipped.primary);
+  if (!plan?.legal) {
+    // the fallback plan must never grant a package the actor does not own (same entitlement answer as the combat-feature router)
+    if (!actorEntitledToMultiAttackPackage(actor, packageType, equipped.primary)) {
+      ui?.notifications?.warn?.(plan?.warnings?.join(' ') || `${kind === 'triple' ? 'Triple' : 'Double'} Attack is not unlocked for this actor and weapon.`);
+      return;
+    }
+    plan = fallbackMultiAttackPlan(actor, packageType, equipped.primary);
+  }
   if (!plan?.legal || !plan.attacks?.length) {
     ui?.notifications?.warn?.(plan?.warnings?.join(' ') || 'No legal multiattack sequence is available.');
     return;

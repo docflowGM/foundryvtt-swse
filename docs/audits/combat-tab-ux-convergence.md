@@ -63,3 +63,28 @@ Three things are kept apart: **discovery** (the catalog lists it), **eligibility
 **Classified catalog (49 pack actions, organic actor):** 43 general; entitlement-gated: Burst Fire, Crush Pinned Opponent, Pin Grappled Opponent, Throw Grappled Opponent (Throw + Trip), Trip Grappled Opponent, Feign Haywire (Droids only). None unresolved. Eligibility not established (recorded in the register): CAE-001 Treat Poison (prose-only), CAE-002 GM override, CAE-003 cyborg-hybrid / droid-only feat cards without a structured link.
 
 **Hotfix status** (`combat-ui-behavior-hotfix.js`): replaced at the data level and covered by permanent tests: gating of Pin, Trip, Throw, Crush Pinned Opponent, Feign Haywire. Still present, unreplaced: the name-based droid-only list for feat names (Distracting Droid, Sensor Link, Erratic Target, Link, Shield Surge, Logic Upgrade, Droid Shield Mastery) because those feats carry no structured action-card link (CAE-003). The hook only acts on `.combat-action-row`, which no rendered template emits, so it is inert; it was not removed in this pass.
+
+## Eligibility coverage audit (follow-up to review of bc21161f0)
+
+**Execution entrypoints (reachability).** Pinned by `tests/combat-action-eligibility-coverage.test.mjs`:
+
+| Path | Boundary |
+| --- | --- |
+| Sheet buttons, rows, `combat-ui.js`, macros calling the sheet runner | `_runCanonicalCombatAction` first-entry gate (live re-derivation by key). `CombatWorkflowRegistry` is only called from that method, after the gate; nested/routed calls come from the registry's own handlers. |
+| Combat Features router / legacy click bridge (Double/Triple Attack) | `executeCombatFeatureMultiattack`, gated by `actorEntitledToMultiAttackPackage` (new, in `multi-attack.js`, the multi-attack authority) |
+| Hotfix multiattack delegate (`executeMultiAttackFromElement`) | **second bypass found and fixed**: it had its own `fallbackMultiAttackPlan` that made any actor with a ready weapon legal; now guarded by the same helper. Every `fallbackMultiAttackPlan(` call site in the codebase is asserted to be guarded (a new unguarded route fails the test). Covered by a source-contract test and by the helper's behavioral test; the hotfix delegate itself is not driven headlessly. |
+| `FullAttackExecutor` | requires `plan.legal` from `buildFullAttackSequence` (no fallback plan) |
+| Pin / Trip / Throw / Crush | independent second boundary inside `SWSEGrappling` (feat or a weapon-form entitlement); tested to refuse without the feat |
+| Attack-option features (Power Attack, Flurry, ...) via the router | no entitlement gate needed: `CombatOptionResolver` only sees options from OWNED abilities, so a forced option adds no math (tested); the result is a normal attack |
+| Tracked active states (Rage, Braced, ...) | display-only flags; tested that only the Combat Features display modules read them |
+| `CombatExecutor.executeAttack` | legacy plain attack roll from an actor flag; not called by the sheet; grants no feat/talent action |
+
+**Ownership is identity-first** (a defect in the first version: it matched by name). It now uses `featIs` from the ability identity authority, the rule the grapple and multi-attack authorities use: a same-named item with a different canonical identity never satisfies a requirement; the name is the fallback only for an item with no canonical identity; a disabled ability is not owned.
+
+**Action sources crosswalk.** Every `registerAction` call states its origin (5 sites, asserted). The 263-entry feat/talent catalog: an actor owning nothing receives none; for each of 260 distinct required feat/talent items an owner receives only that item's cards, unlocked, and a copied key is refused for any other actor. 3 catalog entries (`defensive-fighting`, `total-defense`, `skill-focus`) have no required feat/talent and are never emitted by the resolver (unreachable). Metadata-defined cards, combined-feat cards and species/actor-ability items follow ownership and are re-derived live at execution.
+
+**Weapon-granted entitlement (Amphistaff whip form).** The grapple authority lets a weapon form entitle Pin/Trip without the feat. That entitlement travels through the weapon-control workflow (`weaponEntitlement`), not through a library action, so the library correctly shows these actions as locked for a character without the feat and the weapon path is untouched.
+
+**Actor-flag-defined actions.** No code writes `flags.*.combatActions`; the sheet only read it, merged into the action data. It is not a registered extension interface, so such keys are refused (asserted). If an extension interface is wanted it should register through the catalog / a granting item.
+
+**Rulings.** CAE-001/002/003 stay `DEFERRED_RULES_REVIEW`. The reviewer's recommendations (Treat Poison: require skill training and an equipment prerequisite once a Medical Kit authority exists, show unresolved meanwhile; GM override only as an explicit attributable workflow; Droid feat cards from the Droid rules profile, feat ownership and structured metadata, no cyborg assumption) are provisional and are not implemented as rulings.

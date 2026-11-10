@@ -259,6 +259,18 @@ export function actorHasMultiAttackFor(actor, kind, weapon, context = {}) {
 }
 
 /**
+ * Is the actor entitled to the requested Double/Triple Attack package with this weapon? The ONE entitlement answer for every route that
+ * builds a multi-attack sequence (sheet executor, combat-feature router, legacy hotfix bridge): a route may fall back to a simplified plan
+ * only when this is true, so a fallback can never grant a package the actor does not own. Triple requires Double (as the planner does).
+ */
+export function actorEntitledToMultiAttackPackage(actor, packageType, weapon, context = {}) {
+  if (!weapon) return false;
+  if (packageType === FULL_ATTACK_PACKAGES.DOUBLE_ATTACK) return actorHasMultiAttackFor(actor, 'double', weapon, context);
+  if (packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK) return actorHasMultiAttackFor(actor, 'double', weapon, context) && actorHasMultiAttackFor(actor, 'triple', weapon, context);
+  return true;
+}
+
+/**
  * Get the actor's Dual Weapon Mastery level (0, 1, 2, or 3)
  * @param {Actor} actor - The actor
  * @returns {number} DWM level (0 = none, 1 = DWM I, 2 = DWM II, 3 = DWM III)

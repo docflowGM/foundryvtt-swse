@@ -21,6 +21,7 @@
  * Fail closed: a structured requirement this module does not recognise makes the action UNRESOLVED (never executable), and it is reported.
  */
 import { resolveDroidRulesProfile } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
+import { featIs } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
 import { authorizeDroidComponentOperation } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js';
 
 export const ELIGIBILITY_STATE = Object.freeze({ UNLOCKED: 'unlocked', LOCKED: 'locked', UNRESOLVED: 'unresolved' });
@@ -71,11 +72,13 @@ export function catalogRequirementsOf(row = {}) {
   return out;
 }
 
-const matchesOwned = (actor, type, name) => {
-  const want = norm(name);
-  return itemsOf(actor).some((item) => String(item?.type ?? '').toLowerCase() === type
-    && [item?.name, item?.system?.slug, item?.system?.key, item?.flags?.swse?.slug].some((c) => norm(c) === want));
-};
+/**
+ * Does the actor own this feat/talent? IDENTITY-FIRST, the same rule the grapple and multi-attack authorities use (`featIs`): an owned ability with a
+ * canonical identity is the ability its identity says, so a same-named item carrying a different identity never impersonates it; the display name is
+ * the fallback only for an item with no canonical identity. A disabled ability is not owned for this purpose.
+ */
+const matchesOwned = (actor, type, name) => itemsOf(actor).some((item) => String(item?.type ?? '').toLowerCase() === type
+  && item?.system?.disabled !== true && featIs(item, norm(name).replace(/ /g, '-')));
 
 function trainedIn(actor, skillName) {
   const skills = actor?.system?.skills;
