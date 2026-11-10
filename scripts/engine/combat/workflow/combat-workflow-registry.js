@@ -2,6 +2,19 @@ import { normalizeCombatAction } from "/systems/foundryvtt-swse/scripts/engine/c
 import { buildCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-builder.js";
 import { CombatWorkflowResult } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-result.js";
 
+// Internal-routing trust. A nested `_runCanonicalCombatAction` call made by the workflow's own handlers is not gated a second time, but that
+// trust must not be something a caller can claim: it is held by IDENTITY of an options object this module created (a private WeakSet), so a literal
+// `{ __combatWorkflowRouted: true }`, a copy of a marked object, or a replayed one is not trusted.
+const TRUSTED_ROUTED_OPTIONS = new WeakSet();
+export function markWorkflowRouted(options = {}) {
+  const marked = { ...options, __combatWorkflowRouted: true };
+  TRUSTED_ROUTED_OPTIONS.add(marked);
+  return marked;
+}
+export function isWorkflowRouted(options) {
+  return !!options && typeof options === 'object' && options.__combatWorkflowRouted === true && TRUSTED_ROUTED_OPTIONS.has(options);
+}
+
 /**
  * CombatWorkflowRegistry
  *

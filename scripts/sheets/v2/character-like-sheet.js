@@ -37,7 +37,7 @@ import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/c
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
 import { AbilityCombatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/ability-combat-action-resolver.js";
-import { evaluateCombatActionEligibility, authorizeCombatActionExecution } from "/systems/foundryvtt-swse/scripts/engine/combat/features/combat-action-eligibility.js";
+import { evaluateCombatActionEligibility, gateCombatActionRequest, isActorCombatActionGrant } from "/systems/foundryvtt-swse/scripts/engine/combat/features/combat-action-eligibility.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/talent/guardian-spirit-actions.js";
 import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/consular-talent-actions.js";
@@ -126,7 +126,7 @@ import { EntityCreateBrowser } from "/systems/foundryvtt-swse/scripts/dialogs/en
 import { CombinedFeatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combined-feat-action-resolver.js";
 import { FullAttackExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-executor.js";
 import { SWSEGrappling } from "/systems/foundryvtt-swse/scripts/combat/systems/grappling-system.js";
-import { CombatWorkflowRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-registry.js";
+import { CombatWorkflowRegistry, markWorkflowRouted } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-registry.js";
 import { FULL_ATTACK_PACKAGES } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 
@@ -1715,11 +1715,7 @@ const forcePoints = [];
       // Include actor-owned executable combat-action items, such as species abilities.
       for (const item of this.actor?.items || []) {
         if (item?.type !== 'combat-action') continue;
-        const isActorAbility = item.flags?.swse?.isSpeciesAbility === true
-          || item.flags?.swse?.isActorAbility === true
-          || item.system?.executionModel === 'actor-special-ability'
-          || item.system?.executionModel === 'species-activated-ability';
-        if (!isActorAbility) continue;
+        if (!isActorCombatActionGrant(item)) continue;
         registerAction(grouped, {
           key: `item:${item.id}:use`,
           itemId: item.id,
@@ -6816,12 +6812,11 @@ const forcePoints = [];
   }
 
   _createCombatWorkflowHandlers(options = {}) {
-    const routeLegacy = async (context) => this._runCanonicalCombatAction(context?.action?.id ?? context?.actionId, context?.action ?? {}, {
+    const routeLegacy = async (context) => this._runCanonicalCombatAction(context?.action?.id ?? context?.actionId, context?.action ?? {}, markWorkflowRouted({
       ...options,
-      __combatWorkflowRouted: true,
       combatContext: context,
       actionRecord: context?.action ?? null
-    });
+    }));
 
     return {
       fullAttack: async (context) => this._executeFullAttackCombatWorkflow(context, options),
@@ -7135,12 +7130,11 @@ const forcePoints = [];
     const actionId = actionData?.id ?? context?.actionId ?? 'skill-combat-action';
     const skillKey = this._resolveCombatActionSkillKey(actionData);
     if (!skillKey) {
-      return await this._runCanonicalCombatAction(actionId, actionData, {
+      return await this._runCanonicalCombatAction(actionId, actionData, markWorkflowRouted({
         ...options,
-        __combatWorkflowRouted: true,
         combatContext: context,
         actionRecord: actionData
-      });
+      }));
     }
 
     const modResult = await showRollModifiersDialog({
@@ -7182,19 +7176,24 @@ const forcePoints = [];
 
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
     // EXECUTION boundary for combat actions: a hidden or disabled button is not a security boundary. The action is re-derived from the LIVE
-    // actor / catalog by its key (nothing the caller or a stale sheet claims is believed) and must be unlocked before any workflow runs.
-    if (options?.__combatWorkflowRouted !== true) {
-      const gate = authorizeCombatActionExecution(this.actor, actionId, await this._liveCombatActionSources());
-      if (!gate.allowed) {
-        ui?.notifications?.warn?.(gate.reason || 'This actor has not unlocked this action.');
-        return null;
-      }
+    // actor / catalog by its key and must be unlocked before any workflow runs; what then runs is the live / sheet-registered row for that key,
+    // never mechanics the caller supplied. Trust for the workflow's own nested calls is an options object the workflow marked (markWorkflowRouted),
+    // not a flag a caller can set.
+    const gated = await gateCombatActionRequest(this.actor, actionId, actionData, options, {
+      live: () => this._liveCombatActionSources(),
+      lookupRow: this._combatActionLookup?.[String(actionId)] ?? null
+    });
+    if (!gated.allowed) {
+      ui?.notifications?.warn?.(gated.reason || 'This actor has not unlocked this action.');
+      return null;
     }
+    actionData = gated.actionData;
+    options = gated.options;
 
     // Phase 1B: route combat actions through the thin workflow registry first.
     // The registry owns normalization/context preservation, while this sheet
     // method remains the legacy execution adapter for existing authorities.
-    if (options?.__combatWorkflowRouted !== true) {
+    if (!gated.routed) {
       const registry = CombatWorkflowRegistry.getDefault();
       const result = await registry.execute({
         actor: this.actor,

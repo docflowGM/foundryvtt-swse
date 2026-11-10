@@ -22,6 +22,7 @@
  */
 import { resolveDroidRulesProfile } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-rules-profile.js';
 import { featIs } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js';
+import { isWorkflowRouted } from '/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-registry.js';
 import { authorizeDroidComponentOperation } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js';
 
 export const ELIGIBILITY_STATE = Object.freeze({ UNLOCKED: 'unlocked', LOCKED: 'locked', UNRESOLVED: 'unresolved' });
@@ -77,6 +78,19 @@ export function catalogRequirementsOf(row = {}) {
  * canonical identity is the ability its identity says, so a same-named item carrying a different identity never impersonates it; the display name is
  * the fallback only for an item with no canonical identity. A disabled ability is not owned for this purpose.
  */
+/**
+ * Is this owned Item an actor combat-action GRANT (species / actor special ability)? The ONE predicate the sheet uses to register such an action and
+ * the execution gate uses to re-verify it: an Item of type `combat-action` carrying the species/actor-ability flag or execution model. Ownership of an
+ * arbitrary Item is not an entitlement.
+ */
+export function isActorCombatActionGrant(item) {
+  if (!item || item.type !== 'combat-action') return false;
+  return item.flags?.swse?.isSpeciesAbility === true
+    || item.flags?.swse?.isActorAbility === true
+    || item.system?.executionModel === 'actor-special-ability'
+    || item.system?.executionModel === 'species-activated-ability';
+}
+
 const matchesOwned = (actor, type, name) => itemsOf(actor).some((item) => String(item?.type ?? '').toLowerCase() === type
   && item?.system?.disabled !== true && featIs(item, norm(name).replace(/ /g, '-')));
 
@@ -132,6 +146,7 @@ export function evaluateCombatActionEligibility(actor, row = {}, deps = {}) {
   if (origin === 'ability' || origin === 'actor-item') {
     const item = ownedItem(actor, row.itemId ?? row.sourceItemId);
     if (!item) return finish(result(ELIGIBILITY_STATE.LOCKED, { missing: [`${row.sourceName || 'source'} is not owned`], reason: `${row.sourceName || 'The granting feat/talent'} is not owned by this actor.` }));
+    if (origin === 'actor-item' && !isActorCombatActionGrant(item)) return finish(result(ELIGIBILITY_STATE.LOCKED, { missing: ['actor combat-action grant'], reason: 'This item is not a species or actor combat-action grant.' }));
     const type = String(item.type ?? '').toLowerCase();
     const kind = origin === 'actor-item' ? ENTITLEMENT.SPECIES : (type === 'talent' ? ENTITLEMENT.TALENT : ENTITLEMENT.FEAT);
     const r = result(ELIGIBILITY_STATE.UNLOCKED, { entitlement: [kind], basis: [`owned ${origin === 'actor-item' ? 'ability' : type}: ${item.name}`] });
@@ -214,9 +229,11 @@ export function authorizeCombatActionExecution(actor, actionId, live = {}, deps 
     if (!row) return refuse(ELIGIBILITY_STATE.LOCKED, 'This combined-feat action is not granted by the feats this actor owns.', origin);
   } else if (key.startsWith('item:')) {
     origin = 'actor-item';
-    const item = ownedItem(actor, key.split(':')[1]);
+    const m = /^item:([^:]+):use$/.exec(key);
+    const item = m ? ownedItem(actor, m[1]) : null;
     if (!item) return refuse(ELIGIBILITY_STATE.LOCKED, 'This ability item is not owned by this actor.', origin);
-    row = { itemId: item.id ?? item._id, sourceName: item.name };
+    if (!isActorCombatActionGrant(item)) return refuse(ELIGIBILITY_STATE.LOCKED, 'This item is not a species or actor combat-action grant.', origin);
+    row = { key, itemId: item.id ?? item._id, sourceName: item.name, name: item.name, actionType: item.system?.actionType ?? item.system?.speciesAbility?.actionType ?? 'standard' };
   } else {
     origin = 'catalog'; row = live.catalogRow?.(key) ?? null;
     // a key that no live source knows grants nothing and defines no entitlement; the sheet's own lookup is the only other source of truth
@@ -224,8 +241,28 @@ export function authorizeCombatActionExecution(actor, actionId, live = {}, deps 
   }
   const eligibility = evaluateCombatActionEligibility(actor, { ...row, origin }, deps);
   return eligibility.execution.allowed
-    ? { allowed: true, reason: '', state: eligibility.state, origin, eligibility }
+    ? { allowed: true, reason: '', state: eligibility.state, origin, eligibility, row }
     : refuse(eligibility.state, eligibility.execution.reason, origin, eligibility);
 }
 
-export default { evaluateCombatActionEligibility, authorizeCombatActionExecution, parseRequirementText, catalogRequirementsOf, ELIGIBILITY_STATE, ENTITLEMENT };
+/**
+ * The sheet runner's entry check, kept pure so it is testable without the sheet. Returns what the workflow is allowed to run:
+ *   - trusted internal routing (an options object the workflow itself marked) passes through, un-gated, as before;
+ *   - anything else is authorised by KEY against the live sources, and the action that RUNS is the live / sheet-registered row for that key.
+ *     Caller-supplied mechanics (`resolutionMode`, `ruleData`, `*TalentAction` flags, `spendAction`, `id`) are discarded, so authorising one key and
+ *     executing another is impossible. An untrusted `__combatWorkflowRouted` flag is stripped.
+ */
+export async function gateCombatActionRequest(actor, actionId, actionData, options, { live, lookupRow = null, deps = {} } = {}) {
+  if (isWorkflowRouted(options)) return { allowed: true, routed: true, actionData, options, reason: '' };
+  const cleanOptions = { ...(options ?? {}) };
+  delete cleanOptions.__combatWorkflowRouted;
+  const sources = typeof live === 'function' ? await live() : (live ?? {});
+  const gate = authorizeCombatActionExecution(actor, actionId, sources, deps);
+  if (!gate.allowed) return { allowed: false, routed: false, actionData, options: cleanOptions, reason: gate.reason, gate };
+  const trusted = lookupRow ?? gate.row ?? null;
+  const safe = trusted ? { ...trusted } : { name: actionData?.name };
+  safe.id = actionId; safe.key = actionId;
+  return { allowed: true, routed: false, actionData: safe, options: cleanOptions, reason: '', gate };
+}
+
+export default { evaluateCombatActionEligibility, authorizeCombatActionExecution, gateCombatActionRequest, isActorCombatActionGrant, parseRequirementText, catalogRequirementsOf, ELIGIBILITY_STATE, ENTITLEMENT };

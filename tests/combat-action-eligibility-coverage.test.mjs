@@ -54,15 +54,14 @@ test('inventory: only the known callers invoke the sheet action runner, the mult
   assert.deepEqual(callers('CombatWorkflowRegistry.getDefault()', ['combat-workflow-registry.js']), ['scripts/sheets/v2/character-like-sheet.js']);
 });
 
-test('the sheet gate precedes the workflow registry, and routed (nested) calls do not skip a first-entry gate', () => {
+test('the sheet gate precedes the workflow registry; nested calls are trusted only through markWorkflowRouted', () => {
   const src = read('scripts/sheets/v2/character-like-sheet.js');
   const start = src.indexOf('async _runCanonicalCombatAction(');
-  const body = src.slice(start, start + 2600);
-  assert.ok(body.indexOf('__combatWorkflowRouted !== true') < body.indexOf('authorizeCombatActionExecution('));
-  assert.ok(body.indexOf('authorizeCombatActionExecution(') < body.indexOf('CombatWorkflowRegistry.getDefault()'));
-  // the only callers that pass __combatWorkflowRouted:true are the registry's own handlers, which are reached only after the gate
-  const routed = [...src.matchAll(/__combatWorkflowRouted:\s*true/g)].length;
-  assert.ok(routed >= 2);
+  const body = src.slice(start, start + 3200);
+  assert.ok(body.indexOf('gateCombatActionRequest(') > -1 && body.indexOf('gateCombatActionRequest(') < body.indexOf('CombatWorkflowRegistry.getDefault()'));
+  assert.match(body, /if \(!gated\.routed\)/, 'only a trusted routed call skips the registry');
+  assert.equal(/options\?\.__combatWorkflowRouted/.test(src), false, 'no code trusts the raw flag');
+  assert.ok((src.match(/markWorkflowRouted\(/g) ?? []).length >= 2, 'the workflow handlers mark their nested calls');
 });
 
 // ---- 3. every alternate multi-attack route -------------------------------------------------------------------------------------------------
@@ -186,4 +185,80 @@ test('actor-flag-defined combat actions are not an extension interface: nothing 
   assert.deepEqual(writers, [], 'no writer of actor-flag combat actions exists');
   // the legacy executor runs a plain attack roll from such a flag; it grants no feat/talent action and is not reachable from the sheet runner
   assert.equal(read('scripts/sheets/v2/character-like-sheet.js').includes('CombatExecutor.executeAttack'), false);
+});
+
+// ---- 9. internal routing cannot be forged; caller-supplied mechanics are never executed; item grants are verified ----------------------------
+const elig = await import('/systems/foundryvtt-swse/scripts/engine/combat/features/combat-action-eligibility.js');
+const wf = await import('/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-registry.js');
+const crushRow = { key: 'crush-pinned-opponent', name: 'Crush Pinned Opponent', origin: 'catalog', requirements: ['Crush feat', 'Target is Pinned'], resolutionMode: 'grapple', ruleData: { grappleMode: 'crush' } };
+const liveCatalog = (rows) => async () => ({ catalogRow: (k) => rows.find((r) => r.key === k) ?? null, abilityRow: () => null, combinedRow: () => null });
+
+test('a caller cannot skip the gate by supplying __combatWorkflowRouted: only options the workflow itself marked are trusted', async () => {
+  const a = actor([]); // does not own Crush
+  const forged = await elig.gateCombatActionRequest(a, crushRow.key, {}, { __combatWorkflowRouted: true }, { live: liveCatalog([crushRow]) });
+  assert.equal(forged.allowed, false, 'a forged routing flag does not bypass eligibility');
+  const marked = wf.markWorkflowRouted({ source: 'x' });
+  assert.equal(wf.isWorkflowRouted(marked), true);
+  const routed = await elig.gateCombatActionRequest(a, crushRow.key, {}, marked, { live: liveCatalog([crushRow]) });
+  assert.equal(routed.allowed, true, 'the workflow\'s own nested call is not gated twice');
+  assert.equal(wf.isWorkflowRouted({ ...marked }), false, 'copying a marked options object (replaying it) does not carry the trust');
+  assert.equal(wf.isWorkflowRouted({ __combatWorkflowRouted: true }), false);
+  const replay = await elig.gateCombatActionRequest(a, crushRow.key, {}, { ...marked }, { live: liveCatalog([crushRow]) });
+  assert.equal(replay.allowed, false);
+});
+
+test('an untrusted routing flag is stripped from the options the workflow receives', async () => {
+  const a = actor([feat('f1', 'Crush')]);
+  const r = await elig.gateCombatActionRequest(a, crushRow.key, {}, { __combatWorkflowRouted: true, source: 'macro' }, { live: liveCatalog([crushRow]) });
+  assert.equal(r.allowed, true);
+  assert.equal('__combatWorkflowRouted' in r.options, false);
+  assert.equal(r.options.source, 'macro');
+});
+
+test('the authorised KEY decides what runs: caller-supplied resolutionMode / ruleData / talent flags are replaced by the live or sheet row', async () => {
+  const a = actor([feat('f1', 'Crush')]);
+  const spoof = { id: 'something-else', key: 'something-else', resolutionMode: 'forceTalent', forceTalentAction: true, ruleData: { forceTalentAction: true, evil: 1 }, spendAction: false, executable: true, name: 'Crush Pinned Opponent' };
+  const r = await elig.gateCombatActionRequest(a, crushRow.key, spoof, {}, { live: liveCatalog([crushRow]) });
+  assert.equal(r.allowed, true);
+  assert.equal(r.actionData.id, crushRow.key); assert.equal(r.actionData.key, crushRow.key);
+  assert.equal(r.actionData.resolutionMode, 'grapple');
+  assert.deepEqual(r.actionData.ruleData, { grappleMode: 'crush' });
+  assert.equal('forceTalentAction' in r.actionData, false); assert.equal('spendAction' in r.actionData, false);
+  // the sheet's own registered row is preferred when it has one
+  const sheetRow = { ...crushRow, useLabel: 'Use', cost: 1 };
+  const r2 = await elig.gateCombatActionRequest(a, crushRow.key, spoof, {}, { live: liveCatalog([crushRow]), lookupRow: sheetRow });
+  assert.equal(r2.actionData.useLabel, 'Use'); assert.equal(r2.actionData.resolutionMode, 'grapple');
+});
+
+test('the sheet delegates to the gate helper and never trusts a literal routing flag', () => {
+  const src = read('scripts/sheets/v2/character-like-sheet.js');
+  assert.match(src, /gateCombatActionRequest\(/);
+  assert.equal(/__combatWorkflowRouted:\s*true/.test(src), false, 'routed options are created only by markWorkflowRouted');
+  assert.equal((src.match(/markWorkflowRouted\(/g) ?? []).length >= 2, true);
+});
+
+const grant = (id, extra = {}) => ({ id, type: 'combat-action', name: 'Thing', system: extra.system ?? {}, flags: extra.flags ?? {} });
+test('item: keys need an owned item that is an actor combat-action grant (the same predicate the sheet registers with)', () => {
+  const species = grant('s1', { flags: { swse: { isSpeciesAbility: true } } });
+  const actorAbility = grant('s2', { flags: { swse: { isActorAbility: true } } });
+  const byModel = grant('s3', { system: { executionModel: 'species-activated-ability' } });
+  const byModel2 = grant('s4', { system: { executionModel: 'actor-special-ability' } });
+  const plain = grant('p1');                                                       // a combat-action item that grants nothing
+  const weapon = { id: 'w9', type: 'weapon', name: 'Blaster', system: { executionModel: 'actor-special-ability' }, flags: { swse: { isSpeciesAbility: true } } };
+  const a = actor([species, actorAbility, byModel, byModel2, plain, weapon]);
+  for (const id of ['s1', 's2', 's3', 's4']) assert.equal(authorize(a, `item:${id}:use`, {}).allowed, true, id);
+  assert.equal(authorize(a, 'item:p1:use', {}).allowed, false, 'an owned combat-action item with no grant evidence');
+  assert.equal(authorize(a, 'item:w9:use', {}).allowed, false, 'an owned non-combat-action item, whatever flags it carries');
+  assert.equal(authorize(a, 'item:missing:use', {}).allowed, false);
+  assert.equal(authorize(a, 'item:s1', {}).allowed, false, 'malformed key');
+  assert.equal(authorize(a, 'item:s1:use:extra', {}).allowed, false, 'malformed key');
+  assert.equal(elig.isActorCombatActionGrant(species), true); assert.equal(elig.isActorCombatActionGrant(plain), false); assert.equal(elig.isActorCombatActionGrant(weapon), false);
+  assert.equal(evaluate(a, { origin: 'actor-item', itemId: 'p1' }).state, S.LOCKED);
+  assert.equal(evaluate(a, { origin: 'actor-item', itemId: 's1' }).state, S.UNLOCKED);
+});
+
+test('the sheet registers actor abilities with the shared grant predicate (one rule for display and execution)', () => {
+  const src = read('scripts/sheets/v2/character-like-sheet.js');
+  assert.match(src, /isActorCombatActionGrant\(item\)/);
+  assert.equal(/item\.system\?\.executionModel === 'actor-special-ability'/.test(src), false, 'the inline copy of the rule is gone');
 });

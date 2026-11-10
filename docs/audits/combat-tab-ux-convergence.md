@@ -88,3 +88,25 @@ Three things are kept apart: **discovery** (the catalog lists it), **eligibility
 **Actor-flag-defined actions.** No code writes `flags.*.combatActions`; the sheet only read it, merged into the action data. It is not a registered extension interface, so such keys are refused (asserted). If an extension interface is wanted it should register through the catalog / a granting item.
 
 **Rulings.** CAE-001/002/003 stay `DEFERRED_RULES_REVIEW`. The reviewer's recommendations (Treat Poison: require skill training and an equipment prerequisite once a Medical Kit authority exists, show unresolved meanwhile; GM override only as an explicit attributable workflow; Droid feat cards from the Droid rules profile, feat ownership and structured metadata, no cyborg assumption) are provisional and are not implemented as rulings.
+
+## Second review: routing trust, spoofed mechanics, grant identity, and live vs dormant reachability
+
+1. **Internal routing could be forged.** `_runCanonicalCombatAction` skipped its gate when `options.__combatWorkflowRouted === true`, a flag any caller could set. Trust is now held by identity of an options object the workflow module created (`markWorkflowRouted` / `isWorkflowRouted`, a private WeakSet in `combat-workflow-registry.js`): a literal flag, a copy of a marked object and a replayed one are not trusted, and an untrusted flag is stripped. No new eligibility calculator: the nested workflow call is simply not gated twice, as before.
+2. **Authorising one key and running another.** The workflow normalizer takes `id` / `resolutionMode` / `ruleData` from the caller's `actionData`, so a legitimately unlocked key could carry another action's mechanics. The gate helper (`gateCombatActionRequest`, pure, testable without the sheet) now replaces `actionData` with the sheet-registered row (else the live row) for the authorised key; caller-supplied mechanics are discarded.
+3. **`item:` grants.** Ownership of an arbitrary Item no longer suffices: the Item must satisfy `isActorCombatActionGrant` (type `combat-action` and the species/actor-ability flag or execution model), the same predicate the sheet now uses to register such actions (the inline copy was removed), and the key must be exactly `item:<id>:use`.
+
+**Reachability: production-live vs dormant**
+
+| Code | Status |
+| --- | --- |
+| Sheet runner (`_runCanonicalCombatAction`) and `CombatWorkflowRegistry` | live; gated |
+| `combat-feature-legacy-action-bridge.js` (capture click on `swse-v2-use-action` rows named Double/Triple Attack) | live (registered at boot in `runtime-bugfix-hotfixes-init.js`); routes to the router, gated |
+| `combat-feature-handlers.js` `executeCombatFeatureMultiattack` | live; gated |
+| Hotfix delegate `executeMultiAttackFromElement` | live-registered; shadowed on concept rows by the bridge, which is registered first and stops propagation; guarded anyway |
+| Hotfix `executeCombatOptionAttackFromElement` (Power Attack, Flurry, ...) | live; no gate needed: the option resolver only honours options from owned abilities |
+| Hotfix `dedupeAndGateCombatActions` | registered, inert (acts on `.combat-action-row`, which no rendered template emits) |
+| `FullAttackExecutor`, `SWSEGrappling` | live; independent boundaries (legal plan required; feat or weapon-form entitlement) |
+| `CombatExecutor.executeAttack` | dormant (imported by the sheet, only `executeInitiative` is called) |
+| Legacy `character/v2` and `droid/v2` combat partials | dormant (not rendered by the concept sheet) |
+
+Live Foundry v13 verification is still outstanding, including a click-through of the legacy bridge and the hotfix delegate against a real sheet.

@@ -254,8 +254,8 @@ test('the sheet runs the eligibility gate before any workflow (source contract)'
   const src = fs.readFileSync('scripts/sheets/v2/character-like-sheet.js', 'utf8');
   const start = src.indexOf('async _runCanonicalCombatAction(');
   const body = src.slice(start, start + 2500);
-  assert.match(body, /authorizeCombatActionExecution\(/);
-  assert.ok(body.indexOf('authorizeCombatActionExecution(') < body.indexOf('CombatWorkflowRegistry.getDefault()'), 'the gate comes before the registry');
+  assert.match(body, /gateCombatActionRequest\(/);
+  assert.ok(body.indexOf('gateCombatActionRequest(') < body.indexOf('CombatWorkflowRegistry.getDefault()'), 'the gate comes before the registry');
 });
 
 // ---- 9. multiattack execution boundary (Double / Triple Attack) ----------------------------------------------------------------------------
