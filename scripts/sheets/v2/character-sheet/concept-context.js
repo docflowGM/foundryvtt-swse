@@ -1,3 +1,4 @@
+import { dedupeCombatActionRows } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-action-identity.js";
 import { isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
 import { readJournal, unresolvedItemIds, JOURNAL_STATUS } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-transaction-journal.js";
@@ -581,20 +582,30 @@ function buildActionGroups(combatActions, actionEconomy = {}) {
       description: normalizeText(item?.description || item?.notes),
       itemId: item?.itemId || '',
       resources: asArray(item?.resources),
-      relatedSkills: asArray(item?.relatedSkills)
+      relatedSkills: asArray(item?.relatedSkills),
+      sourceActionId: item?.sourceActionId || '',
+      alsoFrom: asArray(item?.alsoFrom),
+      identityConflict: item?.identityConflict === true,
+      identityConflictReason: item?.identityConflictReason || '',
+      gmManaged: item?.gmManaged === true,
+      restrictionReason: item?.restrictionReason || '',
+      availabilityLabel: item?.availabilityLabel || ''
     };
   };
 
   const laneOrder = ['full-round', 'standard', 'move', 'swift', 'reaction', 'free'];
+  // defensive presentation pass: whatever assembled these groups, a genuine duplicate is shown once (the same rule the sheet applies at registration)
+  const rawRows = [...new Set(asArray(combatActions?.groups).flatMap((g) => [...asArray(g?.items), ...asArray(g?.subgroups).flatMap((sg) => asArray(sg?.items))]))];
+  const keptRows = new Set(dedupeCombatActionRows(rawRows).rows);
+  const isKept = (item) => keptRows.has(item);
   return asArray(combatActions?.groups).map((group, index) => {
     const groupKey = normalizeCombatActionLaneKey(group?.key || group?.id || group?.label || `actions-${index}`);
     const availability = resolveAvailability(groupKey);
-    const subgroups = asArray(group?.subgroups).map((subgroup) => ({
-      label: subgroup?.label || 'Actions',
-      count: Number(subgroup?.count) || 0,
-      items: asArray(subgroup?.items).map((item) => normalizeItem(item, groupKey))
-    }));
-    const directItems = asArray(group?.items).map((item) => normalizeItem(item, groupKey));
+    const subgroups = asArray(group?.subgroups).map((subgroup) => {
+      const items = asArray(subgroup?.items).filter(isKept).map((item) => normalizeItem(item, groupKey));
+      return { label: subgroup?.label || 'Actions', count: items.length, items };
+    });
+    const directItems = asArray(group?.items).filter(isKept).map((item) => normalizeItem(item, groupKey));
     const flattenedItems = directItems.length
       ? directItems
       : subgroups.flatMap((subgroup) => subgroup.items);
@@ -603,7 +614,7 @@ function buildActionGroups(combatActions, actionEconomy = {}) {
       key: groupKey,
       sortIndex: laneOrder.includes(groupKey) ? laneOrder.indexOf(groupKey) : laneOrder.length + index,
       label: group?.label || 'Actions',
-      count: Number(group?.count) || flattenedItems.length,
+      count: flattenedItems.length,
       availabilityLabel: availability.label,
       availabilityClass: availability.className,
       availabilityTooltip: availability.tooltip,
@@ -615,6 +626,9 @@ function buildActionGroups(combatActions, actionEconomy = {}) {
     .filter((group) => group.items.length > 0 || group.subgroups.length > 0)
     .sort((a, b) => a.sortIndex - b.sortIndex || a.label.localeCompare(b.label));
 }
+
+/** Contract-test seam: the pure action-group presentation builder. */
+export const buildActionGroupsForTest = (...args) => buildActionGroups(...args);
 
 function buildSheetProgressionAudit(actor) {
   try {

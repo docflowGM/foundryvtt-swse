@@ -427,6 +427,7 @@ function hasForceSensitivityAccess(actor) {
 
 import { buildConceptSheetViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
 import { applyLoadoutPreviews } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js";
+import { dedupeCombatActionRows } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-action-identity.js";
 import { buildLoadoutPreviews } from "/systems/foundryvtt-swse/scripts/combat/rolls/loadout-preview.js";
 import { maybePromptForDatapadRegistration } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/chargen-onboarding.js";
 
@@ -1545,6 +1546,7 @@ const forcePoints = [];
     // clicking a card has the same hydrated data that rendered the card.
     let combatActions = { groups: [] };
     let combatActionLookup = {};
+    const registeredCombatRows = [];   // every row, in registration order, so identity can be judged across lanes and registries
     const economyOrder = ['full-round', 'standard', 'move', 'swift', 'free', 'reaction'];
     const economyLabel = (value) => String(value || 'standard')
       .split('-')
@@ -1640,6 +1642,7 @@ const forcePoints = [];
           row.economyViolations = [...(row.economyViolations ?? []), `GRAPPLE_${String(grappleRestriction.state ?? 'RESTRICTED').toUpperCase()}`];
         }
       }
+      registeredCombatRows.push(row);
       if (!grouped[actionType]) grouped[actionType] = [];
       grouped[actionType].push(row);
       combatActionLookup[key] = row;
@@ -1730,6 +1733,15 @@ const forcePoints = [];
         registerAction(grouped, action);
       }
 
+
+      // Combat tab UX convergence: the same action arriving from several registries is shown once (see combat-action-identity.js). Same-identity rows
+      // with contradictory mechanics are kept and flagged; names are never an identity. The use-handler lookup is rebuilt from the same rows.
+      const dedupe = dedupeCombatActionRows(registeredCombatRows);
+      for (const lane of Object.keys(grouped)) delete grouped[lane];
+      combatActionLookup = {};
+      for (const r of dedupe.rows) { (grouped[r.actionType] ??= []).push(r); combatActionLookup[r.key] = r; }
+      combatActions.diagnostics = { removedDuplicates: dedupe.removed.length, conflicts: dedupe.conflicts, sharedKeys: dedupe.sharedKeys };
+      if (dedupe.conflicts.length) swseLogger.warn('[SWSE] Combat actions: same identity with contradictory mechanics (kept, flagged)', { actorId: this.actor?.id, conflicts: dedupe.conflicts });
 
       for (const eco of economyOrder) {
         const items = grouped[eco] || [];
