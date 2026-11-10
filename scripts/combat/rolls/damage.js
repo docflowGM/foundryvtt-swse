@@ -35,72 +35,6 @@ import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvt
 import { resolveCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { isVehicleManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 
-/** Statblock NPC printed damage formula (an NPC in statblock mode whose weapon carries a flat formula), else null. Shared by rollDamage and the Combat Loadout Preview. */
-export function npcStatblockFlatDamageFormula(actor, weapon) {
-  if (!(actor?.type === 'npc' && isNpcStatblockMode(actor))) return null;
-  const npc = weapon?.flags?.swse?.npc;
-  const flatFormula = npc?.flatDamageFormula;
-  return npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim() ? flatFormula : null;
-}
-
-/**
- * Weapon damage COMPOSITION (no dice, no chat, no notifications, no state): resolves the selected canonical damage definition, composes it
- * through the one damage authority and builds the damage formula. rollDamage() below and the read-only Combat Loadout Preview both call
- * THIS function, so a displayed formula can never diverge from the formula that is actually rolled.
- * @returns {{refusal:{error?:Error, message?:string}}|{canonicalDamage:object, composition:object, formula:string, rollContext:object, workflowContext:object}}
- */
-export function composeWeaponDamage(actor, weapon, rollContext, workflowContext, context = rollContext) {
-  let canonicalDamage;
-  try {
-    canonicalDamage = resolveCanonicalDamage(weapon, { ...rollContext, actor });
-  } catch (err) {
-    if (!(err instanceof WeaponRuntimeError)) throw err;
-    return { refusal: { error: err } };
-  }
-  if (canonicalDamage.source === 'canonical') {
-    if (canonicalDamage.status === 'no-damage' || canonicalDamage.status === 'special') {
-      return { refusal: { message: `${weapon.name}: the selected attack form has no ordinary damage roll (${canonicalDamage.reason}).` } };
-    }
-    // Phase 5D-E native-stun: the structured stun capability makes stun the effective mode even when the caller never said so
-    // (e.g. a Damage roll started from the sheet); the workflow context/packet type must agree with the dice that were resolved.
-    if (canonicalDamage.damageMode === 'stun' && rollContext.damageMode !== 'stun') {
-      rollContext = { ...rollContext, damageMode: 'stun', stun: true };
-      workflowContext = summarizeCombatWorkflowContext(workflowContext, { damageMode: 'stun', isStun: true, contextTags: ['stun'] });
-    }
-    // canonical structured damage types (never description text); an explicit caller-supplied type still wins
-    const types = canonicalDamage.damageTypes;
-    const explicitType = context.damageType ?? null;
-    rollContext = {
-      ...rollContext,
-      // Phase 5D-F: option gating at damage time (Burst Fire / Deadeye / Rapid Shot dice) uses the SELECTED form's branch, like the attack side
-      attackType: rollContext.attackType ?? canonicalDamage.runtime.branch ?? undefined,
-      damageType: canonicalDamage.damageMode === 'stun' ? 'stun'
-        : explicitType ?? canonicalDamage.selectedDamageType ?? (canonicalDamage.requiresDamageTypeSelection ? rollContext.damageType : (types[0] ?? rollContext.damageType)),
-      // A class-granted unarmed stun mode must never retain a stale physical
-      // damage-type array carried from the weapon's normal form.
-      damageTypes: canonicalDamage.damageMode === 'stun' ? ['stun']
-        : Array.isArray(context.damageTypes) && context.damageTypes.length ? context.damageTypes : (types.length ? [...types] : rollContext.damageTypes)
-    };
-    // D-016: record the physical subtype(s) this attack form deals ("and": all; "or": the chosen one only) for type-specific protections
-    const physical = physicalDamageTypesOf(canonicalDamage, explicitType);
-    workflowContext = summarizeCombatWorkflowContext(workflowContext, { physicalDamageTypes: physical.types, physicalDamageTypeResolved: physical.resolved });
-  }
-  const compositionContext = { ...rollContext, weapon, canonicalDamage, forceTwoHanded: rollContext.twoHanded || false };
-  const composition = resolveDamageComposition(actor, weapon, compositionContext);
-
-  // Add Force Point bonus if present
-  const fpBonus = rollContext.fpBonus || 0;
-  // Add custom modifier if present
-  const customModifier = rollContext.customModifier || 0;
-
-  const formula = buildDamageFormula(composition, {
-    extraTerms: [fpBonus !== 0 ? fpBonus : null, customModifier !== 0 ? customModifier : null],
-    isAreaAttack: isCanonicalAreaAttack(canonicalDamage, weapon, rollContext)
-  });
-
-  return { canonicalDamage, composition, formula, rollContext, workflowContext };
-}
-
 /**
  * Roll damage for a SWSE weapon/power.
  * Handles:
@@ -414,4 +348,70 @@ export async function rollAndApplyDamage(actor, weapon, token, context = {}) {
   const { DamageSystem } = await import('/systems/foundryvtt-swse/scripts/combat/damage-system.js');
   await DamageSystem.applyPacketToActor(target, packet);
   return roll;
+}
+
+/** Statblock NPC printed damage formula (an NPC in statblock mode whose weapon carries a flat formula), else null. Shared by rollDamage and the Combat Loadout Preview. */
+export function npcStatblockFlatDamageFormula(actor, weapon) {
+  if (!(actor?.type === 'npc' && isNpcStatblockMode(actor))) return null;
+  const npc = weapon?.flags?.swse?.npc;
+  const flatFormula = npc?.flatDamageFormula;
+  return npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim() ? flatFormula : null;
+}
+
+/**
+ * Weapon damage COMPOSITION (no dice, no chat, no notifications, no state): resolves the selected canonical damage definition, composes it
+ * through the one damage authority and builds the damage formula. rollDamage() below and the read-only Combat Loadout Preview both call
+ * THIS function, so a displayed formula can never diverge from the formula that is actually rolled.
+ * @returns {{refusal:{error?:Error, message?:string}}|{canonicalDamage:object, composition:object, formula:string, rollContext:object, workflowContext:object}}
+ */
+export function composeWeaponDamage(actor, weapon, rollContext, workflowContext, context = rollContext) {
+  let canonicalDamage;
+  try {
+    canonicalDamage = resolveCanonicalDamage(weapon, { ...rollContext, actor });
+  } catch (err) {
+    if (!(err instanceof WeaponRuntimeError)) throw err;
+    return { refusal: { error: err } };
+  }
+  if (canonicalDamage.source === 'canonical') {
+    if (canonicalDamage.status === 'no-damage' || canonicalDamage.status === 'special') {
+      return { refusal: { message: `${weapon.name}: the selected attack form has no ordinary damage roll (${canonicalDamage.reason}).` } };
+    }
+    // Phase 5D-E native-stun: the structured stun capability makes stun the effective mode even when the caller never said so
+    // (e.g. a Damage roll started from the sheet); the workflow context/packet type must agree with the dice that were resolved.
+    if (canonicalDamage.damageMode === 'stun' && rollContext.damageMode !== 'stun') {
+      rollContext = { ...rollContext, damageMode: 'stun', stun: true };
+      workflowContext = summarizeCombatWorkflowContext(workflowContext, { damageMode: 'stun', isStun: true, contextTags: ['stun'] });
+    }
+    // canonical structured damage types (never description text); an explicit caller-supplied type still wins
+    const types = canonicalDamage.damageTypes;
+    const explicitType = context.damageType ?? null;
+    rollContext = {
+      ...rollContext,
+      // Phase 5D-F: option gating at damage time (Burst Fire / Deadeye / Rapid Shot dice) uses the SELECTED form's branch, like the attack side
+      attackType: rollContext.attackType ?? canonicalDamage.runtime.branch ?? undefined,
+      damageType: canonicalDamage.damageMode === 'stun' ? 'stun'
+        : explicitType ?? canonicalDamage.selectedDamageType ?? (canonicalDamage.requiresDamageTypeSelection ? rollContext.damageType : (types[0] ?? rollContext.damageType)),
+      // A class-granted unarmed stun mode must never retain a stale physical
+      // damage-type array carried from the weapon's normal form.
+      damageTypes: canonicalDamage.damageMode === 'stun' ? ['stun']
+        : Array.isArray(context.damageTypes) && context.damageTypes.length ? context.damageTypes : (types.length ? [...types] : rollContext.damageTypes)
+    };
+    // D-016: record the physical subtype(s) this attack form deals ("and": all; "or": the chosen one only) for type-specific protections
+    const physical = physicalDamageTypesOf(canonicalDamage, explicitType);
+    workflowContext = summarizeCombatWorkflowContext(workflowContext, { physicalDamageTypes: physical.types, physicalDamageTypeResolved: physical.resolved });
+  }
+  const compositionContext = { ...rollContext, weapon, canonicalDamage, forceTwoHanded: rollContext.twoHanded || false };
+  const composition = resolveDamageComposition(actor, weapon, compositionContext);
+
+  // Add Force Point bonus if present
+  const fpBonus = rollContext.fpBonus || 0;
+  // Add custom modifier if present
+  const customModifier = rollContext.customModifier || 0;
+
+  const formula = buildDamageFormula(composition, {
+    extraTerms: [fpBonus !== 0 ? fpBonus : null, customModifier !== 0 ? customModifier : null],
+    isAreaAttack: isCanonicalAreaAttack(canonicalDamage, weapon, rollContext)
+  });
+
+  return { canonicalDamage, composition, formula, rollContext, workflowContext };
 }
