@@ -87,9 +87,14 @@ export async function addItemToCart(store, itemId, updateDialogueCallback, optio
     }
 
     // Engine provides finalCost already calculated, after GM policy overrides.
-    // The merchant offer is the price. Only a staged customization carries its own (customization-authority) quote.
-    const stagedCustomization = options.stagedCustomization || null;
-    const finalCost = normalizeCredits(stagedCustomization ? (options.costOverride ?? item.finalCost) : item.finalCost);
+    // Customized purchases are unavailable until a certified modification lane can supply an authoritative quote
+    // (Modification V2 registry: no certified selectable modifications). A client-computed customization price is never accepted.
+    if (options.stagedCustomization || options.costOverride !== undefined) {
+        ui.notifications.warn('Customized purchases are unavailable: no certified modification quote exists for them yet.');
+        return;
+    }
+    const stagedCustomization = null;
+    const finalCost = normalizeCredits(item.finalCost);
 
     // Add to cart
     store.cart.items.push({
@@ -261,10 +266,9 @@ async function revalidateCart(store, actor, originalTotal) {
                 };
             }
 
-            // Exact match required (no tolerance). Staged customizations carry their own quote.
-            const expectedCost = item.stagedCustomization?.finalCost ?? item.cost;
-            const priceMismatch = item.stagedCustomization ? false : normalizeCredits(currentItem.finalCost) !== normalizeCredits(expectedCost);
-            if (priceMismatch) {
+            // Exact match required (no tolerance); customized lines never reach here (refused earlier).
+            const expectedCost = item.cost;
+            if (item.stagedCustomization || normalizeCredits(currentItem.finalCost) !== normalizeCredits(expectedCost)) {
                 return {
                     valid: false,
                     error: `Price of "${item.name}" changed from ${expectedCost} to ${currentItem.finalCost} credits. Please review your cart.`
@@ -470,16 +474,9 @@ function revalidateCartItems(store) {
         store.cart.items.splice(i, 1);
         continue;
       }
-      // A staged customization is priced as (base listing price) + (customization quote). The customization quote belongs
-      // to the customization authority (S7: uncertified modification lanes are not Store-verifiable); the BASE part is
-      // the Store's, so a customization staged against a price that has since changed is dropped and must be re-staged.
-      if (cartItem.stagedCustomization) {
-        if (normalizeCredits(cartItem.stagedCustomization.baseCost) !== normalizeCredits(storeItem.finalCost)) {
-          report.removed.push({ type: 'item', name: `${cartItem.name} (base price changed; re-stage the customization)` });
-          store.cart.items.splice(i, 1);
-          continue;
-        }
-        report.totalRevalidated += normalizeCredits(cartItem.cost);
+      if (cartItem.stagedCustomization) {   // fail closed: customization prices are not verifiable
+        report.removed.push({ type: 'item', name: `${cartItem.name} (customized purchases are unavailable)` });
+        store.cart.items.splice(i, 1);
         continue;
       }
       const recalculated = normalizeCredits(storeItem.finalCost);
@@ -577,9 +574,7 @@ export function createItemPlans(cartItems) {
   if (!cartItems || cartItems.length === 0) return [];
 
   const itemsToCreate = cartItems.map(cartItem => {
-    if (cartItem.stagedCustomization?.itemData) {
-      return foundry.utils.deepClone(cartItem.stagedCustomization.itemData);
-    }
+    if (cartItem.stagedCustomization) throw new Error(`Customized purchase "${cartItem.name ?? cartItem.id}" has no authoritative quote; purchase refused.`);
     // the compendium record itself (canonical identity, effects, full system data) -- never the normalized store listing
     const data = storeItemDocumentData(cartItem.item);
     if (!data) throw new Error(`Store item "${cartItem.name ?? cartItem.id}" has no source document; purchase refused.`);
@@ -706,12 +701,8 @@ function flattenCartForPurchase(cart) {
         flattened.push({
             id: item.id,
             name: item.name,
-            type: item.stagedCustomization ? 'customized-item' : 'item',
-            finalCost: normalizeCredits(item.cost),
-            stagedCustomization: item.stagedCustomization ? {
-                customizationCost: normalizeCredits(item.stagedCustomization.customizationCost ?? 0),
-                finalCost: normalizeCredits(item.stagedCustomization.finalCost ?? item.cost)
-            } : null
+            type: 'item',
+            finalCost: normalizeCredits(item.cost)
         });
     }
 
@@ -764,7 +755,7 @@ function serializeApprovalSourceData(source = {}) {
 }
 
 function serializeStoreApprovalEntry(entry = {}, bucket = 'item') {
-    const source = entry.stagedCustomization?.itemData || entry.item || entry.actor || entry.template || {};
+    const source = entry.item || entry.actor || entry.template || {};
     const itemData = serializeApprovalSourceData(source);
     const type = bucket === 'droids' ? 'droid' : bucket === 'vehicles' ? 'vehicle' : (itemData.type || entry.item?.type || 'equipment');
     const name = entry.name || itemData.name || 'Store item';
@@ -781,9 +772,8 @@ function serializeStoreApprovalEntry(entry = {}, bucket = 'item') {
         img: entry.img || itemData.img || source?.img || '',
         // Source data is carried only for customizations (their own authority, S7). Everything else is rebuilt
         // from the exact canonical listing when the GM approves; a player-written record is a request, not a quote.
-        itemData: entry.stagedCustomization ? itemData : { name, type, img: entry.img || itemData.img || '' },
-        sourceUuid: entry.item?.sourceUuid ?? entry.actor?.sourceUuid ?? entry.template?.sourceUuid ?? null,
-        stagedCustomization: entry.stagedCustomization ? cloneStoreCheckoutData(entry.stagedCustomization) : null
+        itemData: { name, type, img: entry.img || itemData.img || '' },
+        sourceUuid: entry.item?.sourceUuid ?? entry.actor?.sourceUuid ?? entry.template?.sourceUuid ?? null
     };
 }
 
@@ -905,7 +895,7 @@ async function checkoutUnguarded(store, animateNumberCallback) {
     // before any approval request or debit. A listing whose source cannot be verified is never sold.
     try {
         await hydrateStoreListings([
-            ...(store.cart.items || []).filter(entry => !entry.stagedCustomization?.itemData).map(entry => entry.item),
+            ...(store.cart.items || []).map(entry => entry.item),
             ...(store.cart.droids || []).map(entry => entry.actor)
         ]);
     } catch (err) {
@@ -969,7 +959,7 @@ async function checkoutUnguarded(store, animateNumberCallback) {
             actor,
             items: flattenCartForPurchase(store.cart),
             totalCost: total,
-            transactionContext: (store.cart.items || []).some(item => item.stagedCustomization) ? 'store-customization-checkout' : 'store-purchase',
+            transactionContext: 'store-purchase',
             itemGrantCallback: async (purchasingActor, cartItems) => {
                 // Compile all MutationPlans
                 const plans = [];
@@ -1044,76 +1034,23 @@ function stripDocumentIdentity(data = {}) {
 }
 
 /**
- * Phase 3b: Build custom droid using the progression Droid Builder
+ * Store-originated custom droid construction is UNAVAILABLE until its commerce lifecycle exists.
  *
- * Launches the builder for a player to design a custom droid.
- * Handles credit deduction via hook listener.
- *
- * @param {Actor} actor - The player's actor who owns the droid
- * @param {Function} closeCallback - Callback to close the Store UI
+ * Lifecycle audit (S5 follow-up): the progression Droid Builder is launched in single-step mode with
+ * `storeMode`/`requireApproval`/`storeDroidApproval`, but nothing in the progression framework consumes those
+ * options, and `ProgressionFinalizer.finalizeSingleStep` has no `droidBuilder` domain. A finished design could not be
+ * delivered, and the only code that queued a priced pending droid had no callers. The builder's per-part prices are
+ * also stored on client-held entries (including `isGranted` flags), so no verifiable server-side re-quote exists without
+ * re-deriving which components are legitimately granted free (a builder/species rules concern the Store must not re-implement).
+ * Until a design snapshot can be re-quoted at the approval boundary, the Store refuses to start the build rather than
+ * let a player design a droid it cannot lawfully deliver.
  */
-export async function buildDroidWithBuilder(actor, closeCallback) {
+export async function buildDroidWithBuilder(actor, _closeCallback) {
     if (!actor) {
         ui.notifications.error(storeI18n('SWSE.Store.Notifications.NoActorForDroid'));
-        return;
+        return null;
     }
-
-    const baseCredits = ProgressionRules.getDroidConstructionCredits();
-    const playerCredits = LedgerService.getCurrentCredits(actor);
-
-    // Check if player has minimum credits
-    if (playerCredits < baseCredits) {
-        ui.notifications.warn(
-            storeI18n('SWSE.Store.Notifications.NeedCreditsForDroid', { required: baseCredits.toLocaleString(), current: playerCredits.toLocaleString() })
-        );
-        return;
-    }
-
-    // Confirm droid building
-    const confirmed = await SWSEDialogV2.confirm({
-        title: storeI18n('SWSE.Store.Dialogs.BuildCustomDroid'),
-        content: storeI18n('SWSE.Store.Dialogs.BuildCustomDroidBody', {
-            credits: playerCredits.toLocaleString(),
-            minimum: baseCredits.toLocaleString()
-        }),
-        defaultYes: true
-    });
-
-    if (!confirmed) return;
-
-    // Close store if callback provided
-    if (closeCallback) {
-        closeCallback();
-    }
-
-    try {
-        await launchNewProgression({
-            actorType: 'droid',
-            subtype: 'droid',
-            isDroid: true,
-            name: 'Custom Droid',
-            source: 'store-custom-droid',
-            currentStep: 'droid-builder',
-            targetStep: 'droid-builder',
-            singleStep: true,
-            singleStepDomain: 'droidBuilder',
-            ownerActorId: actor.id,
-            storeMode: true,
-            requireApproval: true,
-            storeDroidApproval: {
-                enabled: true,
-                mode: 'NEW',
-                ownerActorId: actor.id,
-                ownerActorName: actor.name,
-                requireApproval: true,
-                source: 'store-custom-droid'
-            }
-        });
-
-        SWSELogger.log('SWSE Store | Launched progression droid builder for actor:', { actor: actor.name });
-    } catch (err) {
-        SWSELogger.error('SWSE Store | Failed to launch progression droid builder:', err);
-        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedOpenDroidBuilder'));
-    }
+    ui.notifications.warn('Custom droid construction through the Store is unavailable until its quote, approval and payment lifecycle is connected. Buy a certified stock droid from the Droids catalog instead.');
+    return null;
 }
 

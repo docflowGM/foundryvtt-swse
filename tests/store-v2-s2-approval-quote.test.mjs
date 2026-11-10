@@ -25,8 +25,8 @@ assert.match(verifyApprovalQuote(req([line({ id: 'v1', finalCost: 150000 })], 15
 assert.match(verifyApprovalQuote(req([line({ id: 'v2', condition: 'used', finalCost: 100000 })], 100000), inv).reasons[0], /NO_CURRENT_OFFER/, 'no published used price -> no used offer');
 assert.equal(currentOfferFor(inv.get('v2'), 'used'), null);
 assert.equal(verifyApprovalQuote(req([], 0), inv).ok, false);
-// customization lines carry their own quote (S7) but still count in the total
-assert.equal(verifyApprovalQuote(req([line({ id: 'w1', finalCost: 700, stagedCustomization: { itemData: {} } })], 700), inv).ok, true);
+// a customization line has no authoritative quote: refused, never trusted
+assert.match(verifyApprovalQuote(req([line({ id: 'w1', finalCost: 700, stagedCustomization: { itemData: {} } })], 700), inv).reasons[0], /CUSTOMIZATION_QUOTE_UNVERIFIABLE/);
 
 const svc = fs.readFileSync('scripts/ui/shell/gm/GMApprovalOperationsService.js', 'utf8');
 assert.doesNotMatch(svc, /purchaseItems\[0\]\.finalCost = /, 'no silent price rebalancing');

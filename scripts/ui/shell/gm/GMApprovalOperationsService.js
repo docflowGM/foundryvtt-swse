@@ -284,12 +284,26 @@ export class GMApprovalOperationsService {
       return false;
     }
 
+    // The recorded total is the BUILD's declared figure, held on the draft actor; the Store cannot re-quote a design snapshot
+    // (see buildDroidWithBuilder). It therefore never debits silently: a missing/zero figure is refused (no free droid), and
+    // the GM must explicitly authorize the exact amount, which is recorded as an auditable GM price authorization.
     const cost = normalizeCredits(droidData.credits?.spent || droidData.totalCost || 0);
+    if (!(cost > 0)) {
+      ui?.notifications?.error?.(`Cannot approve ${actor.name}: no valid construction cost is recorded. Nothing was charged.`);
+      return false;
+    }
     const ownerActor = this.resolveDroidOwnerActor(actor);
     if (!ownerActor) {
       ui?.notifications?.error?.(`Cannot approve ${actor.name}: no owning character actor could be resolved for the credit charge.`);
       return false;
     }
+
+    const authorized = await foundry.applications.api.DialogV2.confirm({
+      window: { title: 'Authorize droid price' },
+      content: `<p>Charge <strong>${cost.toLocaleString()}</strong> credits to <strong>${foundry.utils.escapeHTML?.(ownerActor.name) ?? ownerActor.name}</strong> for the droid <strong>${foundry.utils.escapeHTML?.(actor.name) ?? actor.name}</strong>?</p><p>This is the amount declared by the build. The Store has not independently verified it; your confirmation is recorded as a GM price authorization.</p>`,
+      rejectClose: false
+    });
+    if (!authorized) return false;
 
     try {
       // Credit debit, ownership link, and droid FINALIZE state apply as ONE
@@ -312,6 +326,9 @@ export class GMApprovalOperationsService {
           ownerActorId: ownerActor.id,
           ownerActorName: ownerActor.name,
           draftActorId: actor.id,
+          priceAuthority: 'gm-authorized-declared-cost',
+          gmAuthorizedCost: cost,
+          gmAuthorizedBy: game.user?.id ?? null,
           source: 'GM Datapad - Pending Droid Approval'
         },
         assetUpdates: {
@@ -795,10 +812,7 @@ export class GMApprovalOperationsService {
     const cartItems = [], cartDroids = [], cartVehicles = [];
 
     for (const item of items) {
-      if (item?.stagedCustomization?.itemData) {   // customization quotes are owned by the customization authority (S7)
-        cartItems.push({ id: item.id, name: item.name, cost: item.finalCost, stagedCustomization: item.stagedCustomization });
-        continue;
-      }
+      if (item?.stagedCustomization) throw new Error('Customized purchases have no authoritative quote and cannot be approved');
       // Everything else is rebuilt from the exact canonical source of the CURRENT listing, never from player-supplied data.
       const listing = inventoryById.get(item.id);
       if (!listing) throw new Error(`Store listing ${item.id} is no longer available`);

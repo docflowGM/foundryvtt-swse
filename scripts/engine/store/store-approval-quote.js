@@ -36,7 +36,7 @@ export function verifyApprovalQuote(approval, inventoryById) {
     const recorded = Number(item?.finalCost);
     if (!positive(recorded)) { reasons.push(`QUOTE_MISSING: ${item?.name ?? item?.id}`); continue; }
     total += recorded;
-    if (item.stagedCustomization) { lines.push({ id: item.id, staged: true, cost: recorded }); continue; }   // customization quotes: S7 authority
+    if (item.stagedCustomization) { reasons.push(`CUSTOMIZATION_QUOTE_UNVERIFIABLE: ${item.name ?? item.id}`); continue; }   // no certified lane can quote it: fail closed
     const listing = inventoryById?.get?.(item.id) ?? null;
     if (!listing) { reasons.push(`LISTING_NO_LONGER_AVAILABLE: ${item.name ?? item.id}`); continue; }
     if (listing.type === 'vehicle' && item.condition !== 'new' && item.condition !== 'used') { reasons.push(`VEHICLE_CONDITION_REQUIRED: ${item.name ?? item.id}`); continue; }

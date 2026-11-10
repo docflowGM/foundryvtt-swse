@@ -518,6 +518,9 @@ export class ProgressionFinalizer {
 
       const stepId = options.stepId || sessionState.steps?.[0]?.stepId || sessionState.progressionSession?.currentStepId || null;
       const domain = options.domain || this.singleStepDomainForStep(stepId);
+      // Store-originated droid construction has no commerce lifecycle yet (quote -> GM approval -> payment). It must never
+      // finalize into an actor, whatever launched it.
+      if (domain === 'droidBuilder') return { success: false, error: 'STORE_DROID_BUILD_COMMERCE_UNAVAILABLE: custom droid construction cannot be finalized without an approved, paid commerce transaction.' };
       if (!domain) throw new Error(`Unsupported single-step progression job: ${stepId || options.job || '(unknown)'}`);
 
       const mutationPlan = await this._compileSingleStepMutationPlan(sessionState, actor, { ...options, domain, stepId });
