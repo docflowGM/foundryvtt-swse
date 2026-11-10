@@ -19,26 +19,9 @@ import {
   createCustomStarship
 } from '/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js';
 
+import { normalizeAvailabilityText } from '/systems/foundryvtt-swse/scripts/apps/store/store-shared.js';
 import { StoreSurfaceService } from '/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceService.js';
 import { initRendarrStoreSplash } from '/systems/foundryvtt-swse/scripts/apps/store/store-splash.js';
-
-function normalizeStoreFilterValue(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[’']/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function normalizeAvailabilityText(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[’']/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
-}
 
 function cartEntryCount(cart = {}) {
   return (cart.items?.length ?? 0) + (cart.droids?.length ?? 0) + (cart.vehicles?.length ?? 0);
@@ -684,57 +667,25 @@ export class StoreSurfaceController {
     }
   }
 
+  /**
+   * Instant in-place filtering of the already-rendered cards by the two inputs that do not change the rendered set's
+   * membership rules: search text and availability. Category / subcategory / family / vehicle facets are applied once,
+   * by matchesStoreQuery, when the surface renders; changing them re-renders (see _setOptions), so they are not re-evaluated here.
+   */
   _clientFilter(root) {
     const searchVal = (root.querySelector('#ss-search')?.value ?? '').toLowerCase();
-    const availVal = (root.querySelector('#ss-avail')?.value ?? 'all').toLowerCase();
-    const categoryVal = (this._host._shellSurfaceOptions?.currentCategory ?? '').toLowerCase();
-    const subcategoryVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentSubcategory ?? '');
-    const familyVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentFamily ?? '');
-    const vehicleSizeVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleSize ?? '');
-    const vehicleClVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleCl ?? '');
-    const vehicleRoleVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleRole ?? '');
-    const vehicleCrewVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleCrew ?? '');
-    const vehiclePassengerVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehiclePassenger ?? '');
-    const vehicleCargoVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleCargo ?? '');
-    const vehicleHyperdriveVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleHyperdrive ?? '');
-    const vehicleWeaponsVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleWeapons ?? '');
-    const vehicleShieldsVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleShields ?? '');
+    const requestedAvail = normalizeAvailabilityText(root.querySelector('#ss-avail')?.value ?? 'all');
 
     let visible = 0;
     root.querySelectorAll('.store-card[data-item-id], .swse-store-surface__card[data-item-id]').forEach(card => {
       const name = (card.dataset.name ?? '').toLowerCase();
       const cat = (card.dataset.categoryKey || card.dataset.category || '').toLowerCase();
       const subtype = (card.dataset.subcategory ?? '').toLowerCase();
-      const subtypeKey = normalizeStoreFilterValue(card.dataset.subcategory || '');
-      const familyKey = normalizeStoreFilterValue(card.dataset.family || '');
-      const vehicleSizeKey = normalizeStoreFilterValue(card.dataset.vehicleSize || '');
-      const vehicleClKey = normalizeStoreFilterValue(card.dataset.vehicleCl || '');
-      const vehicleRoleKey = normalizeStoreFilterValue(card.dataset.vehicleRole || '');
-      const vehicleCrewKey = normalizeStoreFilterValue(card.dataset.vehicleCrew || '');
-      const vehiclePassengerKey = normalizeStoreFilterValue(card.dataset.vehiclePassenger || '');
-      const vehicleCargoKey = normalizeStoreFilterValue(card.dataset.vehicleCargo || '');
-      const vehicleHyperdriveKey = normalizeStoreFilterValue(card.dataset.vehicleHyperdrive || '');
-      const vehicleWeaponsKey = normalizeStoreFilterValue(card.dataset.vehicleWeapons || '');
-      const vehicleShieldsKey = normalizeStoreFilterValue(card.dataset.vehicleShields || '');
       const avail = normalizeAvailabilityText(card.dataset.availability ?? '');
-      const requestedAvail = normalizeAvailabilityText(availVal);
 
       const matchSearch = !searchVal || name.includes(searchVal) || cat.includes(searchVal) || subtype.includes(searchVal);
       const matchAvail = !requestedAvail || requestedAvail === 'all' || avail.split(/\s+/).includes(requestedAvail) || avail.includes(requestedAvail);
-      const matchCategory = !categoryVal || cat === categoryVal;
-      const matchSubcategory = !subcategoryVal || subtypeKey === subcategoryVal;
-      const matchFamily = !(['weapons', 'droids', 'vehicles'].includes(categoryVal) && familyVal) || familyKey === familyVal;
-      const matchVehicleSize = !(categoryVal === 'vehicles' && vehicleSizeVal) || vehicleSizeKey === vehicleSizeVal;
-      const matchVehicleCl = !(categoryVal === 'vehicles' && vehicleClVal) || vehicleClKey === vehicleClVal;
-      const matchVehicleRole = !(categoryVal === 'vehicles' && vehicleRoleVal) || vehicleRoleKey === vehicleRoleVal;
-      const matchVehicleCrew = !(categoryVal === 'vehicles' && vehicleCrewVal) || vehicleCrewKey === vehicleCrewVal;
-      const matchVehiclePassenger = !(categoryVal === 'vehicles' && vehiclePassengerVal) || vehiclePassengerKey === vehiclePassengerVal;
-      const matchVehicleCargo = !(categoryVal === 'vehicles' && vehicleCargoVal) || vehicleCargoKey === vehicleCargoVal;
-      const matchVehicleHyperdrive = !(categoryVal === 'vehicles' && vehicleHyperdriveVal) || vehicleHyperdriveKey === vehicleHyperdriveVal;
-      const matchVehicleWeapons = !(categoryVal === 'vehicles' && vehicleWeaponsVal) || vehicleWeaponsKey === vehicleWeaponsVal;
-      const matchVehicleShields = !(categoryVal === 'vehicles' && vehicleShieldsVal) || vehicleShieldsKey === vehicleShieldsVal;
-
-      const show = matchSearch && matchAvail && matchCategory && matchSubcategory && matchFamily && matchVehicleSize && matchVehicleCl && matchVehicleRole && matchVehicleCrew && matchVehiclePassenger && matchVehicleCargo && matchVehicleHyperdrive && matchVehicleWeapons && matchVehicleShields;
+      const show = matchSearch && matchAvail;
       card.style.display = show ? '' : 'none';
       if (show) visible += 1;
     });

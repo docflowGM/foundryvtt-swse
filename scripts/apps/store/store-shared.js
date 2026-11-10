@@ -1134,3 +1134,110 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
     activeFamily
   };
 }
+
+
+/* ------------------------------------------------------------------ */
+/* Presentation helpers shared by every Store surface (one definition) */
+/* ------------------------------------------------------------------ */
+
+export function normalizeStoreFilterValue(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export function normalizeAvailabilityText(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+export function getStoreAvailabilityText(itemOrView = {}) {
+  const sys = itemOrView.system ?? itemOrView.data ?? {};
+  return String(sys.availability ?? itemOrView.availability ?? itemOrView.rarityLabel ?? itemOrView.rarityClass ?? '').trim();
+}
+
+/** Surface key for a catalog category. Exact map of the canonical catalog categories (store-taxonomy.js); no substring guessing. */
+const CATEGORY_KEYS = Object.freeze({
+  weapons: 'weapons', armor: 'armor', droids: 'droids', vehicles: 'vehicles', implants: 'implants',
+  medical: 'gear', tech: 'gear', tools: 'gear', survival: 'gear', security: 'gear', equipment: 'gear', gear: 'gear'
+});
+export function storeItemCategoryKey(itemOrView = {}) {
+  const raw = String(itemOrView.category ?? itemOrView.type ?? '').trim().toLowerCase();
+  return CATEGORY_KEYS[raw] ?? raw.replace(/\s+/g, '-');
+}
+
+export function getStoreNavigationSubcategory(itemOrView = {}) {
+  const categoryKey = storeItemCategoryKey(itemOrView);
+  if (categoryKey === 'armor') return normalizeArmorSubcategory(itemOrView);
+  if (categoryKey === 'droids') return normalizeDroidSubcategory(itemOrView);
+  if (categoryKey === 'vehicles') return normalizeVehicleSubcategory(itemOrView);
+  return String(itemOrView.subcategory ?? itemOrView.system?.subcategory ?? itemOrView.system?.category ?? '').trim();
+}
+
+export function getStoreNavigationFamily(itemOrView = {}) {
+  const categoryKey = storeItemCategoryKey(itemOrView);
+  if (categoryKey === 'weapons') return getWeaponFamily(getStoreNavigationSubcategory(itemOrView));
+  if (categoryKey === 'droids') return getDroidFamily(itemOrView);
+  if (categoryKey === 'vehicles') return getVehicleFamily(getStoreNavigationSubcategory(itemOrView));
+  return '';
+}
+
+export function positiveCreditOrNull(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+}
+
+/** Display prices of a vehicle listing: each condition shows only its own merchant offer (no cross-condition/base fallback). */
+export function resolveVehicleStoreCosts(item = {}) {
+  return { newCost: positiveCreditOrNull(item.finalCostNew), usedCost: positiveCreditOrNull(item.finalCostUsed) };
+}
+
+export function vehiclePriceStatusLabel(item = {}) {
+  const status = item.system?.vehiclePriceStatus || item.vehiclePriceStatus || item.costStatus || '';
+  if (status === 'review') return 'Price needs source review';
+  if (status === 'unavailable') return 'Not publicly available';
+  if (status === 'missing') return 'Price unknown';
+  return '';
+}
+
+export function availabilityMatches(itemOrView = {}, filterValue = '') {
+  const filter = normalizeAvailabilityText(filterValue);
+  if (!filter || filter === 'all') return true;
+  const availability = normalizeAvailabilityText(getStoreAvailabilityText(itemOrView));
+  if (!availability) return false;
+  return availability.split(/\s+/).includes(filter) || availability.includes(filter);
+}
+
+const VEHICLE_FILTERS = [
+  ['currentVehicleSize', getVehicleSizeKey], ['currentVehicleCl', getVehicleChallengeBand], ['currentVehicleRole', getVehicleRoleKey],
+  ['currentVehicleCrew', getVehicleCrewGroup], ['currentVehiclePassenger', getVehiclePassengerGroup], ['currentVehicleCargo', getVehicleCargoGroup],
+  ['currentVehicleHyperdrive', getVehicleHyperdriveKey], ['currentVehicleWeapons', getVehicleWeaponsKey], ['currentVehicleShields', getVehicleShieldsKey]
+];
+
+/**
+ * THE catalog-navigation predicate (category, subcategory, family, vehicle facets). Pure; every Store surface uses it,
+ * and it runs on the cheap listing BEFORE any card view-model is built. `state` carries the current* selections.
+ */
+export function matchesStoreQuery(item, state = {}) {
+  const category = String(state.currentCategory ?? '').toLowerCase();
+  if (category && storeItemCategoryKey(item) !== category) return false;
+  if (state.currentSubcategory
+    && normalizeStoreFilterValue(getStoreNavigationSubcategory(item)) !== normalizeStoreFilterValue(state.currentSubcategory)) return false;
+  if (state.currentFamily && ['weapons', 'droids', 'vehicles'].includes(category)
+    && getStoreNavigationFamily(item) !== state.currentFamily) return false;
+  if (category === 'vehicles') {
+    for (const [key, getter] of VEHICLE_FILTERS) {
+      const want = normalizeStoreFilterValue(state[key]);
+      if (want && want !== 'all' && getter(item) !== want) return false;
+    }
+  }
+  return true;
+}
