@@ -176,8 +176,6 @@ export async function loadStoreCatalog({ refresh = false } = {}) {
   return _catalogPromise;
 }
 
-export function clearStoreCatalog() { _catalog = null; _catalogPromise = null; _hydrated.clear(); }
-
 /* ------------------------------------------------------------------ */
 /* Hydration                                                           */
 /* ------------------------------------------------------------------ */

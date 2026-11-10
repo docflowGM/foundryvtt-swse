@@ -212,26 +212,6 @@ export function getRandomDialogue(context) {
 
 /* ---------------- Categorization / Sorting helpers ---------------- */
 
-export function categorizeEquipment(item) {
-    const name = (item?.name || '').toString().toLowerCase();
-    const desc = (item?.system?.description || '').toString().toLowerCase();
-    const text = name + ' ' + desc;
-    if (text.includes('grenade') || text.includes('detonator')) {return 'grenades';}
-    if (text.includes('medpac') || text.includes('bacta')) {return 'medical';}
-    if (text.includes('comlink') || text.includes('datapad')) {return 'tech';}
-    if (text.includes('tool') || text.includes('kit')) {return 'tools';}
-    return 'equipment';
-}
-
-export function sortWeapons(weapons) {
-    // simple alphabetical fallback
-    return weapons.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
-}
-
-export function sortArmor(armors) {
-    return armors.sort((a,b) => (a.name || '').localeCompare(b.name || ''));
-}
-
 export function getRarityClass(availability) {
     if (!availability) {return null;}
     const normalized = availability.toString().toLowerCase();

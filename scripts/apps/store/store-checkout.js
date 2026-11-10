@@ -332,19 +332,6 @@ async function revalidateCart(store, actor, originalTotal) {
 }
 
 /**
- * Launch custom droid builder
- * @param {Object} actor - Actor building the droid
- * @param {Function} closeCallback - Callback to close the store
- */
-export async function createCustomDroid(actor, closeCallback) {
-    // Legacy store callers should use the same live progression Droid Builder lane as
-    // the shell-native Build Droid From Scratch button. Keeping this as a
-    // delegating alias prevents one store path from showing the old
-    // "builder refactor pending" dead end while the other opens correctly.
-    return buildDroidWithBuilder(actor, closeCallback);
-}
-
-/**
  * Launch custom starship builder
  * @param {Object} actor - Actor building the starship
  * @param {Function} closeCallback - Callback to close the store

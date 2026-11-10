@@ -34,6 +34,10 @@ assert.doesNotMatch(shared, /\\b\(at-at|\\b\(crawler|\\b\(swoop|medical\|medic\|
 // the retired starship builder and its toast are gone; legacy store files deleted
 for (const f of ['store/store.js', 'scripts/engine/store/loader.js', 'scripts/engine/store/normalizer.js', 'scripts/engine/store/categorizer.js', 'scripts/engine/store/index.js', 'scripts/engine/store/compendium-schema.js'])
   assert.ok(!fs.existsSync(f), `${f} must be deleted`);
+// dead Store files proven unreferenced (scripts, templates, manifest) are deleted
+for (const f of ['scripts/apps/store/store-filters.js', 'scripts/apps/store/store-constants.js', 'templates/apps/store/cart-item-v2.hbs', 'templates/apps/store/droid-card-v2.hbs',
+  'templates/apps/store/product-card-v2.hbs', 'templates/apps/store/purchase-history.hbs', 'templates/apps/store/vehicle-card-v2.hbs', 'templates/apps/store/gm-settings.html'])
+  assert.ok(!fs.existsSync(f), `${f} must be deleted`);
 // one purchase path per asset: no quick-buy entry points
 const co = all('scripts/apps/store/store-checkout.js');
 for (const gone of ['buyVehicle', 'buyDroid', 'buyService', 'buildDroidFromTemplate', 'submitDraftDroidForApproval', 'submitDraftVehicleForApproval'])

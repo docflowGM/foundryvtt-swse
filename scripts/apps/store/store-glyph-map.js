@@ -114,4 +114,3 @@ export function resolveStoreGlyph(category, itemType, useAurebesh = true) {
 /**
  * All supported glyph keys (for validation).
  */
-export const GLYPH_KEYS = Object.keys(STORE_GLYPHS);

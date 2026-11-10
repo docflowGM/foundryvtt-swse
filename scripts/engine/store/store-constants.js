@@ -4,7 +4,6 @@ import { UNIVERSAL_VEHICLE_PACK_NAMES } from '../../domain/vehicles/universal-ve
  * scripts/engine/store/store-constants.js
  *
  * Engine-level configuration for store
- * (UI-only config remains in apps/store/store-constants.js)
  */
 
 /**
@@ -50,21 +49,5 @@ export const STORE_PACKS = {
   // Every vehicle Actor comes from exactly one canonical publication pack.
   // No 316-ship/aggregate/old-emplacement fallbacks.
   VEHICLE_PACKS: UNIVERSAL_VEHICLE_PACK_NAMES.map(name=>'foundryvtt-swse.'+name)
-
-};
-
-/**
- * Business rules (engine-enforced)
- */
-export const STORE_RULES = {
-  // Default markup/discount applied by engine
-  DEFAULT_MARKUP: 0,
-  DEFAULT_DISCOUNT: 0,
-
-  // Minimum costs for custom creations
-  MIN_COSTS: {
-    DROID: 1000,
-    STARSHIP: 5000
-  },
 
 };
