@@ -16,6 +16,8 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
 import { quoteDroidBuilderSelection } from '../../../domain/droids/droid-builder-quote-consumer.js';
+import { quoteDroidBuild } from '../../../domain/droids/droid-build-quote.js';
+import { resolveDroidBuilderQuote } from '../../../domain/droids/droid-component-quote-authority.js';   // was used by _initializeDroidState but never imported (latent ReferenceError when the builder opened)
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionRules } from '../../../engine/progression/ProgressionRules.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
@@ -837,56 +839,37 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (!sys || !credits) return;
     this._dedupeInstalledSingletonSystems();
 
-    const quoteEntry = (entry, definition, group, subcategory = null, options = {}) => {
-      if (!definition) return { ...entry, cost: null, weight: null, quoteStatus: 'BLOCKED', quoteBlockingReason: 'Source definition not found' };
-      const quote = this._quoteDroidSystem(definition, group, subcategory, options);
-      const granted = !!entry.isDefault || !!entry.isGranted || !!options.granted;
-      return {
+    // The shared construction-quote authority (domain/droids/droid-build-quote.js) re-prices every installed component from
+    // its IDENTITY and derives the legitimate free grants. The builder no longer holds a second copy of that logic, and
+    // flags left on entries (isGranted/isDefault/cost) are never the reason a component is free.
+    const quote = quoteDroidBuild(
+      { droidSize: this._droidState.droidSize, droidSystems: sys },
+      { speciesDroidBuilder: this._droidState.speciesDroidBuilder || null }
+    );
+    const lineFor = (group, index) => quote.lines.find(line => line.group === group && line.index === index) || null;
+    const apply = (entry, line) => {
+      if (!entry) return entry;
+      if (!line) return { ...entry, cost: null, weight: null, quoteStatus: 'BLOCKED', quoteBlockingReason: 'Component could not be quoted' };
+      const next = {
         ...entry,
-        name: entry.name || definition.name,
-        cost: quote.status === 'OK' ? (granted ? 0 : quote.credits) : null,
-        weight: quote.kg,
-        quoteStatus: quote.status,
-        quoteBlockingReason: quote.blockingReason,
-        isGranted: !!entry.isGranted || !!options.granted
+        name: entry.name || line.name,
+        cost: line.credits,
+        weight: line.weight,
+        quoteStatus: line.quoteStatus,
+        quoteBlockingReason: line.blockingReason,
+        isGranted: !!line.grant
       };
+      if (line.group === 'locomotion') next.speed = line.speed ?? null;
+      if (line.group === 'accessory') next.category = line.subcategory;
+      return next;
     };
 
-    if (sys.locomotion) {
-      const def = DROID_SYSTEMS.locomotion?.find(item => item.id === sys.locomotion.id);
-      const speed = def ? this._calculateLocomotionSpeed(def) : null;
-      sys.locomotion = {
-        ...quoteEntry(sys.locomotion, def, 'locomotion', null, { speed }),
-        speed
-      };
-    }
-
-    if (sys.processor) {
-      const def = DROID_SYSTEMS.processors?.find(item => item.id === sys.processor.id);
-      sys.processor = quoteEntry(sys.processor, def, 'processor');
-    }
-
-    sys.appendages = (sys.appendages || []).map((entry, index) => {
-      const id = ['hand-1', 'hand-2'].includes(entry.id) ? 'hand' : entry.id;
-      const def = DROID_SYSTEMS.appendages?.find(item => item.id === id);
-      const granted = ['hand-1', 'hand-2'].includes(entry.id) || (id === 'hand' && index < 2 && entry.cost === 0);
-      return quoteEntry(entry, def, 'appendage', null, { granted });
-    });
-
-    sys.accessories = (sys.accessories || []).map(entry => {
-      const subcategory = entry.category || entry.subcategory;
-      const def = DROID_SYSTEMS.accessories?.[subcategory]?.find(item => item.id === entry.id);
-      return { ...quoteEntry(entry, def, 'accessory', subcategory), category: subcategory };
-    });
-
-    sys.locomotionEnhancements = (sys.locomotionEnhancements || []).map(entry => {
-      const def = DROID_SYSTEMS.locomotionEnhancements?.find(item => item.id === entry.id);
-      return quoteEntry(entry, def, 'locomotionEnhancement');
-    });
-    sys.appendageEnhancements = (sys.appendageEnhancements || []).map(entry => {
-      const def = DROID_SYSTEMS.appendageEnhancements?.find(item => item.id === entry.id);
-      return quoteEntry(entry, def, 'appendageEnhancement');
-    });
+    sys.locomotion = apply(sys.locomotion, sys.locomotion ? lineFor('locomotion', 0) : null);
+    sys.processor = apply(sys.processor, sys.processor ? lineFor('processor', 0) : null);
+    sys.appendages = (sys.appendages || []).map((entry, index) => apply(entry, lineFor('appendage', index)));
+    sys.accessories = (sys.accessories || []).map((entry, index) => apply(entry, lineFor('accessory', index)));
+    sys.locomotionEnhancements = (sys.locomotionEnhancements || []).map((entry, index) => apply(entry, lineFor('locomotionEnhancement', index)));
+    sys.appendageEnhancements = (sys.appendageEnhancements || []).map((entry, index) => apply(entry, lineFor('appendageEnhancement', index)));
 
     const all = [sys.locomotion, sys.processor, ...(sys.appendages || []),
       ...(sys.accessories || []), ...(sys.locomotionEnhancements || []),

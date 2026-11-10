@@ -6,6 +6,7 @@ import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { verifyApprovalQuote } from "/systems/foundryvtt-swse/scripts/engine/store/store-approval-quote.js";
+import { STORE_DROID_APPROVAL_KIND, verifyDroidConstructionApproval, buildCustomDroidActorData, constructionAlreadyDelivered } from "/systems/foundryvtt-swse/scripts/engine/store/store-droid-construction.js";
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { requestShellRender } from "/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js";
@@ -603,6 +604,10 @@ export class GMApprovalOperationsService {
       return false;
     }
 
+    if (approval.approvalKind === STORE_DROID_APPROVAL_KIND) {
+      return this._approveDroidConstruction(host, index, approval, ownerActor);
+    }
+
     if (approval.type === 'store-item' || approval.approvalKind === 'store-policy-item') {
       return this._approveStoreItemPurchase(host, index, approval, ownerActor);
     }
@@ -801,6 +806,63 @@ export class GMApprovalOperationsService {
     });
     await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host));
     this._reportCommitted(failures, `Approved: ${approval.draftData?.name ?? 'Store purchase'}`);
+    return true;
+  }
+
+  /**
+   * Store-originated custom Droid. The GM approves the QUOTED amount, re-derived here from the stored build identities by the shared
+   * construction-quote authority; nothing the player recorded (cost, flags, totals) decides the debit. Debit + droid creation + owner
+   * link are one StoreEngine/TransactionEngine commerce transaction, so a failure cannot leave a free droid or a lost paid droid.
+   */
+  static async _approveDroidConstruction(host, index, approval, ownerActor) {
+    const verified = verifyDroidConstructionApproval(approval);
+    if (!verified.ok) {
+      ui?.notifications?.error?.(`Cannot approve this droid (${verified.reasons.join('; ')}). Nothing was charged. Deny the request and ask the player to resubmit.`);
+      return false;
+    }
+    const total = verified.total;
+    const ledger = TransactionEngine.getActorTransactions(ownerActor, { contexts: ['store-purchase'] });
+    if (constructionAlreadyDelivered(ledger, approval.id)) {
+      ui?.notifications?.warn?.('This droid was already paid for and delivered; the stale request is being removed. Nothing was charged.');
+      await this._afterCommit([], 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
+      return false;
+    }
+    const funds = LedgerService.validateFunds(ownerActor, total);
+    if (!funds.ok) {
+      ui?.notifications?.error?.(`${ownerActor.name} has ${normalizeCredits(funds.current).toLocaleString()} credits; this droid is quoted at ${total.toLocaleString()}. Nothing was charged.`);
+      return false;
+    }
+    const name = approval.approvalItems[0].name;
+    const grants = (verified.quote.grants || []).map(grant => `${grant.id} (${grant.grant})`).join(', ') || 'none';
+    const authorized = await foundry.applications.api.DialogV2.confirm({
+      window: { title: 'Approve custom droid' },
+      content: `<p>Charge <strong>${total.toLocaleString()}</strong> credits to <strong>${foundry.utils.escapeHTML?.(ownerActor.name) ?? ownerActor.name}</strong> for the custom droid <strong>${foundry.utils.escapeHTML?.(name) ?? name}</strong>?</p><p>This amount was re-quoted just now from the design's components by the shared droid construction authority. Baseline grants applied: ${foundry.utils.escapeHTML?.(grants) ?? grants}.</p>`,
+      rejectClose: false
+    });
+    if (!authorized) return false;
+
+    const result = await StoreEngine.purchase({
+      actor: ownerActor,
+      items: [{ id: approval.id, policyId: null, name, type: 'droid', finalCost: total, cost: total, condition: null }],
+      totalCost: total,
+      transactionContext: 'store-purchase',
+      itemGrantCallback: async () => {
+        const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
+        const data = buildCustomDroidActorData({ quote: verified.quote, name, approvalId: approval.id, owner: ownerActor });
+        return [DroidFactory.buildMutationPlan({ droidActor: data, name })];
+      }
+    });
+    if (!result.success) {
+      ui?.notifications?.error?.(`Failed to approve droid: ${result.error}. Nothing was delivered unless the transaction report says otherwise.`);
+      return false;
+    }
+    const failures = [];
+    await this._afterCommit(failures, 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
+    await this._afterCommit(failures, 'approved hook', async () => {
+      Hooks.callAll?.('swseCustomPurchaseApproved', { approval, actor: ownerActor, draftActor: null, transactionId: result.transactionId, decidedBy: game.user?.name ?? 'GM', edited: false });
+    });
+    await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host));
+    this._reportCommitted(failures, `Approved: ${name} (${total.toLocaleString()} cr)`);
     return true;
   }
 

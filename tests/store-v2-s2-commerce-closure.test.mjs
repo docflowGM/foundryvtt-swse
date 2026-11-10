@@ -43,18 +43,15 @@ let n = 0; const ok = m => console.log(`  [${++n}] ${m} OK`);
   ok('customized purchases: not stageable, not addable, not plannable, not approvable; client price override ignored');
 }
 
-// P1: Store-originated custom droid construction cannot start or finalize without a commerce lifecycle
+// P1: Store-originated custom droid construction runs only through the verified lifecycle (see store-v2-droid-construction.test.mjs)
 {
-  const before = notes.length;
-  const r = await buildDroidWithBuilder({ id: 'a', name: 'Buyer' }, null);
-  assert.equal(r, null);
-  assert.match(notes.at(-1)[1], /unavailable/); assert.ok(notes.length > before);
   const co = fs.readFileSync('scripts/apps/store/store-checkout.js', 'utf8');
   const fn = co.slice(co.indexOf('export async function buildDroidWithBuilder('), co.indexOf('\n}\n', co.indexOf('export async function buildDroidWithBuilder(')));
-  assert.doesNotMatch(fn, /launchNewProgression/, 'the builder is not launched without a commerce lifecycle');
+  assert.match(fn, /beginStoreDroidConstruction\(/, 'the builder is launched only with a one-shot Store authorization');
   const fin = fs.readFileSync('scripts/apps/progression-framework/shell/progression-finalizer.js', 'utf8');
-  assert.match(fin, /domain === 'droidBuilder'\) return \{ success: false, error: 'STORE_DROID_BUILD_COMMERCE_UNAVAILABLE/, 'finalizer refuses droidBuilder single-step finalization');
-  ok('Store Build Droid: builder not launched; finalizer refuses droidBuilder finalization (no unpaid creation)');
+  assert.match(fin, /domain === 'droidBuilder'[\s\S]{0,200}submitStoreDroidConstruction/, 'droidBuilder single-step finalization queues a quoted request, never an actor');
+  assert.doesNotMatch(fin.slice(fin.indexOf("if (domain === 'droidBuilder')"), fin.indexOf('const mutationPlan = await this._compileSingleStepMutationPlan')), /createActor|ActorEngine|executeMutationTransaction/, 'finalizer creates no actor and charges nothing');
+  ok('Store Build Droid: authorized launch -> quoted pending request; the finalizer creates nothing and charges nothing');
 }
 
 // P1: pending-droid approval is never a silent or zero-cost debit

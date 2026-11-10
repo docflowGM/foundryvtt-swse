@@ -518,9 +518,21 @@ export class ProgressionFinalizer {
 
       const stepId = options.stepId || sessionState.steps?.[0]?.stepId || sessionState.progressionSession?.currentStepId || null;
       const domain = options.domain || this.singleStepDomainForStep(stepId);
-      // Store-originated droid construction has no commerce lifecycle yet (quote -> GM approval -> payment). It must never
-      // finalize into an actor, whatever launched it.
-      if (domain === 'droidBuilder') return { success: false, error: 'STORE_DROID_BUILD_COMMERCE_UNAVAILABLE: custom droid construction cannot be finalized without an approved, paid commerce transaction.' };
+      // Single-step 'droidBuilder' has exactly one supported consumer: Store-originated construction. It never creates an
+      // actor here: a verified Store launch token (in-memory, one-shot, bound to user and buying actor; see
+      // store-droid-construction.js) is required, the committed build is reduced to identities and re-quoted, and a pending
+      // request is queued for GM approval + payment. Without a valid token the request is refused. Chargen / level-up droid
+      // building uses the full finalize() path, which does not pass through here and is unaffected.
+      if (domain === 'droidBuilder') {
+        const { submitStoreDroidConstruction } = await import('/systems/foundryvtt-swse/scripts/engine/store/store-droid-construction.js');
+        const selection = sessionState.progressionSession?.draftSelections?.droid
+          ?? sessionState.committedSelections?.get?.('droid-builder')
+          ?? null;
+        const submitted = await submitStoreDroidConstruction({ token: options.storeConstructionToken, selection, name: actor?.name });
+        return submitted.success
+          ? { success: true, committed: false, result: { actorId: null, domain, stepId }, message: submitted.message }
+          : { success: false, error: submitted.error };
+      }
       if (!domain) throw new Error(`Unsupported single-step progression job: ${stepId || options.job || '(unknown)'}`);
 
       const mutationPlan = await this._compileSingleStepMutationPlan(sessionState, actor, { ...options, domain, stepId });

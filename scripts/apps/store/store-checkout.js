@@ -16,6 +16,8 @@ import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-
 import { evaluateVehicleMerchantPurchase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-store-eligibility.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { beginStoreDroidConstruction } from "/systems/foundryvtt-swse/scripts/engine/store/store-droid-construction.js";
+import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 
 
@@ -1015,23 +1017,43 @@ function stripDocumentIdentity(data = {}) {
 }
 
 /**
- * Store-originated custom droid construction is UNAVAILABLE until its commerce lifecycle exists.
+ * Store-originated custom droid construction.
  *
- * Lifecycle audit (S5 follow-up): the progression Droid Builder is launched in single-step mode with
- * `storeMode`/`requireApproval`/`storeDroidApproval`, but nothing in the progression framework consumes those
- * options, and `ProgressionFinalizer.finalizeSingleStep` has no `droidBuilder` domain. A finished design could not be
- * delivered, and the only code that queued a priced pending droid had no callers. The builder's per-part prices are
- * also stored on client-held entries (including `isGranted` flags), so no verifiable server-side re-quote exists without
- * re-deriving which components are legitimately granted free (a builder/species rules concern the Store must not re-implement).
- * Until a design snapshot can be re-quoted at the approval boundary, the Store refuses to start the build rather than
- * let a player design a droid it cannot lawfully deliver.
+ * Lifecycle (see engine/store/store-droid-construction.js): this button issues a one-shot launch authorization and opens
+ * the EXISTING progression Droid Builder (single-step). On confirm the finalizer verifies that authorization, reduces the
+ * build to component identities, re-quotes it with the shared construction-quote authority (the same one the builder's own
+ * totals use) and queues a pending request. The GM approves the re-quoted amount; debit, droid creation and owner link are
+ * one commerce transaction. Nothing is created or charged at this step.
  */
-export async function buildDroidWithBuilder(actor, _closeCallback) {
+export async function buildDroidWithBuilder(actor, closeCallback) {
     if (!actor) {
         ui.notifications.error(storeI18n('SWSE.Store.Notifications.NoActorForDroid'));
         return null;
     }
-    ui.notifications.warn('Custom droid construction through the Store is unavailable until its quote, approval and payment lifecycle is connected. Buy a certified stock droid from the Droids catalog instead.');
-    return null;
+    if (actor.isOwner !== true) {
+        ui.notifications.warn('You can only start a droid build for a character you own.');
+        return null;
+    }
+    const token = beginStoreDroidConstruction(actor, game.user?.id);
+    if (typeof closeCallback === 'function') closeCallback();
+    try {
+        ui.notifications.info('Design your droid. Its price is quoted from its components when you confirm; the GM approves the quote and nothing is charged before that.');
+        return await launchNewProgression({
+            actorType: 'droid',
+            subtype: 'droid',
+            isDroid: true,
+            name: 'Custom Droid',
+            source: 'store-custom-droid',
+            currentStep: 'droid-builder',
+            targetStep: 'droid-builder',
+            singleStep: true,
+            singleStepDomain: 'droidBuilder',
+            storeConstructionToken: token
+        });
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Failed to launch progression droid builder:', err);
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedOpenDroidBuilder'));
+        return null;
+    }
 }
 

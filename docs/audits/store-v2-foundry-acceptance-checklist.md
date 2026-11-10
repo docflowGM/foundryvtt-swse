@@ -54,3 +54,15 @@ Use two clients (Player A owns the buyer actor, GM) and, for cross-client rows, 
 ## H. Performance (record, do not assert)
 - [ ] Cold open, warm open, category switch, search keystroke, detail select, add to cart: record ms each. Compare with the pre-cutover build (`c19e0a4`) on the same world.
 - [ ] Note suggestion generation cost on open (all weapons/armor/gear are scored on first load; not changed in this pass).
+
+## I. Store-originated custom droid (new lifecycle; all RUNTIME_UNVERIFIED)
+- [ ] Store > Droids > Build a Droid opens the existing builder in single-step mode (no console ReferenceError; the builder previously called an un-imported quote function).
+- [ ] Choose paid components (non-default locomotion, extra hand, an accessory) and confirm: notification states the quoted total; nothing is charged; no actor is created; a pending request appears in the GM approvals list showing the total and per-component lines (granted baseline lines show 0).
+- [ ] A build made only of baseline components (default locomotion, heuristic processor, two hands) is refused as having nothing to purchase.
+- [ ] Confirm twice / reopen: the second confirm is refused (launch authorization is one-shot).
+- [ ] GM approves: confirmation dialog shows the re-quoted amount; owner is debited exactly that amount; droid Actor appears owned by the buyer with the chosen systems; second approve attempt is refused with no second charge.
+- [ ] Insufficient credits: approval refused, nothing charged, request stays pending.
+- [ ] Edit the request total inline as GM, or change DROID_SYSTEMS data between request and approval: approval is refused (quote changed).
+- [ ] Interrupt during approval (refresh): either fully paid + delivered or fully unchanged; no free droid, no paid-but-missing droid.
+- [ ] Non-Store progression: droid chargen (full flow), level-up and follower droid building behave as before; the builder's running totals match the quoted total for the same components.
+- [ ] Inspect the delivered droid sheet: confirm chassis-only data is acceptable or file follow-up (stats/class levels are not part of a Store construction).
