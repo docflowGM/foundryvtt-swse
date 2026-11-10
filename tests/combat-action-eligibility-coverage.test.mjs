@@ -88,6 +88,22 @@ test('the shared multi-attack entitlement answer reuses the authority: Double ne
   assert.equal(ma.actorEntitledToMultiAttackPackage(a, P.NORMAL, w), true, 'a normal full attack is not a feat package');
 });
 
+test('an actor legitimately entitled to Double / Triple Attack for the readied weapon is still entitled (the helper agrees with the planner)', async () => {
+  const { weaponItem, installReadinessEnvironment, ownAndReady, PISTOL_KEY } = await import('./helpers/ready-weapon-fixture.mjs');
+  await installReadinessEnvironment();
+  const canonFeat = (slug) => ({ swse: { canonicalFeat: { identityKey: `feat::test::p1::${slug}` } } });
+  const choice = (slug, name) => ({ id: `f-${slug}`, type: 'feat', name, flags: canonFeat(slug), system: { slug, selectedChoice: { id: 'pistols', group: 'pistols', label: 'Pistols' } } });
+  const w = weaponItem('w1', { key: PISTOL_KEY });
+  const a = actor([w, choice('double-attack', 'Double Attack')], { system: { species: 'Human', size: 'medium', skills: {} } });
+  w.actor = a; ownAndReady(a, w);
+  const P = ma.FULL_ATTACK_PACKAGES;
+  assert.equal(ma.actorEntitledToMultiAttackPackage(a, P.DOUBLE_ATTACK, w), true);
+  assert.equal(ma.actorEntitledToMultiAttackPackage(a, P.TRIPLE_ATTACK, w), false, 'Triple still needs Triple Attack');
+  assert.equal(ma.buildFullAttackSequence(a, { requestedPackage: P.DOUBLE_ATTACK, primaryWeapon: w }).legal, true, 'the planner agrees, so the router needs no fallback');
+  a.items.push(choice('triple-attack', 'Triple Attack'));
+  assert.equal(ma.actorEntitledToMultiAttackPackage(a, P.TRIPLE_ATTACK, w), true);
+});
+
 // ---- 4. the second, independent boundary for grapple-feat actions --------------------------------------------------------------------------
 test('the grapple authority itself refuses Pin / Trip / Throw / Crush without the feat, independently of the sheet', async () => {
   const { SWSEGrappling } = await import('/systems/foundryvtt-swse/scripts/combat/systems/grappling-system.js');

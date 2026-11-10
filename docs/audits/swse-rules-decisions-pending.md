@@ -2570,3 +2570,16 @@ The project owner gave these as provisional recommendations, expressly "not fina
 | Resolution | |
 
 - **Revision 56 (2026-11-10):** appended CAE-001, CAE-002, CAE-003.
+
+## Open-decision summary and merge impact (2026-11-10, appended; does not replace any entry above)
+
+| ID | Exact question | Published source | Existing behavior | State | Owner decision required | Blocks merge? |
+|---|---|---|---|---|---|---|
+| CAE-001 | Gate Treat Poison on skill training and a Medical Kit? Which owned item is a Medical Kit? | Not established (printed page not re-verified); the runtime pack row has the restriction as prose only | Listed as a general action; JSON fallback requirement `Medical Kit` would fail closed (unresolved) | Incomplete (a data and equipment-identity gap), not a defect | Whether to gate; the Medical Kit identity | No: current behavior is permissive for one action and documented |
+| CAE-002 | May a GM run an action the actor has not unlocked, and how is it attributed? | None located | The gate refuses locked/unresolved actions for every user, the GM included | Incomplete; conservative default | Whether and how a GM override exists | No (owner may choose to require it) |
+| CAE-003 | What is cyborg-hybrid evidence; should feats that expose no card expose one? | Not established | A card with structured `requiresDroid` is locked for non-Droids; others follow ownership; no cyborg inference | Blocked on evidence for cyborg hybrids; the rest incomplete | Cyborg-hybrid predicate; card metadata | No |
+| WPN-W1-001, WPN-W1-002, WPN-W2-001, WPN-B-001, WPN-M12-001, WPN-D-001 | See each entry above | See each entry above | See each entry above (implemented defaults and known gaps are stated there) | `DEFERRED_RULES_REVIEW` | Owner rulings (the 2026-11-10 recommendations are provisional, not rulings) | None blocks #1142. For #1140 the owner decides whether any should be resolved before merge |
+
+No provisional recommendation has been converted into a ruling.
+
+- **Revision 57 (2026-11-10):** appended the open-decision summary.

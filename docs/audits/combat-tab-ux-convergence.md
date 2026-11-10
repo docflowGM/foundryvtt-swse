@@ -110,3 +110,41 @@ Three things are kept apart: **discovery** (the catalog lists it), **eligibility
 | Legacy `character/v2` and `droid/v2` combat partials | dormant (not rendered by the concept sheet) |
 
 Live Foundry v13 verification is still outstanding, including a click-through of the legacy bridge and the hotfix delegate against a real sheet.
+
+## Deferred work (TODO)
+
+### LOW PRIORITY — DEFERRED: hardening of the combat-action gate against hypothetical adversarial JavaScript (P4)
+- **What:** the routing-trust marker (`markWorkflowRouted` / `isWorkflowRouted`, a module-private WeakSet) and the gate helper (`gateCombatActionRequest`) are not designed to withstand code that imports those internals directly, replays a trusted options object it obtained from inside a workflow handler, or is a deliberately malicious Foundry module.
+- **Why it is deferred:** it concerns hypothetical adversarial JavaScript, not ordinary gameplay. Any module that can run script inside the Foundry client can already modify actors directly; the gate protects the normal paths (sheet buttons, stale sheets, macros that call the sheet runner with ordinary or accidentally wrong data, the Double/Triple Attack router and legacy bridge). Normal Foundry ownership and permission enforcement is unchanged.
+- **Genuine limitation (not exaggerated):** trust is by object identity inside one JavaScript realm. It stops accidental and casual misuse (forged flags, copied options, wrong `actionData`), not a determined script author.
+- **Action:** none planned. No further spoofing tests or abstractions will be added for this. Revisit only if a concrete operational problem is demonstrated.
+
+### Other follow-up (optional, not merge blockers)
+- Dead CSS in `styles/sheets/v2-concept-sheet.css` (`swse-concept-ae-*`, old attack-card sub-elements, `combat-row*`, `initiative-command*`): needs a runtime check before removal.
+- The inert name-based hotfix gating (`dedupeAndGateCombatActions`) and its droid-only feat-name list, pending CAE-003.
+- Dormant legacy partials under `character/v2` and `droid/v2` (combat tab and actions panels) and `CombatExecutor.executeAttack`.
+- NPC tab Action Library; Droid integrated-part attack cards.
+- A "before" screenshot set (only after-state harness shots exist).
+
+## Acceptance status (final pass)
+
+**Environment:** no Foundry VTT v13 runtime exists in this environment (no Foundry install, no licensed server), so live Actor/ApplicationV2 click-through testing could **not** be performed and is **not** claimed. What was verified instead is below; what needs manual Foundry testing is listed after it.
+
+| Acceptance item | How verified | Where |
+| --- | --- | --- |
+| General actions present for organic, Droid and NPC-droid actors | runtime test over the real pack rows | `combat-action-eligibility.test.mjs` (1) |
+| Feat action absent before / present after / gone after removal; disabled feat grants nothing; same-named different-identity feat does not unlock | runtime tests | `combat-action-eligibility.test.mjs` (2, 9), `...-coverage.test.mjs` (1) |
+| Talent actions follow the same contract; passive riders not listed as actions | runtime tests | eligibility tests (6, 9), library test (25) |
+| Organic gets no Droid-only action; Droid and NPC-type Droid Follower do (Droid rules profile); contradictory evidence fails closed; a name is not evidence | runtime tests | eligibility tests (7, 8) |
+| Installed-component actions need operable ledger hardware; draft / item-only / missing hardware grant nothing | runtime tests against the production gate | eligibility tests (13, 14) |
+| Double/Triple Attack refused without the feat (router, hotfix path via shared helper), still available with it | runtime test (router), helper + planner tests, existing 5D-F multi-attack suite | `...-coverage.test.mjs`, `weapon-phase-5d-f-multiattack-convergence.test.mjs` |
+| Unresolved evidence never executable and stays visible with its reason | runtime tests; register CAE-001/003 | eligibility tests (15, 16) |
+| Unlocked-but-spent action stays visible and disabled with the economy reason | library test | eligibility tests (24) |
+| Layout order, one library, no duplicate rows/cards, variants kept, My Actions default, All Rules non-executable, search/filter/sort/reset | template + view-model tests, browser-harness screenshots (1100 / 720 / 380 px) | `combat-tab-ux-contract.test.mjs`, `docs/audits/combat-tab-ux/` |
+| Primary weapon Roll button reachable without scrolling | harness: y≈184 px (desktop), ≈224 px (phone) | screenshots |
+| Equipment and Combat previews agree; Roll uses the same authority | parity tests against the real `rollAttack` / `rollDamage` | `combat-loadout-preview.test.mjs`, `combat-tab-ux-contract.test.mjs` (B) |
+| Ready / held / unavailable weapons, Unarmed card, NPC statblock rows preserved, no fabricated Items | view-model tests | `combat-tab-ux-contract.test.mjs` (B, D) |
+
+**Exact-head CI (4dd13d0ed), verified from the workflow check runs:** Rolling system validation: success; targeted (Droid V2 Gate A): success; provenance: success; native-vehicle-packs (Universal Vehicles QA): success. #1141 head `383a0536c` and #1140 head `4ea9d3469` are unchanged since their green runs.
+
+**Still requires manual Foundry v13 testing:** Characters A–D click-through (Organic Soldier gaining a feat; Jedi lightsaber one-/two-handed numbers and Equipment/Combat parity, readiness and activation; Droid with installed components and multiple manipulators; NPC/Follower statblock rows and permissions); executing a normal attack, unarmed attack, a permitted feat action, a permitted talent action, a blocked action, Double/Triple Attack with and without entitlement, a grapple action, a combat-status change, and action-economy spending; and the legacy multi-attack bridge and hotfix delegate against a real sheet.
