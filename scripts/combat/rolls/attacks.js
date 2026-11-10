@@ -229,6 +229,12 @@ async function resolveOpportunityChoice(weapon, rollOptions) {
   return { rollOptions: { ...rollOptions, profileId: picked.profileId, aooChoice: picked.choice } };
 }
 
+/** Weapon three-gate W7: is this weapon canonical, or hinting a canonical identity that does not resolve (which must reach the canonical gate, never a legacy fallback)? */
+export function isCanonicalHintedWeapon(weapon) {
+  try { return resolveAttackWeaponRuntime(weapon, {}).source === 'canonical'; }
+  catch (_err) { return true; }
+}
+
 /**
  * Phase 5D-A: pure canonical weapon/profile resolution for an attack. Legacy/custom weapons return the options untouched;
  * a canonical weapon returns options carrying the resolved weaponRuntime and the selected profile's branch as attackType.

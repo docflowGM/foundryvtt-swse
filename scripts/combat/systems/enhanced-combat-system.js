@@ -4,7 +4,7 @@ import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
-import { resolveAttackWeaponRuntime } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { isCanonicalHintedWeapon } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
 import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
 
@@ -16,16 +16,11 @@ import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/
  * - This class now handles: UI input gathering, roll execution, card display
  * - No mutation logic — all routes through ActorEngine → DamageEngine
  */
-/**
- * Weapon three-gate W7 (audit section 5): a canonical weapon (or one hinting canonical identity that no longer resolves) must never
- * have its damage built from the Item-level damage field. This legacy entry point (reachable through the window.SWSECombat global /
- * macros) redirects such weapons to the SAME entry points the character sheet uses (SWSERoll -> attacks.js / damage.js), where the
- * selected canonical profile, readiness gate and fail-closed identity checks live. Legacy/custom weapons keep the adapter below.
- */
-export function isCanonicalHintedWeapon(weapon) {
-  try { return resolveAttackWeaponRuntime(weapon, {}).source === 'canonical'; }
-  catch (_err) { return true; } // a canonical hint that does not resolve must reach the canonical gate (which refuses), never a legacy fallback
-}
+// Weapon three-gate W7 (audit section 5): a canonical weapon (or one hinting canonical identity that no longer resolves) must never
+// have its damage built from the Item-level damage field. This legacy entry point (reachable through the window.SWSECombat global /
+// macros) redirects such weapons to the SAME entry points the character sheet uses (SWSERoll -> attacks.js / damage.js), where the
+// selected canonical profile, readiness gate and fail-closed identity checks live. Legacy/custom weapons keep the adapter below.
+export { isCanonicalHintedWeapon };
 
 export class SWSECombat {
 
