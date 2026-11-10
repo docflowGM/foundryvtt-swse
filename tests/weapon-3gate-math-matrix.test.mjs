@@ -72,6 +72,35 @@ test('M-17 low result on a confirmed weapon hit: effective damage 1 BEFORE mitig
   assert.equal(withDR.damageReduction.applied, 1);
 });
 
+// ---- M-11 / M-12: target-side rules through the real chain  buildDamagePacket -> finalizeDamagePacketForTarget -> ActorEngine.applyDamage ----
+const { finalizeDamagePacketForTarget, buildDamageApplyOptions } = await import('/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js');
+const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+ActorEngine.updateActor = async () => {};
+const { DamageResolutionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js');
+globalThis.game = { ...(globalThis.game ?? {}), settings: { get: () => undefined }, combat: null, user: { id: 'u1' } };
+const tgt = ({ type = 'character', hp = 100, dt = 20, extra = {}, items = [] } = {}) => ({ id: `t-${type}`, name: `Target ${type}`, type, flags: { swse: {} }, effects: [], items: col(items), getFlag() {}, setFlag: async () => {},
+  system: { size: 'medium', hp: { value: hp, max: 100 }, conditionTrack: { current: 0 }, ...extra, derived: { damageThreshold: dt, damage: { threshold: dt, reduction: 0 }, hp: { value: hp, max: 100 }, shield: { current: 0, stored: false } } } });
+const ARMED = item('weapon-frag-grenade', { weaponCategory: 'ranged', damageType: 'energy' });   // a real attack always has a weapon: the packet enhancer is what marks an area attack as Evasion-eligible
+async function strike(t, rolled, { type = 'normal', hit = true, area = false, half = false, cover = false, weapon = ARMED } = {}) {
+  const attack = area ? { isArea: true } : {};
+  const packet = buildDamagePacket({ attacker: null, target: t, weapon, amount: rolled, workflowContext: { attack, damage: { hit, damageType: type }, ruleData: { ...(area ? { areaAttack: true } : {}), ...(half ? { halfDamageOnMiss: true } : {}) } }, options: { damageType: type, hit, ...(cover ? { cover: 'cover' } : {}) } });  // buildDamagePacket already finalizes for the target, exactly once, as the chat card does
+  const options = buildDamageApplyOptions(packet);
+  // the real resolution engine: what actually reaches HP, the threshold and the condition track
+  const res = packet.disposition?.damageAllowed === false || packet.amount <= 0 ? null : await DamageResolutionEngine.resolveDamage({ actor: t, damage: packet.amount, damageType: options.damageType, source: null, options });
+  return { packet, res };
+}
+test('M-11 stun: a character takes HALF the stun damage in HP while the FULL amount is compared to the threshold; a Droid is immune to stun', async () => {
+  const { packet, res } = await strike(tgt({ type: 'character', dt: 20 }), 30, { type: 'stun' });
+  assert.equal(packet.type, 'stun'); assert.equal(packet.flags.stunHpHalved, true); assert.equal(packet.options.thresholdDamageOverride, 30, 'threshold sees the full 30');
+  assert.equal(res.damageToHP, 15, 'HP takes half'); assert.equal(res.hpAfter, 85);
+  const droid = await strike(tgt({ type: 'droid' }), 30, { type: 'stun' });
+  assert.equal(droid.packet.amount, 0); assert.equal(droid.packet.flags.stunSuppressed, true); assert.equal(droid.res, null, 'no HP write for an immune target');
+});
+test('M-12 area miss with a weapon present is never floored to 1 (the minimum-1 rule is for confirmed hits only)', async () => {
+  const w = item('weapon-blaster-pistol', { weaponCategory: 'ranged', damageType: 'energy' });
+  assert.equal((await strike(tgt({ type: 'character' }), 1, { area: true, hit: false, half: true, weapon: w })).packet.amount, 0, 'half of 1 is 0, not 1');
+  assert.equal((await strike(tgt({ type: 'character' }), -3, { area: true, hit: true, weapon: w })).packet.amount, 1, 'an area HIT of a weapon is still a hit: floor 1');
+});
 test('matrix anchors: all 20 cases map to a real test whose named case still exists', () => {
   const m = JSON.parse(fs.readFileSync('data/audits/weapon-v2-3gate-math-matrix.json', 'utf8'));
   assert.deepEqual(m.cases.map((c) => c.id), Array.from({ length: 20 }, (_, i) => `M-${String(i + 1).padStart(2, '0')}`));

@@ -41,7 +41,7 @@ test('the only operation key left without a reason is the source-complete Dark S
   assert.deepEqual(ledger.summary.orphanedFields, [], 'no orphaned census field remains');
 });
 
-test('profile.wielding duplicate proof: the size authority already forces two hands on the lanvarok melee form (so the profile field adds no missing consumer)', async () => {
+test('profile.wielding duplicate proof: the size authority forces two hands on the lanvarok melee form for a Medium wielder only (Large wielder: WPN-B-001, undecided)', async () => {
   const { registerFoundryPathLoader } = await import('./helpers/foundry-shim/register.mjs');
   const { installFoundryShimGlobals } = await import('./helpers/foundry-shim/globals.mjs');
   globalThis.window = globalThis.window || {}; registerFoundryPathLoader(); installFoundryShimGlobals(); globalThis.ui = { notifications: { warn() {}, info() {}, error() {} } };

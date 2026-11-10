@@ -1,0 +1,4887 @@
+{
+  "schemaVersion": 1,
+  "tool": "tools/audit-weapon-v2-gate-a-crosswalk.mjs",
+  "inputs": {
+    "canonicalRegistry": {
+      "file": "data/canonical/weapons.json",
+      "sha256_16": "deea5adcbbdf4de3",
+      "identities": 203
+    },
+    "productionPacks": [
+      {
+        "file": "packs/weapons-exotic.db",
+        "sha256_16": "3b4e23668d153ff6"
+      },
+      {
+        "file": "packs/weapons-grenades.db",
+        "sha256_16": "2e98ee685e621b18"
+      },
+      {
+        "file": "packs/weapons-heavy.db",
+        "sha256_16": "55598e3db35bcd1f"
+      },
+      {
+        "file": "packs/weapons-lightsabers.db",
+        "sha256_16": "47293d5e7692b9a8"
+      },
+      {
+        "file": "packs/weapons-pistols.db",
+        "sha256_16": "bcad403831ded5ec"
+      },
+      {
+        "file": "packs/weapons-rifles.db",
+        "sha256_16": "55209870ae1461fb"
+      },
+      {
+        "file": "packs/weapons-simple.db",
+        "sha256_16": "4a7c557abd0e81bf"
+      },
+      {
+        "file": "packs/weapons.db",
+        "sha256_16": "d1cef21e79d53711"
+      }
+    ]
+  },
+  "summary": {
+    "productionDocuments": 207,
+    "boundToCanonicalIdentity": 203,
+    "unbound": 4,
+    "canonicalIdentities": 203,
+    "canonicalIdentitiesWithAProductionItem": 203,
+    "identitiesWithoutAProductionItem": [],
+    "multiProfileIdentities": 34,
+    "branch": {
+      "MATCH": 203
+    },
+    "dice": {
+      "CANONICAL_NOT_COMPARABLE": 25,
+      "KNOWN_CONVENTION": 1,
+      "MATCH": 177
+    },
+    "damageType": {
+      "KNOWN_CONVENTION": 115,
+      "MATCH": 75,
+      "SOURCE_SILENT": 13
+    },
+    "weight": {
+      "MATCH": 199,
+      "SOURCE_SILENT": 4
+    },
+    "unexplainedDifferences": {
+      "branch": 0,
+      "dice": 0,
+      "damageType": 0,
+      "weight": 0
+    }
+  },
+  "unbound": [
+    {
+      "productionId": "lightsaber-crystal-barab-ingot",
+      "name": "Barab Ingot",
+      "type": "weaponUpgrade",
+      "category": null
+    },
+    {
+      "productionId": "lightsaber-accessory-blade-lock",
+      "name": "Blade Lock",
+      "type": "weaponUpgrade",
+      "category": null
+    },
+    {
+      "productionId": "lightsaber-crystal-ilum",
+      "name": "Ilum Crystal",
+      "type": "weaponUpgrade",
+      "category": null
+    },
+    {
+      "productionId": "lightsaber-crystal-synthetic",
+      "name": "Synthetic Crystal",
+      "type": "weaponUpgrade",
+      "category": null
+    }
+  ],
+  "different": {
+    "branch": [],
+    "dice": [],
+    "damageType": [],
+    "weight": []
+  },
+  "rows": [
+    {
+      "identityKey": "weapon-adhesive-grenade",
+      "productionId": "weapon-adhesive-grenade",
+      "name": "Adhesive Grenade",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "-"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Amphistaff",
+      "productionId": "weapon-amphistaff",
+      "name": "Amphistaff",
+      "defaultProfileId": "quarterstaff-end1",
+      "profileCount": 8,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-arc-9965-blaster",
+      "productionId": "weapon-arc-9965-blaster",
+      "name": "ARC-9965 Blaster Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Arggarok",
+      "productionId": "weapon-arggarok",
+      "name": "Arggarok",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-ascension-gun",
+      "productionId": "weapon-ascension-gun",
+      "name": "Ascension Gun",
+      "defaultProfileId": "blaster",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Atlatl",
+      "productionId": "weapon-atlatl",
+      "name": "Atlatl",
+      "defaultProfileId": "primary",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-aurial-blaster",
+      "productionId": "weapon-aurial-blaster",
+      "name": "Aurial Blaster",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the canonical record states a qualifier (e.g. sonic) on an energy type; the Item shows the qualifier as its type (damage-type-rules expands sonic into energy)",
+        "item": [
+          "sonic"
+        ],
+        "canonical": [
+          "energy"
+        ],
+        "qualifiers": [
+          "sonic"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Axe",
+      "productionId": "weapon-axe",
+      "name": "Axe",
+      "defaultProfileId": "melee",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Bayonet",
+      "productionId": "weapon-bayonet",
+      "name": "Bayonet",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-black-powder-pistol",
+      "productionId": "weapon-black-powder-pistol",
+      "name": "Black-Powder Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-espo-500-riot-gun",
+      "productionId": "weapon-espo-500-riot-gun",
+      "name": "BlasTech 500 Riot Gun",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-dh-23-blaster-pistol",
+      "productionId": "weapon-dh-23-blaster-pistol",
+      "name": "BlasTech DH-23 Outback Blaster Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-dlt-20a-longblaster",
+      "productionId": "weapon-dlt-20a-longblaster",
+      "name": "BlasTech DLT-20A \"Longbarrel\" Blaster Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-dt-12-heavy-blaster",
+      "productionId": "weapon-dt-12-heavy-blaster",
+      "name": "BlasTech DT-12 Heavy Blaster Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-blaster-cannon",
+      "productionId": "weapon-blaster-cannon",
+      "name": "Blaster Cannon",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-blaster-carbine",
+      "productionId": "weapon-blaster-carbine",
+      "name": "Blaster Carbine",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-double-barreled-blaster-carbine",
+      "productionId": "weapon-double-barreled-blaster-carbine",
+      "name": "Blaster Carbine, Double-Barreled",
+      "defaultProfileId": "single-shot",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-hunting-blaster-carbine",
+      "productionId": "weapon-hunting-blaster-carbine",
+      "name": "Blaster Carbine, Hunting",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-repeating-blaster-carbine",
+      "productionId": "weapon-repeating-blaster-carbine",
+      "name": "Blaster Carbine, Repeating",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sporting-blaster-carbine",
+      "productionId": "weapon-sporting-blaster-carbine",
+      "name": "Blaster Carbine, Sporting",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-blaster-pistol",
+      "productionId": "weapon-blaster-pistol",
+      "name": "Blaster Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-bluebolt-blaster-pistol",
+      "productionId": "weapon-bluebolt-blaster-pistol",
+      "name": "Blaster Pistol, Bluebolt",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-heavy-blaster-pistol",
+      "productionId": "weapon-heavy-blaster-pistol",
+      "name": "Blaster Pistol, Heavy",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-hold-out-blaster-pistol",
+      "productionId": "weapon-hold-out-blaster-pistol",
+      "name": "Blaster Pistol, Hold-Out",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sidearm-blaster-pistol",
+      "productionId": "weapon-sidearm-blaster-pistol",
+      "name": "Blaster Pistol, Sidearm",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-snap-shot-blaster-pistol",
+      "productionId": "weapon-snap-shot-blaster-pistol",
+      "name": "Blaster Pistol, Snap Shot",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sporting-blaster-pistol",
+      "productionId": "weapon-sporting-blaster-pistol",
+      "name": "Blaster Pistol, Sporting",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-blaster-rifle",
+      "productionId": "weapon-blaster-rifle",
+      "name": "Blaster Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-assault-blaster-rifle",
+      "productionId": "weapon-assault-blaster-rifle",
+      "name": "Blaster Rifle, Assault",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-heavy-blaster-rifle",
+      "productionId": "weapon-heavy-blaster-rifle",
+      "name": "Blaster Rifle, Heavy",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-heavy-assault-blaster",
+      "productionId": "weapon-heavy-assault-blaster",
+      "name": "Blaster Rifle, Heavy Assault",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-heavy-variable-blaster",
+      "productionId": "weapon-heavy-variable-blaster",
+      "name": "Blaster Rifle, Heavy Variable",
+      "defaultProfileId": "low",
+      "profileCount": 4,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-light-repeating-blaster",
+      "productionId": "weapon-light-repeating-blaster",
+      "name": "Blaster Rifle, Light Repeating",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sniper-blaster-rifle",
+      "productionId": "weapon-sniper-blaster-rifle",
+      "name": "Blaster Rifle, Sniper",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sporting-blaster-rifle",
+      "productionId": "weapon-sporting-blaster-rifle",
+      "name": "Blaster Rifle, Sporting",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-variable-blaster",
+      "productionId": "weapon-variable-blaster",
+      "name": "Blaster Rifle, Variable",
+      "defaultProfileId": "low",
+      "profileCount": 3,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-wrist-blaster",
+      "productionId": "weapon-wrist-blaster",
+      "name": "Blaster, Wrist",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Blastsword",
+      "productionId": "weapon-blastsword",
+      "name": "Blastsword",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-bow",
+      "productionId": "weapon-bow",
+      "name": "Bow",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-bowcaster",
+      "productionId": "weapon-bowcaster",
+      "name": "Bowcaster",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "energy",
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-bryar-pistol",
+      "productionId": "weapon-bryar-pistol",
+      "name": "Bryar Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-bryar-rifle",
+      "productionId": "weapon-bryar-rifle",
+      "name": "Bryar Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-carbonite-rifle",
+      "productionId": "weapon-carbonite-rifle",
+      "name": "Carbonite Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "3d10"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Cesta",
+      "productionId": "weapon-cesta",
+      "name": "Cesta",
+      "defaultProfileId": "primary",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Club/Baton",
+      "productionId": "weapon-club-baton",
+      "name": "Club/Baton",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Combat Gloves",
+      "productionId": "weapon-combat-gloves",
+      "name": "Combat Gloves",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "modifier",
+        "item": "0"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "SOURCE_SILENT"
+      }
+    },
+    {
+      "identityKey": "weapon-commando-special-rifle",
+      "productionId": "weapon-commando-special-rifle",
+      "name": "Commando Special Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-concealed-dart-launcher",
+      "productionId": "weapon-concealed-dart-launcher",
+      "name": "Concealed Dart Launcher",
+      "defaultProfileId": "default-sedative-dart",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "3d8"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-concussion-grenade",
+      "productionId": "weapon-concussion-grenade",
+      "name": "Concussion Grenade",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-concussion-rifle",
+      "productionId": "weapon-concussion-rifle",
+      "name": "Concussion Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Contact Stunner",
+      "productionId": "weapon-contact-stunner",
+      "name": "Contact Stunner",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-cr-1-blast-cannon",
+      "productionId": "weapon-cr-1-blast-cannon",
+      "name": "CR-1 Blast Cannon",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-crossbow",
+      "productionId": "weapon-crossbow",
+      "name": "Crossbow",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-repeating-crossbow",
+      "productionId": "weapon-repeating-crossbow",
+      "name": "Crossbow, Repeating",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-crossguard",
+      "productionId": "lightsaber-chassis-crossguard",
+      "name": "Crossguard Lightsaber",
+      "defaultProfileId": "blade",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-cryoban-grenade",
+      "productionId": "weapon-cryoban-grenade",
+      "name": "CryoBan Grenade",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-adjudicator-slugthrower",
+      "productionId": "weapon-adjudicator-slugthrower",
+      "name": "Czerka Adjudicator",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-adventurer-slugthrower",
+      "productionId": "weapon-adventurer-slugthrower",
+      "name": "Czerka Adventurer",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Darkstick",
+      "productionId": "weapon-darkstick",
+      "name": "Darkstick",
+      "defaultProfileId": "melee",
+      "profileCount": 3,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-darter",
+      "productionId": "weapon-darter",
+      "name": "Darter",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "fixed",
+        "item": "1"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Datadagger",
+      "productionId": "weapon-datadagger",
+      "name": "Datadagger",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-deck-sweeper",
+      "productionId": "weapon-deck-sweeper",
+      "name": "Deck Sweeper",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "3d6"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Dire Sword",
+      "productionId": "weapon-dire-sword",
+      "name": "Dire Sword",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Dire Vibroblade",
+      "productionId": "weapon-dire-vibroblade",
+      "name": "Dire Vibroblade",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-discblade",
+      "productionId": "weapon-discblade",
+      "name": "Discblade",
+      "defaultProfileId": "thrown",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Double Vibroblade",
+      "productionId": "weapon-double-vibroblade",
+      "name": "Double Vibroblade",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Double-Bladed Sword",
+      "productionId": "weapon-double-bladed-sword",
+      "name": "Double-Bladed Sword",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-dueling",
+      "productionId": "lightsaber-chassis-dueling",
+      "name": "Dueling Lightsaber",
+      "defaultProfileId": "blade",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-disruptor-pistol",
+      "productionId": "weapon-disruptor-pistol",
+      "name": "DX-2 Disruptor Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-disruptor-rifle",
+      "productionId": "weapon-disruptor-rifle",
+      "name": "DXR-6 Disruptor Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-e-web-missile-launcher",
+      "productionId": "weapon-e-web-missile-launcher",
+      "name": "E-Web Missile Launcher",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-e-web-repeating-blaster",
+      "productionId": "weapon-e-web-repeating-blaster",
+      "name": "E-Web Repeating Blaster",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-electronet",
+      "productionId": "weapon-electronet",
+      "name": "Electronet",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "3d8"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-gungan-electropole",
+      "productionId": "weapon-gungan-electropole",
+      "name": "Electropole",
+      "defaultProfileId": "melee",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-electrostaff",
+      "productionId": "weapon-electrostaff",
+      "name": "Electrostaff",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-emp-grenade",
+      "productionId": "weapon-emp-grenade",
+      "name": "EMP Grenade",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-energy-ball",
+      "productionId": "weapon-energy-ball",
+      "name": "Energy Ball",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Energy Lance",
+      "productionId": "weapon-energy-lance",
+      "name": "Energy Lance",
+      "defaultProfileId": "melee",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "energy",
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Entrenching Tool",
+      "productionId": "weapon-entrenching-tool",
+      "name": "Entrenching Tool",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Felucian Skullblade",
+      "productionId": "weapon-felucian-skullblade",
+      "name": "Felucian Skullblade",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Fira",
+      "productionId": "weapon-fira",
+      "name": "Fira",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Fire Blade",
+      "productionId": "weapon-fire-blade",
+      "name": "Fire Blade",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-flame-cannon",
+      "productionId": "weapon-flame-cannon",
+      "name": "Flame Cannon",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-flamethrower",
+      "productionId": "weapon-flamethrower",
+      "name": "Flamethrower",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-flechette-launcher",
+      "productionId": "weapon-flechette-launcher",
+      "name": "Flechette Launcher",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Force Pike",
+      "productionId": "weapon-force-pike",
+      "name": "Force Pike",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "energy",
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-tusken-gaderffii-stick",
+      "productionId": "weapon-tusken-gaderffii-stick",
+      "name": "Gaderffii",
+      "defaultProfileId": "blade-end",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Garrote",
+      "productionId": "weapon-garrote",
+      "name": "Garrote",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-gas-grenade",
+      "productionId": "weapon-gas-grenade",
+      "name": "Gas Grenade",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "4d6"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-defender-microblaster",
+      "productionId": "weapon-defender-microblaster",
+      "name": "Gee-Tech 12 Defender Microblaster",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-grenade-launcher",
+      "productionId": "weapon-grenade-launcher",
+      "name": "Grenade Launcher",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "ammunition",
+        "item": "Special"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-frag-grenade",
+      "productionId": "weapon-frag-grenade",
+      "name": "Grenade, Frag",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-ion-grenade",
+      "productionId": "weapon-ion-grenade",
+      "name": "Grenade, Ion",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-radiation-grenade",
+      "productionId": "weapon-radiation-grenade",
+      "name": "Grenade, Radiation",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-smoke-grenade",
+      "productionId": "weapon-smoke-grenade",
+      "name": "Grenade, Smoke",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "-"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-stun-grenade",
+      "productionId": "weapon-stun-grenade",
+      "name": "Grenade, Stun",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "4d6"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-guard-shoto",
+      "productionId": "lightsaber-chassis-guard-shoto",
+      "name": "Guard Shoto",
+      "defaultProfileId": "blade",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-heavy-blaster-cannon",
+      "productionId": "weapon-heavy-blaster-cannon",
+      "name": "Heavy Blaster Cannon",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-heavy-repeating-blaster",
+      "productionId": "weapon-heavy-repeating-blaster",
+      "name": "Heavy Repeating Blaster",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-heavy-slugthrower-pistol",
+      "productionId": "weapon-heavy-slugthrower-pistol",
+      "name": "Heavy Slugthrower Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-heavy-sonic-pistol",
+      "productionId": "weapon-heavy-sonic-pistol",
+      "name": "Heavy Sonic Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the canonical record states a qualifier (e.g. sonic) on an energy type; the Item shows the qualifier as its type (damage-type-rules expands sonic into energy)",
+        "item": [
+          "sonic"
+        ],
+        "canonical": [
+          "energy"
+        ],
+        "qualifiers": [
+          "sonic"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-incinerator-rifle",
+      "productionId": "weapon-incinerator-rifle",
+      "name": "Incinerator Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-interchangeable-weapon-system",
+      "productionId": "weapon-interchangeable-weapon-system",
+      "name": "Interchangeable Weapon System",
+      "defaultProfileId": "blaster-rifle",
+      "profileCount": 3,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-ion-carbine",
+      "productionId": "weapon-ion-carbine",
+      "name": "Ion Carbine",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-ion-pistol",
+      "productionId": "weapon-ion-pistol",
+      "name": "Ion Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-ion-rifle",
+      "productionId": "weapon-ion-rifle",
+      "name": "Ion Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Knife",
+      "productionId": "weapon-knife",
+      "name": "Knife",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-light-concussion-missile-launcher",
+      "productionId": "weapon-light-concussion-missile-launcher",
+      "name": "Light Concussion Missile Launcher",
+      "defaultProfileId": "light-concussion-missile",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-lightfoil",
+      "productionId": "weapon-lightfoil",
+      "name": "Lightfoil",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-archaic-lightfoil",
+      "productionId": "lightsaber-chassis-archaic-lightfoil",
+      "name": "Lightfoil, Archaic",
+      "defaultProfileId": "blade",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-modern-lightfoil",
+      "productionId": "lightsaber-chassis-modern-lightfoil",
+      "name": "Lightfoil, Modern",
+      "defaultProfileId": "blade",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-lightsaber",
+      "productionId": "weapon-lightsaber",
+      "name": "Lightsaber",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-pike",
+      "productionId": "lightsaber-chassis-pike",
+      "name": "Lightsaber Pike",
+      "defaultProfileId": "blade",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-archaic-lightsaber",
+      "productionId": "lightsaber-chassis-archaic-lightsaber",
+      "name": "Lightsaber, Archaic",
+      "defaultProfileId": "blade",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-double-bladed-lightsaber",
+      "productionId": "weapon-double-bladed-lightsaber",
+      "name": "Lightsaber, Double",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-dual-phase",
+      "productionId": "lightsaber-chassis-dual-phase",
+      "name": "Lightsaber, Dual-Phase",
+      "defaultProfileId": "default",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-great",
+      "productionId": "lightsaber-chassis-great",
+      "name": "Lightsaber, Great",
+      "defaultProfileId": "blade",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-short",
+      "productionId": "lightsaber-chassis-short",
+      "name": "Lightsaber, Short",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-lightwhip",
+      "productionId": "lightsaber-chassis-lightwhip",
+      "name": "Lightwhip",
+      "defaultProfileId": "whip",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-longhandle",
+      "productionId": "lightsaber-chassis-longhandle",
+      "name": "Long-Handle Lightsaber",
+      "defaultProfileId": "blade",
+      "profileCount": 3,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Mace",
+      "productionId": "weapon-mace",
+      "name": "Mace",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-magna-caster",
+      "productionId": "weapon-magna-caster",
+      "name": "Magna Caster",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-massassi-lanvarok",
+      "productionId": "weapon-massassi-lanvarok",
+      "name": "Massassi Lanvarok",
+      "defaultProfileId": "disc",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-model-434-deathhammer",
+      "productionId": "weapon-model-434-deathhammer",
+      "name": "Merr-Sonn Model 434 DeathHammer",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-plx-2m-portable-missile-launcher",
+      "productionId": "weapon-plx-2m-portable-missile-launcher",
+      "name": "Merr-Sonn PLX-2M Portable Missile Launcher",
+      "defaultProfileId": "area-missile",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-micro-grenade-launcher",
+      "productionId": "weapon-micro-grenade-launcher",
+      "name": "Micro Grenade Launcher",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "varies-by-payload",
+        "item": "Special"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-miniature-proton-torpedo-launcher",
+      "productionId": "weapon-miniature-proton-torpedo-launcher",
+      "name": "Miniature Proton Torpedo Launcher",
+      "defaultProfileId": "area",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-missile-launcher",
+      "productionId": "weapon-missile-launcher",
+      "name": "Missile Launcher",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-mortar-launcher",
+      "productionId": "weapon-mortar-launcher",
+      "name": "Mortar Launcher",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Mythosaur Axe",
+      "productionId": "weapon-mythosaur-axe",
+      "name": "Mythosaur Axe",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-needler",
+      "productionId": "weapon-needler",
+      "name": "Needler",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-net",
+      "productionId": "weapon-net",
+      "name": "Net",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "-"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-neural-inhibitor",
+      "productionId": "weapon-neural-inhibitor",
+      "name": "Neural Inhibitor",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Neuronic Whip",
+      "productionId": "weapon-neuronic-whip",
+      "name": "Neuronic Whip",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "2d8"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Power Hammer",
+      "productionId": "weapon-power-hammer",
+      "name": "Power Hammer",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Power Lance",
+      "productionId": "weapon-power-lance",
+      "name": "Power Lance",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-pulse-rifle",
+      "productionId": "weapon-pulse-rifle",
+      "name": "Pulse Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-pulse-wave-pistol",
+      "productionId": "weapon-pulse-wave-pistol",
+      "name": "Pulse-Wave Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-pulse-wave-rifle",
+      "productionId": "weapon-pulse-wave-rifle",
+      "name": "Pulse-Wave Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Quarterstaff",
+      "productionId": "weapon-quarterstaff",
+      "name": "Quarterstaff",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-flash-canister",
+      "productionId": "weapon-flash-canister",
+      "name": "R-9 Flash Canister",
+      "defaultProfileId": "throw",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "special",
+        "item": "Special"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-rail-detonator-gun",
+      "productionId": "weapon-rail-detonator-gun",
+      "name": "Rail Detonator Gun",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-razor-bug",
+      "productionId": "weapon-razor-bug",
+      "name": "Razor Bug",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-remote-grenade",
+      "productionId": "weapon-remote-grenade",
+      "name": "Remote Grenade",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "lightsaber-chassis-retrosaber",
+      "productionId": "lightsaber-chassis-retrosaber",
+      "name": "Retrosaber",
+      "defaultProfileId": "normal",
+      "profileCount": 3,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "SOURCE_SILENT"
+      }
+    },
+    {
+      "identityKey": "weapon-ripper",
+      "productionId": "weapon-ripper",
+      "name": "Ripper",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-rotary-blaster-cannon",
+      "productionId": "weapon-rotary-blaster-cannon",
+      "name": "Rotary Blaster Cannon",
+      "defaultProfileId": "autofire",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-wookiee-ryyk-blade",
+      "productionId": "weapon-wookiee-ryyk-blade",
+      "name": "Ryyk Blade",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::San-Ni Staff",
+      "productionId": "weapon-san-ni-staff",
+      "name": "San-Ni Staff",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-scattergun",
+      "productionId": "weapon-scattergun",
+      "name": "Scatter Gun",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item text encodes the alternative profiles (\"A or B\"); the canonical default profile states the first",
+        "item": "3d8or2d8",
+        "canonical": "3d8"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sg-4-blaster-rifle",
+      "productionId": "weapon-sg-4-blaster-rifle",
+      "name": "SG-4 Blaster Rifle",
+      "defaultProfileId": "blaster",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Shock Stick",
+      "productionId": "weapon-shock-stick",
+      "name": "Shock Stick",
+      "defaultProfileId": "native-stun",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Shock Whip",
+      "productionId": "weapon-shock-whip",
+      "name": "Shock Whip",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Shockboxing Gloves",
+      "productionId": "weapon-shockboxing-gloves",
+      "name": "Shockboxing Gloves",
+      "defaultProfileId": "unarmed-lethal",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "modifier",
+        "item": "0"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "SOURCE_SILENT"
+      }
+    },
+    {
+      "identityKey": "unmapped::Shockstaff",
+      "productionId": "weapon-shockstaff",
+      "name": "Shockstaff",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Short Sword",
+      "productionId": "weapon-short-sword",
+      "name": "Short Sword",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Shyarn",
+      "productionId": "weapon-shyarn",
+      "name": "Shyarn",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-siang-lance",
+      "productionId": "weapon-siang-lance",
+      "name": "Siang Lance",
+      "defaultProfileId": "ranged",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sith-lanvarok",
+      "productionId": "weapon-sith-lanvarok",
+      "name": "Sith Lanvarok",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sith-sword",
+      "productionId": "weapon-sith-sword",
+      "name": "Sith Sword",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sling",
+      "productionId": "weapon-sling",
+      "name": "Sling",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-slugthrower-pistol",
+      "productionId": "weapon-slugthrower-pistol",
+      "name": "Slugthrower Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-slugthrower-rifle",
+      "productionId": "weapon-slugthrower-rifle",
+      "name": "Slugthrower Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-snap-baton",
+      "productionId": "weapon-snap-baton",
+      "name": "Snap Baton",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-snare-pistol",
+      "productionId": "weapon-snare-pistol",
+      "name": "Snare Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "1d4"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-snare-rifle",
+      "productionId": "weapon-snare-rifle",
+      "name": "Snare Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "1d6"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sonic-disruptor",
+      "productionId": "weapon-sonic-disruptor",
+      "name": "Sonic Disruptor",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the canonical record states a qualifier (e.g. sonic) on an energy type; the Item shows the qualifier as its type (damage-type-rules expands sonic into energy)",
+        "item": [
+          "sonic"
+        ],
+        "canonical": [
+          "energy"
+        ],
+        "qualifiers": [
+          "sonic"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sonic-pistol",
+      "productionId": "weapon-sonic-pistol",
+      "name": "Sonic Pistol",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the canonical record states a qualifier (e.g. sonic) on an energy type; the Item shows the qualifier as its type (damage-type-rules expands sonic into energy)",
+        "item": [
+          "sonic"
+        ],
+        "canonical": [
+          "energy"
+        ],
+        "qualifiers": [
+          "sonic"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sonic-rifle",
+      "productionId": "weapon-sonic-rifle",
+      "name": "Sonic Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the canonical record states a qualifier (e.g. sonic) on an energy type; the Item shows the qualifier as its type (damage-type-rules expands sonic into energy)",
+        "item": [
+          "sonic"
+        ],
+        "canonical": [
+          "energy"
+        ],
+        "qualifiers": [
+          "sonic"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-sonic-stunner",
+      "productionId": "weapon-sonic-stunner",
+      "name": "Sonic Stunner",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "3d6"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-firelance-blaster-rifle",
+      "productionId": "weapon-firelance-blaster-rifle",
+      "name": "SoroSuub Firelance Blaster Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Spear",
+      "productionId": "weapon-spear",
+      "name": "Spear",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-battering-ram",
+      "productionId": "weapon-battering-ram",
+      "name": "Squib Battering Ram",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-squib-tensor-rifle",
+      "productionId": "weapon-squib-tensor-rifle",
+      "name": "Squib Tensor Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Static Pike",
+      "productionId": "weapon-static-pike",
+      "name": "Static Pike",
+      "defaultProfileId": "melee",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item lists a subset of the canonical types; the canonical record additionally keeps the physical subtype (e.g. a lightsaber is energy AND slashing)",
+        "item": [
+          "energy"
+        ],
+        "canonical": [
+          "energy",
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-stokhli-spray-stick",
+      "productionId": "weapon-stokhli-spray-stick",
+      "name": "Stokhli Spray Stick",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "3d8"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-stun-baton",
+      "productionId": "weapon-stun-baton",
+      "name": "Stun Baton",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-stun-pistol",
+      "productionId": "weapon-stun-pistol",
+      "name": "Stun Pistol",
+      "defaultProfileId": "native-stun",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "3d6"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "the Item shows stun as its type; the canonical record states the damage type and a stun capability / profile",
+        "item": [
+          "stun"
+        ],
+        "canonical": [
+          "energy"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Stunning Gauntlet",
+      "productionId": "weapon-stunning-gauntlet",
+      "name": "Stunning Gauntlet",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "inherited",
+        "item": "0"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "SOURCE_SILENT"
+      }
+    },
+    {
+      "identityKey": "weapon-subrepeating-blaster",
+      "productionId": "weapon-subrepeating-blaster",
+      "name": "Subrepeating Blaster",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Survival Knife",
+      "productionId": "weapon-survival-knife",
+      "name": "Survival Knife",
+      "defaultProfileId": "melee",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-tactical-tractor-beam",
+      "productionId": "weapon-tactical-tractor-beam",
+      "name": "Tactical Tractor Beam",
+      "defaultProfileId": "tractor",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-targeting-blaster-rifle",
+      "productionId": "weapon-targeting-blaster-rifle",
+      "name": "Targeting Blaster Rifle",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-targeting-laser",
+      "productionId": "weapon-targeting-laser",
+      "name": "Targeting Laser",
+      "defaultProfileId": "targeting",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "none",
+        "item": "-"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Tehkla Blade",
+      "productionId": "weapon-tehkla-blade",
+      "name": "Tehkla Blade",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-thermal-detonator",
+      "productionId": "weapon-thermal-detonator",
+      "name": "Thermal Detonator",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-thud-bug",
+      "productionId": "weapon-thud-bug",
+      "name": "Thud Bug",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-verpine-shattergun",
+      "productionId": "weapon-verpine-shattergun",
+      "name": "Verpine Shatter Gun",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Vibro-Ax",
+      "productionId": "weapon-vibro-ax",
+      "name": "Vibro-Ax",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Vibro-Saw",
+      "productionId": "weapon-vibro-saw",
+      "name": "Vibro-Saw",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Vibrobayonet",
+      "productionId": "weapon-vibrobayonet",
+      "name": "Vibrobayonet",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-vibroblade",
+      "productionId": "weapon-vibroblade",
+      "name": "Vibroblade",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Vibroblade, Double",
+      "productionId": "weapon-vibroblade-double",
+      "name": "Vibroblade, Double",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-vibrodagger",
+      "productionId": "weapon-vibrodagger",
+      "name": "Vibrodagger",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Vibroknucklers",
+      "productionId": "weapon-vibroknucklers",
+      "name": "Vibroknucklers",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "modifier",
+        "item": "0"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Vibrolance",
+      "productionId": "weapon-vibrolance",
+      "name": "Vibrolance",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Vibrorapier",
+      "productionId": "weapon-vibrorapier",
+      "name": "Vibrorapier",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-vibrosword",
+      "productionId": "weapon-vibrosword",
+      "name": "Vibrosword",
+      "defaultProfileId": "melee",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Wan-Shen",
+      "productionId": "weapon-wan-shen",
+      "name": "Wan-Shen",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "bludgeoning",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::War Sword",
+      "productionId": "weapon-war-sword",
+      "name": "War Sword",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "piercing",
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-wrist-rocket-launcher",
+      "productionId": "weapon-wrist-rocket-launcher",
+      "name": "Wrist Rocket Launcher",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "CANONICAL_NOT_COMPARABLE",
+        "canonicalMode": "varies-by-payload",
+        "item": "3d8"
+      },
+      "damageType": {
+        "result": "SOURCE_SILENT"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "weapon-xerrol-nightstinger",
+      "productionId": "weapon-xerrol-nightstinger",
+      "name": "Xerrol Nightstinger",
+      "defaultProfileId": "primary",
+      "profileCount": 1,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "MATCH"
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    },
+    {
+      "identityKey": "unmapped::Zhaboka",
+      "productionId": "weapon-zhaboka",
+      "name": "Zhaboka",
+      "defaultProfileId": "end1",
+      "profileCount": 2,
+      "branch": {
+        "result": "MATCH"
+      },
+      "dice": {
+        "result": "MATCH"
+      },
+      "damageType": {
+        "result": "KNOWN_CONVENTION",
+        "why": "D-016: the Item folds the physical subtypes (slashing / piercing / bludgeoning) into kinetic; the canonical record keeps the subtype",
+        "item": [
+          "kinetic"
+        ],
+        "canonical": [
+          "slashing"
+        ]
+      },
+      "weight": {
+        "result": "MATCH"
+      }
+    }
+  ]
+}
