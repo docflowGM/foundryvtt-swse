@@ -578,8 +578,12 @@ function buildActionGroups(combatActions, actionEconomy = {}) {
       cost: item?.cost ?? '',
       executable,
       economyAvailable: availability.available,
-      canUseNow: executable && availability.available,
-      unavailableReason: executable ? (availability.available ? '' : `${availability.label} action unavailable`) : 'This action cannot be used from the sheet.',
+      // eligibility (earned) gates availability (right now): a locked / unresolved / choice-pending action can never be used from the sheet
+      eligibility: item?.eligibility ?? null,
+      canUseNow: executable && availability.available && item?.eligibility?.execution?.allowed !== false,
+      unavailableReason: item?.eligibility?.execution?.allowed === false
+        ? (item.eligibility.execution.reason || 'This actor has not unlocked this action.')
+        : (executable ? (availability.available ? '' : `${availability.label} action unavailable`) : 'This action cannot be used from the sheet.'),
       useLabel: item?.useLabel || 'Use',
       description: normalizeText(item?.description || item?.notes),
       itemId: item?.itemId || '',

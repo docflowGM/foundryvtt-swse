@@ -37,6 +37,7 @@ import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/c
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
 import { AbilityCombatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/ability-combat-action-resolver.js";
+import { evaluateCombatActionEligibility, authorizeCombatActionExecution } from "/systems/foundryvtt-swse/scripts/engine/combat/features/combat-action-eligibility.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/talent/guardian-spirit-actions.js";
 import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/consular-talent-actions.js";
@@ -1625,10 +1626,17 @@ const forcePoints = [];
         spendAction: action.spendAction !== false,
         requiresSelectedChoice: action.requiresSelectedChoice === true,
         requiredContext: action.requiredContext || [],
+        requirements: action.requirements || [],
+        restriction: action.restriction || '',
+        origin: action.origin || '',
         targetHint: action.targetHint || '',
         ruleData: action.ruleData || null,
         isAttack: action.isAttack === true
       };
+      // Eligibility (who has earned / may perform this action) is separate from availability (economy, grapple, context). See combat-action-eligibility.js.
+      row.eligibility = evaluateCombatActionEligibility(this.actor, row);
+      row.entitled = row.eligibility.state === 'unlocked';
+      if (row.eligibility.execution.allowed !== true) { row.economyAvailable = false; row.eligibilityBlocked = true; }
       const grappleRestriction = GrappleStateEngine.evaluateAction(this.actor, row);
       if (grappleRestriction?.restricted) {
         row.grappleRestricted = true;
@@ -1673,6 +1681,7 @@ const forcePoints = [];
             ...action,
             key: action.key || `combat:${index}`,
             sourceName: 'Combat Actions Compendium',
+            origin: 'catalog',
             executable: action.executable !== false,
             useLabel: action.executable === false ? 'Review' : (action.relatedSkills?.length ? 'Roll / Use' : 'Use')
           });
@@ -1696,6 +1705,7 @@ const forcePoints = [];
             description: action.description ?? action.notes,
             relatedSkills: action.relatedSkills || [],
             sourceName: 'Core Combat Action',
+            origin: 'catalog',
             executable: action.executable !== false,
             useLabel: action.executable === false ? 'Review' : (action.relatedSkills?.length ? 'Roll / Use' : 'Use')
           }));
@@ -1721,6 +1731,7 @@ const forcePoints = [];
           relatedSkills: item.system?.relatedSkills ?? [],
           sourceName: item.flags?.swse?.sourceSpecies ?? item.flags?.swse?.sourceName ?? item.system?.specialAbility?.sourceName ?? 'Special Ability',
           executable: true,
+          origin: 'actor-item',
           useLabel: 'Use'
         });
       }
@@ -1728,11 +1739,11 @@ const forcePoints = [];
       // Include action cards exposed by owned feats and talents. These are
       // source-item-owned action cards, not bespoke tree-specific code.
       for (const action of AbilityCombatActionResolver.getActions(this.actor)) {
-        registerAction(grouped, action);
+        registerAction(grouped, { ...action, origin: 'ability' });
       }
       // Combined-feat synthetic action cards (cross-feat interactions).
       for (const action of CombinedFeatActionResolver.getActions(this.actor)) {
-        registerAction(grouped, action);
+        registerAction(grouped, { ...action, origin: 'combined' });
       }
 
 
@@ -6771,6 +6782,18 @@ const forcePoints = [];
     return await rollSkillCheck(this.actor, skillKey, payload);
   }
 
+  /** The live sources the eligibility gate re-derives an action from (catalog, owned feat/talent cards, combined-feat cards). */
+  async _liveCombatActionSources() {
+    const actor = this.actor;
+    try { await CombatActionsMapper.init?.(); } catch (_err) { /* an uninitialised catalog yields no rows: unknown keys then fail closed */ }
+    const catalog = CombatActionsMapper.getAllCombatActions?.() || [];
+    return {
+      catalogRow: (key) => catalog.find((row) => row?.key === key) ?? null,
+      abilityRow: (key) => AbilityCombatActionResolver.getActions(actor).find((row) => row?.key === key) ?? null,
+      combinedRow: (key) => CombinedFeatActionResolver.getActions(actor).find((row) => row?.key === key) ?? null
+    };
+  }
+
   _resolveSheetCombatActionData(actionId, element = null) {
     const key = String(actionId || '');
     const actorActions = this.actor?.getFlag?.(game.system.id, "combatActions") ?? {};
@@ -7158,6 +7181,16 @@ const forcePoints = [];
   }
 
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
+    // EXECUTION boundary for combat actions: a hidden or disabled button is not a security boundary. The action is re-derived from the LIVE
+    // actor / catalog by its key (nothing the caller or a stale sheet claims is believed) and must be unlocked before any workflow runs.
+    if (options?.__combatWorkflowRouted !== true) {
+      const gate = authorizeCombatActionExecution(this.actor, actionId, await this._liveCombatActionSources());
+      if (!gate.allowed) {
+        ui?.notifications?.warn?.(gate.reason || 'This actor has not unlocked this action.');
+        return null;
+      }
+    }
+
     // Phase 1B: route combat actions through the thin workflow registry first.
     // The registry owns normalization/context preservation, while this sheet
     // method remains the legacy execution adapter for existing authorities.

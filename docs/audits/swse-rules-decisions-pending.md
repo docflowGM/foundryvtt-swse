@@ -2514,3 +2514,59 @@ The project owner gave these as provisional recommendations, expressly "not fina
 | Resolution | |
 
 - **Revision 55 (2026-11-10):** appended WPN-D-001.
+
+## CAE-001 — "Treat Poison": which evidence establishes "Trained in Treat Injury" and a Medical Kit? (combat action eligibility)
+
+| Field | Content |
+|---|---|
+| Decision ID | CAE-001 |
+| Rules domain | Combat actions / eligibility |
+| Feature | Combat action "Treat Poison" (`packs/combat-actions.db` key `treat-poison`; `data/combat-actions.json`) |
+| Source | The catalog record; the printed page is not re-verified in this pass |
+| Evidence | The runtime pack row carries the restriction only as prose in `notes` ("Trained in Treat Injury only. Requires Medical Kit."): `requirements` is empty. The JSON fallback row lists `requirements: ['Trained in Treat Injury', 'Medical Kit']`. No Medical Kit item authority exists in the repository. |
+| Confirmed behavior | The action is currently listed as a general action. Nothing in the pack gates it. The eligibility module will gate "Trained in <Skill>" from the actor's skill record and will report `Medical Kit` (JSON fallback only) as UNRESOLVED (fail closed). |
+| Unresolved question | Whether the sheet should gate Treat Poison on skill training and a Medical Kit at all, and which owned item identity counts as a Medical Kit. |
+| Options | None supported by a located source. |
+| Recommended ruling | None |
+| Implementation impact | Structured `requirements` on the pack row (a data edit) and an equipment-identity rule. Not implemented; the pack row is unchanged. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## CAE-002 — May the GM execute a combat action the actor has not unlocked? (combat action eligibility)
+
+| Field | Content |
+|---|---|
+| Decision ID | CAE-002 |
+| Rules domain | Combat actions / GM permissions |
+| Feature | The execution gate in `SWSEV2CharacterLikeSheet._runCanonicalCombatAction` |
+| Source | Project instruction: "Preserve GM permissions and established action-economy rules." |
+| Evidence | No existing rule or setting defines a GM override of feat/talent/species/Droid entitlement for combat actions. |
+| Confirmed behavior | The gate refuses a locked, unresolved or stale action for every user, the GM included. Action-economy and grapple restrictions are unchanged. |
+| Unresolved question | Whether a GM should be able to run a locked action on an actor's behalf, and how that would be recorded. |
+| Options | None supported by a located source. |
+| Recommended ruling | None |
+| Implementation impact | A GM-only bypass in the gate and a visible flag on the row; not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## CAE-003 — Droid-only evidence for feat/talent action cards, and cyborg-hybrid eligibility (combat action eligibility)
+
+| Field | Content |
+|---|---|
+| Decision ID | CAE-003 |
+| Rules domain | Combat actions / Droid rules |
+| Feature | Owned feat/talent action cards whose rule metadata says `requiresDroid` or `requiresDroidOrCyborgHybrid` (e.g. Distracting Droid, Sensor Link, Aiming Accuracy, Slammer; `scripts/engine/feats/droid-combat-feat-normalization-hooks.js`) |
+| Source | The feat rule metadata; printed pages not re-verified in this pass |
+| Evidence | `requiresDroid` is structured on the rule and is now honoured for a card whose `sourceActionId` equals the rule's `actionKey`. `requiresDroidOrCyborgHybrid` has no cyborg-hybrid authority in the Droid rules profile (`droid-combat-runtime-patches.js` decides it from name/species strings). Several of these feats expose no combat-action card in their metadata at all, so the link between the feat and a library row cannot be established. |
+| Confirmed behavior | A card with a structured `requiresDroid` link is locked for a non-Droid owner. |
+| Unresolved question | What counts as cyborg-hybrid evidence, and whether the feats that expose no card should expose one. |
+| Options | None supported by a located source. |
+| Recommended ruling | None |
+| Implementation impact | A cyborg-hybrid predicate in the Droid rules profile; card metadata for the feats without one. Not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 56 (2026-11-10):** appended CAE-001, CAE-002, CAE-003.

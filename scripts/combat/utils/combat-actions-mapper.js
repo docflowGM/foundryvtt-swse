@@ -425,6 +425,8 @@ export class CombatActionsMapper {
       notes: system.notes,
       notesAdvanced: system.notesAdvanced,
       restriction: system.restriction,
+      // structured entitlement evidence (read by combat-action-eligibility.js); kept separate from requiredContext, which also carries table/target context
+      requirements: Array.isArray(system.requirements) ? system.requirements : [],
       description: system.description ?? system.notes,
       relatedSkills: system.relatedSkills ?? [],
       dc: system.dc,

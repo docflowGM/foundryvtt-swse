@@ -1,6 +1,6 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js';
-import { buildFullAttackSequence, collectPlanAnswers, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { actorHasMultiAttackFor, buildFullAttackSequence, collectPlanAnswers, FULL_ATTACK_PACKAGES, getReadiedWeaponSelection, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
 import { attackSelectionOf } from '/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
@@ -231,7 +231,17 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
   const equipped = getReadiedWeaponSelection(actor);
   const planAnswers = await collectPlanAnswers(equipped.primary, {});
   let plan = buildFullAttackSequence(actor, { requestedPackage: spec.packageType, primaryWeapon: equipped.primary, answers: planAnswers });
-  if (!plan?.legal) plan = fallbackMultiAttackPlan(actor, spec, equipped.primary);
+  if (!plan?.legal) {
+    // The fallback plan only covers a plan the authority could not build for a NON-entitlement reason. It must never turn "the actor does not
+    // have Double/Triple Attack for this weapon" into a legal sequence (execution boundary: a hidden button is not a security boundary).
+    const kinds = spec.id === 'triple-attack' ? ['double', 'triple'] : ['double'];
+    const entitled = !!equipped.primary && kinds.every((kind) => actorHasMultiAttackFor(actor, kind, equipped.primary, { answers: planAnswers }));
+    if (!entitled) {
+      ui?.notifications?.warn?.(plan?.warnings?.join(' ') || `${spec.label} is not unlocked for this actor and weapon.`);
+      return;
+    }
+    plan = fallbackMultiAttackPlan(actor, spec, equipped.primary);
+  }
   if (!plan?.legal || !plan.attacks?.length) {
     ui?.notifications?.warn?.(plan?.warnings?.join(' ') || 'No legal multiattack sequence is available.');
     return;

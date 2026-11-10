@@ -90,6 +90,10 @@
 
 /* ---- 4. Combat action library -------------------------------------------------------------------------------------------------- */
 .swse-cmb .swse-cmb__library > details { margin-top: 0; }
+.swse-cmb .swse-cmb__cal-scopes { display: flex; gap: 4px; margin-top: 8px; }
+.swse-cmb .swse-cmb__cal-scope { padding: 3px 12px; font-size: 12.5px; color: var(--cmb-ink-2); background: transparent; border: 1px solid var(--cmb-line); cursor: pointer; }
+.swse-cmb .swse-cmb__cal-scope small { color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__cal-scope.is-active { color: var(--cmb-ink); background: var(--cmb-fill-strong); border-color: var(--cmb-line-strong); }
 .swse-cmb .swse-cmb__cal-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
 .swse-cmb .swse-cmb__cal-tab { padding: 3px 10px; font-size: 12.5px; color: var(--cmb-ink-2); background: transparent; border: 1px solid var(--cmb-line); cursor: pointer; }
 .swse-cmb .swse-cmb__cal-tab small { color: var(--cmb-ink-3); }
@@ -111,7 +115,8 @@
 .swse-cmb .swse-cmb__chip.is-dim { color: var(--cmb-ink-3); }
 .swse-cmb .swse-cmb__chip.is-available { color: var(--cmb-ok); }
 .swse-cmb .swse-cmb__chip.is-unavailable, .swse-cmb .swse-cmb__chip.is-warn { color: var(--cmb-warn); border-color: color-mix(in oklab, var(--cmb-warn) 40%, transparent); }
-.swse-cmb .swse-cmb__chip.is-reference { color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__chip.is-reference, .swse-cmb .swse-cmb__chip.is-locked { color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__cal-item.is-locked { opacity: .78; }
 
 /* ---- narrow sheets: keep everything reachable, drop nothing -------------------------------------------------------------- */
 @container cmb (max-width: 520px) {

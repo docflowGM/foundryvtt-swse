@@ -62,8 +62,8 @@ test('A5 the attack cards read ONLY the preview-backed view model: no legacy mir
 });
 test('A6 the library rows use the existing use-action handler, with an explicit name hook, and reference actions are not executable', () => {
   const lib = read(`${P}panels/combat-action-library.hbs`);
-  assert.ok(/\{\{#if a\.executable\}\}[\s\S]*data-action="swse-v2-use-action"[\s\S]*data-action-name="\{\{a\.name\}\}"[\s\S]*\{\{else\}\}[\s\S]*Reference only/.test(lib));
-  assert.ok(/data-action-id="\{\{a\.key\}\}"[^>]*\{\{#unless a\.canUseNow\}\}disabled/.test(lib), 'an unavailable action stays disabled and says why');
+  assert.ok(/\{\{#if a\.showUse\}\}[\s\S]*data-action="swse-v2-use-action"[\s\S]*data-action-name="\{\{a\.name\}\}"[\s\S]*\{\{else\}\}[\s\S]*Reference only/.test(lib));
+  assert.ok(/data-action-id="\{\{a\.key\}\}"[^>]*\{\{#unless a\.canUse\}\}disabled/.test(lib), 'an unavailable action stays disabled and says why');
   assert.ok(lib.includes('<details class="swse-cmb__lib" data-cmb-details="library">') && !/<details[^>]*\bopen\b/.test(lib), 'collapsed by default');
 });
 test('A7 browsing is DOM-only: the tab UI module never touches an actor, document, flag or update', () => {
@@ -187,7 +187,8 @@ test('B8 the card numbers equal what the real rollAttack / rollDamage produce fo
 // ---------------------------------------------------------------------------------------------------------------------------------------
 const { buildCombatActionLibrary, orderEconomySteps, LIBRARY_CATEGORIES } = await import('/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-action-library-context.js');
 const { matchesAction, compareActions, defaultCombatTabState } = await import('/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-tab-ui.js');
-const act = (o) => ({ key: 'k', name: 'N', laneKey: 'standard', cost: 1, executable: true, canUseNow: true, sourceName: 'S', description: 'd', itemId: '', ...o });
+const UNLOCKED = { state: 'unlocked', entitlement: ['general'], basis: [], missing: [], unresolved: [], reason: '', execution: { allowed: true, reason: '' } };
+const act = (o) => ({ key: 'k', name: 'N', laneKey: 'standard', cost: 1, executable: true, canUseNow: true, sourceName: 'S', description: 'd', itemId: '', eligibility: UNLOCKED, ...o });
 const groups = [
   { key: 'standard', items: [act({ key: 'a', name: 'Aim' }), act({ key: 'f', name: 'Fire', canUseNow: false, unavailableReason: 'Standard action unavailable' }), act({ key: 'r', name: 'Recall', executable: false })] },
   { key: 'swift', items: [act({ key: 'a', name: 'Aim', laneKey: 'swift' })] },
@@ -213,7 +214,7 @@ test('C2 only the default category is visible at first; availability is honest (
 });
 test('C3 search / availability filter / category are pure functions of the descriptors (browsing changes nothing)', () => {
   const lib = buildCombatActionLibrary(groups);
-  const d = lib.items.map((i) => ({ lane: i.laneKey, avail: i.availability, search: i.searchText, name: i.name, source: i.sourceName, cost: i.costLabel }));
+  const d = lib.items.map((i) => ({ lane: i.laneKey, scope: i.scope, avail: i.availability, search: i.searchText, name: i.name, source: i.sourceName, cost: i.costLabel }));
   const st = (o) => ({ ...defaultCombatTabState(), ...o });
   assert.equal(d.filter((x) => matchesAction(x, st({ tab: 'all' }))).length, 6);
   assert.deepEqual(d.filter((x) => matchesAction(x, st({ tab: 'all', query: 'aim' }))).map((x) => x.lane).sort(), ['standard', 'swift']);
@@ -231,7 +232,7 @@ test('C4 sort by name / source / cost / availability, ascending and descending (
 });
 test('C5 reset returns every control to its default; the economy steps read Standard, Move, Swift, Full-round, Reaction, Free', () => {
   const s = defaultCombatTabState();
-  assert.deepEqual([s.tab, s.query, s.avail, s.sort, s.dir, s.expanded.size], ['standard', '', 'all', 'name', 'asc', 0]);
+  assert.deepEqual([s.tab, s.query, s.avail, s.sort, s.dir, s.expanded.size, s.scope], ['standard', '', 'all', 'name', 'asc', 0, 'mine']);
   assert.deepEqual(orderEconomySteps([{ key: 'free' }, { key: 'full-round' }, { key: 'swift' }, { key: 'reaction' }, { key: 'move' }, { key: 'standard' }]).map((x) => x.key), ['standard', 'move', 'swift', 'full-round', 'reaction', 'free']);
   assert.deepEqual(LIBRARY_CATEGORIES.map((c) => c.key).at(-1), 'all');
 });
@@ -266,4 +267,28 @@ test('D4 an item-backed NPC attack whose weapon is not held shows an explicit no
   assert.equal(row.previewBlocked, true); assert.match(row.previewBlockedReason, /Not held/); assert.equal(row.preview, undefined);
   const npcTpl = read('templates/actors/npc/v2/partials/npc-concept-content.hbs');
   assert.ok(/\{\{else if attack\.previewBlocked\}\}[\s\S]*To hit —[\s\S]*Damage —/.test(npcTpl), 'the template shows dashes, not attack.attack / attack.damage, for a blocked row');
+});
+
+test('E1 the sheet row model carries a locked/unresolved eligibility result into the library as a disabled / reference entry', async () => {
+  const { buildActionGroupsForTest } = await import('/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js');
+  const locked = { state: 'locked', entitlement: ['feat'], basis: [], missing: ['Crush feat'], unresolved: [], reason: 'Requires Crush feat.', execution: { allowed: false, reason: 'Requires Crush feat.' } };
+  const groups = buildActionGroupsForTest({ groups: [{ key: 'standard', label: 'Standard', items: [
+    { key: 'a', name: 'Aim', actionType: 'standard', executable: true, eligibility: UNLOCKED },
+    { key: 'c', name: 'Crush Pinned Opponent', actionType: 'standard', executable: true, eligibility: locked }
+  ] }] }, {});
+  const rows = groups.flatMap((g) => g.items ?? []);
+  const crush = rows.find((r) => r.key === 'c'); const aim = rows.find((r) => r.key === 'a');
+  assert.equal(crush.canUseNow, false); assert.equal(crush.unavailableReason, 'Requires Crush feat.');
+  assert.equal(aim.canUseNow, true);
+  const lib = buildCombatActionLibrary(groups);
+  assert.equal(lib.items.find((i) => i.key === 'c').scope, 'reference');
+  assert.equal(lib.items.find((i) => i.key === 'a').scope, 'mine');
+});
+test('E2 scope filtering: My Actions hides reference entries; All Rules lists them; the descriptors are never mutated', () => {
+  const d = [{ lane: 'standard', scope: 'mine', avail: 'available', search: 'aim' }, { lane: 'standard', scope: 'reference', avail: 'locked', search: 'crush' }];
+  const st = (o) => ({ ...defaultCombatTabState(), tab: 'all', ...o });
+  const before = JSON.stringify(d);
+  assert.equal(d.filter((x) => matchesAction(x, st({}))).length, 1);
+  assert.equal(d.filter((x) => matchesAction(x, st({ scope: 'reference' }))).length, 2);
+  assert.equal(JSON.stringify(d), before);
 });

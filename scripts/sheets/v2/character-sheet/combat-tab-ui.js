@@ -7,14 +7,16 @@
  * (swse-v2-use-action, roll-attack, ...). This file never reads or writes an actor.
  */
 export const LIBRARY_TABS = Object.freeze(['standard', 'move', 'swift', 'full-round', 'reaction', 'free', 'all']);
-const AVAIL_RANK = { available: 0, unavailable: 1, reference: 2 };
+const AVAIL_RANK = { available: 0, unavailable: 1, reference: 2, locked: 3 };
+export const LIBRARY_SCOPES = Object.freeze(['mine', 'reference']);
 
 export function defaultCombatTabState() {
-  return { tab: 'standard', query: '', avail: 'all', sort: 'name', dir: 'asc', expanded: new Set(), open: { status: false, library: false, advanced: false } };
+  return { scope: 'mine', tab: 'standard', query: '', avail: 'all', sort: 'name', dir: 'asc', expanded: new Set(), open: { status: false, library: false, advanced: false } };
 }
 
-/** descriptor = { lane, avail, search } */
+/** descriptor = { lane, avail, search, scope }. My Actions lists only what the actor has unlocked; All Rules lists every rule action (locked ones are reference-only). */
 export function matchesAction(d, state) {
+  if ((state.scope ?? 'mine') === 'mine' && d.scope !== 'mine') return false;
   if (state.tab !== 'all' && d.lane !== state.tab) return false;
   if (state.avail !== 'all' && d.avail !== state.avail) return false;
   const terms = String(state.query ?? '').toLowerCase().split(/\s+/).filter(Boolean);
@@ -34,7 +36,7 @@ export function compareActions(a, b, { sort = 'name', dir = 'asc' } = {}) {
 }
 
 function describe(li) {
-  return { el: li, lane: li.dataset.lane, avail: li.dataset.avail, name: li.dataset.name ?? '', source: li.dataset.source ?? '', cost: li.dataset.cost ?? '', search: li.dataset.search ?? '', id: li.dataset.calId ?? '' };
+  return { el: li, lane: li.dataset.lane, scope: li.dataset.scope ?? 'mine', avail: li.dataset.avail, name: li.dataset.name ?? '', source: li.dataset.source ?? '', cost: li.dataset.cost ?? '', search: li.dataset.search ?? '', id: li.dataset.calId ?? '' };
 }
 
 function applyLibrary(root, state) {
@@ -51,12 +53,20 @@ function applyLibrary(root, state) {
     const detail = r.el.querySelector('[data-cal-detail]'); const head = r.el.querySelector('[data-cal-select]');
     if (detail) detail.hidden = !open; if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
+  // category counts follow the chosen scope (DOM only)
+  const inScope = rows.filter((r) => (state.scope ?? 'mine') === 'reference' || r.scope === 'mine');
+  for (const t of root.querySelectorAll('[data-cal-tab]')) {
+    const c = t.querySelector('[data-cal-tab-count]');
+    if (c) c.textContent = String(t.dataset.calTab === 'all' ? inScope.length : inScope.filter((r) => r.lane === t.dataset.calTab).length);
+  }
+  for (const b of root.querySelectorAll('[data-cal-scope]')) { const on = b.dataset.calScope === (state.scope ?? 'mine'); b.classList.toggle('is-active', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); }
+  const note = root.querySelector('[data-cal-scope-note]'); if (note) note.hidden = (state.scope ?? 'mine') !== 'reference';
   for (const t of root.querySelectorAll('[data-cal-tab]')) { const on = t.dataset.calTab === state.tab; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', on ? 'true' : 'false'); }
   const search = root.querySelector('[data-cal-search]'); if (search && search.value !== state.query) search.value = state.query;
   const av = root.querySelector('[data-cal-avail]'); if (av) av.value = state.avail;
   const so = root.querySelector('[data-cal-sort]'); if (so) so.value = state.sort;
   const dir = root.querySelector('[data-cal-dir]'); if (dir) { dir.dataset.dir = state.dir; dir.textContent = state.dir === 'asc' ? 'A→Z' : 'Z→A'; }
-  const count = root.querySelector('[data-cal-count]'); if (count) count.textContent = `${shown} of ${rows.length}`;
+  const count = root.querySelector('[data-cal-count]'); if (count) count.textContent = `${shown} of ${inScope.length}`;
   const empty = root.querySelector('[data-cal-empty]'); if (empty) empty.hidden = shown > 0;
 }
 
@@ -76,6 +86,8 @@ export function activateCombatTab(sheet, html, { signal } = {}) {
   if (!lib) return;
   applyLibrary(lib, state);
   lib.addEventListener('click', (ev) => {
+    const scopeBtn = ev.target.closest?.('[data-cal-scope]');
+    if (scopeBtn) { state.scope = LIBRARY_SCOPES.includes(scopeBtn.dataset.calScope) ? scopeBtn.dataset.calScope : 'mine'; return applyLibrary(lib, state); }
     const tab = ev.target.closest?.('[data-cal-tab]');
     if (tab) { state.tab = LIBRARY_TABS.includes(tab.dataset.calTab) ? tab.dataset.calTab : 'standard'; return applyLibrary(lib, state); }
     const sel = ev.target.closest?.('[data-cal-select]');
@@ -90,4 +102,4 @@ export function activateCombatTab(sheet, html, { signal } = {}) {
   }, opts);
 }
 
-export default { activateCombatTab, defaultCombatTabState, matchesAction, compareActions, LIBRARY_TABS };
+export default { activateCombatTab, defaultCombatTabState, matchesAction, compareActions, LIBRARY_TABS, LIBRARY_SCOPES };
