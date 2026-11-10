@@ -257,3 +257,28 @@ test('an unparseable / non-dice damage expression is shown as Variable with NO n
   const slot = ws.slots.find((s) => s.occupant)?.occupant?.preview;
   if (slot) assert.equal(slot.damageRangeLabel, '—');
 });
+
+// ---- agreement with the corrected damage math: the Item projection is deliberately MISSING or WRONG; the preview must still equal the real roll ----
+const bare = (id, key, grip = 'one-handed', apps = ONE, system = {}) => F.readiedWeapon(id, { key, wielded: grip, appendageIds: apps, system });
+test('canonical pistol with NO weaponCategory on the Item: no Strength in damage, preview equals the real roll (the defect this audit found)', async () => {
+  const w = bare('p0', 'weapon-blaster-pistol'); const A = hero([w]);
+  const p = await buildWeaponLoadoutPreview(A, w);
+  assert.equal(p.damageFormula, '3d6 + 2', 'was 3d6 + 5 before the damage-branch fix');
+  const real = await realRoll(A, w);
+  assert.equal(norm(p.damageFormula), norm(real.damageFormula)); assert.equal(p.attackBonus, real.attackBonus);
+});
+test('rifle, thrown weapon and a multi-profile weapon (default profile) with wrong Item metadata: preview equals the real roll', async () => {
+  const cases = [
+    ['rifle', bare('r1', 'weapon-blaster-rifle', 'two-handed', TWO, { weaponCategory: 'melee', meleeOrRanged: 'melee' })],
+    ['thrown discblade', bare('t1', 'weapon-discblade', 'one-handed', ONE, { weaponCategory: 'melee' })],
+    ['siang lance (ranged default)', bare('s1', 'weapon-siang-lance', 'two-handed', TWO, { weaponCategory: 'melee', meleeOrRanged: 'melee' })]
+  ];
+  for (const [label, w] of cases) {
+    const A = hero([w]);
+    const p = await buildWeaponLoadoutPreview(A, w);
+    assert.equal(p.calculationStatus, 'established', `${label}: ${p.explanation}`);
+    const real = await realRoll(A, w);
+    assert.equal(norm(p.damageFormula), norm(real.damageFormula), `${label}: damage formula`);
+    assert.equal(p.attackBonus, real.attackBonus, `${label}: attack total`);
+  }
+});
