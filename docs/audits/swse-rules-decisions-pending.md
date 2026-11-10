@@ -2474,3 +2474,23 @@ The project owner gave these as provisional recommendations, expressly "not fina
 | WPN-W2-001 | Keep `Custom / GM` available but require an explicit, attributable adjudicated penalty rather than assuming zero | Not so: `custom` applies no canonical penalty and the Custom Modifier field carries any adjustment | Dialog and `assertAttackFormResolvable` change; not made until ruled |
 
 - **Revision 53 (2026-11-10):** appended WPN-B-001 and the owner's provisional recommendations for WPN-W1-001, WPN-W1-002 and WPN-W2-001.
+
+## WPN-M12-001 — Cover state and the published area-attack cover damage negation (weapon three-gate M-12)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-M12-001 |
+| Rules domain | Combat / area attacks / cover |
+| Feature | Ability rules of type `area-attack-cover-damage-negation` (`requiresCover`, `appliesToAreaAttacks`), e.g. an Advantageous-Cover style feat or talent |
+| Source | The ability's own structured rule; the printed page of each carrying ability is not re-verified in this audit |
+| Evidence | `SkillFeatRuntime.resolveAreaAttackCoverDamageDisposition` negates area damage when the target owns such a rule AND the damage context carries cover (`context.cover`, `defense.cover`, `targetContext.cover`, or a `*-cover` text). A real attack's workflow context carries no cover fact at all: the roll dialog's cover choice only becomes a numeric defense bonus (`targetContext.coverBonus`). Verified by a known-gap test on the real attack path. |
+| Confirmed behavior | The negation rule itself works when the damage context says the target has cover (tested at the packet seam). Evasion and Improved Evasion now reach canonical area attacks (fixed in this audit). |
+| Unresolved question | Which cover degrees count as "cover" for `requiresCover` (the dialog offers none / partial / cover / improved / total), and whether the dialog's cover choice or a measured fact should be the evidence. |
+| Options | None supported by a located source. |
+| Recommended ruling | None |
+| Implementation impact | The attack workflow would carry a `cover` fact to damage; blocked on the degree question. Not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 54 (2026-11-10):** appended WPN-M12-001.

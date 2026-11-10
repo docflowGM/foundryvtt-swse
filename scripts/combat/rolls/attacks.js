@@ -442,7 +442,7 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
     : cd.areaShape;
   let nextOptions = rollOptions;
   if (areaShape?.isArea) {
-    nextOptions = { ...nextOptions, isAreaAttack: true, areaAttack: true, ruleData: { ...(nextOptions.ruleData ?? {}), areaAttack: true, ...(areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } };
+    nextOptions = { ...nextOptions, isAreaAttack: true, areaAttack: true, ruleData: { ...(nextOptions.ruleData ?? {}), areaAttack: true, evasionApplies: true, ...(areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } };
   }
   if (stage.contributions.length) {
     const contributions = stage.contributions.map((c) => createModifier({
@@ -1138,7 +1138,8 @@ export async function rollAttack(actor, weapon, options = {}) {
       // Phase 5D-I-B: the owned-state facts this attack was resolved with (damage must not rediscover them from a possibly changed Item)
       ...(specialStage.ownedExtras ?? {}),
     } : undefined,
-    ...(specialStage.areaShape?.isArea ? { isArea: true, ruleData: { areaAttack: true, ...(specialStage.areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } } : {}),
+    // weapon three-gate M-12: a canonical area form is Evasion-eligible (the project rule in damage-packet-rules / weapon-damage-packet-builder: an area attack that is not burst fire); without this the canonical path never reached Evasion
+    ...(specialStage.areaShape?.isArea ? { isArea: true, ruleData: { areaAttack: true, evasionApplies: true, ...(specialStage.areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } } : {}),
     // V-P6C-07 (project interpretation): an ordinary splash / area weapon resolved against ONE target at starship scale keeps the area-attack
     // miss rule (Core Special Combat Rules: Area Attacks): a hit deals full damage and a miss deals HALF. The flag is only the miss rule: it is
     // not the character-scale area (no Evasion / cover / critical semantics are added or removed by it).

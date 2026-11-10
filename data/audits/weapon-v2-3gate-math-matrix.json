@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "purpose": "Weapon three-gate Gate C: the 20-case mathematical fidelity matrix, each case anchored to the exact test that proves it. PROVEN = executed real-production assertion on the stated chain; PARTIAL = proven except for the named gap.",
   "summary": {
-    "PROVEN": 16,
-    "PARTIAL": 4,
+    "PROVEN": 19,
+    "PARTIAL": 1,
     "total": 20
   },
   "cases": [
@@ -151,18 +151,33 @@
       "id": "M-09",
       "title": "+1 weapon and Weapon Specialization",
       "provenance": "NEW",
-      "status": "PARTIAL",
+      "status": "PROVEN",
       "rule": "Enhancement and Weapon Specialization add to damage once each",
       "field": "Item flatDamageBonus; feat identity weapon-specialization",
       "consumer": "resolveDamageBonus",
-      "expected": "half level 2 + 1 + 2 = 5 on a 3d6 pistol",
+      "expected": "half level 2 + flat +1 + specialization +2 = 5 on a 3d6 pistol; a typed Effect Intent competence bonus resolves highestOnly (not both); Modification V2's certified effects (Durasteel Bonding critical die after the multiplier, Enhanced Energy Projector natural-1 reroll) execute through the real damage and reroll authorities. Modification V2 has no generic +N enhancement: its certified effects are specific.",
       "tests": [
         {
           "file": "tests/weapon-3gate-math-matrix.test.mjs",
           "needle": "M-09 +1 weapon and Weapon Specialization"
+        },
+        {
+          "file": "tests/damage-modifier-ssot.test.mjs",
+          "needle": "FIXED: competence damage bonuses from two different source paths"
+        },
+        {
+          "file": "tests/attack-bonus-math-integrity.test.mjs",
+          "needle": "Effect Intent channel"
+        },
+        {
+          "file": "tests/modification-v2-convergence.test.mjs",
+          "needle": "12: Durasteel Bonding"
+        },
+        {
+          "file": "tests/modification-v2-convergence.test.mjs",
+          "needle": "13: Enhanced Energy Projector"
         }
-      ],
-      "gap": "A typed active Effect Intent source and a Modification V2 enhancement were not exercised in this matrix (stacking collisions between typed sources are covered by damage-modifier-ssot)."
+      ]
     },
     {
       "id": "M-10",
@@ -188,22 +203,33 @@
       "id": "M-11",
       "title": "Stun / ion / alternate damage type",
       "provenance": "EXISTING",
-      "status": "PARTIAL",
+      "status": "PROVEN",
       "rule": "The selected form's damage type travels to the packet; target-specific consequences follow",
       "field": "damageTypes / damageMode on the selected profile",
       "consumer": "damage-type-rules + damage-packet-builder + mitigation",
-      "expected": "type retained; ion consequence on a vehicle target",
+      "expected": "type retained through the packet; stun: a character takes half in HP with the full amount compared to the threshold, a Droid is immune; ion: Droid and vehicle/device take half HP with full-amount threshold and condition-track effects, an ordinary organic is singed with no other effect, a cybernetic creature takes full damage",
       "tests": [
         {
-          "file": "tests/d016-physical-damage-type-flow.test.mjs",
-          "needle": "physical damage subtype"
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-11 stun"
         },
         {
           "file": "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
-          "needle": "ion"
+          "needle": "DROID: the ion rules apply"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+          "needle": "ORGANIC (Core p. 159)"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+          "needle": "CYBERNETIC PROSTHETICS (Core p. 137)"
+        },
+        {
+          "file": "tests/d016-physical-damage-type-flow.test.mjs",
+          "needle": "physical damage subtype"
         }
-      ],
-      "gap": "Stun's HP-halving consequence on a character target and ion against a Droid target were not located as an executing test in this pass."
+      ]
     },
     {
       "id": "M-12",
@@ -213,7 +239,7 @@
       "rule": "Area attack: a hit deals full damage, a miss half; no blanket minimum-1 floor",
       "field": "ruleData.halfDamageOnMiss; attack.isArea",
       "consumer": "damage-packet-builder.resolveDamageDisposition",
-      "expected": "miss = half, never floored to 1",
+      "expected": "area miss = half (certified policy), never floored to 1; an area HIT of a weapon still takes the minimum-1; Evasion negates a missed area attack and Improved Evasion halves an area hit, through the REAL canonical attack workflow (this pass fixed a defect: the canonical path never marked the attack Evasion-eligible); single-target attacks ignore Evasion",
       "tests": [
         {
           "file": "tests/vehicle-universal-phase4e-p36-area-miss-damage.test.mjs",
@@ -222,9 +248,25 @@
         {
           "file": "tests/weapon-3gate-w1-minimum-hit-damage.test.mjs",
           "needle": "area attack miss keeps its certified half-damage policy"
+        },
+        {
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-12 area miss with a weapon present"
+        },
+        {
+          "file": "tests/weapon-3gate-evasion-area-path.test.mjs",
+          "needle": "Evasion (${name}): a MISSED area attack deals no damage"
+        },
+        {
+          "file": "tests/weapon-3gate-evasion-area-path.test.mjs",
+          "needle": "Improved Evasion (${name}): a hit deals half"
+        },
+        {
+          "file": "tests/weapon-3gate-evasion-area-path.test.mjs",
+          "needle": "KNOWN GAP (WPN-M12-001"
         }
       ],
-      "gap": "Evasion and cover interaction with the area-miss stage were not re-verified in this pass."
+      "gap": "Cover negation of area damage (WPN-M12-001): a real attack's workflow does not carry cover state to the damage stage, so the published area-attack cover damage negation cannot trigger. Which cover degrees qualify is a rules question, left undecided. Pinned by a known-gap test."
     },
     {
       "id": "M-13",
@@ -266,11 +308,11 @@
       "id": "M-15",
       "title": "Installed vehicle gunner and weapon",
       "provenance": "EXISTING",
-      "status": "PARTIAL",
+      "status": "PROVEN",
       "rule": "Vehicle weapon damage uses the certified installation and vehicle formula; no personal half level or Strength",
       "field": "vehicle weapon authority / sealed installation provenance",
       "consumer": "resolveVehicleWeaponDamage; getDamageAbilityContribution vehicle guard",
-      "expected": "vehicle formula, no personal bonuses",
+      "expected": "vehicle formula (weapon dice x multiplier), certified installation, no personal half level or Strength; the same cannon uses the character range table against a character target and the starship table against a vehicle; an ion/laser hit applies through to HP, threshold and condition track",
       "tests": [
         {
           "file": "tests/damage-modifier-ssot.test.mjs",
@@ -283,9 +325,16 @@
         {
           "file": "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
           "needle": "damage: Core vehicle formula"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs",
+          "needle": "SCALE: the same cannon uses the CHARACTER table"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+          "needle": "END TO END: weapon authority"
         }
-      ],
-      "gap": "Vehicle scale and certified-mount range were not re-run end to end in this pass."
+      ]
     },
     {
       "id": "M-16",
