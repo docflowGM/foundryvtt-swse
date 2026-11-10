@@ -2386,3 +2386,131 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 50 (2026-11-09):** appended EQ-W-001 (equipment weight scope). EQ-001, EQ-002 and EQ-003 were re-reviewed against the existing source evidence; no new evidence was found and all three remain `DEFERRED_RULES_REVIEW` and fail closed.
+
+## WPN-W1-001 — Minimum-1 weapon-hit damage versus the Saboteur Destructive multiplier (weapon three-gate audit W1)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-W1-001 |
+| Rules domain | Combat / damage; Saboteur class feature |
+| Feature | "A successful weapon hit always deals at least 1 point" (Core Rulebook, Combat Statistics > Damage) combined with Saboteur Destructive (damage roll doubled against vehicles / unattended objects) |
+| Source | Core Rulebook, Combat Statistics > Damage (minimum-1 on a hit); Saboteur Destructive per `data/class-features.json` `cf.saboteur.destructive` |
+| Evidence | The minimum applies to damage a successful hit deals. Destructive multiplies the damage roll before target defenses. Neither source states which is applied first when the roll is below 1. |
+| Confirmed behavior | A confirmed ordinary weapon hit never reaches mitigation below 1. Destructive multiplies a positive roll by 2 before mitigation. |
+| Unresolved question | When the damage roll is 0 or negative and Destructive applies: is the floor applied to the doubled roll (result 1) or to the roll before doubling (1 doubled = 2)? |
+| Options | (a) floor after doubling: effective 1. (b) floor before doubling: effective 2. Both are consistent with the wording; neither is stated. |
+| Recommended ruling | None |
+| Implementation impact | `buildDamagePacket` currently takes (a) as the more conservative reading so no extra damage is created without a ruling. One line (`unfloored` / `minimumHitDamageApplied`). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## WPN-W1-002 — Minimum-1 weapon-hit damage when the hit was adjudicated by hand (no target defense carried)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-W1-002 |
+| Rules domain | Combat / damage workflow policy |
+| Feature | Applying the minimum-1 rule to a damage roll whose attack had no resolved hit state |
+| Source | Core Rulebook, Combat Statistics > Damage; existing packet policy ("No hit state; damage is GM/adjudication-controlled", `resolveDamageDisposition`) |
+| Evidence | When an attack is rolled without a target defense to compare against, `isHit` is null and the damage roll carries no hit evidence. The player and GM then decide the hit by hand. |
+| Confirmed behavior | The minimum-1 floor is applied only when a confirmed hit is carried in the workflow context. A detached damage roll is not assumed to be a hit. |
+| Unresolved question | Whether pressing Roll Damage on an attack with no resolved hit state should be treated as a GM-declared hit (floor applies) or remain unfloored until a hit is recorded. |
+| Options | (a) unfloored until a hit state is carried (current). (b) the damage card offers an explicit "hit confirmed by GM" toggle that sets the evidence. |
+| Recommended ruling | None |
+| Implementation impact | Without a target, a non-positive roll displays as 0 damage; the GM can type the amount manually. No code beyond the carried-evidence check exists. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 51 (2026-11-09):** appended WPN-W1-001 and WPN-W1-002 from the weapon three-gate W1 minimum-damage correction.
+
+## WPN-W2-001 — Roll dialog "Custom / GM" range band: required adjudication or silent zero? (weapon three-gate W2)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-W2-001 |
+| Rules domain | Combat / range workflow policy |
+| Feature | The roll dialog's `Custom / GM` range band for a canonical banded ranged form |
+| Source | Core Rulebook, Combat Statistics (range penalties 0 / -2 / -5 / -10 by band, Table 8-5, printed p.129); no printed rule covers a GM-chosen band |
+| Evidence | `custom` names no band, so the canonical band penalty is not applied (effective 0). The dialog's separate Custom Modifier field is how a GM currently supplies an adjustment. It is itemized in the breakdown but is not tied to range. |
+| Confirmed behavior | A bare numeric `rangePenalty` can no longer replace the canonical table. A reasoned adjudication from a GM user can (tested). |
+| Unresolved question | Should `Custom / GM` (a) require an explicit numeric range adjudication, (b) become a GM-only audit-stamped override, or (c) stay as is (zero canonical penalty plus Custom Modifier)? |
+| Options | (a), (b) or (c). All are consistent with the printed table, and none is printed. |
+| Recommended ruling | None |
+| Implementation impact | Currently (c), unchanged. Choosing (a) or (b) changes the dialog and `assertAttackFormResolvable` only. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 52 (2026-11-10):** appended WPN-W2-001.
+
+## WPN-B-001 — Massassi lanvarok melee form: does the printed "two-handed" bind a Large wielder? (weapon three-gate Gate B)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-B-001 |
+| Rules domain | Weapon wielding / size |
+| Feature | Massassi lanvarok, melee profile (`attackProfiles[].wielding: "two-handed"`, weapon size Large) |
+| Source | Canonical weapon registry (`weapon-massassi-lanvarok`); the printed page is not re-verified in this audit |
+| Evidence | The size authority (`resolveEffectiveWieldingSize` + `resolveWielding`) already requires two hands for a Medium wielder and refuses a one-handed grip (`requires-two-hands`). For a Large wielder the same authority classifies the weapon one-handed and allows either grip. The profile field says "two-handed" without naming a wielder size. |
+| Confirmed behavior | A Medium wielder must use two hands (enforced and tested). The profile field adds no further consumer. |
+| Unresolved question | Whether "two-handed" is a statement of the weapon's design that also binds a Large wielder, or only a restatement of the size rule for Medium wielders. |
+| Options | (a) the field is a restatement of the size rule (current behavior). (b) the field is an independent two-hands requirement for every wielder size. |
+| Recommended ruling | None |
+| Implementation impact | Under (b), `wieldingConstraintsOf` would need to read the profile field. Nothing is changed now. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### Owner recommendations received 2026-11-10 (provisional, NOT rulings)
+
+The project owner gave these as provisional recommendations, expressly "not final source-certified rulings". They are recorded for the review and **do not change status, behavior or the authorization boundary**. A ruling still needs the owner's explicit decision; the printed rule and the Destructive wording are still to be confirmed against source.
+
+| Decision ID | Owner's provisional recommendation | Current implementation | Gap if adopted |
+|---|---|---|---|
+| WPN-W1-001 | Apply the minimum-1 floor after the applicable damage multipliers and before defensive mitigation | Already so (the floor is applied after the Destructive multiplier, at the packet seam) | none |
+| WPN-W1-002 | Do not infer a confirmed hit from a manually entered damage roll; require explicit hit evidence for the automatic floor | Already so (no carried hit evidence means no floor) | none |
+| WPN-W2-001 | Keep `Custom / GM` available but require an explicit, attributable adjudicated penalty rather than assuming zero | Not so: `custom` applies no canonical penalty and the Custom Modifier field carries any adjustment | Dialog and `assertAttackFormResolvable` change; not made until ruled |
+
+- **Revision 53 (2026-11-10):** appended WPN-B-001 and the owner's provisional recommendations for WPN-W1-001, WPN-W1-002 and WPN-W2-001.
+
+## WPN-M12-001 — Cover state and the published area-attack cover damage negation (weapon three-gate M-12)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-M12-001 |
+| Rules domain | Combat / area attacks / cover |
+| Feature | Ability rules of type `area-attack-cover-damage-negation` (`requiresCover`, `appliesToAreaAttacks`), e.g. an Advantageous-Cover style feat or talent |
+| Source | The ability's own structured rule; the printed page of each carrying ability is not re-verified in this audit |
+| Evidence | `SkillFeatRuntime.resolveAreaAttackCoverDamageDisposition` negates area damage when the target owns such a rule AND the damage context carries cover (`context.cover`, `defense.cover`, `targetContext.cover`, or a `*-cover` text). A real attack's workflow context carries no cover fact at all: the roll dialog's cover choice only becomes a numeric defense bonus (`targetContext.coverBonus`). Verified by a known-gap test on the real attack path. |
+| Confirmed behavior | The negation rule itself works when the damage context says the target has cover (tested at the packet seam). Evasion and Improved Evasion now reach canonical area attacks (fixed in this audit). |
+| Unresolved question | Which cover degrees count as "cover" for `requiresCover` (the dialog offers none / partial / cover / improved / total), and whether the dialog's cover choice or a measured fact should be the evidence. |
+| Options | None supported by a located source. |
+| Recommended ruling | None |
+| Implementation impact | The attack workflow would carry a `cover` fact to damage; blocked on the degree question. Not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 54 (2026-11-10):** appended WPN-M12-001.
+
+## WPN-D-001 — Sith Sword "Dark Side Empowerment": is the bonus the Dark Side Score before or after its own +1? (weapon three-gate Gate B)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-D-001 |
+| Rules domain | Weapon special action / Dark Side Score |
+| Feature | Sith Sword, `operation.darkSideEmpowerment` (the printed page is not re-verified in this audit) |
+| Source | Canonical weapon registry, `weapon-sith-sword` |
+| Evidence | The record states: activation action swift; cost 1 Force Point; Dark Side Score increases by 1; effect "bonus to next Sith sword damage roll equal to wielder Dark Side Score"; expires after the next attack or end of encounter; requires proficiency. |
+| Confirmed behavior | None is implemented: no production consumer reads this key. The action, cost, +1 and duration are stated. |
+| Unresolved question | Whether the damage bonus equals the wielder's Dark Side Score as it stood before the activation's +1 or after it, and whether it is fixed at activation or read at the damage roll. |
+| Options | (a) the score after the +1, fixed at activation. (b) the score before the +1. (c) the score read when the damage is rolled. All fit the wording. |
+| Recommended ruling | None |
+| Implementation impact | A later consumer would reuse the stored one-shot damage-bonus pattern (`rapidAlchemy`), `ActorEngine.spendForcePoints`, `ActionEconomyConsumption.spend`, `DSPEngine` and the canonical proficiency check. Blocked on this ruling. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 55 (2026-11-10):** appended WPN-D-001.

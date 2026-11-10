@@ -477,7 +477,9 @@ try {
   reset(); assert.equal(await attack(A, pistol, { distanceSquares: 100 }), null, '100 squares is beyond a pistol\'s 80: refused'); assert.equal(spent.rolls, 0); assert.deepEqual(spent.actions, []);
   assert.match(notes.warn.concat(notes.error).join(' '), /out of range/i);
   for (const bad of [-1, 'far', NaN]) { reset(); assert.equal(await attack(A, pistol, { distanceSquares: bad }), null, `${bad}: invalid`); }
-  reset(); assert.ok(await attack(A, pistol, { distanceSquares: 100, rangeBand: 'long' }), 'an explicit band wins: the player named it');
+  reset(); assert.equal(await attack(A, pistol, { distanceSquares: 100, rangeBand: 'long' }), null, 'W2 (C-RNG-01): a band label never cancels a stated distance beyond every band'); assert.equal(spent.rolls, 0); assert.deepEqual(spent.actions, []);
+  reset(); assert.equal(await attack(A, pistol, { distanceSquares: 30, rangeBand: 'pointBlank' }), null, 'W2: contradictory distance + band is refused before any cost'); assert.equal(spent.rolls, 0); assert.deepEqual(spent.actions, []);
+  reset(); assert.ok(await attack(A, pistol, { distanceSquares: 30, rangeBand: 'short' }), 'W2: a band that agrees with the stated distance is accepted');
   reset(); assert.ok(await attack(A, pistol, {}), 'no distance stated: nothing to validate (unknown is not out of range)');
   // the discblade: thrown 12 squares max; pistol range with the talent extends it
   const disc = canon('weapon-discblade'); const without = makeActor({ items: [disc] });

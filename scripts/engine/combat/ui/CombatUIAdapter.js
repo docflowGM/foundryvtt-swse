@@ -229,6 +229,9 @@ export class CombatUIAdapter {
     const { RollEngine } = globalThis.SWSE;
 
     if (isVehicleManagedWeaponItem(weapon)) { ui?.notifications?.warn?.(`${weapon.name}: roll vehicle weapon damage from the attack result.`); return null; }
+    // weapon three-gate W7: a canonical weapon's damage is the selected profile's (damage.js via SWSERoll), never the Item-level field below
+    const { isCanonicalHintedWeapon, SWSECombat } = await import("/systems/foundryvtt-swse/scripts/combat/systems/enhanced-combat-system.js");
+    if (isCanonicalHintedWeapon(weapon)) return SWSECombat.rollDamage(attacker, weapon, target, opts);
     const dmgBonus = computeDamageBonus(attacker, weapon);
     const base = weapon.system?.damage ?? '1d6';
     const formula = `${base} + ${dmgBonus}`;

@@ -1,0 +1,424 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Weapon three-gate Gate C: the 20-case mathematical fidelity matrix, each case anchored to the exact test that proves it. PROVEN = executed real-production assertion on the stated chain; PARTIAL = proven except for the named gap.",
+  "summary": {
+    "PROVEN": 19,
+    "PARTIAL": 1,
+    "total": 20
+  },
+  "cases": [
+    {
+      "id": "M-01",
+      "title": "One-handed ordinary melee, L5 STR+3",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Core Rulebook, Combat Statistics > Damage: weapon dice + half heroic level + Strength",
+      "field": "canonical profile damage dice; actor level/STR",
+      "consumer": "combat-roll-math.resolveDamageComposition + buildDamageFormula",
+      "expected": "2d8 + 5 (Vibrosword)",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-w4-golden-arithmetic.test.mjs",
+          "needle": "M-01:"
+        }
+      ]
+    },
+    {
+      "id": "M-02",
+      "title": "Same actor wielding a non-light melee weapon two-handed",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Core Rulebook, Combat Statistics > Damage: double the Strength bonus two-handed (non-light)",
+      "field": "wieldedHands carried from the owned grip",
+      "consumer": "combat-stat-rules.getDamageAbilityContribution",
+      "expected": "2d8 + 8",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-w4-golden-arithmetic.test.mjs",
+          "needle": "M-02:"
+        }
+      ]
+    },
+    {
+      "id": "M-03",
+      "title": "Two-handed light weapon",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Core Rulebook, Combat Statistics > Damage: no doubled Strength with a light weapon",
+      "field": "weaponSizeClass / descriptor 'light'",
+      "consumer": "getDamageAbilityContribution",
+      "expected": "2d4 + 5 for one- and two-handed",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-w4-golden-arithmetic.test.mjs",
+          "needle": "M-03:"
+        }
+      ]
+    },
+    {
+      "id": "M-04",
+      "title": "L5 ordinary ranged 3d6 blaster",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Core Rulebook, Combat Statistics > Damage: ranged damage = dice + half level (no ability)",
+      "field": "profile branch ranged",
+      "consumer": "getDamageAbilityContribution",
+      "expected": "3d6 + 2",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-w4-golden-arithmetic.test.mjs",
+          "needle": "M-04:"
+        },
+        {
+          "file": "tests/weapon-3gate-damage-branch-authority.test.mjs",
+          "needle": "ordinary ranged weapons (pistol, rifle) never add Strength"
+        }
+      ]
+    },
+    {
+      "id": "M-05",
+      "title": "Thrown melee",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Core Rulebook, Combat Statistics > Damage: melee and thrown weapons add Strength to damage",
+      "field": "selected profile branch ranged + descriptor 'thrown'",
+      "consumer": "getDamageAbilityContribution (profile-driven, this audit)",
+      "expected": "half level 2 + STR 3 on the thrown profile; attack ability DEX",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-05 thrown melee"
+        },
+        {
+          "file": "tests/weapon-3gate-damage-branch-authority.test.mjs",
+          "needle": "attack side (already correct, locked)"
+        }
+      ]
+    },
+    {
+      "id": "M-06",
+      "title": "Bow / Sling",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Published bow / sling Strength damage, once",
+      "field": "operation.strengthModifierAppliesToDamage",
+      "consumer": "getDamageAbilityContribution",
+      "expected": "half level 2 + STR 3 = 5, once",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-06 bow / sling"
+        },
+        {
+          "file": "tests/weapon-phase-5d-i-a-core-attack-residuals.test.mjs",
+          "needle": "Strength damage for bow / sling applies once"
+        }
+      ]
+    },
+    {
+      "id": "M-07",
+      "title": "Negative Strength, two-handed non-light",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Core Rulebook, Combat Statistics > Damage: only a positive Strength bonus doubles",
+      "field": "actor STR modifier",
+      "consumer": "getDamageAbilityContribution",
+      "expected": "a penalty is applied once, not doubled",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-w4-golden-arithmetic.test.mjs",
+          "needle": "M-07:"
+        }
+      ]
+    },
+    {
+      "id": "M-08",
+      "title": "Chosen alternative attack mode",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Selected profile governs dice / type / range / proficiency",
+      "field": "attackProfiles[] selection (owned settingProfile / profileId)",
+      "consumer": "FireStateStore.applyOwnedSelection -> resolveCanonicalDamage",
+      "expected": "3d4 / 3d6 / 3d8 + 2 for Variable Blaster low / medium / high",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-08 alternative attack mode"
+        }
+      ]
+    },
+    {
+      "id": "M-09",
+      "title": "+1 weapon and Weapon Specialization",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Enhancement and Weapon Specialization add to damage once each",
+      "field": "Item flatDamageBonus; feat identity weapon-specialization",
+      "consumer": "resolveDamageBonus",
+      "expected": "half level 2 + flat +1 + specialization +2 = 5 on a 3d6 pistol; a typed Effect Intent competence bonus resolves highestOnly (not both); Modification V2's certified effects (Durasteel Bonding critical die after the multiplier, Enhanced Energy Projector natural-1 reroll) execute through the real damage and reroll authorities. Modification V2 has no generic +N enhancement: its certified effects are specific.",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-09 +1 weapon and Weapon Specialization"
+        },
+        {
+          "file": "tests/damage-modifier-ssot.test.mjs",
+          "needle": "FIXED: competence damage bonuses from two different source paths"
+        },
+        {
+          "file": "tests/attack-bonus-math-integrity.test.mjs",
+          "needle": "Effect Intent channel"
+        },
+        {
+          "file": "tests/modification-v2-convergence.test.mjs",
+          "needle": "12: Durasteel Bonding"
+        },
+        {
+          "file": "tests/modification-v2-convergence.test.mjs",
+          "needle": "13: Enhanced Energy Projector"
+        }
+      ]
+    },
+    {
+      "id": "M-10",
+      "title": "Weapon multiplier and critical multiplier",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Weapon damage x multiplier; extra weapon damage before it; a critical doubles the result",
+      "field": "dice.baseMultiplier; critical.multiplier",
+      "consumer": "buildDamageFormula",
+      "expected": "(10 + 2) x 2 = 24, critical 48",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-10 weapon multiplier and critical"
+        },
+        {
+          "file": "tests/weapon-phase-5d-e-multiplier-correction.test.mjs",
+          "needle": "x2 weapon on a critical applies both multipliers"
+        }
+      ]
+    },
+    {
+      "id": "M-11",
+      "title": "Stun / ion / alternate damage type",
+      "provenance": "EXISTING",
+      "status": "PROVEN",
+      "rule": "The selected form's damage type travels to the packet; target-specific consequences follow",
+      "field": "damageTypes / damageMode on the selected profile",
+      "consumer": "damage-type-rules + damage-packet-builder + mitigation",
+      "expected": "type retained through the packet; stun: a character takes half in HP with the full amount compared to the threshold, a Droid is immune; ion: Droid and vehicle/device take half HP with full-amount threshold and condition-track effects, an ordinary organic is singed with no other effect, a cybernetic creature takes full damage",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-11 stun"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+          "needle": "DROID: the ion rules apply"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+          "needle": "ORGANIC (Core p. 159)"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+          "needle": "CYBERNETIC PROSTHETICS (Core p. 137)"
+        },
+        {
+          "file": "tests/d016-physical-damage-type-flow.test.mjs",
+          "needle": "physical damage subtype"
+        }
+      ]
+    },
+    {
+      "id": "M-12",
+      "title": "Area miss, Evasion, cover",
+      "provenance": "EXISTING",
+      "status": "PARTIAL",
+      "rule": "Area attack: a hit deals full damage, a miss half; no blanket minimum-1 floor",
+      "field": "ruleData.halfDamageOnMiss; attack.isArea",
+      "consumer": "damage-packet-builder.resolveDamageDisposition",
+      "expected": "area miss = half (certified policy), never floored to 1; an area HIT of a weapon still takes the minimum-1; Evasion negates a missed area attack and Improved Evasion halves an area hit, through the REAL canonical attack workflow (this pass fixed a defect: the canonical path never marked the attack Evasion-eligible); single-target attacks ignore Evasion",
+      "tests": [
+        {
+          "file": "tests/vehicle-universal-phase4e-p36-area-miss-damage.test.mjs",
+          "needle": "halfDamageOnMiss"
+        },
+        {
+          "file": "tests/weapon-3gate-w1-minimum-hit-damage.test.mjs",
+          "needle": "area attack miss keeps its certified half-damage policy"
+        },
+        {
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-12 area miss with a weapon present"
+        },
+        {
+          "file": "tests/weapon-3gate-evasion-area-path.test.mjs",
+          "needle": "Evasion (${name}): a MISSED area attack deals no damage"
+        },
+        {
+          "file": "tests/weapon-3gate-evasion-area-path.test.mjs",
+          "needle": "Improved Evasion (${name}): a hit deals half"
+        },
+        {
+          "file": "tests/weapon-3gate-evasion-area-path.test.mjs",
+          "needle": "KNOWN GAP (WPN-M12-001"
+        }
+      ],
+      "gap": "Cover negation of area damage (WPN-M12-001): a real attack's workflow does not carry cover state to the damage stage, so the published area-attack cover damage negation cannot trigger. Which cover degrees qualify is a rules question, left undecided. Pinned by a known-gap test."
+    },
+    {
+      "id": "M-13",
+      "title": "NPC statblock flat attack / damage",
+      "provenance": "EXISTING",
+      "status": "PROVEN",
+      "rule": "The printed statblock total replaces BAB / ability; situational penalties still apply",
+      "field": "weapon.flags.swse.npc.{useFlat,flatAttackBonus,flatDamageFormula}",
+      "consumer": "resolveAttackBonus / rollDamage flat branch",
+      "expected": "published totals preserved, range penalty still applied",
+      "tests": [
+        {
+          "file": "tests/weapon-phase-5d-d-range-resource-consumption.test.mjs",
+          "needle": "NPC flat total keeps situational range penalty exactly as before"
+        },
+        {
+          "file": "tests/weapon-phase-5d-c-damage-consumption.test.mjs",
+          "needle": "flatW"
+        }
+      ]
+    },
+    {
+      "id": "M-14",
+      "title": "Stock droid imported attack / damage",
+      "provenance": "EXISTING",
+      "status": "PROVEN",
+      "rule": "The published stock-droid formula composes with on-roll rules without duplicating BAB",
+      "field": "flags.swse.stockDroidAttack",
+      "consumer": "resolveDamageBonus / resolveAttackBonus stock branch",
+      "expected": "published formula honoured, no double counting",
+      "tests": [
+        {
+          "file": "tests/stock-droid-damage-math.test.mjs",
+          "needle": "P0-4"
+        }
+      ]
+    },
+    {
+      "id": "M-15",
+      "title": "Installed vehicle gunner and weapon",
+      "provenance": "EXISTING",
+      "status": "PROVEN",
+      "rule": "Vehicle weapon damage uses the certified installation and vehicle formula; no personal half level or Strength",
+      "field": "vehicle weapon authority / sealed installation provenance",
+      "consumer": "resolveVehicleWeaponDamage; getDamageAbilityContribution vehicle guard",
+      "expected": "vehicle formula (weapon dice x multiplier), certified installation, no personal half level or Strength; the same cannon uses the character range table against a character target and the starship table against a vehicle; an ion/laser hit applies through to HP, threshold and condition track",
+      "tests": [
+        {
+          "file": "tests/damage-modifier-ssot.test.mjs",
+          "needle": "personal half-level must never apply to vehicle weapon damage"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p23-weapon-integrity.test.mjs",
+          "needle": "an untouched installed weapon resolves to its certified identity and damage"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p21-weapon-slice.test.mjs",
+          "needle": "damage: Core vehicle formula"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p35-vehicle-range.test.mjs",
+          "needle": "SCALE: the same cannon uses the CHARACTER table"
+        },
+        {
+          "file": "tests/vehicle-universal-phase4e-p27-ion-damage.test.mjs",
+          "needle": "END TO END: weapon authority"
+        }
+      ]
+    },
+    {
+      "id": "M-16",
+      "title": "Selected critical damage rider",
+      "provenance": "EXISTING",
+      "status": "PROVEN",
+      "rule": "A rider stays a separate typed component and takes the critical multiplier once",
+      "field": "damageComponents riders",
+      "consumer": "damage.js postDamageRider",
+      "expected": "rider rolled separately, critical applied once",
+      "tests": [
+        {
+          "file": "tests/weapon-phase-5d-e-multiplier-correction.test.mjs",
+          "needle": "Neuronic Whip"
+        }
+      ]
+    },
+    {
+      "id": "M-17",
+      "title": "1d4-5 on a confirmed weapon hit",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "Core Rulebook, Combat Statistics > Damage: a successful hit deals at least 1 damage",
+      "field": "damage.hit evidence",
+      "consumer": "damage-packet-builder.buildDamagePacket then DamageMitigationManager",
+      "expected": "effective 1 before mitigation; Damage Reduction 5 then takes HP loss to 0; raw total disclosed",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-math-matrix.test.mjs",
+          "needle": "M-17 low result on a confirmed weapon hit"
+        },
+        {
+          "file": "tests/weapon-3gate-w1-minimum-hit-damage.test.mjs",
+          "needle": "C-DMG-01"
+        }
+      ]
+    },
+    {
+      "id": "M-18",
+      "title": "Equipment / grip / readiness changes after the dialog opens",
+      "provenance": "EXISTING",
+      "status": "PROVEN",
+      "rule": "Revalidate before any spend; refuse; respect rollback",
+      "field": "revalidateAttackSource boundary",
+      "consumer": "attacks.js / enhanced-rolls revalidation",
+      "expected": "refused before the next expenditure or roll",
+      "tests": [
+        {
+          "file": "tests/equipment-e4c1-wp5-c2-attack-integrity.test.mjs",
+          "needle": "R4: equipment changed during a dialog / hook / payment boundary is caught"
+        }
+      ]
+    },
+    {
+      "id": "M-19",
+      "title": "Custom / legacy weapon with no canonical identity",
+      "provenance": "EXISTING",
+      "status": "PROVEN",
+      "rule": "Uncertified legacy weapons stay behind the readiness gate",
+      "field": "canonical identity",
+      "consumer": "attack-readiness-gate",
+      "expected": "refused, nothing spent",
+      "tests": [
+        {
+          "file": "tests/weapon-phase-5d-i-d-f-ammo-power-reload.test.mjs",
+          "needle": "an uncertified legacy weapon is refused by the gate and spends nothing"
+        }
+      ]
+    },
+    {
+      "id": "M-20",
+      "title": "Malformed canonical identity / no-damage form",
+      "provenance": "NEW",
+      "status": "PROVEN",
+      "rule": "A broken canonical identity never falls back to the Item dice (no silent 1d6)",
+      "field": "canonical identity registry",
+      "consumer": "resolveDamageComposition",
+      "expected": "refusal (throws), no fallback",
+      "tests": [
+        {
+          "file": "tests/weapon-3gate-w4-golden-arithmetic.test.mjs",
+          "needle": "M-20:"
+        }
+      ]
+    }
+  ]
+}

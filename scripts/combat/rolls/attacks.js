@@ -62,7 +62,7 @@ import { resolveWielding, resolveOpportunityEligibility, crewRegulationFor } fro
 import { resolveEffectiveWieldingSize } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js";
 import { evaluateProfileRequirements, forgoesDoubleStrength, slugOfIdentity } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/activation-requirements.js";
 import { abilityKeysOfActor } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
-import { resolveAttackWeaponRuntime, assertAttackFormResolvable, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
+import { resolveAttackWeaponRuntime, assertAttackFormResolvable, rangeBandForDistance, resolveAttackResourceCost, weaponFormRecord, resolveCanonicalDamage, effectiveDamageMode, resolveAttackShapeFor, resolveCanonicalAttackProficiency, attackSelectionOf, shapeOfWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { passiveDefenseAdjustment, resolveDisarmProtection } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-weapon-context.js";
 import { rangeGate, grabAttackPenalty } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/control-rules.js";
 import { resolveAttackStageModifiers, evaluateAttackOutcomeSpecials, summarizeMechanics, alternateDefenseOf, canonicalSizeName, resolveTargetRequirements, askSpecialQuestion, thresholdAdjustmentOf, targetRulesOf, isEffectOnlyForm } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/special-mechanics.js";
@@ -229,6 +229,12 @@ async function resolveOpportunityChoice(weapon, rollOptions) {
   return { rollOptions: { ...rollOptions, profileId: picked.profileId, aooChoice: picked.choice } };
 }
 
+/** Weapon three-gate W7: is this weapon canonical, or hinting a canonical identity that does not resolve (which must reach the canonical gate, never a legacy fallback)? */
+export function isCanonicalHintedWeapon(weapon) {
+  try { return resolveAttackWeaponRuntime(weapon, {}).source === 'canonical'; }
+  catch (_err) { return true; }
+}
+
 /**
  * Phase 5D-A: pure canonical weapon/profile resolution for an attack. Legacy/custom weapons return the options untouched;
  * a canonical weapon returns options carrying the resolved weaponRuntime and the selected profile's branch as attackType.
@@ -254,6 +260,16 @@ function withCanonicalWeaponRuntime(weapon, rollOptions, actor = null) {
     const infiltratorStun = damageMode === 'stun' && canDeclareInfiltratorUnarmedStun(actor,weapon);
     const weaponProfileMode = infiltratorStun ? 'normal' : damageMode;
     assertAttackFormResolvable(weaponRuntime, { damageMode: weaponProfileMode ?? null, rangeBand: rollOptions.rangeBand ?? null, distanceSquares: rollOptions.distanceSquares ?? null, actor });
+    // Weapon three-gate W3 (C-RNG-03): ONE effective range band per attack. When only a stated distance names the band (or the named band is
+    // not a recognized one, e.g. the dialog's "custom"), the band that distance falls in (already validated above, through the wielder's range
+    // grants and the form's maximum) is written into the attack options, so the attack penalty, the point-blank conditional damage, the
+    // damage-side range penalty and the serialized workflow context all read the same band instead of re-deriving it (or losing it).
+    let effectiveBand = null;
+    if (weaponRuntime.range?.status === 'banded' && weaponRuntime.branch === 'ranged' && !normalizeRangeBand(rollOptions.rangeBand)
+      && rollOptions.distanceSquares !== null && rollOptions.distanceSquares !== undefined && rollOptions.distanceSquares !== '') {
+      effectiveBand = rangeBandForDistance(weaponRuntime, actor, rollOptions.distanceSquares);
+    }
+    if (effectiveBand) rollOptions = { ...rollOptions, rangeBand: effectiveBand, rangeBandSource: 'distance' };
     // Phase 5D-D: the selected form's canonical per-attack resource units feed the existing AmmoSystem cost rule (read-only here;
     // spending still happens exactly once, in AmmoSystem.spendForWorkflow). 'pending' leaves the existing rule untouched.
     // Phase 5D-F: attack-shape legality of the selected form (firing constraints / fire modes) -- refused BEFORE any cost is spent
@@ -426,7 +442,7 @@ async function prepareCanonicalSpecialMechanics(weapon, rollOptions, actor = wea
     : cd.areaShape;
   let nextOptions = rollOptions;
   if (areaShape?.isArea) {
-    nextOptions = { ...nextOptions, isAreaAttack: true, areaAttack: true, ruleData: { ...(nextOptions.ruleData ?? {}), areaAttack: true, ...(areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } };
+    nextOptions = { ...nextOptions, isAreaAttack: true, areaAttack: true, ruleData: { ...(nextOptions.ruleData ?? {}), areaAttack: true, evasionApplies: true, ...(areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } };
   }
   if (stage.contributions.length) {
     const contributions = stage.contributions.map((c) => createModifier({
@@ -1122,7 +1138,8 @@ export async function rollAttack(actor, weapon, options = {}) {
       // Phase 5D-I-B: the owned-state facts this attack was resolved with (damage must not rediscover them from a possibly changed Item)
       ...(specialStage.ownedExtras ?? {}),
     } : undefined,
-    ...(specialStage.areaShape?.isArea ? { isArea: true, ruleData: { areaAttack: true, ...(specialStage.areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } } : {}),
+    // weapon three-gate M-12: a canonical area form is Evasion-eligible (the project rule in damage-packet-rules / weapon-damage-packet-builder: an area attack that is not burst fire); without this the canonical path never reached Evasion
+    ...(specialStage.areaShape?.isArea ? { isArea: true, ruleData: { areaAttack: true, evasionApplies: true, ...(specialStage.areaShape.halfDamageOnMiss ? { halfDamageOnMiss: true } : {}) } } : {}),
     // V-P6C-07 (project interpretation): an ordinary splash / area weapon resolved against ONE target at starship scale keeps the area-attack
     // miss rule (Core Special Combat Rules: Area Attacks): a hit deals full damage and a miss deals HALF. The flag is only the miss rule: it is
     // not the character-scale area (no Evasion / cover / critical semantics are added or removed by it).

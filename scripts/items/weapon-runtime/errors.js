@@ -30,6 +30,7 @@ export const ERROR_CODES = Object.freeze({
   RANGE_BRANCH_MISMATCH: 'range-branch-mismatch',
   RANGE_BAND_NOT_ALLOWED: 'range-band-not-allowed',
   RANGE_DISTANCE_OUT_OF_RANGE: 'range-distance-out-of-range',
+  RANGE_BAND_DISTANCE_MISMATCH: 'range-band-distance-mismatch',
   RANGE_FAMILY_MISMATCH: 'range-family-mismatch',
   END_UNAVAILABLE: 'double-weapon-end-unavailable',
   ATTACK_SHAPE_ILLEGAL: 'attack-shape-illegal',
