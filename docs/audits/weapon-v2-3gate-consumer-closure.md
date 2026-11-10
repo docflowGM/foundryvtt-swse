@@ -66,9 +66,9 @@ Evidence: of the 690 DIRECT_CONSUMER rows, 583 are `STATIC_ONLY` (the consumer p
 | `3b.qualityParameters` (63) | DEFERRED | **PARTIAL** | Only `inaccurate` has a demonstrated numeric consumer (`canonical-range.js`). `accurate` and `arc` are unverified. |
 | `3b.durability` (53) | DEFERRED | **BLOCKED_BY_SUBSYSTEM** | No production reference to `objectDurability` or `constructionRules` (grep). Object DR must not reuse creature DR. |
 | `3b.operation.utility-and-movement` (5) | DEFERRED | PARTIAL | `ascensionMode` has no consumer (below) |
-| `3b.profile.wielding` (1) | DEFERRED | **CONSUMED_VIA_DUPLICATE** | The size authority already forces two hands for a Medium wielder (tested); Large-wielder edge is WPN-B-001 |
+| `3b.profile.wielding` (1) | DEFERRED | **PARTIAL** | Equivalent to the size rule only for a Medium wielder (tested). Not called a complete duplicate: the Large-wielder case is WPN-B-001. |
 
-Historic 8 deferred, now: 4 closed or consumed through a duplicate (`3b.defensive`, proficiency routes, rule-selector riders, `profile.wielding`), 2 partial (`3b.wielding`, `3b.qualityParameters`), 1 blocked (`3b.durability`), 1 partial operation container (`utility-and-movement`, one GM-adjudicated key).
+Historic 8 deferred, now: 3 closed or consumed through a duplicate (`3b.defensive`, proficiency routes, rule-selector riders), 3 partial (`3b.wielding`, `3b.qualityParameters`, `profile.wielding`), 1 blocked (`3b.durability`), 1 partial operation container (`utility-and-movement`, one GM-adjudicated key).
 The 1,206 `NEW_CONSUMER_REQUIRED` paths in the 5B map are **not** 1,206 assignments. They are a 5B-era state, now superseded by the family dispositions above.
 
 ### 41 historical operation keys (final classification)
@@ -83,7 +83,7 @@ GM_ADJUDICATED 14, CONSUMED_VIA_DUPLICATE 11, BLOCKED_BY_SUBSYSTEM 6, SOURCE_UNR
 | Consumed duplicate (11) | 3 proficiency echoes (`alternateProficiency`, `wookiee*`), `surveillanceTaggerCompatibility`, `capacityGrenades`, `oneShotCapacity`, `powerLevelSwitchAction`, `singleShot`, `specialRateOfFire`, `protectedAtmosphereImmune`, `collapsedForm` | The same fact is consumed through another structured field. |
 | Descriptive (4) | `preferredMode`, `targeting`, `redirectionCrystalCompatibility`, `retractableStockOptional` | Non-executable. |
 
-`attackProfiles[].wielding` (Massassi lanvarok, "two-handed") is a **duplicate** of the size authority, which already forces two hands on a Medium wielder (tested). The Large-wielder edge is a rules question, registered as WPN-B-001, not decided.
+`attackProfiles[].wielding` (Massassi lanvarok, "two-handed") is **partially** consumed: the size authority already forces two hands on a Medium wielder (tested), but that shows equivalence for that configuration only. Whether the field also binds a Large wielder is a rules question, registered as WPN-B-001, not decided, so the field is not classed as a complete duplicate.
 
 ## Gate C: 20-case matrix
 **16 proven, 4 partial** (`data/audits/weapon-v2-3gate-math-matrix.json`). Every case lists its printed rule, canonical field, production consumer, expected result and the exact anchored test (`weapon-3gate-math-matrix` fails if an anchor disappears). "Existing" cases were located and anchored, not re-audited line by line against the printed page.

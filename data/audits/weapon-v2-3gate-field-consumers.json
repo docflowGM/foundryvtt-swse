@@ -37,10 +37,10 @@
     "fieldPaths": 2309,
     "byDisposition": {
       "BLOCKED_BY_SUBSYSTEM": 53,
-      "CONSUMED_VIA_DUPLICATE": 167,
+      "CONSUMED_VIA_DUPLICATE": 166,
       "DIRECT_CONSUMER": 690,
       "DISPLAY_ONLY": 442,
-      "PARTIAL_CONSUMER": 734,
+      "PARTIAL_CONSUMER": 735,
       "VALIDATION_ONLY": 223
     },
     "byRole": {
@@ -88,9 +88,9 @@
       },
       "byCurrentDisposition": {
         "BLOCKED_BY_SUBSYSTEM": 1,
-        "CONSUMED_VIA_DUPLICATE": 6,
+        "CONSUMED_VIA_DUPLICATE": 5,
         "DIRECT_CONSUMER": 36,
-        "PARTIAL_CONSUMER": 14
+        "PARTIAL_CONSUMER": 15
       }
     },
     "directConsumerByEvidence": {
@@ -677,7 +677,7 @@
     "3b.profile.wielding": {
       "historicalStatus": "DEFERRED",
       "fieldPaths": 1,
-      "disposition": "CONSUMED_VIA_DUPLICATE",
+      "disposition": "PARTIAL_CONSUMER",
       "consumer": {
         "module": "scripts/items/weapon-runtime/wielding-size.js",
         "probe": "resolveEffectiveWieldingSize"
@@ -685,8 +685,14 @@
       "entrypoint": "resolveCanonicalAttackStage -> resolveWielding (rollAttack)",
       "behaviorTest": "tests/weapon-3gate-ledger.test.mjs",
       "evidenceStatus": "STATIC_ONLY",
+      "consumed": [
+        "Medium wielder: the size authority already forces two hands on the Massassi lanvarok melee form (tested)"
+      ],
+      "residual": [
+        "whether the printed \"two-handed\" also binds a Large wielder, for whom the size authority allows one hand (WPN-B-001, not decided)"
+      ],
       "blockingDecision": null,
-      "note": "attackProfiles[].wielding \"two-handed\" (Massassi lanvarok melee, size Large) restates a fact the size authority already enforces: a Medium wielder cannot wield it one-handed (requires-two-hands). Open edge, not decided here: WPN-B-001 (Large wielder).",
+      "note": "attackProfiles[].wielding \"two-handed\" is equivalent to the size rule only for a Medium wielder; it is NOT classed as a complete duplicate until WPN-B-001 is ruled.",
       "reconciled": true
     },
     "3b.qualities": {
@@ -8569,7 +8575,7 @@
       "identityCount": 1,
       "occurrenceCount": 1,
       "role": "EXECUTION",
-      "disposition": "CONSUMED_VIA_DUPLICATE",
+      "disposition": "PARTIAL_CONSUMER",
       "consumer": {
         "module": "scripts/items/weapon-runtime/wielding-size.js",
         "probe": "resolveEffectiveWieldingSize"
@@ -8578,7 +8584,7 @@
       "evidenceStatus": "STATIC_ONLY",
       "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
-      "note": "attackProfiles[].wielding \"two-handed\" (Massassi lanvarok melee, size Large) restates a fact the size authority already enforces: a Medium wielder cannot wield it one-handed (requires-two-hands). Open edge, not decided here: WPN-B-001 (Large wielder)."
+      "note": "attackProfiles[].wielding \"two-handed\" is equivalent to the size rule only for a Medium wielder; it is NOT classed as a complete duplicate until WPN-B-001 is ruled."
     },
     {
       "fieldPath": "canonicalStats.availability",
