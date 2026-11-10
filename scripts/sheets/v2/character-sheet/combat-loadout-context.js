@@ -101,4 +101,28 @@ export function buildCombatLoadout({ readyViews = [], heldViews = new Map(), una
   return { cards, hasCards: cards.length > 0, count: cards.length, attackLocked, attackLockLabel, previewed: map.size > 0 };
 }
 
-export default { buildCombatLoadout };
+
+/**
+ * NPC / Follower combat tab: overlay the preview onto the attack rows that are backed by an owned weapon Item. Their Roll button already runs the
+ * CANONICAL attack, so the row must show the canonical numbers, not the Item's own attackBonus / damage fields. Statblock-only rows (no Item) keep their
+ * published values and flat roll untouched; no weapon Item is fabricated for them. A row backed by an Item that is not held shows an explicit "not held"
+ * state, never the Item's legacy numbers.
+ */
+export function overlayNpcAttackPreviews(rows = [], previews = null) {
+  const map = previews instanceof Map ? previews : new Map();
+  return asArray(rows).map((row) => {
+    const id = row?.itemId;
+    if (!id) return row;                                    // statblock-only attack: published numbers stand
+    const pv = map.get(id);
+    if (!pv) return { ...row, previewBlocked: true, previewBlockedReason: 'Not held: draw this weapon to see its attack' };
+    const established = pv.calculationStatus !== 'unresolved';
+    const hasRange = established && Number.isFinite(pv.minimumDamage) && Number.isFinite(pv.maximumDamage);
+    return { ...row, preview: {
+      toHitLabel: established ? signed(pv.attackBonus) : '—', damageRangeLabel: hasRange ? `${pv.minimumDamage}–${pv.maximumDamage}` : '—',
+      damageFormula: established ? (pv.damageFormula ?? '') : '', gripLabel: pv.gripLabel ?? '', stateLabel: pv.ready ? 'Readied' : 'Held · not drawn',
+      unavailable: !established, unavailableReason: !established ? (pv.explanation || 'Attack preview unresolved') : '', profileNote: pv.profileLabel ?? ''
+    } };
+  });
+}
+
+export default { buildCombatLoadout, overlayNpcAttackPreviews };

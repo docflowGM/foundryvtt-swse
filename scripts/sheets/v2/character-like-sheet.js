@@ -426,6 +426,7 @@ function hasForceSensitivityAccess(actor) {
   });
 }
 
+import { overlayNpcAttackPreviews } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-loadout-context.js";
 import { buildConceptSheetViewModel, buildActorCombatLoadout } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
 import { applyLoadoutPreviews } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js";
 import { dedupeCombatActionRows } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-action-identity.js";
@@ -2335,6 +2336,8 @@ const forcePoints = [];
     }
     // Combat tab, attack-first: the SAME preview map feeds the Active Attacks cards, so the Combat and Equipment tabs agree by construction.
     // A weapon whose preview is unresolved shows an explicit unavailable state; there is no fallback to an Item damage field.
+    // NPC / Follower: item-backed attack rows show the canonical preview (their Roll already runs the canonical attack); statblock-only rows keep published values
+    if (context.npcConcept?.attacks) context.npcConcept.attacks = overlayNpcAttackPreviews(context.npcConcept.attacks, loadoutPreviews);
     if (conceptLayout?.combat) {
       try {
         conceptLayout.combat.loadout = buildActorCombatLoadout(actor, { conceptCombat: conceptLayout.combat, previews: loadoutPreviews, attackLocked: combatStatus?.attackLocked === true, attackLockLabel: combatStatus?.attackLockLabel ?? '' });

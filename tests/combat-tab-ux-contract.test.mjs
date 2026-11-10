@@ -235,3 +235,35 @@ test('C5 reset returns every control to its default; the economy steps read Stan
   assert.deepEqual(orderEconomySteps([{ key: 'free' }, { key: 'full-round' }, { key: 'swift' }, { key: 'reaction' }, { key: 'move' }, { key: 'standard' }]).map((x) => x.key), ['standard', 'move', 'swift', 'full-round', 'reaction', 'free']);
   assert.deepEqual(LIBRARY_CATEGORIES.map((c) => c.key).at(-1), 'all');
 });
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+// D. NPC / Follower parity
+// ---------------------------------------------------------------------------------------------------------------------------------------
+const { overlayNpcAttackPreviews } = await import('/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-loadout-context.js');
+test('D1 the NPC combat tab reads Attacks first, then the economy card, then condition track and defenses', () => {
+  const npc = read('templates/actors/npc/v2/partials/npc-concept-content.hbs');
+  const i = (k) => npc.indexOf(k);
+  assert.ok(i('swse-npc-card--attacks') > 0 && i('swse-npc-card--attacks') < i('swse-npc-card--action-economy'));
+  assert.ok(i('swse-npc-card--action-economy') < i('swse-npc-card--condition') && i('swse-npc-card--condition') < i('swse-npc-card--defenses'));
+  // every NPC operation survives the reorder
+  for (const a of ['add-npc-weapon', 'roll-npc-statblock-attack', 'roll-npc-statblock-damage', 'swse-v2-open-item']) assert.ok(npc.includes(a), a);
+});
+test('D2 statblock-only attacks keep their published numbers and flat roll; no weapon Item is fabricated for them', () => {
+  const rows = [{ name: 'Claw', itemId: null, attack: '+9', damage: '1d6+4', canRollAttack: true }];
+  const out = overlayNpcAttackPreviews(rows, new Map([['x', { weaponId: 'x', calculationStatus: 'established' }]]));
+  assert.deepEqual(out[0], rows[0], 'untouched, same published values');
+  assert.equal(out[0].preview, undefined); assert.equal(out[0].previewBlocked, undefined);
+});
+test('D3 an item-backed NPC attack shows the canonical preview (not the Item fields its Roll no longer uses)', async () => {
+  const w = F.readiedWeapon('n1', { key: 'weapon-blaster-pistol', wielded: 'one-handed', appendageIds: ONE, system: { weaponCategory: 'ranged', attackBonus: 99, damage: '9d9' }, flags: { swse: { npc: { useFlat: true, flatAttackBonus: 7, flatDamageFormula: '2d6+3' } } } });
+  const npc = hero([w], 'npc', { bab: 0, level: 3, npcProfile: { mode: 'play', sourceAuthority: 'statblock' } });
+  const previews = await buildLoadoutPreviews(npc);
+  const [row] = overlayNpcAttackPreviews([{ name: 'Blaster', itemId: 'n1', attack: '+99', damage: '9d9' }], previews);
+  assert.deepEqual([row.preview.toHitLabel, row.preview.damageFormula, row.preview.damageRangeLabel, row.preview.stateLabel], ['+7', '2d6+3', '5–15', 'Readied']);
+});
+test('D4 an item-backed NPC attack whose weapon is not held shows an explicit not-held state with NO legacy numbers', () => {
+  const [row] = overlayNpcAttackPreviews([{ name: 'Rifle', itemId: 'gone', attack: '+99', damage: '9d9' }], new Map());
+  assert.equal(row.previewBlocked, true); assert.match(row.previewBlockedReason, /Not held/); assert.equal(row.preview, undefined);
+  const npcTpl = read('templates/actors/npc/v2/partials/npc-concept-content.hbs');
+  assert.ok(/\{\{else if attack\.previewBlocked\}\}[\s\S]*To hit —[\s\S]*Damage —/.test(npcTpl), 'the template shows dashes, not attack.attack / attack.damage, for a blocked row');
+});
