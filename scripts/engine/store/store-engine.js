@@ -46,7 +46,7 @@
  *   - purchase(context)           : Execute a verified commerce transaction [CONSOLIDATED]
  */
 
-import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/index.js";
+import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js";
 import { STORE_RULES } from "/systems/foundryvtt-swse/scripts/engine/store/store-constants.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
@@ -80,7 +80,7 @@ export class StoreEngine {
       logger().info('StoreEngine: Loading inventory', { useCache, ignorePolicies });
 
       // Load and process inventory through full pipeline
-      const index = await buildStoreIndex({ useCache });
+      const index = await buildStoreIndex({ refresh: useCache === false });
 
       if (!ignorePolicies) {
         // Apply legality/availability policies (future extensibility)

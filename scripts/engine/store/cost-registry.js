@@ -1,313 +1,72 @@
 /**
- * Store Cost Registry & Resolver
+ * Store Cost Registry
  *
- * Single authority for translating raw pack pricing into store-consumable costs.
+ * Typed translation of a canonical record's published price into a Store cost record, and of a
+ * cost record + GM policy (markup/discount) into final merchant prices.
  *
- * Handles:
- * - Structured new/used vehicle pricing
- * - Scalar droid pricing (when available)
- * - "Not publicly available" unavailable state
- * - Missing pricing detection
- *
- * Policy:
- * - Prefer structured { new, used } over composite costNumeric
- * - Preserve distinction between scalar, conditional, unavailable, missing
- * - No synthetic pricing; only use what exists in raw data
- * - costNumeric is treated as packed helper, not scalar truth
+ * Authorities:
+ *   items / droids : `system.cost` (a finite number of credits). Nothing else is read -- no costNumeric,
+ *                    no price strings. A missing or zero price is `missing`, never free.
+ *   vehicles       : the published source economics (`priceNew` / `priceUsed`) through the vehicle domain
+ *                    (`buildCanonicalVehicleCostRecord`). A used price is only ever a PUBLISHED used price.
+ * Cost states: priced (single) | conditional (new/used) | unavailable | missing.
  */
+import { buildCanonicalVehicleCostRecord } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-store-eligibility.js';
 
+const finitePositive = v => typeof v === 'number' && Number.isFinite(v) && v > 0;
 
-function parseCreditNumber(value) {
-  if (typeof value === 'number') {
-    return Number.isFinite(value) && value >= 0 ? value : null;
-  }
-  if (typeof value !== 'string') return null;
-  if (isReviewText(value)) return null;
-  const cleaned = value
-    .replace(/[,\s]/g, '')
-    .replace(/credits?|cr|credit/gi, '')
-    .trim();
-  if (!cleaned || /^[-—]+$/.test(cleaned)) return null;
-  const number = Number(cleaned);
-  return Number.isFinite(number) && number >= 0 ? number : null;
-}
-
-function isUnavailableText(value) {
-  if (typeof value !== 'string') return false;
-  const normalized = value.toLowerCase().trim();
-  return normalized.includes('not publicly available')
-    || normalized.includes('not available')
-    || normalized.includes('unavailable')
-    || normalized === 'n/a'
-    || normalized === 'na';
-}
-
-
-function isReviewText(value) {
-  if (typeof value !== 'string') return false;
-  const normalized = value.toLowerCase().trim();
-  return normalized.includes('source review')
-    || normalized.includes('needs review')
-    || normalized.includes('review required')
-    || normalized.includes('verify source');
-}
+const MISSING = Object.freeze({
+  costStatus: 'missing', pricingMode: 'none', baseCost: null, baseCostNew: null, baseCostUsed: null,
+  requiresCondition: false, defaultCondition: null, unavailabilityReason: 'noPublishedPrice', rawCostSource: null
+});
 
 /**
- * Build store cost record from raw document
- * @param {Object} rawDoc - Raw item document from pack
- * @returns {Object} Cost record with status, pricing fields, metadata
+ * @param {{type?:string, system?:object, economics?:object}} source  `economics` is the vehicle source economics
  */
-import { buildCanonicalVehicleCostRecord } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-store-eligibility.js";
-
-export function buildStoreCostRecord(rawDoc) {
-  // Source-backed vehicles price from their published economics only (new / used /
-  // not-for-sale / ambiguous / absent), never from the legacy mirrored system.cost.
-  const economics = rawDoc?.flags?.swse?.universalVehicleSource?.source?.economics;
-  if (rawDoc?.type === 'vehicle' && rawDoc?.flags?.swse?.universalVehicleSource?.source?.recordType === 'vehicle-source-entry')
-    return buildCanonicalVehicleCostRecord(economics);
-  const rawPricing = rawDoc?.__storeRawPricing || rawDoc?.__storeSource?.rawPricing || null;
-  const cost = rawPricing?.cost ?? rawDoc?.system?.cost;
-  const costNumeric = rawPricing?.costNumeric ?? rawDoc?.system?.costNumeric;
-
-  // Detect unavailable state: string values like "not publicly available"
-  if (isUnavailableCost(cost)) {
+export function buildStoreCostRecord(source = {}) {
+  if (source.type === 'vehicle') return buildCanonicalVehicleCostRecord(source.economics);
+  const cost = source.system?.cost;
+  if (finitePositive(cost)) {
     return {
-      costStatus: 'unavailable',
-      pricingMode: 'none',
-      baseCost: null,
-      baseCostNew: null,
-      baseCostUsed: null,
-      requiresCondition: false,
-      defaultCondition: null,
-      unavailabilityReason: 'notPubliclyAvailable',
-      rawCostSource: 'unavailable_string'
+      costStatus: 'priced', pricingMode: 'single', baseCost: cost, baseCostNew: null, baseCostUsed: null,
+      requiresCondition: false, defaultCondition: null, unavailabilityReason: null, rawCostSource: 'system.cost'
     };
   }
-
-  // Detect structured new/used pricing. Structured vehicle pricing is
-  // authoritative; never fall back to costNumeric because old vehicle packs
-  // used costNumeric as a packed helper that can concatenate new+used values.
-  if (isStructuredCost(cost)) {
-    const { validNew, validUsed } = extractStructuredCost(cost);
-    if (validNew !== null || validUsed !== null) {
-      return {
-        costStatus: 'conditional',
-        pricingMode: 'new-used',
-        baseCost: null,
-        baseCostNew: validNew,
-        baseCostUsed: validUsed,
-        requiresCondition: true,
-        defaultCondition: null,
-        unavailabilityReason: null,
-        rawCostSource: 'system.cost.new-used'
-      };
-    }
-    const values = [cost.new, cost.used];
-    const review = values.some(isReviewText);
-    const unavailable = values.length && values.every(value => isUnavailableText(value));
-    return {
-      costStatus: unavailable ? 'unavailable' : review ? 'missing' : 'missing',
-      pricingMode: 'none',
-      baseCost: null,
-      baseCostNew: null,
-      baseCostUsed: null,
-      requiresCondition: false,
-      defaultCondition: null,
-      unavailabilityReason: unavailable ? 'notPubliclyAvailable' : review ? 'sourceReviewRequired' : null,
-      rawCostSource: review ? 'system.cost.new-used.review' : 'system.cost.new-used.empty'
-    };
-  }
-
-  // Detect scalar numeric pricing. Prefer the explicit numeric helper, but
-  // tolerate source packs that keep cost as a string like "1,500 cr".
-  const parsedCostNumeric = parseCreditNumber(costNumeric);
-  if (parsedCostNumeric !== null) {
-    return {
-      costStatus: 'priced',
-      pricingMode: 'single',
-      baseCost: parsedCostNumeric,
-      baseCostNew: null,
-      baseCostUsed: null,
-      requiresCondition: false,
-      defaultCondition: null,
-      unavailabilityReason: null,
-      rawCostSource: 'system.costNumeric'
-    };
-  }
-
-  const parsedCost = parseCreditNumber(cost);
-  if (parsedCost !== null) {
-    return {
-      costStatus: 'priced',
-      pricingMode: 'single',
-      baseCost: parsedCost,
-      baseCostNew: null,
-      baseCostUsed: null,
-      requiresCondition: false,
-      defaultCondition: null,
-      unavailabilityReason: null,
-      rawCostSource: 'system.cost'
-    };
-  }
-
-  // No usable pricing
-  return {
-    costStatus: 'missing',
-    pricingMode: 'none',
-    baseCost: null,
-    baseCostNew: null,
-    baseCostUsed: null,
-    requiresCondition: false,
-    defaultCondition: null,
-    unavailabilityReason: null,
-    rawCostSource: null
-  };
+  return { ...MISSING };
 }
 
-/**
- * Resolve final store cost given a record and optional condition
- * @param {Object} record - Cost record from buildStoreCostRecord()
- * @param {Object} options - { condition: 'new' | 'used' | null, markup: number }
- * @returns {Object} { cost, costNew, costUsed, usedCondition }
- */
+function applyPolicy(base, markup, discount) {
+  if (!finitePositive(base)) return null;
+  const modifier = (1 + (Number(markup) || 0) / 100) * (1 - (Number(discount) || 0) / 100);
+  const result = Math.round(base * modifier);
+  return result > 0 ? result : null;
+}
+
+/** Final merchant prices for a cost record. A condition that has no published price stays null. */
 export function resolveStoreCost(record, options = {}) {
   const { condition = null, markup = 0, discount = 0 } = options;
-
-  // Unavailable or missing: no cost
-  if (record.costStatus === 'unavailable' || record.costStatus === 'missing') {
-    return {
-      cost: null,
-      costNew: null,
-      costUsed: null,
-      usedCondition: null
-    };
-  }
-
-  // Scalar pricing
+  const none = { cost: null, costNew: null, costUsed: null, usedCondition: null };
+  if (!record || (record.costStatus !== 'priced' && record.costStatus !== 'conditional')) return none;
   if (record.pricingMode === 'single') {
-    const base = record.baseCost ?? 0;
-    const final = applyMarkup(base, markup, discount);
-    return {
-      cost: final,
-      costNew: null,
-      costUsed: null,
-      usedCondition: null
-    };
+    return { ...none, cost: applyPolicy(record.baseCost, markup, discount) };
   }
-
-  // Conditional new/used pricing
   if (record.pricingMode === 'new-used') {
-    // A missing new/used price stays missing (null); it is never priced as 0. Markup and discount both apply (main's pricing rule).
-    const finalNew = record.baseCostNew == null ? null : applyMarkup(record.baseCostNew, markup, discount);
-    const finalUsed = record.baseCostUsed == null ? null : applyMarkup(record.baseCostUsed, markup, discount);
-
-    // Determine which to return as primary cost
-    let primaryCost = null;
-    let usedCondition = null;
-
-    if (condition === 'new') {
-      primaryCost = finalNew;
-      usedCondition = 'new';
-    } else if (condition === 'used') {
-      primaryCost = finalUsed;
-      usedCondition = 'used';
-    }
-    // else: no condition specified, return both new/used costs
-
+    const costNew = applyPolicy(record.baseCostNew, markup, discount);
+    const costUsed = applyPolicy(record.baseCostUsed, markup, discount);
     return {
-      cost: primaryCost,
-      costNew: finalNew,
-      costUsed: finalUsed,
-      usedCondition
+      cost: condition === 'new' ? costNew : condition === 'used' ? costUsed : null,
+      costNew, costUsed, usedCondition: condition === 'new' || condition === 'used' ? condition : null
     };
   }
-
-  // Unknown mode
-  return {
-    cost: null,
-    costNew: null,
-    costUsed: null,
-    usedCondition: null
-  };
+  return none;
 }
 
-/**
- * Check if a record is purchasable in the store
- * @param {Object} record - Cost record from buildStoreCostRecord()
- * @param {Object} options - { condition: 'new' | 'used' | null }
- * @returns {boolean}
- */
 export function isStorePurchasable(record, options = {}) {
   const { condition = null } = options;
-
-  if (record.costStatus !== 'priced' && record.costStatus !== 'conditional') {
-    return false;
+  if (record?.costStatus === 'priced') return finitePositive(record.baseCost);
+  if (record?.costStatus === 'conditional' && record.pricingMode === 'new-used') {
+    if (condition === 'new') return finitePositive(record.baseCostNew);
+    if (condition === 'used') return finitePositive(record.baseCostUsed);
   }
-
-  if (record.costStatus === 'priced') {
-    return true;
-  }
-
-  // Conditional: must have valid cost for requested condition
-  if (record.pricingMode === 'new-used') {
-    if (condition === 'new' && record.baseCostNew !== null && record.baseCostNew > 0) {
-      return true;
-    }
-    if (condition === 'used' && record.baseCostUsed !== null && record.baseCostUsed > 0) {
-      return true;
-    }
-    return false;
-  }
-
   return false;
-}
-
-/**
- * Private: Check if cost field contains unavailability string
- */
-function isUnavailableCost(cost) {
-  if (isUnavailableText(cost)) return true;
-
-  if (typeof cost !== 'object' || cost === null) {
-    return false;
-  }
-
-  const newVal = cost.new;
-  const usedVal = cost.used;
-
-  return isUnavailableText(newVal) && isUnavailableText(usedVal);
-}
-
-/**
- * Private: Check if cost is a structured { new, used } object
- */
-function isStructuredCost(cost) {
-  if (typeof cost !== 'object' || cost === null) {
-    return false;
-  }
-
-  return 'new' in cost || 'used' in cost;
-}
-
-/**
- * Private: Extract numeric new/used values, filtering out string placeholders
- */
-function extractStructuredCost(cost) {
-  return {
-    validNew: parseCreditNumber(cost.new),
-    validUsed: parseCreditNumber(cost.used)
-  };
-}
-
-/**
- * Private: Apply markup/modifier to a base cost
- */
-function applyMarkup(baseCost, markupPercent, discountPercent = 0) {
-  if (baseCost === null || baseCost === 0) {
-    return null;
-  }
-
-  // the GM's store markup and discount (house rules storeMarkup / storeDiscount), same arithmetic as pricing.calculateFinalCost
-  const modifier = (1 + (Number(markupPercent) || 0) / 100) * (1 - (Number(discountPercent) || 0) / 100);
-  return Math.max(0, Math.round(baseCost * modifier));
 }

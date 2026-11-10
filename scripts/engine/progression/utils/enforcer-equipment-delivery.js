@@ -11,7 +11,7 @@
  * Actors through the established StoreAcquisitionService/ActorEngine path.
  */
 import { StoreEngine } from '/systems/foundryvtt-swse/scripts/engine/store/store-engine.js';
-import { storeItemDocumentData } from '/systems/foundryvtt-swse/scripts/engine/store/normalizer.js';
+import { storeItemDocumentData, hydrateStoreListings } from '/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js';
 import { StoreAcquisitionService } from '/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { pendingEnforcerResources } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/enforcer-resources-entitlement.js';
@@ -35,6 +35,8 @@ export class EnforcerEquipmentDelivery {
   static async getEligibleInventory() {
     const result=await StoreEngine.getInventory({useCache:false,ignorePolicies:true});
     if(!result?.success||!result.inventory)throw new Error(result?.error||'Store compendium is unavailable');
+    // Source records are resolved synchronously by the delivery plan: hydrate the item listings first.
+    await hydrateStoreListings(result.inventory.allItems.filter(i=>i.type==='weapon'||i.type==='armor'||i.type==='equipment'));
     return result.inventory;
   }
   static async defer({actor,classLevel}={}) {

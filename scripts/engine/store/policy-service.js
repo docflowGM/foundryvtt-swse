@@ -11,7 +11,6 @@
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getStoreItemLookupIds } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
 
 export const STORE_AVAILABILITY_DEFAULTS = Object.freeze({
   standard: true,
@@ -224,9 +223,7 @@ function rebuildIndexMaps(index) {
   index.byCategory = new Map();
 
   for (const item of index.allItems || []) {
-    for (const lookupId of getStoreItemLookupIds(item)) {
-      index.byId.set(lookupId, item);
-    }
+    index.byId.set(item.id, item);   // exact source identity only; no aliases
 
     if (!index.byType.has(item.type)) index.byType.set(item.type, []);
     index.byType.get(item.type).push(item);

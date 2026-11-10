@@ -7,6 +7,7 @@
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { hydrateStoreListing } from '/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js';
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 import {
@@ -846,6 +847,13 @@ export class StoreSurfaceService {
 
       // Reload cart from actor flags (reflects any controller mutations)
       storeInstance.cart = storeInstance._loadCartFromActor();
+
+      // Index-first catalog: load the full canonical record (description, statblock) only for the inspected product.
+      const inspected = storeInstance.selectedProductId ? storeInstance.itemsById?.get(storeInstance.selectedProductId) : null;
+      if (inspected) {
+        try { await hydrateStoreListing(inspected); }
+        catch (err) { SWSELogger.warn('[StoreSurface] Product detail could not be loaded from its source record', { id: inspected.id, error: err?.message }); }
+      }
 
       // Build context using the cached, already-initialized instance
       const storeContext = await storeInstance._prepareContext();

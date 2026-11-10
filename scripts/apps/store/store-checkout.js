@@ -8,7 +8,7 @@
  * - Business logic (ALL delegated to StoreEngine)
  */
 
-import { storeItemDocumentData } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
+import { storeItemDocumentData, hydrateStoreListings } from "/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js";
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
@@ -475,6 +475,7 @@ export async function buyDroid(store, actorId) {
 
     try {
         // DELEGATED TO ENGINE: Execute purchase (credit deduction)
+        await hydrateStoreListings([droidTemplate]);
         const result = await StoreEngine.purchase({
             actor: store.actor,
             items: [{ ...droidTemplate, finalCost }],
@@ -943,9 +944,8 @@ async function createVehiclePlans(cartVehicles, itemsById) {
       template.raw?.system?.vehicleSourceEntryKey ??
       template.doc?.system?.vehicleSourceEntryKey ??
       template.template?.system?.vehicleSourceEntryKey;
-    const matches = index.filter(entry => key
-      ? entry.sourceEntryKey === key
-      : entry.id === vehicle.id || entry.documentId === vehicle.id);
+    // Exact publication identity only: a listing without its sourceEntryKey is refused.
+    const matches = key ? index.filter(entry => entry.sourceEntryKey === key) : [];
     if (matches.length !== 1)
       throw new Error('UNIVERSAL_VEHICLE_STORE_SOURCE_IDENTITY_REQUIRED: ' + String(vehicle.id));
     const canonicalActor = await VehiclePackDataLoader.loadVehicleDocument(matches[0]);
@@ -1187,6 +1187,19 @@ async function checkoutUnguarded(store, animateNumberCallback) {
     if (!quantityValidation.ok) {
         ui.notifications.warn(quantityValidation.error);
         return { success: false, error: quantityValidation.error };
+    }
+
+    // The catalog is index-first: load the full canonical source record of every purchased listing now,
+    // before any approval request or debit. A listing whose source cannot be verified is never sold.
+    try {
+        await hydrateStoreListings([
+            ...(store.cart.items || []).filter(entry => !entry.stagedCustomization?.itemData).map(entry => entry.item),
+            ...(store.cart.droids || []).map(entry => entry.actor)
+        ]);
+    } catch (err) {
+        const error = `A product in your cart could not be verified against its source record, so nothing was purchased (${err?.message ?? err}).`;
+        ui.notifications.error(error);
+        return { success: false, error };
     }
 
     const approvalEntries = collectStoreApprovalEntries(store.cart);
