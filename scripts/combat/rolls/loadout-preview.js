@@ -30,7 +30,7 @@ export async function buildWeaponLoadoutPreview(actor, weapon, { readiness = nul
   const rd = readiness ?? (() => { try { return readCombatReadiness(actor); } catch { return null; } })();
   const r = rd ? describeWeaponReadiness(rd, weapon.id, null) : null;
   const base = {
-    weaponId: weapon.id, name: weapon.name, profileId: null,
+    weaponId: weapon.id, name: weapon.name, profileId: null, profileLabel: null, otherProfileCount: 0, profileIsDefault: true,
     effectivePosture: r?.effectivePosture ?? null, ready: r?.ready === true,
     grip: null, gripLabel: '', occupiedAppendageIds: asArray(r?.occupancy?.appendageIds),
     attackBonus: null, damageFormula: null, minimumDamage: null, maximumDamage: null, rawMinimumDamage: null,
@@ -43,6 +43,10 @@ export async function buildWeaponLoadoutPreview(actor, weapon, { readiness = nul
   if (!ctx.ok) return unresolved(`The selected attack form cannot be resolved (${ctx.error?.message ?? ctx.reason}).`);
   if (ctx.source !== 'canonical') return unresolved('This weapon has no certified canonical identity, so no attack can be previewed.');
   base.profileId = ctx.weaponForm?.profileId ?? null;
+  // the readout names the attack profile it shows; a weapon with other attack modes says so (the numbers are NOT those of an alternate mode)
+  base.profileLabel = ctx.profileInfo?.label ?? base.profileId;
+  base.otherProfileCount = Math.max(0, (ctx.profileInfo?.count ?? 1) - 1);
+  base.profileIsDefault = ctx.profileInfo?.isDefault !== false;
   const hands = ctx.wield?.hands ?? null;
   base.grip = hands ? (hands === 1 ? 'one-handed' : hands === 2 ? 'two-handed' : `${hands}-handed`) : null;
   base.gripLabel = hands ? (hands === 1 ? 'One-handed' : hands === 2 ? 'Two-handed' : `${hands}-handed`) : '';

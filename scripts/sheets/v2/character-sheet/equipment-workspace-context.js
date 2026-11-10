@@ -345,7 +345,8 @@ export function applyLoadoutPreviews(workspace, previews) {
       hasBreakdown: established && (pv.attackBreakdown?.length > 0 || pv.damageBreakdown?.length > 0),
       attackBreakdown: asArray(pv.attackBreakdown).map((b) => ({ label: b.label, value: signed(b.value) })),
       damageBreakdown: asArray(pv.damageBreakdown).map((b) => ({ label: b.label, value: typeof b.value === 'number' ? signed(b.value) : String(b.value) })),
-      gripLabel: pv.gripLabel || ''
+      gripLabel: pv.gripLabel || '',
+      profileNote: pv.profileLabel ? `${pv.profileLabel}${pv.profileIsDefault ? ' (default profile)' : ' (selected profile)'}${pv.otherProfileCount > 0 ? ` · ${pv.otherProfileCount} other attack mode${pv.otherProfileCount === 1 ? '' : 's'} not shown` : ''}` : ''
     };
   };
   const byId = new Map([...previews].map(([id, pv]) => [id, view(pv)]));

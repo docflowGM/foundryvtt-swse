@@ -274,7 +274,9 @@ export function previewAttackContext(actor, weapon, baseOptions = {}) {
     ...(sizing?.classification ? { weaponSizeClass: { classification: sizing.classification, effectiveSize: sizing.effectiveSize, source: sizing.source } } : {}),
     ...(forgoesDoubleStrength(targetReqs) ? { forgoDoubleStrength: true } : {})
   };
-  return { ok: true, source: 'canonical', rollOptions, weaponForm, wield, sizing, pendingFacts, damageContext, conditionalDamageDeclared: Array.isArray(shape.conditionalDamage) ? shape.conditionalDamage.length : 0 };
+  // which attack profile this preview shows (so the readout can name it, and say when the weapon has other attack modes)
+  const profileInfo = { id: runtime.profile?.id ?? null, label: runtime.profile?.definition?.label ?? runtime.profile?.id ?? null, count: Array.isArray(runtime.resolved?.profiles) ? runtime.resolved.profiles.length : 1, isDefault: (runtime.resolved?.defaultProfileId ?? null) === (runtime.profile?.id ?? null) };
+  return { ok: true, source: 'canonical', rollOptions, weaponForm, wield, sizing, pendingFacts, damageContext, profileInfo, conditionalDamageDeclared: Array.isArray(shape.conditionalDamage) ? shape.conditionalDamage.length : 0 };
 }
 
 /**

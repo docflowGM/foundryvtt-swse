@@ -282,3 +282,21 @@ test('rifle, thrown weapon and a multi-profile weapon (default profile) with wro
     assert.equal(p.attackBonus, real.attackBonus, `${label}: attack total`);
   }
 });
+
+test('the preview names the attack profile it shows and says when the weapon has other attack modes', async () => {
+  const vb = F.readiedWeapon('v9', { key: 'weapon-variable-blaster', wielded: 'one-handed', appendageIds: ONE, system: { weaponCategory: 'ranged' }, flags: { swse: { fireState: { v: 1, wielded: 'one-handed', settingProfile: 'high' } } } });
+  const p = await buildWeaponLoadoutPreview(hero([vb]), vb);
+  assert.equal(p.profileId, 'high'); assert.equal(p.profileLabel, 'High Power'); assert.equal(p.otherProfileCount, 2); assert.equal(p.profileIsDefault, false);
+  const ws = await workspaceOf(hero([vb]));
+  const note = ws.slots.find((s) => s.occupant).occupant.preview.profileNote;
+  assert.match(note, /High Power \(selected profile\) · 2 other attack modes not shown/, note);
+  const single = pistol('p9'); const q = await buildWeaponLoadoutPreview(hero([single]), single);
+  assert.equal(q.otherProfileCount, 0);
+  assert.doesNotMatch((await workspaceOf(hero([single]))).slots.find((s) => s.occupant).occupant.preview.profileNote, /other attack mode/, 'a single-profile weapon makes no claim about other modes');
+});
+test('a multi-profile weapon on its default profile says so (Siang Lance: ranged shot shown, bayonet not shown)', async () => {
+  const w = bare('s2', 'weapon-siang-lance', 'two-handed', TWO, { weaponCategory: 'ranged' });
+  const p = await buildWeaponLoadoutPreview(hero([w]), w);
+  assert.equal(p.profileId, 'ranged'); assert.equal(p.profileIsDefault, true); assert.equal(p.otherProfileCount, 1);
+  assert.match((await workspaceOf(hero([w]))).slots.find((s) => s.occupant).occupant.preview.profileNote, /Ranged shot \(default profile\) · 1 other attack mode not shown/);
+});

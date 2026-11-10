@@ -34,6 +34,7 @@
             <span class="swse-eqw__pv-cell"><i>To hit</i><b data-eqw-pv-attack>{{pv.attackLabel}}</b></span>
             <span class="swse-eqw__pv-cell"><i>Damage</i><b data-eqw-pv-damage>{{pv.damageRangeLabel}}</b></span>
             {{#if pv.damageShown}}<span class="swse-eqw__pv-formula" data-eqw-pv-formula>{{pv.damageFormula}}</span>{{/if}}
+            {{#if pv.profileNote}}<span class="swse-eqw__pv-profile" data-eqw-pv-profile>{{pv.profileNote}}</span>{{/if}}
             <span class="swse-eqw__pv-grip">{{#if pv.gripLabel}}{{pv.gripLabel}}{{else}}Grip not established{{/if}}{{#unless pv.ready}} · not drawn{{/unless}}</span>
             {{#if pv.explanation}}<span class="swse-eqw__pv-note" title="{{pv.explanation}}">{{pv.statusLabel}}</span>{{/if}}
           </span>
