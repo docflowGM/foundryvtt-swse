@@ -1,0 +1,31 @@
+{
+  "baseline": "c19e0a4d7a98abbd3d5e3ce5c06c9f3895f93c27",
+  "runtime": "NOT_RUN",
+  "phases": {
+    "S0": "CODE_COMPLETE",
+    "S1": "NOT_STARTED",
+    "S2": "PARTIAL_CODE_COMPLETE",
+    "S3": "NOT_STARTED",
+    "S4": "NOT_STARTED",
+    "S5": "NOT_STARTED",
+    "S6": "CODE_COMPLETE",
+    "S7": "NOT_STARTED",
+    "S8": "PARTIAL"
+  },
+  "consumers": [
+    {"path": "store/store.js", "class": "C4", "disposition": "DELETED"},
+    {"path": "scripts/engine/store/store-engine.js", "class": "C1", "disposition": "KEEP_HARDENED"},
+    {"path": "scripts/engine/store/transaction-engine.js", "class": "C1", "disposition": "KEEP"},
+    {"path": "scripts/engine/store/placement-router.js", "class": "C1", "disposition": "KEEP"},
+    {"path": "scripts/engine/store/loader.js", "class": "C2", "disposition": "REPLACE_S1"},
+    {"path": "scripts/engine/store/normalizer.js", "class": "C2", "disposition": "REPLACE_S1"},
+    {"path": "scripts/engine/store/categorizer.js", "class": "C2", "disposition": "REPLACE_S1"},
+    {"path": "scripts/engine/store/index.js", "class": "C2", "disposition": "REPLACE_S1"},
+    {"path": "scripts/engine/store/compendium-schema.js", "class": "C2", "disposition": "REPLACE_S1"},
+    {"path": "scripts/engine/store/cost-registry.js", "class": "C2", "disposition": "REPLACE_S1"},
+    {"path": "scripts/apps/store/store-checkout.js", "class": "C2", "disposition": "REWIRE_PARTIAL"},
+    {"path": "scripts/ui/shell/gm/GMApprovalOperationsService.js", "class": "C2", "disposition": "REWIRE_S2b"},
+    {"path": "purchaseHistory flag mirror", "class": "C3", "disposition": "REPLACE_S2b"},
+    {"path": "scripts/apps/customization/item-customization-workbench.js", "class": "C5", "disposition": "HOLD_CERTIFICATION"}
+  ]
+}

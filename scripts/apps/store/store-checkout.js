@@ -286,11 +286,10 @@ async function revalidateCart(store, actor, originalTotal) {
                 };
             }
 
-            // Check price hasn't changed more than 5%
+            // Exact match required (no tolerance). Staged customizations carry their own quote.
             const expectedCost = item.stagedCustomization?.finalCost ?? item.cost;
-            const priceDiff = item.stagedCustomization ? 0 : Math.abs(currentItem.finalCost - expectedCost);
-            const threshold = expectedCost * 0.05;
-            if (priceDiff > threshold) {
+            const priceMismatch = item.stagedCustomization ? false : normalizeCredits(currentItem.finalCost) !== normalizeCredits(expectedCost);
+            if (priceMismatch) {
                 return {
                     valid: false,
                     error: `Price of "${item.name}" changed from ${expectedCost} to ${currentItem.finalCost} credits. Please review your cart.`
@@ -478,7 +477,7 @@ export async function buyDroid(store, actorId) {
         // DELEGATED TO ENGINE: Execute purchase (credit deduction)
         const result = await StoreEngine.purchase({
             actor: store.actor,
-            items: [droidTemplate],
+            items: [{ ...droidTemplate, finalCost }],
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
                 // PHASE 1: Return MutationPlans instead of mutating directly
@@ -607,7 +606,7 @@ async function buyVehicleUnguarded(store, actorId, condition) {
         // DELEGATED TO ENGINE: Execute purchase (credit deduction)
         const result = await StoreEngine.purchase({
             actor: store.actor,
-            items: [vehicleTemplate],
+            items: [{ ...vehicleTemplate, finalCost }],
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
                 // PHASE 1: Return MutationPlans instead of mutating directly
@@ -647,11 +646,17 @@ export async function createCustomDroid(actor, closeCallback) {
  * @param {Function} closeCallback - Callback to close the store
  */
 export async function createCustomStarship(actor, closeCallback) {
-    // The old builder started from data/stock-ships.json frames, which is no longer
-    // a stock authority. Published hulls are bought from the vehicle catalog and
-    // modified through certified installations (see rules decisions V-P2-01..04).
-    ui.notifications.warn('The legacy starship builder is retired. Buy a published hull from the vehicle catalog; modifications become available once certified.');
-    return;
+    // Custom starships are a funded project handled by the existing Ship Designer and
+    // CustomVehicleConstructionService (GM approval, funding, design time, delivery).
+    // The Store only launches it; it never prices or delivers a custom ship itself.
+    if (!actor) {
+        ui.notifications.warn('Open a character actor before designing a starship.');
+        return null;
+    }
+    const designer = await import('/systems/foundryvtt-swse/scripts/ui/shell/construction-designer-ui.js');
+    const result = await designer.openShipDesigner(actor);
+    if (result?.success && typeof closeCallback === 'function') closeCallback();
+    return result;
 }
 
 /**
@@ -757,6 +762,13 @@ function revalidateCartItems(store) {
       if (!policyCheck.ok) {
         report.removed.push({ type: 'item', name: `${cartItem.name} (${policyCheck.reason})` });
         store.cart.items.splice(i, 1);
+        continue;
+      }
+      // Staged customizations carry their own quote; overwriting it with the base listing price
+      // would silently change what the player reviewed. Customization quotes are re-verified by
+      // the customization authority (S7), not repriced here.
+      if (cartItem.stagedCustomization) {
+        report.totalRevalidated += normalizeCredits(cartItem.cost);
         continue;
       }
       const recalculated = normalizeCredits(storeItem.finalCost);
@@ -1158,6 +1170,17 @@ async function checkoutUnguarded(store, animateNumberCallback) {
     const revalidationReport = revalidateCartItems(store);
     if (revalidationReport.removed.length > 0) {
         ui.notifications.warn(storeI18n('SWSE.Store.Notifications.CartItemsRemoved', { count: revalidationReport.removed.length }));
+    }
+    // A changed quote invalidates the player's confirmation: the cart now shows the
+    // current price, nothing is charged, and the player must review and confirm again.
+    if (revalidationReport.recalculated.length > 0 || revalidationReport.removed.length > 0) {
+        await store._persistCart?.();
+        const changed = revalidationReport.recalculated.map(r => `${r.name}: ${r.old} -> ${r.new} cr`).join('; ');
+        const error = revalidationReport.recalculated.length > 0
+            ? `Prices changed since you added these to your cart (${changed}). Review your cart and check out again; no credits were charged.`
+            : 'Some cart items are no longer available. Review your cart; no credits were charged.';
+        ui.notifications.warn(error);
+        return { success: false, error, priceReviewRequired: true };
     }
 
     const quantityValidation = validateCartQuantities(store);

@@ -224,53 +224,39 @@ export class StoreEngine {
   }
 
   /**
-   * Validate that prices haven't changed significantly since checkout started
-   * Returns { valid: boolean, currentTotal: number, priceDiff: number }
-   * @param {Array} cartItems - items from cart (should have id and cost)
-   * @param {Number} originalTotal - total price at checkout time
-   * @returns {Object} validation result
+   * Validate that the charged total exactly equals the sum of the quoted line prices.
+   * No tolerance, and fail closed: a cart whose price cannot be verified is never charged.
+   * Returns { valid: boolean, currentTotal: number, priceDiff: number, reason: string|null }
+   * @param {Array} cartItems - items with a quoted finalCost (or cost)
+   * @param {Number} originalTotal - total the buyer confirmed
    * @private
    */
   static async _validatePricesAtPurchaseTime(cartItems = [], originalTotal = 0) {
     try {
-      // Rebuild price from scratch based on current store state
       let currentTotal = 0;
       for (const item of cartItems) {
         if (!item || !item.id) continue;
-        // Item should have finalCost already set by engine during inventory load
-        currentTotal += item.finalCost ?? 0;
+        const line = Number(item.finalCost ?? item.cost);
+        if (!Number.isFinite(line) || line < 0) {
+          return { valid: false, currentTotal: 0, priceDiff: NaN, reason: `No valid quoted price for "${item.name ?? item.id}"; nothing was charged.` };
+        }
+        currentTotal += line;
       }
 
       const priceDiff = Math.abs(currentTotal - originalTotal);
-      const threshold = originalTotal * 0.05; // 5% tolerance
-
-      if (priceDiff > threshold) {
-        logger().warn('StoreEngine: Significant price change detected', {
-          originalTotal,
-          currentTotal,
-          diff: priceDiff,
-          threshold
-        });
+      if (priceDiff !== 0) {
+        logger().warn('StoreEngine: Price mismatch; purchase refused', { originalTotal, currentTotal, diff: priceDiff });
         return {
           valid: false,
           currentTotal,
           priceDiff,
-          reason: `Price changed from ${originalTotal} to ${currentTotal} credits`
+          reason: `Price changed from ${originalTotal} to ${currentTotal} credits. Review your cart; nothing was charged.`
         };
       }
-
-      return {
-        valid: true,
-        currentTotal,
-        priceDiff,
-        reason: null
-      };
+      return { valid: true, currentTotal, priceDiff: 0, reason: null };
     } catch (err) {
-      logger().warn('StoreEngine: Price validation failed, proceeding with original', {
-        error: err.message
-      });
-      // Non-fatal: if validation fails, allow purchase to proceed
-      return { valid: true, currentTotal: originalTotal, priceDiff: 0 };
+      logger().error('StoreEngine: Price validation failed; purchase refused', { error: err.message });
+      return { valid: false, currentTotal: 0, priceDiff: NaN, reason: 'Prices could not be verified; nothing was charged.' };
     }
   }
 
