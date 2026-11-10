@@ -67,13 +67,14 @@ test('C-DMG-01: a stock NPC flat / droid published formula result takes the same
   assert.equal(p.amount, 1);
 });
 
-test('C-DMG-01: the floor is applied BEFORE mitigation: DR 5 reduces the effective 1 to 0 HP loss', async () => {
-  const { DamageResolutionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js');
+test('C-DMG-01: the floor is applied BEFORE mitigation: DR 5 reduces the effective 1 to 0 HP loss (real DamageMitigationManager)', async () => {
+  const { DamageMitigationManager } = await import('/systems/foundryvtt-swse/scripts/engine/combat/damage-mitigation-manager.js');
   const p = packet(-4);
   assert.equal(p.amount, 1);
-  const drTarget = { ...target, system: { hp: { value: 30, max: 30 }, damageReduction: 5 } };
-  const res = DamageResolutionEngine.resolveDamage
-    ? await DamageResolutionEngine.resolveDamage({ actor: drTarget, damage: p.amount, packet: p, options: { dryRun: true } }).catch(() => null)
-    : null;
-  if (res) assert.ok((res.hpLoss ?? res.finalDamage ?? 0) <= 1);
+  const drTarget = { ...target, system: { hp: { value: 30, max: 30 }, derived: { damageReduction: { highestValue: 5, all: 5 } } } };
+  const res = DamageMitigationManager.resolve({ damage: p.amount, actor: drTarget, damageType: 'energy', weapon, options: { damagePacket: p } });
+  assert.equal(res.damageReduction.applied, 1, 'DR consumed the single point');
+  assert.equal(res.hpDamage, 0, 'mitigation, not the floor, takes it to 0');
+  const open = DamageMitigationManager.resolve({ damage: p.amount, actor: { ...target, system: { hp: { value: 30, max: 30 } } }, damageType: 'energy', weapon, options: { damagePacket: p } });
+  assert.equal(open.hpDamage, 1, 'without reduction the minimum point lands');
 });
