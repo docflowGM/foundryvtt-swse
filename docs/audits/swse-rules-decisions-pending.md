@@ -2424,3 +2424,23 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 51 (2026-11-09):** appended WPN-W1-001 and WPN-W1-002 from the weapon three-gate W1 minimum-damage correction.
+
+## WPN-W2-001 — Roll dialog "Custom / GM" range band: required adjudication or silent zero? (weapon three-gate W2)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-W2-001 |
+| Rules domain | Combat / range workflow policy |
+| Feature | The roll dialog's `Custom / GM` range band for a canonical banded ranged form |
+| Source | Core Rulebook, Combat Statistics (range penalties 0 / -2 / -5 / -10 by band, Table 8-5, printed p.129); no printed rule covers a GM-chosen band |
+| Evidence | `custom` names no band, so the canonical band penalty is not applied (effective 0). The dialog's separate Custom Modifier field is how a GM currently supplies an adjustment. It is itemized in the breakdown but is not tied to range. |
+| Confirmed behavior | A bare numeric `rangePenalty` can no longer replace the canonical table. A reasoned adjudication from a GM user can (tested). |
+| Unresolved question | Should `Custom / GM` (a) require an explicit numeric range adjudication, (b) become a GM-only audit-stamped override, or (c) stay as is (zero canonical penalty plus Custom Modifier)? |
+| Options | (a), (b) or (c). All are consistent with the printed table, and none is printed. |
+| Recommended ruling | None |
+| Implementation impact | Currently (c), unchanged. Choosing (a) or (b) changes the dialog and `assertAttackFormResolvable` only. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 52 (2026-11-10):** appended WPN-W2-001.
