@@ -10,6 +10,7 @@
  * @module combat/multi-attack
  */
 
+import { getCoreAttackOptionEconomy } from '/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js';
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
@@ -256,6 +257,35 @@ export function actorHasMultiAttackFor(actor, kind, weapon, context = {}) {
   const group = getWeaponGroup(weapon);
   const groups = kind === 'triple' ? getTripleAttackGroups(actor) : getDoubleAttackGroups(actor);
   return !!group && groups.has(group);
+}
+
+/**
+ * A Charge is a Standard action ending in ONE attack (Core Rulebook p. 152); Double Attack, Triple Attack and Full Attack are full-round actions
+ * (p. 154). An attack that belongs to a multi-attack package therefore cannot also be a Charge attack: a declared Charge, a Charge-gated option
+ * (Powerful Charge, Charging Fire, ...) or the Charging box is refused. No exception is encoded: none has been source-certified; a future verified
+ * exception belongs here. Pure; callers refuse BEFORE any action, ammunition or die is committed.
+ * @returns {string|null} the refusal reason, or null when the combination is legal
+ */
+export function multiAttackChargeViolation(options = {}) {
+  if (!options?.packageType) return null; // a single attack: Charge and Charging Fire are legal
+  const picked = (v) => v === true || (typeof v === 'number' && v > 0) || (typeof v === 'string' && v !== '' && v !== '0' && v !== 'false');
+  const selected = { ...(options.attackOptions ?? {}), ...(options.combatOptions ?? {}) };
+  const chargeOption = Object.keys(selected).some((id) => picked(selected[id]) && getCoreAttackOptionEconomy(id)?.economy === 'autoChargeIfMissing');
+  const declared = options.charge === true || options.charging === true || options.situational?.charging === true;
+  if (!declared && !chargeOption) return null;
+  return 'Charge cannot be combined with Double Attack, Triple Attack or Full Attack: a Charge is a Standard action with a single attack, while these are full-round actions.';
+}
+
+/**
+ * Is the actor entitled to the requested Double/Triple Attack package with this weapon? The ONE entitlement answer for every route that
+ * builds a multi-attack sequence (sheet executor, combat-feature router, legacy hotfix bridge): a route may fall back to a simplified plan
+ * only when this is true, so a fallback can never grant a package the actor does not own. Triple requires Double (as the planner does).
+ */
+export function actorEntitledToMultiAttackPackage(actor, packageType, weapon, context = {}) {
+  if (!weapon) return false;
+  if (packageType === FULL_ATTACK_PACKAGES.DOUBLE_ATTACK) return actorHasMultiAttackFor(actor, 'double', weapon, context);
+  if (packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK) return actorHasMultiAttackFor(actor, 'double', weapon, context) && actorHasMultiAttackFor(actor, 'triple', weapon, context);
+  return true;
 }
 
 /**

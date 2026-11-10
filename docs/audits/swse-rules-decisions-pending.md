@@ -2514,3 +2514,108 @@ The project owner gave these as provisional recommendations, expressly "not fina
 | Resolution | |
 
 - **Revision 55 (2026-11-10):** appended WPN-D-001.
+
+## CAE-001 — "Treat Poison": which evidence establishes "Trained in Treat Injury" and a Medical Kit? (combat action eligibility)
+
+| Field | Content |
+|---|---|
+| Decision ID | CAE-001 |
+| Rules domain | Combat actions / eligibility |
+| Feature | Combat action "Treat Poison" (`packs/combat-actions.db` key `treat-poison`; `data/combat-actions.json`) |
+| Source | The catalog record; the printed page is not re-verified in this pass |
+| Evidence | The runtime pack row carries the restriction only as prose in `notes` ("Trained in Treat Injury only. Requires Medical Kit."): `requirements` is empty. The JSON fallback row lists `requirements: ['Trained in Treat Injury', 'Medical Kit']`. No Medical Kit item authority exists in the repository. |
+| Confirmed behavior | The action is currently listed as a general action. Nothing in the pack gates it. The eligibility module will gate "Trained in <Skill>" from the actor's skill record and will report `Medical Kit` (JSON fallback only) as UNRESOLVED (fail closed). |
+| Unresolved question | Whether the sheet should gate Treat Poison on skill training and a Medical Kit at all, and which owned item identity counts as a Medical Kit. |
+| Options | None supported by a located source. |
+| Recommended ruling | None |
+| Implementation impact | Structured `requirements` on the pack row (a data edit) and an equipment-identity rule. Not implemented; the pack row is unchanged. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## CAE-002 — May the GM execute a combat action the actor has not unlocked? (combat action eligibility)
+
+| Field | Content |
+|---|---|
+| Decision ID | CAE-002 |
+| Rules domain | Combat actions / GM permissions |
+| Feature | The execution gate in `SWSEV2CharacterLikeSheet._runCanonicalCombatAction` |
+| Source | Project instruction: "Preserve GM permissions and established action-economy rules." |
+| Evidence | No existing rule or setting defines a GM override of feat/talent/species/Droid entitlement for combat actions. |
+| Confirmed behavior | The gate refuses a locked, unresolved or stale action for every user, the GM included. Action-economy and grapple restrictions are unchanged. |
+| Unresolved question | Whether a GM should be able to run a locked action on an actor's behalf, and how that would be recorded. |
+| Options | None supported by a located source. |
+| Recommended ruling | None |
+| Implementation impact | A GM-only bypass in the gate and a visible flag on the row; not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## CAE-003 — Droid-only evidence for feat/talent action cards, and cyborg-hybrid eligibility (combat action eligibility)
+
+| Field | Content |
+|---|---|
+| Decision ID | CAE-003 |
+| Rules domain | Combat actions / Droid rules |
+| Feature | Owned feat/talent action cards whose rule metadata says `requiresDroid` or `requiresDroidOrCyborgHybrid` (e.g. Distracting Droid, Sensor Link, Aiming Accuracy, Slammer; `scripts/engine/feats/droid-combat-feat-normalization-hooks.js`) |
+| Source | The feat rule metadata; printed pages not re-verified in this pass |
+| Evidence | `requiresDroid` is structured on the rule and is now honoured for a card whose `sourceActionId` equals the rule's `actionKey`. `requiresDroidOrCyborgHybrid` has no cyborg-hybrid authority in the Droid rules profile (`droid-combat-runtime-patches.js` decides it from name/species strings). Several of these feats expose no combat-action card in their metadata at all, so the link between the feat and a library row cannot be established. |
+| Confirmed behavior | A card with a structured `requiresDroid` link is locked for a non-Droid owner. |
+| Unresolved question | What counts as cyborg-hybrid evidence, and whether the feats that expose no card should expose one. |
+| Options | None supported by a located source. |
+| Recommended ruling | None |
+| Implementation impact | A cyborg-hybrid predicate in the Droid rules profile; card metadata for the feats without one. Not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 56 (2026-11-10):** appended CAE-001, CAE-002, CAE-003.
+
+## Open-decision summary and merge impact (2026-11-10, appended; does not replace any entry above)
+
+| ID | Exact question | Published source | Existing behavior | State | Owner decision required | Blocks merge? |
+|---|---|---|---|---|---|---|
+| CAE-001 | Gate Treat Poison on skill training and a Medical Kit? Which owned item is a Medical Kit? | Not established (printed page not re-verified); the runtime pack row has the restriction as prose only | Listed as a general action; JSON fallback requirement `Medical Kit` would fail closed (unresolved) | Incomplete (a data and equipment-identity gap), not a defect | Whether to gate; the Medical Kit identity | No: current behavior is permissive for one action and documented |
+| CAE-002 | May a GM run an action the actor has not unlocked, and how is it attributed? | None located | The gate refuses locked/unresolved actions for every user, the GM included | Incomplete; conservative default | Whether and how a GM override exists | No (owner may choose to require it) |
+| CAE-003 | What is cyborg-hybrid evidence; should feats that expose no card expose one? | Not established | A card with structured `requiresDroid` is locked for non-Droids; others follow ownership; no cyborg inference | Blocked on evidence for cyborg hybrids; the rest incomplete | Cyborg-hybrid predicate; card metadata | No |
+| WPN-W1-001, WPN-W1-002, WPN-W2-001, WPN-B-001, WPN-M12-001, WPN-D-001 | See each entry above | See each entry above | See each entry above (implemented defaults and known gaps are stated there) | `DEFERRED_RULES_REVIEW` | Owner rulings (the 2026-11-10 recommendations are provisional, not rulings) | None blocks #1142. For #1140 the owner decides whether any should be resolved before merge |
+
+No provisional recommendation has been converted into a ruling.
+
+- **Revision 57 (2026-11-10):** appended the open-decision summary.
+
+## MODAL-001 — Aim / Charge declarations in the attack dialog versus the automatic prerequisite spend (pre-attack modal)
+
+| Field | Content |
+|---|---|
+| Decision ID | MODAL-001 |
+| Rules domain | Combat / action economy / attack options |
+| Feature | Roll Configurator "Aim" and "Charging" declarations; Careful Shot, Deadeye, Powerful Charge, Charging Fire |
+| Source | Existing code: `core-attack-option-action-economy.js` (`autoAimIfMissing`, `autoChargeIfMissing`; Aim = two swift actions through the action economy) and the round-8 dialog gating in `roll-config.js`; printed pages not re-verified |
+| Evidence | A declared Aim/Charge is treated as already paid (nothing is spent). Selecting an Aim- or Charge-gated option without the declaration makes the roll spend the prerequisite. The dialog keeps those options disabled until the declaration is ticked, so the dialog path never reaches the spend. |
+| Confirmed behavior | The dialog labels the boxes as declarations. Nothing is spent for a declared Aim/Charge; the GM adjudicates the honesty of the declaration. |
+| Unresolved question | Should the dialog let the player select Careful Shot / Deadeye / Powerful Charge / Charging Fire without the declaration and have the roll pay the prerequisite (the production design), or keep the declaration gate? |
+| Options | (a) keep the declaration gate (current). (b) offer those options as selectable with a visible "spends Aim (2 swift actions) unless already aimed" note, so the existing auto-spend applies. Both are supported by existing code. |
+| Recommended ruling | None |
+| Implementation impact | (b) changes dialog gating that the round-8 tests pin and affects action spending; not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 58 (2026-11-10):** appended MODAL-001.
+
+### MODAL-001 — resolution addendum (2026-11-10; the original entry above is preserved)
+- **Direction received:** the project owner's 2026-11-10 message: allow players to select Aim- and Charge-dependent options and have the existing action-economy authority pay the prerequisite when needed; an already-completed prerequisite is not charged again; the ordinary attack's Standard must not also be charged when a Charge workflow has already paid for it.
+- **Implemented as option (b):** see "Aim / Charge and stances" in `docs/audits/combat-tab-ux-convergence.md`. Implementing commit: `f677498a8` (adds `attackStandardCoveredByCharge`; the dialog promotion is in `deriveAttackModalState`).
+- **Residual question for the owner (not guessed):** whether a Charge-gated option combined with Double/Triple Attack or Full Attack should pay the Charge in addition to the full-round action. Not implemented; those executors are untouched.
+- **Status:** implemented per owner direction; the residual question above stays `DEFERRED_RULES_REVIEW`.
+
+- **Revision 59 (2026-11-10):** appended the MODAL-001 resolution addendum.
+
+### MODAL-001 residual — resolution addendum (2026-11-10; earlier entries preserved)
+- **Question (from the MODAL-001 addendum):** should a Charge-gated option combined with Double/Triple Attack or Full Attack pay the Charge in addition to the full-round action?
+- **Owner ruling received:** no. An ordinary Charge (Standard action, one attack; Core Rulebook p. 152) is not combined with Double Attack, Triple Attack or Full Attack (full-round; p. 154) unless a specific, verified rule permits it. Charging Fire changes the kind of attack at the end of a charge; it does not authorize a Full Attack. Page references are the owner's, not independently verified in this repository pass.
+- **Implemented:** `multiAttackChargeViolation` (see the convergence doc, "Final routing closure"); rejected before any spend. **Resolved rule:** Charge and multi-attack packages are mutually exclusive. **Future exceptions:** none source-certified; any verified exception (a specific feat, talent or weapon rule) is to be added to that function with its source.
+- **Status:** resolved and implemented. MODAL-001 is closed; CAE-001, CAE-002 and CAE-003 remain `DEFERRED_RULES_REVIEW`.
+
+- **Revision 60 (2026-11-10):** recorded the MODAL-001 residual ruling and its implementation.

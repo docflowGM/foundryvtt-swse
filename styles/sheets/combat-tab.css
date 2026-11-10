@@ -1,0 +1,127 @@
+/* ============================================================================
+   Combat tab (Character / Droid): attack-first command layout.
+   Order: Active attacks -> Action economy strip -> Combat status & defenses -> Combat action library -> Advanced.
+
+   Same token language as the Equipment Workspace (--eqw-*) so the two tabs read as one interface. Dense and restrained: no glow, no pulsing, no
+   decorative boxes. Every rule is rooted at `.swse-cmb` so global sheet styles (pill, uppercase `.swse-concept-main button`) are not edited.
+   Layout adapts to the SHEET width (container queries), not the viewport, because Foundry sheets are resizable windows.
+   ============================================================================ */
+
+.swse-cmb {
+  --cmb-accent: var(--vapor-cyan, var(--swse-concept-accent, #70e2ff));
+  --cmb-ink: var(--ink, var(--swse-concept-ink, #dff8ff));
+  --cmb-ink-dim: var(--ink-dim, var(--swse-concept-ink-dim, #9bc9d5));
+  --cmb-ink-faint: var(--ink-faint, var(--swse-concept-ink-faint, #6f95a5));
+  --cmb-ok: var(--pos, var(--swse-concept-ok, #7dffb2));
+  --cmb-warn: var(--zero, var(--swse-concept-warn, #ffc857));
+  --cmb-danger: var(--neg, var(--swse-concept-danger, #ff6b6b));
+  --cmb-ink-2: color-mix(in oklab, var(--cmb-ink-dim) 78%, var(--cmb-ink));
+  --cmb-ink-3: color-mix(in oklab, var(--cmb-ink-faint) 70%, var(--cmb-ink-dim));
+  --cmb-line: color-mix(in oklab, var(--cmb-accent) 20%, transparent);
+  --cmb-line-strong: color-mix(in oklab, var(--cmb-accent) 50%, transparent);
+  --cmb-fill: color-mix(in oklab, var(--cmb-accent) 6%, transparent);
+  --cmb-fill-strong: color-mix(in oklab, var(--cmb-accent) 13%, transparent);
+  display: grid; gap: 10px; container-type: inline-size; container-name: cmb;
+}
+.swse-cmb .swse-concept-panel { margin: 0; padding: 10px 12px; }
+.swse-cmb button:not(.swse-concept-btn) { text-transform: none; letter-spacing: normal; border-radius: 6px; }
+.swse-cmb .swse-concept-btn { text-transform: none; letter-spacing: normal; border-radius: 6px; }
+
+.swse-cmb .swse-cmb__head, .swse-cmb .swse-cmb__lib-summary { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.swse-cmb .swse-cmb__title { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--cmb-ink); }
+.swse-cmb .swse-cmb__hint { font-size: 12px; color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.swse-cmb .swse-cmb__note { margin: 6px 0 0; font-size: 12.5px; color: var(--cmb-ink-2); }
+.swse-cmb .swse-cmb__note.is-warn { color: var(--cmb-warn); }
+.swse-cmb .swse-cmb__lock { margin: 6px 0; padding: 6px 10px; font-size: 13px; color: var(--cmb-warn); border: 1px solid color-mix(in oklab, var(--cmb-warn) 45%, transparent); border-radius: 6px; }
+
+/* ---- 1. Active attacks ------------------------------------------------------------------------------------------------------------ */
+.swse-cmb .swse-cmb__cards { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); margin-top: 8px; }
+.swse-cmb .swse-cmb__card { display: grid; gap: 6px; padding: 9px 11px; border: 1px solid var(--cmb-line); border-left: 3px solid var(--weapon-rail, var(--cmb-accent)); border-radius: 8px; background: var(--cmb-fill); }
+.swse-cmb .swse-cmb__card.is-held { opacity: .82; border-left-color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__card.is-unavailable { border-color: color-mix(in oklab, var(--cmb-warn) 40%, transparent); }
+.swse-cmb .swse-cmb__card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.swse-cmb .swse-cmb__card-name { margin: 0; font-size: 15px; font-weight: 700; color: var(--cmb-ink); overflow-wrap: anywhere; }
+.swse-cmb .swse-cmb__state { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cmb-ink-2); }
+.swse-cmb .swse-cmb__state.is-ready { color: var(--cmb-ok); }
+.swse-cmb .swse-cmb__stats { display: grid; grid-template-columns: auto auto 1fr; gap: 4px 18px; margin: 0; align-items: end; }
+.swse-cmb .swse-cmb__stat { display: grid; min-width: 0; }
+.swse-cmb .swse-cmb__stat dt { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__stat dd { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.1; color: var(--cmb-ink); font-variant-numeric: tabular-nums; }
+.swse-cmb .swse-cmb__stat--formula dd { font-size: 14px; font-weight: 600; color: var(--cmb-ink-2); overflow-wrap: anywhere; }
+.swse-cmb .swse-cmb__meta { display: flex; flex-wrap: wrap; gap: 2px 12px; margin: 0; font-size: 12px; color: var(--cmb-ink-2); }
+.swse-cmb .swse-cmb__meta span + span::before { content: none; }
+.swse-cmb .swse-cmb__profile { color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__card-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.swse-cmb .swse-cmb__ref { font-size: 12px; color: var(--cmb-ink-3); }
+
+/* ---- 2. Action economy strip ---------------------------------------------------------------------------------------------------- */
+.swse-cmb .swse-cmb__economy { display: flex; align-items: center; justify-content: space-between; gap: 8px 14px; flex-wrap: wrap; }
+.swse-cmb .swse-cmb__economy.is-reference .swse-cmb__ae-step { opacity: .75; }
+.swse-cmb .swse-cmb__economy-steps { display: flex; gap: 6px 14px; flex-wrap: wrap; }
+.swse-cmb .swse-cmb__ae-step { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--cmb-ink-2); }
+.swse-cmb .swse-cmb__ae-step strong { font-weight: 600; color: var(--cmb-ink); }
+.swse-cmb .swse-cmb__ae-step small { color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__ae-pips { display: inline-flex; gap: 3px; align-items: center; }
+.swse-cmb .swse-cmb__ae-pips i { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--cmb-line-strong); }
+.swse-cmb .swse-cmb__ae-pips i.is-on { background: var(--cmb-accent); }
+.swse-cmb .swse-cmb__economy-meta { display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; font-size: 12px; color: var(--cmb-ink-2); }
+.swse-cmb .swse-cmb__ae-left b { color: var(--cmb-ink); }
+.swse-cmb .swse-cmb__economy .swse-concept-btn { padding: 3px 10px; font-size: 12px; }
+
+/* ---- 3. Combat status & defenses --------------------------------------------------------------------------------------------- */
+.swse-cmb .swse-cmb__strip { display: grid; gap: 6px; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); }
+.swse-cmb .swse-cmb__cell { display: grid; gap: 1px; align-content: start; padding: 5px 8px; border: 1px solid var(--cmb-line); border-radius: 6px; min-width: 0; }
+.swse-cmb .swse-cmb__cell i { font-style: normal; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__cell b { font-size: 17px; font-weight: 700; color: var(--cmb-ink); font-variant-numeric: tabular-nums; }
+.swse-cmb .swse-cmb__cell small { font-size: 11px; color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__cell.is-boosted b { color: var(--cmb-ok); }
+.swse-cmb .swse-cmb__cell.is-blocked b { color: var(--cmb-warn); }
+.swse-cmb .swse-cmb__modmark { color: var(--cmb-warn); }
+.swse-cmb .swse-cmb__mini { margin-top: 2px; padding: 1px 8px; font-size: 11.5px; color: var(--cmb-ink); background: var(--cmb-fill-strong); border: 1px solid var(--cmb-line-strong); cursor: pointer; }
+.swse-cmb .swse-cmb__mini:disabled { opacity: .5; cursor: default; }
+.swse-cmb .swse-cmb__summary { display: flex; flex-wrap: wrap; gap: 2px 16px; margin: 8px 0 0; font-size: 12.5px; color: var(--cmb-ink-2); }
+.swse-cmb .swse-cmb__summary b { color: var(--cmb-ink); font-weight: 600; }
+.swse-cmb details.swse-cmb__more, .swse-cmb details.swse-cmb__lib { margin-top: 6px; }
+.swse-cmb details > summary { cursor: pointer; font-size: 12.5px; color: var(--cmb-ink-2); list-style: revert; }
+.swse-cmb details.swse-cmb__lib > summary { color: inherit; }
+.swse-cmb .swse-cmb__more-actions, .swse-cmb .swse-cmb__commands { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.swse-cmb .swse-concept-effective-defense-list { margin-top: 8px; }
+
+/* ---- 4. Combat action library -------------------------------------------------------------------------------------------------- */
+.swse-cmb .swse-cmb__library > details { margin-top: 0; }
+.swse-cmb .swse-cmb__cal-scopes { display: flex; gap: 4px; margin-top: 8px; }
+.swse-cmb .swse-cmb__cal-scope { padding: 3px 12px; font-size: 12.5px; color: var(--cmb-ink-2); background: transparent; border: 1px solid var(--cmb-line); cursor: pointer; }
+.swse-cmb .swse-cmb__cal-scope small { color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__cal-scope.is-active { color: var(--cmb-ink); background: var(--cmb-fill-strong); border-color: var(--cmb-line-strong); }
+.swse-cmb .swse-cmb__cal-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.swse-cmb .swse-cmb__cal-tab { padding: 3px 10px; font-size: 12.5px; color: var(--cmb-ink-2); background: transparent; border: 1px solid var(--cmb-line); cursor: pointer; }
+.swse-cmb .swse-cmb__cal-tab small { color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__cal-tab.is-active { color: var(--cmb-ink); background: var(--cmb-fill-strong); border-color: var(--cmb-line-strong); }
+.swse-cmb .swse-cmb__cal-tools { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin-top: 8px; }
+.swse-cmb .swse-cmb__cal-search { flex: 1 1 180px; }
+.swse-cmb .swse-cmb__cal-search input, .swse-cmb .swse-cmb__cal-field select { width: 100%; font-size: 12.5px; }
+.swse-cmb .swse-cmb__cal-field { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__cal-tools .swse-concept-btn { padding: 3px 10px; font-size: 12px; }
+.swse-cmb .swse-cmb__cal-count { font-size: 12px; color: var(--cmb-ink-3); margin-left: auto; }
+.swse-cmb .swse-cmb__cal-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; max-height: 360px; overflow: auto; }
+.swse-cmb .swse-cmb__cal-item { border: 1px solid var(--cmb-line); border-radius: 6px; }
+.swse-cmb .swse-cmb__cal-item[hidden] { display: none; }
+.swse-cmb .swse-cmb__cal-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; width: 100%; padding: 5px 9px; text-align: left; color: var(--cmb-ink); background: transparent; border: 0; cursor: pointer; }
+.swse-cmb .swse-cmb__cal-head strong { font-size: 13px; font-weight: 600; margin-right: auto; overflow-wrap: anywhere; }
+.swse-cmb .swse-cmb__cal-detail { padding: 2px 9px 8px; display: grid; gap: 4px; font-size: 12.5px; color: var(--cmb-ink-2); }
+.swse-cmb .swse-cmb__cal-detail p { margin: 0; }
+.swse-cmb .swse-cmb__chip { padding: 0 6px; font-size: 11px; color: var(--cmb-ink-2); border: 1px solid var(--cmb-line); border-radius: 999px; }
+.swse-cmb .swse-cmb__chip.is-dim { color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__chip.is-available { color: var(--cmb-ok); }
+.swse-cmb .swse-cmb__chip.is-unavailable, .swse-cmb .swse-cmb__chip.is-warn { color: var(--cmb-warn); border-color: color-mix(in oklab, var(--cmb-warn) 40%, transparent); }
+.swse-cmb .swse-cmb__chip.is-reference, .swse-cmb .swse-cmb__chip.is-locked { color: var(--cmb-ink-3); }
+.swse-cmb .swse-cmb__cal-item.is-locked { opacity: .78; }
+
+/* ---- narrow sheets: keep everything reachable, drop nothing -------------------------------------------------------------- */
+@container cmb (max-width: 520px) {
+  .swse-cmb .swse-cmb__stats { grid-template-columns: 1fr 1fr; }
+  .swse-cmb .swse-cmb__stat--formula { grid-column: 1 / -1; }
+  .swse-cmb .swse-cmb__strip { grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)); }
+  .swse-cmb .swse-cmb__cal-count { margin-left: 0; }
+}

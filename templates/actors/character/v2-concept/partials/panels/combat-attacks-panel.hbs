@@ -1,0 +1,62 @@
+{{!-- ACTIVE ATTACKS: the first thing on the Combat tab. Presentation only (combat-loadout-context.js): To Hit, Damage min-max, formula, grip and profile are the
+     Combat Loadout Preview's own numbers (the same map the Equipment tab shows); readied weapons first, then held-but-not-drawn weapons (marked, not rollable),
+     then Unarmed Strike. One card per weapon: a two-handed weapon is not repeated per hand. An unresolved preview shows an explicit unavailable state, never an Item formula. --}}
+<section class="swse-concept-panel swse-cmb__attacks" aria-labelledby="cmb-attacks-title" data-combat-attacks>
+  <header class="swse-cmb__head">
+    <h3 id="cmb-attacks-title" class="swse-cmb__title">Active attacks</h3>
+    <span class="swse-cmb__hint">Normal attack: no target, range, cover or optional choice</span>
+  </header>
+
+  {{#if combatStatus.attackLocked}}<div class="swse-cmb__lock" role="status">{{combatStatus.attackLockLabel}}</div>{{/if}}
+
+  {{#if conceptLayout.combat.loadout.hasCards}}
+    <div class="swse-cmb__cards">
+      {{#each conceptLayout.combat.loadout.cards as |card|}}
+        <article class="swse-cmb__card is-{{card.stateTone}}{{#if card.unavailable}} is-unavailable{{/if}}{{#if card.variable}} is-variable{{/if}}" data-attack-card="{{card.key}}" {{#if card.weaponId}}data-weapon-id="{{card.weaponId}}"{{/if}} style="{{card.railStyle}}">
+          <header class="swse-cmb__card-head">
+            <h4 class="swse-cmb__card-name">{{card.name}}</h4>
+            <span class="swse-cmb__state is-{{card.stateTone}}">{{card.stateLabel}}{{#if card.gripLabel}} · {{card.gripLabel}}{{/if}}</span>
+          </header>
+          <dl class="swse-cmb__stats">
+            <div class="swse-cmb__stat"><dt>To hit</dt><dd data-cmb-tohit>{{card.toHitLabel}}</dd></div>
+            <div class="swse-cmb__stat"><dt>Damage</dt><dd data-cmb-damage>{{card.damageRangeLabel}}</dd></div>
+            <div class="swse-cmb__stat swse-cmb__stat--formula"><dt>Formula</dt><dd data-cmb-formula>{{#if card.damageFormula}}{{card.damageFormula}}{{else}}—{{/if}}</dd></div>
+          </dl>
+          <p class="swse-cmb__meta">
+            {{#if card.critLabel}}<span>{{card.critLabel}}</span>{{/if}}
+            {{#if card.branchLabel}}<span>{{card.branchLabel}}</span>{{/if}}
+            {{#if card.typeLabel}}<span>{{card.typeLabel}}</span>{{/if}}
+            {{#if card.rangeLabel}}{{#if card.branchLabel}}{{#unless (eq card.branchLabel "Melee")}}<span>{{card.rangeLabel}}</span>{{/unless}}{{/if}}{{/if}}
+            {{#if card.ammoLabel}}<span title="Ammunition">Ammo {{card.ammoLabel}}</span>{{/if}}
+            {{#if card.powerLabel}}<span title="Power source">{{card.powerLabel}}</span>{{/if}}
+            {{#if card.configLabel}}<span title="Configuration">{{card.configLabel}}</span>{{/if}}
+            {{#if card.profileNote}}<span class="swse-cmb__profile" title="Attack profile shown">{{card.profileNote}}</span>{{/if}}
+          </p>
+          {{#if card.unavailable}}<p class="swse-cmb__note is-warn">{{card.unavailableReason}}</p>{{/if}}
+          {{#if card.variable}}<p class="swse-cmb__note">{{card.variableNote}}</p>{{/if}}
+          <footer class="swse-cmb__card-actions">
+            {{#if (eq card.kind "unarmed")}}
+              <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="roll-unarmed-attack" {{#unless card.canRoll}}disabled title="{{card.rollDisabledReason}}"{{/unless}}>Roll attack</button>
+            {{else}}
+              <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="roll-attack" data-weapon-id="{{card.weaponId}}" {{#unless card.canRoll}}disabled title="{{card.rollDisabledReason}}"{{/unless}}>Roll attack</button>
+              {{#if card.readiness.canDrawStow}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--readiness {{#if card.readiness.drawn}}is-ready{{else}}is-inactive{{/if}}" data-action="toggle-weapon-readiness" data-item-id="{{card.weaponId}}"{{#if card.readiness.stowBlocked}} disabled title="Deactivate the lightsaber before stowing it."{{/if}}>{{card.readiness.drawStowLabel}}</button>{{/if}}
+              {{#if card.readiness.canToggleActivated}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--activation swse-weapon-controls--compact {{#if card.readiness.activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{card.weaponId}}">{{card.readiness.activationLabel}}</button>{{/if}}
+              {{#if card.configuration}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--configuration" data-action="change-weapon-configuration" data-item-id="{{card.weaponId}}">Configure</button>{{/if}}
+              {{#if card.power}}<button type="button" class="swse-concept-btn swse-weapon-control swse-weapon-control--power is-{{card.power.state}}" data-action="set-power-source" data-item-id="{{card.weaponId}}" title="{{card.power.title}}">Power: {{card.power.stateLabel}}</button>{{/if}}
+              <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{card.weaponId}}">Inspect</button>
+            {{/if}}
+          </footer>
+        </article>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state swse-concept-empty-state--guided">
+      <span class="swse-concept-empty-state__eyebrow">No attacks available</span>
+      <strong>No weapon is held or readied. Draw or equip a weapon in Gear; Unarmed Strike appears here when the sheet provides it.</strong>
+      <div class="swse-concept-empty-state__actions swse-edit-only">
+        <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="weapon">Add Weapon</button>
+        <button type="button" class="swse-concept-btn" data-action="sheet-tab" data-sheet-tab="gear" data-tab="gear">Open Gear</button>
+      </div>
+    </div>
+  {{/if}}
+</section>

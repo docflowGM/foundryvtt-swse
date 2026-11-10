@@ -1,3 +1,4 @@
+import { stanceActionCost } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-active-state-service.js';
 import { SWSEActiveEffectsManager } from "/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSECombat } from "/systems/foundryvtt-swse/scripts/combat/systems/enhanced-combat-system.js";
@@ -92,10 +93,8 @@ export class CombatActionBar {
   }
 
   static _fightDefensivelyCost() {
-    const mode = this._fightDefensivelyMode();
-    if (mode === 'swift') return 'swift';
-    if (mode === 'rai') return null;
-    return 'standard';
+    // one cost rule for every surface that activates the stance (see stanceActionCost)
+    return stanceActionCost('fight-defensively', this._fightDefensivelyMode());
   }
 
   static _fightDefensivelyLabel() {

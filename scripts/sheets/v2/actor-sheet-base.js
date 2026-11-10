@@ -1,3 +1,4 @@
+import { attackStandardCoveredByCharge } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -2042,7 +2043,9 @@ export class SWSEV2ActorSheetBase extends
     }, { title: 'Confirm Grappled Attack' });
     if (!grappleActionAllowed) return null;
 
-    const allowed = await this._applyActionEconomy("standard", {
+    // A Charge-gated option selected without a declared Charge makes the roll spend the Charge (a Standard action that includes the attack):
+    // the attack's own Standard is then not charged a second time.
+    const allowed = attackStandardCoveredByCharge(options) ? true : await this._applyActionEconomy("standard", {
       source: options?.source ?? "attack",
       weaponId: weapon?.id ?? null,
       weaponName: weapon?.name ?? null

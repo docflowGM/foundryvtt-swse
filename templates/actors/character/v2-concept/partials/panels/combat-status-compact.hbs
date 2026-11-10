@@ -1,0 +1,93 @@
+{{!-- COMBAT STATUS & DEFENSES: replaces four large panels (Initiative, Combat Vitals, Combat Status, Effective Defenses). Same values, same handlers:
+     roll-initiative, use-second-wind, rest-second-wind, swse-combat-cover-option, swse-combat-defensive-mode, swse-combat-toggle-prone and the defense
+     formula inputs. The strip is always visible; cover / stance / defense formulas are one expand away (the open state is UI-only, kept by the sheet). --}}
+<section class="swse-concept-panel swse-cmb__status" data-combat-status-panel data-combat-status-compact aria-label="Combat status and defenses">
+  <div class="swse-cmb__strip">
+    <div class="swse-cmb__cell is-init"><i>Init</i><b>{{numberFormat initiativeTotal decimals=0 sign=true}}</b><button type="button" class="swse-cmb__mini" data-action="roll-initiative" title="Roll initiative">Roll</button></div>
+    {{#each effectiveDefenses.rows as |row|}}
+      <div class="swse-cmb__cell {{#if row.boosted}}is-boosted{{/if}} {{#if row.blocked}}is-blocked{{/if}}" title="{{row.abbrev}}: base {{row.base}}{{#if row.chips.length}}, modified by active status{{/if}}"><i>{{row.abbrev}}</i><b>{{#if row.blocked}}BLOCK{{else}}{{row.effective}}{{/if}}</b>{{#if row.chips.length}}<small class="swse-cmb__modmark" aria-label="modified">±</small>{{/if}}</div>
+    {{/each}}
+    <div class="swse-cmb__cell"><i>HP</i><b>{{healthPanel.hp.value}}/{{healthPanel.hp.max}}</b>{{#if healthPanel.hp.temp}}<small>+{{healthPanel.hp.temp}} temp</small>{{/if}}</div>
+    <div class="swse-cmb__cell"><i>DT</i><b>{{derived.damageThreshold}}</b></div>
+    <div class="swse-cmb__cell"><i>Speed</i><b>{{speed}}</b></div>
+    <div class="swse-cmb__cell"><i>CT</i><b>{{healthPanel.conditionTrack.current}}</b></div>
+    <div class="swse-cmb__cell"><i>BAB</i><b>{{numberFormat bab decimals=0 sign=true}}</b></div>
+    <div class="swse-cmb__cell is-sw"><i>Second Wind</i><b>{{secondWindPanel.uses}}/{{secondWindPanel.max}}</b><button type="button" class="swse-cmb__mini" data-action="use-second-wind" {{#unless secondWindPanel.hasUses}}disabled{{/unless}} title="Heals {{secondWindPanel.healing}} HP">Use</button></div>
+  </div>
+
+  <p class="swse-cmb__summary" data-cmb-status-summary>
+    <span>Cover <b>{{combatStatus.coverLabel}}</b></span>
+    <span>Stance <b>{{combatStatus.defensiveModeLabel}}</b></span>
+    <span>Prone <b>{{#if combatStatus.prone}}Yes{{else}}No{{/if}}</b></span>
+  </p>
+
+  <details class="swse-cmb__more" data-cmb-details="status">
+    <summary>Cover, stance &amp; defense formulas</summary>
+
+    <div class="swse-concept-combat-status-grid">
+      <div class="swse-concept-status-block swse-concept-status-block--cover">
+        <div class="swse-concept-status-block__label"><strong>Cover</strong><span>{{combatStatus.coverLabel}}</span></div>
+        <div class="swse-concept-cover-options">
+          {{#each combatStatus.coverOptions as |option|}}
+            <button type="button" class="swse-concept-cover-option {{#if option.selected}}is-active{{/if}}" data-action="swse-combat-cover-option" data-cover="{{option.value}}" {{#unless ../combatStatus.canEdit}}disabled{{/unless}}>
+              <span>{{option.label}}</span><small>{{option.bonusLabel}}</small>
+            </button>
+          {{/each}}
+        </div>
+        <p class="swse-concept-status-note">Cover is selected by the player or GM. The system does not calculate line of sight or token geometry.</p>
+      </div>
+
+      <div class="swse-concept-status-block swse-concept-status-block--conditions">
+        <div class="swse-concept-status-block__label"><strong>Conditions</strong><span>{{combatStatus.defensiveModeLabel}}</span></div>
+        <div class="swse-concept-condition-button-grid">
+          <button type="button" class="swse-concept-condition-button {{#if combatStatus.defensiveNormalMode.active}}is-active{{/if}}" data-action="swse-combat-defensive-mode" data-mode="normal" data-mode-active="{{combatStatus.defensiveNormalMode.active}}" {{#unless combatStatus.canEdit}}disabled{{/unless}}>
+            <strong>Normal</strong><small>Clear prone and defensive stances</small>
+          </button>
+          <button type="button" class="swse-concept-condition-button {{#if combatStatus.prone}}is-active{{/if}}" data-action="swse-combat-toggle-prone" data-prone-active="{{combatStatus.prone}}" {{#unless combatStatus.canEdit}}disabled{{/unless}}>
+            <strong>Prone</strong><small>+5 vs ranged · −5 vs melee</small>
+          </button>
+          {{#each combatStatus.defensiveStanceModes as |mode|}}
+            <button type="button" class="swse-concept-condition-button {{#if mode.active}}is-active{{/if}}" data-action="swse-combat-defensive-mode" data-mode="{{mode.value}}" data-mode-active="{{mode.active}}" {{#unless ../combatStatus.canEdit}}disabled{{/unless}}>
+              <strong>{{mode.label}}</strong><small>{{mode.detail}}</small>
+            </button>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    {{#if effectiveDefenses.hasRows}}
+      <div class="swse-concept-effective-defense-list">
+        {{#each effectiveDefenses.rows as |row|}}
+          <article class="swse-concept-effective-defense-row {{#if row.boosted}}is-boosted{{/if}} {{#if row.blocked}}is-blocked{{/if}}">
+            <div class="swse-concept-effective-defense-row__title"><h4>{{row.abbrev}}</h4><span>Base {{row.base}}</span></div>
+            <div class="swse-concept-defense-formula-strip">
+              {{#each row.parts as |part|}}
+                {{#if part.isSelect}}
+                  <label class="swse-concept-defense-formula-input swse-concept-defense-formula-input--select">
+                    <small>{{part.label}}</small>
+                    <select name="{{part.path}}" {{#unless ../canEdit}}disabled{{/unless}}>{{#each part.options as |opt|}}<option value="{{opt.value}}" {{#if opt.selected}}selected{{/if}}>{{opt.label}}</option>{{/each}}</select>
+                    <strong>{{numberFormat part.value decimals=0 sign=true}}</strong>
+                  </label>
+                {{else}}
+                  {{#if part.readonly}}
+                    <span class="swse-concept-defense-formula-chip"><small>{{part.label}}</small><strong>{{numberFormat part.value decimals=0 sign=true}}</strong></span>
+                  {{else}}
+                    <label class="swse-concept-defense-formula-input"><span>{{part.label}}</span><input type="number" name="{{part.path}}" value="{{part.value}}" {{#unless ../canEdit}}disabled{{/unless}}></label>
+                  {{/if}}
+                {{/if}}
+              {{/each}}
+            </div>
+            {{#if row.chips.length}}<div class="swse-concept-effective-defense-row__mods">{{#each row.chips as |chip|}}<span class="swse-concept-defense-mod-chip swse-concept-defense-mod-chip--{{chip.tone}}">{{chip.label}} {{chip.valueLabel}}</span>{{/each}}</div>{{/if}}
+            <div class="swse-concept-effective-defense-row__total"><span>Total</span>{{#if row.blocked}}<strong>BLOCK</strong>{{else}}<strong>{{row.effective}}</strong>{{/if}}</div>
+          </article>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="swse-cmb__note">Defense context was unavailable for this actor.</p>
+    {{/if}}
+
+    <div class="swse-cmb__more-actions">
+      <button type="button" class="swse-concept-btn" data-action="rest-second-wind" {{#unless secondWindPanel.canEdit}}disabled{{/unless}}>Reset Second Wind</button>
+    </div>
+  </details>
+</section>

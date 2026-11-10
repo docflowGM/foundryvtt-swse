@@ -1,4 +1,6 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
+import { SWSEActiveEffectsManager } from '/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js';
 import {
   COMBAT_FEATURE_ACTIONS,
   COMBAT_FEATURE_AUTOMATION_STATUS,
@@ -30,6 +32,24 @@ export const UNIVERSAL_COMBAT_STATE_ACTION_IDS = Object.freeze([
   'fight-defensively',
   'total-defense'
 ]);
+
+// Fight Defensively / Total Defense are MECHANICAL stances with one authority: the combat-action ActiveEffect (SWSEActiveEffectsManager). The attack
+// composition (-5 attack), the Reflex dodge bonus and the roll dialog all read that effect, so the panel must not keep a second, display-only record.
+/**
+ * The action a stance costs: Total Defense is a Standard action; Fight Defensively follows the existing `fightDefensivelyActionMode` house setting
+ * (swift -> Swift; rai -> no separate action, it is an attack stance; default -> Standard). The one rule, shared with the combat action bar.
+ */
+export function stanceActionCost(featureId, mode = 'default') {
+  const id = canonicalCombatFeatureKey(featureId);
+  if (id === 'total-defense') return 'standard';
+  if (id === 'fight-defensively') return mode === 'swift' ? 'swift' : (mode === 'rai' ? null : 'standard');
+  return null;
+}
+const stanceMode = () => { try { return game?.settings?.get?.('foundryvtt-swse', 'fightDefensivelyActionMode') || 'default'; } catch { return 'default'; } };
+
+const EFFECT_BACKED_STATES = Object.freeze({ 'fight-defensively': 'fighting-defensively', 'total-defense': 'total-defense' });
+const effectKeyFor = (id) => EFFECT_BACKED_STATES[id] ?? null;
+const hasStanceEffect = (actor, key) => Array.from(actor?.effects ?? []).some((e) => e?.flags?.swse?.combatAction === key);
 
 function stateFlagRoot(actor) {
   return actor?.flags?.['foundryvtt-swse']?.combatFeatures?.activeStates ?? {};
@@ -75,6 +95,8 @@ export function isTrackedCombatState(featureId) {
 
 export function getActiveCombatFeatureState(actor, featureId) {
   const id = canonicalCombatFeatureKey(featureId);
+  const effectKey = effectKeyFor(id);
+  if (effectKey) return hasStanceEffect(actor, effectKey) ? { active: true, id, name: activeStateName(id), sourceName: 'Combat Action Effect' } : null;
   const value = stateFlagRoot(actor)?.[id];
   return value && typeof value === 'object' && value.active !== false ? value : null;
 }
@@ -84,8 +106,13 @@ export function getActiveCombatFeatureStates(actor) {
   const entries = [];
   for (const [rawId, state] of Object.entries(root)) {
     const id = canonicalCombatFeatureKey(rawId);
+    if (effectKeyFor(id)) continue; // effect-backed stances are read from the effect below, never from a stale display flag
     if (!state || typeof state !== 'object' || state.active === false) continue;
     entries.push(featureFromState(id, state));
+  }
+  for (const id of Object.keys(EFFECT_BACKED_STATES)) {
+    const active = getActiveCombatFeatureState(actor, id);
+    if (active) entries.push(featureFromState(id, active));
   }
   return entries;
 }
@@ -132,6 +159,29 @@ export async function activateCombatFeatureState(actor, featureId, { sourceItemI
     return { success: false, reason: 'not-tracked' };
   }
 
+  const effectKey = effectKeyFor(id);
+  if (effectKey) {
+    // An already-active stance is not activated (or paid for) again.
+    if (hasStanceEffect(actor, effectKey)) return { success: false, reason: 'already-active' };
+    // The stance costs its action, paid ONCE through the existing action-economy authority before the effect is applied (out of combat the economy
+    // is reference-only and spends nothing). A refused spend applies nothing; a failed application gives the spend back.
+    const cost = stanceActionCost(id, stanceMode());
+    let spend = null;
+    if (cost) {
+      spend = await ActionEconomyConsumption.spend(actor, cost, { source: 'combat-feature-stance', actionId: id, actionName: activeStateName(id) });
+      if (spend?.allowed === false || spend?.permitted === false) return { success: false, reason: 'action-unavailable' };
+    }
+    try {
+      // the ONE mutation path for a stance: the combat-action effect (replaces any other stance effect, exactly as the Combat tab action does)
+      await SWSEActiveEffectsManager.applyCombatActionEffect(actor, effectKey);
+    } catch (err) {
+      try { await spend?.rollback?.(); } catch { /* best effort */ }
+      throw err;
+    }
+    ui?.notifications?.info?.(`${activeStateName(id)} active.`);
+    return { success: true, state: getActiveCombatFeatureState(actor, id) ?? { active: true, id } };
+  }
+
   const profile = getCombatFeatureProfile(id) ?? {};
   const state = {
     active: true,
@@ -166,6 +216,13 @@ export async function clearCombatFeatureState(actor, featureId) {
   const existing = getActiveCombatFeatureState(actor, id);
   if (!existing) return { success: false, reason: 'not-active' };
 
+  const effectKey = effectKeyFor(id);
+  if (effectKey) {
+    await SWSEActiveEffectsManager.removeCombatActionEffects(actor, [effectKey]);
+    ui?.notifications?.info?.(`${existing.name ?? activeStateName(id)} ended.`);
+    return { success: true };
+  }
+
   await ActorEngine.updateActor(actor, { [stateFlagPath(id)]: null }, {
     meta: { guardKey: `combat-feature-state-clear-${id}` },
     source: 'combat-feature-active-state-service'
@@ -173,4 +230,21 @@ export async function clearCombatFeatureState(actor, featureId) {
 
   ui?.notifications?.info?.(`${existing.name ?? activeStateName(id)} ended.`);
   return { success: true };
+}
+
+/**
+ * Workflow handler for combat-action records whose resolution mode is `combatState` (e.g. the library's "Fight defensively"). The two effect-backed
+ * stances are established through activateCombatFeatureState (the combat-action effect authority; the stance action is paid exactly once there), so the
+ * generic sheet route -- which spends an action but has no resolver that applies the stance -- is never reached for them. Every other combatState action
+ * keeps `fallback` (the existing generic route).
+ */
+export function createCombatStateWorkflowHandler(actor, fallback) {
+  return async (context = {}) => {
+    const id = canonicalCombatFeatureKey(context?.action?.id ?? context?.actionId ?? '');
+    if (!effectKeyFor(id)) return fallback(context);
+    const result = await activateCombatFeatureState(actor, id);
+    if (result?.success) return { success: true, stance: id, state: result.state };
+    if (result?.reason === 'already-active') ui?.notifications?.info?.(`${activeStateName(id)} is already active.`);
+    return { cancelled: true, reason: result?.reason ?? 'stance-not-activated' };
+  };
 }

@@ -40,6 +40,7 @@
     "styles/sheets/v2-alive-systems.css",
     "styles/sheets/v2-weapon-controls.css",
     "styles/sheets/equipment-workspace.css",
+    "styles/sheets/combat-tab.css",
     "styles/sheets/v2-motion-picker.css",
     "styles/system/tokens.css",
     "styles/system/mentor-hologram.css",

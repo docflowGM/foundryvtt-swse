@@ -1,0 +1,14 @@
+{{!-- ADVANCED / REFERENCE: secondary commands that used to sit in a rail under the attack ledger. Initiative and Second Wind live in the status strip, so only the
+     commands with no home elsewhere remain. Collapsed by default. --}}
+<section class="swse-concept-panel swse-cmb__advanced" data-combat-advanced>
+  <details class="swse-cmb__more" data-cmb-details="advanced">
+    <summary>Advanced &amp; reference</summary>
+    <nav class="swse-cmb__commands" aria-label="Secondary combat commands">
+      <button type="button" class="swse-concept-btn" data-action="spend-force-point" {{#unless forcePointsValue}}disabled{{/unless}}>Spend Force Point</button>
+      <button type="button" class="swse-concept-btn" data-action="sheet-tab" data-sheet-tab="gear" data-tab="gear">Open Gear</button>
+      <button type="button" class="swse-concept-btn" data-action="cmd-levelup">Level up</button>
+    </nav>
+    <div data-combat-features-slot></div>
+    {{#if conceptLayout.combat.notes}}<p class="swse-cmb__note">{{conceptLayout.combat.notes}}</p>{{/if}}
+  </details>
+</section>

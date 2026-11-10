@@ -225,8 +225,13 @@ ok('Charge context becomes relevant for a ranged attacker who owns Charging Fire
   const beforeAim = await buildRollConfigModel({ actor, rollType: 'attack', weapon: rangedWeapon() });
   const carefulBefore = beforeAim.combatOptions.find((o) => o.id === 'carefulShot');
   assert.ok(carefulBefore, 'Careful Shot must be surfaced (owned, correct attack type) even before Aim is checked');
-  assert.equal(carefulBefore.state, 'disabled', 'Careful Shot must be presented as disabled, not omitted, before Aim is checked');
-  assert.equal(carefulBefore.reason, 'Requires Aim', 'the disabled reason must name Aim specifically');
+  // MODAL-001 (owner direction, 2026-11-10): an Aim-gated option whose only unmet gate is the Aim action is SELECTABLE; the roll pays the prerequisite
+  // through the action economy unless Aim is declared. (The resolver itself still reports it disabled with 'Requires Aim', checked just below.)
+  assert.equal(carefulBefore.state, 'available', 'Careful Shot is selectable before Aim is declared; the roll pays for Aim');
+  assert.equal(carefulBefore.autoPrerequisite, 'aim');
+  const resolverBefore = CombatOptionResolver.getAttackOptionsWithState(actor, rangedWeapon(), { attackType: 'ranged' }).find((o) => o.id === 'carefulShot');
+  assert.equal(resolverBefore.state, 'disabled', 'the resolver still states the gate');
+  assert.equal(resolverBefore.reason, 'Requires Aim', 'the resolver reason names Aim specifically');
 
   const afterAim = CombatOptionResolver.getAttackOptionsWithState(actor, rangedWeapon(), { attackType: 'ranged', aim: true });
   const carefulAfter = afterAim.find((o) => o.id === 'carefulShot');
@@ -252,8 +257,11 @@ ok('an owned, context-gated option is shown disabled with a reason before its co
   const actor = makeActor({ items: [powerfulChargeFeat()] });
   const beforeCharge = await buildRollConfigModel({ actor, rollType: 'attack', weapon: meleeWeapon() });
   const pcBefore = beforeCharge.combatOptions.find((o) => o.id === 'powerfulCharge');
-  assert.equal(pcBefore.state, 'disabled');
-  assert.equal(pcBefore.reason, 'Requires Charge');
+  // MODAL-001: selectable; the roll pays the Charge (which includes the attack) unless Charge is declared
+  assert.equal(pcBefore.state, 'available');
+  assert.equal(pcBefore.autoPrerequisite, 'charge');
+  const pcResolver = CombatOptionResolver.getAttackOptionsWithState(actor, meleeWeapon(), { attackType: 'melee' }).find((o) => o.id === 'powerfulCharge');
+  assert.equal(pcResolver.state, 'disabled'); assert.equal(pcResolver.reason, 'Requires Charge');
 
   const afterCharge = CombatOptionResolver.getAttackOptionsWithState(actor, meleeWeapon(), { attackType: 'melee', charge: true });
   assert.equal(afterCharge.find((o) => o.id === 'powerfulCharge').state, 'available');

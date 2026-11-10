@@ -121,27 +121,6 @@
 
     <section class="tab flexcol" data-tab-group="primary" data-tab="combat">
       <div class="swse-npc-col-stack">
-        <section class="swse-npc-card swse-npc-card--action-economy">
-          <header class="swse-npc-card__header">
-            <div>
-              <h3 class="swse-section-title">{{localize "SWSE.ActorUI.ActionEconomy"}}</h3>
-              <p class="swse-npc-card__subhead">{{localize "SWSE.ActorUI.EncounterTelemetryAppearsWhenThisNPCIsIn"}}</p>
-            </div>
-          </header>
-          <div class="swse-npc-card__body">
-            {{#if actionEconomy}}
-              <div class="swse-npc-action-row">
-                <span class="swse-npc-chip">Full {{actionEconomy.state.full}}</span>
-                <span class="swse-npc-chip">Standard {{actionEconomy.state.standard}}</span>
-                <span class="swse-npc-chip">Move {{actionEconomy.state.move}}</span>
-                <span class="swse-npc-chip">Swift {{actionEconomy.state.swift}}</span>
-              </div>
-            {{else}}
-              <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.ActionEconomyTrackingActivatesDuringActiveCombat"}}</p>
-            {{/if}}
-          </div>
-        </section>
-
         <section class="swse-npc-card swse-npc-card--attacks">
           <header class="swse-npc-card__header">
             <div>
@@ -161,10 +140,22 @@
                     <strong>{{attack.name}}</strong>
                     <span>{{attack.source}} · {{attack.mode}}</span>
                   </div>
+                  {{#if attack.preview}}
+                    <div class="swse-npc-attack-meta" data-npc-attack-preview>
+                      <span>To hit <b>{{attack.preview.toHitLabel}}</b></span>
+                      <span>Damage <b>{{attack.preview.damageRangeLabel}}</b>{{#if attack.preview.damageFormula}} · {{attack.preview.damageFormula}}{{/if}}</span>
+                      <span>{{attack.preview.stateLabel}}{{#if attack.preview.gripLabel}} · {{attack.preview.gripLabel}}{{/if}}</span>
+                    </div>
+                    {{#if attack.preview.unavailable}}<p class="swse-npc-attack-notes">{{attack.preview.unavailableReason}}</p>{{/if}}
+                  {{else if attack.previewBlocked}}
+                    <div class="swse-npc-attack-meta" data-npc-attack-preview><span>To hit —</span><span>Damage —</span></div>
+                    <p class="swse-npc-attack-notes">{{attack.previewBlockedReason}}</p>
+                  {{else}}
                   <div class="swse-npc-attack-meta">
                     <span>Attack {{attack.attack}}</span>
                     <span>Damage {{attack.damage}}</span>
                   </div>
+                  {{/if}}
                   {{#if attack.notes}}<p class="swse-npc-attack-notes">{{attack.notes}}</p>{{/if}}
                   <div class="swse-npc-attack-actions">
                     {{#if attack.canRollAttack}}
@@ -181,6 +172,27 @@
               {{/each}}
             {{else}}
               <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoItemizedOrStatblockAttacksWereFound"}}</p>
+            {{/if}}
+          </div>
+        </section>
+
+        <section class="swse-npc-card swse-npc-card--action-economy">
+          <header class="swse-npc-card__header">
+            <div>
+              <h3 class="swse-section-title">{{localize "SWSE.ActorUI.ActionEconomy"}}</h3>
+              <p class="swse-npc-card__subhead">{{localize "SWSE.ActorUI.EncounterTelemetryAppearsWhenThisNPCIsIn"}}</p>
+            </div>
+          </header>
+          <div class="swse-npc-card__body">
+            {{#if actionEconomy}}
+              <div class="swse-npc-action-row">
+                <span class="swse-npc-chip">Full {{actionEconomy.state.full}}</span>
+                <span class="swse-npc-chip">Standard {{actionEconomy.state.standard}}</span>
+                <span class="swse-npc-chip">Move {{actionEconomy.state.move}}</span>
+                <span class="swse-npc-chip">Swift {{actionEconomy.state.swift}}</span>
+              </div>
+            {{else}}
+              <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.ActionEconomyTrackingActivatesDuringActiveCombat"}}</p>
             {{/if}}
           </div>
         </section>

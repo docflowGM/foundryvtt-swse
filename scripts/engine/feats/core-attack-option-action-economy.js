@@ -206,6 +206,15 @@ export function auditCoreAttackOptionEconomy(options = {}) {
   return selectedOptionIds(options).map(id => ({ id, ...ATTACK_OPTION_ECONOMY[id] }));
 }
 
+/**
+ * A Charge ends in the attack: when the roll will itself spend the Charge prerequisite (a Charge-gated option selected without a declared Charge),
+ * that Standard action IS the attack's action, so the attack must not be charged a second Standard. A declared Charge spends nothing here, and Aim
+ * (two Swift actions) is separate from the attack's own action, so neither changes the attack's cost.
+ */
+export function attackStandardCoveredByCharge(options = {}) {
+  return prepareCoreAttackOptionRollContext(options).swseAutoPrerequisites?.charge === true;
+}
+
 export function prepareCoreAttackOptionRollContext(options = {}) {
   const prepared = { ...options };
   const combatOptions = { ...(options.combatOptions ?? options.attackOptions ?? {}) };

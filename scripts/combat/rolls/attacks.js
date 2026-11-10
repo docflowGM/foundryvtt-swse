@@ -8,6 +8,7 @@ import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowConte
 import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { canDeclareInfiltratorUnarmedStun } from "/systems/foundryvtt-swse/scripts/engine/combat/class-infiltrator-unarmed-stun.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
+import { multiAttackChargeViolation } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { prepareCoreAttackOptionRollContext, spendCoreAttackOptionCosts } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { damageContextForReaction, damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
@@ -277,6 +278,19 @@ export function previewAttackContext(actor, weapon, baseOptions = {}) {
   // which attack profile this preview shows (so the readout can name it, and say when the weapon has other attack modes)
   const profileInfo = { id: runtime.profile?.id ?? null, label: runtime.profile?.definition?.label ?? runtime.profile?.id ?? null, count: Array.isArray(runtime.resolved?.profiles) ? runtime.resolved.profiles.length : 1, isDefault: (runtime.resolved?.defaultProfileId ?? null) === (runtime.profile?.id ?? null) };
   return { ok: true, source: 'canonical', rollOptions, weaponForm, wield, sizing, pendingFacts, damageContext, profileInfo, conditionalDamageDeclared: Array.isArray(shape.conditionalDamage) ? shape.conditionalDamage.length : 0 };
+}
+
+/**
+ * READ-ONLY ammunition preflight for the attack dialog: the SAME AmmoSystem cost rule and non-mutating preflight rollAttack() runs before it commits
+ * anything, evaluated on the selected attack form (previewAttackContext) and the options the player has chosen. It spends nothing and is not the final
+ * validation: rollAttack() stays authoritative and refuses an unaffordable attack before any action or ammunition is committed.
+ */
+export function previewAmmoPreflight(actor, weapon, baseOptions = {}) {
+  const ctx = previewAttackContext(actor, weapon, baseOptions);
+  if (ctx.ok === false) return { ok: false, tracked: false, reason: ctx.reason ?? 'unresolved', message: ctx.error?.message ?? 'The selected attack form could not be resolved.' };
+  const rollOptions = ctx.rollOptions ?? baseOptions;
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
+  return AmmoSystem.preflightAmmunition(actor, weapon, AmmoSystem.resolveAmmoCost({ weapon, workflowContext: null, options: rollOptions, optionModifiers }), rollOptions);
 }
 
 /**
@@ -792,6 +806,8 @@ export async function rollAttack(actor, weapon, options = {}) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
+  // Charge (Standard, one attack) cannot be combined with Double / Triple / Full Attack (full-round): refused before anything is committed.
+  { const chargeBlock = multiAttackChargeViolation(rollOptions); if (chargeBlock) { ui?.notifications?.warn?.(chargeBlock); return null; } }
   { const gate = checkAttackSourceReadiness(actor, weapon, rollOptions); if (!gate.ok) return refuseUnreadyAttack(weapon, gate); }
 
   // Phase 2C, immediate strict stock mode (approved DENY): every vehicle-

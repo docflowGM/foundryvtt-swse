@@ -34,6 +34,7 @@ export async function buildWeaponLoadoutPreview(actor, weapon, { readiness = nul
     effectivePosture: r?.effectivePosture ?? null, ready: r?.ready === true,
     grip: null, gripLabel: '', occupiedAppendageIds: asArray(r?.occupancy?.appendageIds),
     attackBonus: null, damageFormula: null, minimumDamage: null, maximumDamage: null, rawMinimumDamage: null,
+    critMultiplier: null, damageTypes: [], branch: null,
     attackBreakdown: [], damageBreakdown: [], calculationStatus: PREVIEW_STATUS.UNRESOLVED, explanation: '', notes: []
   };
   const unresolved = (explanation) => ({ ...base, calculationStatus: PREVIEW_STATUS.UNRESOLVED, explanation });
@@ -43,6 +44,7 @@ export async function buildWeaponLoadoutPreview(actor, weapon, { readiness = nul
   if (!ctx.ok) return unresolved(`The selected attack form cannot be resolved (${ctx.error?.message ?? ctx.reason}).`);
   if (ctx.source !== 'canonical') return unresolved('This weapon has no certified canonical identity, so no attack can be previewed.');
   base.profileId = ctx.weaponForm?.profileId ?? null;
+  base.branch = ctx.rollOptions?.weaponRuntime?.branch ?? null;
   // the readout names the attack profile it shows; a weapon with other attack modes says so (the numbers are NOT those of an alternate mode)
   base.profileLabel = ctx.profileInfo?.label ?? base.profileId;
   base.otherProfileCount = Math.max(0, (ctx.profileInfo?.count ?? 1) - 1);
@@ -60,7 +62,7 @@ export async function buildWeaponLoadoutPreview(actor, weapon, { readiness = nul
 
   // ---- damage: the formula rollDamage() itself would roll ----
   const flat = npcStatblockFlatDamageFormula(actor, weapon);
-  let formula = null, damageBreakdown = [], noDamage = null, conditionalApplied = false;
+  let formula = null, damageBreakdown = [], noDamage = null, conditionalApplied = false, critMultiplier = null, damageTypes = [];
   if (flat) { formula = flat; }
   else {
     const rollContext = { ...ctx.damageContext, target: null };
@@ -70,6 +72,8 @@ export async function buildWeaponLoadoutPreview(actor, weapon, { readiness = nul
     if (composed.refusal) noDamage = composed.refusal.error?.message ?? composed.refusal.message ?? 'no ordinary damage';
     else {
       formula = composed.formula;
+      critMultiplier = Number(composed.composition?.critical?.multiplier) || null;
+      damageTypes = Array.isArray(composed.canonicalDamage?.damageTypes) ? [...composed.canonicalDamage.damageTypes] : [];
       const bc = composed.composition?.bonus?.components ?? {};
       damageBreakdown = [{ label: 'Weapon dice', value: String(composed.composition?.dice?.base ?? '') }, ...nonZeroParts(bc)].filter((p) => p.value !== '');
       conditionalApplied = Number(composed.composition?.dice?.conditionalFlat || 0) !== 0 || asArray(composed.composition?.dice?.conditionalDiceTerms).length > 0;
@@ -87,7 +91,7 @@ export async function buildWeaponLoadoutPreview(actor, weapon, { readiness = nul
   // minimum-1 on a confirmed weapon hit (three-gate W1, packet seam): the DISPLAYED minimum is the effective per-hit minimum, the raw formula minimum is kept
   const rawMin = bounds ? bounds.min : null;
   return {
-    ...out, damageFormula: formula, damageBreakdown,
+    ...out, damageFormula: formula, damageBreakdown, critMultiplier, damageTypes,
     rawMinimumDamage: rawMin,
     minimumDamage: bounds ? Math.max(1, bounds.min) : null,
     maximumDamage: bounds ? bounds.max : null,

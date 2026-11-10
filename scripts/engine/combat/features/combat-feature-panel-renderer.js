@@ -68,8 +68,12 @@ async function renderCombatFeaturesPanel(app, html) {
   const panel = wrapper.firstElementChild;
   if (!panel) return;
 
+  // Combat tab UX convergence: the panel lives in the Advanced / reference section's slot. The previous anchors stay as fallbacks for any sheet that
+  // still renders the retired combat-actions board.
+  const slot = combatRoot.querySelector('[data-combat-features-slot]');
   const legacyPanel = combatRoot.querySelector('.swse-concept-panel--combat-actions-compact');
-  if (legacyPanel) legacyPanel.insertAdjacentElement('beforebegin', panel);
+  if (slot) slot.insertAdjacentElement('beforeend', panel);
+  else if (legacyPanel) legacyPanel.insertAdjacentElement('beforebegin', panel);
   else combatRoot.insertAdjacentElement('beforeend', panel);
 }
 

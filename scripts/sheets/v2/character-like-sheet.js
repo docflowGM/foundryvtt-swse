@@ -1,3 +1,4 @@
+import { activateCombatTab } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-tab-ui.js";
 import { activateEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-ui.js";
 import { authorizeDroidComponentOperation } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js";
 import { isIntegratedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-item-classification.js";
@@ -36,6 +37,8 @@ import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/c
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
 import { AbilityCombatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/ability-combat-action-resolver.js";
+import { createCombatStateWorkflowHandler } from "/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-active-state-service.js";
+import { evaluateCombatActionEligibility, gateCombatActionRequest, isActorCombatActionGrant } from "/systems/foundryvtt-swse/scripts/engine/combat/features/combat-action-eligibility.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/talent/guardian-spirit-actions.js";
 import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/consular-talent-actions.js";
@@ -124,7 +127,7 @@ import { EntityCreateBrowser } from "/systems/foundryvtt-swse/scripts/dialogs/en
 import { CombinedFeatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combined-feat-action-resolver.js";
 import { FullAttackExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-executor.js";
 import { SWSEGrappling } from "/systems/foundryvtt-swse/scripts/combat/systems/grappling-system.js";
-import { CombatWorkflowRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-registry.js";
+import { CombatWorkflowRegistry, markWorkflowRouted } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-workflow-registry.js";
 import { FULL_ATTACK_PACKAGES } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 
@@ -425,8 +428,10 @@ function hasForceSensitivityAccess(actor) {
   });
 }
 
-import { buildConceptSheetViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
+import { overlayNpcAttackPreviews } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-loadout-context.js";
+import { buildConceptSheetViewModel, buildActorCombatLoadout } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
 import { applyLoadoutPreviews } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js";
+import { dedupeCombatActionRows } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-action-identity.js";
 import { buildLoadoutPreviews } from "/systems/foundryvtt-swse/scripts/combat/rolls/loadout-preview.js";
 import { maybePromptForDatapadRegistration } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/chargen-onboarding.js";
 
@@ -1545,6 +1550,7 @@ const forcePoints = [];
     // clicking a card has the same hydrated data that rendered the card.
     let combatActions = { groups: [] };
     let combatActionLookup = {};
+    const registeredCombatRows = [];   // every row, in registration order, so identity can be judged across lanes and registries
     const economyOrder = ['full-round', 'standard', 'move', 'swift', 'free', 'reaction'];
     const economyLabel = (value) => String(value || 'standard')
       .split('-')
@@ -1621,10 +1627,17 @@ const forcePoints = [];
         spendAction: action.spendAction !== false,
         requiresSelectedChoice: action.requiresSelectedChoice === true,
         requiredContext: action.requiredContext || [],
+        requirements: action.requirements || [],
+        restriction: action.restriction || '',
+        origin: action.origin || '',
         targetHint: action.targetHint || '',
         ruleData: action.ruleData || null,
         isAttack: action.isAttack === true
       };
+      // Eligibility (who has earned / may perform this action) is separate from availability (economy, grapple, context). See combat-action-eligibility.js.
+      row.eligibility = evaluateCombatActionEligibility(this.actor, row);
+      row.entitled = row.eligibility.state === 'unlocked';
+      if (row.eligibility.execution.allowed !== true) { row.economyAvailable = false; row.eligibilityBlocked = true; }
       const grappleRestriction = GrappleStateEngine.evaluateAction(this.actor, row);
       if (grappleRestriction?.restricted) {
         row.grappleRestricted = true;
@@ -1640,6 +1653,7 @@ const forcePoints = [];
           row.economyViolations = [...(row.economyViolations ?? []), `GRAPPLE_${String(grappleRestriction.state ?? 'RESTRICTED').toUpperCase()}`];
         }
       }
+      registeredCombatRows.push(row);
       if (!grouped[actionType]) grouped[actionType] = [];
       grouped[actionType].push(row);
       combatActionLookup[key] = row;
@@ -1668,6 +1682,7 @@ const forcePoints = [];
             ...action,
             key: action.key || `combat:${index}`,
             sourceName: 'Combat Actions Compendium',
+            origin: 'catalog',
             executable: action.executable !== false,
             useLabel: action.executable === false ? 'Review' : (action.relatedSkills?.length ? 'Roll / Use' : 'Use')
           });
@@ -1691,6 +1706,7 @@ const forcePoints = [];
             description: action.description ?? action.notes,
             relatedSkills: action.relatedSkills || [],
             sourceName: 'Core Combat Action',
+            origin: 'catalog',
             executable: action.executable !== false,
             useLabel: action.executable === false ? 'Review' : (action.relatedSkills?.length ? 'Roll / Use' : 'Use')
           }));
@@ -1700,11 +1716,7 @@ const forcePoints = [];
       // Include actor-owned executable combat-action items, such as species abilities.
       for (const item of this.actor?.items || []) {
         if (item?.type !== 'combat-action') continue;
-        const isActorAbility = item.flags?.swse?.isSpeciesAbility === true
-          || item.flags?.swse?.isActorAbility === true
-          || item.system?.executionModel === 'actor-special-ability'
-          || item.system?.executionModel === 'species-activated-ability';
-        if (!isActorAbility) continue;
+        if (!isActorCombatActionGrant(item)) continue;
         registerAction(grouped, {
           key: `item:${item.id}:use`,
           itemId: item.id,
@@ -1716,6 +1728,7 @@ const forcePoints = [];
           relatedSkills: item.system?.relatedSkills ?? [],
           sourceName: item.flags?.swse?.sourceSpecies ?? item.flags?.swse?.sourceName ?? item.system?.specialAbility?.sourceName ?? 'Special Ability',
           executable: true,
+          origin: 'actor-item',
           useLabel: 'Use'
         });
       }
@@ -1723,13 +1736,22 @@ const forcePoints = [];
       // Include action cards exposed by owned feats and talents. These are
       // source-item-owned action cards, not bespoke tree-specific code.
       for (const action of AbilityCombatActionResolver.getActions(this.actor)) {
-        registerAction(grouped, action);
+        registerAction(grouped, { ...action, origin: 'ability' });
       }
       // Combined-feat synthetic action cards (cross-feat interactions).
       for (const action of CombinedFeatActionResolver.getActions(this.actor)) {
-        registerAction(grouped, action);
+        registerAction(grouped, { ...action, origin: 'combined' });
       }
 
+
+      // Combat tab UX convergence: the same action arriving from several registries is shown once (see combat-action-identity.js). Same-identity rows
+      // with contradictory mechanics are kept and flagged; names are never an identity. The use-handler lookup is rebuilt from the same rows.
+      const dedupe = dedupeCombatActionRows(registeredCombatRows);
+      for (const lane of Object.keys(grouped)) delete grouped[lane];
+      combatActionLookup = {};
+      for (const r of dedupe.rows) { (grouped[r.actionType] ??= []).push(r); combatActionLookup[r.key] = r; }
+      combatActions.diagnostics = { removedDuplicates: dedupe.removed.length, conflicts: dedupe.conflicts, sharedKeys: dedupe.sharedKeys };
+      if (dedupe.conflicts.length) swseLogger.warn('[SWSE] Combat actions: same identity with contradictory mechanics (kept, flagged)', { actorId: this.actor?.id, conflicts: dedupe.conflicts });
 
       for (const eco of economyOrder) {
         const items = grouped[eco] || [];
@@ -2312,12 +2334,24 @@ const forcePoints = [];
 
     // Combat Loadout Preview (Gear tab): a read-only projection of the production attack / damage authorities for the weapons held right now,
     // recomputed on every render (no cache, no polling, nothing written), so grip, equipment, ability, modification and effect changes show at once.
+    let loadoutPreviews = new Map();
     try {
-      const loadoutPreviews = await buildLoadoutPreviews(actor);
+      loadoutPreviews = await buildLoadoutPreviews(actor);
       applyLoadoutPreviews(conceptLayout?.gear?.workspace, loadoutPreviews);
       applyLoadoutPreviews(context.npcConcept?.workspace, loadoutPreviews);
     } catch (err) {
       swseLogger.warn('[SWSE] Combat loadout preview unavailable', { actorId: actor?.id, error: err?.message });
+    }
+    // Combat tab, attack-first: the SAME preview map feeds the Active Attacks cards, so the Combat and Equipment tabs agree by construction.
+    // A weapon whose preview is unresolved shows an explicit unavailable state; there is no fallback to an Item damage field.
+    // NPC / Follower: item-backed attack rows show the canonical preview (their Roll already runs the canonical attack); statblock-only rows keep published values
+    if (context.npcConcept?.attacks) context.npcConcept.attacks = overlayNpcAttackPreviews(context.npcConcept.attacks, loadoutPreviews);
+    if (conceptLayout?.combat) {
+      try {
+        conceptLayout.combat.loadout = buildActorCombatLoadout(actor, { conceptCombat: conceptLayout.combat, previews: loadoutPreviews, attackLocked: combatStatus?.attackLocked === true, attackLockLabel: combatStatus?.attackLockLabel ?? '' });
+      } catch (err) {
+        swseLogger.warn('[SWSE] Combat loadout unavailable', { actorId: actor?.id, error: err?.message });
+      }
     }
 
     const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor });
@@ -3591,6 +3625,8 @@ const forcePoints = [];
     this._activateInventoryUI(html, { signal });
     // Gear tab equipment workspace: UI state + routing to the existing equipment authorities
     activateEquipmentWorkspace(this, html, { signal });
+    // Combat tab: action library filtering + open state (UI only; the rows' buttons are the existing data-action handlers)
+    activateCombatTab(this, html, { signal });
     // shared browse/inspect surfaces (Droid Systems components; Vehicle systems): UI state only, operations stay existing data-action handlers
     activateBrowseInspect(this, html, { signal });
 
@@ -6743,6 +6779,18 @@ const forcePoints = [];
     return await rollSkillCheck(this.actor, skillKey, payload);
   }
 
+  /** The live sources the eligibility gate re-derives an action from (catalog, owned feat/talent cards, combined-feat cards). */
+  async _liveCombatActionSources() {
+    const actor = this.actor;
+    try { await CombatActionsMapper.init?.(); } catch (_err) { /* an uninitialised catalog yields no rows: unknown keys then fail closed */ }
+    const catalog = CombatActionsMapper.getAllCombatActions?.() || [];
+    return {
+      catalogRow: (key) => catalog.find((row) => row?.key === key) ?? null,
+      abilityRow: (key) => AbilityCombatActionResolver.getActions(actor).find((row) => row?.key === key) ?? null,
+      combinedRow: (key) => CombinedFeatActionResolver.getActions(actor).find((row) => row?.key === key) ?? null
+    };
+  }
+
   _resolveSheetCombatActionData(actionId, element = null) {
     const key = String(actionId || '');
     const actorActions = this.actor?.getFlag?.(game.system.id, "combatActions") ?? {};
@@ -6765,12 +6813,11 @@ const forcePoints = [];
   }
 
   _createCombatWorkflowHandlers(options = {}) {
-    const routeLegacy = async (context) => this._runCanonicalCombatAction(context?.action?.id ?? context?.actionId, context?.action ?? {}, {
+    const routeLegacy = async (context) => this._runCanonicalCombatAction(context?.action?.id ?? context?.actionId, context?.action ?? {}, markWorkflowRouted({
       ...options,
-      __combatWorkflowRouted: true,
       combatContext: context,
       actionRecord: context?.action ?? null
-    });
+    }));
 
     return {
       fullAttack: async (context) => this._executeFullAttackCombatWorkflow(context, options),
@@ -6778,7 +6825,7 @@ const forcePoints = [];
       reference: async (context) => this._executeManualCombatWorkflow(context, options),
       skillAction: async (context) => this._executeSkillActionCombatWorkflow(context, options),
       attack: routeLegacy,
-      combatState: routeLegacy,
+      combatState: createCombatStateWorkflowHandler(this.actor, routeLegacy),
       secondWind: routeLegacy,
       grapple: async (context) => this._executeGrappleCombatWorkflow(context, options),
       aidAnother: routeLegacy,
@@ -7084,12 +7131,11 @@ const forcePoints = [];
     const actionId = actionData?.id ?? context?.actionId ?? 'skill-combat-action';
     const skillKey = this._resolveCombatActionSkillKey(actionData);
     if (!skillKey) {
-      return await this._runCanonicalCombatAction(actionId, actionData, {
+      return await this._runCanonicalCombatAction(actionId, actionData, markWorkflowRouted({
         ...options,
-        __combatWorkflowRouted: true,
         combatContext: context,
         actionRecord: actionData
-      });
+      }));
     }
 
     const modResult = await showRollModifiersDialog({
@@ -7130,10 +7176,25 @@ const forcePoints = [];
   }
 
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
+    // EXECUTION boundary for combat actions: a hidden or disabled button is not a security boundary. The action is re-derived from the LIVE
+    // actor / catalog by its key and must be unlocked before any workflow runs; what then runs is the live / sheet-registered row for that key,
+    // never mechanics the caller supplied. Trust for the workflow's own nested calls is an options object the workflow marked (markWorkflowRouted),
+    // not a flag a caller can set.
+    const gated = await gateCombatActionRequest(this.actor, actionId, actionData, options, {
+      live: () => this._liveCombatActionSources(),
+      lookupRow: this._combatActionLookup?.[String(actionId)] ?? null
+    });
+    if (!gated.allowed) {
+      ui?.notifications?.warn?.(gated.reason || 'This actor has not unlocked this action.');
+      return null;
+    }
+    actionData = gated.actionData;
+    options = gated.options;
+
     // Phase 1B: route combat actions through the thin workflow registry first.
     // The registry owns normalization/context preservation, while this sheet
     // method remains the legacy execution adapter for existing authorities.
-    if (options?.__combatWorkflowRouted !== true) {
+    if (!gated.routed) {
       const registry = CombatWorkflowRegistry.getDefault();
       const result = await registry.execute({
         actor: this.actor,
