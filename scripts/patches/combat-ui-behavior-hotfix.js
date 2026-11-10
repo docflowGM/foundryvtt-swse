@@ -161,16 +161,6 @@ function actorFromElement(element) {
   return canvas?.tokens?.controlled?.[0]?.actor ?? null;
 }
 
-function itemFromAnyActor(itemId, actor = null) {
-  if (!itemId) return null;
-  if (actor?.items?.get?.(itemId)) return actor.items.get(itemId);
-  for (const candidate of game?.actors ?? []) {
-    const item = candidate?.items?.get?.(itemId);
-    if (item) return item;
-  }
-  return null;
-}
-
 function defenseValue(actor, defenseType = 'reflex') {
   if (!actor) return null;
   const key = String(defenseType || 'reflex').toLowerCase() === 'fort' ? 'fortitude' : String(defenseType || 'reflex').toLowerCase();
@@ -309,15 +299,6 @@ function weaponBranch(item) {
   return isRangedWeapon(item) ? 'ranged' : 'melee';
 }
 
-function weaponGroupLabel(item, fallback = '') {
-  const system = item?.system ?? {};
-  const text = [item?.type, item?.name, system.weaponType, system.weaponGroup, system.weaponCategory, system.proficiency, system.category, system.subcategory].join(' ').toLowerCase();
-  if (text.includes('lightsaber')) return 'Lightsaber';
-  if (isMeleeWeapon(item) && /heavy[-\s]?weapons?/.test(text)) return 'Melee';
-  const raw = fallback || system.weaponGroup || system.weaponType || system.weaponCategory || system.proficiency || '';
-  return String(raw || 'Weapon').replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-}
-
 function actionNameFromRow(row) {
   return row?.querySelector?.('.action-name')?.textContent?.trim()
     || row?.dataset?.actionName
@@ -426,22 +407,7 @@ function repairCombatTabWeaponDisplay(app, html) {
   combatRoot.querySelectorAll('.combat-action-row, [data-action="swse-v2-use-action"]').forEach(el => { el.dataset.actorId = actor.id; });
   dedupeAndGateCombatActions(actor, combatRoot);
 
-  for (const card of combatRoot.querySelectorAll('.swse-concept-attack-card')) {
-    const button = card.querySelector('[data-action="roll-attack"][data-weapon-id]');
-    const item = itemFromAnyActor(button?.dataset?.weaponId, actor);
-    if (!item) continue;
-    const melee = isMeleeWeapon(item);
-    const line = card.querySelector('.swse-concept-attack-card__main > p');
-    if (line) {
-      const branchLabel = melee ? 'Melee' : 'Ranged';
-      line.textContent = `${item.name || 'Weapon'} · ${weaponGroupLabel(item, line.textContent)} · ${branchLabel}`;
-    }
-    if (melee) {
-      card.querySelectorAll('.swse-concept-attack-card__microline span').forEach(span => {
-        if (/^\s*ammo\b/i.test(span.textContent || '')) span.remove();
-      });
-    }
-  }
+  // Attack cards are rendered from the Combat Loadout Preview (combat-attacks-panel.hbs); no DOM rewrite of weapon text is needed.
 }
 
 function scrubHiddenDefensesInRollDialog(_app, html) {
