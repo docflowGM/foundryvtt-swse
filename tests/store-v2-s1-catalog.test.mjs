@@ -91,6 +91,12 @@ for (const d of droids) {
 }
 ok(`stock droid certification covers all ${droids.length} records and pins each record's content hash`);
 
+// 6b. The three verification levels stay distinct: eligibility is never recorded as mechanical certification.
+assert.equal(cert.mechanicalCertification, 'NOT_PERFORMED');
+for (const r of Object.values(cert.records)) { assert.equal(r.mechanicalCertification, 'NOT_PERFORMED'); assert.equal(typeof r.sourceIdentity, 'boolean'); assert.equal(typeof r.importAcceptance, 'boolean'); }
+assert.match(fs.readFileSync(new URL('../scripts/engine/store/store-catalog.js', import.meta.url), 'utf8'), /pin\.name !== entry\.name \|\| pin\.degree !== /, 'runtime re-checks the pinned identity');
+ok('droid eligibility records source identity and import acceptance separately; mechanical certification is NOT_PERFORMED and never implied');
+
 // 7. Architecture-negative guards.
 const read = f => fs.readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 for (const gone of ['loader', 'normalizer', 'categorizer', 'index', 'compendium-schema']) assert.ok(!fs.existsSync(new URL(`../scripts/engine/store/${gone}.js`, import.meta.url)), `${gone}.js deleted`);

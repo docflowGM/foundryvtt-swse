@@ -67,10 +67,10 @@ test('invalid source and uncertified legacy shipyard modifications fail before m
   const original = sample(d => d.system.shieldRating > 0);
   const corrupted = clone(original);
   corrupted.system.hp.max = 1;
-  assert.throws(() => Factory.buildVehicleActorData({ template: corrupted }),
+  assert.throws(() => Factory.buildVehicleActorData({ template: corrupted, condition: 'new' }),
     /VEHICLE_FACTORY_UNTRUSTED_CANONICAL_TEMPLATE/);
   assert.throws(() => Factory.buildVehicleActorData({
-    template: original, modifications: [{ id: 'weapons-lasers', damage: '99d10' }]
+    template: original, condition: 'new', modifications: [{ id: 'weapons-lasers', damage: '99d10' }]
   }), /VEHICLE_FACTORY_CANONICAL_MODIFICATION_REQUIRES_CERTIFIED_P2_PATH/);
   assert.throws(() => Factory.buildExistingModificationMutationPlan(original, {
     stockShip: { hitPoints: 999 }, modifications: []
@@ -129,7 +129,7 @@ test('Foundry V13 Factory uses toObject(true) source, never prepared derived dat
       return prepared;
     }
   };
-  const created = Factory.buildVehicleActorData({ template: { doc: stub } });
+  const created = Factory.buildVehicleActorData({ template: { doc: stub }, condition: 'new' });
   assert.equal(consulted, true, 'Foundry source flag must be true');
   assert.equal(created.system.hp.max, original.system.hp.max);
   assert.equal(classifyVehicleActorSource(created).kind, 'canonical');

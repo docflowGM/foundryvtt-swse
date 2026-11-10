@@ -68,3 +68,15 @@ let n = 0; const ok = m => console.log(`  [${++n}] ${m} OK`);
   ok('pending droid approval: refuses zero/missing cost, requires explicit GM authorization of the amount, records it, only from PENDING');
 }
 console.log(`store-v2-s2-commerce-closure: ${n} checks ok`);
+
+// P5: the vehicle condition is part of every stage of the chain and never silently becomes 'new'
+{
+  const vf = fs.readFileSync('scripts/engine/vehicles/vehicle-factory.js', 'utf8');
+  assert.match(vf, /condition !== 'new' && condition !== 'used'\) throw/, 'factory refuses a missing/invalid condition');
+  const eng = fs.readFileSync('scripts/engine/store/store-engine.js', 'utf8');
+  assert.match(eng, /condition: item\.condition \|\| null/, 'the transaction audit records each line\'s condition');
+  const co = fs.readFileSync('scripts/apps/store/store-checkout.js', 'utf8');
+  assert.match(co, /condition: vehicle\.condition\s*\n\s*\}\);/, 'checkout passes the cart condition (not a default) to the factory');
+  assert.match(co, /condition: entry\.condition \|\| null/, 'approval requests record the condition');
+  console.log('  vehicle condition chain guards OK');
+}

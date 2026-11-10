@@ -1,8 +1,14 @@
-// Generates data/store/stock-droid-certification.json: positive, traceable certification of stock droid
-// records for Store retail. A record is certified only when (a) it is in the canonical droids pack,
-// (b) its degree is a published 1st-5th Degree value, and (c) the supported stock pipeline
-// (StockDroidNormalizer -> StockDroidImporterEngine) accepts it without throwing.
-// It does NOT judge statblock quality and does not decide price (commerce is separate).
+// Generates data/store/stock-droid-certification.json: the Store's retail-eligibility record for stock droids.
+// THREE DIFFERENT THINGS, never to be confused:
+//   1. SOURCE IDENTITY  - the record is in the canonical droids pack and names a published 1st-5th Degree. (checked here)
+//   2. IMPORT ACCEPTANCE - StockDroidNormalizer -> StockDroidImporterEngine accept it without throwing. (checked here; the
+//      normalizer is lenient, so this proves the Store can deliver it, NOT that its statblock is correct)
+//   3. MECHANICAL CERTIFICATION - a rules audit of the statblock against the sourcebook. NOT PERFORMED by this tool or by
+//      the Store; every record carries mechanicalCertification: 'NOT_PERFORMED'.
+// `certified` below means (1) AND (2) only. recordHash pins the pack record's content; it is enforced at the source-validation
+// boundary (tests/store-v2-s1-catalog.test.mjs and `--check` in CI), and the runtime catalog re-checks the identity pins
+// (record id, name, degree) against the live pack index before listing a droid.
+// It does not judge statblock quality and does not decide price (commerce is separate).
 // Usage: node tools/generate-stock-droid-certification.mjs [--check]
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -28,7 +34,7 @@ export function certifyRecord(rec) {
       StockDroidImporterEngine.buildActorDataFromNormalized(normalized, { name: rec.name });
     } catch (err) { reasons.push(`STOCK_PIPELINE_REFUSED: ${err?.message ?? err}`); }
   }
-  return { name: rec.name, certified: reasons.length === 0, degree: rec.system?.degree ?? null, reasons, recordHash: hash(rec) };
+  return { name: rec.name, certified: reasons.length === 0, degree: rec.system?.degree ?? null, reasons, recordHash: hash(rec), sourceIdentity: !reasons.includes('NOT_A_DROID') && !reasons.includes('DEGREE_NOT_PUBLISHED'), importAcceptance: !reasons.some(r => r.startsWith('STOCK_PIPELINE_REFUSED')), mechanicalCertification: 'NOT_PERFORMED' };
 }
 
 const rows = fs.readFileSync(new URL('../packs/droids.db', import.meta.url), 'utf8').split('\n').filter(l => l.trim()).map(l => JSON.parse(l));
@@ -37,7 +43,8 @@ for (const rec of rows) records[rec._id] = certifyRecord(rec);
 const out = {
   schema: 'swse-store-stock-droid-certification-v1',
   pack: PACK,
-  method: 'canonical pack identity + published degree + StockDroidNormalizer/StockDroidImporterEngine dry run; recordHash pins the certified record content',
+  method: 'sourceIdentity (canonical pack + published degree) AND importAcceptance (StockDroidNormalizer/StockDroidImporterEngine dry run). NOT a mechanical certification. recordHash pins the record content.',
+  mechanicalCertification: 'NOT_PERFORMED',
   counts: { total: rows.length, certified: Object.values(records).filter(r => r.certified).length },
   records
 };

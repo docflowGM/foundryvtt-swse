@@ -137,7 +137,10 @@ async function buildCatalog() {
       for (const entry of entriesOf(await compendium.getIndex({ fields }))) {
         if (spec.domain === 'droid') {
           certified ??= await loadDroidCertification();
-          if (certified.records?.[entry._id]?.certified !== true) { metadata.uncertifiedDroids += 1; continue; }
+          // Retail eligibility = source identity + import acceptance (NOT mechanical certification). The live index must still
+          // match the pinned identity (id, name, degree); content hashes are enforced at the source-validation boundary.
+          const pin = certified.records?.[entry._id];
+          if (pin?.certified !== true || pin.name !== entry.name || pin.degree !== (entry.system?.degree ?? null)) { metadata.uncertifiedDroids += 1; continue; }
         }
         items.push(buildIndexedListing(entry, { domain: spec.domain, pack }));
       }
