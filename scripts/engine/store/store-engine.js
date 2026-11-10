@@ -47,6 +47,7 @@
  */
 
 import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js";
+import { ledgerLineFields } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -367,6 +368,7 @@ export class StoreEngine {
             quantity: normalizeCredits(item.quantity ?? 1) || 1,
             cost: normalizeCredits(item.finalCost ?? item.cost ?? item.price ?? 0),
             condition: item.condition || null,
+            ...ledgerLineFields(item),   // listingId, sourceUuid, unitCost (actual paid per unit), publishedUnitCost: the evidence resale later verifies
             customized: !!item.stagedCustomization
           })),
           hasCustomizedStoreItem

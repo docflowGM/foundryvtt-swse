@@ -16,6 +16,7 @@ import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-
 import { evaluateVehicleMerchantPurchase } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-store-eligibility.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { buildAcquisitionMarker, publishedUnitCostOf } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js";
 import { beginStoreDroidConstruction } from "/systems/foundryvtt-swse/scripts/engine/store/store-droid-construction.js";
 import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
@@ -561,6 +562,8 @@ export function createItemPlans(cartItems) {
     // the compendium record itself (canonical identity, effects, full system data) -- never the normalized store listing
     const data = storeItemDocumentData(cartItem.item);
     if (!data) throw new Error(`Store item "${cartItem.name ?? cartItem.id}" has no source document; purchase refused.`);
+    // actual amount paid for this delivered Item (stamped with the transaction id by the TransactionEngine)
+    data.__acquisition = buildAcquisitionMarker({ listing: cartItem.item, listingId: cartItem.id, unitPaid: cartItem.cost });
     return data;
   });
 
@@ -593,6 +596,7 @@ export async function createDroidPlans(cartDroids) {
         droidActor: droid.actor,
         name: droid.name
       });
+      for (const spec of plan.create?.actors ?? []) spec.data.__acquisition = buildAcquisitionMarker({ listing: droid.actor, listingId: droid.id, unitPaid: droid.cost });
       plans.push(plan);
     } catch (err) {
       SWSELogger.error('SWSE Store | DroidFactory failed:', err);
@@ -661,6 +665,7 @@ export async function createVehiclePlans(cartVehicles, itemsById) {
         template: canonicalActor,
         condition: vehicle.condition
       });
+      for (const spec of plan.create?.actors ?? []) spec.data.__acquisition = buildAcquisitionMarker({ listing: merchantItem, listingId: vehicle.id, unitPaid: vehicle.cost, condition: vehicle.condition });
       plans.push(plan);
     } catch (err) {
       SWSELogger.error('SWSE Store | VehicleFactory failed:', err);
@@ -685,7 +690,9 @@ function flattenCartForPurchase(cart) {
             id: item.id,
             name: item.name,
             type: 'item',
-            finalCost: normalizeCredits(item.cost)
+            finalCost: normalizeCredits(item.cost),
+            sourceUuid: item.item?.sourceUuid ?? null,
+            publishedUnitCost: publishedUnitCostOf(item.item)
         });
     }
 
@@ -695,7 +702,9 @@ function flattenCartForPurchase(cart) {
             id: droid.id,
             name: droid.name,
             type: 'droid',
-            finalCost: normalizeCredits(droid.cost)
+            finalCost: normalizeCredits(droid.cost),
+            sourceUuid: droid.actor?.sourceUuid ?? null,
+            publishedUnitCost: publishedUnitCostOf(droid.actor)
         });
     }
 
@@ -706,7 +715,10 @@ function flattenCartForPurchase(cart) {
             name: vehicle.name,
             type: 'vehicle',
             finalCost: normalizeCredits(vehicle.cost),
-            condition: vehicle.condition
+            condition: vehicle.condition,
+            sourceUuid: vehicle.template?.sourceUuid ?? null,
+            sourceEntryKey: vehicle.template?.sourceEntryKey ?? null,
+            publishedUnitCost: publishedUnitCostOf(vehicle.template, vehicle.condition)
         });
     }
 

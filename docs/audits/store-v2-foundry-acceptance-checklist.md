@@ -66,3 +66,15 @@ Use two clients (Player A owns the buyer actor, GM) and, for cross-client rows, 
 - [ ] Interrupt during approval (refresh): either fully paid + delivered or fully unchanged; no free droid, no paid-but-missing droid.
 - [ ] Non-Store progression: droid chargen (full flow), level-up and follower droid building behave as before; the builder's running totals match the quoted total for the same components.
 - [ ] Inspect the delivered droid sheet: confirm chassis-only data is acceptable or file follow-up (stats/class levels are not part of a Store construction).
+
+## J. Resale (S9; all RUNTIME_UNVERIFIED)
+- [ ] Buy a pistol with a GM discount (e.g. 20%): the Item's flags show `acquisition` with `unitPaid` below `publishedUnitCost`; the ledger line shows the same figures.
+- [ ] Sell it back from every sheet (character, droid, equipment workspace): one dialog, exact offer = policy % of the paid price; with `resaleBasis` = published the offer changes accordingly.
+- [ ] Edit the Item's `system.cost`/`system.price` and the acquisition flag by hand: the offer does not change; a forged `unitPaid` falls back to published (labelled).
+- [ ] Stack of consumables: sell 2 of 5: 3 remain, payout for exactly 2; sell all: item removed. Try 0, -1, 1.5, 6: refused.
+- [ ] Customized item / item with no compendium source: "no automatic value", request goes to GM; GM approves with amount + reason; ledger shows `gm-appraisal`.
+- [ ] Auto-accept on, actor with two player owners: sale is routed to GM approval instead.
+- [ ] Change the sale percentage between the offer dialog and confirming: "offer changed", renewed confirmation.
+- [ ] Player forces `resolvePendingSaleRequest` from the console: refused (GM required). Double-click approve / approve twice: one payment.
+- [ ] Droid and Vehicle: Asset Bay "Request Sale" -> GM sees verified paid/published/condition/construction evidence + policy reference; approve with amount + reason: seller paid once, asset leaves the player's Asset Bay, stays in the world GM-only with `flags.foundryvtt-swse.resale`; vehicle with assigned crew is refused.
+- [ ] Interrupt (refresh) during an asset sale: either fully sold and paid, or fully unchanged; if the report says `indeterminate`, the asset is GM-held and the seller unpaid.

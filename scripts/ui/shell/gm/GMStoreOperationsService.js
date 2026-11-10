@@ -21,6 +21,11 @@ export class GMStoreOperationsService {
     // TI4-C0/G24: a request is identified ONLY by its stable STRING id. A number never matches (a numeric position must not resolve a request whose id merely
     // looks numeric), a blank id never matches an id-less request, a duplicated id is ambiguous (neither request is resolved), and a request already being
     // resolved is not resolved a second time concurrently. There is no positional fallback.
+    // Authorization at the trusted boundary (the UI also checks, but a listener is not a security control): only a GM decides sale requests.
+    if (game.user?.isGM !== true) {
+      ui?.notifications?.error?.('Only a GM can resolve sale requests.');
+      return { success: false, error: 'gm-required' };
+    }
     const id = typeof requestId === 'string' ? requestId : '';
     if (!id.trim()) {
       ui?.notifications?.error?.('Pending sale request could not be identified; nothing was changed.');
@@ -124,50 +129,50 @@ export class GMStoreOperationsService {
       return { success: false, error: 'actor-not-found' };
     }
 
-    const salePrice = normalizeCredits(amount ?? request.requestedPrice ?? request.suggestedPrice ?? request.value ?? 0);
-    if (!(salePrice > 0)) {
-      ui?.notifications?.warn?.('Sale approval requires a credit amount greater than zero.');
-      return { success: false, error: 'invalid-sale-price' };
-    }
+    // A pending request is a REQUEST: nothing in it (prices, quote, item data) is trusted for payment. The decision is expressed as an authority
+    // and re-verified by the TransactionEngine at commit: either the player's canonical quote (re-derived and compared) or an explicit GM appraisal.
+    const isAsset = request.type === 'asset-sale';
+    const reasonText = String(reason ?? '').trim();
+    const amountN = amount === null || amount === undefined ? null : Number(amount);
+    const quote = request.canonicalQuote ?? null;
+    const policyOffer = request.evidence?.reference?.policyOffer ?? null;
+    const label = request.item || (isAsset ? 'asset' : 'item');
+    let result;
 
-    const item = actor.items?.get?.(request.itemId);
-    if (!item) {
-      ui?.notifications?.error?.('Cannot approve sale: item is no longer owned by this actor.');
-      return { success: false, error: 'item-not-owned' };
-    }
-
-    const result = await TransactionEngine.executeSaleTransaction({
-      actor,
-      itemId: request.itemId,
-      salePrice,
-      reason: reason || (decision === 'counteroffer' ? 'GM counteroffer approved' : 'GM approved store sale'),
-      transactionContext: decision === 'counteroffer' ? 'store-haggle-sale' : 'store-sale-approval',
-      audit: {
-        requestId: request.id,
-        requestType: request.type || 'sale',
-        itemName: item.name || request.item,
-        itemNames: [item.name || request.item].filter(Boolean),
-        itemCount: 1,
-        basePrice: request.basePrice ?? request.itemData?.system?.price ?? null,
-        suggestedPrice: request.suggestedPrice ?? request.value ?? null,
-        requestedPrice: request.requestedPrice ?? request.value ?? null,
-        approvedPrice: salePrice,
-        approvalMode: decision,
-        approvedBy: game.user?.id ?? null,
-        approvedByName: game.user?.name ?? 'GM',
-        gmReason: reason,
-        source: 'GM Store Control Approvals'
+    if (isAsset) {
+      const appraisalReason = reasonText || (amountN !== null && policyOffer !== null && amountN === policyOffer ? 'GM accepted the policy reference offer (verified acquisition cost)' : '');
+      result = await TransactionEngine.executeAssetSaleTransaction({
+        ownerActor: actor, assetActorId: request.assetId, requestId: request.id,
+        appraisal: { amount: amountN, reason: appraisalReason },
+        reason: appraisalReason || 'GM appraised asset sale',
+        audit: { requestId: request.id, requestType: 'asset-sale', approvedBy: game.user?.id ?? null, approvedByName: game.user?.name ?? 'GM', gmReason: appraisalReason, source: 'GM Store Control Approvals' }
+      }, { validate: true, rederive: true, source: 'GMStoreOperationsService.resolvePendingSaleRequest' });
+    } else {
+      if (!actor.items?.get?.(request.itemId)) {
+        ui?.notifications?.error?.('Cannot approve sale: item is no longer owned by this actor.');
+        return { success: false, error: 'item-not-owned' };
       }
-    }, {
-      validate: true,
-      rederive: true,
-      source: 'GMStoreOperationsService.resolvePendingSaleRequest'
-    });
+      const acceptsQuote = decision === 'approve' && quote && (amountN === null || amountN === quote.payout);
+      const baseContext = {
+        actor, itemId: request.itemId, quantity: request.quantity ?? 1, requestId: request.id,
+        audit: { requestId: request.id, requestType: request.type || 'sale', approvedBy: game.user?.id ?? null, approvedByName: game.user?.name ?? 'GM', gmReason: reasonText, source: 'GM Store Control Approvals' }
+      };
+      result = acceptsQuote
+        ? await TransactionEngine.executeSaleTransaction({ ...baseContext, authority: 'canonical-automatic', shownQuote: quote, reason: 'GM approved the canonical offer', transactionContext: 'store-sale-approval' },
+          { validate: true, rederive: true, source: 'GMStoreOperationsService.resolvePendingSaleRequest' })
+        : await TransactionEngine.executeSaleTransaction({ ...baseContext, authority: 'gm-appraisal', appraisal: { amount: amountN, reason: reasonText }, reason: reasonText || 'GM appraised sale',
+          transactionContext: decision === 'counteroffer' ? 'store-haggle-sale' : 'store-sale-approval' },
+        { validate: true, rederive: true, source: 'GMStoreOperationsService.resolvePendingSaleRequest' });
+    }
 
     if (!result.success) {
-      ui?.notifications?.error?.(`Failed to approve sale: ${result.error}`);
+      ui?.notifications?.error?.(result.quoteChanged
+        ? 'The offer changed since the player requested this sale. Deny it and ask them to request again, or approve an explicit GM appraisal with a reason. Nothing was paid.'
+        : `Failed to approve sale: ${result.error}`);
       return result;
     }
+    const salePrice = result.amount;
+    const item = { name: label };
 
     // The sale is COMMITTED. Reconcile the queue from fresh state, by id. Whatever happens here, the sale outcome is reported truthfully as a success
     // (never as an ordinary failure that invites a second approval); an unverified queue update is flagged on the result and to the GM.
@@ -188,7 +193,7 @@ export class GMStoreOperationsService {
     Hooks.callAll?.('swseStoreSaleApproved', {
       request,
       actor,
-      itemData: request.itemData,
+      itemData: request.itemData ?? { name: label, type: request.itemType },
       salePrice,
       decision,
       reason,

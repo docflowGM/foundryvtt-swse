@@ -5,6 +5,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
+import { publishedUnitCostOf } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js";
 import { verifyApprovalQuote } from "/systems/foundryvtt-swse/scripts/engine/store/store-approval-quote.js";
 import { STORE_DROID_APPROVAL_KIND, verifyDroidConstructionApproval, buildCustomDroidActorData, constructionAlreadyDelivered } from "/systems/foundryvtt-swse/scripts/engine/store/store-droid-construction.js";
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
@@ -767,15 +768,21 @@ export class GMApprovalOperationsService {
       ui?.notifications?.error?.(`Cannot approve (${verified.reasons.join('; ')}). Nothing was charged. Deny this request and ask the player to resubmit at the current price.`);
       return false;
     }
-    const purchaseItems = approvalItems.map(item => ({
-      id: item.id || item.policyId || null,
-      policyId: item.policyId || item.id || null,
-      name: item.name || 'Store item',
-      type: item.type || 'item',
-      finalCost: normalizeCredits(item.finalCost),
-      cost: normalizeCredits(item.finalCost),
-      condition: item.condition || null
-    }));
+    const purchaseItems = approvalItems.map(item => {
+      const listing = inventory.inventory.byId.get(item.id) ?? null;   // verified above: the live catalog listing is the source of these figures
+      return {
+        id: item.id || item.policyId || null,
+        policyId: item.policyId || item.id || null,
+        name: item.name || 'Store item',
+        type: item.type || 'item',
+        finalCost: normalizeCredits(item.finalCost),
+        cost: normalizeCredits(item.finalCost),
+        condition: item.condition || null,
+        sourceUuid: listing?.sourceUuid ?? null,
+        sourceEntryKey: listing?.sourceEntryKey ?? null,
+        publishedUnitCost: publishedUnitCostOf(listing, item.condition || null)
+      };
+    });
 
     const result = await StoreEngine.purchase({
       actor: ownerActor,
@@ -849,7 +856,11 @@ export class GMApprovalOperationsService {
       itemGrantCallback: async () => {
         const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
         const data = buildCustomDroidActorData({ quote: verified.quote, name, approvalId: approval.id, owner: ownerActor });
-        return [DroidFactory.buildMutationPlan({ droidActor: data, name })];
+        const plan = DroidFactory.buildMutationPlan({ droidActor: data, name });
+        for (const spec of plan.create?.actors ?? []) {
+          spec.data.__acquisition = { kind: 'custom-droid-construction', listingId: approval.id, sourceUuid: null, sourceEntryKey: null, unitPaid: total, publishedUnitCost: null, quantity: 1, condition: null, quoteHash: verified.quote.provenance.snapshotHash };
+        }
+        return [plan];
       }
     });
     if (!result.success) {

@@ -22,7 +22,8 @@ const PROTECTED_PATHS = [
   'scripts/houserules/houserule-status-effects.js',
   'scripts/utils/force-power-manager.js',
   'scripts/infrastructure/hooks/actor-hooks.js',
-  'scripts/apps/item-selling-system.js',
+  'scripts/engine/store/resale-service.js',
+  'scripts/apps/store/resale-ui.js',
   'scripts/core/runtime-safety.js'
 ];
 

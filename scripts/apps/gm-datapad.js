@@ -854,8 +854,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   _formatPendingSaleRequest(request, index = 0) {
     const actor = game.actors.get(request.actorId);
-    const ownedItem = actor?.items?.get?.(request.itemId);
-    const basePrice = request.basePrice ?? request.itemData?.system?.price ?? null;
+    const isAsset = request.type === 'asset-sale';
+    const ownedItem = isAsset ? game.actors.get(request.assetId) : actor?.items?.get?.(request.itemId);
+    const basePrice = request.basePrice ?? null;
     const suggestedPrice = request.suggestedPrice ?? request.value ?? null;
     const requestedPrice = request.requestedPrice ?? suggestedPrice;
     const defaultAmount = normalizeCredits(requestedPrice ?? suggestedPrice ?? 0);
@@ -878,6 +879,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       requestedPriceDisplay: Number.isFinite(Number(requestedPrice)) ? `${normalizeCredits(requestedPrice).toLocaleString()} cr` : 'GM sets offer',
       submittedAt,
       submittedDisplay: new Date(submittedAt).toLocaleString(),
+      evidenceLines: Array.isArray(request.evidenceLines) ? request.evidenceLines : [],
       canApprove: !!actor && !!ownedItem && defaultAmount > 0,
       needsAmount: !(defaultAmount > 0),
       warning: !actor
@@ -885,7 +887,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         : !ownedItem
           ? 'Item is no longer owned by the actor.'
           : request.noBasePrice
-            ? 'No base price was defined. GM must set a sale amount.'
+            ? 'No automatic value. The GM appraises this sale: set an amount and state the reason.'
             : ''
     };
   }

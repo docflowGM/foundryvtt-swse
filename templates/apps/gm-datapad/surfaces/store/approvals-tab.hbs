@@ -43,6 +43,7 @@
                       </div>
 
                       {{#if this.warning}}<p class="gm-store-warning gm-store-sale-warning">{{this.warning}}</p>{{/if}}
+                      {{#each this.evidenceLines}}<p class="gm-store-sale-evidence">{{this}}</p>{{/each}}
 
                       <div class="gm-store-sale-controls">
                         <label><span>GM Amount</span><input type="number" min="0" step="1" class="swse-ui-input" data-sale-custom-amount value="{{#if this.defaultAmount}}{{this.defaultAmount}}{{/if}}" placeholder="Set offer"></label>

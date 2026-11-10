@@ -42,6 +42,7 @@ export const SETTINGS_DEFAULTS = {
     "store.requireGMApproval": false,
     autoAcceptItemSales: false,
     automaticSalePercentage: 50,
+    resaleBasis: 'acquisition',
     disallowAutoSellNoPrice: true,
     visibleRarities: {
         standard: true,
