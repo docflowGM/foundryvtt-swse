@@ -33,3 +33,27 @@ test('orphans are itemized, never silent: every ORPHANED field and operation key
   assert.equal(ledger.operationKeys.length, 41);
   for (const k of ledger.operationKeys) { assert.ok(DISPOSITIONS.has(k.disposition)); if (k.disposition === 'ORPHANED') assert.deepEqual(k.productionReferences, [], `${k.key} claims no consumer but one exists`); }
 });
+
+test('the only operation key left without a reason is the source-complete Dark Side Empowerment rule; every other residual names why', () => {
+  const orphans = ledger.operationKeys.filter((k) => k.disposition === 'ORPHANED').map((k) => k.key);
+  assert.deepEqual(orphans, ['darkSideEmpowerment']);
+  for (const k of ledger.operationKeys) if (k.disposition !== 'ORPHANED') assert.ok(k.note, `${k.key}: every non-orphan residual states its reason`);
+  assert.deepEqual(ledger.summary.orphanedFields, [], 'no orphaned census field remains');
+});
+
+test('profile.wielding duplicate proof: the size authority already forces two hands on the lanvarok melee form (so the profile field adds no missing consumer)', async () => {
+  const { registerFoundryPathLoader } = await import('./helpers/foundry-shim/register.mjs');
+  const { installFoundryShimGlobals } = await import('./helpers/foundry-shim/globals.mjs');
+  globalThis.window = globalThis.window || {}; registerFoundryPathLoader(); installFoundryShimGlobals(); globalThis.ui = { notifications: { warn() {}, info() {}, error() {} } };
+  const rt = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/index.js');
+  const { registry } = await import('./helpers/weapon-runtime-fixture.mjs'); rt.setSharedWeaponAuthorityRegistry(registry);
+  const { resolveEffectiveWieldingSize } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/wielding-size.js');
+  const { resolveWielding } = await import('/systems/foundryvtt-swse/scripts/items/weapon-runtime/owned-state.js');
+  const w = { id: 'l', name: 'Renamed', type: 'weapon', flags: { swse: { canonicalWeapon: { identityKey: 'weapon-massassi-lanvarok' } } }, system: {} };
+  const shape = rt.shapeOfWeapon(w, { profileId: 'melee' });
+  const sizing = resolveEffectiveWieldingSize(shape, 'medium', {});
+  const one = resolveWielding(shape.wielding, { option: 1, state: {}, sizing });
+  assert.equal(one.legal, false); assert.equal(one.reason, 'requires-two-hands');
+  assert.equal(resolveWielding(shape.wielding, { option: 2, state: {}, sizing }).legal, true);
+  assert.equal(resolveWielding(shape.wielding, { option: undefined, state: {}, sizing }).hands, 2);
+});

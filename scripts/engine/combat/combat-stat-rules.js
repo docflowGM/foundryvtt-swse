@@ -939,9 +939,18 @@ export function getDamageAbilityContribution(actor, weapon, context = {}) {
 
   // Phase 5D-I-A: a ranged weapon whose canonical operation says the Strength modifier applies to its damage (bow, sling) adds it ONCE.
   // CONSUMER_DEFECT fixed: every other ranged weapon contributes no ability modifier, and these two silently lost the published Strength damage.
-  { const sh = shapeOfWeapon(weapon); if (sh.source === 'canonical' && sh.strengthAppliesToDamage === true) return SchemaAdapters.getAbilityMod(actor, 'str'); }
-  if (isRangedWeapon(weapon) && !isThrownMeleeWeapon(weapon)) return 0;
+  // Weapon three-gate follow-up: for a canonical weapon, melee vs ranged vs thrown is the SELECTED attack profile's own branch / descriptor (the form
+  // carried by the attack), never the Item-level weaponCategory / meleeOrRanged projection, which can be missing or schema-defaulted ("melee").
+  let selected = null;
+  try { selected = shapeOfWeapon(weapon, context?.weaponForm ? attackSelectionOf(context.weaponForm) : {}); } catch { selected = null; }
+  const canonicalSelected = selected?.source === 'canonical';
+  if (canonicalSelected && selected.strengthAppliesToDamage === true) return SchemaAdapters.getAbilityMod(actor, 'str');
+  const rangedForm = canonicalSelected ? selected.branch === 'ranged' : isRangedWeapon(weapon);
+  const thrownForm = canonicalSelected ? descriptorMatchesAny(selected.descriptor, ['thrown', 'grenade'], { wielderSize: 'medium' }) : isThrownMeleeWeapon(weapon);
+  if (rangedForm && !thrownForm) return 0;
   const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
-  if (system.twoHanded === true) return Math.floor(strMod * 1.5);
+  // Legacy / custom fallback only (a canonical weapon with a known grip is handled above from the wielder's actual hands). Core Rulebook, Damage:
+  // a melee weapon wielded two-handed adds DOUBLE the Strength BONUS (positive only), except with a light weapon. This used to be floor(STR x 1.5).
+  if (system.twoHanded === true) return strMod > 0 && !isLightMeleeWeapon(weapon) ? strMod * 2 : strMod;
   return strMod;
 }

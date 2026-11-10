@@ -37,10 +37,9 @@
     "fieldPaths": 2309,
     "byDisposition": {
       "BLOCKED_BY_SUBSYSTEM": 53,
-      "CONSUMED_VIA_DUPLICATE": 166,
+      "CONSUMED_VIA_DUPLICATE": 167,
       "DIRECT_CONSUMER": 690,
       "DISPLAY_ONLY": 442,
-      "ORPHANED": 1,
       "PARTIAL_CONSUMER": 734,
       "VALIDATION_ONLY": 223
     },
@@ -56,8 +55,8 @@
     },
     "byEvidenceStatus": {
       "HISTORICAL_MANIFEST": 1153,
-      "NOT_PROVEN": 54,
-      "STATIC_ONLY": 1102
+      "NOT_PROVEN": 53,
+      "STATIC_ONLY": 1103
     },
     "historicalImplementationStateCounts": {
       "ADAPTER_REQUIRED": 58,
@@ -76,6 +75,7 @@
       "4h.auth.ruleSelectors.riders",
       "3b.wielding",
       "3b.qualityParameters",
+      "3b.profile.wielding",
       "3b.durability"
     ],
     "executionFamilies": {
@@ -88,9 +88,8 @@
       },
       "byCurrentDisposition": {
         "BLOCKED_BY_SUBSYSTEM": 1,
-        "CONSUMED_VIA_DUPLICATE": 5,
+        "CONSUMED_VIA_DUPLICATE": 6,
         "DIRECT_CONSUMER": 36,
-        "ORPHANED": 1,
         "PARTIAL_CONSUMER": 14
       }
     },
@@ -98,17 +97,16 @@
       "HISTORICAL_MANIFEST": 107,
       "STATIC_ONLY": 583
     },
-    "orphanedFields": [
-      "canonicalStats.attackProfiles[].wielding"
-    ],
+    "orphanedFields": [],
     "operationKeys": {
       "total": 41,
       "byDisposition": {
-        "BLOCKED_BY_SUBSYSTEM": 3,
+        "BLOCKED_BY_SUBSYSTEM": 6,
         "CONSUMED_VIA_DUPLICATE": 11,
-        "DISPLAY_ONLY": 3,
-        "ORPHANED": 20,
-        "SOURCE_UNRESOLVED": 4
+        "DISPLAY_ONLY": 4,
+        "GM_ADJUDICATED": 14,
+        "ORPHANED": 1,
+        "SOURCE_UNRESOLVED": 5
       }
     }
   },
@@ -679,14 +677,17 @@
     "3b.profile.wielding": {
       "historicalStatus": "DEFERRED",
       "fieldPaths": 1,
-      "disposition": "ORPHANED",
-      "consumer": null,
-      "entrypoint": null,
-      "behaviorTest": null,
-      "evidenceStatus": "NOT_PROVEN",
-      "blockingDecision": "profile-level wielding fact (1 path); the wielding state model is not part of the attack path",
-      "note": "profile-level wielding fact (1 path); the wielding state model is not part of the attack path",
-      "reconciled": false
+      "disposition": "CONSUMED_VIA_DUPLICATE",
+      "consumer": {
+        "module": "scripts/items/weapon-runtime/wielding-size.js",
+        "probe": "resolveEffectiveWieldingSize"
+      },
+      "entrypoint": "resolveCanonicalAttackStage -> resolveWielding (rollAttack)",
+      "behaviorTest": "tests/weapon-3gate-ledger.test.mjs",
+      "evidenceStatus": "STATIC_ONLY",
+      "blockingDecision": null,
+      "note": "attackProfiles[].wielding \"two-handed\" (Massassi lanvarok melee, size Large) restates a fact the size authority already enforces: a Medium wielder cannot wield it one-handed (requires-two-hands). Open edge, not decided here: WPN-B-001 (Large wielder).",
+      "reconciled": true
     },
     "3b.qualities": {
       "historicalStatus": "CONSUMED",
@@ -930,7 +931,7 @@
       "testReferences": [],
       "plannedSubpass": "I_D_C",
       "automation": null,
-      "note": null
+      "note": "GENUINE GAP: the Sith Sword rule is source-complete (swift, 1 Force Point, Dark Side Score +1, bonus = Dark Side Score on the next attack) and no consumer exists"
     },
     {
       "operationKey": "ability-compatibility.redirectionCrystalCompatibility",
@@ -1061,43 +1062,43 @@
       "family": "area-splash-burst",
       "key": "remoteDetonationSafetyRule",
       "historicalDisposition": "DEFERRED_TO_I_D_C",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_C",
       "automation": null,
-      "note": null
+      "note": "needs a measured 100 m distance to the transmitter (GM / map)"
     },
     {
       "operationKey": "attack-modifiers-and-penalties.allyAttackBonus",
       "family": "attack-modifiers-and-penalties",
       "key": "allyAttackBonus",
       "historicalDisposition": "DEFERRED_TO_I_D_C",
-      "disposition": "ORPHANED",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_C",
       "automation": null,
-      "note": null
+      "note": "needs designation state (which target is designated, which allies know the frequency); no such state exists"
     },
     {
       "operationKey": "attack-modifiers-and-penalties.allyEligibleWeapons",
       "family": "attack-modifiers-and-penalties",
       "key": "allyEligibleWeapons",
       "historicalDisposition": "DEFERRED_TO_I_D_C",
-      "disposition": "ORPHANED",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_C",
       "automation": null,
-      "note": null
+      "note": "qualifies allyAttackBonus; blocked with it"
     },
     {
       "operationKey": "attack-modifiers-and-penalties.lineOfSightOriginHeightSquares",
       "family": "attack-modifiers-and-penalties",
       "key": "lineOfSightOriginHeightSquares",
       "historicalDisposition": "DEFERRED_TO_I_D_A3",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [
         "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs",
@@ -1105,31 +1106,31 @@
       ],
       "plannedSubpass": "I_D_A3",
       "automation": "GM_ADJUDICATED",
-      "note": "GM_ADJUDICATED"
+      "note": "needs whether the target is visible / covered (GM)"
     },
     {
       "operationKey": "attack-modifiers-and-penalties.preferredMode",
       "family": "attack-modifiers-and-penalties",
       "key": "preferredMode",
       "historicalDisposition": "DEFERRED_TO_I_D_B",
-      "disposition": "ORPHANED",
+      "disposition": "DISPLAY_ONLY",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_B",
       "automation": null,
-      "note": null
+      "note": "descriptive preference; the autofire modifier it mentions is already in modeProfiles (manifest: DUPLICATE_OR_NON_EXECUTABLE)"
     },
     {
       "operationKey": "attack-modifiers-and-penalties.repeatAttackEachRoundToMaintainDesignation",
       "family": "attack-modifiers-and-penalties",
       "key": "repeatAttackEachRoundToMaintainDesignation",
       "historicalDisposition": "DEFERRED_TO_I_D_C",
-      "disposition": "ORPHANED",
+      "disposition": "BLOCKED_BY_SUBSYSTEM",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_C",
       "automation": null,
-      "note": null
+      "note": "needs per-round designation state; no such state exists"
     },
     {
       "operationKey": "attack-modifiers-and-penalties.targeting",
@@ -1228,38 +1229,38 @@
       "family": "concealment-stealth-sensing",
       "key": "alwaysDetermineNorth",
       "historicalDisposition": "DEFERRED_TO_I_D_A3",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_A3",
       "automation": "GM_ADJUDICATED",
-      "note": "GM_ADJUDICATED"
+      "note": "needs the fictional direction (GM)"
     },
     {
       "operationKey": "concealment-stealth-sensing.audibility",
       "family": "concealment-stealth-sensing",
       "key": "audibility",
       "historicalDisposition": "DEFERRED_TO_I_D_A3",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [
         "tests/weapon-phase-5d-i-d-a-residual-manifest.test.mjs"
       ],
       "plannedSubpass": "I_D_A3",
       "automation": "GM_ADJUDICATED",
-      "note": "GM_ADJUDICATED"
+      "note": "only the target hears the attack; GM adjudicates everyone else"
     },
     {
       "operationKey": "concealment-stealth-sensing.builtInDigitalCompass",
       "family": "concealment-stealth-sensing",
       "key": "builtInDigitalCompass",
       "historicalDisposition": "DEFERRED_TO_I_D_A3",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_A3",
       "automation": "GM_ADJUDICATED",
-      "note": "GM_ADJUDICATED"
+      "note": "GM supplies direction"
     },
     {
       "operationKey": "concealment-stealth-sensing.concealmentDesign",
@@ -1280,42 +1281,42 @@
       "family": "concealment-stealth-sensing",
       "key": "createsSmokeHazard",
       "historicalDisposition": "DEFERRED_TO_I_D_A2",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [
         "tests/weapon-phase-5d-i-d-a-residual-manifest.test.mjs"
       ],
       "plannedSubpass": "I_D_A2",
       "automation": "CONTEXTUAL",
-      "note": "CONTEXTUAL"
+      "note": "who is in the smoke (GM)"
     },
     {
       "operationKey": "concealment-stealth-sensing.firingDoesNotRevealShooterPosition",
       "family": "concealment-stealth-sensing",
       "key": "firingDoesNotRevealShooterPosition",
       "historicalDisposition": "DEFERRED_TO_I_D_A3",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [
         "tests/weapon-phase-5d-i-d-a-residual-manifest.test.mjs"
       ],
       "plannedSubpass": "I_D_A3",
       "automation": "GM_ADJUDICATED",
-      "note": "GM_ADJUDICATED"
+      "note": "whether anyone detects the shooter (GM)"
     },
     {
       "operationKey": "concealment-stealth-sensing.gasConcealmentDuration",
       "family": "concealment-stealth-sensing",
       "key": "gasConcealmentDuration",
       "historicalDisposition": "DEFERRED_TO_I_D_A2",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [
         "tests/weapon-phase-5d-i-d-a-residual-manifest.test.mjs"
       ],
       "plannedSubpass": "I_D_A2",
       "automation": "CONTEXTUAL",
-      "note": "CONTEXTUAL"
+      "note": "who is inside / across the cloud boundary (GM)"
     },
     {
       "operationKey": "concealment-stealth-sensing.protectedAtmosphereImmune",
@@ -1336,14 +1337,14 @@
       "family": "concealment-stealth-sensing",
       "key": "providesConcealment",
       "historicalDisposition": "DEFERRED_TO_I_D_A2",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [
         "tests/weapon-phase-5d-i-d-a-residual-manifest.test.mjs"
       ],
       "plannedSubpass": "I_D_A2",
       "automation": "CONTEXTUAL",
-      "note": "CONTEXTUAL"
+      "note": "which targets are concealed is a GM ruling; the attack dialog already takes None / 20% / 50% concealment"
     },
     {
       "operationKey": "concealment-stealth-sensing.radiationExposure",
@@ -1364,54 +1365,54 @@
       "family": "concealment-stealth-sensing",
       "key": "sensorDetection",
       "historicalDisposition": "DEFERRED_TO_I_D_A3",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_A3",
       "automation": "CONTEXTUAL",
-      "note": "CONTEXTUAL"
+      "note": "a scan of this weapon is made explicitly; Use Computer DC 25 is the scanner's check"
     },
     {
       "operationKey": "concealment-stealth-sensing.shotVisibility",
       "family": "concealment-stealth-sensing",
       "key": "shotVisibility",
       "historicalDisposition": "DEFERRED_TO_I_D_A3",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [
         "tests/weapon-phase-5d-i-d-a-residual-manifest.test.mjs"
       ],
       "plannedSubpass": "I_D_A3",
       "automation": "GM_ADJUDICATED",
-      "note": "GM_ADJUDICATED"
+      "note": "what observers perceive (GM)"
     },
     {
       "operationKey": "concealment-stealth-sensing.silentInUse",
       "family": "concealment-stealth-sensing",
       "key": "silentInUse",
       "historicalDisposition": "DEFERRED_TO_I_D_A3",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [
         "tests/weapon-phase-5d-i-d-a-residual-manifest.test.mjs"
       ],
       "plannedSubpass": "I_D_A3",
       "automation": "GM_ADJUDICATED",
-      "note": "GM_ADJUDICATED"
+      "note": "who would hear otherwise is the GM's call"
     },
     {
       "operationKey": "condition-and-persistent-effects.grievousWound",
       "family": "condition-and-persistent-effects",
       "key": "grievousWound",
       "historicalDisposition": "DEFERRED_TO_I_D_D",
-      "disposition": "ORPHANED",
+      "disposition": "SOURCE_UNRESOLVED",
       "productionReferences": [],
       "testReferences": [
         "tests/weapon-phase-5d-i-c-a-outcome-persistent-effects.test.mjs"
       ],
       "plannedSubpass": "I_D_D",
       "automation": null,
-      "note": null
+      "note": "the printed text (\"on the following round\") leaves the timing open (5D-I-D: SOURCE_CLARIFICATION_NEEDED)"
     },
     {
       "operationKey": "configuration-and-wielding.collapsedForm",
@@ -1430,12 +1431,12 @@
       "family": "configuration-and-wielding",
       "key": "encumbranceException",
       "historicalDisposition": "DEFERRED_TO_I_D_B",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_B",
       "automation": null,
-      "note": null
+      "note": "carried weight is a GM / inventory total; also bound by the open weight-scope ruling EQ-W-001"
     },
     {
       "operationKey": "damage-modifiers.powerAttackExtraDamageAppliesToObjectsAndVehicles",
@@ -1532,12 +1533,12 @@
       "family": "utility-and-movement",
       "key": "ascensionMode",
       "historicalDisposition": "DEFERRED_TO_I_D_C",
-      "disposition": "ORPHANED",
+      "disposition": "GM_ADJUDICATED",
       "productionReferences": [],
       "testReferences": [],
       "plannedSubpass": "I_D_C",
       "automation": null,
-      "note": null
+      "note": "a GM-adjudicated traversal (destination, anchor); the swift mode switch is a plain mode change"
     }
   ],
   "fields": [
@@ -8568,13 +8569,16 @@
       "identityCount": 1,
       "occurrenceCount": 1,
       "role": "EXECUTION",
-      "disposition": "ORPHANED",
-      "consumer": null,
-      "behaviorTest": null,
-      "evidenceStatus": "NOT_PROVEN",
-      "blockingDecision": "profile-level wielding fact (1 path); the wielding state model is not part of the attack path",
+      "disposition": "CONSUMED_VIA_DUPLICATE",
+      "consumer": {
+        "module": "scripts/items/weapon-runtime/wielding-size.js",
+        "probe": "resolveEffectiveWieldingSize"
+      },
+      "behaviorTest": "tests/weapon-3gate-ledger.test.mjs",
+      "evidenceStatus": "STATIC_ONLY",
+      "blockingDecision": null,
       "historicalImplementationState": "NEW_CONSUMER_REQUIRED",
-      "note": "profile-level wielding fact (1 path); the wielding state model is not part of the attack path"
+      "note": "attackProfiles[].wielding \"two-handed\" (Massassi lanvarok melee, size Large) restates a fact the size authority already enforces: a Medium wielder cannot wield it one-handed (requires-two-hands). Open edge, not decided here: WPN-B-001 (Large wielder)."
     },
     {
       "fieldPath": "canonicalStats.availability",

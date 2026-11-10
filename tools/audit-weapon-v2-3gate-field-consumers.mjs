@@ -29,11 +29,35 @@ const FAMILY_RECON = {
   '4h.auth.ruleSelectors.riders': { disposition: 'CONSUMED_VIA_DUPLICATE', file: `${W}ability-relations.js`, probe: 'RELATION_POLICY', entrypoint: 'ability relation corpus (planner copy is the 4H mirror)', test: 'tests/weapon-phase-5d-i-d-e-talent-relations.test.mjs', note: 'execution reads the relation corpus, not the 4H planner copy' },
   '3b.wielding': { disposition: 'PARTIAL_CONSUMER', file: `${W}wielding-size.js`, probe: 'designedTwoHandedOf', entrypoint: 'attack-shape.js -> getDamageAbilityContribution / readiness', test: 'tests/weapon-phase-5d-i-d-b2-wielding-size.test.mjs', consumed: ['may-count-as-size', 'designed-for-two-handed-use'], residual: ['counts-as-light-weapon', 'cannot-be-wielded-two-handed', 'feat-or-talent-eligibility', 'handsRequired', 'attackRollModifier', 'AoO equipment bonus', 'requires-two-hands (consumer string present, behavior unverified)'], note: 'Phase 5D-I-B/B2 built the wielding state; 5D-H still lists the family DEFERRED' },
   '3b.qualityParameters': { disposition: 'PARTIAL_CONSUMER', file: `${W}canonical-range.js`, probe: 'qualityEffects', entrypoint: 'resolveCanonicalRange (rollAttack)', test: 'tests/weapon-phase-5d-d-range-resource-consumption.test.mjs', consumed: ['inaccurate (range quality effects)'], residual: ['accurate (numeric effect unverified)', 'arc (numeric effect unverified)'], note: 'keys present in all 203 identities; only the range quality has a demonstrated numeric consumer' },
+  '3b.profile.wielding': { disposition: 'CONSUMED_VIA_DUPLICATE', file: `${W}wielding-size.js`, probe: 'resolveEffectiveWieldingSize', entrypoint: 'resolveCanonicalAttackStage -> resolveWielding (rollAttack)', test: 'tests/weapon-3gate-ledger.test.mjs', note: 'attackProfiles[].wielding "two-handed" (Massassi lanvarok melee, size Large) restates a fact the size authority already enforces: a Medium wielder cannot wield it one-handed (requires-two-hands). Open edge, not decided here: WPN-B-001 (Large wielder).' },
   '3b.durability': { disposition: 'BLOCKED_BY_SUBSYSTEM', blockingDecision: 'no weapon-object damage / crafting subsystem (objectDurability, constructionRules have no production consumer; grep-verified); object DR must not reuse creature DR', note: 'owner decision: object damage subsystem' },
 };
 // operation-key dispositions (41 historical gaps), derived from the 5D-I-D manifest disposition + a current-code consumer search
 const KEY_DISPOSITION = {
   DUPLICATE: 'CONSUMED_VIA_DUPLICATE', NON_EXECUTABLE: 'DISPLAY_ONLY', DATA_COMPLETENESS: 'SOURCE_UNRESOLVED', BLOCKED: 'BLOCKED_BY_SUBSYSTEM',
+};
+// Evidence-based final classification of the historical 41 operation keys that still have no production consumer. Source: the 5D-I-D manifest row
+// (what Foundry knows / what must be supplied) re-read in this audit; nothing here implements a mechanic. GM_ADJUDICATED = the rule needs a fact only
+// the GM / table can supply (positions, perception, narrative); BLOCKED_BY_SUBSYSTEM = needs state the system does not model; SOURCE_UNRESOLVED = the
+// printed text leaves the mechanic open; ORPHANED = source-complete and automatable but no consumer exists (a genuine, small gameplay gap).
+const GM = 'GM_ADJUDICATED', BLK = 'BLOCKED_BY_SUBSYSTEM';
+const KEY_FINAL = {
+  remoteDetonationSafetyRule: [GM, 'needs a measured 100 m distance to the transmitter (GM / map)'],
+  lineOfSightOriginHeightSquares: [GM, 'needs whether the target is visible / covered (GM)'],
+  alwaysDetermineNorth: [GM, 'needs the fictional direction (GM)'], builtInDigitalCompass: [GM, 'GM supplies direction'],
+  audibility: [GM, 'only the target hears the attack; GM adjudicates everyone else'], silentInUse: [GM, 'who would hear otherwise is the GM\'s call'],
+  shotVisibility: [GM, 'what observers perceive (GM)'], firingDoesNotRevealShooterPosition: [GM, 'whether anyone detects the shooter (GM)'],
+  sensorDetection: [GM, 'a scan of this weapon is made explicitly; Use Computer DC 25 is the scanner\'s check'],
+  createsSmokeHazard: [GM, 'who is in the smoke (GM)'], gasConcealmentDuration: [GM, 'who is inside / across the cloud boundary (GM)'],
+  providesConcealment: [GM, 'which targets are concealed is a GM ruling; the attack dialog already takes None / 20% / 50% concealment'],
+  encumbranceException: [GM, 'carried weight is a GM / inventory total; also bound by the open weight-scope ruling EQ-W-001'],
+  ascensionMode: [GM, 'a GM-adjudicated traversal (destination, anchor); the swift mode switch is a plain mode change'],
+  allyAttackBonus: [BLK, 'needs designation state (which target is designated, which allies know the frequency); no such state exists'],
+  allyEligibleWeapons: [BLK, 'qualifies allyAttackBonus; blocked with it'],
+  repeatAttackEachRoundToMaintainDesignation: [BLK, 'needs per-round designation state; no such state exists'],
+  grievousWound: ['SOURCE_UNRESOLVED', 'the printed text ("on the following round") leaves the timing open (5D-I-D: SOURCE_CLARIFICATION_NEEDED)'],
+  preferredMode: ['DISPLAY_ONLY', 'descriptive preference; the autofire modifier it mentions is already in modeProfiles (manifest: DUPLICATE_OR_NON_EXECUTABLE)'],
+  darkSideEmpowerment: ['ORPHANED', 'GENUINE GAP: the Sith Sword rule is source-complete (swift, 1 Force Point, Dark Side Score +1, bonus = Dark Side Score on the next attack) and no consumer exists'],
 };
 const PROF_ECHO = new Set(['alternateProficiency', 'wookieeAdvancedMeleeProficiencyCounts', 'wookieeTreatsAsProficientWithWeaponProficiencyRifles']);
 
@@ -85,9 +109,10 @@ export function buildLedger() {
     const scriptHits = grepFiles(key, 'scripts', ['*.js']);
     let disposition = KEY_DISPOSITION[hist] ?? null, reason = row?.automation ?? null;
     if (PROF_ECHO.has(key)) { disposition = 'CONSUMED_VIA_DUPLICATE'; reason = 'echo of selectors.speciesOverrides (proficiency-resolver.js)'; }
+    if (!disposition && KEY_FINAL[key]) { [disposition, reason] = KEY_FINAL[key]; }
     if (!disposition && scriptHits.length) disposition = 'PARTIAL_CONSUMER';
     if (!disposition) disposition = 'ORPHANED'; // no production consumer and not source-silent / blocked / duplicate: itemized owner queue
-    return { operationKey: qk, family, key, historicalDisposition: hist, disposition, productionReferences: scriptHits, testReferences: grepFiles(key, 'tests', ['*.mjs']), plannedSubpass: /^DEFERRED_TO_/.test(hist) ? hist.replace('DEFERRED_TO_', '') : null, automation: row?.automation ?? null, note: reason };
+    return { operationKey: qk, family, key, historicalDisposition: hist, disposition, productionReferences: scriptHits, testReferences: grepFiles(key, 'tests', ['*.mjs']).filter((f) => f !== 'tests/weapon-3gate-ledger.test.mjs'), plannedSubpass: /^DEFERRED_TO_/.test(hist) ? hist.replace('DEFERRED_TO_', '') : null, automation: row?.automation ?? null, note: reason };
   });
 
   // per field path

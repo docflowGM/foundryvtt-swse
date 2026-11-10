@@ -2444,3 +2444,33 @@ Implemented as PUBLISHED_RULE (lock-on, Reflex 30 / 10 HP / -5, no second charge
 | Resolution | |
 
 - **Revision 52 (2026-11-10):** appended WPN-W2-001.
+
+## WPN-B-001 — Massassi lanvarok melee form: does the printed "two-handed" bind a Large wielder? (weapon three-gate Gate B)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-B-001 |
+| Rules domain | Weapon wielding / size |
+| Feature | Massassi lanvarok, melee profile (`attackProfiles[].wielding: "two-handed"`, weapon size Large) |
+| Source | Canonical weapon registry (`weapon-massassi-lanvarok`); the printed page is not re-verified in this audit |
+| Evidence | The size authority (`resolveEffectiveWieldingSize` + `resolveWielding`) already requires two hands for a Medium wielder and refuses a one-handed grip (`requires-two-hands`). For a Large wielder the same authority classifies the weapon one-handed and allows either grip. The profile field says "two-handed" without naming a wielder size. |
+| Confirmed behavior | A Medium wielder must use two hands (enforced and tested). The profile field adds no further consumer. |
+| Unresolved question | Whether "two-handed" is a statement of the weapon's design that also binds a Large wielder, or only a restatement of the size rule for Medium wielders. |
+| Options | (a) the field is a restatement of the size rule (current behavior). (b) the field is an independent two-hands requirement for every wielder size. |
+| Recommended ruling | None |
+| Implementation impact | Under (b), `wieldingConstraintsOf` would need to read the profile field. Nothing is changed now. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### Owner recommendations received 2026-11-10 (provisional, NOT rulings)
+
+The project owner gave these as provisional recommendations, expressly "not final source-certified rulings". They are recorded for the review and **do not change status, behavior or the authorization boundary**. A ruling still needs the owner's explicit decision; the printed rule and the Destructive wording are still to be confirmed against source.
+
+| Decision ID | Owner's provisional recommendation | Current implementation | Gap if adopted |
+|---|---|---|---|
+| WPN-W1-001 | Apply the minimum-1 floor after the applicable damage multipliers and before defensive mitigation | Already so (the floor is applied after the Destructive multiplier, at the packet seam) | none |
+| WPN-W1-002 | Do not infer a confirmed hit from a manually entered damage roll; require explicit hit evidence for the automatic floor | Already so (no carried hit evidence means no floor) | none |
+| WPN-W2-001 | Keep `Custom / GM` available but require an explicit, attributable adjudicated penalty rather than assuming zero | Not so: `custom` applies no canonical penalty and the Custom Modifier field carries any adjustment | Dialog and `assertAttackFormResolvable` change; not made until ruled |
+
+- **Revision 53 (2026-11-10):** appended WPN-B-001 and the owner's provisional recommendations for WPN-W1-001, WPN-W1-002 and WPN-W2-001.
