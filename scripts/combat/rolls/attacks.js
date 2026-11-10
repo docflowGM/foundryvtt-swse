@@ -236,6 +236,48 @@ export function isCanonicalHintedWeapon(weapon) {
 }
 
 /**
+ * Combat Loadout Preview: the owned-state facts a NORMAL attack with this weapon would carry, resolved read-only. It reads the same authorities as
+ * the live attack stage in resolveCanonicalAttackStage (selected form -> effective wielding size -> resolveWielding over the owned fire-state grip
+ * the equipment coordinator wrote), but never asks a question, writes state or spends anything. A fact only the live attack may ask for (the tripod
+ * answer) is reported in `pendingFacts` and the preview then declines to show a number that depends on it. Parity with the live attack is asserted
+ * by tests/combat-loadout-preview.test.mjs.
+ * @returns {{ok:false, reason:string, error?:Error}|{ok:true, source:'legacy', rollOptions:object}|{ok:true, source:'canonical', rollOptions:object, weaponForm:object, wield:object, sizing:object|undefined, pendingFacts:string[], damageContext:object}}
+ */
+export function previewAttackContext(actor, weapon, baseOptions = {}) {
+  let rollOptions = FireStateStore.applyOwnedSelection(actor, weapon, { ...baseOptions });
+  const canonical = withCanonicalWeaponRuntime(weapon, rollOptions, actor);
+  if (canonical.error) return { ok: false, reason: 'weapon-runtime-error', error: canonical.error };
+  rollOptions = canonical.rollOptions;
+  const runtime = rollOptions.weaponRuntime;
+  if (runtime?.source !== 'canonical') return { ok: true, source: 'legacy', rollOptions };
+  const shape = resolveAttackShapeFor(runtime, rollOptions);
+  const owned = FireStateStore.readFireState(weapon) ?? {};
+  const personallyWielded = !routedVehicleWeapon(actor, weapon, rollOptions);
+  const wielderSize = actor?.system?.size ?? actor?.system?.details?.size ?? null;
+  const beneficialSizeChoice = rollOptions.beneficialSizeChoice ?? owned.sizeTreatment ?? undefined;
+  const preparedForSize = (() => {
+    if (!shape.sizeRules?.prepared) return false;
+    try { const st = FireStateStore.previewReadiness(actor, weapon, runtime, rollOptions).preparation?.state; return st === 'prepared' || st === 'required'; } catch { return false; }
+  })();
+  const tripod = typeof rollOptions.mounted === 'boolean' ? rollOptions.mounted : (typeof owned.mounted === 'boolean' ? owned.mounted : undefined);
+  const sizing = personallyWielded ? resolveEffectiveWieldingSize(shape, wielderSize, { tripodMounted: tripod, beneficialSizeChoice, prepared: preparedForSize }) : undefined;
+  const pendingFacts = [];
+  if (sizing?.pending === 'tripod' && tripod === undefined) pendingFacts.push('tripod');
+  const wield = resolveWielding(shape.wielding, { option: rollOptions.wieldedHands, state: owned, sizing });
+  const targetReqs = runtime.profile?.definition?.activationRequirements ?? [];
+  const weaponForm = weaponFormRecord(runtime, rollOptions.damageMode ?? null);
+  // exactly the owned facts the live attack carries into its workflow context (see ownedExtras in resolveCanonicalAttackStage)
+  const damageContext = {
+    weaponForm,
+    ...(runtime.branch ? { attackType: runtime.branch } : {}),
+    ...(wield.hands ? { wieldedHands: wield.hands } : {}),
+    ...(sizing?.classification ? { weaponSizeClass: { classification: sizing.classification, effectiveSize: sizing.effectiveSize, source: sizing.source } } : {}),
+    ...(forgoesDoubleStrength(targetReqs) ? { forgoDoubleStrength: true } : {})
+  };
+  return { ok: true, source: 'canonical', rollOptions, weaponForm, wield, sizing, pendingFacts, damageContext, conditionalDamageDeclared: Array.isArray(shape.conditionalDamage) ? shape.conditionalDamage.length : 0 };
+}
+
+/**
  * Phase 5D-A: pure canonical weapon/profile resolution for an attack. Legacy/custom weapons return the options untouched;
  * a canonical weapon returns options carrying the resolved weaponRuntime and the selected profile's branch as attackType.
  * A canonical identity/selection error is returned (never thrown, never a legacy fallback) so callers fail closed.

@@ -192,7 +192,19 @@
         <div class="swse-eqw__pane" data-eqw-pane="details">
           <dl class="swse-eqw__facts">
             {{#if it.isWeapon}}
-              {{#if it.attack}}
+              {{#if it.preview}}
+                <div class="swse-eqw__wide swse-eqw__pv-inspect" data-eqw-preview-inspector="{{it.id}}">
+                  <dt>Normal attack</dt>
+                  <dd>
+                    <span class="swse-eqw__pv-line"><b>To hit {{it.preview.attackLabel}}</b>{{#if it.preview.damageShown}} · <b>Damage {{it.preview.damageRangeLabel}}</b> · {{it.preview.damageFormula}}{{/if}}</span>
+                    {{#if it.preview.attackBreakdown.length}}<ul class="swse-eqw__pv-list" aria-label="Attack breakdown">{{#each it.preview.attackBreakdown as |b|}}<li><span>{{b.label}}</span><b>{{b.value}}</b></li>{{/each}}</ul>{{/if}}
+                    {{#if it.preview.damageBreakdown.length}}<ul class="swse-eqw__pv-list" aria-label="Damage breakdown">{{#each it.preview.damageBreakdown as |b|}}<li><span>{{b.label}}</span><b>{{b.value}}</b></li>{{/each}}</ul>{{/if}}
+                    <span class="swse-eqw__pv-note">{{#if it.preview.gripLabel}}Grip: {{it.preview.gripLabel}} · {{/if}}{{#if it.preview.ready}}Readied{{else}}Not drawn{{/if}} · {{it.preview.statusLabel}}</span>
+                    {{#if it.preview.explanation}}<span class="swse-eqw__pv-note">{{it.preview.explanation}}</span>{{/if}}
+                    <span class="swse-eqw__pv-note is-dim">Excludes target, range, cover and optional combat choices.</span>
+                  </dd>
+                </div>
+              {{else if it.attack}}
                 <div class="is-key"><dt>Attack</dt><dd>{{#if it.attack.hasProfile}}{{numberFormat it.attack.attackTotal decimals=0 sign=true}}{{else}}—{{/if}}</dd></div>
                 <div class="is-key"><dt>Damage</dt><dd>{{#if it.attack.damageFormula}}{{it.attack.damageFormula}}{{else}}—{{/if}}</dd></div>
                 <div><dt>Crit</dt><dd>{{#if it.attack.critRange}}{{it.attack.critRange}}×{{it.attack.critMult}}{{else}}—{{/if}}</dd></div>

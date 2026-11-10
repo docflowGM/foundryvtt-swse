@@ -320,4 +320,50 @@ export function buildEquipmentWorkspace(actor, { groups = [], attackViews = new 
   };
 }
 
-export default { buildEquipmentWorkspace, categoryOfRow, artOf, WORKSPACE_TABS };
+
+/**
+ * Attaches the Combat Loadout Preview (combat/rolls/loadout-preview.js -- the read-only projection of the production attack and damage
+ * authorities) to the held weapons of an already-built workspace: item rows, entries and hand/appendage slots. Presentation only: it formats
+ * the preview's own numbers (signs, en dash) and decides nothing. When `previews` is given, the preview REPLACES the sheet's older per-item
+ * attack mirror for held weapons (that mirror reads Item-level fields), so one set of numbers is shown everywhere.
+ * @param {object|null} workspace  buildEquipmentWorkspace() result
+ * @param {Map<string,object>|null} previews  buildLoadoutPreviews() result keyed by weapon id
+ */
+export function applyLoadoutPreviews(workspace, previews) {
+  if (!workspace || !(previews instanceof Map)) return workspace;
+  const view = (pv) => {
+    if (!pv) return null;
+    const established = pv.calculationStatus !== 'unresolved';
+    const hasRange = Number.isFinite(pv.minimumDamage) && Number.isFinite(pv.maximumDamage);
+    return {
+      ...pv,
+      statusKey: pv.calculationStatus,
+      statusLabel: pv.calculationStatus === 'established' ? 'Established' : pv.calculationStatus === 'variable' ? 'Variable / context required' : 'Unresolved',
+      attackLabel: established && Number.isFinite(pv.attackBonus) ? signed(pv.attackBonus) : '—',
+      damageRangeLabel: hasRange ? `${pv.minimumDamage}–${pv.maximumDamage}` : '—',
+      damageShown: established && !!pv.damageFormula,
+      hasBreakdown: established && (pv.attackBreakdown?.length > 0 || pv.damageBreakdown?.length > 0),
+      attackBreakdown: asArray(pv.attackBreakdown).map((b) => ({ label: b.label, value: signed(b.value) })),
+      damageBreakdown: asArray(pv.damageBreakdown).map((b) => ({ label: b.label, value: typeof b.value === 'number' ? signed(b.value) : String(b.value) })),
+      gripLabel: pv.gripLabel || ''
+    };
+  };
+  const byId = new Map([...previews].map(([id, pv]) => [id, view(pv)]));
+  const decorate = (it) => {
+    const pv = it?.isWeapon ? byId.get(it.id) ?? null : null;
+    if (!pv) return it;
+    return { ...it, preview: pv, gripLabel: pv.gripLabel || it.gripLabel };
+  };
+  workspace.items = asArray(workspace.items).map(decorate);
+  workspace.entries = asArray(workspace.entries).map(decorate);
+  for (const slot of asArray(workspace.slots)) {
+    const pv = slot?.occupant ? byId.get(slot.occupant.itemId) ?? null : null;
+    if (!pv) continue;
+    // the stale per-item mirror labels are superseded by the preview's numbers
+    slot.occupant = { ...slot.occupant, preview: pv, attackLabel: '', damageLabel: '' };
+  }
+  workspace.hasLoadoutPreview = true;
+  return workspace;
+}
+
+export default { buildEquipmentWorkspace, applyLoadoutPreviews, categoryOfRow, artOf, WORKSPACE_TABS };

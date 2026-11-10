@@ -183,6 +183,22 @@
 .swse-eqw .swse-eqw__readout b { color: var(--eqw-ink); font-weight: 600; }
 .swse-eqw .swse-eqw__grip-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--eqw-accent); }
 
+/* Combat loadout readout (KOTOR-style TO HIT / DAMAGE under a held weapon). Read-only projection; the numbers come from loadout-preview.js. */
+.swse-eqw .swse-eqw__pv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 10px; margin-top: 4px; padding: 5px 8px; border: 1px solid var(--eqw-line); border-radius: 6px; background: var(--eqw-fill); }
+.swse-eqw .swse-eqw__pv-cell { display: grid; min-width: 0; }
+.swse-eqw .swse-eqw__pv-cell i { font-style: normal; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--eqw-ink-3); }
+.swse-eqw .swse-eqw__pv-cell b { font-size: 16px; font-weight: 700; color: var(--eqw-ink); font-variant-numeric: tabular-nums; }
+.swse-eqw .swse-eqw__pv-formula { grid-column: 1 / -1; font-size: 12.5px; color: var(--eqw-ink-2); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.swse-eqw .swse-eqw__pv-grip { grid-column: 1 / -1; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--eqw-accent); }
+.swse-eqw .swse-eqw__pv-note { grid-column: 1 / -1; font-size: 11.5px; color: var(--eqw-warn); }
+.swse-eqw .swse-eqw__pv-note.is-dim { color: var(--eqw-ink-3); }
+.swse-eqw .swse-eqw__pv.is-unresolved .swse-eqw__pv-cell b { color: var(--eqw-ink-3); }
+.swse-eqw .swse-eqw__pv-line { display: block; font-size: 14px; }
+.swse-eqw .swse-eqw__pv-list { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 1px; font-size: 12.5px; }
+.swse-eqw .swse-eqw__pv-list li { display: flex; justify-content: space-between; gap: 12px; color: var(--eqw-ink-2); }
+.swse-eqw .swse-eqw__pv-list b { color: var(--eqw-ink); font-variant-numeric: tabular-nums; }
+@media (max-width: 420px) { .swse-eqw .swse-eqw__pv { grid-template-columns: 1fr; } }
+
 /* Empty positions: recognisable but subdued */
 .swse-eqw .swse-eqw__open {
   display: grid; place-items: center; min-height: 46px; font-size: 13px; color: var(--eqw-ink-3);

@@ -426,6 +426,8 @@ function hasForceSensitivityAccess(actor) {
 }
 
 import { buildConceptSheetViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
+import { applyLoadoutPreviews } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js";
+import { buildLoadoutPreviews } from "/systems/foundryvtt-swse/scripts/combat/rolls/loadout-preview.js";
 import { maybePromptForDatapadRegistration } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/chargen-onboarding.js";
 
 /**
@@ -2306,6 +2308,16 @@ const forcePoints = [];
       });
       // Gear tab: the shared equipment workspace, fed by the already-hydrated inventory panel and attack rows (separate hook; the context hook above keeps its shape)
       if (context.npcConcept) context.npcConcept.workspace = this._buildNpcEquipmentWorkspace(actor, { panelContexts, combat });
+    }
+
+    // Combat Loadout Preview (Gear tab): a read-only projection of the production attack / damage authorities for the weapons held right now,
+    // recomputed on every render (no cache, no polling, nothing written), so grip, equipment, ability, modification and effect changes show at once.
+    try {
+      const loadoutPreviews = await buildLoadoutPreviews(actor);
+      applyLoadoutPreviews(conceptLayout?.gear?.workspace, loadoutPreviews);
+      applyLoadoutPreviews(context.npcConcept?.workspace, loadoutPreviews);
+    } catch (err) {
+      swseLogger.warn('[SWSE] Combat loadout preview unavailable', { actorId: actor?.id, error: err?.message });
     }
 
     const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor });

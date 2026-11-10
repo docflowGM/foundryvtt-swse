@@ -35,89 +35,31 @@ import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvt
 import { resolveCanonicalDamage } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-consumer.js";
 import { isVehicleManagedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-weapon-damage.js";
 
+/** Statblock NPC printed damage formula (an NPC in statblock mode whose weapon carries a flat formula), else null. Shared by rollDamage and the Combat Loadout Preview. */
+export function npcStatblockFlatDamageFormula(actor, weapon) {
+  if (!(actor?.type === 'npc' && isNpcStatblockMode(actor))) return null;
+  const npc = weapon?.flags?.swse?.npc;
+  const flatFormula = npc?.flatDamageFormula;
+  return npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim() ? flatFormula : null;
+}
+
 /**
- * Roll damage for a SWSE weapon/power.
- * Handles:
- *  - Complete SWSE damage math
- *  - Talent-based damage bonuses (Sneak Attack, Skirmisher, etc.)
- *  - Active Effects (Actor.applyDamage handles thresholds)
- *
- * @param {Actor} actor - The attacking actor
- * @param {Item} weapon - The weapon used
- * @param {Object} context - Optional context {target, isCritical, aimedThisTurn}
+ * Weapon damage COMPOSITION (no dice, no chat, no notifications, no state): resolves the selected canonical damage definition, composes it
+ * through the one damage authority and builds the damage formula. rollDamage() below and the read-only Combat Loadout Preview both call
+ * THIS function, so a displayed formula can never diverge from the formula that is actually rolled.
+ * @returns {{refusal:{error?:Error, message?:string}}|{canonicalDamage:object, composition:object, formula:string, rollContext:object, workflowContext:object}}
  */
-export async function rollDamage(actor, weapon, context = {}) {
-  let rollContext = mergeCombatWorkflowContextIntoRollOptions(context, context?.combatContext ?? context?.workflowContext ?? null);
-  let workflowContext = summarizeCombatWorkflowContext(rollContext.combatContext ?? rollContext.workflowContext ?? rollContext, {
-    actor,
-    weapon,
-    target: rollContext.target,
-    isCritical: rollContext.isCritical === true,
-    critMultiplier: rollContext.critMultiplier,
-    damageMode: rollContext.damageMode ?? null,
-    damageType: rollContext.damageType ?? null,
-    damageTypes: damageTypesFromContext({ weapon, workflowContext: rollContext.combatContext ?? rollContext.workflowContext ?? null, options: rollContext }).expanded,
-    damageComponents: rollContext.damageComponents ?? rollContext.combatContext?.damage?.damageComponents ?? rollContext.workflowContext?.damage?.damageComponents ?? [],
-    isStun: rollContext.stun === true || rollContext.damageMode === 'stun',
-    isIon: rollContext.ion === true,
-    contextTags: rollContext.damageMode === 'stun' || rollContext.stun === true ? ['stun'] : []
-  });
-  if (!actor || !weapon) {
-    ui.notifications.error('Missing actor or weapon for damage roll.');
-    return null;
-  }
-
-  // Statblock NPCs can roll printed damage formula until explicitly leveled.
-  if (actor.type === 'npc' && isNpcStatblockMode(actor)) {
-    const npc = weapon?.flags?.swse?.npc;
-    const flatFormula = npc?.flatDamageFormula;
-
-    if (npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim()) {
-      const roll = await RollEngine.safeRoll(flatFormula);
-      if (roll) {
-        roll.swseDamageFormula = flatFormula;
-        if (rollContext.suppressChat !== true) {
-          await SWSEChat.postRoll({
-          roll,
-          actor,
-          flavor: `${actor.name} — ${weapon.name} Damage`,
-          flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
-          context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, damageType: resolveDamagePacketType({ weapon, workflowContext, options: rollContext }), damageTypes: damageTypesFromContext({ weapon, workflowContext, options: rollContext }).expanded, damageComponents: rollContext.damageComponents ?? workflowContext?.damage?.damageComponents ?? [] }
-        });
-      }
-      return roll;
-    }
-  }
-  }
-
-
-  // Canonical Damage SSOT (combat-roll-math.js): resolveDamageComposition()
-  // is the single authority for every dice-shaped and additive damage
-  // contribution (base dice, die-size steps, extra weapon dice, ½ level/
-  // ability/enhancement/rage/effect-intent/combat-option/scoped-feat,
-  // talent dice, Force Item/Inquisition dice, critical multiplier and
-  // critical-only bonus formula). This orchestration wrapper's job is only
-  // to gather workflow context, call composition + buildDamageFormula(),
-  // roll it, and post/consume state — it no longer computes any damage
-  // term itself. This is the actual fix for the confirmed live bug where
-  // Deadeye/Burst Fire/Mighty Swing/Rapid Shot/Rapid Strike/unarmed
-  // die-step contributions were silently dropped on this exact path.
-  // Phase 5D-C: resolve the canonical damage definition of the attack form actually selected (carried in the workflow
-  // context from the attack roll, or explicit ids) BEFORE composing anything. Invalid identity/selection/damage mode/
-  // payload fails closed here -- never the default profile; a form with no ordinary damage is refused, not invented.
+export function composeWeaponDamage(actor, weapon, rollContext, workflowContext, context = rollContext) {
   let canonicalDamage;
   try {
     canonicalDamage = resolveCanonicalDamage(weapon, { ...rollContext, actor });
   } catch (err) {
     if (!(err instanceof WeaponRuntimeError)) throw err;
-    reportWeaponRuntimeError(err, { notify: false });
-    ui.notifications.error(`Damage could not be resolved: ${err.message}`);
-    return null;
+    return { refusal: { error: err } };
   }
   if (canonicalDamage.source === 'canonical') {
     if (canonicalDamage.status === 'no-damage' || canonicalDamage.status === 'special') {
-      ui.notifications.warn(`${weapon.name}: the selected attack form has no ordinary damage roll (${canonicalDamage.reason}).`);
-      return null;
+      return { refusal: { message: `${weapon.name}: the selected attack form has no ordinary damage roll (${canonicalDamage.reason}).` } };
     }
     // Phase 5D-E native-stun: the structured stun capability makes stun the effective mode even when the caller never said so
     // (e.g. a Damage roll started from the sheet); the workflow context/packet type must agree with the dice that were resolved.
@@ -155,6 +97,91 @@ export async function rollDamage(actor, weapon, context = {}) {
     extraTerms: [fpBonus !== 0 ? fpBonus : null, customModifier !== 0 ? customModifier : null],
     isAreaAttack: isCanonicalAreaAttack(canonicalDamage, weapon, rollContext)
   });
+
+  return { canonicalDamage, composition, formula, rollContext, workflowContext };
+}
+
+/**
+ * Roll damage for a SWSE weapon/power.
+ * Handles:
+ *  - Complete SWSE damage math
+ *  - Talent-based damage bonuses (Sneak Attack, Skirmisher, etc.)
+ *  - Active Effects (Actor.applyDamage handles thresholds)
+ *
+ * @param {Actor} actor - The attacking actor
+ * @param {Item} weapon - The weapon used
+ * @param {Object} context - Optional context {target, isCritical, aimedThisTurn}
+ */
+export async function rollDamage(actor, weapon, context = {}) {
+  let rollContext = mergeCombatWorkflowContextIntoRollOptions(context, context?.combatContext ?? context?.workflowContext ?? null);
+  let workflowContext = summarizeCombatWorkflowContext(rollContext.combatContext ?? rollContext.workflowContext ?? rollContext, {
+    actor,
+    weapon,
+    target: rollContext.target,
+    isCritical: rollContext.isCritical === true,
+    critMultiplier: rollContext.critMultiplier,
+    damageMode: rollContext.damageMode ?? null,
+    damageType: rollContext.damageType ?? null,
+    damageTypes: damageTypesFromContext({ weapon, workflowContext: rollContext.combatContext ?? rollContext.workflowContext ?? null, options: rollContext }).expanded,
+    damageComponents: rollContext.damageComponents ?? rollContext.combatContext?.damage?.damageComponents ?? rollContext.workflowContext?.damage?.damageComponents ?? [],
+    isStun: rollContext.stun === true || rollContext.damageMode === 'stun',
+    isIon: rollContext.ion === true,
+    contextTags: rollContext.damageMode === 'stun' || rollContext.stun === true ? ['stun'] : []
+  });
+  if (!actor || !weapon) {
+    ui.notifications.error('Missing actor or weapon for damage roll.');
+    return null;
+  }
+
+  // Statblock NPCs can roll printed damage formula until explicitly leveled.
+  {
+    const flatFormula = npcStatblockFlatDamageFormula(actor, weapon);
+    if (flatFormula) {
+      const roll = await RollEngine.safeRoll(flatFormula);
+      if (roll) {
+        roll.swseDamageFormula = flatFormula;
+        if (rollContext.suppressChat !== true) {
+          await SWSEChat.postRoll({
+          roll,
+          actor,
+          flavor: `${actor.name} — ${weapon.name} Damage`,
+          flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
+          context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, damageType: resolveDamagePacketType({ weapon, workflowContext, options: rollContext }), damageTypes: damageTypesFromContext({ weapon, workflowContext, options: rollContext }).expanded, damageComponents: rollContext.damageComponents ?? workflowContext?.damage?.damageComponents ?? [] }
+        });
+      }
+      return roll;
+    }
+  }
+  }
+
+
+  // Canonical Damage SSOT (combat-roll-math.js): resolveDamageComposition()
+  // is the single authority for every dice-shaped and additive damage
+  // contribution (base dice, die-size steps, extra weapon dice, ½ level/
+  // ability/enhancement/rage/effect-intent/combat-option/scoped-feat,
+  // talent dice, Force Item/Inquisition dice, critical multiplier and
+  // critical-only bonus formula). This orchestration wrapper's job is only
+  // to gather workflow context, call composition + buildDamageFormula(),
+  // roll it, and post/consume state — it no longer computes any damage
+  // term itself. This is the actual fix for the confirmed live bug where
+  // Deadeye/Burst Fire/Mighty Swing/Rapid Shot/Rapid Strike/unarmed
+  // die-step contributions were silently dropped on this exact path.
+  // Phase 5D-C: resolve the canonical damage definition of the attack form actually selected (carried in the workflow
+  // context from the attack roll, or explicit ids) BEFORE composing anything. Invalid identity/selection/damage mode/
+  // payload fails closed here -- never the default profile; a form with no ordinary damage is refused, not invented.
+  const composed = composeWeaponDamage(actor, weapon, rollContext, workflowContext, context);
+  if (composed.refusal) {
+    if (composed.refusal.error) {
+      reportWeaponRuntimeError(composed.refusal.error, { notify: false });
+      ui.notifications.error(`Damage could not be resolved: ${composed.refusal.error.message}`);
+    } else ui.notifications.warn(composed.refusal.message);
+    return null;
+  }
+  rollContext = composed.rollContext;
+  workflowContext = composed.workflowContext;
+  const { canonicalDamage, composition, formula } = composed;
+  const fpBonus = rollContext.fpBonus || 0;
+  const customModifier = rollContext.customModifier || 0;
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
   if (roll) {

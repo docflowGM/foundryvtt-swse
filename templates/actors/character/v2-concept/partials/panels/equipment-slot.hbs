@@ -27,6 +27,18 @@
           {{#if slot.occupant.shared}}<span class="swse-eqw__grip-tag"><i class="fa-solid fa-link" aria-hidden="true"></i> with {{slot.occupant.withSlotLabels}}</span>{{/if}}
           {{#if slot.occupant.damageLabel}}<span class="swse-eqw__readout"><b>{{slot.occupant.attackLabel}}</b> · <b>{{slot.occupant.damageLabel}}</b></span>{{/if}}
         </span>
+        {{!-- Combat loadout readout (read-only projection of the production attack/damage authorities; see loadout-preview.js). "To hit" is the NORMAL attack: no target, range, cover or optional choice. --}}
+        {{#if slot.occupant.preview}}
+          {{#with slot.occupant.preview as |pv|}}
+          <span class="swse-eqw__pv is-{{pv.statusKey}}" data-eqw-preview="{{pv.weaponId}}">
+            <span class="swse-eqw__pv-cell"><i>To hit</i><b data-eqw-pv-attack>{{pv.attackLabel}}</b></span>
+            <span class="swse-eqw__pv-cell"><i>Damage</i><b data-eqw-pv-damage>{{pv.damageRangeLabel}}</b></span>
+            {{#if pv.damageShown}}<span class="swse-eqw__pv-formula" data-eqw-pv-formula>{{pv.damageFormula}}</span>{{/if}}
+            <span class="swse-eqw__pv-grip">{{#if pv.gripLabel}}{{pv.gripLabel}}{{else}}Grip not established{{/if}}{{#unless pv.ready}} · not drawn{{/unless}}</span>
+            {{#if pv.explanation}}<span class="swse-eqw__pv-note" title="{{pv.explanation}}">{{pv.statusLabel}}</span>{{/if}}
+          </span>
+          {{/with}}
+        {{/if}}
       {{else}}
         <strong class="swse-eqw__slot-item is-dim">Occupied</strong>
         <span class="swse-eqw__slot-meta"><span class="swse-eqw__readout">by {{slot.occupant.name}}</span></span>
