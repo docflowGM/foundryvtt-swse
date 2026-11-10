@@ -5,6 +5,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
+import { verifyApprovalQuote } from "/systems/foundryvtt-swse/scripts/engine/store/store-approval-quote.js";
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { requestShellRender } from "/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js";
@@ -625,27 +626,7 @@ export class GMApprovalOperationsService {
 
       // The approval is COMMITTED. Everything below is bookkeeping and cannot undo it or report it as failed.
       const failures = [];
-      await this._afterCommit(failures, 'purchase-history mirror', async () => {
-        const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
-        history.push({
-          timestamp: Date.now(),
-          items: [],
-          droids: draftActor.type === 'droid' ? [{ id: draftActor.id, name: assetName, cost }] : [],
-          vehicles: draftActor.type === 'vehicle' ? [{ id: draftActor.id, name: assetName, cost }] : [],
-          total: cost,
-          transactionId: approvalResult.transactionId ?? null,
-          source: `GM Datapad - Custom ${draftActor.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
-          gmNotes: approval.metadata?.gmNotes ?? '',
-          compatibilityMirror: true
-        });
-        await ActorEngine.updateActor(ownerActor, {
-          'flags.foundryvtt-swse.purchaseHistory': history
-        }, {
-          source: 'GMApprovalOperationsService.approvePendingCustom.purchaseHistoryMirror',
-          skipValidation: true
-        });
-      });
-      await this._afterCommit(failures, 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
+            await this._afterCommit(failures, 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
       await this._afterCommit(failures, 'approved hook', async () => {
         Hooks.callAll?.('swseCustomPurchaseApproved', {
           approval,
@@ -753,28 +734,33 @@ export class GMApprovalOperationsService {
       return false;
     }
 
+    // Re-resolve every line from the live catalog: the player's record is a request, not a quote.
+    const inventory = await StoreEngine.getInventory({ useCache: true });
+    if (!inventory?.success) {
+      ui?.notifications?.error?.('The store catalog could not be loaded; nothing was charged.');
+      return false;
+    }
+    const verified = verifyApprovalQuote(approval, inventory.inventory.byId);
+    if (!verified.ok) {
+      ui?.notifications?.error?.(`Cannot approve (${verified.reasons.join('; ')}). Nothing was charged. Deny this request and ask the player to resubmit at the current price.`);
+      return false;
+    }
     const purchaseItems = approvalItems.map(item => ({
       id: item.id || item.policyId || null,
       policyId: item.policyId || item.id || null,
       name: item.name || 'Store item',
       type: item.type || 'item',
-      finalCost: normalizeCredits(item.finalCost ?? item.cost ?? 0),
-      cost: normalizeCredits(item.cost ?? item.finalCost ?? 0),
+      finalCost: normalizeCredits(item.finalCost),
+      cost: normalizeCredits(item.finalCost),
       condition: item.condition || null
     }));
-    const pricedTotal = purchaseItems.reduce((sum, item) => sum + normalizeCredits(item.finalCost ?? item.cost ?? 0), 0);
-    if (purchaseItems.length && pricedTotal !== cost) {
-      const delta = cost - pricedTotal;
-      purchaseItems[0].finalCost = Math.max(0, normalizeCredits(purchaseItems[0].finalCost + delta));
-      purchaseItems[0].cost = purchaseItems[0].finalCost;
-    }
 
     const result = await StoreEngine.purchase({
       actor: ownerActor,
       items: purchaseItems,
       totalCost: cost,
       transactionContext: 'store-purchase',
-      itemGrantCallback: async () => this._buildStoreItemApprovalMutationPlans(approval)
+      itemGrantCallback: async () => this._buildStoreItemApprovalMutationPlans(approval, inventory.inventory.byId)
     });
 
     if (!result.success) {
@@ -801,32 +787,30 @@ export class GMApprovalOperationsService {
     return true;
   }
 
-  static async _buildStoreItemApprovalMutationPlans(approval = {}) {
+  static async _buildStoreItemApprovalMutationPlans(approval = {}, inventoryById = new Map()) {
     const items = Array.isArray(approval.approvalItems) ? approval.approvalItems : [];
     const plans = [];
-    const itemData = [];
+    const { createItemPlans, createDroidPlans, createVehiclePlans } = await import('/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js');
+    const { hydrateStoreListings } = await import('/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js');
+    const cartItems = [], cartDroids = [], cartVehicles = [];
 
     for (const item of items) {
-      const type = String(item?.type || '').toLowerCase();
-      const sourceBucket = String(item?.sourceBucket || '').toLowerCase();
-      const data = this._stripApprovalDocumentIdentity(item?.itemData || { name: item?.name || 'Store item', type: item?.type || 'equipment', img: item?.img, system: {} });
-
-      if (type === 'droid' || sourceBucket === 'droids') {
-        const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
-        plans.push(DroidFactory.buildMutationPlan({ droidActor: data, name: item?.name || data.name }));
+      if (item?.stagedCustomization?.itemData) {   // customization quotes are owned by the customization authority (S7)
+        cartItems.push({ id: item.id, name: item.name, cost: item.finalCost, stagedCustomization: item.stagedCustomization });
         continue;
       }
-
-      if (type === 'vehicle' || sourceBucket === 'vehicles') {
-        const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
-        plans.push(VehicleFactory.buildMutationPlan({ template: data, condition: item?.condition || 'new' }));
-        continue;
-      }
-
-      itemData.push(data);
+      // Everything else is rebuilt from the exact canonical source of the CURRENT listing, never from player-supplied data.
+      const listing = inventoryById.get(item.id);
+      if (!listing) throw new Error(`Store listing ${item.id} is no longer available`);
+      if (listing.type === 'vehicle') cartVehicles.push({ id: item.id, name: item.name, cost: item.finalCost, condition: item.condition, template: listing });
+      else if (listing.type === 'droid') cartDroids.push({ id: item.id, name: item.name, cost: item.finalCost, actor: listing });
+      else cartItems.push({ id: item.id, name: item.name, cost: item.finalCost, item: listing });
     }
 
-    if (itemData.length) plans.push({ add: { items: itemData } });
+    await hydrateStoreListings([...cartItems.filter(entry => entry.item).map(entry => entry.item), ...cartDroids.map(entry => entry.actor)]);
+    plans.push(...createItemPlans(cartItems));
+    if (cartDroids.length) plans.push(...await createDroidPlans(cartDroids));
+    if (cartVehicles.length) plans.push(...await createVehiclePlans(cartVehicles, inventoryById));
     return plans;
   }
 

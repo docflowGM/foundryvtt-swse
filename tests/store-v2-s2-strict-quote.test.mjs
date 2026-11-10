@@ -32,3 +32,18 @@ assert.ok(/priceReviewRequired: true/.test(checkoutSrc), 'a changed quote aborts
 assert.ok(/openShipDesigner/.test(checkoutSrc) && !/legacy starship builder is retired/.test(checkoutSrc), 'Build Ship launches the existing Ship Designer');
 assert.ok(!fs.existsSync('store/store.js'), 'legacy FormApplication store removed');
 console.log('store-v2-s2-strict-quote: all checks ok');
+
+// ---- S2b / S4 guards: ledger-projected history, strict vehicle condition ----
+{
+  const readSrc = f => fs.readFileSync(f, 'utf8');
+  for (const f of ['scripts/apps/store/store-checkout.js', 'scripts/ui/shell/gm/GMApprovalOperationsService.js', 'scripts/apps/gm-store-dashboard.js'])
+    assert.doesNotMatch(readSrc(f), /setFlag\('foundryvtt-swse', 'purchaseHistory'|flags\.foundryvtt-swse\.purchaseHistory'/, `${f}: no purchaseHistory mirror writes`);
+  assert.doesNotMatch(readSrc('scripts/apps/store/store-main.js'), /getFlag\?\.\('foundryvtt-swse', 'purchaseHistory'\)/, 'history reads the TransactionEngine ledger');
+  const co = readSrc('scripts/apps/store/store-checkout.js');
+  assert.doesNotMatch(co, /vehicle\.condition === 'used' \? 'used' : 'new'/, 'no silent condition coercion to new');
+  assert.doesNotMatch(co, /isUsed \? 'used' : 'new'/);
+  const fn = co.slice(co.indexOf('function getVehicleConditionCost('), co.indexOf('function isValidVehicleConditionCost'));
+  assert.doesNotMatch(fn, /costNew|costUsed|\.cost\b|finalCost\)/, 'no base-price or cross-condition fallback');
+  assert.doesNotMatch(readSrc('scripts/ui/shell/StoreSurfaceController.js'), /addVehicleToCart\(store, id, condition \|\| 'new'/, 'Store never defaults a vehicle to New');
+  console.log('store-v2 S2b/S4 guards ok');
+}

@@ -15,6 +15,7 @@
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
 import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
 import { GearSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/gear-suggestions.js";
@@ -210,12 +211,9 @@ function positiveCreditOrNull(value) {
 }
 
 function resolveVehicleStoreCosts(item = {}) {
-  const newCost = positiveCreditOrNull(item.finalCostNew)
-    ?? positiveCreditOrNull(item.finalCost)
-    ?? positiveCreditOrNull(item.costNew)
-    ?? positiveCreditOrNull(item.cost);
-  const usedCost = positiveCreditOrNull(item.finalCostUsed)
-    ?? positiveCreditOrNull(item.costUsed);
+  // Each condition shows only its own published-price-derived merchant offer; no cross-condition or base-price fallback.
+  const newCost = positiveCreditOrNull(item.finalCostNew);
+  const usedCost = positiveCreditOrNull(item.finalCostUsed);
   return { newCost, usedCost };
 }
 
@@ -514,20 +512,24 @@ export class SWSEStore extends BaseSWSEAppV2 {
     return entries;
   }
 
+  /** Purchase history is a read projection of the TransactionEngine actor ledger (the credit SSOT). */
   _buildPurchaseHistoryEntries() {
-    const history = this.actor?.getFlag?.('foundryvtt-swse', 'purchaseHistory') || [];
-    return history.slice().reverse().map(entry => {
-      const items = [
-        ...(entry.items || []).map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Item'), qty: 1, cost: i.cost ?? 0 })),
-        ...(entry.droids || []).map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Droid'), qty: 1, cost: i.cost ?? 0 })),
-        ...(entry.vehicles || []).map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Vehicle'), qty: 1, cost: i.cost ?? 0 }))
-      ];
-      return {
-        timestamp: new Date(entry.timestamp || Date.now()).toLocaleString(),
-        total: entry.total ?? 0,
-        items
-      };
+    const records = TransactionEngine.getActorTransactions(this.actor, {
+      contexts: ['store-purchase', 'store-customization-checkout', 'custom-approval', 'store-sale-approval', 'store-haggle-sale']
     });
+    return records
+      .filter(tx => tx.status === 'Success' || tx.status === undefined)
+      .map(tx => {
+        const audited = Array.isArray(tx.audit?.items) ? tx.audit.items : [];
+        const items = audited.length
+          ? audited.map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Item'), qty: Number(i.quantity) || 1, cost: i.cost ?? i.finalCost ?? '' }))
+          : tx.itemNames.map(name => ({ name, qty: 1, cost: '' }));
+        return {
+          timestamp: new Date(tx.timestamp || Date.now()).toLocaleString(),
+          total: tx.cost ?? 0,
+          items
+        };
+      });
   }
 
   _buildCategorySummary(allItems = []) {

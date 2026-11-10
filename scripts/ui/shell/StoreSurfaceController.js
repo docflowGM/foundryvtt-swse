@@ -628,7 +628,17 @@ export class StoreSurfaceController {
 
     try {
       if (itemType === 'vehicle') {
-        await addVehicleToCart(store, id, condition || 'new', null);
+        // The purchaser's condition survives intact. An unspecified condition is only resolved when the listing
+        // has exactly ONE published price; with both prices the purchaser must choose New or Used.
+        const listing = store.itemsById?.get(id);
+        let chosen = String(condition || '').toLowerCase();
+        if (!chosen) {
+          const hasNew = Number(listing?.finalCostNew) > 0, hasUsed = Number(listing?.finalCostUsed) > 0;
+          if (hasNew && !hasUsed) chosen = 'new';
+          else if (hasUsed && !hasNew) chosen = 'used';
+          else { ui.notifications?.warn?.('Choose New or Used for this vehicle.'); return; }
+        }
+        await addVehicleToCart(store, id, chosen, null);
       } else if (itemType === 'droid') {
         await addDroidToCart(store, id, null);
       } else {

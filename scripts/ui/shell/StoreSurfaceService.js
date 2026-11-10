@@ -267,14 +267,9 @@ function _positiveCreditOrNull(value) {
 }
 
 function _resolveVehicleStoreCosts(item = {}) {
-  const newCost = _positiveCreditOrNull(item.newCost)
-    ?? _positiveCreditOrNull(item.finalCostNew)
-    ?? _positiveCreditOrNull(item.finalCost)
-    ?? _positiveCreditOrNull(item.costNew)
-    ?? _positiveCreditOrNull(item.cost);
-  const usedCost = _positiveCreditOrNull(item.usedCost)
-    ?? _positiveCreditOrNull(item.costUsed)
-    ?? _positiveCreditOrNull(item.finalCostUsed);
+  // Each condition shows only its own published-price-derived merchant offer; no cross-condition or base-price fallback.
+  const newCost = _positiveCreditOrNull(item.newCost) ?? _positiveCreditOrNull(item.finalCostNew);
+  const usedCost = _positiveCreditOrNull(item.usedCost) ?? _positiveCreditOrNull(item.finalCostUsed);
   return { newCost, usedCost };
 }
 

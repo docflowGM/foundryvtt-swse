@@ -37,12 +37,15 @@ function positiveCreditsOrNull(value) {
     return Number.isFinite(numeric) && numeric > 0 ? Math.round(numeric) : null;
 }
 
-function getVehicleConditionCost(vehicleTemplate, condition = 'new') {
-    const isUsed = condition === 'used';
-    const primary = isUsed
-        ? (positiveCreditsOrNull(vehicleTemplate?.finalCostUsed) ?? positiveCreditsOrNull(vehicleTemplate?.costUsed))
-        : (positiveCreditsOrNull(vehicleTemplate?.finalCostNew) ?? positiveCreditsOrNull(vehicleTemplate?.finalCost) ?? positiveCreditsOrNull(vehicleTemplate?.costNew) ?? positiveCreditsOrNull(vehicleTemplate?.cost));
-    return primary;
+/**
+ * The merchant's current offer for one vehicle condition. Strict: only the explicit conditions 'new' and 'used'
+ * have a price, each from its own published-price-derived final cost. There is no fallback between conditions,
+ * no fallback to base prices, and an unspecified condition never defaults to 'new'.
+ */
+function getVehicleConditionCost(vehicleTemplate, condition) {
+    if (condition === 'used') return positiveCreditsOrNull(vehicleTemplate?.finalCostUsed);
+    if (condition === 'new') return positiveCreditsOrNull(vehicleTemplate?.finalCostNew);
+    return null;
 }
 
 function isValidVehicleConditionCost(value) {
@@ -828,8 +831,7 @@ function revalidateCartItems(store) {
         store.cart.vehicles.splice(i, 1);
         continue;
       }
-      const isUsed = cartVehicle.condition === 'used';
-      const recalculated = getVehicleConditionCost(storeItem, isUsed ? 'used' : 'new');
+      const recalculated = getVehicleConditionCost(storeItem, cartVehicle.condition);
       if (!isValidVehicleConditionCost(recalculated)) {
         report.removed.push({ type: 'vehicle', name: `${cartVehicle.name} (invalid ${cartVehicle.condition || 'new'} price)` });
         store.cart.vehicles.splice(i, 1);
@@ -893,7 +895,7 @@ export function createItemPlans(cartItems) {
  * @param {Array} cartDroids - Droids from cart
  * @returns {Array<Object>} MutationPlans
  */
-async function createDroidPlans(cartDroids) {
+export async function createDroidPlans(cartDroids) {
   // Import DroidFactory dynamically to avoid circular deps
   const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
 
@@ -923,7 +925,7 @@ async function createDroidPlans(cartDroids) {
  * @param {Map} itemsById - Store inventory map
  * @returns {Array<Object>} MutationPlans
  */
-async function createVehiclePlans(cartVehicles, itemsById) {
+export async function createVehiclePlans(cartVehicles, itemsById) {
   // Import VehicleFactory dynamically to avoid circular deps
   const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
   const { VehiclePackDataLoader } = await import('/systems/foundryvtt-swse/scripts/core/vehicle-pack-data-loader.js');
@@ -960,7 +962,7 @@ async function createVehiclePlans(cartVehicles, itemsById) {
     // The charge must equal the Store's own policy-applied offer for this item (looked up
     // by id in the merchant index), never just a cart value the client holds.
     const merchantItem = itemsById?.get(vehicle.id) ?? template;
-    const condition = vehicle.condition === 'used' ? 'used' : 'new';
+    const condition = vehicle.condition;   // evaluateVehicleMerchantPurchase refuses anything but 'new' | 'used'
     const verdict = evaluateVehicleMerchantPurchase(canonicalActor.toObject().flags.swse.universalVehicleSource.source, {
       condition,
       merchantPrice: getVehicleConditionCost(merchantItem, condition),
@@ -1070,7 +1072,10 @@ function serializeStoreApprovalEntry(entry = {}, bucket = 'item') {
         finalCost: cost,
         condition: entry.condition || null,
         img: entry.img || itemData.img || source?.img || '',
-        itemData,
+        // Source data is carried only for customizations (their own authority, S7). Everything else is rebuilt
+        // from the exact canonical listing when the GM approves; a player-written record is a request, not a quote.
+        itemData: entry.stagedCustomization ? itemData : { name, type, img: entry.img || itemData.img || '' },
+        sourceUuid: entry.item?.sourceUuid ?? entry.actor?.sourceUuid ?? entry.template?.sourceUuid ?? null,
         stagedCustomization: entry.stagedCustomization ? cloneStoreCheckoutData(entry.stagedCustomization) : null
     };
 }
@@ -1288,9 +1293,7 @@ async function checkoutUnguarded(store, animateNumberCallback) {
 
         ui.notifications.info(storeI18n('SWSE.Store.Notifications.PurchaseComplete', { total: total.toLocaleString() }));
 
-        // Log purchase to history
-        await logPurchaseToHistory(actor, store.cart, total, result.transactionId);
-
+        // Purchase history is a read projection of the TransactionEngine ledger; nothing is mirrored here.
 
         // Clear cart only on success
         const purchasedItems = {
@@ -1320,54 +1323,6 @@ async function checkoutUnguarded(store, animateNumberCallback) {
         return { success: false, error: err.message };
     }
 }
-
-/**
- * Log purchase to actor's purchase history
- * @param {Actor} actor - The actor making the purchase
- * @param {Object} cart - The shopping cart
- * @param {number} total - Total credits spent
- */
-async function logPurchaseToHistory(actor, cart, total, transactionId = null) {
-    try {
-        // Get existing purchase history
-        const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
-
-        // Create purchase record
-        const purchase = {
-            timestamp: Date.now(),
-            items: cart.items.map(i => ({
-                id: i.id || i.item?.id || i.item?._id,
-                name: i.name || i.item?.name,
-                cost: i.cost || i.item?.finalCost || 0
-            })),
-            droids: cart.droids.map(d => ({
-                id: d.id || d.actor?.id || d.actor?._id,
-                name: d.name || d.actor?.name,
-                cost: d.cost || 0
-            })),
-            vehicles: cart.vehicles.map(v => ({
-                id: v.id || v.template?._id || v.template?.id,
-                name: v.name || v.template?.name,
-                cost: v.cost || 0,
-                condition: v.condition || 'new'
-            })),
-            total: total,
-            transactionId,
-            compatibilityMirror: true,
-            source: 'TransactionEngine mirror'
-        };
-
-        // Add to history and save
-        history.push(purchase);
-        await actor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
-
-        SWSELogger.log('SWSE Store | Purchase logged to history:', purchase);
-    } catch (err) {
-        SWSELogger.error('SWSE Store | Failed to log purchase to history:', err);
-        // Don't throw error - this is non-critical
-    }
-}
-
 
 function cloneStoreCheckoutData(value) {
     if (value === undefined || value === null) return value;
