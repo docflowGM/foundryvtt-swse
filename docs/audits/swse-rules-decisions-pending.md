@@ -2494,3 +2494,23 @@ The project owner gave these as provisional recommendations, expressly "not fina
 | Resolution | |
 
 - **Revision 54 (2026-11-10):** appended WPN-M12-001.
+
+## WPN-D-001 — Sith Sword "Dark Side Empowerment": is the bonus the Dark Side Score before or after its own +1? (weapon three-gate Gate B)
+
+| Field | Content |
+|---|---|
+| Decision ID | WPN-D-001 |
+| Rules domain | Weapon special action / Dark Side Score |
+| Feature | Sith Sword, `operation.darkSideEmpowerment` (the printed page is not re-verified in this audit) |
+| Source | Canonical weapon registry, `weapon-sith-sword` |
+| Evidence | The record states: activation action swift; cost 1 Force Point; Dark Side Score increases by 1; effect "bonus to next Sith sword damage roll equal to wielder Dark Side Score"; expires after the next attack or end of encounter; requires proficiency. |
+| Confirmed behavior | None is implemented: no production consumer reads this key. The action, cost, +1 and duration are stated. |
+| Unresolved question | Whether the damage bonus equals the wielder's Dark Side Score as it stood before the activation's +1 or after it, and whether it is fixed at activation or read at the damage roll. |
+| Options | (a) the score after the +1, fixed at activation. (b) the score before the +1. (c) the score read when the damage is rolled. All fit the wording. |
+| Recommended ruling | None |
+| Implementation impact | A later consumer would reuse the stored one-shot damage-bonus pattern (`rapidAlchemy`), `ActorEngine.spendForcePoints`, `ActionEconomyConsumption.spend`, `DSPEngine` and the canonical proficiency check. Blocked on this ruling. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 55 (2026-11-10):** appended WPN-D-001.

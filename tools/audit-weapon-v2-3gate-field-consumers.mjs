@@ -57,7 +57,7 @@ const KEY_FINAL = {
   repeatAttackEachRoundToMaintainDesignation: [BLK, 'needs per-round designation state; no such state exists'],
   grievousWound: ['SOURCE_UNRESOLVED', 'the printed text ("on the following round") leaves the timing open (5D-I-D: SOURCE_CLARIFICATION_NEEDED)'],
   preferredMode: ['DISPLAY_ONLY', 'descriptive preference; the autofire modifier it mentions is already in modeProfiles (manifest: DUPLICATE_OR_NON_EXECUTABLE)'],
-  darkSideEmpowerment: ['ORPHANED', 'GENUINE GAP: the Sith Sword rule is source-complete (swift, 1 Force Point, Dark Side Score +1, bonus = Dark Side Score on the next attack) and no consumer exists'],
+  darkSideEmpowerment: ['ORPHANED', 'GENUINE GAP with one open ruling: the Sith Sword rule is stated (swift action, 1 Force Point, Dark Side Score +1, bonus on the next damage roll equal to the wielder\'s Dark Side Score) and no consumer exists, but the record does not say whether the bonus uses the score before or after the +1 (WPN-D-001). Existing infrastructure for a later implementation: the stored one-shot damage-bonus pattern (rapidAlchemy state, consumed in damage.js), ActorEngine.spendForcePoints, ActionEconomyConsumption.spend (swift), DSPEngine, resolveCanonicalAttackProficiency.'],
 };
 const PROF_ECHO = new Set(['alternateProficiency', 'wookieeAdvancedMeleeProficiencyCounts', 'wookieeTreatsAsProficientWithWeaponProficiencyRifles']);
 

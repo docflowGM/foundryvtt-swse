@@ -77,7 +77,7 @@ GM_ADJUDICATED 14, CONSUMED_VIA_DUPLICATE 11, BLOCKED_BY_SUBSYSTEM 6, SOURCE_UNR
 
 | Class | Keys | Why |
 |---|---|---|
-| **Genuine missing consumer (1)** | `darkSideEmpowerment` | The Sith Sword rule is source-complete (swift action, 1 Force Point, Dark Side Score +1, bonus equal to Dark Side Score on the next attack) and no consumer exists. Small. Not implemented by decision. |
+| **Genuine missing consumer (1)** | `darkSideEmpowerment` | The Sith Sword rule is stated (swift action, 1 Force Point, Dark Side Score +1, bonus equal to Dark Side Score on the next damage roll) and no consumer exists. One detail is open (WPN-D-001: is the bonus the score before or after the +1?), so it is not implemented. Existing infrastructure for a later implementation: the stored one-shot damage-bonus pattern (`rapidAlchemy` state, cleared by `damage.js` after the roll), `ActorEngine.spendForcePoints`, `ActionEconomyConsumption.spend` (swift), `DSPEngine`, `resolveCanonicalAttackProficiency`. |
 | GM-adjudicated (14) | `remoteDetonationSafetyRule`, `lineOfSightOriginHeightSquares`, `alwaysDetermineNorth`, `builtInDigitalCompass`, `audibility`, `silentInUse`, `shotVisibility`, `firingDoesNotRevealShooterPosition`, `sensorDetection`, `createsSmokeHazard`, `gasConcealmentDuration`, `providesConcealment`, `encumbranceException`, `ascensionMode` | Each needs a fact only the table can supply (distance, perception, visibility, narrative). `encumbranceException` is also bound by the open weight-scope ruling EQ-W-001. |
 | Blocked by a missing subsystem (6) | `allyAttackBonus`, `allyEligibleWeapons`, `repeatAttackEachRoundToMaintainDesignation` (targeting laser), plus `radiationExposure`, `weaponDR`, `weaponDRAppliesAgainstLightsabers` | The first three need designation / frequency state that is not modeled; the last three need radiation-exposure and weapon-object damage subsystems. |
 | Source-unresolved (5) | `grievousWound`, `powerCordDisconnectRule`, `concealmentDesign`, `weaponDRValue`, `powerAttackExtraDamageAppliesToObjectsAndVehicles` | The printed text is silent or ambiguous. No number is invented. |
@@ -120,6 +120,7 @@ GM_ADJUDICATED 14, CONSUMED_VIA_DUPLICATE 11, BLOCKED_BY_SUBSYSTEM 6, SOURCE_UNR
 ## Pending rulings added
 - `WPN-W1-001`: ordering of the minimum-1 floor against Saboteur Destructive.
 - `WPN-W1-002`: whether a hit-less (hand-adjudicated) damage roll counts as a hit.
+- `WPN-D-001`: whether the Sith Sword's Dark Side Empowerment bonus uses the Dark Side Score before or after its own +1.
 - `WPN-M12-001`: which cover degrees negate area damage, and what carries cover to the damage stage.
 - `WPN-B-001`: whether the lanvarok's printed "two-handed" binds a Large wielder.
 - `WPN-W2-001`: whether the dialog's `Custom / GM` band should require an explicit numeric adjudication or a GM-stamped override. Today it applies no canonical penalty, and the Custom Modifier field carries the adjudication, itemized in the breakdown. This was deliberately left unchanged.
@@ -134,8 +135,8 @@ The owner's provisional recommendations for WPN-W1-001, WPN-W1-002 and WPN-W2-00
 
 ## Remaining work
 1. Field-level behavioral proof for the STATIC_ONLY rows (parametrized fixtures per family).
-2. The one genuine gap, `darkSideEmpowerment` (source-complete; not implemented by decision), and the 6 subsystem-blocked keys.
+2. The one genuine gap, `darkSideEmpowerment` (stated; one ordering question, WPN-D-001; not implemented), and the 6 subsystem-blocked keys.
 3. M-12 cover negation (WPN-M12-001, a rules question).
-4. Owner rulings: WPN-W1-001, WPN-W1-002, WPN-W2-001, WPN-B-001, WPN-M12-001.
+4. Owner rulings: WPN-W1-001, WPN-W1-002, WPN-W2-001, WPN-B-001, WPN-M12-001, WPN-D-001.
 5. Gate A crosswalk (source, registry, production Item, runtime) from a fixed SHA.
 6. Live Foundry V13 acceptance.
