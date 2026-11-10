@@ -133,7 +133,7 @@ test('checkout: source eligibility is evaluated before any debit, exact price on
   assert.doesNotMatch(checkout, /vehicle\.cost \* 0\.05/);
   assert.match(checkout, /currentPrice !== vehicle\.cost/);
   assert.doesNotMatch(checkout, /foundryvtt-swse\.vehicles['"`]/);
-  for (const fn of ['buyVehicle', 'checkout']) {
+  for (const fn of ['checkout']) {
     const body = checkout.slice(checkout.indexOf(`export async function ${fn}(`));
     assert.ok(body.indexOf('createVehiclePlans(') < body.indexOf('StoreEngine.purchase('), fn);
   }

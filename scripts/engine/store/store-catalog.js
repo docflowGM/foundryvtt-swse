@@ -28,8 +28,9 @@ export const STORE_ITEM_DOMAINS = Object.freeze([
 
 /**
  * Index fields per domain: everything the browse list, filters and cards read. Long prose and heavy
- * statblock blobs are HYDRATE_ONLY and load with the inspected product. tests/store-v2-s1-catalog.test.mjs
- * proves every key of every canonical pack record is in exactly one of the two lists.
+ * statblock blobs are deliberately NOT indexed; they load with the inspected product (hydration).
+ * tests/store-v2-s1-catalog.test.mjs enumerates every key of every canonical pack record and fails if a
+ * key is neither indexed nor on the test's explicit hydrate-only list.
  */
 export const INDEX_SYSTEM_KEYS = Object.freeze({
   weapon: ['combat', 'ammunition', 'equippable', 'economics', 'properties', 'traits', 'rangeProfile', 'weaponType', 'proficiency', 'range',
@@ -48,13 +49,6 @@ export const INDEX_SYSTEM_KEYS = Object.freeze({
     'senses', 'baseAttackBonus', 'grapple', 'initiative', 'perception', 'reflexDefense', 'flatFooted', 'fortitudeDefense', 'willDefense', 'HP',
     'damageThreshold', 'speed', 'damageReduction']
 });
-export const HYDRATE_ONLY_SYSTEM_KEYS = Object.freeze({
-  weapon: ['description'],
-  armor: ['description'],
-  equipment: ['capabilities', 'skillHooks', 'description', 'notes', 'usage'],
-  droid: ['droidSystems', 'attacks', 'baseStats', 'skills', 'description']
-});
-
 const AVAILABILITY_CLASSES = ['illegal', 'military', 'restricted', 'licensed', 'rare'];
 const RARITY_LABELS = { illegal: 'Illegal', military: 'Military', restricted: 'Restricted', licensed: 'Licensed', rare: 'Rare', standard: 'Standard' };
 

@@ -18,9 +18,11 @@ let n = 0;
 const ok = m => console.log(`  [${++n}] ${m} OK`);
 const rows = pack => fs.readFileSync(new URL(`../packs/${pack}.db`, import.meta.url), 'utf8').split('\n').filter(l => l.trim()).map(l => JSON.parse(l));
 
-// 1. Index field coverage: every system key of every canonical record is indexed XOR hydrate-only.
+// 1. Index field coverage: every system key of every canonical record is indexed XOR explicitly hydrate-only.
+const HYDRATE_ONLY = { weapon: ['description'], armor: ['description'], equipment: ['capabilities', 'skillHooks', 'description', 'notes', 'usage'],
+  droid: ['droidSystems', 'attacks', 'baseStats', 'skills', 'description'] };
 for (const spec of C.STORE_ITEM_DOMAINS) {
-  const idx = new Set(C.INDEX_SYSTEM_KEYS[spec.domain]), heavy = new Set(C.HYDRATE_ONLY_SYSTEM_KEYS[spec.domain]);
+  const idx = new Set(C.INDEX_SYSTEM_KEYS[spec.domain]), heavy = new Set(HYDRATE_ONLY[spec.domain]);
   for (const k of idx) assert.ok(!heavy.has(k), `${spec.domain}.${k} is in both lists`);
   for (const pack of spec.packs) for (const r of rows(pack.replace('foundryvtt-swse.', ''))) for (const k of Object.keys(r.system ?? {}))
     assert.ok(idx.has(k) || heavy.has(k), `${pack} ${r.name}: system.${k} is neither indexed nor hydrate-only`);

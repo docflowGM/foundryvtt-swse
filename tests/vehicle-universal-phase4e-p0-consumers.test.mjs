@@ -100,17 +100,9 @@ test('old vehicle sheet reads live HP before stale hull and exposes read-only so
 
 test('legacy Store checkout resolves the universal source pack before any credit debit', () => {
   const code = readFileSync('scripts/apps/store/store-checkout.js', 'utf8');
-  const buy = code.slice(code.indexOf('export async function buyVehicle('),
-    code.indexOf('export async function createCustomDroid('));
   const plans = code.slice(code.indexOf('async function createVehiclePlans('),
     code.indexOf('function flattenCartForPurchase('));
-  assert.doesNotMatch(buy, /foundryvtt-swse\.vehicles['"]/);
-  assert.match(buy, /VehiclePackDataLoader\.loadVehicleIndex\(\)/);
-  assert.match(buy, /VehiclePackDataLoader\.loadVehicleDocument\(/);
-  assert.match(buy, /vehiclePlans = await createVehiclePlans\(/);
-  assert.match(buy, /return vehiclePlans;/);
-  assert.ok(buy.indexOf('vehiclePlans = await createVehiclePlans(') <
-    buy.indexOf('StoreEngine.purchase('), 'source preflight must precede debit');
+  assert.doesNotMatch(code, /game\.actors\.get\(actorId\)/, 'no world-actor vehicle fallback');
   assert.match(plans, /entry\.sourceEntryKey === key/);
   assert.match(plans, /VehiclePackDataLoader\.loadVehicleDocument\(matches\[0\]\)/);
   assert.match(plans, /template: canonicalActor/);

@@ -137,6 +137,6 @@ test('createVehiclePlans verifies the merchant offer and runs inside the purchas
   assert.match(plans, /evaluateVehicleMerchantPurchase\(/);
   assert.match(plans, /merchantPrice: getVehicleConditionCost\(merchantItem, condition\)/);
   assert.match(plans, /cartPrice: vehicle\.cost/);
-  assert.match(src, /async function buyVehicleUnguarded/);
-  assert.match(src, /withPurchaseLock\(store\?\.actor\?\.id, \(\) => buyVehicleUnguarded/);
+  assert.doesNotMatch(src, /buyVehicle/, 'the legacy quick-buy vehicle path is deleted; checkout is the only purchase path');
+  assert.match(src, /withPurchaseLock\(store\?\.actor\?\.id, \(\) => checkoutUnguarded/);
 });

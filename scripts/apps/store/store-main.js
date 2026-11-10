@@ -77,7 +77,6 @@ import {
   checkout,
   createCustomDroid,
   buildDroidWithBuilder,
-  buildDroidFromTemplate,
   createCustomStarship
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
 
@@ -1649,14 +1648,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
       customDroidBtn.addEventListener('click', async () => {
         if (!this.actor) {return;}
         await buildDroidWithBuilder(this.actor, () => this.render());
-      }, { signal });
-    }
-
-    const templateDroidBtn = root.querySelector('.build-droid-from-template');
-    if (templateDroidBtn) {
-      templateDroidBtn.addEventListener('click', async () => {
-        if (!this.actor) {return;}
-        await buildDroidFromTemplate(this.actor, () => this.render());
       }, { signal });
     }
 
