@@ -2606,7 +2606,7 @@ No provisional recommendation has been converted into a ruling.
 
 ### MODAL-001 — resolution addendum (2026-11-10; the original entry above is preserved)
 - **Direction received:** the project owner's 2026-11-10 message: allow players to select Aim- and Charge-dependent options and have the existing action-economy authority pay the prerequisite when needed; an already-completed prerequisite is not charged again; the ordinary attack's Standard must not also be charged when a Charge workflow has already paid for it.
-- **Implemented as option (b):** see "Aim / Charge and stances" in `docs/audits/combat-tab-ux-convergence.md`. Implementing commit: the commit that adds `attackStandardCoveredByCharge` (see the PR).
+- **Implemented as option (b):** see "Aim / Charge and stances" in `docs/audits/combat-tab-ux-convergence.md`. Implementing commit: `f677498a8` (adds `attackStandardCoveredByCharge`; the dialog promotion is in `deriveAttackModalState`).
 - **Residual question for the owner (not guessed):** whether a Charge-gated option combined with Double/Triple Attack or Full Attack should pay the Charge in addition to the full-round action. Not implemented; those executors are untouched.
 - **Status:** implemented per owner direction; the residual question above stays `DEFERRED_RULES_REVIEW`.
 
