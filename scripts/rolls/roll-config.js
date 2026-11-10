@@ -14,6 +14,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import { getCoreAttackOptionEconomy } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js";
 import { weaponSupportsAutofire as canonicalWeaponSupportsAutofire } from "/systems/foundryvtt-swse/scripts/engine/combat/weapon-target-gate-classifiers.js";
 import { resolveAttackBonus, getTargetActorFromOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
@@ -559,7 +560,8 @@ function optionCard(option) {
   const summary = escapeHTML(option.summary ?? option.warning ?? '');
   const gateDisabled = option.state === 'disabled';
   const disabledAttr = (option.disabled || gateDisabled) ? 'disabled' : '';
-  const reasonHTML = gateDisabled && option.reason ? `<small class="swse-roll-config-option-reason">${escapeHTML(option.reason)}</small>` : '';
+  const reasonHTML = gateDisabled && option.reason ? `<small class="swse-roll-config-option-reason">${escapeHTML(option.reason)}</small>`
+    : (option.autoPrerequisiteNote ? `<small class="swse-roll-config-option-reason">${escapeHTML(option.autoPrerequisiteNote)}</small>` : '');
   const cardClass = gateDisabled ? 'swse-roll-config-option swse-roll-config-option--gated' : 'swse-roll-config-option';
   if (option.control === 'slider') {
     return `<label class="${cardClass} swse-roll-config-option--slider" data-rcd-option-id="${id}">
@@ -1052,7 +1054,9 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
         sequencePenalty
       };
       const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
-      const composition = await computeFinalAttackComposition(actor, weapon, rollOptions);
+      // the roll prepares its context (Aim/Charge implied by a selected Aim-/Charge-gated option) before composing; the preview does the same
+      const { prepareCoreAttackOptionRollContext } = await import('/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js');
+      const composition = await computeFinalAttackComposition(actor, weapon, prepareCoreAttackOptionRollContext(rollOptions));
       const resolvedTargetActor = getTargetActorFromOptions(rollOptions);
       const previewSituationalTotal = situationalContributions.reduce((sum, m) => sum + (Number(m.value) || 0), 0);
       const total = composition.ok ? composition.atkBonus : base + custom + previewSituationalTotal;
@@ -1141,13 +1145,28 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
  * @param {{melee?:boolean, attackType?:string, selection?:object, aim?:boolean, charge?:boolean, autofire?:boolean, combatOptions?:object, attackOptions?:object, target?:Actor|null}} live
  * @returns {{attackType:string, selection:object, contexts:{aim:boolean,charge:boolean,flanking:boolean}, options:object[], staleOptionIds:string[], autofire:{supported:boolean, reason:string}}}
  */
+const AUTO_PREREQUISITE_NOTE = Object.freeze({
+  aim: 'Spends Aim (two swift actions) when you attack, unless you declare you already aimed.',
+  charge: 'This attack is made as part of a Charge: the Charge action (which includes the attack) is spent when you attack, unless you declare you already charged.'
+});
 export function deriveAttackModalState(actor, weapon, live = {}) {
   const attackType = live.attackType ?? (live.melee ? 'melee' : 'ranged');
   const selection = requestedAttackSelection(live.selection ?? {});
   const base = { attackType, ...selection, target: live.target ?? null, targetActor: live.target ?? null };
   const contexts = CombatOptionResolver.getAvailableAttackContexts(actor, weapon, base);
   const combatOptions = live.combatOptions ?? {};
-  const resolved = CombatOptionResolver.getAttackOptionsWithState(actor, weapon, { ...base, aim: live.aim === true, charge: live.charge === true, autofire: live.autofire === true, combatOptions, attackOptions: live.attackOptions ?? {} });
+  const ctx = { ...base, aim: live.aim === true, charge: live.charge === true, autofire: live.autofire === true, combatOptions, attackOptions: live.attackOptions ?? {} };
+  const resolved = CombatOptionResolver.getAttackOptionsWithState(actor, weapon, ctx).map((o) => {
+    // MODAL-001: an Aim- or Charge-gated option whose ONLY unmet gate is the prerequisite action is selectable; the roll pays the prerequisite through the
+    // existing action economy (prepareCoreAttackOptionRollContext / spendCoreAttackOptionCosts) unless the player declares it was already taken.
+    if (o.state !== 'disabled') return o;
+    const economy = getCoreAttackOptionEconomy(o.id)?.economy;
+    const pre = economy === 'autoAimIfMissing' ? 'aim' : economy === 'autoChargeIfMissing' ? 'charge' : null;
+    if (!pre || ctx[pre] === true) return o;
+    const probed = CombatOptionResolver.getAttackOptionsWithState(actor, weapon, { ...ctx, [pre]: true }).find((x) => x.id === o.id);
+    if (probed?.state !== 'available') return o;
+    return { ...probed, state: 'available', reason: null, autoPrerequisite: pre, autoPrerequisiteNote: AUTO_PREREQUISITE_NOTE[pre] };
+  });
   // an option that is gated right now is shown unselected (a disabled input never submits); an option no longer offered at all is reported stale
   const options = resolved.map((o) => (o.state === 'disabled' ? { ...o, checked: false, value: Number(o.min ?? 0) } : o));
   const offeredAvailable = new Set(options.filter((o) => o.state !== 'disabled').map((o) => o.id));
@@ -1166,8 +1185,8 @@ export function contextControlsHtml(contexts = {}, actor = null, previous = {}) 
   if (!contexts.aim && !contexts.charge && !contexts.flanking) return '';
   const box = (name, on) => `<input type="checkbox" name="${name}"${on ? ' checked' : ''} />`;
   return `<h5>Attack Context</h5>
-              ${contexts.aim ? `<label class="swse-roll-config-option">${box('aiming', previous.aiming === true)} <span><b>Aim</b><small>No direct attack bonus. Declare only if you have already taken the Aim action (two swift actions) for this attack; this does not spend or verify it. Unlocks Careful Shot/Deadeye and other Aim-gated feats/talents if you have them.</small></span></label>` : ''}
-              ${contexts.charge ? `<label class="swse-roll-config-option">${box('charging', previous.charging === true)} <span><b>Charging</b><small>${_chargingLabel(actor)} Declare only if this attack ends a charge you have already made; it does not spend the Charge action.</small></span></label>` : ''}
+              ${contexts.aim ? `<label class="swse-roll-config-option">${box('aiming', previous.aiming === true)} <span><b>Aim</b><small>No direct attack bonus. Tick only if you have already taken the Aim action (two swift actions) for this attack; ticking declares it and does not spend or verify it. Otherwise selecting an Aim-dependent option (Careful Shot, Deadeye) makes the roll spend Aim for you.</small></span></label>` : ''}
+              ${contexts.charge ? `<label class="swse-roll-config-option">${box('charging', previous.charging === true)} <span><b>Charging</b><small>${_chargingLabel(actor)} Tick only if this attack ends a charge you have already made; ticking declares it and does not spend the Charge action. Selecting a Charge-dependent option makes the roll spend it for you.</small></span></label>` : ''}
               ${contexts.flanking ? `<label class="swse-roll-config-option">${box('flanking', previous.flanking === true)} <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>` : ''}`;
 }
 

@@ -1,4 +1,5 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { SWSEActiveEffectsManager } from '/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js';
 import {
   COMBAT_FEATURE_ACTIONS,
@@ -34,6 +35,18 @@ export const UNIVERSAL_COMBAT_STATE_ACTION_IDS = Object.freeze([
 
 // Fight Defensively / Total Defense are MECHANICAL stances with one authority: the combat-action ActiveEffect (SWSEActiveEffectsManager). The attack
 // composition (-5 attack), the Reflex dodge bonus and the roll dialog all read that effect, so the panel must not keep a second, display-only record.
+/**
+ * The action a stance costs: Total Defense is a Standard action; Fight Defensively follows the existing `fightDefensivelyActionMode` house setting
+ * (swift -> Swift; rai -> no separate action, it is an attack stance; default -> Standard). The one rule, shared with the combat action bar.
+ */
+export function stanceActionCost(featureId, mode = 'default') {
+  const id = canonicalCombatFeatureKey(featureId);
+  if (id === 'total-defense') return 'standard';
+  if (id === 'fight-defensively') return mode === 'swift' ? 'swift' : (mode === 'rai' ? null : 'standard');
+  return null;
+}
+const stanceMode = () => { try { return game?.settings?.get?.('foundryvtt-swse', 'fightDefensivelyActionMode') || 'default'; } catch { return 'default'; } };
+
 const EFFECT_BACKED_STATES = Object.freeze({ 'fight-defensively': 'fighting-defensively', 'total-defense': 'total-defense' });
 const effectKeyFor = (id) => EFFECT_BACKED_STATES[id] ?? null;
 const hasStanceEffect = (actor, key) => Array.from(actor?.effects ?? []).some((e) => e?.flags?.swse?.combatAction === key);
@@ -148,8 +161,23 @@ export async function activateCombatFeatureState(actor, featureId, { sourceItemI
 
   const effectKey = effectKeyFor(id);
   if (effectKey) {
-    // the ONE mutation path for a stance: the combat-action effect (replaces any other stance effect, exactly as the Combat tab action does)
-    await SWSEActiveEffectsManager.applyCombatActionEffect(actor, effectKey);
+    // An already-active stance is not activated (or paid for) again.
+    if (hasStanceEffect(actor, effectKey)) return { success: false, reason: 'already-active' };
+    // The stance costs its action, paid ONCE through the existing action-economy authority before the effect is applied (out of combat the economy
+    // is reference-only and spends nothing). A refused spend applies nothing; a failed application gives the spend back.
+    const cost = stanceActionCost(id, stanceMode());
+    let spend = null;
+    if (cost) {
+      spend = await ActionEconomyConsumption.spend(actor, cost, { source: 'combat-feature-stance', actionId: id, actionName: activeStateName(id) });
+      if (spend?.allowed === false || spend?.permitted === false) return { success: false, reason: 'action-unavailable' };
+    }
+    try {
+      // the ONE mutation path for a stance: the combat-action effect (replaces any other stance effect, exactly as the Combat tab action does)
+      await SWSEActiveEffectsManager.applyCombatActionEffect(actor, effectKey);
+    } catch (err) {
+      try { await spend?.rollback?.(); } catch { /* best effort */ }
+      throw err;
+    }
     ui?.notifications?.info?.(`${activeStateName(id)} active.`);
     return { success: true, state: getActiveCombatFeatureState(actor, id) ?? { active: true, id } };
   }

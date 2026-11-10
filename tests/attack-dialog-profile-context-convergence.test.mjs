@@ -129,17 +129,54 @@ test('B4 Burst Fire: not offered without the feat; offered (gated on Autofire) o
   assert.equal(ids(p.options, 'available').includes('burstFire'), false);
 });
 
-test('B5 Aim-gated options are shown disabled WITH their reason until Aim is declared, then selectable; Aim never changes eligibility of unowned options', () => {
+test('B5 (MODAL-001) Aim-gated options are selectable without ticking Aim, labelled with the prerequisite the roll will pay; a declared Aim removes the note', () => {
   const pistol = canon('weapon-blaster-pistol');
   const a = actorWith([ownedFeat('Careful Shot'), ownedFeat('Deadeye')]);
   const idle = RC.deriveAttackModalState(a, pistol, { melee: false, selection: {} });
   const careful = idle.options.find((o) => o.id === 'carefulShot');
-  assert.equal(careful.state, 'disabled'); assert.match(careful.reason, /Aim/i);
-  const aimed = RC.deriveAttackModalState(a, pistol, { melee: false, selection: {}, aim: true });
-  assert.equal(aimed.options.find((o) => o.id === 'carefulShot').state, 'available');
-  assert.equal(ids(aimed.options).includes('powerAttack'), false);
+  assert.equal(careful.state, 'available'); assert.equal(careful.autoPrerequisite, 'aim');
+  assert.match(careful.autoPrerequisiteNote, /Aim/); assert.match(careful.autoPrerequisiteNote, /swift/i);
+  const declared = RC.deriveAttackModalState(a, pistol, { melee: false, selection: {}, aim: true });
+  assert.equal(declared.options.find((o) => o.id === 'carefulShot').state, 'available');
+  assert.equal(declared.options.find((o) => o.id === 'carefulShot').autoPrerequisite, undefined, 'declared: nothing will be paid, so no note');
+  assert.equal(ids(idle.options).includes('powerAttack'), false, 'an option the actor does not own never appears');
 });
 
+test('H1 Charge-gated options follow the same rule; options gated by something ELSE stay disabled with their reason', () => {
+  const sword = canon('lightsaber-chassis-archaic-lightsaber');
+  const pc = RC.deriveAttackModalState(actorWith([ownedFeat('Powerful Charge')]), sword, { melee: true, selection: {} });
+  const o = pc.options.find((x) => x.id === 'powerfulCharge');
+  assert.equal(o.state, 'available'); assert.equal(o.autoPrerequisite, 'charge'); assert.match(o.autoPrerequisiteNote, /Charge/);
+  assert.equal(RC.deriveAttackModalState(actorWith([ownedFeat('Powerful Charge')]), sword, { melee: true, selection: {}, charge: true }).options.find((x) => x.id === 'powerfulCharge').autoPrerequisite, undefined);
+  const cf = RC.deriveAttackModalState(actorWith([ownedFeat('Charging Fire')]), canon('weapon-blaster-pistol'), { melee: false, selection: {} });
+  assert.equal(cf.options.find((x) => x.id === 'chargingFire').autoPrerequisite, 'charge');
+  // Burst Fire is gated by autofire, not by a prerequisite action: it stays disabled with its reason on a pistol
+  const bf = RC.deriveAttackModalState(actorWith([ownedFeat('Burst Fire')]), canon('weapon-blaster-pistol'), { melee: false, selection: {} });
+  assert.equal(ids(bf.options, 'available').includes('burstFire'), false);
+});
+
+test('H2 the dialog preview prepares the roll context exactly as rollAttack does, so a selected Aim-gated option is in the previewed bonus', async () => {
+  const { prepareCoreAttackOptionRollContext } = await import('/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js');
+  const pistol = canon('weapon-blaster-pistol'); const a = actorWith([ownedFeat('Careful Shot')]);
+  const base = { attackType: 'ranged', combatOptions: { carefulShot: true }, attackOptions: {} };
+  const raw = await ATTACKS.computeFinalAttackComposition(a, pistol, base);
+  const prepared = await ATTACKS.computeFinalAttackComposition(a, pistol, prepareCoreAttackOptionRollContext(base));
+  assert.equal(prepared.atkBonus - raw.atkBonus, 1, 'the roll applies Careful Shot (+1) after preparing the context; an unprepared preview would omit it');
+  const src = fs.readFileSync('scripts/rolls/roll-config.js', 'utf8');
+  assert.match(src, /prepareCoreAttackOptionRollContext\(rollOptions\)/, 'the live preview prepares the context');
+});
+
+test('H3 a Charge that pays its own Standard action also covers the attack: the attack is not charged a second Standard', async () => {
+  const eco = await import('/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js');
+  assert.equal(typeof eco.attackStandardCoveredByCharge, 'function');
+  assert.equal(eco.attackStandardCoveredByCharge({ combatOptions: { powerfulCharge: true } }), true, 'undeclared Charge: the roll spends the Charge standard, which includes the attack');
+  assert.equal(eco.attackStandardCoveredByCharge({ combatOptions: { powerfulCharge: true }, charge: true }), false, 'declared Charge: nothing is spent for it, the attack pays its own Standard');
+  assert.equal(eco.attackStandardCoveredByCharge({ combatOptions: { carefulShot: true } }), false, 'Aim is two Swift actions plus the attack: unchanged');
+  assert.equal(eco.attackStandardCoveredByCharge({ combatOptions: {} }), false);
+  const base = fs.readFileSync('scripts/sheets/v2/actor-sheet-base.js', 'utf8');
+  const n = base.indexOf('async _runCanonicalAttack(');
+  assert.match(base.slice(n, n + 1800), /attackStandardCoveredByCharge\(options\)/);
+});
 test('B6 an illegal stale selection is reported and rendered unselected: a profile change cannot carry a hidden checked option into the roll', () => {
   const lance = canon('weapon-siang-lance');
   const a = actorWith(POWER_SET);
@@ -149,10 +186,10 @@ test('B6 an illegal stale selection is reported and rendered unselected: a profi
   assert.equal(st.options.some((o) => o.id === 'rapidShot'), false);
   const pa = st.options.find((o) => o.id === 'powerAttack');
   assert.equal(pa.state, 'available'); assert.equal(Number(pa.value), 3, 'a still-legal selection is preserved');
-  // an option that is owned but momentarily gated renders unselected (a disabled input never submits)
-  const gated = RC.deriveAttackModalState(actorWith([ownedFeat('Careful Shot')]), canon('weapon-blaster-pistol'), { melee: false, selection: {}, combatOptions: { carefulShot: true } });
-  assert.equal(gated.options.find((o) => o.id === 'carefulShot').checked, false);
-  assert.deepEqual(gated.staleOptionIds, ['carefulShot']);
+  // an option that is owned but gated by something other than a prerequisite action (Burst Fire on a non-autofire form) renders unselected and is reported
+  const gated = RC.deriveAttackModalState(actorWith([ownedFeat('Burst Fire')]), canon('weapon-blaster-pistol'), { melee: false, selection: {}, combatOptions: { burstFire: true } });
+  assert.deepEqual(gated.staleOptionIds, ['burstFire']);
+  assert.equal(gated.options.some((o) => o.id === 'burstFire' && o.checked === true), false);
 });
 
 // ===== C. the DOM seam: stable mount points, rebuilt controls ===============================================================================================
@@ -300,7 +337,7 @@ test('G1 the dialog Aim / Charge boxes are DECLARATIONS: a declared Aim suppress
   const charge = prepareCoreAttackOptionRollContext({ combatOptions: { powerfulCharge: true } });
   assert.equal(charge.swseAutoPrerequisites.charge, true);
   assert.equal(prepareCoreAttackOptionRollContext({ combatOptions: { powerfulCharge: true }, charge: true }).swseAutoPrerequisites.charge, false);
-  // the dialog's gating (B5) keeps Careful Shot disabled until Aim is declared: that boundary is recorded as MODAL-001 in the rules register
+  // MODAL-001: the dialog no longer forces a declaration to unlock these options (B5/H1); the roll pays the prerequisite unless it is declared
 });
 
 test('G2 the Aim / Charging controls say what they are: a declaration that the setup action was already taken, not a spend', () => {

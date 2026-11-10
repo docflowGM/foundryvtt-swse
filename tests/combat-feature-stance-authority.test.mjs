@@ -21,6 +21,7 @@ globalThis.localStorage ??= { getItem() { return null; }, setItem() {}, removeIt
 
 const svc = await import('/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-active-state-service.js');
 const { SWSEActiveEffectsManager } = await import('/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js');
+const { ActionEconomyConsumption } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js');
 const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
 
 const effect = (key) => ({ id: `e-${key}`, name: key, flags: { swse: { combatAction: key } } });
@@ -65,4 +66,60 @@ test('non-stance tracked states (Rage, Braced, ...) keep their display-flag beha
     assert.equal(r.success, true); assert.equal(writes.length, 1);
     assert.ok(Object.keys(writes[0])[0].includes('combatFeatures.activeStates.rage'));
   } finally { ActorEngine.updateActor = real; }
+});
+
+// ---- the stance costs its action, once ---------------------------------------------------------------------------------------------------------------
+const withEconomy = async (mode, fn, spendResult = { allowed: true, permitted: true, committed: true, rollback: async () => true }) => {
+  const spends = []; const applies = [];
+  const realSpend = ActionEconomyConsumption.spend; const realApply = SWSEActiveEffectsManager.applyCombatActionEffect;
+  const priorGame = globalThis.game;
+  globalThis.game = { ...(priorGame ?? {}), settings: { get: (_s, k) => (k === 'fightDefensivelyActionMode' ? mode : undefined) } };
+  ActionEconomyConsumption.spend = async (actor, type, meta) => { spends.push([type, meta.actionId]); return spendResult; };
+  SWSEActiveEffectsManager.applyCombatActionEffect = async (actor, key) => { applies.push(key); return {}; };
+  try { await fn({ spends, applies }); } finally { ActionEconomyConsumption.spend = realSpend; SWSEActiveEffectsManager.applyCombatActionEffect = realApply; globalThis.game = priorGame; }
+};
+
+test('S1 the stance cost is the existing house-rule cost: Fight Defensively standard / swift / none (rai), Total Defense standard', () => {
+  assert.equal(svc.stanceActionCost('fight-defensively', 'default'), 'standard');
+  assert.equal(svc.stanceActionCost('fight-defensively', 'swift'), 'swift');
+  assert.equal(svc.stanceActionCost('fight-defensively', 'rai'), null);
+  assert.equal(svc.stanceActionCost('total-defense', 'swift'), 'standard');
+  assert.equal(svc.stanceActionCost('rage', 'default'), null);
+});
+
+test('S2 activating from the Combat Features panel pays the stance action exactly once, then applies the effect', async () => {
+  await withEconomy('default', async ({ spends, applies }) => {
+    const a = actorOf();
+    assert.equal((await svc.activateCombatFeatureState(a, 'fight-defensively')).success, true);
+    assert.deepEqual(spends, [['standard', 'fight-defensively']]);
+    assert.deepEqual(applies, ['fighting-defensively']);
+  });
+  await withEconomy('swift', async ({ spends }) => { await svc.activateCombatFeatureState(actorOf(), 'fight-defensively'); assert.deepEqual(spends, [['swift', 'fight-defensively']]); });
+  await withEconomy('rai', async ({ spends, applies }) => { await svc.activateCombatFeatureState(actorOf(), 'fight-defensively'); assert.deepEqual(spends, []); assert.deepEqual(applies, ['fighting-defensively']); });
+  await withEconomy('default', async ({ spends }) => { await svc.activateCombatFeatureState(actorOf(), 'total-defense'); assert.deepEqual(spends, [['standard', 'total-defense']]); });
+});
+
+test('S3 a refused spend applies nothing; an already-active stance is neither re-applied nor re-charged', async () => {
+  await withEconomy('default', async ({ spends, applies }) => {
+    const r = await svc.activateCombatFeatureState(actorOf(), 'total-defense');
+    assert.equal(r.success, false); assert.equal(r.reason, 'action-unavailable'); assert.deepEqual(applies, []);
+  }, { allowed: false, permitted: false, committed: false, rollback: async () => false });
+  await withEconomy('default', async ({ spends, applies }) => {
+    const r = await svc.activateCombatFeatureState(actorOf([effect('fighting-defensively')]), 'fight-defensively');
+    assert.equal(r.reason, 'already-active'); assert.deepEqual(spends, []); assert.deepEqual(applies, []);
+  });
+});
+
+test('S4 a failed effect application gives the spent action back', async () => {
+  let rolledBack = 0;
+  await withEconomy('default', async () => {
+    SWSEActiveEffectsManager.applyCombatActionEffect = async () => { throw new Error('boom'); };
+    await assert.rejects(() => svc.activateCombatFeatureState(actorOf(), 'fight-defensively'), /boom/);
+    assert.equal(rolledBack, 1);
+  }, { allowed: true, permitted: true, committed: true, rollback: async () => { rolledBack += 1; return true; } });
+});
+
+test('S5 the combat action bar uses the same cost rule (no second copy)', async () => {
+  const bar = (await import('node:fs')).readFileSync('scripts/components/combat-action-bar.js', 'utf8');
+  assert.match(bar, /stanceActionCost\('fight-defensively'/);
 });
