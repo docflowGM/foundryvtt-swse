@@ -1,4 +1,5 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { SWSEActiveEffectsManager } from '/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js';
 import {
   COMBAT_FEATURE_ACTIONS,
   COMBAT_FEATURE_AUTOMATION_STATUS,
@@ -30,6 +31,12 @@ export const UNIVERSAL_COMBAT_STATE_ACTION_IDS = Object.freeze([
   'fight-defensively',
   'total-defense'
 ]);
+
+// Fight Defensively / Total Defense are MECHANICAL stances with one authority: the combat-action ActiveEffect (SWSEActiveEffectsManager). The attack
+// composition (-5 attack), the Reflex dodge bonus and the roll dialog all read that effect, so the panel must not keep a second, display-only record.
+const EFFECT_BACKED_STATES = Object.freeze({ 'fight-defensively': 'fighting-defensively', 'total-defense': 'total-defense' });
+const effectKeyFor = (id) => EFFECT_BACKED_STATES[id] ?? null;
+const hasStanceEffect = (actor, key) => Array.from(actor?.effects ?? []).some((e) => e?.flags?.swse?.combatAction === key);
 
 function stateFlagRoot(actor) {
   return actor?.flags?.['foundryvtt-swse']?.combatFeatures?.activeStates ?? {};
@@ -75,6 +82,8 @@ export function isTrackedCombatState(featureId) {
 
 export function getActiveCombatFeatureState(actor, featureId) {
   const id = canonicalCombatFeatureKey(featureId);
+  const effectKey = effectKeyFor(id);
+  if (effectKey) return hasStanceEffect(actor, effectKey) ? { active: true, id, name: activeStateName(id), sourceName: 'Combat Action Effect' } : null;
   const value = stateFlagRoot(actor)?.[id];
   return value && typeof value === 'object' && value.active !== false ? value : null;
 }
@@ -84,8 +93,13 @@ export function getActiveCombatFeatureStates(actor) {
   const entries = [];
   for (const [rawId, state] of Object.entries(root)) {
     const id = canonicalCombatFeatureKey(rawId);
+    if (effectKeyFor(id)) continue; // effect-backed stances are read from the effect below, never from a stale display flag
     if (!state || typeof state !== 'object' || state.active === false) continue;
     entries.push(featureFromState(id, state));
+  }
+  for (const id of Object.keys(EFFECT_BACKED_STATES)) {
+    const active = getActiveCombatFeatureState(actor, id);
+    if (active) entries.push(featureFromState(id, active));
   }
   return entries;
 }
@@ -132,6 +146,14 @@ export async function activateCombatFeatureState(actor, featureId, { sourceItemI
     return { success: false, reason: 'not-tracked' };
   }
 
+  const effectKey = effectKeyFor(id);
+  if (effectKey) {
+    // the ONE mutation path for a stance: the combat-action effect (replaces any other stance effect, exactly as the Combat tab action does)
+    await SWSEActiveEffectsManager.applyCombatActionEffect(actor, effectKey);
+    ui?.notifications?.info?.(`${activeStateName(id)} active.`);
+    return { success: true, state: getActiveCombatFeatureState(actor, id) ?? { active: true, id } };
+  }
+
   const profile = getCombatFeatureProfile(id) ?? {};
   const state = {
     active: true,
@@ -165,6 +187,13 @@ export async function clearCombatFeatureState(actor, featureId) {
   const id = canonicalCombatFeatureKey(featureId);
   const existing = getActiveCombatFeatureState(actor, id);
   if (!existing) return { success: false, reason: 'not-active' };
+
+  const effectKey = effectKeyFor(id);
+  if (effectKey) {
+    await SWSEActiveEffectsManager.removeCombatActionEffects(actor, [effectKey]);
+    ui?.notifications?.info?.(`${existing.name ?? activeStateName(id)} ended.`);
+    return { success: true };
+  }
 
   await ActorEngine.updateActor(actor, { [stateFlagPath(id)]: null }, {
     meta: { guardKey: `combat-feature-state-clear-${id}` },

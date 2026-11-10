@@ -14,6 +14,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import { weaponSupportsAutofire as canonicalWeaponSupportsAutofire } from "/systems/foundryvtt-swse/scripts/engine/combat/weapon-target-gate-classifiers.js";
 import { resolveAttackBonus, getTargetActorFromOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { buildAttackForms, findAttackForm, attackFormSelection } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/attack-form-options.js";
@@ -403,11 +404,6 @@ function weaponProperties(weapon = {}) {
   const props = weapon?.system?.properties;
   if (Array.isArray(props)) return props.map(p => String(p).toLowerCase());
   return String(props ?? '').split(',').map(p => p.trim().toLowerCase()).filter(Boolean);
-}
-
-function weaponSupportsAutofire(weapon = {}) {
-  const props = weaponProperties(weapon);
-  return weapon?.system?.autofire === true || props.some(p => p.includes('autofire'));
 }
 
 function weaponDamageTypeKey(weapon = {}) {
@@ -1022,6 +1018,11 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
       const melee = live.form?.branch ? live.form.branch === 'melee' : (model?.melee ?? false);
       syncAttackFormBranch(form, live.form?.branch ?? null);
       syncAttackFormFacets(form, live.form);
+      // Rebuild the Aim / Charge / Flanking declarations and the Autofire control for the SELECTED form BEFORE reading them, so a profile change
+      // (ranged -> melee, melee -> thrown, ...) can neither keep a control that no longer applies nor leave a stale declaration in the roll.
+      const earlyTarget = getTargetActorFromOptions({ targetTokenId: form.querySelector('[name="targetTokenId"]')?.value || null, targetActorId: form.querySelector('[name="targetActorId"]')?.value || null });
+      const attackType = melee ? 'melee' : 'ranged';
+      applyAttackModalState(form, deriveAttackModalState(actor, weapon, { attackType, selection: live.selection, target: earlyTarget }), { actor, parts: ['contexts', 'autofire'] });
       const { aim, charge, isPointBlank, situationalContributions } = computeAttackSituationalContext(form, melee);
       // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker
       // 3): thread the dialog's own Target Context selection (Selected
@@ -1067,7 +1068,12 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
       // rollOptions.aim/charge/attackOptions.autofire this same update()
       // pass just built for the real composition, so the option-state
       // recompute can never disagree with what the roll itself would see.
-      rebuildAttackOptionsPanel(form, actor, weapon, { attackType: melee ? 'melee' : 'ranged', aim, charge, autofire: rollOptions.attackOptions?.autofire === true, combatOptions: rollOptions.combatOptions, attackOptions: rollOptions.attackOptions, target: resolvedTargetActor, targetActor: resolvedTargetActor });
+      applyAttackModalState(form, deriveAttackModalState(actor, weapon, { attackType, selection: live.selection, aim, charge, autofire: rollOptions.attackOptions?.autofire === true, combatOptions: rollOptions.combatOptions, attackOptions: rollOptions.attackOptions, target: resolvedTargetActor }), { actor, parts: ['options'] });
+      // read-only ammunition status: the production preflight on the selected form and chosen options (spends nothing; rollAttack stays authoritative)
+      try {
+        const { previewAmmoPreflight } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+        applyAmmoStatus(form, previewAmmoPreflight(actor, weapon, { attackType, ...live.selection, combatOptions: rollOptions.combatOptions, attackOptions: rollOptions.attackOptions, aim, charge, autofire: rollOptions.attackOptions?.autofire === true }));
+      } catch (err) { SWSELogger?.debug?.('SWSE | attack dialog ammunition preview unavailable', err); }
       return;
     }
     // Math Integrity Freeze, Attack Bonus round 8 (Part 1, domain
@@ -1122,6 +1128,95 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
   form.addEventListener('input', update);
   form.addEventListener('change', update);
   update();
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
+// Attack-modal derivation seam. The model build AND every live recompute go through deriveAttackModalState(): what the dialog offers is what
+// CombatOptionResolver / the canonical weapon shape say the SELECTED attack form permits (the same authorities the production roll consumes).
+// Presentation only: nothing here spends, writes or decides a rule.
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
+/**
+ * @param {Actor} actor
+ * @param {Item} weapon
+ * @param {{melee?:boolean, attackType?:string, selection?:object, aim?:boolean, charge?:boolean, autofire?:boolean, combatOptions?:object, attackOptions?:object, target?:Actor|null}} live
+ * @returns {{attackType:string, selection:object, contexts:{aim:boolean,charge:boolean,flanking:boolean}, options:object[], staleOptionIds:string[], autofire:{supported:boolean, reason:string}}}
+ */
+export function deriveAttackModalState(actor, weapon, live = {}) {
+  const attackType = live.attackType ?? (live.melee ? 'melee' : 'ranged');
+  const selection = requestedAttackSelection(live.selection ?? {});
+  const base = { attackType, ...selection, target: live.target ?? null, targetActor: live.target ?? null };
+  const contexts = CombatOptionResolver.getAvailableAttackContexts(actor, weapon, base);
+  const combatOptions = live.combatOptions ?? {};
+  const resolved = CombatOptionResolver.getAttackOptionsWithState(actor, weapon, { ...base, aim: live.aim === true, charge: live.charge === true, autofire: live.autofire === true, combatOptions, attackOptions: live.attackOptions ?? {} });
+  // an option that is gated right now is shown unselected (a disabled input never submits); an option no longer offered at all is reported stale
+  const options = resolved.map((o) => (o.state === 'disabled' ? { ...o, checked: false, value: Number(o.min ?? 0) } : o));
+  const offeredAvailable = new Set(options.filter((o) => o.state !== 'disabled').map((o) => o.id));
+  const selected = (v) => v === true || (typeof v === 'number' && v > 0) || (typeof v === 'string' && v !== '' && v !== '0' && v !== 'false');
+  const staleOptionIds = Object.entries(combatOptions).filter(([id, v]) => selected(v) && !offeredAvailable.has(id)).map(([id]) => id).sort();
+  const supported = canonicalWeaponSupportsAutofire(weapon, base);
+  const canonical = shapeOfWeapon(weapon, selection).source === 'canonical';
+  return {
+    attackType, selection, contexts, options, staleOptionIds,
+    autofire: { supported, reason: supported ? '' : (canonical ? 'The selected attack form cannot fire in autofire mode.' : 'This weapon has no autofire capability.') }
+  };
+}
+
+/** The Aim / Charge / Flanking declarations relevant to the selected form (one renderer for the template and the live rebuild). */
+export function contextControlsHtml(contexts = {}, actor = null, previous = {}) {
+  if (!contexts.aim && !contexts.charge && !contexts.flanking) return '';
+  const box = (name, on) => `<input type="checkbox" name="${name}"${on ? ' checked' : ''} />`;
+  return `<h5>Attack Context</h5>
+              ${contexts.aim ? `<label class="swse-roll-config-option">${box('aiming', previous.aiming === true)} <span><b>Aim</b><small>No direct attack bonus. Declare only if you have already taken the Aim action (two swift actions) for this attack; this does not spend or verify it. Unlocks Careful Shot/Deadeye and other Aim-gated feats/talents if you have them.</small></span></label>` : ''}
+              ${contexts.charge ? `<label class="swse-roll-config-option">${box('charging', previous.charging === true)} <span><b>Charging</b><small>${_chargingLabel(actor)} Declare only if this attack ends a charge you have already made; it does not spend the Charge action.</small></span></label>` : ''}
+              ${contexts.flanking ? `<label class="swse-roll-config-option">${box('flanking', previous.flanking === true)} <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>` : ''}`;
+}
+
+/**
+ * Apply a derived state to the dialog form. The mount points are STABLE: the option panel and the context panel are emptied/hidden, never removed,
+ * so they can be repopulated when a later form change makes options eligible again. `parts` limits what is touched (the live update applies contexts +
+ * Autofire first, so Aim/Charge are read from the DOM that matches the selected form, then the option cards).
+ */
+/** Read-only ammunition status line (the production preflight's own numbers); hidden for an untracked or zero-cost attack. */
+export function applyAmmoStatus(form, ammo) {
+  const el = form?.querySelector?.('[data-rcd-ammo-status]');
+  if (!el) return;
+  const show = !!ammo && ammo.tracked === true && ammo.skipped !== true && Number(ammo.amount) > 0;
+  el.hidden = !show;
+  el.textContent = !show ? '' : (ammo.ok
+    ? `Ammunition ${ammo.current}/${ammo.max}: this attack uses ${ammo.amount}.`
+    : `Ammunition ${ammo.current}/${ammo.max}: this attack needs ${ammo.amount}. It will be refused and nothing is spent.`);
+}
+
+export function applyAttackModalState(form, state, { actor = null, previous = null, ammo = null, parts = ['contexts', 'autofire', 'options'] } = {}) {
+  if (!form) return;
+  if (parts.includes('ammo')) applyAmmoStatus(form, ammo);
+  if (!state) return;
+  if (parts.includes('contexts')) {
+    const ctxEl = form.querySelector('[data-rcd-attack-context]');
+    if (ctxEl) {
+      const prev = previous ?? { aiming: form.querySelector('[name="aiming"]')?.checked === true, charging: form.querySelector('[name="charging"]')?.checked === true, flanking: form.querySelector('[name="flanking"]')?.checked === true };
+      const html = contextControlsHtml(state.contexts, actor, prev);
+      ctxEl.innerHTML = html;
+      ctxEl.hidden = !html;
+    }
+  }
+  if (parts.includes('autofire')) {
+    const box = form.querySelector('[name="attackOptions.autofire"]');
+    if (box) {
+      box.disabled = !state.autofire.supported;
+      if (!state.autofire.supported) box.checked = false;
+    }
+    const note = form.querySelector('[data-rcd-autofire-note]');
+    if (note) note.textContent = state.autofire.supported ? 'Weapon supports autofire.' : (state.autofire.reason || 'Unavailable for this weapon.');
+  }
+  if (parts.includes('options')) {
+    const el = form.querySelector('[data-rcd-attack-options]');
+    if (el) {
+      const has = state.options.length > 0;
+      el.innerHTML = has ? `<h5>Your Attack Options</h5>${state.options.map(optionCard).join('')}` : '';
+      el.hidden = !has;
+    }
+  }
 }
 
 export async function buildRollConfigModel(options = {}) {
@@ -1183,18 +1278,15 @@ export async function buildRollConfigModel(options = {}) {
   // collectAttackModifiers()'s own resolution (the real roll math) still
   // calls summarizeAttackOptions()/getAvailableAttackOptions() directly and
   // is completely unaffected by this presentation-only view.
-  const combatOptions = isAttackRoll && weapon
-    ? CombatOptionResolver.getAttackOptionsWithState(actor, weapon, { attackType: attackTypeKey, target: initialTargetActor, targetActor: initialTargetActor })
-    : [];
-  // Which generic attack-context toggles (Aim/Charge/Flanking) are relevant
-  // to even show, per the melee/ranged split plus the Charging-Fire-style
-  // "charge context is relevant to my ranged attack" exception (round 8,
-  // Part 3). Point Blank is deliberately absent -- round 8 correction #1
-  // (Blocker 4) removed it as a toggleable context entirely; it is a range
-  // STATE derived from the Range Band selector, never a second authority.
-  const attackContexts = isAttackRoll && weapon
-    ? CombatOptionResolver.getAvailableAttackContexts(actor, weapon, { attackType: attackTypeKey, target: initialTargetActor, targetActor: initialTargetActor })
-    : { aim: false, charge: false, flanking: false };
+  // ONE derivation for the model AND the live recompute (deriveAttackModalState): option discovery, context relevance and Autofire capability are all
+  // evaluated for the SELECTED attack form (profile / configuration / mode / payload), never the weapon's default form.
+  const modalState = isAttackRoll && weapon
+    ? deriveAttackModalState(actor, weapon, { melee: attackTypeKey === 'melee', selection: attackSelection, target: initialTargetActor })
+    : null;
+  const combatOptions = modalState?.options ?? [];
+  // Aim/Charge/Flanking relevance per the melee/ranged split plus the Charging-Fire-style ranged-charge exception (CombatOptionResolver owns it).
+  // Point Blank is a range STATE owned by the Range Band selector, never a toggleable context.
+  const attackContexts = modalState?.contexts ?? { aim: false, charge: false, flanking: false };
 
   // Skill/force rolls have a single canonical authority: getSkillTotal() via
   // getRollBaseTotal(). A caller-supplied options.baseBonus that disagrees
@@ -1279,7 +1371,8 @@ export async function buildRollConfigModel(options = {}) {
     selectedPayloadId,
     attackSelection,
     attackFormError,
-    supportsAutofire: weaponSupportsAutofire(weapon),
+    supportsAutofire: modalState?.autofire?.supported === true,
+    autofireReason: modalState?.autofire?.reason ?? '',
     hasStunSetting: weaponHasStunSetting(weapon) || canDeclareInfiltratorUnarmedStun(actor,weapon),
     stunOnly: weaponIsStunOnly(weapon),
     damageModeChoices: buildDamageModeChoices(weapon,actor),
@@ -1427,7 +1520,7 @@ function buildWeaponPanel(model) {
   const rangedPanel = branchSection(model, 'ranged', (model.isAttackRoll && (model.ranged || model.crossBranch)) ? `<div class="swse-roll-config-subpanel">
       <h5>Ranged Options</h5>
       ${rangeChips ? `<div class="swse-roll-config-chips">${rangeChips}</div>` : ''}
-      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.autofire" ${model.supportsAutofire ? '' : 'disabled'} /> <span><b>Autofire</b><small>${model.supportsAutofire ? 'Weapon supports autofire.' : 'Unavailable for this weapon.'}</small></span></label>
+      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.autofire" ${model.supportsAutofire ? '' : 'disabled'} /> <span><b>Autofire</b><small data-rcd-autofire-note>${model.supportsAutofire ? 'Weapon supports autofire.' : escapeHTML(model.autofireReason || 'Unavailable for this weapon.')}</small></span></label>
     </div>` : '');
   const meleeAttackOptions = [
     model.hasDoubleStrike ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.doubleStrike" /> <span><b>Double Strike</b><small>Full-round multiattack.</small></span></label>` : '',
@@ -1461,9 +1554,10 @@ function buildWeaponPanel(model) {
     <h4>Weapon Profile</h4>
     <div class="swse-roll-config-source"><b>${escapeHTML(model.weaponName)}</b><span>${model.ranged ? 'Ranged' : 'Melee'} · ${escapeHTML(model.weapon?.system?.weaponCategory ?? model.weapon?.system?.rangeProfileName ?? '')}</span></div>
     ${buildAttackFormPanel(model)}
+    ${model.isAttackRoll ? `<small class="swse-roll-config-note" data-rcd-ammo-status hidden></small>` : ''}
     ${damageModePanel}
     ${rangedPanel}${meleePanel}
-    ${(model.isAttackRoll && optionCards) ? `<div class="swse-roll-config-subpanel" data-rcd-attack-options><h5>Your Attack Options</h5>${optionCards}</div>` : ''}
+    ${model.isAttackRoll ? `<div class="swse-roll-config-subpanel" data-rcd-attack-options${optionCards ? '' : ' hidden'}>${optionCards ? `<h5>Your Attack Options</h5>${optionCards}` : ''}</div>` : ''}
   </section>`;
 }
 
@@ -1612,27 +1706,6 @@ function rebuildAttackBreakdown(form, ledgerEntries, total) {
   addRow('Total', total, 'rcd-bd-total');
 }
 
-// Math Integrity Freeze, Attack Bonus round 8 (Part 7, live context
-// recomputation): rebuilds the "Your Attack Options" cards from a fresh
-// CombatOptionResolver.getAttackOptionsWithState() call against the
-// CURRENT form state, so toggling Aim/Charge/Autofire immediately updates
-// which owned options are selectable vs. disabled-with-reason, without
-// closing and reopening the dialog. Reads combatOptions/attackOptions from
-// the passed context (the same values this update() pass already read from
-// the form), so a value the player just set is preserved across the
-// rebuild rather than reset.
-function rebuildAttackOptionsPanel(form, actor, weapon, context) {
-  const container = form.querySelector('[data-rcd-attack-options]');
-  if (!container || !actor || !weapon) return;
-  const options = CombatOptionResolver.getAttackOptionsWithState(actor, weapon, context);
-  if (!options.length) {
-    container.remove();
-    return;
-  }
-  const cards = options.map(optionCard).join('');
-  container.innerHTML = `<h5>Your Attack Options</h5>${cards}`;
-}
-
 /**
  * Return the charging situational label, adjusted for combined feats.
  * Dodge + Charging Fire (KotOR CG): charging Reflex penalty is -1 instead of -2.
@@ -1733,12 +1806,7 @@ export async function showRollModifiersDialog(options = {}) {
             ${masterOfMovementEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="masterOfMovementReroll" /> <span><b>Master of Movement</b><small>Spend one use (${masterOfMovementRemaining(model.actor)} left this encounter) to roll twice and keep the better result.</small></span></label>` : ''}
             ${observedTargetEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="observedTarget" /> <span><b>Observed target</b><small>Apply your observation benefits (Targeted Suspect +${observedSkillBonus(model.actor,model.skillKey,soleTargetedActor())}; Score: roll twice, keep the better) only if this check concerns your targeted, observed opponent (GM adjudicated).</small></span></label>` : ''}
           ${shaperLoreEligible ? `<label class="swse-roll-config-option"><input type="checkbox" name="biotechDevice" /> <span><b>Biotech device</b><small>Apply Shaper Lore +${shaperLoreBonus(model.actor,model.skillKey,{biotechDevice:true})} only if this check concerns a biotech device (GM adjudicated).</small></span></label>` : ''}
-            ${model.isAttackRoll ? `<div class="swse-roll-config-subpanel" data-rcd-attack-context>
-              <h5>Attack Context</h5>
-              ${model.attackContexts?.aim ? `<label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aim</b><small>No direct attack bonus. Enables Careful Shot/Deadeye and other Aim-gated feats/talents if you have them.</small></span></label>` : ''}
-              ${model.attackContexts?.charge ? `<label class="swse-roll-config-option"><input type="checkbox" name="charging" /> <span><b>Charging</b><small>${_chargingLabel(actor)}</small></span></label>` : ''}
-              ${model.attackContexts?.flanking ? `<label class="swse-roll-config-option"><input type="checkbox" name="flanking" /> <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>` : ''}
-            </div>` : ''}
+            ${model.isAttackRoll ? `<div class="swse-roll-config-subpanel" data-rcd-attack-context${contextControlsHtml(model.attackContexts, actor, {}) ? '' : ' hidden'}>${contextControlsHtml(model.attackContexts, actor, {})}</div>` : ''}
             <!-- Math Integrity Freeze, Attack Bonus round 8 correction #1
                  (Blocker 4): no separate Point Blank Range checkbox here.
                  Point Blank is a range STATE, already owned by the Range

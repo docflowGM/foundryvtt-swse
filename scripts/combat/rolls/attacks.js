@@ -280,6 +280,19 @@ export function previewAttackContext(actor, weapon, baseOptions = {}) {
 }
 
 /**
+ * READ-ONLY ammunition preflight for the attack dialog: the SAME AmmoSystem cost rule and non-mutating preflight rollAttack() runs before it commits
+ * anything, evaluated on the selected attack form (previewAttackContext) and the options the player has chosen. It spends nothing and is not the final
+ * validation: rollAttack() stays authoritative and refuses an unaffordable attack before any action or ammunition is committed.
+ */
+export function previewAmmoPreflight(actor, weapon, baseOptions = {}) {
+  const ctx = previewAttackContext(actor, weapon, baseOptions);
+  if (ctx.ok === false) return { ok: false, tracked: false, reason: ctx.reason ?? 'unresolved', message: ctx.error?.message ?? 'The selected attack form could not be resolved.' };
+  const rollOptions = ctx.rollOptions ?? baseOptions;
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
+  return AmmoSystem.preflightAmmunition(actor, weapon, AmmoSystem.resolveAmmoCost({ weapon, workflowContext: null, options: rollOptions, optionModifiers }), rollOptions);
+}
+
+/**
  * Phase 5D-A: pure canonical weapon/profile resolution for an attack. Legacy/custom weapons return the options untouched;
  * a canonical weapon returns options carrying the resolved weaponRuntime and the selected profile's branch as attackType.
  * A canonical identity/selection error is returned (never thrown, never a legacy fallback) so callers fail closed.

@@ -2583,3 +2583,23 @@ The project owner gave these as provisional recommendations, expressly "not fina
 No provisional recommendation has been converted into a ruling.
 
 - **Revision 57 (2026-11-10):** appended the open-decision summary.
+
+## MODAL-001 — Aim / Charge declarations in the attack dialog versus the automatic prerequisite spend (pre-attack modal)
+
+| Field | Content |
+|---|---|
+| Decision ID | MODAL-001 |
+| Rules domain | Combat / action economy / attack options |
+| Feature | Roll Configurator "Aim" and "Charging" declarations; Careful Shot, Deadeye, Powerful Charge, Charging Fire |
+| Source | Existing code: `core-attack-option-action-economy.js` (`autoAimIfMissing`, `autoChargeIfMissing`; Aim = two swift actions through the action economy) and the round-8 dialog gating in `roll-config.js`; printed pages not re-verified |
+| Evidence | A declared Aim/Charge is treated as already paid (nothing is spent). Selecting an Aim- or Charge-gated option without the declaration makes the roll spend the prerequisite. The dialog keeps those options disabled until the declaration is ticked, so the dialog path never reaches the spend. |
+| Confirmed behavior | The dialog labels the boxes as declarations. Nothing is spent for a declared Aim/Charge; the GM adjudicates the honesty of the declaration. |
+| Unresolved question | Should the dialog let the player select Careful Shot / Deadeye / Powerful Charge / Charging Fire without the declaration and have the roll pay the prerequisite (the production design), or keep the declaration gate? |
+| Options | (a) keep the declaration gate (current). (b) offer those options as selectable with a visible "spends Aim (2 swift actions) unless already aimed" note, so the existing auto-spend applies. Both are supported by existing code. |
+| Recommended ruling | None |
+| Implementation impact | (b) changes dialog gating that the round-8 tests pin and affects action spending; not implemented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 58 (2026-11-10):** appended MODAL-001.
