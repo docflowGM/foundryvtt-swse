@@ -1,3 +1,5 @@
+import { buildCombatActionLibrary, orderEconomySteps } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-action-library-context.js";
+import { buildCombatLoadout } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-loadout-context.js";
 import { dedupeCombatActionRows } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-action-identity.js";
 import { isAlwaysReadiedWeapon, isNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { isItemActivated } from "/systems/foundryvtt-swse/scripts/engine/inventory/item-activation-state.js";
@@ -1797,6 +1799,20 @@ function createAttackViewBuilder(actor, itemById) {
 }
 
 /**
+ * Combat tab Active Attacks (attack-first layout): the readied attack views the sheet already built + the held-but-not-drawn weapons, all carrying the
+ * Combat Loadout Preview numbers (the same map the Equipment tab uses). Presentation only -- see combat-loadout-context.js.
+ */
+export function buildActorCombatLoadout(actor, { conceptCombat = null, previews = null, attackLocked = false, attackLockLabel = '' } = {}) {
+  const itemById = new Map(Array.from(actor?.items ?? []).map((item) => [item.id, item]));
+  const buildView = createAttackViewBuilder(actor, itemById);
+  const readyViews = asArray(conceptCombat?.attacks);
+  const readyIds = new Set(readyViews.map((v) => v?.weaponId));
+  const heldViews = new Map();
+  if (previews instanceof Map) for (const [id, pv] of previews) if (!readyIds.has(id)) heldViews.set(id, buildView({ weaponId: id, name: pv?.name }));
+  return buildCombatLoadout({ readyViews, heldViews, unarmed: conceptCombat?.unarmedAttack ?? null, previews, attackLocked, attackLockLabel });
+}
+
+/**
  * ONE assembly of the equipment workspace view model for every character-like actor (Character, Droid, NPC, Follower).
  * Pass either the sheet's inventory panel + attack rows (shared hydration) or already-built groups / attack views.
  * Everything is read from the actor's existing authorities; nothing here is actor-type specific.
@@ -2096,6 +2112,9 @@ export function buildConceptSheetViewModel(context = {}) {
       } : null,
       hasAnyAttacks: attackEntries.length > 0 || !!unarmedAttackEntry,
       actionGroups,
+      // Combat tab UX convergence: ONE searchable action library over the (de-duplicated) groups, and the economy steps in strip order
+      actionLibrary: buildCombatActionLibrary(actionGroups),
+      economySteps: orderEconomySteps(context.actionEconomy?.steps),
       notes: context.combatNotesPanel?.combatNotes || '',
       statusStrip: buildCombatStatusStrip(context, {
         attacks: attackEntries,

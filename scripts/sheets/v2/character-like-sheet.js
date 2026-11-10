@@ -1,3 +1,4 @@
+import { activateCombatTab } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-tab-ui.js";
 import { activateEquipmentWorkspace } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-ui.js";
 import { authorizeDroidComponentOperation } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-component-operation-gate.js";
 import { isIntegratedWeaponItem } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-item-classification.js";
@@ -425,7 +426,7 @@ function hasForceSensitivityAccess(actor) {
   });
 }
 
-import { buildConceptSheetViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
+import { buildConceptSheetViewModel, buildActorCombatLoadout } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
 import { applyLoadoutPreviews } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/equipment-workspace-context.js";
 import { dedupeCombatActionRows } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/combat-action-identity.js";
 import { buildLoadoutPreviews } from "/systems/foundryvtt-swse/scripts/combat/rolls/loadout-preview.js";
@@ -2324,12 +2325,22 @@ const forcePoints = [];
 
     // Combat Loadout Preview (Gear tab): a read-only projection of the production attack / damage authorities for the weapons held right now,
     // recomputed on every render (no cache, no polling, nothing written), so grip, equipment, ability, modification and effect changes show at once.
+    let loadoutPreviews = new Map();
     try {
-      const loadoutPreviews = await buildLoadoutPreviews(actor);
+      loadoutPreviews = await buildLoadoutPreviews(actor);
       applyLoadoutPreviews(conceptLayout?.gear?.workspace, loadoutPreviews);
       applyLoadoutPreviews(context.npcConcept?.workspace, loadoutPreviews);
     } catch (err) {
       swseLogger.warn('[SWSE] Combat loadout preview unavailable', { actorId: actor?.id, error: err?.message });
+    }
+    // Combat tab, attack-first: the SAME preview map feeds the Active Attacks cards, so the Combat and Equipment tabs agree by construction.
+    // A weapon whose preview is unresolved shows an explicit unavailable state; there is no fallback to an Item damage field.
+    if (conceptLayout?.combat) {
+      try {
+        conceptLayout.combat.loadout = buildActorCombatLoadout(actor, { conceptCombat: conceptLayout.combat, previews: loadoutPreviews, attackLocked: combatStatus?.attackLocked === true, attackLockLabel: combatStatus?.attackLockLabel ?? '' });
+      } catch (err) {
+        swseLogger.warn('[SWSE] Combat loadout unavailable', { actorId: actor?.id, error: err?.message });
+      }
     }
 
     const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor });
@@ -3603,6 +3614,8 @@ const forcePoints = [];
     this._activateInventoryUI(html, { signal });
     // Gear tab equipment workspace: UI state + routing to the existing equipment authorities
     activateEquipmentWorkspace(this, html, { signal });
+    // Combat tab: action library filtering + open state (UI only; the rows' buttons are the existing data-action handlers)
+    activateCombatTab(this, html, { signal });
     // shared browse/inspect surfaces (Droid Systems components; Vehicle systems): UI state only, operations stay existing data-action handlers
     activateBrowseInspect(this, html, { signal });
 

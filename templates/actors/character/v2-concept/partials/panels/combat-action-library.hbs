@@ -1,0 +1,62 @@
+{{!-- COMBAT ACTION LIBRARY: the ONE action browser on the Combat tab (replaces the Combat Actions lane board). One flat list; every action appears exactly once
+     (de-duplicated upstream, see combat-action-identity.js) and the category tabs only decide which rows are visible. Search / filters / sort / reset are DOM-only
+     (combat-tab-ui.js) and never touch the actor. Executable rows use the existing swse-v2-use-action handler; a reference or an unavailable action says so and
+     gives the authority's reason. Collapsed by default. --}}
+<section class="swse-concept-panel swse-cmb__library" data-cal-root aria-label="Combat action library">
+  <details class="swse-cmb__lib" data-cmb-details="library">
+    <summary class="swse-cmb__lib-summary">
+      <h3 class="swse-cmb__title">Combat action library</h3>
+      <span class="swse-cmb__hint">{{conceptLayout.combat.actionLibrary.total}} action{{#unless (eq conceptLayout.combat.actionLibrary.total 1)}}s{{/unless}}{{#if conceptLayout.combat.actionLibrary.conflictCount}} · {{conceptLayout.combat.actionLibrary.conflictCount}} flagged{{/if}}</span>
+    </summary>
+
+    {{#if conceptLayout.combat.actionLibrary.hasItems}}
+      <div class="swse-cmb__cal-tabs" role="tablist" aria-label="Action type">
+        {{#each conceptLayout.combat.actionLibrary.categories as |cat|}}
+          <button type="button" role="tab" class="swse-cmb__cal-tab{{#if cat.active}} is-active{{/if}}" data-cal-tab="{{cat.key}}" aria-selected="{{#if cat.active}}true{{else}}false{{/if}}">{{cat.label}} <small>{{cat.count}}</small></button>
+        {{/each}}
+      </div>
+
+      <div class="swse-cmb__cal-tools" role="group" aria-label="Filter and sort actions">
+        <label class="swse-cmb__cal-search"><span class="swse-cmb__sr">Search actions</span><input type="search" data-cal-search placeholder="Search actions…" autocomplete="off" spellcheck="false"></label>
+        <label class="swse-cmb__cal-field"><span>Show</span>
+          <select data-cal-avail>{{#each conceptLayout.combat.actionLibrary.availabilityFilters as |f|}}<option value="{{f.key}}">{{f.label}}</option>{{/each}}</select></label>
+        <label class="swse-cmb__cal-field"><span>Sort</span>
+          <select data-cal-sort>{{#each conceptLayout.combat.actionLibrary.sorts as |f|}}<option value="{{f.key}}">{{f.label}}</option>{{/each}}</select></label>
+        <button type="button" class="swse-concept-btn" data-cal-dir aria-label="Sort direction" data-dir="asc" title="Ascending / descending">A→Z</button>
+        <button type="button" class="swse-concept-btn" data-cal-reset>Reset</button>
+        <span class="swse-cmb__cal-count" data-cal-count aria-live="polite">{{conceptLayout.combat.actionLibrary.visibleCount}} of {{conceptLayout.combat.actionLibrary.total}}</span>
+      </div>
+
+      <ul class="swse-cmb__cal-list" data-cal-list>
+        {{#each conceptLayout.combat.actionLibrary.items as |a|}}
+          <li class="swse-cmb__cal-item is-{{a.availability}}" data-cal-item data-cal-id="{{a.key}}|{{a.laneKey}}|{{a.itemId}}" data-lane="{{a.laneKey}}" data-avail="{{a.availability}}" data-name="{{a.name}}" data-source="{{a.sourceName}}" data-cost="{{a.costLabel}}" data-search="{{a.searchText}}" {{#unless a.visible}}hidden{{/unless}}>
+            <button type="button" class="swse-cmb__cal-head" data-cal-select aria-expanded="false">
+              <strong>{{a.name}}</strong>
+              <span class="swse-cmb__chip">{{a.laneLabel}}</span>
+              {{#if a.costLabel}}<span class="swse-cmb__chip is-dim" title="Cost">{{a.costLabel}}</span>{{/if}}
+              <span class="swse-cmb__chip is-{{a.availability}}">{{a.availabilityLabel}}</span>
+              {{#if a.identityConflict}}<span class="swse-cmb__chip is-warn" title="{{a.identityConflictReason}}">Flagged</span>{{/if}}
+            </button>
+            <div class="swse-cmb__cal-detail" data-cal-detail hidden>
+              {{#if a.description}}<p>{{a.description}}</p>{{/if}}
+              <p class="swse-cmb__meta"><span>Source: {{#if a.sourceName}}{{a.sourceName}}{{else}}—{{/if}}{{#each a.alsoFrom as |also|}}, {{also}}{{/each}}</span><span>{{a.laneLabel}} action</span>{{#if a.costLabel}}<span>Cost {{a.costLabel}}</span>{{/if}}</p>
+              {{#if a.reason}}<p class="swse-cmb__note is-warn">{{a.reason}}</p>{{/if}}
+              {{#if a.identityConflict}}<p class="swse-cmb__note is-warn">Flagged for review: {{a.identityConflictReason}}.</p>{{/if}}
+              <div class="swse-cmb__card-actions">
+                {{#if a.executable}}
+                  <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="swse-v2-use-action" data-action-id="{{a.key}}" data-action-name="{{a.name}}" data-action-type="{{a.laneKey}}" {{#unless a.canUseNow}}disabled title="{{a.reason}}"{{/unless}}>{{a.useLabel}}</button>
+                {{else}}
+                  <span class="swse-cmb__ref">Reference only</span>
+                {{/if}}
+                {{#if a.itemId}}<button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{a.itemId}}">Inspect source</button>{{/if}}
+              </div>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+      <p class="swse-cmb__note" data-cal-empty hidden>No actions match the current search and filters.</p>
+    {{else}}
+      <p class="swse-cmb__note">This actor currently has no combat actions to list.</p>
+    {{/if}}
+  </details>
+</section>

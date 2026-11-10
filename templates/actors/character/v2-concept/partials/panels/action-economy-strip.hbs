@@ -1,0 +1,20 @@
+{{!-- ACTION ECONOMY STRIP: one compact row. Every value is the action-economy authority's own (actionEconomy.* / the steps it resolved); nothing is
+     inferred from button state and no second tracker exists. Steps read Standard, Move, Swift, Full-round, Reaction, Free. --}}
+<section class="swse-concept-panel swse-cmb__economy{{#unless actionEconomy.active}} is-reference{{/unless}}" data-action-economy-strip aria-label="Action economy">
+  <div class="swse-cmb__economy-steps" role="list">
+    {{#each conceptLayout.combat.economySteps as |step|}}
+      <div class="swse-cmb__ae-step {{step.cssClass}}" role="listitem" data-ae-step="{{step.key}}" title="{{step.tooltip}}">
+        <strong>{{step.label}}</strong>
+        <span class="swse-cmb__ae-pips" aria-hidden="true">{{#if step.infinite}}∞{{else}}{{#each step.pips as |pip|}}<i class="{{#if pip.on}}is-on{{/if}}"></i>{{/each}}{{/if}}</span>
+        <small>{{step.stateLabel}}</small>
+      </div>
+    {{/each}}
+  </div>
+  <div class="swse-cmb__economy-meta">
+    <span class="swse-cmb__ae-mode" title="{{actionEconomy.enforcementModeLabel}}">{{#if actionEconomy.active}}Live turn{{else}}Reference{{/if}} · {{actionEconomy.enforcementModeLabel}}</span>
+    <span class="swse-cmb__ae-left">Remaining <b>{{actionEconomy.summary}}</b></span>
+    <button type="button" class="swse-concept-btn" data-action="swse-action-economy-undo" {{#unless actionEconomy.canUndo}}disabled{{/unless}}>Undo</button>
+    <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="new-round" {{#unless actionEconomy.canReset}}disabled{{/unless}}>End turn</button>
+  </div>
+  {{#if actionEconomy.readOnlyReason}}<p class="swse-cmb__note">{{actionEconomy.readOnlyReason}}</p>{{/if}}
+</section>
