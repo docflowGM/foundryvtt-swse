@@ -6,7 +6,13 @@
 - Previous reviewed head: `8fcc5e5d75be87fccdf2c331df8aab296eaf27ee`
 - Status vocabulary: CODE_COMPLETE / OFFLINE_TESTED / RUNTIME_UNVERIFIED / FOUNDRY_TESTED. **Nothing in this PR is FOUNDRY_TESTED.** No Foundry V13 runtime exists in the build environment (no install, no licence, no world); no live result below is claimed.
 
-## DECISION: **NO-GO** (runtime acceptance only)
+## Post-merge update
+- PR #1143 was merged into `main` as `33ce3f7622ca5ac458a36d13d0fd941e782cda07` (head `8e3d5e8`), at the project owner's instruction. Exact-head CI at `8e3d5e8`: native-vehicle-packs, targeted, provenance and Rolling system validation all **success**.
+- The project owner then reported that **Foundry V13 acceptance is green**. This is an owner-reported result: the per-item results for checklist sections A-M were not supplied to this session, so they are not transcribed here and were not independently observed by the author of this report. Record the per-item results beside each checklist entry to make them traceable.
+- Gates below change from UNVERIFIED to **PASS (owner-reported)**: Foundry V13 acceptance, ledger/permission boundary (K), concurrency (M), live former-owner access removal (L5), exact-head CI. Performance (H) is covered only if the owner recorded timings.
+- Decision: **GO - merged; FOUNDRY_TESTED on the owner's report.** The documented design limits below (client-local locks, owner-writable `system.credits`) still stand.
+
+## Decision at time of merge (historical): **NO-GO** (runtime acceptance only)
 All offline gates pass and no code blocker is known, but financial and asset-ownership changes of this scope require the live Foundry V13 acceptance in `store-v2-foundry-acceptance-checklist.md` (sections A–M). The next step is runtime acceptance, not another architecture phase.
 
 ## Scope S0–S9 (summary)
