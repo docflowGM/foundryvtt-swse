@@ -48,7 +48,7 @@ export function parseTransactionCost(value) {
   if (typeof value === 'string' && value.trim() !== '') return Number(value);
   return NaN;
 }
-import { stampAcquisitions } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js";
+import { stampAcquisitions, lotIdFor } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js";
 import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js";
 
 const RESALE_AUTHORITY_GM_APPRAISAL = 'gm-appraisal';
@@ -404,7 +404,9 @@ export class TransactionEngine {
       const plans = preparedAcquisition.plans;
       // Acquisition provenance: delivered Items / Actors get a REFERENCE to this committed transaction (the ledger line below is the evidence).
       const acquiredAtStamp = Date.now();
-      for (const plan of plans) stampAcquisitions(plan, { transactionId, context: transactionContext, at: acquiredAtStamp });
+      // Each purchase line gets a unique lot id in the ledger; delivered assets are allocated to lots one-to-one (see acquisition-record.js).
+      const auditLines = Array.isArray(audit?.items) ? audit.items.map((line, index) => ({ ...line, lotId: lotIdFor(transactionId, index) })) : audit?.items;
+      for (const plan of plans) stampAcquisitions(plan, { transactionId, context: transactionContext, at: acquiredAtStamp, lines: Array.isArray(auditLines) ? auditLines : [] });
       const creditPlan = normalizedCost > 0 ? LedgerService.buildCreditDelta(freshActor, normalizedCost) : null;
 
       const transactionAudit = {
@@ -426,6 +428,7 @@ export class TransactionEngine {
             source,
             audit: {
               ...audit,
+              ...(Array.isArray(auditLines) ? { items: auditLines } : {}),
               creditsBefore,
               creditsAfter,
               acquiredActors: preparedAcquisition.acquiredActors
@@ -1496,7 +1499,7 @@ export class TransactionEngine {
         reason, source, itemName,
         audit: {
           ...audit, reason, creditsBefore, creditsAfter, itemName, itemCount: soldQty,
-          requestId: requestId ?? null, resaleAuthority: verdict.authority, resaleQuote: verdict.quote ?? null,
+          requestId: requestId ?? null, resaleAuthority: verdict.authority, resaleQuote: verdict.quote ?? null, lotDisposal: verdict.lotDisposal ?? null,
           appraisal: verdict.appraisal ?? null,
           items: [{ id: ownedItem.id, itemId: ownedItem.id, name: itemName, type: ownedItem.type, quantity: soldQty, salePrice: normalizedSalePrice, itemData }]
         }

@@ -21,7 +21,7 @@ import { verifyAcquisition } from '/systems/foundryvtt-swse/scripts/engine/store
 export function quoteEvidenceLines(q) {
   const lines = [`${q.quantity} x ${q.itemName}: policy ${q.percent}% (basis policy: ${q.basisPolicy})`];
   for (const seg of q.segments) lines.push(`${seg.units} unit(s) valued on ${seg.basisKind === 'acquisition' ? 'the VERIFIED price paid' : 'the published cost'} (${seg.unitBase} cr) -> ${seg.unitPayout} cr each`);
-  lines.push(q.acquisitionStatus === 'verified' ? `Purchase verified in transaction ${q.acquisitionTransactionId}` : `Acquisition cost not verified (${q.acquisitionStatus}); published cost used for units without a verified purchase`);
+  lines.push(`Purchase verified in the ledger (transaction ${q.acquisitionTransactionId}, lot ${q.acquisitionLotId})`);
   return lines;
 }
 
@@ -51,14 +51,22 @@ export class ResaleService {
   static acquisitionFor(actor, itemData) {
     const acquisition = itemData?.flags?.['foundryvtt-swse']?.acquisition ?? null;
     const ledger = this.ledgerOf(actor);
+    const lotId = acquisition?.lotId ?? null;
+    // Disposal is accounted per LEDGER LOT (the purchase allocation), never per embedded Item id: a duplicated or re-created Item cannot
+    // open a fresh entitlement, and a lot is paid out at most once across everything that ever claimed it.
     let disposed = 0;
-    for (const record of Object.values(ledger)) {
-      const q = record?.audit?.resaleQuote;
-      if (record?.type === 'Sell' && record.status === 'Success' && q?.acquisitionTransactionId && q.acquisitionTransactionId === acquisition?.transactionId && q.itemId === itemData?._id) {
-        disposed += (q.segments ?? []).filter(seg => seg.basisKind === 'acquisition').reduce((n, seg) => n + seg.units, 0);
+    if (lotId) {
+      for (const record of Object.values(ledger)) {
+        // every committed sale of an Item that claimed this lot (automatic OR GM-appraised) consumes it
+        const d = record?.audit?.lotDisposal;
+        if (record?.type === 'Sell' && record.status === 'Success' && d?.lotId === lotId) disposed += Number(d.quantity) || 0;
       }
     }
-    return verifyAcquisition({ acquisition, sourceUuid: itemData?._stats?.compendiumSource ?? null, ledger, unitsAlreadyDisposed: disposed });
+    // More than one owned Item claiming the same lot is ambiguous (duplicate / copied reference / split stack): nobody is entitled.
+    const claimantCount = lotId
+      ? (actor?.items?.contents ?? Array.from(actor?.items ?? [])).filter(i => asData(i)?.flags?.['foundryvtt-swse']?.acquisition?.lotId === lotId).length
+      : 0;
+    return verifyAcquisition({ acquisition, sourceUuid: itemData?._stats?.compendiumSource ?? null, ledger, unitsAlreadyDisposed: disposed, claimantCount });
   }
 
   /**
@@ -122,7 +130,9 @@ export class ResaleService {
     if (blocker) return fail(blocker.message, [blocker.reason]);
 
     const removeEntirely = UNIQUE_ITEM_TYPES.includes(data.type) || qty === owned;
-    const base = { quantity: qty, removeEntirely, remainingQuantity: owned - qty };
+    // Whatever the authority, selling an Item that claims a purchase lot uses that lot up (a GM appraisal must not leave a copy able to claim it again).
+    const claimedLot = data.flags?.['foundryvtt-swse']?.acquisition?.lotId ?? null;
+    const base = { quantity: qty, removeEntirely, remainingQuantity: owned - qty, lotDisposal: claimedLot ? { lotId: claimedLot, quantity: qty } : null };
 
     if (authority === RESALE_AUTHORITY.CANONICAL_AUTOMATIC) {
       if (transactionContext === 'store-haggle-sale') return fail('A counteroffer is a GM appraisal, not a canonical resale.', ['AUTHORITY_CONTEXT_MISMATCH']);
@@ -222,7 +232,10 @@ export class ResaleService {
       canonicalQuote: q, needsAppraisal: !q, appraisalReasons: q ? [] : (quote?.reasons ?? []),
       // display figures for the GM list; they are shown, never trusted for payment
       basePrice: q?.publishedUnitCost ?? null, suggestedPrice: q?.payout ?? null, requestedPrice: q?.payout ?? null, noBasePrice: !q,
-      evidenceLines: q ? quoteEvidenceLines(q) : [`No automatic value: ${(quote?.reasons ?? []).join(', ')}`],
+      evidenceLines: q ? quoteEvidenceLines(q) : [
+        `No automatic value: ${(quote?.reasons ?? []).join(', ')}`,
+        ...(quote?.reference ? [`Published-cost reference: ${quote.reference.payoutAtPublished} cr for ${quantity} unit(s) (a reference for the GM; never paid automatically)`] : [])
+      ],
       timestamp: Date.now(), requestedAt: Date.now(), playerId: user?.id ?? null, playerName: user?.name ?? 'Player'
     });
   }

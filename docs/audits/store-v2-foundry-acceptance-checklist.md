@@ -68,6 +68,7 @@ Use two clients (Player A owns the buyer actor, GM) and, for cross-client rows, 
 - [ ] Inspect the delivered droid sheet: confirm chassis-only data is acceptable or file follow-up (stats/class levels are not part of a Store construction).
 
 ## J. Resale (S9; all RUNTIME_UNVERIFIED)
+- [ ] Drag a pistol from the compendium onto your own sheet: selling it offers NO automatic value (request GM appraisal); duplicate a purchased pistol (copy/paste or drag from another actor): neither copy sells automatically; delete one copy and the remaining one still does not until the other claim is gone.
 - [ ] Buy a pistol with a GM discount (e.g. 20%): the Item's flags show `acquisition` with `unitPaid` below `publishedUnitCost`; the ledger line shows the same figures.
 - [ ] Sell it back from every sheet (character, droid, equipment workspace): one dialog, exact offer = policy % of the paid price; with `resaleBasis` = published the offer changes accordingly.
 - [ ] Edit the Item's `system.cost`/`system.price` and the acquisition flag by hand: the offer does not change; a forged `unitPaid` falls back to published (labelled).

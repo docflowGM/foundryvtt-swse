@@ -38,7 +38,11 @@ export async function initiateResale(item, actor, { attempt = 0 } = {}) {
   }
 
   if (!quote.ok) {
-    const go = await confirm('No automatic value', `<h3>${esc(item.name)}</h3><p>This item has no automatic resale value (${esc(quote.reasons.join(', '))}).</p><p>You can ask the GM to appraise it. Nothing is sold until the GM sets an offer and approves.</p>`);
+    const unverified = quote.reasons.includes('UNVERIFIED_ACQUISITION') || quote.reasons.includes('QUANTITY_EXCEEDS_VERIFIED_PURCHASE');
+    const why = unverified
+      ? 'The system has no verified Store purchase on record for this item (or for that many units), so it cannot pay for it automatically. Loot, GM grants and older items are valued by the GM.'
+      : `This item has no automatic resale value (${esc(quote.reasons.join(', '))}).`;
+    const go = await confirm('No automatic value', `<h3>${esc(item.name)}</h3><p>${why}</p><p>You can ask the GM to appraise it. Nothing is sold until the GM sets an offer and approves.</p>`);
     if (!go) return;
     const queued = await ResaleService.requestItemSale({ actor, itemId: item.id, quantity, quote });
     ui.notifications[queued.success ? 'info' : 'warn'](queued.success ? `${item.name} was sent to the GM for appraisal.` : `${item.name} is already awaiting GM review.`);

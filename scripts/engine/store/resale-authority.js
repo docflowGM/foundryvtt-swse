@@ -66,18 +66,25 @@ export const DEFAULT_RESALE_BASIS = RESALE_BASIS.ACQUISITION;
 export const normalizeResaleBasis = v => (v === RESALE_BASIS.PUBLISHED ? RESALE_BASIS.PUBLISHED : RESALE_BASIS.ACQUISITION);
 
 /**
- * Resale basis per unit (a project POLICY, not a published SWSE rule):
- *   'acquisition' (default)  units whose purchase is VERIFIED in the ledger are valued at what was actually paid; any other unit
- *                            (loot, GM grant, pre-ledger asset, units added to a stack later) falls back to the canonical source's
- *                            published cost and is labelled as such. "Acquisition cost unknown" is never treated as zero or invented.
- *   'published'              every unit is valued at the canonical published cost.
- * Payout per segment = floor(unit basis x policy %) x units. The policy % can never push a verified-paid unit above what was paid
- * (percent is capped at 100), so buy-low / sell-high arbitrage through GM price policy is not possible on the acquisition basis.
+ * Automatic resale requires a TRUSTED ACQUISITION ENTITLEMENT, and the basis policy only chooses the price.
  *
- * @param {{item:object, quantity:number, source:object|null, percent:number, basis?:string, acquisition?:{verified:boolean, unitPaid?:number, unitsAvailable?:number, reasons?:string[]}|null}} args
+ * A canonical `_stats.compendiumSource` proves what an Item IS, not that the holder legitimately obtained it (a player can drag a
+ * compendium Item onto their own sheet, copy flags, or duplicate an Item). Automatic credits therefore exist only for units whose
+ * purchase is VERIFIED in the holder's own transaction ledger and not already paid out (`acquisition.unitsAvailable`, computed per
+ * ledger LOT, not per embedded Item id, and withheld when more than one Item claims the lot). Everything else (loot, GM grants,
+ * legacy inventory, dragged-in or duplicated Items, units added to a stack later) has no automatic value: it can be sold through a
+ * GM appraisal, which is shown a published-cost REFERENCE (`reference.payoutAtPublished`) but the system never pays it on its own.
+ * "Acquisition cost unknown" means the system cannot authorize payment, not that the Item is worth nothing.
+ *
+ * Basis policy (house rule `resaleBasis`, default `acquisition`; a project policy, not a published SWSE rule):
+ *   'acquisition'  entitled units are valued at the price actually paid
+ *   'published'    entitled units are valued at the canonical published cost (still only for entitled units)
+ * Payout = floor(unit basis x policy %) x units; percent capped at 100, so a unit never pays more than was paid on the acquisition basis.
+ *
+ * @param {{item:object, quantity:number, source:object|null, percent:number, basis?:string, acquisition?:{verified:boolean, unitPaid?:number, unitsAvailable?:number, lotId?:string, transactionId?:string, reasons?:string[]}|null}} args
  *   item   the owned Item as data (toObject())
  *   source the Store-catalog listing of `item._stats.compendiumSource`: { sourceUuid, name, type, cost, costStatus } or null
- * @returns {{ok:boolean, reasons:string[], needsAppraisal:boolean, quote?:object}}
+ * @returns {{ok:boolean, reasons:string[], needsAppraisal:boolean, quote?:object, reference?:object}}
  */
 export function quoteItemResale({ item, quantity, source, percent, basis = DEFAULT_RESALE_BASIS, acquisition = null }) {
   const reasons = [];
@@ -100,34 +107,42 @@ export function quoteItemResale({ item, quantity, source, percent, basis = DEFAU
   if (markers.length) appraisal.push('CUSTOMIZED_ITEM');
   if (!compendiumSource) appraisal.push('NO_CANONICAL_SOURCE');
 
-  const paidUnits = policyBasis === RESALE_BASIS.ACQUISITION && acquisition?.verified === true
-    ? Math.min(qty, Math.max(0, Number(acquisition.unitsAvailable) || 0)) : 0;
-  const publishedUnits = qty - paidUnits;
   let publishedBase = null;
   if (compendiumSource) {
-    if (!source) { if (publishedUnits > 0) appraisal.push('SOURCE_NOT_IN_STORE_CATALOG'); }
+    if (!source) appraisal.push('SOURCE_NOT_IN_STORE_CATALOG');
     else if (source.sourceUuid !== compendiumSource || source.type !== item.type || source.name !== item.name) appraisal.push('SOURCE_MISMATCH');
     else if (typeof source.cost === 'number' && Number.isFinite(source.cost) && source.cost > 0) publishedBase = source.cost;
-    else if (publishedUnits > 0) appraisal.push('SOURCE_PRICE_UNPUBLISHED');
+    else if (policyBasis === RESALE_BASIS.PUBLISHED) appraisal.push('SOURCE_PRICE_UNPUBLISHED');
   }
 
-  const segments = [];
-  if (paidUnits > 0) segments.push({ units: paidUnits, basisKind: 'acquisition', unitBase: acquisition.unitPaid, unitPayout: Math.floor(acquisition.unitPaid * (pct / 100)) });
-  if (publishedUnits > 0 && publishedBase !== null) segments.push({ units: publishedUnits, basisKind: 'published', unitBase: publishedBase, unitPayout: Math.floor(publishedBase * (pct / 100)) });
-  if (!appraisal.length && (segments.length === 0 || segments.some(seg => !(seg.unitPayout > 0)))) appraisal.push('POLICY_PAYOUT_ZERO');
-  if (appraisal.length) return { ok: false, reasons: appraisal, needsAppraisal: true, markers, acquisitionReasons: acquisition?.reasons ?? [] };
+  // Entitlement: no verified, unspent purchase for every unit being sold -> no automatic payout.
+  const entitled = acquisition?.verified === true ? Math.max(0, Number(acquisition.unitsAvailable) || 0) : 0;
+  if (acquisition?.verified !== true) appraisal.push('UNVERIFIED_ACQUISITION');
+  else if (qty > entitled) appraisal.push('QUANTITY_EXCEEDS_VERIFIED_PURCHASE');
 
-  const payout = segments.reduce((sum, seg) => sum + seg.units * seg.unitPayout, 0);
-  if (!(payout > 0 && payout <= MAX_RESALE_CREDITS)) return { ok: false, reasons: ['PAYOUT_OUT_OF_RANGE'], needsAppraisal: true };
+  const unitBase = policyBasis === RESALE_BASIS.PUBLISHED ? publishedBase : (acquisition?.verified === true ? acquisition.unitPaid : null);
+  const reference = publishedBase ? { publishedUnitCost: publishedBase, payoutAtPublished: Math.floor(publishedBase * (pct / 100)) * qty } : null;
+  const unitPayout = Number.isFinite(unitBase) && unitBase > 0 ? Math.floor(unitBase * (pct / 100)) : 0;
+  if (!appraisal.length && !(unitPayout > 0)) appraisal.push('POLICY_PAYOUT_ZERO');
+  if (appraisal.length) {
+    return { ok: false, reasons: appraisal, needsAppraisal: true, markers, reference, acquisitionReasons: acquisition?.reasons ?? [] };
+  }
+
+  const payout = unitPayout * qty;
+  if (!(payout > 0 && payout <= MAX_RESALE_CREDITS)) return { ok: false, reasons: ['PAYOUT_OUT_OF_RANGE'], needsAppraisal: true, reference };
   const quote = {
     authority: RESALE_AUTHORITY.CANONICAL_AUTOMATIC,
     itemId: item._id, itemName: item.name, itemType: item.type, sourceUuid: compendiumSource,
     quantity: qty, ownedQuantity: owned, percent: pct, basisPolicy: policyBasis,
-    publishedUnitCost: publishedBase, segments, payout,
-    acquisitionStatus: acquisition?.verified === true ? 'verified' : (acquisition?.reasons?.[0] ?? 'ACQUISITION_COST_UNKNOWN'),
-    acquisitionTransactionId: acquisition?.verified === true ? acquisition.transactionId ?? null : null
+    publishedUnitCost: publishedBase,
+    segments: [{ units: qty, basisKind: policyBasis === RESALE_BASIS.PUBLISHED ? 'published' : 'acquisition', unitBase, unitPayout }],
+    payout,
+    acquisitionStatus: 'verified',
+    acquisitionLotId: acquisition.lotId ?? null,
+    acquisitionTransactionId: acquisition.transactionId ?? null,
+    acquisitionUnitPaid: acquisition.unitPaid
   };
-  quote.quoteHash = stableHash({ i: quote.itemId, s: quote.sourceUuid, g: segments, p: pct, q: qty, o: owned, n: item.name, t: quote.acquisitionTransactionId });
+  quote.quoteHash = stableHash({ i: quote.itemId, s: quote.sourceUuid, g: quote.segments, p: pct, q: qty, o: owned, n: item.name, l: quote.acquisitionLotId, a: quote.acquisitionUnitPaid });
   return { ok: true, reasons: [], needsAppraisal: false, quote };
 }
 

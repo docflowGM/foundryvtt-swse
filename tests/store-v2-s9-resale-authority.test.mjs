@@ -21,7 +21,8 @@ const source = { sourceUuid: SRC, name: 'Blaster Pistol', type: 'weapon', cost: 
 const pistol = (over = {}) => ({ _id: 'i1', name: 'Blaster Pistol', type: 'weapon', system: { cost: 99999, price: 99999, quantity: undefined }, flags: {}, _stats: { compendiumSource: SRC }, ...over });
 const gear = (q, over = {}) => ({ _id: 'g1', name: 'Medpac', type: 'equipment', system: { quantity: q, cost: 1 }, flags: {}, _stats: { compendiumSource: 'Compendium.x.medpac' }, ...over });
 const gearSrc = { sourceUuid: 'Compendium.x.medpac', name: 'Medpac', type: 'equipment', cost: 100, costStatus: 'priced' };
-const quote = (a) => A.quoteItemResale({ percent: 50, basis: 'published', acquisition: null, ...a });
+const ENTITLED = { verified: true, unitPaid: 400, unitsAvailable: 99, lotId: 'tx1:0', transactionId: 'tx1' };
+const quote = (a) => A.quoteItemResale({ percent: 50, basis: 'published', acquisition: ENTITLED, ...a });
 
 // 1. valuation comes from the canonical source, never the embedded copy (S9-01)
 {
@@ -63,41 +64,71 @@ const quote = (a) => A.quoteItemResale({ percent: 50, basis: 'published', acquis
   assert.deepEqual(JSON.parse(/NON_STACKABLE_TYPES = (\[.*?\])/.exec(ic)[1]), [...A.UNIQUE_ITEM_TYPES]);
   ok('quantity: exact units priced; zero / negative / fractional / over-quantity / string refused; unique items sell alone; equippedQty ignored');
 }
-// 4. acquisition provenance: verified paid cost vs reference vs unknown
+// 4. acquisition provenance = the ONLY source of automatic entitlement (S9 closure)
 {
-  const ledger = { tx1: { id: 'tx1', status: 'Success', context: 'store-purchase', audit: { items: [{ listingId: 'foundryvtt-swse.weapons-pistols.abc', sourceUuid: SRC, unitCost: 400, publishedUnitCost: 500, quantity: 1, condition: null }] } } };
-  const ref = { transactionId: 'tx1', listingId: 'foundryvtt-swse.weapons-pistols.abc', sourceUuid: SRC, unitPaid: 400, condition: null };
+  const L1 = 'tx1:0', LISTING = 'foundryvtt-swse.weapons-pistols.abc';
+  const mkLedger = (lines, over = {}) => ({ tx1: { id: 'tx1', status: 'Success', context: 'store-purchase', audit: { items: lines }, ...over } });
+  const line = (o = {}) => ({ lotId: L1, listingId: LISTING, sourceUuid: SRC, unitCost: 400, publishedUnitCost: 500, quantity: 1, condition: null, ...o });
+  const ledger = mkLedger([line()]);
+  const ref = { transactionId: 'tx1', lotId: L1, listingId: LISTING, sourceUuid: SRC, unitPaid: 400, condition: null };
   const v = R.verifyAcquisition({ acquisition: ref, sourceUuid: SRC, ledger });
-  assert.equal(v.verified, true); assert.equal(v.unitPaid, 400);
-  const withAcq = (acquisition, basis = 'acquisition') => quote({ item: pistol(), quantity: 1, source, acquisition, basis });
+  assert.equal(v.verified, true); assert.equal(v.unitPaid, 400); assert.equal(v.lotId, L1);
+  const withAcq = (acquisition, basis = 'acquisition', extra = {}) => quote({ item: pistol(), quantity: 1, source, acquisition, basis, ...extra });
   assert.equal(withAcq(v).quote.payout, 200, 'verified paid 400 x 50% (not the published 500)');
-  assert.equal(withAcq(v).quote.segments[0].basisKind, 'acquisition');
-  assert.equal(withAcq(v, 'published').quote.payout, 250, 'GM can choose the published basis');
-  assert.equal(withAcq({ verified: false, reasons: ['ACQUISITION_COST_UNKNOWN'] }).quote.payout, 250, 'unknown acquisition -> published fallback, labelled');
-  assert.equal(withAcq({ verified: false, reasons: ['ACQUISITION_COST_UNKNOWN'] }).quote.acquisitionStatus, 'ACQUISITION_COST_UNKNOWN');
-  // forged references never raise a payout
-  for (const [label, mutate] of [['inflated unitPaid', r => { r.unitPaid = 4000; }], ['other transaction', r => { r.transactionId = 'tx9'; }], ['other listing', r => { r.listingId = 'x'; }], ['condition', r => { r.condition = 'used'; }]]) {
-    const bad = { ...ref }; mutate(bad); assert.equal(R.verifyAcquisition({ acquisition: bad, sourceUuid: SRC, ledger }).verified, false, label);
+  assert.equal(withAcq(v, 'published').quote.payout, 250, 'the published BASIS still needs an entitled unit');
+  // UNVERIFIED acquisition never pays automatically (dragged-in / duplicated / granted / legacy items)
+  for (const unknown of [null, { verified: false, reasons: ['ACQUISITION_COST_UNKNOWN'] }, { verified: false, reasons: ['ACQUISITION_TRANSACTION_NOT_IN_LEDGER'] }]) {
+    for (const basis of ['acquisition', 'published']) {
+      const q = withAcq(unknown, basis);
+      assert.deepEqual([q.ok, q.needsAppraisal, q.reasons.includes('UNVERIFIED_ACQUISITION')], [false, true, true], `${basis}: no entitlement -> GM appraisal only`);
+      assert.equal(q.reference.payoutAtPublished, 250, 'the GM is shown a published-cost REFERENCE, never paid automatically');
+    }
   }
+  // forged / copied references never create entitlement
+  const bad = (label, mutate) => { const r = { ...ref }; mutate(r); const res = R.verifyAcquisition({ acquisition: r, sourceUuid: SRC, ledger }); assert.equal(res.verified, false, label); return res; };
+  bad('inflated unitPaid', r => { r.unitPaid = 4000; });
+  bad('other transaction', r => { r.transactionId = 'tx9'; });
+  bad('other listing', r => { r.listingId = 'x'; });
+  bad('no lot id', r => { delete r.lotId; });
+  bad('lot of another purchase', r => { r.lotId = 'tx1:7'; });
+  bad('condition', r => { r.condition = 'used'; });
   assert.equal(R.verifyAcquisition({ acquisition: ref, sourceUuid: 'Compendium.x.other', ledger }).verified, false, 'source mismatch');
-  assert.equal(R.verifyAcquisition({ acquisition: ref, sourceUuid: SRC, ledger: { tx1: { ...ledger.tx1, status: 'Rolled Back' } } }).verified, false, 'rolled-back purchase');
-  assert.equal(R.verifyAcquisition({ acquisition: ref, sourceUuid: SRC, ledger: { tx1: { ...ledger.tx1, context: 'store-sale' } } }).verified, false, 'a sale record is not a purchase');
+  assert.equal(R.verifyAcquisition({ acquisition: ref, sourceUuid: SRC, ledger: mkLedger([line()], { status: 'Rolled Back' }) }).verified, false, 'rolled-back purchase');
+  assert.equal(R.verifyAcquisition({ acquisition: ref, sourceUuid: SRC, ledger: mkLedger([line()], { context: 'store-sale' }) }).verified, false, 'a sale record is not a purchase');
   assert.equal(R.verifyAcquisition({ acquisition: null, ledger }).reasons[0], 'ACQUISITION_COST_UNKNOWN');
+  // entitlement is consumed per LOT
   assert.equal(R.verifyAcquisition({ acquisition: ref, sourceUuid: SRC, ledger, unitsAlreadyDisposed: 1 }).unitsAvailable, 0, 'a purchase can be paid for once');
-  // mixed stack: 1 verified-paid unit + 2 unverified
-  const stack = gear(3); const mixedAcq = { verified: true, unitPaid: 60, unitsAvailable: 1, transactionId: 'txm' };
-  const m = quote({ item: stack, quantity: 3, source: gearSrc, acquisition: mixedAcq, basis: 'acquisition' });
-  assert.deepEqual(m.quote.segments.map(s => [s.units, s.basisKind, s.unitPayout]), [[1, 'acquisition', 30], [2, 'published', 50]]); assert.equal(m.quote.payout, 130);
+  assert.equal(withAcq({ ...v, unitsAvailable: 0 }).ok, false); assert.ok(withAcq({ ...v, unitsAvailable: 0 }).reasons.includes('QUANTITY_EXCEEDS_VERIFIED_PURCHASE'));
+  // duplicated / copied / split Items: more than one claimant of a lot -> nobody is entitled
+  const dup = R.verifyAcquisition({ acquisition: ref, sourceUuid: SRC, ledger, claimantCount: 2 });
+  assert.deepEqual([dup.verified, dup.reasons.includes('ACQUISITION_LOT_CLAIMED_BY_MULTIPLE_ITEMS')], [false, true]);
+  // two purchases of the SAME listing: exact lots, no first-match ambiguity
+  const two = mkLedger([line(), line({ lotId: 'tx1:1', unitCost: 300, publishedUnitCost: 500 })]);
+  assert.equal(R.verifyAcquisition({ acquisition: ref, sourceUuid: SRC, ledger: two }).unitPaid, 400);
+  assert.equal(R.verifyAcquisition({ acquisition: { ...ref, lotId: 'tx1:1', unitPaid: 300 }, sourceUuid: SRC, ledger: two }).unitPaid, 300);
+  assert.equal(R.verifyAcquisition({ acquisition: { ...ref, lotId: 'tx1:1', unitPaid: 400 }, sourceUuid: SRC, ledger: two }).verified, false, 'lot 1 cannot borrow lot 0\'s price');
+  // stacks: only entitled units sell automatically
+  const stack = gear(3);
+  const stackAcq = { verified: true, unitPaid: 60, unitsAvailable: 1, lotId: 'txm:0', transactionId: 'txm' };
+  const sellMany = quote({ item: stack, quantity: 3, source: gearSrc, acquisition: stackAcq, basis: 'acquisition' });
+  assert.deepEqual([sellMany.ok, sellMany.reasons], [false, ['QUANTITY_EXCEEDS_VERIFIED_PURCHASE']], 'the 2 unverified units of the stack are not paid automatically');
+  const sellOne = quote({ item: stack, quantity: 1, source: gearSrc, acquisition: stackAcq, basis: 'acquisition' });
+  assert.deepEqual([sellOne.ok, sellOne.quote.payout, sellOne.quote.acquisitionLotId], [true, 30, 'txm:0']);
   // buy cheap / sell dear is impossible on the paid basis
-  assert.ok(quote({ item: pistol(), quantity: 1, source, acquisition: { verified: true, unitPaid: 10, unitsAvailable: 1 }, percent: 100, basis: 'acquisition' }).quote.payout <= 10, 'never more than was paid');
-  // stamping
-  const plan = { add: { items: [{ name: 'x', __acquisition: R.buildAcquisitionMarker({ listing: { id: 'L', sourceUuid: SRC, type: 'weapon', cost: 500 }, unitPaid: 400 }) }] }, create: { actors: [{ data: { name: 'v', __acquisition: R.buildAcquisitionMarker({ listing: { id: 'V', type: 'vehicle', costNew: 100000, costUsed: 60000, sourceEntryKey: 'k' }, unitPaid: 90000, condition: 'new' }) } }] } };
-  R.stampAcquisitions(plan, { transactionId: 'txS', context: 'store-purchase', at: 5 });
-  assert.equal(plan.add.items[0].flags['foundryvtt-swse'].acquisition.transactionId, 'txS'); assert.equal(plan.add.items[0].__acquisition, undefined);
+  assert.ok(quote({ item: pistol(), quantity: 1, source, acquisition: { verified: true, unitPaid: 10, unitsAvailable: 1, lotId: 'x:0' }, percent: 100, basis: 'acquisition' }).quote.payout <= 10, 'never more than was paid');
+  // stamping allocates lots one-to-one and never first-match
+  const mk = (id, paid) => ({ __acquisition: R.buildAcquisitionMarker({ listing: { id, sourceUuid: SRC, type: 'weapon', cost: 500 }, unitPaid: paid }) });
+  const plan = { add: { items: [{ name: 'a', ...mk('L', 400) }, { name: 'b', ...mk('L', 300) }, { name: 'c', ...mk('M', 100) }] }, create: { actors: [{ data: { name: 'v', __acquisition: R.buildAcquisitionMarker({ listing: { id: 'V', type: 'vehicle', costNew: 100000, costUsed: 60000, sourceEntryKey: 'k' }, unitPaid: 90000, condition: 'new' }) } }] } };
+  const lines = [{ listingId: 'L', lotId: 'txS:0' }, { listingId: 'L', lotId: 'txS:1' }, { listingId: 'M', lotId: 'txS:2' }, { listingId: 'V', lotId: 'txS:3' }];
+  R.stampAcquisitions(plan, { transactionId: 'txS', context: 'store-purchase', at: 5, lines });
+  const acq = i => plan.add.items[i].flags['foundryvtt-swse'].acquisition;
+  assert.deepEqual([acq(0).lotId, acq(1).lotId, acq(2).lotId], ['txS:0', 'txS:1', 'txS:2'], 'two docs of one listing get two different lots'); assert.equal(plan.add.items[0].__acquisition, undefined);
   const va = plan.create.actors[0].data.flags['foundryvtt-swse'].acquisition;
-  assert.deepEqual([va.unitPaid, va.publishedUnitCost, va.condition, va.sourceEntryKey], [90000, 100000, 'new', 'k'], 'vehicle: paid 90000 vs published new 100000, condition kept');
+  assert.deepEqual([va.unitPaid, va.publishedUnitCost, va.condition, va.sourceEntryKey, va.lotId], [90000, 100000, 'new', 'k', 'txS:3'], 'vehicle: paid 90000 vs published new 100000, condition kept');
+  const orphan = { add: { items: [{ name: 'z', ...mk('NOLINE', 1) }] } }; R.stampAcquisitions(orphan, { transactionId: 't', context: 'c', at: 1, lines });
+  assert.equal(orphan.add.items[0].flags['foundryvtt-swse'].acquisition.lotId, null, 'a doc with no ledger line holds no entitlement');
   assert.equal(R.publishedUnitCostOf({ type: 'vehicle', costNew: 100000, costUsed: null }, 'used'), null, 'no derived used price');
-  ok('acquisition: verified paid basis (paid 400 -> 200 offer), forged/edited references rejected against the ledger, unknown -> labelled published fallback, mixed stacks, no profit, markers stamped');
+  ok('entitlement: automatic payout ONLY for ledger-verified, unspent, unambiguous lots; unverified/forged/duplicated/overclaimed/consumed -> appraisal with a published REFERENCE; exact lots; stamping 1:1');
 }
 // 5. GM appraisal validation (S9-E)
 {
@@ -142,7 +173,10 @@ const { TransactionEngine } = await import('/systems/foundryvtt-swse/scripts/eng
 const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
 const settings = { automaticSalePercentage: 50, autoAcceptItemSales: true, resaleBasis: 'published' };
 HouseRuleService.getNumber = (k, f) => settings[k] ?? f; HouseRuleService.getString = (k, f) => settings[k] ?? f; HouseRuleService.isEnabled = k => settings[k] === true;
+const realAcquisitionFor = ResaleService.acquisitionFor.bind(ResaleService);
+ResaleService.acquisitionFor = (actor, data) => ({ ...ENTITLED, unitPaid: 400, unitsAvailable: ownedQty(data) });
 ResaleService.sourceFor = async data => (data._stats?.compendiumSource === SRC ? source : data._stats?.compendiumSource === gearSrc.sourceUuid ? gearSrc : null);
+const ownedQty = d => A.ownedQuantity(d) ?? 1;
 const mkItem = data => ({ id: data._id, name: data.name, type: data.type, toObject: () => JSON.parse(JSON.stringify(data)), isOwned: true });
 const mkActor = (items, over = {}) => { const a = { id: 'a1', name: 'Seller', isOwner: true, ownership: { p1: 3 }, system: { credits: 1000, ownedActors: [] }, flags: {}, ...over };
   a.items = { get: id => items.find(i => i.id === id) ?? null, contents: items }; a.getFlag = (s, k) => a.flags?.[s]?.[k]; return a; };
@@ -188,6 +222,60 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
   assert.equal(cz.ok, false); assert.ok(cz.reasons.includes('CUSTOMIZED_ITEM'));
   assert.equal((await ResaleService.verifyForCommit({ actor: customized, itemId: 'i1', quantity: 1, authority: 'gm-appraisal', appraisal: { amount: 300, reason: 'modded' }, transactionContext: 'store-sale-approval' })).ok, true, 'the same customized item can be sold through a recorded GM appraisal');
   ok('commit boundary: payout re-derived, forged price/quote refused, policy change forces reconfirmation, GM-only decisions, partial vs full stack, replay refused, appraisal recorded, shared actors restricted');
+}
+// 7b. real acquisitionFor against an actor's own ledger: grants, drags, duplicates, replays (S9 closure)
+{
+  setUser(false);
+  const LISTING = 'foundryvtt-swse.weapons-pistols.abc';
+  const ledger = { tx1: { id: 'tx1', type: 'Buy', status: 'Success', context: 'store-purchase', createdAt: 1, audit: { items: [{ lotId: 'tx1:0', listingId: LISTING, sourceUuid: SRC, unitCost: 400, publishedUnitCost: 500, quantity: 1, condition: null }] } } };
+  const acqFlag = { transactionId: 'tx1', lotId: 'tx1:0', listingId: LISTING, sourceUuid: SRC, unitPaid: 400, condition: null };
+  const bought = (id = 'i1', flag = acqFlag) => pistol({ _id: id, flags: { 'foundryvtt-swse': { acquisition: flag } } });
+  const actorWith = (items, extraLedger = {}) => mkActor(items.map(mkItem), { flags: { 'foundryvtt-swse': { transactions: { ...ledger, ...extraLedger } } } });
+  const verify = (actor, id = 'i1') => realAcquisitionFor(actor, actor.items.get(id).toObject());
+  const sellable = async (actor, id = 'i1', context = 'store-sale') => {
+    ResaleService.acquisitionFor = realAcquisitionFor;
+    try { return await ResaleService.verifyForCommit({ actor, itemId: id, quantity: 1, authority: 'canonical-automatic', transactionContext: context }); }
+    finally { ResaleService.acquisitionFor = (a, d) => ({ ...ENTITLED, unitsAvailable: ownedQty(d) }); }
+  };
+  // legitimate purchase: automatic
+  settings.resaleBasis = 'acquisition';
+  let r = await sellable(actorWith([bought()])); assert.deepEqual([r.ok, r.payout], [true, 200], 'purchased item: 50% of the verified 400 paid');
+  // loot / GM grant / dragged-in compendium item: canonical source but no acquisition -> not automatic
+  r = await sellable(actorWith([pistol({ _id: 'loot' })]), 'loot'); assert.equal(r.ok, false); assert.ok(r.reasons.includes('UNVERIFIED_ACQUISITION'), 'a canonical source proves what it is, not that it was acquired');
+  // forged reference on a dragged-in item (no matching ledger)
+  r = await sellable(actorWith([bought('f1', { ...acqFlag, transactionId: 'tx404' })]), 'f1'); assert.equal(r.ok, false);
+  r = await sellable(actorWith([bought('f2', { ...acqFlag, unitPaid: 99999 })]), 'f2'); assert.equal(r.ok, false, 'inflated paid price');
+  // copied reference from ANOTHER actor's purchase: this actor's ledger has no such transaction
+  r = await sellable(mkActor([mkItem(bought('c1'))], { flags: {} }), 'c1'); assert.equal(r.ok, false, 'a reference copied onto an actor with no matching ledger');
+  // duplicated item (same lot on two docs): neither is entitled
+  const dup = actorWith([bought('i1'), bought('i2')]);
+  assert.deepEqual([verify(dup, 'i1').verified, verify(dup, 'i2').verified], [false, false]); assert.ok(verify(dup, 'i1').reasons.includes('ACQUISITION_LOT_CLAIMED_BY_MULTIPLE_ITEMS'));
+  assert.equal((await sellable(dup, 'i2')).ok, false, 'selling a duplicate against the original purchase is refused');
+  // the lot already paid out (a sale record names the lot) -> no entitlement even on a re-created item with a NEW embedded id
+  const spent = { txs: { id: 'txs', type: 'Sell', status: 'Success', context: 'store-sale', createdAt: 2, audit: { lotDisposal: { lotId: 'tx1:0', quantity: 1 } } } };
+  const recreated = actorWith([bought('brand-new-id')], spent);
+  assert.equal(verify(recreated, 'brand-new-id').unitsAvailable, 0, '1 purchased, 1 already paid out: nothing left, whatever the embedded id');
+  r = await sellable(recreated, 'brand-new-id'); assert.equal(r.ok, false, 'one purchase entitles one payout regardless of the embedded Item id');
+  // a GM-APPRAISED sale of a purchased Item also uses the lot up, so a copy cannot claim it afterwards
+  setUser(true); ResaleService.acquisitionFor = realAcquisitionFor;
+  const apprAudit = await ResaleService.verifyForCommit({ actor: actorWith([bought()]), itemId: 'i1', quantity: 1, authority: 'gm-appraisal', appraisal: { amount: 50, reason: 'damaged' }, transactionContext: 'store-sale-approval' });
+  assert.deepEqual(apprAudit.lotDisposal, { lotId: 'tx1:0', quantity: 1 }, 'the appraised sale records the lot it consumed');
+  setUser(false); ResaleService.acquisitionFor = (a, d) => ({ ...ENTITLED, unitsAvailable: ownedQty(d) });
+  // two purchases of the same listing at different prices: each item pays on its own lot
+  const ledger2 = { ...ledger, tx2: { id: 'tx2', type: 'Buy', status: 'Success', context: 'store-purchase', createdAt: 3, audit: { items: [{ lotId: 'tx2:0', listingId: LISTING, sourceUuid: SRC, unitCost: 300, publishedUnitCost: 500, quantity: 1, condition: null }] } } };
+  const two = mkActor([mkItem(bought('i1')), mkItem(bought('i2', { ...acqFlag, transactionId: 'tx2', lotId: 'tx2:0', unitPaid: 300 }))], { flags: { 'foundryvtt-swse': { transactions: ledger2 } } });
+  assert.deepEqual([verify(two, 'i1').unitPaid, verify(two, 'i2').unitPaid], [400, 300]);
+  assert.deepEqual([(await sellable(two, 'i1')).payout, (await sellable(two, 'i2')).payout], [200, 150], 'each Item pays on its own lot');
+  // the published BASIS policy still requires the entitlement
+  settings.resaleBasis = 'published'; r = await sellable(actorWith([bought()])); assert.deepEqual([r.ok, r.payout], [true, 250]);
+  r = await sellable(actorWith([pistol({ _id: 'loot' })]), 'loot'); assert.equal(r.ok, false, 'published basis does not entitle unverified items'); settings.resaleBasis = 'published';
+  // a GM can still appraise unverified inventory, recorded with the published reference
+  setUser(true);
+  ResaleService.acquisitionFor = realAcquisitionFor;
+  const appraised = await ResaleService.verifyForCommit({ actor: actorWith([pistol({ _id: 'loot' })]), itemId: 'loot', quantity: 1, authority: 'gm-appraisal', appraisal: { amount: 180, reason: 'found loot' }, transactionContext: 'store-sale-approval' });
+  assert.deepEqual([appraised.ok, appraised.payout, appraised.appraisal.automaticValuationReasons.includes('UNVERIFIED_ACQUISITION')], [true, 180, true]);
+  ResaleService.acquisitionFor = (a, d) => ({ ...ENTITLED, unitsAvailable: ownedQty(d) }); setUser(false); settings.resaleBasis = 'published';
+  ok('real ledger checks: purchased -> automatic; loot / dragged-in / forged / copied / duplicated / already-paid-out lots -> no automatic payout; same-listing lots independent; GM appraisal still possible');
 }
 // 8. whole-asset sale transaction: ordering, rollback, no payment without disposition
 {
@@ -239,7 +327,7 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
     assert.equal(r.success, true); assert.equal(r.amount, 100, 'the injected salePrice is ignored'); assert.equal(actor.system.credits, 1100);
     assert.deepEqual(plans[0].update.items, [{ _id: 'g1', 'system.quantity': 3 }], 'partial stack: quantity decremented, item kept'); assert.equal(plans[0].delete, undefined);
     const rec = Object.values(plans[0].set).find(v => v && v.type === 'Sell');
-    assert.equal(rec.audit.resaleAuthority, 'canonical-automatic'); assert.equal(rec.audit.items[0].quantity, 2); assert.equal(rec.audit.resaleQuote.payout, 100); assert.equal(rec.audit.requestId, 'r-g1-2');
+    assert.equal(rec.audit.resaleAuthority, 'canonical-automatic'); assert.deepEqual(rec.audit.lotDisposal, null, 'no lot on this fixture'); assert.equal(rec.audit.items[0].quantity, 2); assert.equal(rec.audit.resaleQuote.payout, 100); assert.equal(rec.audit.requestId, 'r-g1-2');
     r = await sell('i1', 1);
     assert.equal(r.success, true); assert.deepEqual(plans[1].delete.items, ['i1'], 'a unique item is deleted whole');
     r = await sell('g1', 1.5); assert.equal(r.success, false); assert.equal(plans.length, 2, 'refusals write nothing');
@@ -264,6 +352,26 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
   assert.match(read('scripts/ui/shell/gm/GMApprovalOperationsService.js'), /kind: 'custom-droid-construction'[\s\S]{0,200}unitPaid: total/, 'custom droids record the quoted amount paid');
   assert.deepEqual(R.ledgerLineFields({ id: 'L', sourceUuid: SRC, finalCost: 410, publishedUnitCost: 500 }), { listingId: 'L', sourceUuid: SRC, sourceEntryKey: null, unitCost: 410, publishedUnitCost: 500 });
   ok('purchases record paid vs published per delivered Item / Droid / Vehicle / custom Droid (ledger line + stamped reference); resale verifies the pair');
+}
+// 8d. the purchase transaction wires lot ids (static: executeMutationTransaction needs a real recovery-snapshot store to run offline)
+{
+  const te = read('scripts/engine/store/transaction-engine.js');
+  const fn = te.slice(te.indexOf('static async executeMutationTransaction('), te.indexOf('static async executeCreditAdjustment(') > 0 ? te.indexOf('static async executeCreditAdjustment(') : undefined);
+  assert.match(fn, /lotId: lotIdFor\(transactionId, index\)/, 'each purchase line gets a lot id');
+  assert.match(fn, /stampAcquisitions\(plan, \{[^}]*lines: Array\.isArray\(auditLines\)/, 'delivered assets are allocated to those same lines');
+  assert.match(fn, /\.\.\.\(Array\.isArray\(auditLines\) \? \{ items: auditLines \} : \{\}\)/, 'the ledger record stores the lines with their lot ids');
+  ok('purchase transaction: ledger lines carry lot ids and the delivered assets are stamped from the same lines');
+}
+// 8e. evidence for the threat model: inventory can enter an Actor without a Store purchase (so a canonical source alone must not entitle)
+{
+  const drop = read('scripts/services/drop-service.js');
+  assert.match(drop, /Compendium item — create embedded copy[\s\S]{0,200}createEmbeddedDocuments\(targetActor, "Item"/, 'compendium drops create embedded Items with no acquisition record');
+  assert.match(drop, /moveEmbeddedDocuments\(sourceActor, targetActor/, 'transfers move Items between actors; the buyer\'s ledger stays with the buyer');
+  assert.doesNotMatch(drop, /acquisition/, 'nothing but the Store purchase transaction writes acquisition references');
+  const writers = ['scripts/apps', 'scripts/engine', 'scripts/services', 'scripts/sheets', 'scripts/ui'].flatMap(function walk(d) { return fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(`${d}/${e.name}`) : [`${d}/${e.name}`]); })
+    .filter(f => f.endsWith('.js') && /foundryvtt-swse'\]\.acquisition\s*=|foundryvtt-swse\.acquisition['"`]/.test(read(f))).map(f => f);
+  assert.deepEqual(writers.sort(), ['scripts/engine/store/acquisition-record.js'], 'the acquisition reference is stamped in exactly one place');
+  ok('threat model: compendium drops / transfers carry no entitlement; only the purchase transaction stamps acquisition references');
 }
 // 9. architecture-negative guards (S9-F/G)
 {

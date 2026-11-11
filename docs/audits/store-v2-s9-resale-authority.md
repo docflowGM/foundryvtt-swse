@@ -36,20 +36,24 @@ Every Store purchase now records three separate things:
 | Actual acquisition price | `unitCost` / `unitPaid` = what was charged for that line after GM markup/discount |
 | Current resale value | not stored; derived at quote time from policy |
 
-**Authoritative evidence = the purchaser's transaction-ledger line** (`audit.items[]`: `listingId`, `sourceUuid`/`sourceEntryKey`, `unitCost`, `publishedUnitCost`, `quantity`, `condition`). The delivered Item/Actor carries only a **reference** (`flags.foundryvtt-swse.acquisition`: `transactionId` + the same figures, stamped by `TransactionEngine` from a plan marker). `verifyAcquisition` re-reads the ledger and requires every figure to match, so editing the flag cannot raise a payout. Loot, GM grants and pre-ledger assets verify as **"acquisition cost unknown"** (never zero, never invented). Disposed units are counted from sale records (`resaleQuote.acquisitionTransactionId`), so one purchase is paid for once; the acquisition record is never deleted when an asset is sold.
+**Authoritative evidence = the purchaser's transaction-ledger line** (`audit.items[]`: `listingId`, `sourceUuid`/`sourceEntryKey`, `unitCost`, `publishedUnitCost`, `quantity`, `condition`). The delivered Item/Actor carries only a **reference** (`flags.foundryvtt-swse.acquisition`: `transactionId` + the same figures, stamped by `TransactionEngine` from a plan marker). `verifyAcquisition` re-reads the ledger and requires every figure to match, so editing the flag cannot raise a payout. Loot, GM grants and pre-ledger assets verify as **"acquisition cost unknown"** (never zero, never invented). Disposed units are counted per **lot** from sale records (`audit.lotDisposal`), never per embedded Item id, so one purchase is paid for once even if the Item is duplicated or re-created; the acquisition record is never deleted when an asset is sold.
 
 Covered purchase paths: catalog Items, stock Droids, published Vehicles (condition recorded), GM-approved purchases, and Store-built custom Droids (`kind: custom-droid-construction`, quote hash). Custom ships keep their sealed construction record; subsequent installations are **not** valued (no double counting, no invented value).
 
-## 4. Valuation rules
+## 4. Valuation rules (revised by the S9 financial-authority closure)
 
-**Embedded Item** (automatic, `canonical-automatic`):
-1. The Item must carry `_stats.compendiumSource` that resolves, by exact UUID, to a Store-catalog listing with the same name and type, and a published `system.cost`. The embedded copy's own `system.cost`/`price` is never read.
-2. No known customization surface may be populated (`system.installedUpgrades`, any `flags.swse.*` key matching upgrade/gearMods/modification/customiz/lightsaberConfig/installed). Customized Items need a GM appraisal; no modification value is invented.
-3. Basis policy (house rule `resaleBasis`, default `acquisition`, **a project policy not a published SWSE rule**): units whose purchase is verified in the ledger are valued at the price actually paid; other units fall back to the published cost, labelled. `published` uses published cost for all units.
-4. Payout = `floor(unit basis x policy %) x units`, policy % = existing `automaticSalePercentage` (default 50, capped at 100), per segment; bounded (`MAX_RESALE_CREDITS`). A 0 payout, missing price, mismatch or missing source -> **GM appraisal only**.
-5. Quantity: integer 1..owned; unique types sell alone; partial stacks decrement `system.quantity`; the whole stack/unique Item is deleted.
+**Decisions (project owner):** `resaleBasis = acquisition` is the default (published is an optional GM policy); whole Droids/Vehicles stay GM-approved (reference offers only) until ownership/disposition is verified in Foundry. Both are project policy, not SWSE RAW.
 
-**Whole Droids / Vehicles**: never automatic. A player submits a request; the GM sees evidence (verified paid cost, published new/used, purchased condition, custom construction total, stock/custom provenance) and a **policy reference** (e.g. verified paid 90,000 x 50% = 45,000) as a convenience, then states the amount and reason. Published used price is shown as evidence only; it is not turned into a buyback formula.
+**Embedded Item, automatic (`canonical-automatic`) — requires a TRUSTED ACQUISITION ENTITLEMENT:**
+1. A canonical `_stats.compendiumSource` proves what an Item *is*, not that the holder legitimately obtained it. Evidence from the code (`services/drop-service.js`): a player can drop a compendium Item onto an owned sheet and get an embedded copy with no Store transaction; cross-actor drops move Items with their flags; embedded Items/flags are player-editable. Only the Store purchase transaction stamps `flags.foundryvtt-swse.acquisition` (tested: one writer).
+2. Entitlement exists only for units whose purchase is **verified in the holder's own ledger** by exact **lot id** (`<transactionId>:<line index>`, written to the ledger line AND stamped on the delivered doc), with matching listing, source, unit price and condition, **not already paid out** (per lot: every committed sale of an Item claiming the lot, automatic or GM-appraised, records `audit.lotDisposal`), and **not claimed by more than one owned Item** (duplicate / copied reference / split stack -> nobody is entitled).
+3. Anything else — loot, GM grants, legacy inventory, dragged-in or duplicated Items, units added to a stack later, forged/copied references — has **no automatic value**. It can be sold through a **GM appraisal**; the GM sees a published-cost *reference* (`reference.payoutAtPublished`) that is never paid on its own. "Acquisition cost unknown" means the system cannot authorize payment, not that the Item is worthless. (An independently authorized grant record is not implemented; GM appraisal is the route.)
+4. The basis policy only chooses the price for entitled units: `acquisition` = verified price paid; `published` = canonical published cost (still only for entitled units). The embedded copy's own `system.cost`/`price` is never read.
+5. Customized Items (installed upgrades/mods/lightsaber config) are never automatic.
+6. Payout = `floor(unit basis x policy %) x units`, % capped at 100, bounded. Selling more units than are entitled is refused for automatic mode (a stack with one verified unit sells that one unit automatically; the rest need appraisal).
+7. Quantity: integer 1..owned; unique types sell alone; partial stacks decrement `system.quantity`; the whole stack/unique Item is deleted.
+
+**Whole Droids / Vehicles**: never automatic. A player submits a request; the GM sees evidence (verified paid cost, published new/used, purchased condition, custom construction total, stock/custom provenance) and a **policy reference** (e.g. verified paid 90,000 x 50% = 45,000), then states the amount and reason. Published used price is evidence only.
 
 ## 5. Authorities recorded in the ledger
 
@@ -63,6 +67,7 @@ Covered purchase paths: catalog Items, stock Droids, published Vehicles (conditi
 | Edited item price / acquisition flag | valuation uses the canonical listing; acquisition is verified against the ledger |
 | Non-GM decisions | `store-sale-approval` / `store-haggle-sale` / appraisals / asset sales require `game.user.isGM` inside the engine boundary and at `resolvePendingSaleRequest` |
 | Another actor's inventory | item must belong to the (permission-checked) actor; assets must be owned in both directions (`system.ownedByActorId` and the owner's `ownedActors`) |
+| Duplicate / copied / dragged-in Items | no ledger-verified unspent unambiguous lot -> no automatic payout (GM appraisal only) |
 | Replay / double approval | `requestId` already in the actor's ledger is refused; same-client lock; item/asset gone or flagged `resale.status` |
 | Partial/stale state | quantity, ownership, source, policy re-read at commit; any change -> refusal |
 | No rollback snapshot | **sale refused** (credit creation requires a verified snapshot, like credit adjustments) |
@@ -90,7 +95,7 @@ The Actor is **kept, never deleted**: `ownership` reduced to `{default: 0, GM: o
 
 ## 10. Tests
 
-New: `tests/store-v2-s9-resale-authority.test.mjs` (11 checks). Updated for the new contract: `ti4c0-g24-pending-sale-identity` (stub derives payout from shown quote/appraisal; requests carry a canonical quote). See the final report for the full-suite result and baseline failures.
+New: `tests/store-v2-s9-resale-authority.test.mjs` (14 checks, incl. forged / copied / duplicated / consumed / unspecified-lot references, mixed-price same-listing lots, appraisal lot consumption, threat-model evidence). Updated for the new contract: `ti4c0-g24-pending-sale-identity` (stub derives payout from shown quote/appraisal; requests carry a canonical quote). See the final report for the full-suite result and baseline failures.
 
 ## 11. Runtime-unverified / remaining
 
