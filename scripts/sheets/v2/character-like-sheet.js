@@ -31,7 +31,7 @@ import { getForceAlchemySuggestedRiteForItem } from "/systems/foundryvtt-swse/sc
 import { launchFollowerProgression, launchMinionCreation } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
-import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
+import { initiateResale } from "/systems/foundryvtt-swse/scripts/apps/store/resale-ui.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
 import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
@@ -3923,20 +3923,6 @@ const forcePoints = [];
       }, { signal });
     });
 
-    // Sell item
-    html.querySelectorAll(".item-sell").forEach(button => {
-      button.addEventListener("click", async (event) => {
-        const row = event.currentTarget.closest(".inventory-row");
-        const itemId = row?.dataset.itemId;
-        if (itemId) {
-          const item = this.actor.items.get(itemId);
-          if (item) {
-            await initiateItemSale(item, this.actor);
-          }
-        }
-      }, { signal });
-    });
-
     // Delete/Remove item
     html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="toggle-weapon-readiness"], [data-action="draw-and-ignite-lightsaber"], [data-action="reconcile-weapon-transaction"], [data-action="change-weapon-configuration"], [data-action="set-power-source"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
       button.addEventListener("click", async (event) => {
@@ -4010,11 +3996,8 @@ const forcePoints = [];
             openItemCustomization(this.actor, item);
             break;
           case "sell-item":
-            // Phase 5A fix: rendered in gear-tab.hbs (data-action="sell-item"),
-            // previously had no reachable handler (the only existing sell logic,
-            // the `.item-sell` class selector above, does not match this button's
-            // markup). Reuses the same authoritative `initiateItemSale` flow.
-            await initiateItemSale(item, this.actor);
+            // The one sell entry point (every template renders data-action="sell-item"): the V2 resale flow.
+            await initiateResale(item, this.actor);
             break;
           case "force-alchemy": {
             // Phase 5A fix: rendered in gear-tab.hbs (data-action="force-alchemy"),

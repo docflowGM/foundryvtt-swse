@@ -43,7 +43,7 @@ let actors = {};
 
 const mkActor = (id, itemIds) => ({ id, name: `Actor ${id}`, system: { credits: 1000 },
   items: Object.assign(itemIds.map((i) => ({ id: i, name: `Item ${i}` })), { get(x) { return this.find((i) => i.id === x) ?? null; } }) });
-const sale = (id, over = {}) => ({ id, actorId: 'A', actor: 'Actor A', itemId: `item_${id}`, item: `Item ${id}`, value: 100, requestedPrice: 100, suggestedPrice: 100, status: 'Pending', timestamp: 1000, ...over });
+const sale = (id, over = {}) => ({ id, actorId: 'A', actor: 'Actor A', itemId: `item_${id}`, item: `Item ${id}`, value: 100, requestedPrice: 100, suggestedPrice: 100, status: 'Pending', timestamp: 1000, canonicalQuote: { payout: over.requestedPrice ?? 100, quoteHash: 'q' }, ...over });   // S9: a request carries the canonical quote the engine re-derives at commit
 
 function install(requests, { owners = {} } = {}) {
   Object.assign(probe, { saleCalls: [], gate: null, gates: {}, failSale: false, setDelay: 0, failSet: false, shared: false });
@@ -59,14 +59,15 @@ function install(requests, { owners = {} } = {}) {
   for (const [id, items] of Object.entries(owners)) actors[id] = mkActor(id, items);
   globalThis.game = { ...(savedGame ?? {}), user: { id: 'gm', name: 'GM', isGM: true }, actors: { get: (id) => actors[id] ?? null } };
   TransactionEngine.executeSaleTransaction = async (ctx) => {
-    probe.saleCalls.push({ itemId: ctx.itemId, salePrice: ctx.salePrice, context: ctx.transactionContext, requestId: ctx.audit?.requestId, source: ctx.audit?.source });
+    const salePrice = ctx.shownQuote?.payout ?? ctx.appraisal?.amount;   // S9: the engine, not the caller, derives the payout; the stub mirrors the two authorities
+    probe.saleCalls.push({ itemId: ctx.itemId, salePrice, context: ctx.transactionContext, requestId: ctx.audit?.requestId, source: ctx.audit?.source });
     if (probe.gate) await probe.gate;
     if (probe.gates[ctx.itemId]) await probe.gates[ctx.itemId];
     if (probe.failSale) return { success: false, error: 'sale refused' };
     const a = ctx.actor; const idx = a.items.findIndex((i) => i.id === ctx.itemId);
     if (idx < 0) return { success: false, error: 'item missing' };
-    a.items.splice(idx, 1); a.system.credits += ctx.salePrice;
-    return { success: true, transactionId: `tx_${probe.saleCalls.length}`, error: null };
+    a.items.splice(idx, 1); a.system.credits += salePrice;
+    return { success: true, transactionId: `tx_${probe.saleCalls.length}`, error: null, amount: salePrice };
   };
   const dash = new GMStoreDashboard(); dash.renders = 0; dash.render = () => { dash.renders++; };
   return dash;

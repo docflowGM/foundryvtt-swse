@@ -76,6 +76,7 @@ test('GM override sells an unpriced vehicle only with complete recorded authorit
 });
 
 // ---- cost-registry integration (module imports a Foundry path) ----
+const costSource = a => ({ type: 'vehicle', economics: rec(a).economics });
 function registry() {
   const code = readFileSync('scripts/engine/store/cost-registry.js', 'utf8')
     .replace(/^import[\s\S]*?;\s*$/gm, '').replace(/\bexport\s+/g, '');
@@ -87,38 +88,44 @@ function registry() {
 test('store cost record for canonical vehicles comes from published economics, not mirrored system.cost', () => {
   const R = registry();
   const x = actors.find(a => a.system.vehicleSourceEntryKey === 'core-incom-t-65b-x-wing-starfighter');
-  const rc = R.buildStoreCostRecord(x);
+  const rc = R.buildStoreCostRecord(costSource(x));
   assert.equal(rc.pricingMode, 'new-used');
   assert.equal(rc.baseCostNew, 150000);
   assert.equal(rc.baseCostUsed, 65000);
   const hasNoUsed = actors.find(a => rec(a).economics?.priceNew?.status === 'priced' && rec(a).economics?.priceUsed?.status !== 'priced');
-  const r2 = R.resolveStoreCost(R.buildStoreCostRecord(hasNoUsed), {});
+  const r2 = R.resolveStoreCost(R.buildStoreCostRecord(costSource(hasNoUsed)), {});
   assert.equal(r2.costUsed, null, 'missing used price stays null, never 0');
   assert.ok(r2.costNew > 0);
-  assert.equal(R.isStorePurchasable(R.buildStoreCostRecord(hasNoUsed), { condition: 'used' }), false);
+  assert.equal(R.isStorePurchasable(R.buildStoreCostRecord(costSource(hasNoUsed)), { condition: 'used' }), false);
   const nfs = actors.find(a => rec(a).economics?.priceNew?.status === 'not-for-sale');
-  const rn = R.buildStoreCostRecord(nfs);
+  const rn = R.buildStoreCostRecord(costSource(nfs));
   assert.equal(rn.costStatus, 'unavailable');
   assert.deepEqual(JSON.parse(JSON.stringify(R.resolveStoreCost(rn, {}))), { cost: null, costNew: null, costUsed: null, usedCondition: null });
   // a tampered mirror cannot create a price
   const forged = structuredClone(nfs); forged.system.cost = 99999; forged.system.costNumeric = 99999;
-  assert.equal(R.buildStoreCostRecord(forged).costStatus, 'unavailable');
-  // non-canonical vehicles keep legacy pricing
-  assert.equal(R.buildStoreCostRecord({ type: 'vehicle', system: { cost: 1000 }, flags: {} }).costStatus, 'priced');
+  assert.equal(R.buildStoreCostRecord(costSource(forged)).costStatus, 'unavailable');
+  // a vehicle without published source economics is never priced from a mirrored system.cost (clean break)
+  assert.equal(R.buildStoreCostRecord({ type: 'vehicle', system: { cost: 1000 }, flags: {} }).costStatus, 'missing');
 });
 
 test('every one of the 429 yields a store cost record consistent with its published state', () => {
   const R = registry();
   for (const a of actors) {
-    const rc = R.buildStoreCostRecord(a), st = rec(a).economics?.priceNew?.status;
+    const rc = R.buildStoreCostRecord(costSource(a)), st = rec(a).economics?.priceNew?.status;
     if (st === 'priced') assert.equal(rc.baseCostNew, rec(a).economics.priceNew.amountCredits);
-    else { assert.equal(rc.baseCostNew, null); assert.notEqual(rc.costStatus, 'conditional'); }
+    else {
+      // no published new price: never a new price. A vehicle is offerable only in a condition with its own published price.
+      assert.equal(rc.baseCostNew, null);
+      const used = rec(a).economics?.priceUsed;
+      if (used?.status === 'priced') { assert.equal(rc.costStatus, 'conditional'); assert.equal(rc.baseCostUsed, used.amountCredits); }
+      else assert.notEqual(rc.costStatus, 'conditional');
+    }
   }
 });
 
 // ---- static wiring guards ----
 const checkout = readFileSync('scripts/apps/store/store-checkout.js', 'utf8');
-const loader = readFileSync('scripts/engine/store/loader.js', 'utf8');
+const catalog = readFileSync('scripts/engine/store/store-catalog.js', 'utf8');
 const constants = readFileSync('scripts/engine/store/store-constants.js', 'utf8');
 
 test('checkout: source eligibility is evaluated before any debit, exact price on drift, no retired pack', () => {
@@ -126,18 +133,16 @@ test('checkout: source eligibility is evaluated before any debit, exact price on
   assert.doesNotMatch(checkout, /vehicle\.cost \* 0\.05/);
   assert.match(checkout, /currentPrice !== vehicle\.cost/);
   assert.doesNotMatch(checkout, /foundryvtt-swse\.vehicles['"`]/);
-  for (const fn of ['buyVehicle', 'checkout']) {
+  for (const fn of ['checkout']) {
     const body = checkout.slice(checkout.indexOf(`export async function ${fn}(`));
     assert.ok(body.indexOf('createVehiclePlans(') < body.indexOf('StoreEngine.purchase('), fn);
   }
 });
 
-test('loader: world vehicles are not inventory; catalog completeness enforced; legacy cache purged', () => {
-  assert.match(loader, /a\.type === 'droid'\);/);
-  assert.doesNotMatch(loader, /a\.type === 'vehicle'/);
-  assert.match(loader, /loadVehicleIndex\(\)/);
-  assert.match(loader, /filter\(doc => doc\?\.type !== 'vehicle'\)/);
-  assert.match(loader, /version: 7/);
-  assert.match(constants, /swse-store-cache-v6/);
-  assert.match(constants, /LEGACY_CACHE_KEYS: \['swse-store-cache-v5'\]/);
+test('catalog: only canonical packs are inventory; vehicle catalog completeness enforced; no document cache', () => {
+  assert.doesNotMatch(catalog, /game\.items|game\.actors/);
+  assert.doesNotMatch(catalog, /localStorage|getDocuments\(/);
+  assert.match(catalog, /loadVehicleIndex\(\)/);
+  assert.match(catalog, /A partial vehicle catalog is never shown/);
+  assert.doesNotMatch(constants, /CACHE_KEY|LEGACY_CACHE_KEYS/);
 });

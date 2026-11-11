@@ -14,7 +14,6 @@ import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps
  */
 
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
-import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
 
 /**
  * Activate inventory UI listeners
@@ -49,20 +48,6 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
       const row = event.currentTarget.closest(".inventory-row");
       const itemId = row?.dataset.itemId;
       if (itemId) await InventoryEngine.incrementQuantity(sheet.actor, itemId);
-    }, { signal });
-  });
-
-  // Sell item
-  html.querySelectorAll(".item-sell").forEach(button => {
-    button.addEventListener("click", async (event) => {
-      const row = event.currentTarget.closest(".inventory-row");
-      const itemId = row?.dataset.itemId;
-      if (itemId) {
-        const item = sheet.actor.items.get(itemId);
-        if (item) {
-          await initiateItemSale(item, sheet.actor);
-        }
-      }
     }, { signal });
   });
 

@@ -139,15 +139,7 @@ function rawExportActor({ dexBase = 10 } = {}) {
 // ---------------------------------------------------------------------------
 {
   const fs = await import('node:fs');
-  const storeSrc = fs.readFileSync(
-    new URL('../scripts/engine/store/index.js', import.meta.url),
-    'utf8'
-  );
-  assert.match(
-    storeSrc,
-    /const abilities = system\.attributes \|\| system\.abilities \|\| \{\};/,
-    'store/index.js#getDroidStatblockQuality must check system.attributes before the legacy system.abilities mirror'
-  );
+  // (store/index.js droid statblock-quality heuristic was deleted in Store V2 S1; nothing left to guard.)
 
   const creatorSrc = fs.readFileSync(
     new URL('../scripts/apps/template-character-creator.js', import.meta.url),

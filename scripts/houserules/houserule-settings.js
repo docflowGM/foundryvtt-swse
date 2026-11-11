@@ -190,6 +190,16 @@ export function registerHouseruleSettings() {
     default: 50
   });
 
+  register('resaleBasis', {
+    name: 'Resale Basis',
+    hint: 'What a sell-back percentage is applied to. "Acquisition": the price actually paid when a verified purchase record exists (published cost otherwise). "Published": always the published cost. Whole droids and vehicles are always GM-appraised.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: { acquisition: 'Actual acquisition price (verified)', published: 'Published price' },
+    default: 'acquisition'
+  });
+
   register('disallowAutoSellNoPrice', {
     name: 'Disallow Auto Sell Without Price',
     hint: 'Prevent automatic sell-back when an item has no valid price.',

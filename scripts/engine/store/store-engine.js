@@ -46,17 +46,15 @@
  *   - purchase(context)           : Execute a verified commerce transaction [CONSOLIDATED]
  */
 
-import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/index.js";
-import { STORE_RULES } from "/systems/foundryvtt-swse/scripts/engine/store/store-constants.js";
+import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js";
+import { ledgerLineFields } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { freezePricing, unfreezePricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import { applyStorePoliciesToIndex, consumeInventoryPolicyQuantities, restoreInventoryPolicyQuantities } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
-import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
 
 const logger = () => SWSELogger || globalThis.swseLogger || console;
 
@@ -80,7 +78,7 @@ export class StoreEngine {
       logger().info('StoreEngine: Loading inventory', { useCache, ignorePolicies });
 
       // Load and process inventory through full pipeline
-      const index = await buildStoreIndex({ useCache });
+      const index = await buildStoreIndex({ refresh: useCache === false });
 
       if (!ignorePolicies) {
         // Apply legality/availability policies (future extensibility)
@@ -224,53 +222,39 @@ export class StoreEngine {
   }
 
   /**
-   * Validate that prices haven't changed significantly since checkout started
-   * Returns { valid: boolean, currentTotal: number, priceDiff: number }
-   * @param {Array} cartItems - items from cart (should have id and cost)
-   * @param {Number} originalTotal - total price at checkout time
-   * @returns {Object} validation result
+   * Validate that the charged total exactly equals the sum of the quoted line prices.
+   * No tolerance, and fail closed: a cart whose price cannot be verified is never charged.
+   * Returns { valid: boolean, currentTotal: number, priceDiff: number, reason: string|null }
+   * @param {Array} cartItems - items with a quoted finalCost (or cost)
+   * @param {Number} originalTotal - total the buyer confirmed
    * @private
    */
   static async _validatePricesAtPurchaseTime(cartItems = [], originalTotal = 0) {
     try {
-      // Rebuild price from scratch based on current store state
       let currentTotal = 0;
       for (const item of cartItems) {
         if (!item || !item.id) continue;
-        // Item should have finalCost already set by engine during inventory load
-        currentTotal += item.finalCost ?? 0;
+        const line = Number(item.finalCost ?? item.cost);
+        if (!Number.isFinite(line) || line < 0) {
+          return { valid: false, currentTotal: 0, priceDiff: NaN, reason: `No valid quoted price for "${item.name ?? item.id}"; nothing was charged.` };
+        }
+        currentTotal += line;
       }
 
       const priceDiff = Math.abs(currentTotal - originalTotal);
-      const threshold = originalTotal * 0.05; // 5% tolerance
-
-      if (priceDiff > threshold) {
-        logger().warn('StoreEngine: Significant price change detected', {
-          originalTotal,
-          currentTotal,
-          diff: priceDiff,
-          threshold
-        });
+      if (priceDiff !== 0) {
+        logger().warn('StoreEngine: Price mismatch; purchase refused', { originalTotal, currentTotal, diff: priceDiff });
         return {
           valid: false,
           currentTotal,
           priceDiff,
-          reason: `Price changed from ${originalTotal} to ${currentTotal} credits`
+          reason: `Price changed from ${originalTotal} to ${currentTotal} credits. Review your cart; nothing was charged.`
         };
       }
-
-      return {
-        valid: true,
-        currentTotal,
-        priceDiff,
-        reason: null
-      };
+      return { valid: true, currentTotal, priceDiff: 0, reason: null };
     } catch (err) {
-      logger().warn('StoreEngine: Price validation failed, proceeding with original', {
-        error: err.message
-      });
-      // Non-fatal: if validation fails, allow purchase to proceed
-      return { valid: true, currentTotal: originalTotal, priceDiff: 0 };
+      logger().error('StoreEngine: Price validation failed; purchase refused', { error: err.message });
+      return { valid: false, currentTotal: 0, priceDiff: NaN, reason: 'Prices could not be verified; nothing was charged.' };
     }
   }
 
@@ -382,8 +366,9 @@ export class StoreEngine {
             name: item.name || 'Unknown Item',
             type: item.type || 'item',
             quantity: normalizeCredits(item.quantity ?? 1) || 1,
-            cost: normalizeCredits(item.finalCost ?? item.cost ?? item.price ?? 0),
+            cost: normalizeCredits(item.finalCost ?? item.cost ?? 0),
             condition: item.condition || null,
+            ...ledgerLineFields(item),   // listingId, sourceUuid, unitCost (actual paid per unit), publishedUnitCost: the evidence resale later verifies
             customized: !!item.stagedCustomization
           })),
           hasCustomizedStoreItem

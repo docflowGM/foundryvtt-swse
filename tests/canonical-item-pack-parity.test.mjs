@@ -19,8 +19,8 @@ for (const family of Object.keys(FAMILIES)) {
   const grouped = corpus.records.filter(r => r.document.system.cost !== undefined);
   assert.ok(grouped.length > 0, family + ' prices must be preserved');
 }
-// A cache-key bump prevents 24-hour browser inventory caches from showing superseded armor records.
-assert.match(fs.readFileSync(path.join(ROOT, 'scripts/engine/store/store-constants.js'), 'utf8'), /CACHE_KEY: 'swse-store-cache-v6'/);
+// Store V2: there is no browser-stored copy of pack documents to go stale; the catalog reads the canonical pack index each session.
+assert.doesNotMatch(fs.readFileSync(path.join(ROOT, 'scripts/engine/store/store-constants.js'), 'utf8'), /CACHE_KEY/);
 // Weapons already have their own stronger canonical JSON -> pack generator.
 execFileSync(process.execPath, ['tools/build-weapon-production.mjs', '--check'], {cwd: ROOT, stdio: 'pipe'});
 console.log('canonical-item-pack-parity: 13 generated armor/equipment packs + canonical weapons verified');

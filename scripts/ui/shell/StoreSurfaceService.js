@@ -7,15 +7,11 @@
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { hydrateStoreListing } from '/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js';
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 import {
   buildStoreNavigationModel,
-  normalizeArmorSubcategory,
-  normalizeDroidSubcategory,
-  normalizeVehicleSubcategory,
-  getDroidFamily,
-  getVehicleFamily,
   getVehicleChallengeBand,
   getVehicleChallengeBandLabel,
   getVehicleChallengeLevel,
@@ -34,92 +30,19 @@ import {
   getVehicleWeaponsKey,
   getVehicleShieldsKey,
   getVehicleBooleanFeatureLabel,
-  getWeaponFamily
+  normalizeStoreFilterValue,
+  storeItemCategoryKey,
+  getStoreNavigationSubcategory,
+  getStoreNavigationFamily,
+  positiveCreditOrNull,
+  resolveVehicleStoreCosts,
+  vehiclePriceStatusLabel
 } from '/systems/foundryvtt-swse/scripts/apps/store/store-shared.js';
 import { getStoreCurrencySymbol } from '/systems/foundryvtt-swse/scripts/apps/store/store-description-resolver.js';
 
 // Module-level cache: actorId → SWSEStore instance
 const _instanceCache = new Map();
 
-function _normalizeStoreFilterValue(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[’']/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function _categoryKey(item = {}) {
-  const raw = String(item.category ?? item.type ?? '').trim().toLowerCase();
-  if (!raw) return '';
-  if (raw.includes('weapon')) return 'weapons';
-  if (raw.includes('armor')) return 'armor';
-  if (raw.includes('droid')) return 'droids';
-  if (raw.includes('vehicle') || raw.includes('ship') || raw.includes('speeder') || raw.includes('walker')) return 'vehicles';
-  if (raw.includes('gear') || raw.includes('equipment') || raw.includes('medical') || raw.includes('security') || raw.includes('survival') || raw.includes('tech') || raw.includes('tool')) return 'gear';
-  return raw.replace(/\s+/g, '-');
-}
-
-function _navSubcategory(item = {}) {
-  const categoryKey = _categoryKey(item);
-  if (categoryKey === 'armor') return normalizeArmorSubcategory(item);
-  if (categoryKey === 'droids') return normalizeDroidSubcategory(item);
-  if (categoryKey === 'vehicles') return normalizeVehicleSubcategory(item);
-  return String(item.subcategory ?? item.system?.subcategory ?? item.system?.category ?? '').trim();
-}
-
-function _navFamily(item = {}) {
-  const categoryKey = _categoryKey(item);
-  if (categoryKey === 'weapons') return getWeaponFamily(_navSubcategory(item));
-  if (categoryKey === 'droids') return getDroidFamily(item);
-  if (categoryKey === 'vehicles') return getVehicleFamily(_navSubcategory(item));
-  return '';
-}
-
-function _vehicleSizeMatches(item = {}, filter = '') {
-  const key = _normalizeStoreFilterValue(filter);
-  if (!key || key === 'all') return true;
-  return getVehicleSizeKey(item) === key;
-}
-
-function _vehicleChallengeMatches(item = {}, filter = '') {
-  const key = _normalizeStoreFilterValue(filter);
-  if (!key || key === 'all') return true;
-  return getVehicleChallengeBand(item) === key;
-}
-
-function _vehicleRoleMatches(item = {}, filter = '') {
-  const key = _normalizeStoreFilterValue(filter);
-  if (!key || key === 'all') return true;
-  return getVehicleRoleKey(item) === key;
-}
-
-
-
-function _vehicleCrewMatches(item = {}, filter = '') {
-  const key = _normalizeStoreFilterValue(filter);
-  if (!key || key === 'all') return true;
-  return getVehicleCrewGroup(item) === key;
-}
-
-function _vehiclePassengerMatches(item = {}, filter = '') {
-  const key = _normalizeStoreFilterValue(filter);
-  if (!key || key === 'all') return true;
-  return getVehiclePassengerGroup(item) === key;
-}
-
-function _vehicleCargoMatches(item = {}, filter = '') {
-  const key = _normalizeStoreFilterValue(filter);
-  if (!key || key === 'all') return true;
-  return getVehicleCargoGroup(item) === key;
-}
-
-function _vehicleFeatureMatches(item = {}, filter = '', getter = null) {
-  const key = _normalizeStoreFilterValue(filter);
-  if (!key || key === 'all' || typeof getter !== 'function') return true;
-  return getter(item) === key;
-}
 const STORE_SPLASH_COMPANIES = [
   ['Adarian government', 'ADG'], ['AestheTech Incorporated', 'ATI'], ['Arlen-Dempler Luxury Speeders', 'ADLS'],
   ['Aurodiseal', 'AUR'], ['Bakiska\'s', 'BAK'], ['Begamor Heavy Industry Group', 'BHIG'],
@@ -189,7 +112,7 @@ function _marketChange(seed = Math.random()) {
 
 function _storeCardLetter(item = {}) {
   const type = String(item.type || '').toLowerCase();
-  const categoryKey = _categoryKey(item);
+  const categoryKey = storeItemCategoryKey(item);
   const category = String(item.category || '').toLowerCase();
   const name = String(item.name || '').trim();
 
@@ -203,7 +126,7 @@ function _storeCardLetter(item = {}) {
 }
 
 function _storeCardLabel(item = {}) {
-  const categoryKey = _categoryKey(item);
+  const categoryKey = storeItemCategoryKey(item);
   const labels = {
     weapons: 'Weapon',
     armor: 'Armor',
@@ -216,10 +139,10 @@ function _storeCardLabel(item = {}) {
 }
 
 function _decorateStoreCardItem(item = {}) {
-  const categoryKey = _categoryKey(item);
-  const navigationFamily = item.navigationFamily || _navFamily(item);
+  const categoryKey = storeItemCategoryKey(item);
+  const navigationFamily = item.navigationFamily || getStoreNavigationFamily(item);
   const vehicleChallengeBand = categoryKey === 'vehicles' ? (item.vehicleChallengeBand || getVehicleChallengeBand(item)) : '';
-  const vehicleCosts = categoryKey === 'vehicles' ? _resolveVehicleStoreCosts(item) : { newCost: null, usedCost: null };
+  const vehicleCosts = categoryKey === 'vehicles' ? resolveVehicleStoreCosts(item) : { newCost: null, usedCost: null };
   return {
     ...item,
     ...(categoryKey === 'vehicles' ? {
@@ -231,10 +154,10 @@ function _decorateStoreCardItem(item = {}) {
       vehiclePriceStatus: categoryKey === 'vehicles' ? (item.vehiclePriceStatus || item.system?.vehiclePriceStatus || item.costStatus || '') : '',
       vehiclePriceLabel: categoryKey === 'vehicles' ? (item.vehiclePriceLabel || item.system?.vehiclePriceLabel || '') : '',
       vehiclePriceReviewNeeded: categoryKey === 'vehicles' ? (item.vehiclePriceReviewNeeded === true || item.system?.vehiclePriceReviewNeeded === true) : false,
-      vehiclePriceStatusLabel: categoryKey === 'vehicles' ? _vehiclePriceStatusLabel(item) : ''
+      vehiclePriceStatusLabel: categoryKey === 'vehicles' ? vehiclePriceStatusLabel(item) : ''
     } : {}),
-    subcategory: item.subcategory || _navSubcategory(item),
-    subcategoryKey: item.subcategoryKey || _normalizeStoreFilterValue(_navSubcategory(item)),
+    subcategory: item.subcategory || getStoreNavigationSubcategory(item),
+    subcategoryKey: item.subcategoryKey || normalizeStoreFilterValue(getStoreNavigationSubcategory(item)),
     cardLetter: item.cardLetter || _storeCardLetter(item),
     glyphLabel: item.glyphLabel || _storeCardLabel(item),
     weaponFamily: categoryKey === 'weapons' ? (item.weaponFamily || navigationFamily) : '',
@@ -259,34 +182,8 @@ function _decorateStoreCardItem(item = {}) {
 
 
 
-function _positiveCreditOrNull(value) {
-  if (value === null || value === undefined || value === '') return null;
-  const numeric = Number(value);
-  return Number.isFinite(numeric) && numeric > 0 ? numeric : null;
-}
-
-function _resolveVehicleStoreCosts(item = {}) {
-  const newCost = _positiveCreditOrNull(item.newCost)
-    ?? _positiveCreditOrNull(item.finalCostNew)
-    ?? _positiveCreditOrNull(item.finalCost)
-    ?? _positiveCreditOrNull(item.costNew)
-    ?? _positiveCreditOrNull(item.cost);
-  const usedCost = _positiveCreditOrNull(item.usedCost)
-    ?? _positiveCreditOrNull(item.costUsed)
-    ?? _positiveCreditOrNull(item.finalCostUsed);
-  return { newCost, usedCost };
-}
-
-function _vehiclePriceStatusLabel(item = {}) {
-  const status = item.system?.vehiclePriceStatus || item.vehiclePriceStatus || item.costStatus || '';
-  if (status === 'review') return 'Price needs source review';
-  if (status === 'unavailable') return 'Not publicly available';
-  if (status === 'missing') return 'Price unknown';
-  return '';
-}
-
 function _storePriceLabel(value) {
-  const numeric = _positiveCreditOrNull(value);
+  const numeric = positiveCreditOrNull(value);
   if (numeric === null) return '—';
   return numeric.toLocaleString();
 }
@@ -370,13 +267,13 @@ function _buildSelectedProductDetail(product = null) {
     { label: 'Policy', value: product.blockedReason ? product.blockedReason : (product.canPurchase === false ? 'Blocked' : 'Purchasable') }
   ].filter(row => row.value !== undefined && row.value !== null && String(row.value).trim() !== '');
 
-  const vehicleCosts = product.requiresCondition ? _resolveVehicleStoreCosts(product) : { newCost: null, usedCost: null };
+  const vehicleCosts = product.requiresCondition ? resolveVehicleStoreCosts(product) : { newCost: null, usedCost: null };
   const priceOptions = product.requiresCondition
     ? [
         { label: 'New', value: vehicleCosts.newCost, valueLabel: _storePriceLabel(vehicleCosts.newCost), condition: 'new' },
         { label: 'Used', value: vehicleCosts.usedCost, valueLabel: _storePriceLabel(vehicleCosts.usedCost), condition: 'used' }
-      ].filter(option => _positiveCreditOrNull(option.value) !== null)
-    : [{ label: 'Price', value: product.price ?? product.finalCost ?? product.cost, valueLabel: _storePriceLabel(product.price ?? product.finalCost ?? product.cost), condition: '' }].filter(option => _positiveCreditOrNull(option.value) !== null);
+      ].filter(option => positiveCreditOrNull(option.value) !== null)
+    : [{ label: 'Price', value: product.price ?? product.finalCost ?? product.cost, valueLabel: _storePriceLabel(product.price ?? product.finalCost ?? product.cost), condition: '' }].filter(option => positiveCreditOrNull(option.value) !== null);
 
   const summaryText = _stripHtml(product.descriptionBasic || product.description || product.descriptionAurebesh || '')
     || product.suggestionBullets?.[0]
@@ -398,7 +295,7 @@ function _buildSelectedProductDetail(product = null) {
 }
 
 function _buildScratchBuilderActions(currentCategory = '') {
-  const key = _normalizeStoreFilterValue(currentCategory || '');
+  const key = normalizeStoreFilterValue(currentCategory || '');
   const isDroidCategory = key === 'droids' || key === 'droid' || key.includes('droid');
   const isVehicleCategory = key === 'vehicles' || key === 'vehicle' || key === 'ships' || key === 'shipyard'
     || key.includes('vehicle') || key.includes('ship') || key.includes('speeder') || key.includes('walker');
@@ -504,7 +401,7 @@ function _buildHotDealsFromItems(allItems = []) {
         items: []
       });
     }
-    const vehicleCosts = _categoryKey(item) === 'vehicles' ? _resolveVehicleStoreCosts(item) : { newCost: null, usedCost: null };
+    const vehicleCosts = storeItemCategoryKey(item) === 'vehicles' ? resolveVehicleStoreCosts(item) : { newCost: null, usedCost: null };
     const price = vehicleCosts.newCost ?? item.price ?? item.finalCost ?? item.cost ?? item.costNew ?? null;
     groups.get(categoryKey).items.push({
       id: item.id,
@@ -513,8 +410,8 @@ function _buildHotDealsFromItems(allItems = []) {
       categoryKey,
       storeCategory: item.category || categoryKey,
       displayCategory: _categoryLabel(categoryKey),
-      price: _positiveCreditOrNull(price) ?? Number.MAX_SAFE_INTEGER,
-      priceLabel: _positiveCreditOrNull(price) !== null ? _formatCredits(price) : '—',
+      price: positiveCreditOrNull(price) ?? Number.MAX_SAFE_INTEGER,
+      priceLabel: positiveCreditOrNull(price) !== null ? _formatCredits(price) : '—',
       rarity: item.rarityLabel || item.availability || '',
       tag: _itemTag(item)
     });
@@ -551,7 +448,7 @@ function _buildHotDealsFromItems(allItems = []) {
 function _buildVehicleSizeOptions(items = [], currentVehicleSize = null) {
   const seen = new Map();
   for (const item of items) {
-    if (_categoryKey(item) !== 'vehicles') continue;
+    if (storeItemCategoryKey(item) !== 'vehicles') continue;
     const key = getVehicleSizeKey(item);
     const label = getVehicleSizeLabel(item);
     if (key && label && !seen.has(key)) seen.set(key, label);
@@ -572,7 +469,7 @@ function _buildVehicleSizeOptions(items = [], currentVehicleSize = null) {
 function _buildVehicleClOptions(items = [], currentVehicleCl = null) {
   const counts = new Map();
   for (const item of items) {
-    if (_categoryKey(item) !== 'vehicles') continue;
+    if (storeItemCategoryKey(item) !== 'vehicles') continue;
     const band = getVehicleChallengeBand(item);
     if (!band) continue;
     counts.set(band, (counts.get(band) || 0) + 1);
@@ -585,14 +482,14 @@ function _buildVehicleClOptions(items = [], currentVehicleCl = null) {
 
 
 function _buildVehicleRoleOptions(items = [], currentSubcategory = null, currentVehicleRole = null) {
-  const bucketKey = _normalizeStoreFilterValue(currentSubcategory || '');
+  const bucketKey = normalizeStoreFilterValue(currentSubcategory || '');
   if (!bucketKey) return [];
   const definitions = getVehicleRoleDefinitionsForSubcategory(bucketKey);
   if (!definitions.length) return [];
   const counts = new Map(definitions.map(def => [def.key, 0]));
   for (const item of items) {
-    if (_categoryKey(item) !== 'vehicles') continue;
-    if (_normalizeStoreFilterValue(_navSubcategory(item)) !== bucketKey) continue;
+    if (storeItemCategoryKey(item) !== 'vehicles') continue;
+    if (normalizeStoreFilterValue(getStoreNavigationSubcategory(item)) !== bucketKey) continue;
     const key = getVehicleRoleKey(item);
     if (!key || !counts.has(key)) continue;
     counts.set(key, (counts.get(key) || 0) + 1);
@@ -605,7 +502,7 @@ function _buildVehicleRoleOptions(items = [], currentSubcategory = null, current
 function _buildVehicleCrewOptions(items = [], currentVehicleCrew = null) {
   const counts = new Map();
   for (const item of items) {
-    if (_categoryKey(item) !== 'vehicles') continue;
+    if (storeItemCategoryKey(item) !== 'vehicles') continue;
     const key = getVehicleCrewGroup(item);
     if (!key) continue;
     counts.set(key, (counts.get(key) || 0) + 1);
@@ -619,7 +516,7 @@ function _buildVehicleCrewOptions(items = [], currentVehicleCrew = null) {
 function _buildVehiclePassengerOptions(items = [], currentVehiclePassenger = null) {
   const counts = new Map();
   for (const item of items) {
-    if (_categoryKey(item) !== 'vehicles') continue;
+    if (storeItemCategoryKey(item) !== 'vehicles') continue;
     const key = getVehiclePassengerGroup(item);
     if (!key) continue;
     counts.set(key, (counts.get(key) || 0) + 1);
@@ -633,7 +530,7 @@ function _buildVehiclePassengerOptions(items = [], currentVehiclePassenger = nul
 function _buildVehicleCargoOptions(items = [], currentVehicleCargo = null) {
   const counts = new Map();
   for (const item of items) {
-    if (_categoryKey(item) !== 'vehicles') continue;
+    if (storeItemCategoryKey(item) !== 'vehicles') continue;
     const key = getVehicleCargoGroup(item);
     if (!key) continue;
     counts.set(key, (counts.get(key) || 0) + 1);
@@ -652,7 +549,7 @@ function _buildVehicleBooleanOptions(items = [], feature = '', current = null) {
       : getVehicleShieldsKey;
   const counts = new Map();
   for (const item of items) {
-    if (_categoryKey(item) !== 'vehicles') continue;
+    if (storeItemCategoryKey(item) !== 'vehicles') continue;
     const key = getter(item);
     if (!key) continue;
     counts.set(key, (counts.get(key) || 0) + 1);
@@ -847,6 +744,13 @@ export class StoreSurfaceService {
       // Reload cart from actor flags (reflects any controller mutations)
       storeInstance.cart = storeInstance._loadCartFromActor();
 
+      // Index-first catalog: load the full canonical record (description, statblock) only for the inspected product.
+      const inspected = storeInstance.selectedProductId ? storeInstance.itemsById?.get(storeInstance.selectedProductId) : null;
+      if (inspected) {
+        try { await hydrateStoreListing(inspected); }
+        catch (err) { SWSELogger.warn('[StoreSurface] Product detail could not be loaded from its source record', { id: inspected.id, error: err?.message }); }
+      }
+
       // Build context using the cached, already-initialized instance
       const storeContext = await storeInstance._prepareContext();
 
@@ -865,33 +769,7 @@ export class StoreSurfaceService {
       const currentVehicleWeapons = storeContext.currentVehicleWeapons ?? options.currentVehicleWeapons ?? null;
       const currentVehicleShields = storeContext.currentVehicleShields ?? options.currentVehicleShields ?? null;
       const allItems = Array.isArray(storeContext.allItems) ? storeContext.allItems : [];
-      const visibleItems = allItems.filter(item => {
-        const itemCategory = _categoryKey(item);
-        const matchesCategory = !currentCategory || itemCategory === currentCategory;
-        const matchesSubcategory = !currentSubcategory
-          || _normalizeStoreFilterValue(_navSubcategory(item)) === _normalizeStoreFilterValue(currentSubcategory);
-        const matchesFamily = !(['weapons', 'droids', 'vehicles'].includes(currentCategory) && currentFamily)
-          || _navFamily(item) === currentFamily;
-        const matchesVehicleSize = !(currentCategory === 'vehicles' && currentVehicleSize)
-          || _vehicleSizeMatches(item, currentVehicleSize);
-        const matchesVehicleCl = !(currentCategory === 'vehicles' && currentVehicleCl)
-          || _vehicleChallengeMatches(item, currentVehicleCl);
-        const matchesVehicleRole = !(currentCategory === 'vehicles' && currentVehicleRole)
-          || _vehicleRoleMatches(item, currentVehicleRole);
-        const matchesVehicleCrew = !(currentCategory === 'vehicles' && currentVehicleCrew)
-          || _vehicleCrewMatches(item, currentVehicleCrew);
-        const matchesVehiclePassenger = !(currentCategory === 'vehicles' && currentVehiclePassenger)
-          || _vehiclePassengerMatches(item, currentVehiclePassenger);
-        const matchesVehicleCargo = !(currentCategory === 'vehicles' && currentVehicleCargo)
-          || _vehicleCargoMatches(item, currentVehicleCargo);
-        const matchesVehicleHyperdrive = !(currentCategory === 'vehicles' && currentVehicleHyperdrive)
-          || _vehicleFeatureMatches(item, currentVehicleHyperdrive, getVehicleHyperdriveKey);
-        const matchesVehicleWeapons = !(currentCategory === 'vehicles' && currentVehicleWeapons)
-          || _vehicleFeatureMatches(item, currentVehicleWeapons, getVehicleWeaponsKey);
-        const matchesVehicleShields = !(currentCategory === 'vehicles' && currentVehicleShields)
-          || _vehicleFeatureMatches(item, currentVehicleShields, getVehicleShieldsKey);
-        return matchesCategory && matchesSubcategory && matchesFamily && matchesVehicleSize && matchesVehicleCl && matchesVehicleRole && matchesVehicleCrew && matchesVehiclePassenger && matchesVehicleCargo && matchesVehicleHyperdrive && matchesVehicleWeapons && matchesVehicleShields;
-      });
+      const visibleItems = allItems;   // already narrowed by matchesStoreQuery in the store instance (single filter pass)
 
       const baseRenderLimit = Number(options.storeRenderLimit ?? 36) || 36;
       const selectedProductId = options.selectedProductId ?? storeContext.selectedProduct?.id ?? null;

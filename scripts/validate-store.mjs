@@ -73,7 +73,7 @@ function checkPhase1Pricing() {
   }
 
   const vehicleCardResults = searchFile(
-    path.join(rootDir, 'templates/apps/store/vehicle-card-v2.hbs'),
+    path.join(rootDir, 'templates/shell/partials/surface-store.hbs'),
     {
       newCost: 'costNew|costUsed|newCost',
       usedCost: 'costUsed|usedCost'

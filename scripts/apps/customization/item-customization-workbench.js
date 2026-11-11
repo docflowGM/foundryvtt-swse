@@ -1,4 +1,4 @@
-import { storeItemDocumentData } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
+import { storeItemDocumentData, hydrateStoreListing } from "/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
@@ -3398,43 +3398,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     };
   }
 
-  async _stageCurrentItemToCart(item, draft, preview, itemUpdate) {
-    // stage from the listing's source document (canonical identity, effects), not the normalized store view
-    const base = storeItemDocumentData(item);
-    if (!base) { ui.notifications.error(`${item?.name ?? 'Item'}: no source record; it cannot be customized for purchase.`); return; }
-    const stagedData = foundry.utils.mergeObject(base, { flags: { swse: {} } }, { inplace: false, recursive: true });
-    stagedData.flags = stagedData.flags || {};
-    stagedData.flags.swse = stagedData.flags.swse || {};
-    for (const [path, value] of Object.entries(itemUpdate)) {
-      if (path === '_id') continue;
-      foundry.utils.setProperty(stagedData, path, value);
-    }
-    const baseCost = this._getItemBaseCost(item);
-    const finalCost = baseCost + Number(preview.totalCost ?? 0);
-    stagedData.name = `${item.name} (Customized)`;
-    stagedData.system = stagedData.system || {};
-    stagedData.system.cost = finalCost;
-    const cartEntry = {
-      id: getWorkbenchItemId(item),
-      name: stagedData.name,
-      img: stagedData.img || item.img,
-      cost: finalCost,
-      item,
-      stagedCustomization: {
-        itemData: stagedData,
-        baseCost,
-        customizationCost: preview.totalCost,
-        finalCost,
-        summary: {
-          upgrades: [...(draft.selectedUpgrades || [])],
-          templates: [...(draft.selectedTemplates || [])],
-          structural: foundry.utils.deepClone(draft.structural || {})
-        }
-      }
-    };
-    if (this.onStage) await this.onStage({ cartEntry, itemName: stagedData.name, itemData: stagedData });
-    ui.notifications.info(`${stagedData.name} staged for cart.`);
-    this.close();
+  async _stageCurrentItemToCart(item, _draft, _preview, _itemUpdate) {
+    // Store-staged customizations are refused: their price is computed by this client-side workbench, and the
+    // production Modification V2 registry has no certified selectable modification that could supply an
+    // authoritative quote. Owned-item customization (apply path) is unaffected.
+    ui.notifications.warn(`${item?.name ?? 'Item'}: customized purchases are unavailable until the modification lane is certified.`);
   }
 
 

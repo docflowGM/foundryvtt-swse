@@ -5,6 +5,9 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
+import { publishedUnitCostOf } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js";
+import { verifyApprovalQuote } from "/systems/foundryvtt-swse/scripts/engine/store/store-approval-quote.js";
+import { STORE_DROID_APPROVAL_KIND, verifyDroidConstructionApproval, buildCustomDroidActorData, constructionAlreadyDelivered } from "/systems/foundryvtt-swse/scripts/engine/store/store-droid-construction.js";
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { requestShellRender } from "/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js";
@@ -283,12 +286,26 @@ export class GMApprovalOperationsService {
       return false;
     }
 
+    // The recorded total is the BUILD's declared figure, held on the draft actor; the Store cannot re-quote a design snapshot
+    // (see buildDroidWithBuilder). It therefore never debits silently: a missing/zero figure is refused (no free droid), and
+    // the GM must explicitly authorize the exact amount, which is recorded as an auditable GM price authorization.
     const cost = normalizeCredits(droidData.credits?.spent || droidData.totalCost || 0);
+    if (!(cost > 0)) {
+      ui?.notifications?.error?.(`Cannot approve ${actor.name}: no valid construction cost is recorded. Nothing was charged.`);
+      return false;
+    }
     const ownerActor = this.resolveDroidOwnerActor(actor);
     if (!ownerActor) {
       ui?.notifications?.error?.(`Cannot approve ${actor.name}: no owning character actor could be resolved for the credit charge.`);
       return false;
     }
+
+    const authorized = await foundry.applications.api.DialogV2.confirm({
+      window: { title: 'Authorize droid price' },
+      content: `<p>Charge <strong>${cost.toLocaleString()}</strong> credits to <strong>${foundry.utils.escapeHTML?.(ownerActor.name) ?? ownerActor.name}</strong> for the droid <strong>${foundry.utils.escapeHTML?.(actor.name) ?? actor.name}</strong>?</p><p>This is the amount declared by the build. The Store has not independently verified it; your confirmation is recorded as a GM price authorization.</p>`,
+      rejectClose: false
+    });
+    if (!authorized) return false;
 
     try {
       // Credit debit, ownership link, and droid FINALIZE state apply as ONE
@@ -311,6 +328,9 @@ export class GMApprovalOperationsService {
           ownerActorId: ownerActor.id,
           ownerActorName: ownerActor.name,
           draftActorId: actor.id,
+          priceAuthority: 'gm-authorized-declared-cost',
+          gmAuthorizedCost: cost,
+          gmAuthorizedBy: game.user?.id ?? null,
           source: 'GM Datapad - Pending Droid Approval'
         },
         assetUpdates: {
@@ -585,6 +605,10 @@ export class GMApprovalOperationsService {
       return false;
     }
 
+    if (approval.approvalKind === STORE_DROID_APPROVAL_KIND) {
+      return this._approveDroidConstruction(host, index, approval, ownerActor);
+    }
+
     if (approval.type === 'store-item' || approval.approvalKind === 'store-policy-item') {
       return this._approveStoreItemPurchase(host, index, approval, ownerActor);
     }
@@ -625,27 +649,7 @@ export class GMApprovalOperationsService {
 
       // The approval is COMMITTED. Everything below is bookkeeping and cannot undo it or report it as failed.
       const failures = [];
-      await this._afterCommit(failures, 'purchase-history mirror', async () => {
-        const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
-        history.push({
-          timestamp: Date.now(),
-          items: [],
-          droids: draftActor.type === 'droid' ? [{ id: draftActor.id, name: assetName, cost }] : [],
-          vehicles: draftActor.type === 'vehicle' ? [{ id: draftActor.id, name: assetName, cost }] : [],
-          total: cost,
-          transactionId: approvalResult.transactionId ?? null,
-          source: `GM Datapad - Custom ${draftActor.type === 'droid' ? 'Droid' : 'Ship/Vehicle'} Approval`,
-          gmNotes: approval.metadata?.gmNotes ?? '',
-          compatibilityMirror: true
-        });
-        await ActorEngine.updateActor(ownerActor, {
-          'flags.foundryvtt-swse.purchaseHistory': history
-        }, {
-          source: 'GMApprovalOperationsService.approvePendingCustom.purchaseHistoryMirror',
-          skipValidation: true
-        });
-      });
-      await this._afterCommit(failures, 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
+            await this._afterCommit(failures, 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
       await this._afterCommit(failures, 'approved hook', async () => {
         Hooks.callAll?.('swseCustomPurchaseApproved', {
           approval,
@@ -753,28 +757,39 @@ export class GMApprovalOperationsService {
       return false;
     }
 
-    const purchaseItems = approvalItems.map(item => ({
-      id: item.id || item.policyId || null,
-      policyId: item.policyId || item.id || null,
-      name: item.name || 'Store item',
-      type: item.type || 'item',
-      finalCost: normalizeCredits(item.finalCost ?? item.cost ?? 0),
-      cost: normalizeCredits(item.cost ?? item.finalCost ?? 0),
-      condition: item.condition || null
-    }));
-    const pricedTotal = purchaseItems.reduce((sum, item) => sum + normalizeCredits(item.finalCost ?? item.cost ?? 0), 0);
-    if (purchaseItems.length && pricedTotal !== cost) {
-      const delta = cost - pricedTotal;
-      purchaseItems[0].finalCost = Math.max(0, normalizeCredits(purchaseItems[0].finalCost + delta));
-      purchaseItems[0].cost = purchaseItems[0].finalCost;
+    // Re-resolve every line from the live catalog: the player's record is a request, not a quote.
+    const inventory = await StoreEngine.getInventory({ useCache: true });
+    if (!inventory?.success) {
+      ui?.notifications?.error?.('The store catalog could not be loaded; nothing was charged.');
+      return false;
     }
+    const verified = verifyApprovalQuote(approval, inventory.inventory.byId);
+    if (!verified.ok) {
+      ui?.notifications?.error?.(`Cannot approve (${verified.reasons.join('; ')}). Nothing was charged. Deny this request and ask the player to resubmit at the current price.`);
+      return false;
+    }
+    const purchaseItems = approvalItems.map(item => {
+      const listing = inventory.inventory.byId.get(item.id) ?? null;   // verified above: the live catalog listing is the source of these figures
+      return {
+        id: item.id || item.policyId || null,
+        policyId: item.policyId || item.id || null,
+        name: item.name || 'Store item',
+        type: item.type || 'item',
+        finalCost: normalizeCredits(item.finalCost),
+        cost: normalizeCredits(item.finalCost),
+        condition: item.condition || null,
+        sourceUuid: listing?.sourceUuid ?? null,
+        sourceEntryKey: listing?.sourceEntryKey ?? null,
+        publishedUnitCost: publishedUnitCostOf(listing, item.condition || null)
+      };
+    });
 
     const result = await StoreEngine.purchase({
       actor: ownerActor,
       items: purchaseItems,
       totalCost: cost,
       transactionContext: 'store-purchase',
-      itemGrantCallback: async () => this._buildStoreItemApprovalMutationPlans(approval)
+      itemGrantCallback: async () => this._buildStoreItemApprovalMutationPlans(approval, inventory.inventory.byId)
     });
 
     if (!result.success) {
@@ -801,32 +816,88 @@ export class GMApprovalOperationsService {
     return true;
   }
 
-  static async _buildStoreItemApprovalMutationPlans(approval = {}) {
+  /**
+   * Store-originated custom Droid. The GM approves the QUOTED amount, re-derived here from the stored build identities by the shared
+   * construction-quote authority; nothing the player recorded (cost, flags, totals) decides the debit. Debit + droid creation + owner
+   * link are one StoreEngine/TransactionEngine commerce transaction, so a failure cannot leave a free droid or a lost paid droid.
+   */
+  static async _approveDroidConstruction(host, index, approval, ownerActor) {
+    const verified = verifyDroidConstructionApproval(approval);
+    if (!verified.ok) {
+      ui?.notifications?.error?.(`Cannot approve this droid (${verified.reasons.join('; ')}). Nothing was charged. Deny the request and ask the player to resubmit.`);
+      return false;
+    }
+    const total = verified.total;
+    const ledger = TransactionEngine.getActorTransactions(ownerActor, { contexts: ['store-purchase'] });
+    if (constructionAlreadyDelivered(ledger, approval.id)) {
+      ui?.notifications?.warn?.('This droid was already paid for and delivered; the stale request is being removed. Nothing was charged.');
+      await this._afterCommit([], 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
+      return false;
+    }
+    const funds = LedgerService.validateFunds(ownerActor, total);
+    if (!funds.ok) {
+      ui?.notifications?.error?.(`${ownerActor.name} has ${normalizeCredits(funds.current).toLocaleString()} credits; this droid is quoted at ${total.toLocaleString()}. Nothing was charged.`);
+      return false;
+    }
+    const name = approval.approvalItems[0].name;
+    const grants = (verified.quote.grants || []).map(grant => `${grant.id} (${grant.grant})`).join(', ') || 'none';
+    const authorized = await foundry.applications.api.DialogV2.confirm({
+      window: { title: 'Approve custom droid' },
+      content: `<p>Charge <strong>${total.toLocaleString()}</strong> credits to <strong>${foundry.utils.escapeHTML?.(ownerActor.name) ?? ownerActor.name}</strong> for the custom droid <strong>${foundry.utils.escapeHTML?.(name) ?? name}</strong>?</p><p>This amount was re-quoted just now from the design's components by the shared droid construction authority. Baseline grants applied: ${foundry.utils.escapeHTML?.(grants) ?? grants}.</p>`,
+      rejectClose: false
+    });
+    if (!authorized) return false;
+
+    const result = await StoreEngine.purchase({
+      actor: ownerActor,
+      items: [{ id: approval.id, policyId: null, name, type: 'droid', finalCost: total, cost: total, condition: null }],
+      totalCost: total,
+      transactionContext: 'store-purchase',
+      itemGrantCallback: async () => {
+        const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
+        const data = buildCustomDroidActorData({ quote: verified.quote, name, approvalId: approval.id, owner: ownerActor });
+        const plan = DroidFactory.buildMutationPlan({ droidActor: data, name });
+        for (const spec of plan.create?.actors ?? []) {
+          spec.data.__acquisition = { kind: 'custom-droid-construction', listingId: approval.id, sourceUuid: null, sourceEntryKey: null, unitPaid: total, publishedUnitCost: null, quantity: 1, condition: null, quoteHash: verified.quote.provenance.snapshotHash };
+        }
+        return [plan];
+      }
+    });
+    if (!result.success) {
+      ui?.notifications?.error?.(`Failed to approve droid: ${result.error}. Nothing was delivered unless the transaction report says otherwise.`);
+      return false;
+    }
+    const failures = [];
+    await this._afterCommit(failures, 'queue removal', () => this._removeApprovalFromQueue(approval, index, host));
+    await this._afterCommit(failures, 'approved hook', async () => {
+      Hooks.callAll?.('swseCustomPurchaseApproved', { approval, actor: ownerActor, draftActor: null, transactionId: result.transactionId, decidedBy: game.user?.name ?? 'GM', edited: false });
+    });
+    await this._afterCommit(failures, 'refresh', () => this._resetApprovalState(host));
+    this._reportCommitted(failures, `Approved: ${name} (${total.toLocaleString()} cr)`);
+    return true;
+  }
+
+  static async _buildStoreItemApprovalMutationPlans(approval = {}, inventoryById = new Map()) {
     const items = Array.isArray(approval.approvalItems) ? approval.approvalItems : [];
     const plans = [];
-    const itemData = [];
+    const { createItemPlans, createDroidPlans, createVehiclePlans } = await import('/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js');
+    const { hydrateStoreListings } = await import('/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js');
+    const cartItems = [], cartDroids = [], cartVehicles = [];
 
     for (const item of items) {
-      const type = String(item?.type || '').toLowerCase();
-      const sourceBucket = String(item?.sourceBucket || '').toLowerCase();
-      const data = this._stripApprovalDocumentIdentity(item?.itemData || { name: item?.name || 'Store item', type: item?.type || 'equipment', img: item?.img, system: {} });
-
-      if (type === 'droid' || sourceBucket === 'droids') {
-        const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
-        plans.push(DroidFactory.buildMutationPlan({ droidActor: data, name: item?.name || data.name }));
-        continue;
-      }
-
-      if (type === 'vehicle' || sourceBucket === 'vehicles') {
-        const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
-        plans.push(VehicleFactory.buildMutationPlan({ template: data, condition: item?.condition || 'new' }));
-        continue;
-      }
-
-      itemData.push(data);
+      if (item?.stagedCustomization) throw new Error('Customized purchases have no authoritative quote and cannot be approved');
+      // Everything else is rebuilt from the exact canonical source of the CURRENT listing, never from player-supplied data.
+      const listing = inventoryById.get(item.id);
+      if (!listing) throw new Error(`Store listing ${item.id} is no longer available`);
+      if (listing.type === 'vehicle') cartVehicles.push({ id: item.id, name: item.name, cost: item.finalCost, condition: item.condition, template: listing });
+      else if (listing.type === 'droid') cartDroids.push({ id: item.id, name: item.name, cost: item.finalCost, actor: listing });
+      else cartItems.push({ id: item.id, name: item.name, cost: item.finalCost, item: listing });
     }
 
-    if (itemData.length) plans.push({ add: { items: itemData } });
+    await hydrateStoreListings([...cartItems.filter(entry => entry.item).map(entry => entry.item), ...cartDroids.map(entry => entry.actor)]);
+    plans.push(...createItemPlans(cartItems));
+    if (cartDroids.length) plans.push(...await createDroidPlans(cartDroids));
+    if (cartVehicles.length) plans.push(...await createVehiclePlans(cartVehicles, inventoryById));
     return plans;
   }
 

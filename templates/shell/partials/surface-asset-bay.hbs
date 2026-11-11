@@ -122,6 +122,13 @@
                 <span>{{asset.grantAccessLabel}}</span>
               </button>
               {{/if}}
+              <button type="button"
+                      class="swse-asset-bay-action"
+                      data-asset-bay-action="request-sale"
+                      data-actor-id="{{asset.actorId}}">
+                <i class="fas fa-coins"></i>
+                <span>Request Sale</span>
+              </button>
             </div>
           </article>
         {{/each}}

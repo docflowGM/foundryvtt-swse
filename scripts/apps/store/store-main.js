@@ -15,6 +15,7 @@
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
+import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
 import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
 import { GearSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/gear-suggestions.js";
@@ -27,16 +28,12 @@ import {
   safeString,
   safeImg,
   safeSystem,
-  tryRender,
   getRarityClass,
   getRarityLabel,
   getCostValue,
   buildStoreNavigationModel,
-  normalizeArmorSubcategory,
   normalizeDroidSubcategory,
   normalizeVehicleSubcategory,
-  getDroidFamily,
-  getVehicleFamily,
   getVehicleChallengeBand,
   getVehicleChallengeBandLabel,
   getVehicleChallengeLevel,
@@ -55,7 +52,18 @@ import {
   getVehicleWeaponsKey,
   getVehicleShieldsKey,
   getVehicleBooleanFeatureLabel,
-  getWeaponFamily
+  getWeaponFamily,
+  normalizeStoreFilterValue,
+  normalizeAvailabilityText,
+  getStoreAvailabilityText,
+  storeItemCategoryKey,
+  getStoreNavigationSubcategory,
+  getStoreNavigationFamily,
+  availabilityMatches,
+  matchesStoreQuery,
+  positiveCreditOrNull,
+  resolveVehicleStoreCosts,
+  vehiclePriceStatusLabel
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { initVehicleAmmunitionContext, buildVehicleAmmunitionView, bindVehicleAmmunition } from "/systems/foundryvtt-swse/scripts/apps/store/store-vehicle-ammunition.js";
@@ -68,15 +76,11 @@ import { resolveStoreDescription, getStoreCurrencySymbol } from "/systems/foundr
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import {
   addItemToCart,
-  addDroidToCart,
-  addVehicleToCart,
   removeFromCartById,
   clearCart,
   calculateCartTotal,
   checkout,
-  createCustomDroid,
   buildDroidWithBuilder,
-  buildDroidFromTemplate,
   createCustomStarship
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
 
@@ -98,133 +102,6 @@ function emptyCart() {
 
 function asArray(v) {
   return Array.isArray(v) ? v : [];
-}
-
-function normalizeStoreFilterValue(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[’']/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function normalizeAvailabilityText(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[’']/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
-}
-
-function getStoreAvailabilityText(itemOrView = {}) {
-  const sys = itemOrView.system ?? itemOrView.data ?? {};
-  return String(
-    sys.availability
-    ?? itemOrView.availability
-    ?? itemOrView.rarityLabel
-    ?? itemOrView.rarityClass
-    ?? ''
-  ).trim();
-}
-
-function storeItemCategoryKey(itemOrView = {}) {
-  const raw = String(itemOrView.category ?? itemOrView.type ?? '').trim().toLowerCase();
-  if (!raw) return '';
-  if (raw.includes('weapon')) return 'weapons';
-  if (raw.includes('armor')) return 'armor';
-  if (raw.includes('droid')) return 'droids';
-  if (raw.includes('implant')) return 'implants';
-  if (raw.includes('vehicle') || raw.includes('ship') || raw.includes('speeder') || raw.includes('walker')) return 'vehicles';
-  if (raw.includes('gear') || raw.includes('equipment') || raw.includes('medical') || raw.includes('security') || raw.includes('survival') || raw.includes('tech') || raw.includes('tool')) return 'gear';
-  return raw.replace(/\s+/g, '-');
-}
-
-function getStoreNavigationSubcategory(itemOrView = {}) {
-  const categoryKey = storeItemCategoryKey(itemOrView);
-  if (categoryKey === 'armor') return normalizeArmorSubcategory(itemOrView);
-  if (categoryKey === 'droids') return normalizeDroidSubcategory(itemOrView);
-  if (categoryKey === 'vehicles') return normalizeVehicleSubcategory(itemOrView);
-  return String(itemOrView.subcategory ?? itemOrView.system?.subcategory ?? itemOrView.system?.category ?? '').trim();
-}
-
-function getStoreNavigationFamily(itemOrView = {}) {
-  const categoryKey = storeItemCategoryKey(itemOrView);
-  if (categoryKey === 'weapons') return getWeaponFamily(getStoreNavigationSubcategory(itemOrView));
-  if (categoryKey === 'droids') return getDroidFamily(itemOrView);
-  if (categoryKey === 'vehicles') return getVehicleFamily(getStoreNavigationSubcategory(itemOrView));
-  return '';
-}
-
-function vehicleSizeMatches(itemOrView = {}, filterValue = '') {
-  const filter = normalizeStoreFilterValue(filterValue);
-  if (!filter || filter === 'all') return true;
-  return getVehicleSizeKey(itemOrView) === filter;
-}
-
-function vehicleChallengeMatches(itemOrView = {}, filterValue = '') {
-  const filter = normalizeStoreFilterValue(filterValue);
-  if (!filter || filter === 'all') return true;
-  return getVehicleChallengeBand(itemOrView) === filter;
-}
-
-
-
-function vehicleCrewMatches(itemOrView = {}, filterValue = '') {
-  const filter = normalizeStoreFilterValue(filterValue);
-  if (!filter || filter === 'all') return true;
-  return getVehicleCrewGroup(itemOrView) === filter;
-}
-
-function vehiclePassengerMatches(itemOrView = {}, filterValue = '') {
-  const filter = normalizeStoreFilterValue(filterValue);
-  if (!filter || filter === 'all') return true;
-  return getVehiclePassengerGroup(itemOrView) === filter;
-}
-
-function vehicleCargoMatches(itemOrView = {}, filterValue = '') {
-  const filter = normalizeStoreFilterValue(filterValue);
-  if (!filter || filter === 'all') return true;
-  return getVehicleCargoGroup(itemOrView) === filter;
-}
-
-function vehicleFeatureMatches(itemOrView = {}, filterValue = '', getter = null) {
-  const filter = normalizeStoreFilterValue(filterValue);
-  if (!filter || filter === 'all' || typeof getter !== 'function') return true;
-  return getter(itemOrView) === filter;
-}
-function availabilityMatches(itemOrView = {}, filterValue = '') {
-  const filter = normalizeAvailabilityText(filterValue);
-  if (!filter || filter === 'all') return true;
-  const availability = normalizeAvailabilityText(getStoreAvailabilityText(itemOrView));
-  if (!availability) return false;
-  return availability.split(/\s+/).includes(filter) || availability.includes(filter);
-}
-
-
-function positiveCreditOrNull(value) {
-  if (value === null || value === undefined || value === '') return null;
-  const numeric = Number(value);
-  return Number.isFinite(numeric) && numeric > 0 ? numeric : null;
-}
-
-function resolveVehicleStoreCosts(item = {}) {
-  const newCost = positiveCreditOrNull(item.finalCostNew)
-    ?? positiveCreditOrNull(item.finalCost)
-    ?? positiveCreditOrNull(item.costNew)
-    ?? positiveCreditOrNull(item.cost);
-  const usedCost = positiveCreditOrNull(item.finalCostUsed)
-    ?? positiveCreditOrNull(item.costUsed);
-  return { newCost, usedCost };
-}
-
-function vehiclePriceStatusLabel(item = {}) {
-  const status = item.system?.vehiclePriceStatus || item.vehiclePriceStatus || item.costStatus || '';
-  if (status === 'review') return 'Price needs source review';
-  if (status === 'unavailable') return 'Not publicly available';
-  if (status === 'missing') return 'Price unknown';
-  return '';
 }
 
 function hasStorePrice(value) {
@@ -514,20 +391,24 @@ export class SWSEStore extends BaseSWSEAppV2 {
     return entries;
   }
 
+  /** Purchase history is a read projection of the TransactionEngine actor ledger (the credit SSOT). */
   _buildPurchaseHistoryEntries() {
-    const history = this.actor?.getFlag?.('foundryvtt-swse', 'purchaseHistory') || [];
-    return history.slice().reverse().map(entry => {
-      const items = [
-        ...(entry.items || []).map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Item'), qty: 1, cost: i.cost ?? 0 })),
-        ...(entry.droids || []).map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Droid'), qty: 1, cost: i.cost ?? 0 })),
-        ...(entry.vehicles || []).map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Vehicle'), qty: 1, cost: i.cost ?? 0 }))
-      ];
-      return {
-        timestamp: new Date(entry.timestamp || Date.now()).toLocaleString(),
-        total: entry.total ?? 0,
-        items
-      };
+    const records = TransactionEngine.getActorTransactions(this.actor, {
+      contexts: ['store-purchase', 'store-customization-checkout', 'custom-approval', 'store-sale-approval', 'store-haggle-sale']
     });
+    return records
+      .filter(tx => tx.status === 'Success' || tx.status === undefined)
+      .map(tx => {
+        const audited = Array.isArray(tx.audit?.items) ? tx.audit.items : [];
+        const items = audited.length
+          ? audited.map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Item'), qty: Number(i.quantity) || 1, cost: i.cost ?? i.finalCost ?? '' }))
+          : tx.itemNames.map(name => ({ name, qty: 1, cost: '' }));
+        return {
+          timestamp: new Date(tx.timestamp || Date.now()).toLocaleString(),
+          total: tx.cost ?? 0,
+          items
+        };
+      });
   }
 
   _buildCategorySummary(allItems = []) {
@@ -924,6 +805,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const useAurebesh = SettingsHelper.getSafe('useAurebesh', false);
 
     for (const item of this.storeInventory?.allItems || []) {
+      // Navigation filters run on the cheap catalog listing BEFORE any card view-model is built.
+      if (!matchesStoreQuery(item, this)) continue;
       // Engine normalizes IDs to .id (not ._id)
       const suggestion = this.suggestions.get(item.id);
       const view = this._viewFromItem(item);
@@ -959,60 +842,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
       view.price = view.finalCost;
       view.canPurchase = view.storePolicy?.canPurchase !== false;
       view.blockedReason = view.storePolicy?.blockedReason || '';
-
-      // Phase 2: Apply category/subcategory/family filtering.
-      if (this.currentCategory) {
-        const itemCategory = storeItemCategoryKey(item);
-        const filterCategory = String(this.currentCategory).toLowerCase();
-        if (itemCategory !== filterCategory) {
-          continue;
-        }
-      }
-
-      if (this.currentSubcategory) {
-        const itemSubcategory = normalizeStoreFilterValue(getStoreNavigationSubcategory(item));
-        const filterSubcategory = normalizeStoreFilterValue(this.currentSubcategory);
-        if (itemSubcategory !== filterSubcategory) {
-          continue;
-        }
-      }
-
-      if (this.currentFamily && ['weapons', 'droids', 'vehicles'].includes(this.currentCategory)) {
-        const itemFamily = getStoreNavigationFamily(item);
-        if (itemFamily !== this.currentFamily) {
-          continue;
-        }
-      }
-
-      if (this.currentCategory === 'vehicles') {
-        if (!vehicleSizeMatches(item, this.currentVehicleSize)) {
-          continue;
-        }
-        if (!vehicleChallengeMatches(item, this.currentVehicleCl)) {
-          continue;
-        }
-        if (this.currentVehicleRole && getVehicleRoleKey(item) !== normalizeStoreFilterValue(this.currentVehicleRole)) {
-          continue;
-        }
-        if (!vehicleCrewMatches(item, this.currentVehicleCrew)) {
-          continue;
-        }
-        if (!vehiclePassengerMatches(item, this.currentVehiclePassenger)) {
-          continue;
-        }
-        if (!vehicleCargoMatches(item, this.currentVehicleCargo)) {
-          continue;
-        }
-        if (!vehicleFeatureMatches(item, this.currentVehicleHyperdrive, getVehicleHyperdriveKey)) {
-          continue;
-        }
-        if (!vehicleFeatureMatches(item, this.currentVehicleWeapons, getVehicleWeaponsKey)) {
-          continue;
-        }
-        if (!vehicleFeatureMatches(item, this.currentVehicleShields, getVehicleShieldsKey)) {
-          continue;
-        }
-      }
 
       // RESOLVE GLYPH: Central authority (store-glyph-map.js)
       const glyphData = resolveStoreGlyph(view.category, item.type, useAurebesh);
@@ -1647,14 +1476,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
       customDroidBtn.addEventListener('click', async () => {
         if (!this.actor) {return;}
         await buildDroidWithBuilder(this.actor, () => this.render());
-      }, { signal });
-    }
-
-    const templateDroidBtn = root.querySelector('.build-droid-from-template');
-    if (templateDroidBtn) {
-      templateDroidBtn.addEventListener('click', async () => {
-        if (!this.actor) {return;}
-        await buildDroidFromTemplate(this.actor, () => this.render());
       }, { signal });
     }
 

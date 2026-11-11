@@ -2619,3 +2619,24 @@ No provisional recommendation has been converted into a ruling.
 - **Status:** resolved and implemented. MODAL-001 is closed; CAE-001, CAE-002 and CAE-003 remain `DEFERRED_RULES_REVIEW`.
 
 - **Revision 60 (2026-11-10):** recorded the MODAL-001 residual ruling and its implementation.
+
+---
+
+## DROID-BUILD-001 — Re-installing the size-default locomotion after replacing it (shared droid construction quote)
+
+| Field | |
+|---|---|
+| Rules domain | Droid construction (progression Droid Builder / Store custom droid pricing) |
+| Feature | Credit charge for the chassis' size-default locomotion system |
+| Source | Existing builder behavior in `droid-builder-step.js` (pre-change): the size-default locomotion starts free ("part of the baseline frame in chargen") and keeps its free flag only while it is the originally installed entry. No published page was consulted; this entry is about preserving existing builder behavior, not a sourcebook ruling. |
+| Evidence | Before the shared construction-quote authority (`domain/droids/droid-build-quote.js`), free-ness was a flag on the installed entry. If a player replaced the default locomotion and later purchased the same default locomotion again, `purchaseSystem` priced it as an ordinary purchase. |
+| Confirmed behavior | The default locomotion is free while it is the original entry; a different locomotion is charged at its quoted price; the heuristic processor and the first two hands are free grants. |
+| Unresolved question | The shared authority reconstructs grants from component IDENTITIES only (it must not trust client flags). It therefore treats the size-default locomotion as free whenever it is installed, including after being replaced and re-installed. Is that the intended rule, or should re-installing the default after replacing it be charged (which cannot be derived from a build's identities alone and would need the build history to be part of the verified snapshot)? |
+| Options | (a) identity-derived: size-default locomotion always free when installed (implemented as the engineering representation). (b) history-dependent: charge on re-installation (requires a verified build-history record). |
+| Recommended ruling | None |
+| Implementation impact | Affects the builder's displayed total and the Store custom-droid quote identically, in this one edge case only. A higher-priced Store quote is impossible via option (a); option (b) would raise it. |
+| Status | `DEFERRED_RULES_REVIEW` (behavior implemented as option (a) pending owner confirmation) |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 61 (2026-11-10):** appended DROID-BUILD-001.

@@ -257,6 +257,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this._singleStepMode = options?.singleStep === true;
     this._singleStepDomain = options?.singleStepDomain || null;
     this._singleStepJob = options?.singleStepJob || null;
+    this._storeConstructionToken = options?.storeConstructionToken || null;   // opaque; verified by the finalizer, never trusted as data
     // Sheet-launched free single-step adds (e.g. dropping a Background
     // compendium item onto the sheet) may name the specific item to commit
     // once the step opens, instead of leaving the player to re-find it in
@@ -4139,6 +4140,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
             domain: this._singleStepDomain || ProgressionFinalizer.singleStepDomainForStep?.(currentDescriptor?.stepId),
             stepId: currentDescriptor?.stepId || null,
             job: this._singleStepJob || null,
+            storeConstructionToken: this._storeConstructionToken || null,
           })
         : await ProgressionFinalizer.finalize(sessionState, this.actor);
 

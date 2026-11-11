@@ -2323,7 +2323,7 @@ export function validateHouleruleManifest() {
     // Internal or non-houlerule settings that live in the same namespace
     'debugMode', 'enableSuiteTrace', 'enableSuggestionTrace',
     'governanceVisibilityMode', 'metaTuningConfig', 'systemVersion',
-    'automaticSalePercentage', 'storeDiscount', 'storeMarkup',
+    'automaticSalePercentage', 'resaleBasis', 'storeDiscount', 'storeMarkup',
     'startingCreditMode', 'resetResourcesOnCombat', 'prestigeClassLevelThreshold'
   ]);
 

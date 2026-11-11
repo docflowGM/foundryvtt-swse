@@ -75,6 +75,7 @@ export class ProgressionSurfaceAdapter {
         existing._app._singleStepMode = options?.singleStep === true;
         existing._app._singleStepDomain = options?.singleStepDomain || null;
         existing._app._singleStepJob = options?.singleStepJob || null;
+        existing._app._storeConstructionToken = options?.storeConstructionToken || null;
         existing._app._singleStepPreselectId = options?.preselectId || null;
         existing._app._targetStepId = options?.targetStep || options?.targetStepId || options?.currentStep || options?.stepId || existing._app._targetStepId || null;
       }
@@ -804,6 +805,7 @@ export class ProgressionSurfaceAdapter {
         domain,
         stepId: descriptor.stepId,
         job: this._app._singleStepJob || null,
+        storeConstructionToken: this._app._storeConstructionToken || null,
       });
 
       if (!result?.success) {
@@ -849,6 +851,7 @@ export class ProgressionSurfaceAdapter {
       app._singleStepMode = options?.singleStep === true;
       app._singleStepDomain = options?.singleStepDomain || null;
       app._singleStepJob = options?.singleStepJob || null;
+      app._storeConstructionToken = options?.storeConstructionToken || null;
       app._targetStepId = options?.targetStep || options?.targetStepId || options?.currentStep || options?.stepId || app._targetStepId || null;
       app._reconciliationContext = options?.reconciliation || null;
 

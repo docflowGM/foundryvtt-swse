@@ -48,6 +48,7 @@ function normalizeIndexEntry(doc,packName,pack){
     srStatus:sys.vehiclePublishedShieldStatus,
     cl:sys.challengeLevel??'',cost:sys.cost??'',
     speed:sys.vehicleMovementRaw??'',
+    economics:doc.flags?.swse?.universalVehicleSource?.source?.economics??null,
     searchText:lower([doc.name,category,book,page,key,spec.label,sys.size,crew,cargo].join(' ')),
     raw:doc
   };
@@ -71,7 +72,8 @@ export class VehiclePackDataLoader {
         'system.vehiclePublishedShieldStatus','system.shieldRating',
         'system.size','system.vehicleCrewLabel','system.vehicleCrewCount',
         'system.vehiclePublishedCargo','system.vehiclePublishedConsumables',
-        'system.vehicleMovementRaw','system.challengeLevel','system.cost'
+        'system.vehicleMovementRaw','system.challengeLevel','system.cost',
+        'flags.swse.universalVehicleSource.source.economics'
       ]});
       for(const doc of getVehicleCompendiumIndexEntries(index)){
         const entry=normalizeIndexEntry(doc,name,pack);

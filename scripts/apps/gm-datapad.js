@@ -795,56 +795,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
   /**
    * Load transaction history from the TransactionEngine actor-ledger flags.
    *
-   * purchaseHistory is a legacy/UI mirror. TransactionEngine is the SSOT for
-   * credit movement, so the GM Store Transactions tab reads that first and only
-   * appends clearly marked legacy rows when an actor has no TransactionEngine
-   * entries yet.
+   * TransactionEngine is the SSOT for credit movement; the GM Store Transactions tab reads
+   * only that ledger. Historical purchaseHistory flags are left on actors as inert data.
    */
   async _loadStoreTransactionHistory() {
     const txRows = TransactionEngine.getAllTransactions({ includeZeroCost: false })
       .map((tx) => this._formatTransactionEngineRow(tx));
 
-    const actorsWithEngineRows = new Set(txRows.map(row => row.actorId).filter(Boolean));
-    const legacyRows = [];
-
-    for (const actor of game.actors) {
-      if (actorsWithEngineRows.has(actor.id)) continue;
-
-      const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
-      for (const purchase of history) {
-        const items = [
-          ...(Array.isArray(purchase.items) ? purchase.items : []),
-          ...(Array.isArray(purchase.droids) ? purchase.droids : []),
-          ...(Array.isArray(purchase.vehicles) ? purchase.vehicles : [])
-        ];
-
-        for (const item of items) {
-          const amount = normalizeCredits(item.cost ?? item.finalCost ?? item.price ?? 0);
-          legacyRows.push({
-            transactionId: purchase.transactionId || `legacy-${actor.id}-${purchase.timestamp}-${legacyRows.length}`,
-            timestamp: purchase.timestamp,
-            actor: actor.name,
-            actorId: actor.id,
-            player: purchase.userName || purchase.playerName || purchase.userId || '—',
-            type: purchase.type || 'Buy',
-            item: item.name || 'Unknown Item',
-            quantity: normalizeCredits(item.quantity ?? 1),
-            price: amount,
-            amount: purchase.type === 'Sell' ? amount : -amount,
-            creditsBefore: null,
-            creditsAfter: null,
-            balanceDisplay: '—',
-            status: purchase.status || 'Legacy',
-            reason: purchase.reason || purchase.failureReason || 'Legacy purchaseHistory mirror; not TransactionEngine SSOT.',
-            source: purchase.source || 'Legacy purchaseHistory',
-            purchaseId: purchase.timestamp,
-            canReverse: false
-          });
-        }
-      }
-    }
-
-    this.transactions = [...txRows, ...legacyRows].sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
+    this.transactions = [...txRows].sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
   }
 
   _formatTransactionEngineRow(tx) {
@@ -896,8 +854,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   _formatPendingSaleRequest(request, index = 0) {
     const actor = game.actors.get(request.actorId);
-    const ownedItem = actor?.items?.get?.(request.itemId);
-    const basePrice = request.basePrice ?? request.itemData?.system?.price ?? null;
+    const isAsset = request.type === 'asset-sale';
+    const ownedItem = isAsset ? game.actors.get(request.assetId) : actor?.items?.get?.(request.itemId);
+    const basePrice = request.basePrice ?? null;
     const suggestedPrice = request.suggestedPrice ?? request.value ?? null;
     const requestedPrice = request.requestedPrice ?? suggestedPrice;
     const defaultAmount = normalizeCredits(requestedPrice ?? suggestedPrice ?? 0);
@@ -920,6 +879,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       requestedPriceDisplay: Number.isFinite(Number(requestedPrice)) ? `${normalizeCredits(requestedPrice).toLocaleString()} cr` : 'GM sets offer',
       submittedAt,
       submittedDisplay: new Date(submittedAt).toLocaleString(),
+      evidenceLines: Array.isArray(request.evidenceLines) ? request.evidenceLines : [],
       canApprove: !!actor && !!ownedItem && defaultAmount > 0,
       needsAmount: !(defaultAmount > 0),
       warning: !actor
@@ -927,7 +887,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         : !ownedItem
           ? 'Item is no longer owned by the actor.'
           : request.noBasePrice
-            ? 'No base price was defined. GM must set a sale amount.'
+            ? 'No automatic value. The GM appraises this sale: set an amount and state the reason.'
             : ''
     };
   }

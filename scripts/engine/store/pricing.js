@@ -19,35 +19,6 @@ import { resolveStoreCost } from '/systems/foundryvtt-swse/scripts/engine/store/
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /* -------------------------------------------------------------- */
-/* PRICE CALCULATION                                              */
-/* -------------------------------------------------------------- */
-
-/**
- * Calculate a final cost given a base cost.
- * Applies markup and discount.
- */
-export function calculateFinalCost(base) {
-  if (!base || isNaN(base) || base < 0) {return null;}
-
-  const markup = getMarkupPercent();     // +%
-  const discount = getDiscountPercent(); // -%
-
-  let result = base;
-
-  // (1 + markup%) → multiply
-  result *= 1 + markup / 100;
-
-  // (1 - discount%) → multiply
-  result *= 1 - discount / 100;
-
-  // Round to nearest whole credit
-  result = Math.round(result);
-
-  // Never allow negative or nonsense values
-  return Math.max(result, 0);
-}
-
-/* -------------------------------------------------------------- */
 /* ITEM ENRICHMENT                                                */
 /* -------------------------------------------------------------- */
 
@@ -85,13 +56,6 @@ export function applyPricing(item) {
   return item;
 }
 
-/**
- * Apply pricing to an entire list.
- */
-export function applyPricingAll(items) {
-  return items.map(i => applyPricing(i));
-}
-
 /* -------------------------------------------------------------- */
 /* P2-2: PRICING FREEZE (During Transaction)                     */
 /* -------------------------------------------------------------- */
@@ -120,13 +84,6 @@ export function unfreezePricing() {
   _pricingFrozen = false;
   _frozenMarkup = null;
   _frozenDiscount = null;
-}
-
-/**
- * Check if pricing is currently frozen
- */
-export function isPricingFrozen() {
-  return _pricingFrozen;
 }
 
 /**

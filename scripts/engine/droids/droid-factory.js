@@ -109,27 +109,15 @@ export class DroidFactory {
   }
 
   /**
-   * Detect stock droid records from the SWSE droids pack or its store listings.
-   * Published stock droids use several legacy statblock fields that must be
-   * normalized before actor creation.
+   * A stock droid is a record whose provenance names the canonical stock droid pack
+   * (`__storeSource.pack`, attached when a Store listing is hydrated from that pack).
+   * It is NOT inferred from the record's shape, id prefix or statblock fields: a custom droid
+   * that happens to carry defense fields is never normalized as a published statblock.
    * @private
    */
   static _looksLikeStockDroidSource(actorObj = {}, actor = {}) {
-    const system = actorObj.system || actor?.system || {};
-    const id = String(actorObj._id || actorObj.id || actor?.rawId || actor?.id || '');
-    const pack = String(actorObj.__storeSource?.pack || actor?.sourcePack || actor?.pack || '');
     if ((actorObj.type || actor?.type) !== 'droid') return false;
-    return Boolean(
-      pack === 'foundryvtt-swse.droids'
-      || id.startsWith('npc-')
-      || system.HP !== undefined
-      || system.baseStats?.abilities
-      || system.reflexDefense !== undefined
-      || system.fortitudeDefense !== undefined
-      || system.willDefense !== undefined
-      || system.droidSystemText
-      || actorObj.flags?.swse?.droidSystemText
-    );
+    return actorObj.__storeSource?.pack === 'foundryvtt-swse.droids';
   }
 
   /**

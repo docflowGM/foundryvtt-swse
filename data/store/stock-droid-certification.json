@@ -1,0 +1,1952 @@
+{
+  "schema": "swse-store-stock-droid-certification-v1",
+  "pack": "foundryvtt-swse.droids",
+  "method": "sourceIdentity (canonical pack + published degree) AND importAcceptance (StockDroidNormalizer/StockDroidImporterEngine dry run). NOT a mechanical certification. recordHash pins the record content.",
+  "mechanicalCertification": "NOT_PERFORMED",
+  "counts": {
+    "total": 194,
+    "certified": 194
+  },
+  "records": {
+    "02e1a7198873937f": {
+      "name": "Viper-Series_Probe_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "98bfe322ca37a766",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "02e36b37b1f5a328": {
+      "name": "Imperial_Warden_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "75c3be8a69da3e79",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "044c875d3ac10d14": {
+      "name": "Junk_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "8f245d2e61aa0959",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "06e4112afce783f0": {
+      "name": "T1_Bulk_Loader_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "85769f62d0d58f7f",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "08e3e2edca6d89a0": {
+      "name": "Vigilant_2X-Series_Picket_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "d48cd25f773e5073",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "0ad9b89d957ec699": {
+      "name": "RT_Sifter_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "83df8f6a1496ab14",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "0c99b0f8e9146275": {
+      "name": "SD-6_%22Hulk%22_Infantry_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "0274184f3f74ace4",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "0ecb09a9d105d4ed": {
+      "name": "Wanderer_Scout_Surveyor_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "ae06ce86f43264ee",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "0ed54bac41526055": {
+      "name": "HK-50_Assassin_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "285124e086bb9e81",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "0fcc160c24bacfe5": {
+      "name": "FLTCH-Series_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "e9a8d82835291faf",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "1036283b0586c23b": {
+      "name": "B1-A_Air_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "b0c1012e979c4b25",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "1139f47cf0d10d86": {
+      "name": "A-Series_Assassin_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "8e5ea9672dec9575",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "13ad17827ba38b69": {
+      "name": "DSH-3_Probe_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "27d9e8656d0cdbd5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "143463fc7703a692": {
+      "name": "IW-37_Pincer_Loader_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "27c0868bf6eca516",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "14964b4140892a57": {
+      "name": "IG-Series_Lancer_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "2f7714a4d4177633",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "14bce5078f084543": {
+      "name": "Mark_VII_%22Inquisitor%22_Seeker_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "63d0bf4283a88809",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "152d7c5f5bd0687d": {
+      "name": "Wing_Guard_Patrol_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "d04bb8c3e06d30b0",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "1662cc4a1006e443": {
+      "name": "K-Series_Spaceport_Control_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "38fb626bd9c45365",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "172172dfd5996a92": {
+      "name": "3PX_Espionage_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "73b3a8ba030c9044",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "183ff44f3cd47f3e": {
+      "name": "Scorpenek_Annihilator_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "621d8fda6054009c",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "18cad4d46e201ae8": {
+      "name": "B3-Series_Ultra_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "35ed8a865cafc9f1",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "1b79b286425e30a1": {
+      "name": "DRK-1_Probe_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "4b43e4a3347f8ee4",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "1c35fd1acf5a8620": {
+      "name": "V6-Series_Pilot_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "8d340c74d8006dd2",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "1cf5ee7105e0954b": {
+      "name": "Mionne_Security_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "76bd96c3bc47e8d5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "1f83fdea732e53bb": {
+      "name": "DD-13_Medical_Assistant_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "b8bbe5955b187ddd",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2038f2da098a3957": {
+      "name": "IC-M_General_Utility_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "66a4a6acc29814c1",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "225b00794765e360": {
+      "name": "GE3-Series_Protocol_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "2b2404c5e861cce5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "229ba927dee878c0": {
+      "name": "Mark_I_Assault_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "ae0d04a3660a1c5a",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "239ca43369d6513a": {
+      "name": "BD_Explorer_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "a244544039c1f0e1",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "23d7ea5d3e0c8c7a": {
+      "name": "MEV-Series_Medical_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "e616e330bc7ec06e",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "262e21c29f6f8ea4": {
+      "name": "KM1_Mining_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "2f0e630a0c54eac4",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "28f821fb807d627c": {
+      "name": "BL-Series_Legionnaire_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "dad3927d39cb8f44",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2aec4c8b47b58535": {
+      "name": "LOM-Series_Protocol_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "439245b86b1f2f4d",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2b41c19d03d92d7e": {
+      "name": "B4J4_Security_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "2f75f022233a085c",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2bb87d9b4655e381": {
+      "name": "ASN-121_Assassin_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "8d347b98f06e8b71",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2c45cc0358e490c8": {
+      "name": "FA-5_Valet_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "f24e329de4f6de58",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2cdc3e761128b6e0": {
+      "name": "TT-8L_Gatekeeper_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "7afcbae2e58758a6",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2ddb24a2229229a8": {
+      "name": "Droideka-Series_Destroyer_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "88533bbd49004783",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2e182a32233a1b9e": {
+      "name": "KX-Series_Security_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "7b5558f6b50fe2de",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2ea9e1f3f6800831": {
+      "name": "RWW-Series_Protocol_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "6f5e0117bd458df1",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "2fcf39ab1e0fec32": {
+      "name": "HK-24_Assassin_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "eb3cbdda8f628370",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "3032ff5a0e8c2ccc": {
+      "name": "G2_Repair_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "b6a715467648c1a7",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "30d0382d290efb10": {
+      "name": "Independent_HK-Series_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "60f2d8c74b2bffe2",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "3520596115f9254b": {
+      "name": "R8-Series_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "fe9a97750599fcec",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "35df1695827441e5": {
+      "name": "IG-110_Lightsaber_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "7ba889543d6dfb6c",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "36c8ed4430646a07": {
+      "name": "3D-4_Administrative_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "7ea8a7530d35ffbf",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "38d7cbb8e5bf6cfe": {
+      "name": "5YQ-Series_Protocol_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "784057236800b7bd",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "39ab00a114c69108": {
+      "name": "Behemoth_Junk_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "98c24b28bed72d2a",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "3b35d8e850316efd": {
+      "name": "R4-Series_Agromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "2bf152e2bd375c5c",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "3cfedfaf5defea79": {
+      "name": "V2-Series_Commando_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "078ada44e2615ac4",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "3e604fabd66eaf1e": {
+      "name": "RO-D_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "688e0a7c243f8fab",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "3f0a9287e1b7bbb9": {
+      "name": "0-LT_Utility_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "3b8873099f243931",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "3f586d8eb62ebb9e": {
+      "name": "ASP_Labor_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "1390b5de7b401190",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "3f8f88bef578be02": {
+      "name": "ET-74_Communications_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "823e5ccab72d00bf",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "4096bd9a7a0b667e": {
+      "name": "LR-57_Combat_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "7461f2f1324573da",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "41075645cfa903ba": {
+      "name": "NR-1100_Slicer_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "aa2bc09f85b776d9",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "4344dced4548f220": {
+      "name": "SP-4_Analysis_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "1103c3843e3676d8",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "4375445748385b1f": {
+      "name": "S19_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "68b499a301bdb9b3",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "480b2a32a6a3ea82": {
+      "name": "5-BT_Threat_Analysis_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "242dd2b3f5fe7916",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "4885e536eae4060e": {
+      "name": "GD16-Series_Pilot_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "d2bb763348829a95",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "496dbea2439e53d4": {
+      "name": "Buzz_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "c2e80a06e064c8e0",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "52995c4bc843714c": {
+      "name": "DSD1_Dwarf_Spider_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "42eff9657a88e706",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "53b57e9a21601917": {
+      "name": "X-1_Viper_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "108f7232b572122e",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "54264cb25b57cefb": {
+      "name": "FSD-6D_Surveillance_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "564295eec1422cac",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "542c5a4dc31b2406": {
+      "name": "IX-6_Heavy_Combat_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "7d32362317847537",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "54d16f274bd15fd8": {
+      "name": "IG-86_Sentinel_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "d438fbf8299d55bd",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "555727a7e78c41c4": {
+      "name": "Mark_IV_Assault_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "37003d43a2aaa337",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "57a5e7414a94a073": {
+      "name": "E522_Assassin_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "9a9a039eeece9a5e",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "57f7b1bec812e3a5": {
+      "name": "GY-I_Information_Analysis_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "c28f88fbc49e3554",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "58de8bb1bee46be5": {
+      "name": "8D_Smelter_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "403cb27bcae3f978",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "58ff485d198fa06f": {
+      "name": "PG-5_Gunnery_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "b3b93ec4ca28df57",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "591ede17771d08c1": {
+      "name": "Probe_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "24c600a00622b772",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "5bef6dc47b6d0098": {
+      "name": "G0-T0_Infrastructure-Planning_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "1f58a3e9009a01e4",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "5e97f6920c5d6790": {
+      "name": "3Z3_Medical_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "32fa3c427d4f92f9",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "601b62d4ff595e9c": {
+      "name": "TC-Series_Protocol_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "943f89bcb986309c",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "60be55c70da399b1": {
+      "name": "T4_Turret_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "64270975d76cc50c",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "60c47cfc08d7deb4": {
+      "name": "GH-7_Medical_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "964bffda9afdbaa1",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "63715c48433f2806": {
+      "name": "FEG-Series_Pilot_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "c933d2f6be748362",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "645446394a5e5ccc": {
+      "name": "Brute_Junk_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "5a26c5388b340672",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "65dd33b2c671a897": {
+      "name": "TC-SC_Infiltration_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "fa257c4160fc3a73",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "6618a93fa83ff4b6": {
+      "name": "Mark_I_Patrol_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "005072d7f86128d7",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "6690525f8fec8b3a": {
+      "name": "P2-Series_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "74f99a9d84e08035",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "672eec7f0347c8ed": {
+      "name": "Holocam_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "7ec14f764f1772ea",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "69a2e074d7442dbd": {
+      "name": "F1_Exploration_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "e6917a8b95c1886d",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "6be667ae63e303ee": {
+      "name": "A-Series_Medical_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "47799a69daa868f0",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "6f2487c5d9fac65a": {
+      "name": "LEP_Service_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "150c37abb50803d5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "7207a1e0106c5a1e": {
+      "name": "Security_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "df45d7391c107301",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "720a91b9ab9aaef6": {
+      "name": "CZ-Series_Secretary_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "58899a1137415248",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "72395550978edc04": {
+      "name": "11-17-Series_Mining_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "08c5f35b0aff6562",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "73adaa9462a1ef35": {
+      "name": "X_Training_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "35ccf8752bfa49ef",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "73edb07a67b6fe9c": {
+      "name": "GNK-Series_Power_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "73635d011816331c",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "747cee85e62c1cae": {
+      "name": "DT-16_%22Destructor%22_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "4ad299eb039a86e5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "7551abb0e914a6da": {
+      "name": "R-4_Recon_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "a896c42943324107",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "76a55fecf7c3bbc2": {
+      "name": "Devastator_War_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "7a41c2557a30437e",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "793dd3872738203d": {
+      "name": "LV8-Series_Guard_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "ef88dd11f67a9a4b",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "79c5ea6553c3c644": {
+      "name": "PK_Worker_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "43921e605728dfde",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "7a6cfec45fe3d6a5": {
+      "name": "AD-Series_Weapons_Maintenance_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "c1d567ebb2659392",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "7bb92955fe42cdc2": {
+      "name": "EI-9_Network_Security_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "e12211c45845bcb5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "7ced0246eecb3a42": {
+      "name": "Sabacc_Dealer_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "f644d3e4203f13b7",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "7e6f68841c6529b6": {
+      "name": "B2-HA-Series_Super_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "7cd7edce9d927c3a",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "7ec12cdd395593fe": {
+      "name": "Maintenance_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "acb0fd3e9c7a3b27",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "806a15ebd611628b": {
+      "name": "BT-16_Perimeter_Security_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "b8a7002e0214453c",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "8174aef071163519": {
+      "name": "88-Series_Administration_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "49c2e968dc7086c2",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "820b79bc8916569e": {
+      "name": "A9G-Series_Archive_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "fa59e7e66813dc6a",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "8348b69990e406b5": {
+      "name": "XK-V8_Excavation_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "9bb1e94cf299b668",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "840c3fdd3650a47f": {
+      "name": "Eradicator-Series_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "0095a0ef887228e5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "8427d6d203b45d80": {
+      "name": "B2-AA_Air_Assault_Super_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "21feecf13c7dff0d",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "852ed7a4f928ffde": {
+      "name": "MSE-6_Repair_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "0bf379459edb89f0",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "85d9b1f73fc97dc7": {
+      "name": "HV-7_Loading_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "00cedfdce98e261a",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "868b8592e6c0aac6": {
+      "name": "Rakatan_Guardian_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "813e8a71aa63a779",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "86a7b6e5e2168e85": {
+      "name": "OOM-Series_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "693d61a59e6853a9",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "86ec0384fbb1a08a": {
+      "name": "T0-D_Interrogation_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "69979e01a13836c5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "875201235523d5dd": {
+      "name": "MR-200-Series_Minesweeper_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "8eedda19121d302d",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "895b51eed243a45d": {
+      "name": "CA-B2_Cold_Assault_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "955e2cc91b03eb06",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "89e83b7c9a128d27": {
+      "name": "AZ-Series_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "19b27e223cc51b48",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "8a5101c0b51cd2dd": {
+      "name": "GG-Series_Hospitality_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "5eff3af5f3308a69",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "8b0f82d985ea3401": {
+      "name": "PLNK-Series_Power_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "50820d6513376abb",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "8d3ba74f7dae08e2": {
+      "name": "YVH_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "75ab5bf8173a418e",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "8d4d7a30226b8839": {
+      "name": "Infiltrator-Series_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "18b82327d13c266d",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "8e031fcedd699624": {
+      "name": "Imperial_Espionage_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "54f5a7f7bc0df7a2",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "900767ab8c9d0c15": {
+      "name": "MRD-39B_Assassin_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "fb9933d35beb2885",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "917cbcbc5d1f76ad": {
+      "name": "Droideka_Mk_II_Destroyer_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "9b4b442c5c0ac8a9",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "92ce7ae00cfbdeed": {
+      "name": "EG-6_Power_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "fecf2a0cb298ac3f",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "932c593917021af9": {
+      "name": "Krath_War_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "f53901229cd58ad9",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "95642a5452cd1a0d": {
+      "name": "R-8009_Utility_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "20eeba227bc185a7",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "9a23cbfa06eeb7ef": {
+      "name": "AS23_Aerial_Survey_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "767e6e6b0a785f36",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "9ac2479e02ffae34": {
+      "name": "BD-3000_Luxury_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "ea6e5f3a4bdb28f6",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "9d4c0dc59699a9e6": {
+      "name": "XLT-014_Labor_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "0d351508f2bb8370",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "9e8bcb290ea3dd4b": {
+      "name": "JK-13_Security_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "db534218f93ef3a4",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "a1772643884db41f": {
+      "name": "GX1-Series_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "3c129dbc2307df15",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "a302ea1630237849": {
+      "name": "BLX_Labor_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "6698a93d35d7576f",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "a33f9cdb9d85ea68": {
+      "name": "C-B3_Cortosis_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "dd1fc77109c558c8",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "a45746ea6916df8f": {
+      "name": "M4-Series_Messenger_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "7b421e7dddeff046",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "a561802871c1aa2e": {
+      "name": "EV-Series_Supervisor_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "fe4ebaf953732449",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "a562c7a1ea3c6839": {
+      "name": "T-Series_Tactical_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "8ad001e70b802f79",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "a58dc3367c2b2f3e": {
+      "name": "WSB-15_Sabotage_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "4f3958c305d64085",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "a7f6d12608f6a5f6": {
+      "name": "Pit_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "0882a2a1ea998a2b",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "ac6ef021fb7c8e02": {
+      "name": "PI-Series_Medical_Assistant_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "5e8c3e4364abea94",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "acb9e30dcae8a4e5": {
+      "name": "PK-2M_Mining_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "5c33f74d9d2a3ee0",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "adb083927f371330": {
+      "name": "K-X12_Probe_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "573af67776d25a23",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "ae2cb5c31be89b53": {
+      "name": "LE-Series_Repair_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "933fe761ca7d381b",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "af04ffc275d87645": {
+      "name": "IT-0_Interrogator_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "7aea742c8334aee2",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "af71e64a8802bc62": {
+      "name": "R2-Series_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "d8c2dde94cc3eddc",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "b2a42a82322eaacd": {
+      "name": "Shadow_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "feba9fa35cc9de8b",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "b2e515be636b71d2": {
+      "name": "MULE_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "7167071176f1642e",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "b4b1aa32607adcb1": {
+      "name": "Z65_Patrol_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "6b3319dd738c2c88",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "b54f7fbb69bc4158": {
+      "name": "Droideka-Series_Ultra_Destroyer_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "09b7454a5fbf98fd",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "b58ed0896362100e": {
+      "name": "HK-77_Assassin_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "7dfa0422345fb0bc",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "b95c8c88f1f002c1": {
+      "name": "M38-Series_Explorer_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "f555495a2328a45f",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "bf2a02322b8ed642": {
+      "name": "Q7-Series_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "9b63e703b39378e9",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "bfedd297b16f60f2": {
+      "name": "R3-Series_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "2901a37efa1fd459",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "c133df78c1011d2a": {
+      "name": "B2-GR-Series_Super_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "968b1812b043102f",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "c23355ec28d87e31": {
+      "name": "HKB-3_Hunter-Killer_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "c7b64f56cf4d5b03",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "c31efa8505462180": {
+      "name": "MK-Series_Maintenance_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "82eff70a1636580b",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "c9506459353f4e1b": {
+      "name": "RX-Series_Pilot_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "c654f8bd351889c1",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "c9e15e74df580272": {
+      "name": "FX-6_Medical_Assistance_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "7dc8b619b842bb37",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "ca2b88abea754169": {
+      "name": "FA-4_Pilot_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "ac48c83817140219",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "cb14ac075dd8c7d7": {
+      "name": "R7-Series_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "e98e65df45cb09a0",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "cb4623db84f6191e": {
+      "name": "H-1ME_Battle_Mechanic_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "5e2465bf02f4daa8",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "cb5e1b8aae371217": {
+      "name": "EW-3_Midwife_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "6434d0de17c3e63c",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "cb64a22efe403163": {
+      "name": "T3-Series_Utility_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "e4c16cd57f8a3993",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "ceea238d8afef2a8": {
+      "name": "KDY-4_Tech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "066ab19d2491c8f8",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "d18f615e76f42e10": {
+      "name": "Shadow_Security_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "69eb92e398247070",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "d464923ab5d2babc": {
+      "name": "R-1_Recon_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "dbcad7d1c604b51a",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "d5c5daf4f401b776": {
+      "name": "B1-Series_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "379bc0bbd1307dd7",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "d6339ec28a58755a": {
+      "name": "EVS_Construction_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "1ee2a3477583d4b5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "d6500d615e92ae16": {
+      "name": "SD-X_Stealth_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "d0cceb2c5d638144",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "d774b4c6d6830639": {
+      "name": "Aggressor-Series_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "4376268a3e7c11e2",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "d9941e2ab2e505e6": {
+      "name": "M-3PO-Series_Protocol_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "0a472badf977c5fa",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "da58493c166be763": {
+      "name": "Spelunker_Probe_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "bd352324e081b79f",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "dba50f4640e22c5c": {
+      "name": "SD-9_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "4379b44f7ba4b7db",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "dda2c68205846f4c": {
+      "name": "VX-Series_Artillery_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "18dc58055210989b",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "ddfd9b7e0b43cfb6": {
+      "name": "A-DSD_Advanced_Dwarf_Spider_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "595be238f66ee445",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "e1c9f735b6bf9f33": {
+      "name": "B2-Series_Super_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "073f4202450a0510",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "e391bc0dec6c8034": {
+      "name": "LM-432_%22Muckraker%22_Crab_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "faa687de894eb438",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "e3ff855f4ce96c56": {
+      "name": "R4-Series_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "6ed0f039e607d4fc",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "e4f542788ff01596": {
+      "name": "IM-6_Medical_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "fedc7464a59b328a",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "e56173b369a17c07": {
+      "name": "DE_Training_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "7f30b8eaf7388aa7",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "e5ad4c20dbafdb2f": {
+      "name": "Mark_IV_Sentry_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "57818a05df06ffa4",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "e954247a452663d9": {
+      "name": "GRZ-6B_Demolitions_Droid",
+      "certified": true,
+      "degree": "5th-Degree",
+      "reasons": [],
+      "recordHash": "36e2376d2c841081",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "ea17aa5e6fad78ef": {
+      "name": "3PO-Series_Protocol_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "bf28f3249d5bc370",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "ec59206e49bb7fbd": {
+      "name": "FX-7_Medical_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "4d831b3873c68eda",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "ec990103dbc4e804": {
+      "name": "B3-A-Series_Ultra_Battle_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "f351fe4df7ba5511",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "ece3bfeabdffbc63": {
+      "name": "R2-R-Series_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "83230da8a86bef92",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "f011c4ed38879500": {
+      "name": "RA-7_Protocol_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "a2603b61e5d844b3",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "f1f38226bc9215f3": {
+      "name": "Chiba_DR-10_Protocol_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "f530bcac519dd724",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "f2fed9f7f114dc87": {
+      "name": "Juggernaut_War_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "5aa2c210a44e4985",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "f33f22a717031d35": {
+      "name": "2-1B_Medical_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "73ff615edb3ce7fc",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "f42c7c088bff1935": {
+      "name": "Mark_I_Sentinel_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "a83aae6fe957df11",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "f4d6f71ba980e79a": {
+      "name": "Roving_Eye_Observation_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "54374adbfbf0951e",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "f74f3aa9fbefef62": {
+      "name": "BT7-Series_Valet_Droid",
+      "certified": true,
+      "degree": "3rd-Degree",
+      "reasons": [],
+      "recordHash": "2fd9f09044a53312",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "f83394c4e64ece68": {
+      "name": "BL-39_Interrogator_Droid",
+      "certified": true,
+      "degree": "1st-Degree",
+      "reasons": [],
+      "recordHash": "a398c43151f4f2fc",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "f9b248f8d74286aa": {
+      "name": "FIII_Footman_Droid",
+      "certified": true,
+      "degree": "4th-Degree",
+      "reasons": [],
+      "recordHash": "fd90521cd992d3a5",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    },
+    "fc64b4e2269200da": {
+      "name": "R5-Series_Astromech_Droid",
+      "certified": true,
+      "degree": "2nd-Degree",
+      "reasons": [],
+      "recordHash": "7cd24697b8d57323",
+      "sourceIdentity": true,
+      "importAcceptance": true,
+      "mechanicalCertification": "NOT_PERFORMED"
+    }
+  }
+}

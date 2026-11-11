@@ -8,7 +8,8 @@ const { StockDroidNormalizer } = await import('../scripts/domain/droids/stock-dr
 
 // F5: a stock droid is created in stock-statblock mode via the importer; if it
 // cannot be normalized the creation FAILS (no raw clone that would double-count).
-const stock = { _id: 'npc-r2', name: 'R2 Unit', type: 'droid', system: { HP: 10, reflexDefense: 12 }, items: [], flags: {} };
+// Stock provenance is explicit (the canonical droids pack, attached when a Store listing is hydrated) -- never inferred from shape.
+const stock = { _id: 'npc-r2', name: 'R2 Unit', type: 'droid', system: { HP: 10, reflexDefense: 12 }, items: [], flags: {}, __storeSource: { pack: 'foundryvtt-swse.droids', documentId: 'npc-r2' } };
 const plan = DroidFactory.buildMutationPlan({ droidActor: stock, name: 'Bought R2' });
 const data = plan.create.actors[0].data;
 assert.equal(data.system.droidCalculationMode, 'stock-statblock', 'purchased stock droid is in stock-statblock mode');
@@ -20,6 +21,10 @@ StockDroidNormalizer.normalizeStockDroidRecord = () => { throw new Error('boom')
 try {
   assert.throws(() => DroidFactory.buildMutationPlan({ droidActor: stock }), e => e.code === 'STOCK_DROID_NORMALIZATION_FAILED');
 } finally { StockDroidNormalizer.normalizeStockDroidRecord = original; }
+
+// A record that merely LOOKS like a statblock (HP/defense fields, npc- id) but has no stock provenance is not normalized as stock.
+const lookalike = { _id: 'npc-x', name: 'Lookalike', type: 'droid', system: { HP: 10, reflexDefense: 12 }, items: [], flags: {} };
+assert.notEqual(DroidFactory.buildMutationPlan({ droidActor: lookalike }).create.actors[0].data.system.droidCalculationMode, 'stock-statblock', 'no shape-based stock detection');
 
 // A non-stock custom droid template keeps its own fidelity (ledger included).
 const custom = { name: 'Custom', type: 'droid', system: { installedSystems: { x: { id: 'x' } } }, items: [], flags: {} };

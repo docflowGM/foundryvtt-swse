@@ -4,16 +4,15 @@ import { UNIVERSAL_VEHICLE_PACK_NAMES } from '../../domain/vehicles/universal-ve
  * scripts/engine/store/store-constants.js
  *
  * Engine-level configuration for store
- * (UI-only config remains in apps/store/store-constants.js)
  */
 
 /**
  * Compendium pack names (SSOT locations)
  * Weapons and armor use subtype-first pattern (like vehicles).
- * Master packs remain as fallback aggregate references only.
+ * Aggregate master packs are not store inventory and have no fallback role.
  */
 export const STORE_PACKS = {
-  // Weapons: use subtype packs for store inventory
+  // Weapons: canonical subtype packs are the only store inventory
   WEAPON_PACKS: [
     'foundryvtt-swse.weapons-simple',
     'foundryvtt-swse.weapons-pistols',
@@ -23,7 +22,6 @@ export const STORE_PACKS = {
     'foundryvtt-swse.weapons-exotic',
     'foundryvtt-swse.weapons-lightsabers'
   ],
-  WEAPONS_CANONICAL: 'foundryvtt-swse.weapons',
 
   // Armor: use subtype packs for store inventory
   ARMOR_PACKS: [
@@ -32,7 +30,6 @@ export const STORE_PACKS = {
     'foundryvtt-swse.armor-heavy',
     'foundryvtt-swse.armor-shields'
   ],
-  ARMOR_CANONICAL: 'foundryvtt-swse.armor',
 
   // Equipment: subtype-first where available, aggregate fallback remains canonical.
   // Pack names must match system.json declarations exactly.
@@ -45,7 +42,6 @@ export const STORE_PACKS = {
     'foundryvtt-swse.equipment-tech',        // computers & slicing tools
     'foundryvtt-swse.equipment-tools'        // general tools
   ],
-  EQUIPMENT: 'foundryvtt-swse.equipment',
 
   // Droids: current single-source
   DROIDS: 'foundryvtt-swse.droids',
@@ -54,27 +50,4 @@ export const STORE_PACKS = {
   // No 316-ship/aggregate/old-emplacement fallbacks.
   VEHICLE_PACKS: UNIVERSAL_VEHICLE_PACK_NAMES.map(name=>'foundryvtt-swse.'+name)
 
-};
-
-/**
- * Business rules (engine-enforced)
- */
-export const STORE_RULES = {
-  // Default markup/discount applied by engine
-  DEFAULT_MARKUP: 0,
-  DEFAULT_DISCOUNT: 0,
-
-  // Used item multiplier
-  USED_CONDITION_MULTIPLIER: 0.5,
-
-  // Minimum costs for custom creations
-  MIN_COSTS: {
-    DROID: 1000,
-    STARSHIP: 5000
-  },
-
-  // Cache invalidation
-  CACHE_KEY: 'swse-store-cache-v6',
-  LEGACY_CACHE_KEYS: ['swse-store-cache-v5'],
-  CACHE_TTL: 1000 * 60 * 60 * 24  // 24 hours
 };

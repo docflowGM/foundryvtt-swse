@@ -102,7 +102,7 @@ for (const [id, name, cost, sourcebook] of expected) {
 
 const sourceChecks = [
   ['scripts/engine/equipment/equipment-normalizer.js', ['implants:', "storeCategory: 'Implants'", "implant: 'Implant'"]],
-  ['scripts/engine/store/categorizer.js', ["IMPLANTS: 'Implants'", 'Category.IMPLANTS']],
+  ['scripts/engine/store/store-taxonomy.js', ['EQUIPMENT_BUCKETS', 'classifyEquipment']],
   ['scripts/apps/store/store-main.js', ["raw.includes('implant')", "implants: 'Implants'", "'implants'"]],
   ['scripts/apps/store/store-shared.js', ["lower.includes('implant')", "implants: 'Implants'", "'implants'"]],
   ['scripts/apps/store/store-description-resolver.js', ['implant-store-descriptions.json', "keys.add('implant')"]],

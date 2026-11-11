@@ -708,6 +708,12 @@ export function ShellHostMixin(BaseClass) {
             return;
           }
 
+          if (action === 'request-sale') {
+            const { initiateAssetResale } = await import('/systems/foundryvtt-swse/scripts/apps/store/resale-ui.js');
+            await initiateAssetResale(targetActor, this.actor);
+            return;
+          }
+
           if (action === 'grant-access') {
             const bayMode = bayModeFromEl || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
             SWSELogger.log('[AssetBay] opening grant access dialog', { bayMode, actorId: targetActor.id });

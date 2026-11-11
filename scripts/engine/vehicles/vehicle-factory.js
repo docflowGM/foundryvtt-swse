@@ -391,7 +391,9 @@ export class VehicleFactory {
    */
   static _buildVehicleActorData(buildSpec) {
     const template = buildSpec.template;
-    const condition = buildSpec.condition || 'new';
+    // A purchased published vehicle is built in the purchaser's explicit, verified condition. There is no default to 'new'.
+    const condition = buildSpec.condition;
+    if (condition !== 'new' && condition !== 'used') throw new Error('VehicleFactory: a vehicle must be created in an explicit condition ("new" or "used")');
 
     const source = template?.doc || template?.template || template;
     // Foundry V13 toObject(false) can expose prepared/derived values rather

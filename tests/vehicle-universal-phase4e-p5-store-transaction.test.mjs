@@ -59,8 +59,9 @@ function harness({ revalidate = 'real', plans = async () => [], credits = 5000, 
     LedgerService: { getCurrentCredits: () => credits },
     SWSELogger: { error(m, d) { if (process.env.DBG) console.log('LOGERR', m, d); }, warn() {} },
     isStoreItemPurchasable: () => ({ ok: true }),
-    revalidateCartItems: () => ({ removed: [] }),
+    revalidateCartItems: () => ({ removed: [], recalculated: [] }),
     validateCartQuantities: () => ({ ok: true }),
+    hydrateStoreListings: async () => {},
     collectStoreApprovalEntries: () => [],
     calculateCartTotal: cart => (cart.vehicles ?? []).reduce((n, v) => n + v.cost, 0),
     flattenCartForPurchase: () => [],
@@ -136,6 +137,6 @@ test('createVehiclePlans verifies the merchant offer and runs inside the purchas
   assert.match(plans, /evaluateVehicleMerchantPurchase\(/);
   assert.match(plans, /merchantPrice: getVehicleConditionCost\(merchantItem, condition\)/);
   assert.match(plans, /cartPrice: vehicle\.cost/);
-  assert.match(src, /async function buyVehicleUnguarded/);
-  assert.match(src, /withPurchaseLock\(store\?\.actor\?\.id, \(\) => buyVehicleUnguarded/);
+  assert.doesNotMatch(src, /buyVehicle/, 'the legacy quick-buy vehicle path is deleted; checkout is the only purchase path');
+  assert.match(src, /withPurchaseLock\(store\?\.actor\?\.id, \(\) => checkoutUnguarded/);
 });

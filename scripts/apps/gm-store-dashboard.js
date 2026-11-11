@@ -539,26 +539,7 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
           postCommitFailures.push(`${label}: ${stepError?.message ?? stepError}`);
         }
       };
-      await afterCommit('purchase-history mirror', async () => {
-        const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
-        history.push({
-          timestamp: Date.now(),
-          items: [],
-          droids: draftActor.type === 'droid' ? [{ id: draftActor.id, name: assetName, cost: normalizedCost }] : [],
-          vehicles: draftActor.type === 'vehicle' ? [{ id: draftActor.id, name: assetName, cost: normalizedCost }] : [],
-          total: normalizedCost,
-          transactionId: approvalResult.transactionId ?? null,
-          source: 'Store - Custom ' + (draftActor.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval',
-          compatibilityMirror: true
-        });
-        await ActorEngine.updateActor(ownerActor, {
-          'flags.foundryvtt-swse.purchaseHistory': history
-        }, {
-          source: 'GMStoreDashboard._approvePendingCustom.purchaseHistoryMirror',
-          skipValidation: true
-        });
-      });
-      await afterCommit('queue removal', () => this._removePendingApproval(approval, index));
+            await afterCommit('queue removal', () => this._removePendingApproval(approval, index));
       await afterCommit('approved hook', async () => {
         Hooks.callAll?.('swseCustomPurchaseApproved', {
           approval,

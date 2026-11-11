@@ -472,6 +472,24 @@ export class InventoryEngine {
   }
 
   /**
+   * Why an owned Item must not be removed right now (equipment-journal evidence), or null. Used by removeItem and by resale, which also
+   * removes Items and so must not destroy the evidence G36 compares.
+   * @returns {{reason:string, message:string, requestIds?:string[]}|null}
+   */
+  static removalBlocker(actor, itemId) {
+    const item = actor?.items?.get?.(itemId);
+    if (!actor || !item) return { reason: "item-not-found", message: "The item is not owned by this actor." };
+    const evidence = equipmentEvidenceFor(actor, itemId);
+    if (isWeaponItem(item) && !evidence.readable) {
+      return { reason: "equipment-journal-unreadable", message: `${item.name}: the actor's equipment transaction journal is unreadable, so weapons are not removed until a GM has inspected it.` };
+    }
+    if (evidence.requestIds.length) {
+      return { reason: "unresolved-equipment-transaction", requestIds: evidence.requestIds, message: `${item.name}: an equipment change on this item did not finish. A GM must resolve it before the item can be removed.` };
+    }
+    return null;
+  }
+
+  /**
    * Remove an embedded item through ActorEngine authority.
    */
   static async removeItem(actor, itemId) {
@@ -479,17 +497,11 @@ export class InventoryEngine {
     if (!actor || !item) return;
     // an unresolved equipment transaction on this Item must be reconciled first, and a weapon is not removed while the journal is unreadable:
     // deleting the Item would destroy the evidence G36 compares. (This guards this route only, not direct ActorEngine deletions.)
-    const evidence = equipmentEvidenceFor(actor, itemId);
-    if (isWeaponItem(item) && !evidence.readable) {
-      globalThis.ui?.notifications?.warn?.(`${item.name}: the actor's equipment transaction journal is unreadable, so weapons are not removed until a GM has inspected it.`);
-      logEquipmentEvent("remove-refused", { actorId: actor.id, itemId, reason: "equipment-journal-unreadable" });
-      return { ok: false, reason: "equipment-journal-unreadable" };
-    }
-    const pending = evidence.requestIds;
-    if (pending.length) {
-      globalThis.ui?.notifications?.warn?.(`${item.name}: an equipment change on this item did not finish. A GM must resolve it before the item can be removed.`);
-      logEquipmentEvent("remove-refused", { actorId: actor.id, itemId, requestIds: pending });
-      return { ok: false, reason: "unresolved-equipment-transaction", requestIds: pending };
+    const blocker = this.removalBlocker(actor, itemId);
+    if (blocker) {
+      globalThis.ui?.notifications?.warn?.(blocker.message);
+      logEquipmentEvent("remove-refused", { actorId: actor.id, itemId, reason: blocker.reason, ...(blocker.requestIds ? { requestIds: blocker.requestIds } : {}) });
+      return { ok: false, reason: blocker.reason, ...(blocker.requestIds ? { requestIds: blocker.requestIds } : {}) };
     }
 
     await ActorEngine.deleteEmbeddedDocuments(actor, "Item", [itemId], {

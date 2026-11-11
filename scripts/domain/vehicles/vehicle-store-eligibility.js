@@ -68,16 +68,20 @@ export function evaluateVehiclePurchase(record, { condition = 'new', offerPrice 
  */
 export function buildCanonicalVehicleCostRecord(economics) {
   const p = getPublishedVehiclePrices(economics);
-  if (p.new.status === 'priced') return {
+  const newOk = p.new.status === 'priced', usedOk = p.used.status === 'priced';
+  // Either published price makes the vehicle offerable in THAT condition only; a missing
+  // condition stays null and is never derived from the other one.
+  if (newOk || usedOk) return {
     costStatus: 'conditional', pricingMode: 'new-used', baseCost: null,
-    baseCostNew: p.new.amountCredits, baseCostUsed: p.used.amountCredits,
+    baseCostNew: newOk ? p.new.amountCredits : null, baseCostUsed: usedOk ? p.used.amountCredits : null,
     requiresCondition: true, defaultCondition: null, unavailabilityReason: null,
     rawCostSource: 'universalVehicleSource.economics'
   };
+  const notForSale = p.new.status === 'not-for-sale';
   return {
-    costStatus: p.new.status === 'not-for-sale' ? 'unavailable' : 'missing', pricingMode: 'none',
+    costStatus: notForSale ? 'unavailable' : 'missing', pricingMode: 'none',
     baseCost: null, baseCostNew: null, baseCostUsed: null, requiresCondition: false, defaultCondition: null,
-    unavailabilityReason: p.new.status === 'not-for-sale' ? 'notPubliclyAvailable' : 'sourceReviewRequired',
+    unavailabilityReason: notForSale ? 'notPubliclyAvailable' : 'sourceReviewRequired',
     rawCostSource: 'universalVehicleSource.economics'
   };
 }

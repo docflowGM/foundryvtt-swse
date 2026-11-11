@@ -23,7 +23,7 @@ const settings = { storeMarkup: 0, storeDiscount: 0 };
 globalThis.game = { ...(globalThis.game ?? {}), user: { isGM: true, id: 'gm' }, items: { get: () => null, contents: [] }, actors: { contents: [], get: () => null },
   settings: { settings: { has: () => true }, get: (_s, k) => settings[k], set: async (_s, k, v) => { settings[k] = v; return v; } } };
 
-const { normalizeStoreItem, storeItemDocumentData, filterValidStoreItems } = await import('/systems/foundryvtt-swse/scripts/engine/store/normalizer.js');
+const { buildIndexedListing, storeItemDocumentData, isListingOfferable, STORE_ITEM_DOMAINS } = await import('/systems/foundryvtt-swse/scripts/engine/store/store-catalog.js');
 const { applyPricing } = await import('/systems/foundryvtt-swse/scripts/engine/store/pricing.js');
 const { createItemPlans } = await import('/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js');
 const { HouseRuleService } = await import('/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js');
@@ -40,7 +40,16 @@ const record = (pack, pred) => { for (const l of fs.readFileSync(new URL(`../pac
 // a compendium Document as the loader hands it to the Store (toObject + uuid), and the cached form (plain data with the loader annotation)
 const asDocument = (data, pack) => ({ ...JSON.parse(JSON.stringify(data)), uuid: `Compendium.foundryvtt-swse.${pack}.Item.${data._id}`, toObject() { const { toObject, uuid, ...rest } = this; return JSON.parse(JSON.stringify(rest)); } });
 const asCached = (data, pack) => ({ ...JSON.parse(JSON.stringify(data)), __storeSource: { source: 'compendium', pack: `foundryvtt-swse.${pack}`, documentId: data._id, uuid: `Compendium.foundryvtt-swse.${pack}.Item.${data._id}` } });
-const listing = (raw) => applyPricing(normalizeStoreItem(raw));
+// index-first listing + the hydrated source record (what hydrateStoreListing attaches for an inspected / purchased product)
+const listing = (raw) => {
+  const pack = /Compendium\.(.+?)\.Item\./.exec(raw.uuid ?? raw.__storeSource.uuid)[1];
+  const domain = raw.type;
+  const entry = { _id: raw._id, name: raw.name, img: raw.img, type: raw.type, system: raw.system };
+  const l = buildIndexedListing(entry, { domain, pack });
+  const doc = JSON.parse(JSON.stringify(raw)); delete doc.uuid; delete doc.toObject;
+  doc._stats = { ...(doc._stats ?? {}), compendiumSource: l.sourceUuid };
+  return applyPricing(Object.assign(l, { doc, system: doc.system, hydrated: true }));
+};
 const buy = (storeItem) => createItemPlans([{ id: storeItem.id, name: storeItem.name, cost: storeItem.finalCost, item: storeItem }])[0].add.items[0];
 
 const PISTOL = record('weapons-pistols', (d) => d.name === 'Blaster Pistol');
@@ -48,12 +57,12 @@ const ARMOR = record('armor-light', (d) => d.system?.cost > 0);
 const GEAR = record('equipment-tools', (d) => d.system?.cost > 0);
 
 {
-  for (const [label, raw] of [['document', asDocument(PISTOL, 'weapons-pistols')], ['cached', asCached(PISTOL, 'weapons-pistols')]]) {
+  for (const [label, raw] of [['document', asDocument(PISTOL, 'weapons-pistols')]]) {
     const owned = buy(listing(raw));
     assert.equal(owned.flags?.swse?.canonicalWeapon?.identityKey, 'weapon-blaster-pistol', `${label}: canonical weapon identity kept`);
     assert.deepEqual(owned.system, PISTOL.system, `${label}: the full canonical system data`);
     assert.equal(owned.type, 'weapon'); assert.equal(owned.name, 'Blaster Pistol');
-    assert.equal(owned._stats?.compendiumSource, `Compendium.foundryvtt-swse.weapons-pistols.Item.${PISTOL._id}`, `${label}: provenance`);
+    assert.equal(owned._stats?.compendiumSource, `Compendium.foundryvtt-swse.weapons-pistols.${PISTOL._id}`, `${label}: provenance`);
     assert.ok(!Object.keys(owned).some((k) => k.startsWith('__store') || ['costStatus', 'finalCost', 'doc', 'canonicalId'].includes(k)), `${label}: no store-view fields in the Item`);
     const dmg = rt.resolveCanonicalDamage({ ...owned, id: 'owned' }, {});
     assert.equal(dmg.source, 'canonical', `${label}: resolves through the canonical weapon runtime`); assert.equal(dmg.base, '3d6');
@@ -102,20 +111,20 @@ const GEAR = record('equipment-tools', (d) => d.system?.cost > 0);
   // a missing price is never a zero price: it is not listed for sale
   const missing = listing(asDocument({ ...GEAR, _id: 'nocost', system: { ...GEAR.system, cost: undefined, costNumeric: undefined, price: undefined } }, 'equipment-tools'));
   assert.equal(missing.costStatus, 'missing'); assert.equal(missing.finalCost, null);
-  assert.equal(filterValidStoreItems([missing]).length, 0, 'not offered');
+  assert.equal(isListingOfferable(missing), false, 'not offered');
   const zero = listing(asDocument({ ...GEAR, _id: 'zerocost', system: { ...GEAR.system, cost: 0, costNumeric: 0, price: undefined } }, 'equipment-tools'));
   assert.equal(zero.finalCost, null, 'a 0 placeholder price is not sold for 0 credits');
   ok('pricing: one calculation (base x markup x discount) for display and cart; missing or 0 prices are never sold as free');
 }
 {
-  // the aggregate equipment pack holds the same records as the subtype packs; the Store reads the subtypes only (the aggregate is the fallback)
-  const loaderSrc = fs.readFileSync(new URL('../scripts/engine/store/loader.js', import.meta.url), 'utf8');
-  assert.match(loaderSrc, /const itemPackNames = \[\.\.\.STORE_PACKS\.WEAPON_PACKS, \.\.\.STORE_PACKS\.ARMOR_PACKS, \.\.\.\(STORE_PACKS\.EQUIPMENT_PACKS \|\| \[\]\)\];/);
-  assert.match(loaderSrc, /const equipmentDocs = itemPackResults\.filter\(result => \(STORE_PACKS\.EQUIPMENT_PACKS \|\| \[\]\)\.includes\(result\.packName\)\)/);
+  // the aggregate equipment pack holds the same records as the subtype packs; the Store reads the explicit subtype packs only (no aggregate, no fallback)
+  const catalogSrc = fs.readFileSync(new URL('../scripts/engine/store/store-catalog.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(catalogSrc, /STORE_PACKS\.EQUIPMENT\b|WEAPONS_CANONICAL|ARMOR_CANONICAL/);
+  assert.equal(STORE_ITEM_DOMAINS.find((d) => d.domain === 'equipment').packs.length, 7);
   const ids = (f) => fs.readFileSync(new URL(`../packs/${f}`, import.meta.url), 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)._id);
   const sub = fs.readdirSync(new URL('../packs/', import.meta.url)).filter((f) => /^equipment-[a-z]+\.db$/.test(f)).flatMap(ids);
   assert.equal(new Set(sub).size, sub.length, 'no duplicate ids across the equipment subtype packs');
   assert.deepEqual(new Set(ids('equipment.db')), new Set(sub), 'the aggregate is exactly the subtype records (so loading both listed every gear item twice)');
-  ok('catalog: gear comes from the 7 equipment subtype packs only (each record once); the identical aggregate is only the fallback');
+  ok('catalog: gear comes from the 7 equipment subtype packs only (each record once); the identical aggregate is not inventory');
 }
 console.log(`store-v2-purchase-integrity: ${n} checks ok`);

@@ -67,10 +67,10 @@ test('invalid source and uncertified legacy shipyard modifications fail before m
   const original = sample(d => d.system.shieldRating > 0);
   const corrupted = clone(original);
   corrupted.system.hp.max = 1;
-  assert.throws(() => Factory.buildVehicleActorData({ template: corrupted }),
+  assert.throws(() => Factory.buildVehicleActorData({ template: corrupted, condition: 'new' }),
     /VEHICLE_FACTORY_UNTRUSTED_CANONICAL_TEMPLATE/);
   assert.throws(() => Factory.buildVehicleActorData({
-    template: original, modifications: [{ id: 'weapons-lasers', damage: '99d10' }]
+    template: original, condition: 'new', modifications: [{ id: 'weapons-lasers', damage: '99d10' }]
   }), /VEHICLE_FACTORY_CANONICAL_MODIFICATION_REQUIRES_CERTIFIED_P2_PATH/);
   assert.throws(() => Factory.buildExistingModificationMutationPlan(original, {
     stockShip: { hitPoints: 999 }, modifications: []
@@ -100,17 +100,9 @@ test('old vehicle sheet reads live HP before stale hull and exposes read-only so
 
 test('legacy Store checkout resolves the universal source pack before any credit debit', () => {
   const code = readFileSync('scripts/apps/store/store-checkout.js', 'utf8');
-  const buy = code.slice(code.indexOf('export async function buyVehicle('),
-    code.indexOf('export async function createCustomDroid('));
   const plans = code.slice(code.indexOf('async function createVehiclePlans('),
     code.indexOf('function flattenCartForPurchase('));
-  assert.doesNotMatch(buy, /foundryvtt-swse\.vehicles['"]/);
-  assert.match(buy, /VehiclePackDataLoader\.loadVehicleIndex\(\)/);
-  assert.match(buy, /VehiclePackDataLoader\.loadVehicleDocument\(/);
-  assert.match(buy, /vehiclePlans = await createVehiclePlans\(/);
-  assert.match(buy, /return vehiclePlans;/);
-  assert.ok(buy.indexOf('vehiclePlans = await createVehiclePlans(') <
-    buy.indexOf('StoreEngine.purchase('), 'source preflight must precede debit');
+  assert.doesNotMatch(code, /game\.actors\.get\(actorId\)/, 'no world-actor vehicle fallback');
   assert.match(plans, /entry\.sourceEntryKey === key/);
   assert.match(plans, /VehiclePackDataLoader\.loadVehicleDocument\(matches\[0\]\)/);
   assert.match(plans, /template: canonicalActor/);
@@ -137,7 +129,7 @@ test('Foundry V13 Factory uses toObject(true) source, never prepared derived dat
       return prepared;
     }
   };
-  const created = Factory.buildVehicleActorData({ template: { doc: stub } });
+  const created = Factory.buildVehicleActorData({ template: { doc: stub }, condition: 'new' });
   assert.equal(consulted, true, 'Foundry source flag must be true');
   assert.equal(created.system.hp.max, original.system.hp.max);
   assert.equal(classifyVehicleActorSource(created).kind, 'canonical');
