@@ -51,6 +51,7 @@ export function parseTransactionCost(value) {
 import { stampAcquisitions, lotIdFor } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js";
 import { StoreAcquisitionService } from "/systems/foundryvtt-swse/scripts/engine/store/acquisition-service.js";
 
+import { sameOwnership } from "/systems/foundryvtt-swse/scripts/engine/store/resale-authority.js";
 const RESALE_AUTHORITY_GM_APPRAISAL = 'gm-appraisal';
 
 export class TransactionEngine {
@@ -1559,16 +1560,27 @@ export class TransactionEngine {
     };
   }
 
-  /** Put a disposed asset back and VERIFY it by reading it. */
+  /** Put a disposed asset back and VERIFY the actual stored state: no pending resale, original owner id, original ownership map. */
   static async #revertAssetDisposition(asset, undoUpdate, previous, source) {
+    const savedResale = asset.flags?.['foundryvtt-swse']?.resale ? JSON.parse(JSON.stringify(asset.flags['foundryvtt-swse'].resale)) : null;
+    // A failed/partial revert must never erase the pending marker: the asset would then look like an ordinary GM-held Actor with no way to reconcile.
+    const keepMarker = async why => {
+      if (savedResale && !asset.flags?.['foundryvtt-swse']?.resale) {
+        try { await ActorEngine.updateActor(asset, { 'flags.foundryvtt-swse.resale': { ...savedResale, needsReconciliation: true, reconciliationReasons: [why] } }, { source: `${source}.keep-marker`, skipValidation: true }); } catch (_e) { /* reported by the caller */ }
+      }
+    };
     try {
       await ActorEngine.updateActor(asset, undoUpdate, { source, skipValidation: true });
     } catch (error) {
+      await keepMarker(`restore write failed: ${error.message}`);
       return { restored: false, error };
     }
-    const resale = asset.flags?.['foundryvtt-swse']?.resale;
-    const restored = !resale && (asset.system?.ownedByActorId ?? null) === previous.ownedByActorId;
-    return restored ? { restored: true } : { restored: false, error: new Error('the asset still shows its disposition after the revert') };
+    const problems = [];
+    if (asset.flags?.['foundryvtt-swse']?.resale) problems.push('the pending resale state is still present');
+    if ((asset.system?.ownedByActorId ?? null) !== (previous.ownedByActorId ?? null)) problems.push('the owner link was not restored');
+    if (!sameOwnership(asset.ownership, previous.ownership)) problems.push('the ownership/permission map was not restored');
+    if (problems.length) { await keepMarker(problems.join('; ')); return { restored: false, error: new Error(problems.join('; ')) }; }
+    return { restored: true };
   }
 
   /**
@@ -1617,7 +1629,10 @@ export class TransactionEngine {
       // 1. dispose the asset as PENDING, carrying this transaction's id
       const soldAt = Date.now();
       const pendingUpdate = buildAssetDispositionUpdate({ ...verdict.dispositionInputs, transactionId, soldAt, status: 'sale-pending' });
-      Object.assign(pendingUpdate['flags.foundryvtt-swse.resale'], { ownerCreditsBefore: creditsBefore, ownerCreditsAfter: creditsAfter });
+      Object.assign(pendingUpdate['flags.foundryvtt-swse.resale'], {
+        ownerCreditsBefore: creditsBefore, ownerCreditsAfter: creditsAfter,
+        ownerHadRelationship: (Array.isArray(owner.system?.relationships) ? owner.system.relationships : []).some(e => e?.id === asset.id || e?.uuid === `Actor.${asset.id}`)
+      });
       try {
         await ActorEngine.updateActor(asset, pendingUpdate, { source: `${source}.dispose`, skipValidation: true });
       } catch (disposeError) {
@@ -1703,33 +1718,102 @@ export class TransactionEngine {
     }
   }
 
+  /** Every Actor other than `owner` that still links `assetId` as owned (a conflicting transfer/disposition). */
+  static #otherLinkers(owner, assetId) {
+    const out = [];
+    const all = game?.actors?.contents ?? (typeof game?.actors?.[Symbol.iterator] === 'function' ? [...game.actors] : []);
+    for (const a of all) {
+      if (!a || a.id === owner.id) continue;
+      const links = Array.isArray(a.system?.ownedActors) ? a.system.ownedActors : [];
+      if (links.some(e => e?.id === assetId)) out.push(a.id);
+    }
+    return out;
+  }
+
+  /** Does the asset still grant access to any non-GM user (its disposition did not hold)? */
+  static #playerAccessOn(asset) {
+    return Object.entries(asset.ownership ?? {}).filter(([k, v]) => k !== 'default' && Number(v) > 0 && game?.users?.get?.(k)?.isGM !== true).map(([k]) => k);
+  }
+
   /**
-   * GM reconciliation of an interrupted asset sale, decided ONLY from the ledger: a record for the asset's recorded sale transaction on the
-   * owner means the payment committed (finalize as sold); no record and the owner still linking the asset means it did not (restore the
-   * asset from its recorded previous state); anything else is left untouched for manual review.
+   * GM reconciliation of an interrupted asset sale. It never infers anything from a single flag or a lone "successful" record:
+   *   PAID    requires the ledger record to be THIS pending sale (id, Sell, asset-sale context, Success, owner, asset, payout, wallet transition), the
+   *           owner wallet to be consistent with it, the asset unlinked everywhere, GM-held with no player access, and no conflicting disposition.
+   *   UNPAID  requires no committed record at all, the wallet exactly at its pre-sale value, the asset still linked to the right owner with consistent
+   *           relationships, no conflicting linker, and the restoration is VERIFIED by reading the asset afterwards.
+   * Anything else stays `sale-pending` + `needsReconciliation` with the reasons recorded. Two Actors are never written atomically; this only resolves
+   * the state after the fact. Executes under a per-asset lock; a second attempt after resolution finds nothing pending.
    */
   static async reconcileAssetSale({ ownerActor, assetActorId } = {}) {
     if (game?.user?.isGM !== true) return { success: false, outcome: 'refused', error: 'Only a GM can reconcile an asset sale.' };
     const owner = game?.actors?.get?.(ownerActor?.id) || ownerActor;
-    const asset = game?.actors?.get?.(assetActorId);
-    const resale = asset?.flags?.['foundryvtt-swse']?.resale;
-    if (!owner || !asset || !resale || !['sale-pending'].includes(resale.status) || !resale.transactionId) return { success: false, outcome: 'nothing-to-reconcile', error: 'The asset has no pending sale to reconcile.' };
-    let ledger;
-    try { ledger = owner.getFlag?.('foundryvtt-swse', 'transactions') || owner.flags?.['foundryvtt-swse']?.transactions || {}; } catch (_e) { ledger = owner.flags?.['foundryvtt-swse']?.transactions || {}; }
-    const record = ledger?.[resale.transactionId];
-    const linked = (Array.isArray(owner.system?.ownedActors) ? owner.system.ownedActors : []).some(e => e?.id === asset.id);
-    if (record && record.status === 'Success') {
-      await ActorEngine.updateActor(asset, { 'flags.foundryvtt-swse.resale.status': 'sold', 'flags.foundryvtt-swse.resale.needsReconciliation': false }, { source: 'TransactionEngine.reconcileAssetSale', skipValidation: true });
-      return { success: true, outcome: 'completed', transactionId: resale.transactionId };
+    const assetId = String(assetActorId ?? '');
+    const lockKey = `reconcile-asset:${assetId}`;
+    if (this._mutationLocks.has(lockKey)) return { success: false, outcome: 'in-progress', error: 'This asset is already being reconciled.' };
+    this._mutationLocks.add(lockKey);
+    try {
+      const asset = game?.actors?.get?.(assetId);
+      const resale = asset?.flags?.['foundryvtt-swse']?.resale;
+      if (!owner || !asset || resale?.status !== 'sale-pending' || !resale.transactionId) return { success: false, outcome: 'nothing-to-reconcile', error: 'The asset has no pending sale to reconcile.' };
+      if (resale.previousOwnerActorId !== owner.id) return { success: false, outcome: 'unresolved', error: 'The pending sale does not belong to this owner.' };
+      const txId = resale.transactionId;
+      let ledger;
+      try { ledger = owner.getFlag?.('foundryvtt-swse', 'transactions') || owner.flags?.['foundryvtt-swse']?.transactions || {}; } catch (_e) { ledger = owner.flags?.['foundryvtt-swse']?.transactions || {}; }
+      const record = ledger?.[txId] ?? null;
+      const credits = LedgerService.getCurrentCredits(owner);
+      const linked = (Array.isArray(owner.system?.ownedActors) ? owner.system.ownedActors : []).some(e => e?.id === asset.id);
+      const hasRel = (Array.isArray(owner.system?.relationships) ? owner.system.relationships : []).some(e => e?.id === asset.id || e?.uuid === `Actor.${asset.id}`);
+      const others = this.#otherLinkers(owner, asset.id);
+      const otherSales = Object.values(ledger ?? {}).filter(r => r && r.id !== txId && r.status === 'Success' && r.audit?.assetActorId === asset.id);
+      const fail = (reasons, extra = {}) => ({ success: false, outcome: 'unresolved', needsReconciliation: true, reasons, error: `Cannot reconcile sale ${txId}: ${reasons.join('; ')}. The asset stays GM-held.`, ...extra });
+      const mark = async reasons => { try { await ActorEngine.updateActor(asset, { 'flags.foundryvtt-swse.resale.needsReconciliation': true, 'flags.foundryvtt-swse.resale.reconciliationReasons': reasons }, { source: 'TransactionEngine.reconcileAssetSale.flag', skipValidation: true }); } catch (_e) { /* the returned result carries the reasons */ } };
+
+      if (others.length || otherSales.length) { const r = ['a conflicting transfer or sale of this asset exists']; await mark(r); return fail(r); }
+
+      if (record) {
+        const bad = [];
+        if (record.id !== txId) bad.push('record id differs from the pending transaction');
+        if (record.status !== 'Success') bad.push('record is not successful');
+        if (record.type !== 'Sell' || record.context !== 'store-asset-sale-approval') bad.push('record is not an asset-sale transaction');
+        if (record.actorId !== owner.id) bad.push('record owner differs from the seller');
+        if (record.audit?.assetActorId !== asset.id) bad.push('record names a different asset');
+        if (!Number.isFinite(Number(record.amount)) || Number(record.amount) !== Number(resale.amount)) bad.push('recorded payout differs from the pending sale');
+        if (record.creditsBefore !== resale.ownerCreditsBefore || record.creditsAfter !== resale.ownerCreditsAfter) bad.push('recorded wallet transition differs from the pending sale');
+        if (linked || hasRel) bad.push('the seller still links the asset');
+        if (asset.system?.ownedByActorId != null) bad.push('the asset still names an owner');
+        if (this.#playerAccessOn(asset).length) bad.push('a player still has access to the asset');
+        const laterTx = Object.values(ledger ?? {}).some(r => r && r.id !== txId && Number(r.createdAt) > Number(record.createdAt));
+        if (credits !== record.creditsAfter && !laterTx) bad.push('the seller wallet does not match the committed payment');
+        if (bad.length) { await mark(bad); return fail(bad); }
+        try {
+          await ActorEngine.updateActor(asset, { 'flags.foundryvtt-swse.resale.status': 'sold', 'flags.foundryvtt-swse.resale.needsReconciliation': false }, { source: 'TransactionEngine.reconcileAssetSale', skipValidation: true });
+        } catch (error) { return fail([`finalizing the asset failed (${error.message})`]); }
+        return asset.flags?.['foundryvtt-swse']?.resale?.status === 'sold'
+          ? { success: true, outcome: 'completed', transactionId: txId }
+          : fail(['the asset status could not be verified as sold']);
+      }
+
+      // no committed record: restoration only if the owner is observably untouched
+      const bad = [];
+      if (credits !== resale.ownerCreditsBefore) bad.push('the seller wallet is not at its pre-sale value (payment may have landed)');
+      if (!linked) bad.push('the seller no longer links the asset');
+      if (hasRel !== (resale.ownerHadRelationship !== false)) bad.push('the seller relationship entry is inconsistent');
+      if (asset.system?.ownedByActorId != null) bad.push('the asset names an owner while pending');
+      if (!resale.previousOwnership || resale.previousOwnedByActorId !== owner.id) bad.push('the original ownership state was not recorded');
+      if (bad.length) { await mark(bad); return fail(bad); }
+      const gmKeys = Object.fromEntries(Object.entries(asset.ownership ?? {}).filter(([k]) => k !== 'default'));
+      const undo = {
+        ownership: { ...resale.previousOwnership, ...Object.fromEntries(Object.keys(gmKeys).filter(k => !(k in resale.previousOwnership)).map(k => [`-=${k}`, null])) },
+        'system.ownedByActorId': resale.previousOwnedByActorId, 'system.ownedByActorName': resale.previousOwnedByActorName ?? null,
+        'flags.foundryvtt-swse.-=resale': null
+      };
+      const rv = await this.#revertAssetDisposition(asset, undo, { ownedByActorId: resale.previousOwnedByActorId, ownership: resale.previousOwnership }, 'TransactionEngine.reconcileAssetSale.restore');
+      if (rv.restored) return { success: true, outcome: 'restored', transactionId: txId };
+      if (asset.flags?.['foundryvtt-swse']?.resale) await mark([`restoration could not be verified (${rv.error?.message})`]);
+      return fail([`restoration could not be verified (${rv.error?.message})`]);
+    } finally {
+      this._mutationLocks.delete(lockKey);
     }
-    // restore ONLY when the owner is observably untouched: no ledger record, asset still linked AND the balance is exactly what it was before the attempt
-    if (!record && linked && LedgerService.getCurrentCredits(owner) === resale.ownerCreditsBefore) {
-      const previous = { ownedByActorId: resale.previousOwnedByActorId ?? null };
-      const undo = { ownership: resale.previousOwnership ?? { default: 0 }, 'system.ownedByActorId': resale.previousOwnedByActorId ?? null, 'system.ownedByActorName': resale.previousOwnedByActorName ?? null, 'flags.foundryvtt-swse.-=resale': null };
-      const rv = await this.#revertAssetDisposition(asset, undo, previous, 'TransactionEngine.reconcileAssetSale.restore');
-      return rv.restored ? { success: true, outcome: 'restored', transactionId: resale.transactionId } : { success: false, outcome: 'unresolved', error: `The asset could not be restored (${rv.error?.message ?? 'unverified'}).` };
-    }
-    return { success: false, outcome: 'unresolved', error: 'The ledger and the owner links disagree; review transaction ' + resale.transactionId + ' manually.' };
   }
 
   /**

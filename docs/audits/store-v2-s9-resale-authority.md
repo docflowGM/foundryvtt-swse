@@ -85,7 +85,7 @@ The Actor is **kept, never deleted**: `ownership` reduced to `{default: 0, GM: o
 
 | Asset | Mode | Valuation |
 |---|---|---|
-| Unmodified canonical weapon/armor/equipment/consumable | automatic (single-owner actor, `autoAcceptItemSales` on) or GM approval of the canonical quote | policy % of verified paid, else published |
+| Unmodified canonical weapon/armor/equipment/consumable | **GM approval of the canonical quote** (automatic player-executed credit creation is closed; see merge-readiness corrections) | policy % of verified paid, else published |
 | Customized, provenance-less, source-mismatched, unpriced Items | GM appraisal only | GM amount + reason |
 | Stock/custom Droids, published/custom Vehicles | GM appraisal only (player requests from Asset Bay) | GM amount + reason, with evidence and policy reference |
 
@@ -104,7 +104,7 @@ New: `tests/store-v2-s9-resale-authority.test.mjs` (14 checks, incl. forged / co
 - Condition/damage/modification value of whole assets is not modelled: GM judgement.
 - Existing assets purchased before this change have no acquisition record: Items fall back to published cost (labelled); assets are "acquisition cost unknown".
 - Trade-ins/ownership transfer between actors are not implemented.
-- Policy question for the owner (not a rules ruling): confirm `resaleBasis` default `acquisition` and whether auto-resale should additionally be allowed for unmodified published whole assets (currently GM-approved with a policy reference).
+- RESOLVED by the project owner (S9 decisions): `resaleBasis` default `acquisition` is approved; whole Droid/Vehicle sales remain GM-approved. (Original wording kept for history:) confirm `resaleBasis` default `acquisition` and whether auto-resale should additionally be allowed for unmodified published whole assets (currently GM-approved with a policy reference).
 
 ## Final integrity corrections (post-review of 8933b88)
 
@@ -121,3 +121,14 @@ New: `tests/store-v2-s9-resale-authority.test.mjs` (14 checks, incl. forged / co
 **Transaction-wide lot allocation.** `executeMutationTransaction` creates one `claimedLots` set per transaction and passes it to every `stampAcquisitions` call; a doc is matched to an unclaimed ledger line of the same listing **and** exact unit price, otherwise it receives no lot (no entitlement). Covered: repeated identical Items, identical Droids/Vehicles, different prices for one listing, mixed types, multiple plans.
 
 **Runtime limitations (unchanged status: OFFLINE_TESTED, not FOUNDRY_TESTED).** ActorEngine's `transactional` rollback and the pending→sold/reconcile flow have only been exercised against stubs; live Foundry acceptance of interrupted asset sales is still required (see the acceptance checklist, section J).
+
+
+## Merge-readiness corrections (after review of 8fcc5e5)
+
+1. **Automatic credit creation is closed.** Entitlements are verified against the seller's own ledger, which is stored in Actor flags. Foundry has no field-level permission and this system has no server-side hook, so any OWNER can write that ledger directly (and `system.credits`). A client-executed "automatic" sale could therefore mint credits from a forged purchase. `ResaleService.automaticResaleAllowed` now always returns `AUTOMATIC_CREDITS_REQUIRE_GM_AUTHORITY` (constant `AUTOMATIC_CREDIT_CREATION_TRUSTED = false`; deliberately not a setting) and `verifyForCommit` refuses a `store-sale` (player-executed) context. Player item sales always become GM requests; the GM approves the canonical quote or a GM appraisal (GM decision = trust anchor; evidence text says the ledger lives on the seller's Actor). The `autoAcceptItemSales` house rule is now inert. Re-enable only with a GM-controlled executor.
+2. **Disposal now really removes the former owner's access.** Foundry MERGES an `ownership` update, so `{default:0, gm:3}` left `player:3` in place. `ownershipReplacement()` adds `-=key` deletions; the undo does the same in reverse.
+3. **Restoration is verified against stored state**: pending resale marker gone, owner link, and the exact ownership map (`sameOwnership`). A failed/partial revert re-asserts the `sale-pending` marker so the asset can never become an unmarked GM-held Actor.
+4. **`reconcileAssetSale` hardened.** PAID needs: record id = pending id, `Success`, `Sell`, context `store-asset-sale-approval`, owner id, asset id, payout, wallet transition (before/after), consistent wallet (or a later ledger transaction explaining it), seller unlinked (link and relationship), asset has no owner and no player access, no other Actor links it, no other successful sale of it. UNPAID needs: no record, wallet exactly at `ownerCreditsBefore`, seller still links it, relationship presence as recorded (`ownerHadRelationship`), original ownership recorded, no conflicting linker, then verified restoration. Else `unresolved` + `needsReconciliation` + `reconciliationReasons`. Per-asset lock inside a client. Two Actors are still not written atomically.
+5. **Price authority**: removed the `system.price` / `item.cost` / `item.price` fallbacks from `store-shared.getCostValue/getCostDisplay` and the purchase audit line.
+
+Not changed: acquisition-lot and ledger replay protections remain (they stop an honest double-submit, not a hostile owner).

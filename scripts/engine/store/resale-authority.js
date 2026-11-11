@@ -227,9 +227,25 @@ export function assessAssetForResale({ asset, owner, designProject = null, acqui
 }
 
 /** Disposition contract for a sold asset: the Actor is kept (never deleted), stripped of player access, and its prior state recorded for recovery. */
+/**
+ * Foundry MERGES an `ownership` update into the stored map, so assigning `{default:0, gm:3}` leaves an existing `player:3` in place. A replacement
+ * must delete the keys that are not in the target (`-=key: null`). Pure; the result is passed straight to an Actor update.
+ */
+export function ownershipReplacement(current = {}, target = {}) {
+  const out = { ...target };
+  for (const key of Object.keys(current ?? {})) if (!(key in target)) out[`-=${key}`] = null;
+  return out;
+}
+
+/** Order-independent comparison of two ownership maps (what is actually stored, `-=` instructions excluded). */
+export function sameOwnership(a = {}, b = {}) {
+  const norm = o => JSON.stringify(Object.entries(o ?? {}).filter(([k]) => !k.startsWith('-=')).map(([k, v]) => [k, Number(v)]).sort((x, y) => (x[0] < y[0] ? -1 : 1)));
+  return norm(a) === norm(b);
+}
+
 export function buildAssetDispositionUpdate({ asset, owner, transactionId, authority, amount, soldAt, soldBy, gmOwnerships, status = 'sold' }) {
   return {
-    ownership: { default: 0, ...gmOwnerships },
+    ownership: ownershipReplacement(asset.ownership ?? {}, { default: 0, ...gmOwnerships }),
     'system.ownedByActorId': null,
     'system.ownedByActorName': null,
     'flags.foundryvtt-swse.resale': {

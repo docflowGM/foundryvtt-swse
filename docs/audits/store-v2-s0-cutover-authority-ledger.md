@@ -124,3 +124,11 @@ node tests/store-v2-purchase-integrity.test.mjs
 node tests/ti2-commerce-integrity.test.mjs
 ```
 Foundry runtime: **not run**.
+
+
+## 12. Status update (merge-readiness pass; historical sections above are kept as written)
+
+- Section 9 questions Q1/Q2 were answered by the project owner earlier in the cutover (Q1: positive traceable stock-droid certification; Q2: purchaseHistory flags stay inert). B1 (live Foundry host) is STILL OPEN and is the only thing between CODE_COMPLETE/OFFLINE_TESTED and FOUNDRY_TESTED.
+- Build a Droid is no longer a placeholder (section 7 item 1): it is the implemented lifecycle documented in `store-v2-foundry-acceptance-checklist.md` section I, RUNTIME_UNVERIFIED.
+- Resale authority: see `store-v2-s9-resale-authority.md`. Automatic player-executed credit creation is closed (owner-writable ledger); all item sales are GM decisions; whole-asset sales are GM-appraised; `resaleBasis=acquisition` approved.
+- Test results quoted in section 10 are historical (earlier heads). Current-head results are in `store-v2-final-merge-readiness.md`.

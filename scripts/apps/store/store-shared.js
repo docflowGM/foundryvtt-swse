@@ -61,14 +61,14 @@ export function getCostValue(item) {
   if (!item) {return null;}
   const sys = safeSystem(item);
   if (!sys) {return null;}
-  const maybe = sys.cost ?? sys.price ?? item.cost ?? null;
+  const maybe = sys.cost ?? null;   // canonical V2 field only: no legacy `price` fallback decides a price
   return normalizeNumber(maybe);
 }
 
 export function getCostDisplay(item, opts={}) {
   const currencySuffix = opts.suffix ?? ' cr';
   const sys = safeSystem(item);
-  const rawSource = sys ? (sys.cost ?? sys.price ?? item.cost ?? null) : (item?.cost ?? null);
+  const rawSource = sys ? (sys.cost ?? null) : null;
   const num = getCostValue(item);
   if (num !== null) {
     try { return num.toLocaleString() + currencySuffix; } catch (e) { return String(num) + currencySuffix; }

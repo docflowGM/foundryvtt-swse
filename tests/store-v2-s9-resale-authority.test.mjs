@@ -184,7 +184,7 @@ const quote = (a) => A.quoteItemResale({ percent: 50, basis: 'published', acquis
   const custom = A.assessAssetForResale({ asset: { ...vehicle, flags: { swse: { vehicleConstructionCompletion: { designId: 'D1' } } } }, owner, designProject: { record: { totalCredits: 750000 } } });
   assert.equal(custom.reference.constructionTotal, 750000); assert.ok(custom.lines.some(l => /installed systems after delivery are NOT valued/.test(l)));
   const disp = A.buildAssetDispositionUpdate({ asset: droid, owner, transactionId: 't', authority: 'gm-appraisal', amount: 5, soldAt: 1, soldBy: 'gm', gmOwnerships: { gm: 3 } });
-  assert.deepEqual(disp.ownership, { default: 0, gm: 3 }); assert.equal(disp['system.ownedByActorId'], null);
+  assert.deepEqual(disp.ownership, { default: 0, gm: 3, '-=p1': null }, 'the former player key is deleted, not merely left in place'); assert.equal(disp['system.ownedByActorId'], null);
   assert.deepEqual(disp['flags.foundryvtt-swse.resale'].previousOwnership, { default: 0, p1: 3 }, 'prior access recorded for recovery');
   assert.equal(JSON.stringify(disp).includes('delete'), false, 'the Actor is kept, never deleted');
   ok('assets: ownership both ways, finalized, no crew, not already sold; evidence shows verified paid / published / construction; policy reference 45000; disposition keeps the Actor');
@@ -194,6 +194,9 @@ const { ResaleService } = await import('/systems/foundryvtt-swse/scripts/engine/
 const { HouseRuleService } = await import('/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js');
 const { TransactionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js');
 const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+const realAutomaticGate = ResaleService.automaticResaleAllowed.bind(ResaleService);
+// the policy half is tested directly; the trust gate (always closed) has its own test below
+ResaleService.automaticResaleAllowed = a => ResaleService.policyAllowsAutomatic(a);
 const settings = { automaticSalePercentage: 50, autoAcceptItemSales: true, resaleBasis: 'published' };
 HouseRuleService.getNumber = (k, f) => settings[k] ?? f; HouseRuleService.getString = (k, f) => settings[k] ?? f; HouseRuleService.isEnabled = k => settings[k] === true;
 const realAcquisitionFor = ResaleService.acquisitionFor.bind(ResaleService);
@@ -300,6 +303,22 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
   ResaleService.acquisitionFor = (a, d) => ({ ...ENTITLED, unitsAvailable: ownedQty(d) }); setUser(false); settings.resaleBasis = 'published';
   ok('real ledger checks: purchased -> automatic; loot / dragged-in / forged / copied / duplicated / already-paid-out lots -> no automatic payout; same-listing lots independent; GM appraisal still possible');
 }
+// 7z. automatic credit creation is disabled until a GM-controlled executor exists (the buyer's ledger is owner-writable)
+{
+  setUser(false);
+  settings.autoAcceptItemSales = true;
+  const actor = mkActor([mkItem(pistol())]);
+  assert.deepEqual(realAutomaticGate(actor), { allowed: false, reason: 'AUTOMATIC_CREDITS_REQUIRE_GM_AUTHORITY' }, 'the house rule cannot re-enable client-side credit creation');
+  const saved = ResaleService.automaticResaleAllowed; ResaleService.automaticResaleAllowed = realAutomaticGate;
+  try {
+    const r = await ResaleService.verifyForCommit({ actor, itemId: 'i1', quantity: 1, authority: 'canonical-automatic', transactionContext: 'store-sale' });
+    assert.equal(r.ok, false); assert.deepEqual(r.reasons, ['AUTOMATIC_CREDITS_REQUIRE_GM_AUTHORITY'], 'a player-executed sale that would create credits is refused at the commit boundary');
+    setUser(true);
+    const gmOk = await ResaleService.verifyForCommit({ actor, itemId: 'i1', quantity: 1, authority: 'canonical-automatic', shownQuote: null, transactionContext: 'store-sale-approval' });
+    assert.equal(gmOk.ok, true, 'the GM-decided path is unaffected'); setUser(false);
+  } finally { ResaleService.automaticResaleAllowed = saved; }
+  ok('automatic credit creation is closed (owner-writable ledger); player sales go to GM approval; GM-decided sales unaffected');
+}
 // 8. whole-asset sale transaction: recovery first, transactional owner plan, observed outcomes, no restore after possible payment
 {
   setUser(true);
@@ -310,26 +329,29 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
     owner.toObject = () => JSON.parse(JSON.stringify({ _id: owner.id, name: owner.name, system: owner.system, flags: owner.flags }));
     const droid = { id: 'd1', name: 'R2', type: 'droid', ownership: { default: 0, p1: 3 }, system: { ownedByActorId: 'o1', droidSystems: { stateMode: 'FINALIZED' } }, flags: {} };
     droid.toObject = () => JSON.parse(JSON.stringify({ _id: droid.id, name: droid.name, type: droid.type, ownership: droid.ownership, system: droid.system, flags: droid.flags }));
-    globalThis.game.actors = { get: id => ({ o1: owner, d1: droid })[id] ?? null };
+    globalThis.game.actors = { get: id => ({ o1: owner, d1: droid })[id] ?? null, contents: [owner, droid] };
     return { owner, droid };
   };
   let { owner, droid } = mk();
   const calls = []; const real = { upd: ActorEngine.updateActor, plan: ActorEngine.applyMutationPlan };
-  const b = { snapshot: true, disposeFails: false, undoFails: false, finalizeFails: false, plan: 'ok' };
+  const b = { skipOwnershipRestore: false, skipOwnerLinkRestore: false, slowRestore: false, snapshot: true, disposeFails: false, undoFails: false, finalizeFails: false, plan: 'ok' };
   SnapshotManager.createSnapshot = async () => { calls.push(['snapshot']); if (!b.snapshot) throw new Error('no snapshot'); return { timestamp: 1 }; };
   SnapshotManager.getSnapshot = () => ({ schemaVersion: 2, scope: 'full-actor' });
   const resaleOf = () => droid.flags['foundryvtt-swse']?.resale;
+  // Foundry MERGES an ownership update: keys are removed only with `-=key`
+  const mergeOwn = (actor, own) => { actor.ownership ??= {}; for (const [k, v] of Object.entries(own ?? {})) { if (k.startsWith('-=')) delete actor.ownership[k.slice(2)]; else actor.ownership[k] = v; } };
   ActorEngine.updateActor = async (actor, data) => {
-    if ('flags.foundryvtt-swse.-=resale' in data) { calls.push(['asset-revert']); if (b.undoFails) throw new Error('undo failed'); delete actor.flags['foundryvtt-swse']?.resale; actor.system.ownedByActorId = data['system.ownedByActorId']; actor.ownership = data.ownership; return; }
-    if ('flags.foundryvtt-swse.resale' in data) { calls.push(['asset-dispose', data['flags.foundryvtt-swse.resale'].status]); if (b.disposeFails) throw new Error('dispose failed'); actor.flags['foundryvtt-swse'] = { resale: data['flags.foundryvtt-swse.resale'] }; actor.system.ownedByActorId = null; actor.ownership = data.ownership; return; }
+    if ('flags.foundryvtt-swse.-=resale' in data) { calls.push(['asset-revert']); if (b.undoFails) throw new Error('undo failed'); if (b.slowRestore) await new Promise(r => setTimeout(r, 20)); delete actor.flags['foundryvtt-swse']?.resale; if (!b.skipOwnerLinkRestore) actor.system.ownedByActorId = data['system.ownedByActorId']; if (!b.skipOwnershipRestore) mergeOwn(actor, data.ownership); return; }
+    if ('flags.foundryvtt-swse.resale' in data) { if (actor.flags['foundryvtt-swse']?.resale && data['flags.foundryvtt-swse.resale'].reconciliationReasons) { calls.push(['asset-marker']); actor.flags['foundryvtt-swse'].resale = data['flags.foundryvtt-swse.resale']; return; } calls.push(['asset-dispose', data['flags.foundryvtt-swse.resale'].status]); if (b.disposeFails) throw new Error('dispose failed'); actor.flags['foundryvtt-swse'] = { resale: data['flags.foundryvtt-swse.resale'] }; actor.system.ownedByActorId = null; mergeOwn(actor, data.ownership); return; }
     if ('flags.foundryvtt-swse.resale.status' in data) { calls.push(['asset-finalize']); if (b.finalizeFails) throw new Error('finalize failed'); actor.flags['foundryvtt-swse'].resale.status = data['flags.foundryvtt-swse.resale.status']; return; }
     if ('flags.foundryvtt-swse.resale.needsReconciliation' in data) { calls.push(['asset-flag']); actor.flags['foundryvtt-swse'].resale.needsReconciliation = true; }
   };
-  const applyOwner = (actor, set) => { for (const [k, v] of Object.entries(set)) { if (k === 'system.credits') actor.system.credits = v; else if (k === 'system.ownedActors') actor.system.ownedActors = v; else if (k.startsWith('flags.foundryvtt-swse.transactions.')) { actor.flags['foundryvtt-swse'] ??= { transactions: {} }; actor.flags['foundryvtt-swse'].transactions ??= {}; actor.flags['foundryvtt-swse'].transactions[k.split('.').pop()] = v; } } };
+  const applyOwner = (actor, set) => { for (const [k, v] of Object.entries(set)) { if (k === 'system.credits') actor.system.credits = v; else if (k === 'system.ownedActors') actor.system.ownedActors = v; else if (k === 'system.relationships') actor.system.relationships = v; else if (k.startsWith('flags.foundryvtt-swse.transactions.')) { actor.flags['foundryvtt-swse'] ??= { transactions: {} }; actor.flags['foundryvtt-swse'].transactions ??= {}; actor.flags['foundryvtt-swse'].transactions[k.split('.').pop()] = v; } } };
   let lastOpts = null;
   ActorEngine.applyMutationPlan = async (actor, plan, opts) => {
     calls.push(['owner-plan', opts?.transactional === true]); lastOpts = opts;
     if (b.plan === 'rejected-compensated') { const e = new Error('credit write failed'); e.rollbackOutcome = 'FAILED_COMPENSATED'; throw e; }
+    if (b.plan === 'nothing-landed') { const e = new Error('outcome unknown'); e.rollbackOutcome = 'INDETERMINATE'; throw e; }
     if (b.plan === 'partial') { actor.system.credits = plan.set['system.credits']; const e = new Error('ledger write failed'); e.rollbackOutcome = 'INDETERMINATE'; e.partialMutationPossible = true; throw e; }
     if (b.plan === 'compensated-but-observed-paid') { applyOwner(actor, plan.set); const e = new Error('claimed rolled back'); e.rollbackOutcome = 'FAILED_COMPENSATED'; throw e; }
     applyOwner(actor, plan.set);
@@ -347,6 +369,7 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
     assert.deepEqual(calls.map(c => c[0]), ['snapshot', 'asset-dispose', 'owner-plan', 'asset-finalize'], 'recovery -> pending disposal -> owner plan -> finalize');
     assert.deepEqual(calls[1], ['asset-dispose', 'sale-pending']); assert.equal(calls[2][1], true, 'the owner plan is transactional'); assert.equal(lastOpts.transactional, true);
     assert.equal(resaleOf().status, 'sold'); assert.equal(resaleOf().transactionId, r.transactionId, 'the asset disposition names the committed transaction');
+    assert.deepEqual(droid.ownership, { default: 0, gm: 3 }, 'the former owner\'s permission is actually REMOVED (Foundry merges ownership; the update deletes the old keys)');
     assert.ok(owner.flags['foundryvtt-swse'].transactions[r.transactionId], 'and that transaction is the owner ledger record'); assert.equal(owner.system.ownedActors.some(e => e.id === 'd1'), false);
 
     // no recovery -> refuse before ANY write
@@ -360,7 +383,7 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
     // owner plan rejected AND ActorEngine verified its compensation AND the owner reads as before -> asset restored (verified)
     reset(); b.plan = 'rejected-compensated'; r = await sell({ amount: 500, reason: 'fair' });
     assert.deepEqual([r.success, r.verifiedUnpaid, r.assetRestored], [false, true, true]); assert.equal(owner.system.credits, 100);
-    assert.deepEqual(calls.map(c => c[0]), ['snapshot', 'asset-dispose', 'owner-plan', 'asset-revert']); assert.equal(resaleOf(), undefined); assert.equal(droid.system.ownedByActorId, 'o1');
+    assert.deepEqual(calls.map(c => c[0]), ['snapshot', 'asset-dispose', 'owner-plan', 'asset-revert']); assert.equal(resaleOf(), undefined); assert.equal(droid.system.ownedByActorId, 'o1'); assert.deepEqual(droid.ownership, { default: 0, p1: 3 }, 'original permissions restored exactly (the GM key added by the disposal is removed)');
 
     // ...but the revert itself fails -> owner verified unpaid, asset GM-held, reconciliation required, never "restored"
     reset(); b.plan = 'rejected-compensated'; b.undoFails = true; r = await sell({ amount: 500, reason: 'fair' });
@@ -384,15 +407,63 @@ const setUser = (isGM, id = isGM ? 'gm' : 'p1') => { globalThis.game.user = { id
     reset(); b.finalizeFails = true; r = await sell({ amount: 500, reason: 'fair' });
     assert.equal(r.success, true); assert.equal(r.assetStatusPending, true); assert.equal(resaleOf().status, 'sale-pending'); assert.ok(!calls.some(c => c[0] === 'asset-revert'));
 
-    // GM reconciliation from the ledger
-    reset(); b.plan = 'partial'; r = await sell({ amount: 500, reason: 'fair' });
-    let rec = await TransactionEngine.reconcileAssetSale({ ownerActor: owner, assetActorId: 'd1' });
-    assert.equal(rec.success, false, 'credit landed but no ledger record: left for manual review, never auto-restored'); assert.equal(rec.outcome, 'unresolved');
-    owner.flags['foundryvtt-swse'] ??= { transactions: {} }; owner.flags['foundryvtt-swse'].transactions ??= {}; owner.flags['foundryvtt-swse'].transactions[r.transactionId] = { id: r.transactionId, status: 'Success' };
-    rec = await TransactionEngine.reconcileAssetSale({ ownerActor: owner, assetActorId: 'd1' }); assert.deepEqual([rec.success, rec.outcome], [true, 'completed']); assert.equal(resaleOf().status, 'sold');
-    reset(); b.plan = 'rejected-compensated'; b.undoFails = true; await sell({ amount: 500, reason: 'fair' }); b.undoFails = false;
-    rec = await TransactionEngine.reconcileAssetSale({ ownerActor: owner, assetActorId: 'd1' }); assert.deepEqual([rec.success, rec.outcome], [true, 'restored']); assert.equal(resaleOf(), undefined);
-    setUser(false); rec = await TransactionEngine.reconcileAssetSale({ ownerActor: owner, assetActorId: 'd1' }); assert.equal(rec.success, false, 'reconciliation is GM only'); setUser(true);
+    // ---- GM reconciliation (hardened) ----
+    const tx = () => owner.flags['foundryvtt-swse']?.transactions ?? {};
+    const rec = () => TransactionEngine.reconcileAssetSale({ ownerActor: owner, assetActorId: 'd1' });
+    const pendingPaid = async () => { reset(); b.finalizeFails = true; const r = await sell({ amount: 500, reason: 'fair' }); b.finalizeFails = false; assert.equal(r.success, true); assert.equal(resaleOf().status, 'sale-pending'); return r.transactionId; };
+    const pendingUnpaid = async (plan = 'rejected-compensated') => { reset(); b.plan = plan; b.undoFails = true; await sell({ amount: 500, reason: 'fair' }); b.undoFails = false; b.plan = 'ok'; assert.equal(resaleOf().status, 'sale-pending'); };
+    const stays = (r, why) => { assert.equal(r.success, false, why); assert.equal(r.outcome, 'unresolved', why); assert.equal(resaleOf().status, 'sale-pending', `${why}: the asset is not finalized`); assert.equal(resaleOf().needsReconciliation, true, `${why}: explicit reconciliation state`); assert.ok(r.reasons?.length, why); };
+
+    // interrupted between payment and finalization: verified paid -> completed; a replay finds nothing to do
+    let id = await pendingPaid(); let x = await rec(); assert.deepEqual([x.success, x.outcome, x.reasons], [true, 'completed', undefined]); assert.equal(resaleOf().status, 'sold');
+    x = await rec(); assert.equal(x.outcome, 'nothing-to-reconcile', 'a replayed reconciliation does nothing'); assert.equal(owner.system.credits, 600);
+
+    // ---- negative: a "successful" record is NOT proof unless it is THIS asset sale ----
+    const corrupt = [
+      ['unrelated successful transaction record', async () => { id = await pendingPaid(); tx()[id] = { id: 'other', status: 'Success', type: 'Buy', context: 'store-purchase', actorId: 'o1', amount: 500, createdAt: 1 }; }],
+      ['not an asset-sale context', async () => { id = await pendingPaid(); tx()[id].context = 'store-sale'; }],
+      ['incorrect asset id', async () => { id = await pendingPaid(); tx()[id].audit.assetActorId = 'dX'; }],
+      ['incorrect owner id', async () => { id = await pendingPaid(); tx()[id].actorId = 'oX'; }],
+      ['mismatched payout', async () => { id = await pendingPaid(); tx()[id].amount = 5; }],
+      ['recorded wallet transition mismatch', async () => { id = await pendingPaid(); tx()[id].creditsAfter = 601; }],
+      ['wallet amount mismatch', async () => { id = await pendingPaid(); owner.system.credits = 777; }],
+      ['ownership-link mismatch (seller still links the asset)', async () => { id = await pendingPaid(); owner.system.ownedActors.push({ id: 'd1' }); }],
+      ['seller relationship left behind', async () => { id = await pendingPaid(); owner.system.relationships.push({ id: 'd1', uuid: 'Actor.d1' }); }],
+      ['a player still has access', async () => { id = await pendingPaid(); droid.ownership.p1 = 3; }],
+      ['asset still names an owner', async () => { id = await pendingPaid(); droid.system.ownedByActorId = 'o1'; }],
+      ['asset transferred to another actor', async () => { id = await pendingPaid(); const other = { id: 'o2', system: { ownedActors: [{ id: 'd1' }] } }; globalThis.game.actors.contents.push(other); }],
+      ['asset already sold through another transaction', async () => { id = await pendingPaid(); tx().txOther = { id: 'txOther', status: 'Success', type: 'Sell', context: 'store-asset-sale-approval', actorId: 'o1', amount: 1, createdAt: 2, audit: { assetActorId: 'd1' } }; }]
+    ];
+    for (const [name, arrange] of corrupt) { await arrange(); x = await rec(); stays(x, name); assert.ok(!calls.some(c => c[0] === 'asset-revert'), `${name}: never restores`); }
+
+    // a later, unrelated transaction legitimately explains a different wallet
+    id = await pendingPaid(); owner.system.credits = 450; tx().later = { id: 'later', status: 'Success', type: 'Buy', context: 'store-purchase', actorId: 'o1', amount: 150, createdAt: Date.now() + 1000 };
+    x = await rec(); assert.deepEqual([x.success, x.outcome], [true, 'completed'], 'a later ledger transaction explains a spent wallet');
+
+    // ---- restoration: only when UNPAID is verified, and the result is verified ----
+    await pendingUnpaid(); x = await rec(); assert.deepEqual([x.success, x.outcome], [true, 'restored']);
+    assert.equal(resaleOf(), undefined); assert.equal(droid.system.ownedByActorId, 'o1'); assert.deepEqual(droid.ownership, { default: 0, p1: 3 }, 'original permissions restored exactly'); assert.equal(owner.system.credits, 100);
+    x = await rec(); assert.equal(x.outcome, 'nothing-to-reconcile', 'replayed restoration');
+    // interruption between disposal and payment (the engine could not say what happened, nothing landed): reconcile proves unpaid and restores
+    await pendingUnpaid('nothing-landed'); x = await rec(); assert.deepEqual([x.success, x.outcome], [true, 'restored']);
+    // permission restoration failure: the ownership map does not come back -> NOT reported as restored
+    await pendingUnpaid(); b.skipOwnershipRestore = true; x = await rec(); b.skipOwnershipRestore = false; stays(x, 'permission restoration failure'); assert.match(x.reasons.join(), /ownership/);
+    // incomplete restoration: owner link not restored
+    await pendingUnpaid(); b.skipOwnerLinkRestore = true; x = await rec(); b.skipOwnerLinkRestore = false; stays(x, 'incomplete restoration'); assert.match(x.reasons.join(), /owner link/);
+    // restore write itself fails
+    await pendingUnpaid(); b.undoFails = true; x = await rec(); b.undoFails = false; stays(x, 'restore write fails');
+    // unpaid evidence missing
+    await pendingUnpaid(); owner.system.credits = 101; x = await rec(); stays(x, 'wallet moved: payment may have landed'); assert.equal(calls.filter(c => c[0] === 'asset-revert').length > 0, true);
+    await pendingUnpaid(); owner.system.ownedActors = []; x = await rec(); stays(x, 'seller no longer links the asset');
+    await pendingUnpaid(); owner.system.relationships = []; x = await rec(); stays(x, 'relationship inconsistent');
+    await pendingUnpaid(); globalThis.game.actors.contents.push({ id: 'o3', system: { ownedActors: [{ id: 'd1' }] } }); x = await rec(); stays(x, 'conflicting transfer');
+    await pendingUnpaid('partial'); x = await rec(); stays(x, 'partial mutation: credit landed, no record'); assert.equal(owner.system.credits, 600, 'never silently refunded');
+
+    // concurrent reconciliation: exactly one performs the work, the other is refused
+    await pendingUnpaid(); b.slowRestore = true;
+    const [r1, r2] = await Promise.all([rec(), rec()]); b.slowRestore = false;
+    assert.deepEqual([r1, r2].map(r => r.outcome).sort(), ['in-progress', 'restored'], 'two simultaneous reconciliations cannot both act');
+    setUser(false); x = await rec(); assert.equal(x.success, false, 'reconciliation is GM only'); setUser(true);
 
     // replay: a committed request id is refused
     reset(); owner.flags = { 'foundryvtt-swse': { transactions: { tx9: { id: 'tx9', status: 'Success', type: 'Sell', context: 'store-asset-sale-approval', createdAt: 1, audit: { requestId: 'r1' } } } } };

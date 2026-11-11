@@ -13,7 +13,7 @@ import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store
 import { VEHICLE_DESIGN_PROJECTS_FLAG } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js';
 import {
   RESALE_AUTHORITY, normalizeResalePercent, normalizeResaleBasis, ownedQuantity, quoteItemResale, quoteMatches, validateAppraisal,
-  assessAssetForResale, UNIQUE_ITEM_TYPES, DEFAULT_RESALE_PERCENT
+  assessAssetForResale, ownershipReplacement, UNIQUE_ITEM_TYPES, DEFAULT_RESALE_PERCENT
 } from '/systems/foundryvtt-swse/scripts/engine/store/resale-authority.js';
 import { verifyAcquisition } from '/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js';
 
@@ -21,7 +21,7 @@ import { verifyAcquisition } from '/systems/foundryvtt-swse/scripts/engine/store
 export function quoteEvidenceLines(q) {
   const lines = [`${q.quantity} x ${q.itemName}: policy ${q.percent}% (basis policy: ${q.basisPolicy})`];
   for (const seg of q.segments) lines.push(`${seg.units} unit(s) valued on ${seg.basisKind === 'acquisition' ? 'the VERIFIED price paid' : 'the published cost'} (${seg.unitBase} cr) -> ${seg.unitPayout} cr each`);
-  lines.push(`Purchase verified in the ledger (transaction ${q.acquisitionTransactionId}, lot ${q.acquisitionLotId})`);
+  lines.push(`Purchase found in the seller's ledger (transaction ${q.acquisitionTransactionId}, lot ${q.acquisitionLotId}). That ledger is stored on the seller's own Actor, so a GM decision is the trust anchor: confirm it matches the table's records.`);
   return lines;
 }
 
@@ -31,6 +31,9 @@ const ownerLevel = () => globalThis.CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3
 const fail = (error, reasons = [], extra = {}) => ({ ok: false, error, reasons, ...extra });
 
 let _listingBySource = { catalog: null, map: null };
+
+/** @see automaticResaleAllowed. There is no setting for this: it changes only when a GM-controlled executor exists. */
+export const AUTOMATIC_CREDIT_CREATION_TRUSTED = false;
 
 export class ResaleService {
   static policyPercent() {
@@ -74,6 +77,16 @@ export class ResaleService {
    * more than one non-GM owner could race itself across clients. Such actors resell through GM approval only.
    */
   static automaticResaleAllowed(actor) {
+    // Purchase entitlements are verified against the buyer's ledger, which lives in Actor flags that any Foundry OWNER of that Actor can write
+    // directly (Foundry has no field-level permission and no server-side hook for this system). An owner can therefore forge a "purchase" and a
+    // client-executed sale would create real credits from it. Until credit creation is executed by a GM-controlled authority, a sale that creates
+    // credits is ALWAYS a GM decision (store-sale-approval); the house-rule switch cannot re-enable it.
+    if (!AUTOMATIC_CREDIT_CREATION_TRUSTED) return { allowed: false, reason: 'AUTOMATIC_CREDITS_REQUIRE_GM_AUTHORITY' };
+    return this.policyAllowsAutomatic(actor);
+  }
+
+  /** The house-rule / ownership policy half of automatic resale (inert while automatic credit creation is untrusted). */
+  static policyAllowsAutomatic(actor) {
     if (HouseRuleService.isEnabled('autoAcceptItemSales') !== true) return { allowed: false, reason: 'AUTO_SALES_DISABLED' };
     const owners = Object.entries(actor?.ownership ?? {}).filter(([userId, level]) => userId !== 'default' && Number(level) >= ownerLevel()
       && globalThis.game?.users?.get?.(userId)?.isGM !== true);
@@ -178,13 +191,14 @@ export class ResaleService {
     for (const u of globalThis.game?.users ?? []) if (u?.isGM) gmOwnerships[u.id] = ownerLevel();
     // The disposition itself is built by TransactionEngine, which owns the transaction id (it must reference the real sale transaction).
     const dispositionInputs = { asset: assetData, owner: ownerData, authority: RESALE_AUTHORITY.GM_APPRAISAL, amount: v.amount, soldBy: user.id, gmOwnerships };
+    const previousOwnership = assetData.ownership ?? { default: 0 };
     const undoUpdate = {
-      ownership: assetData.ownership ?? { default: 0 },
+      ownership: ownershipReplacement({ default: 0, ...gmOwnerships }, previousOwnership),
       'system.ownedByActorId': assetData.system?.ownedByActorId ?? null,
       'system.ownedByActorName': assetData.system?.ownedByActorName ?? null,
       'flags.foundryvtt-swse.-=resale': null
     };
-    return { ok: true, asset, amount: v.amount, dispositionInputs, undoUpdate, previous: { ownership: assetData.ownership ?? { default: 0 }, ownedByActorId: assetData.system?.ownedByActorId ?? null }, evidence: { lines: assessed.lines, reference: assessed.reference, kind: assessed.kind },
+    return { ok: true, asset, amount: v.amount, dispositionInputs, undoUpdate, previous: { ownership: previousOwnership, ownedByActorId: assetData.system?.ownedByActorId ?? null }, evidence: { lines: assessed.lines, reference: assessed.reference, kind: assessed.kind },
       appraisal: { amount: v.amount, reason: v.reason, gmUserId: user.id, gmName: user.name ?? null } };
   }
 

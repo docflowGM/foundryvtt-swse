@@ -366,7 +366,7 @@ export class StoreEngine {
             name: item.name || 'Unknown Item',
             type: item.type || 'item',
             quantity: normalizeCredits(item.quantity ?? 1) || 1,
-            cost: normalizeCredits(item.finalCost ?? item.cost ?? item.price ?? 0),
+            cost: normalizeCredits(item.finalCost ?? item.cost ?? 0),
             condition: item.condition || null,
             ...ledgerLineFields(item),   // listingId, sourceUuid, unitCost (actual paid per unit), publishedUnitCost: the evidence resale later verifies
             customized: !!item.stagedCustomization

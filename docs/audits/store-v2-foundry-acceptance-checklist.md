@@ -41,7 +41,7 @@ Use two clients (Player A owns the buyer actor, GM) and, for cross-client rows, 
 - [ ] Crash/refresh between charge and delivery: transaction recovery reports compensated / indeterminate as before (TI-2 behavior).
 
 ## F. Builders and gated lanes
-- [ ] Build a Droid (Store): shows "unavailable" notice, builder does not open, nothing is created or charged. (Re-enable only after a re-quotable design snapshot exists.)
+- [ ] Build a Droid (Store): SUPERSEDED — this was the pre-S5 placeholder behaviour. Build a Droid is now an implemented lifecycle (Store -> Builder -> quote -> GM approval -> debit -> finalized Droid -> ownership); see section I (RUNTIME_UNVERIFIED).
 - [ ] Build a Ship (Store): opens the existing Ship Designer; submit -> GM approve/fund -> project lifecycle works as before.
 - [ ] Customize a Store item: staging is refused with the notice; an old cart containing a customized line is cleaned at checkout with a message and no charge.
 - [ ] No modification is purchasable (registry `selectable: 0`).
@@ -74,8 +74,29 @@ Use two clients (Player A owns the buyer actor, GM) and, for cross-client rows, 
 - [ ] Edit the Item's `system.cost`/`system.price` and the acquisition flag by hand: the offer does not change; a forged `unitPaid` falls back to published (labelled).
 - [ ] Stack of consumables: sell 2 of 5: 3 remain, payout for exactly 2; sell all: item removed. Try 0, -1, 1.5, 6: refused.
 - [ ] Customized item / item with no compendium source: "no automatic value", request goes to GM; GM approves with amount + reason; ledger shows `gm-appraisal`.
-- [ ] Auto-accept on, actor with two player owners: sale is routed to GM approval instead.
+- [ ] SUPERSEDED by K1: automatic (player-executed) credit creation is closed. With `autoAcceptItemSales` on or off, selling an Item always produces a GM request; the dialog says the offer goes to the GM.
 - [ ] Change the sale percentage between the offer dialog and confirming: "offer changed", renewed confirmation.
 - [ ] Player forces `resolvePendingSaleRequest` from the console: refused (GM required). Double-click approve / approve twice: one payment.
 - [ ] Droid and Vehicle: Asset Bay "Request Sale" -> GM sees verified paid/published/condition/construction evidence + policy reference; approve with amount + reason: seller paid once, asset leaves the player's Asset Bay, stays in the world GM-only with `flags.foundryvtt-swse.resale`; vehicle with assigned crew is refused.
-- [ ] Interrupt (refresh) during an asset sale: either fully sold and paid, or fully unchanged; if the report says `indeterminate`, the asset is GM-held and the seller unpaid.
+- [ ] Interrupt (refresh) during an asset sale: the report is `success`, a verified-unpaid failure (asset restored, permissions identical to before), or `indeterminate` (asset stays GM-held `sale-pending`; the seller is NEVER told they were unpaid unless verified). See section L for the reconcile procedure.
+
+## K. Ledger trust and permissions (MUST be run with real clients; all RUNTIME_UNVERIFIED)
+Expected outcome is stated for each; a deviation is a BLOCKER. Use disposable Actors; Player A owns Actor A; Player B owns nothing of A.
+- [ ] K1. Player A (console) sets `flags.foundryvtt-swse.transactions.forged` on Actor A to a fabricated successful Buy of a pistol (with lot id) and stamps the pistol's `acquisition` flag to match. Then A tries to sell the pistol from the sheet. EXPECT: no credits are created for A (the sale becomes a GM request). Record whether Foundry allowed the flag write (it is expected to: OWNER can write own Actor flags — this is the documented reason automatic credit creation is closed).
+- [ ] K2. Player A calls `TransactionEngine.executeSaleTransaction({... authority:'canonical-automatic', transactionContext:'store-sale'})` directly from the console. EXPECT: refused `AUTOMATIC_CREDITS_REQUIRE_GM_AUTHORITY`, balance unchanged.
+- [ ] K3. Player A calls `executeSaleTransaction` with `transactionContext:'store-sale-approval'` and `executeAssetSaleTransaction`. EXPECT: refused (`GM_REQUIRED`), balance unchanged.
+- [ ] K4. Player A edits `system.credits` directly. RECORD the result: Foundry permits this (OWNER). This is a pre-existing table-trust boundary, not introduced by Store V2; confirm no Store flow relies on it being impossible.
+- [ ] K5. Player B tries to read/modify Actor A's ledger: EXPECT denied by Foundry permissions.
+- [ ] K6. Reuse a legitimate transaction id / request id on a second sale: EXPECT `REQUEST_ALREADY_COMMITTED`.
+- [ ] K7. GM approves a request whose seller ledger was forged: the approval dialog evidence states the ledger is on the seller's Actor; confirm the GM can see lot/transaction ids to compare.
+
+## L. Asset-sale reconcile (GM; all RUNTIME_UNVERIFIED)
+- [ ] L1. Sell a disposable Droid, killing the GM client between disposal and payment (devtools: pause after `sale-pending`). EXPECT: asset GM-held, no player permission, `resale.status='sale-pending'`; `TransactionEngine.reconcileAssetSale({ownerActor, assetActorId})` returns `restored`; the Droid's ownership map and `ownedByActorId` equal their pre-sale values EXACTLY (compare `actor.ownership`), the seller's `ownedActors` and relationships are intact, credits unchanged.
+- [ ] L2. Kill after payment but before finalization. EXPECT: `completed`; asset `sold`; the former owner has no permission on the asset.
+- [ ] L3. Corrupt each of: ledger amount, asset id, owner id, wallet, ownership link, player permission, then run reconcile. EXPECT: `unresolved`, asset stays `sale-pending` with `needsReconciliation` and `reconciliationReasons`; nothing is paid or restored.
+- [ ] L4. Run reconcile twice simultaneously from two GM tabs. EXPECT: at most one acts (the lock is per client, so on two GM CLIENTS a second run finds nothing pending after the first resolves; record the observed behaviour).
+- [ ] L5. After a completed sale, verify the former owner cannot open the asset sheet (Foundry merges ownership updates: the disposal deletes the old player keys with `-=key`).
+
+## M. Concurrency (real clients)
+- [ ] M1. Double-click Checkout on one client: one charge. M2. Same player on two browsers checkout simultaneously with the same cart: RECORD result (client-local locks do not span clients; expected limitation, see merge-readiness doc).
+- [ ] M3. Two GM clients approve the same sale request simultaneously: RECORD result; expected at most one payment per request id when the first write propagates; a sub-second race is a documented limitation.
