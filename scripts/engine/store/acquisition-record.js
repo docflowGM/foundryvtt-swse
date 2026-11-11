@@ -50,13 +50,15 @@ export const lotIdFor = (transactionId, index) => `${transactionId}:${index}`;
  * unclaimed line of its listing, in order, so two purchases of the same listing (different prices/quantities) are different lots.
  * A doc with no matching line gets no lotId and therefore no resale entitlement.
  */
-export function stampAcquisitions(plan, { transactionId, context, at, lines = [] }) {
-  const claimed = new Set();
+export function stampAcquisitions(plan, { transactionId, context, at, lines = [], claimed = new Set() }) {
+  // `claimed` is the TRANSACTION-wide set of allocated lots: pass the same Set for every plan of one transaction, so lots are
+  // allocated across all plans, never independently per plan. A doc is matched to an unclaimed line of its listing AND its price;
+  // if no such line exists it gets no lot (no entitlement) rather than a guess.
   const stamp = data => {
     if (!data || typeof data !== 'object' || !data.__acquisition) return;
     const marker = data.__acquisition;
     delete data.__acquisition;
-    const line = lines.find(l => l?.lotId && !claimed.has(l.lotId) && l.listingId === marker.listingId) ?? null;
+    const line = lines.find(l => l?.lotId && !claimed.has(l.lotId) && l.listingId === marker.listingId && l.unitCost === marker.unitPaid) ?? null;
     if (line) claimed.add(line.lotId);
     data.flags ??= {};
     data.flags['foundryvtt-swse'] ??= {};

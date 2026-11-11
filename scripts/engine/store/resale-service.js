@@ -13,7 +13,7 @@ import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store
 import { VEHICLE_DESIGN_PROJECTS_FLAG } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-installation-ledger.js';
 import {
   RESALE_AUTHORITY, normalizeResalePercent, normalizeResaleBasis, ownedQuantity, quoteItemResale, quoteMatches, validateAppraisal,
-  assessAssetForResale, buildAssetDispositionUpdate, UNIQUE_ITEM_TYPES, DEFAULT_RESALE_PERCENT
+  assessAssetForResale, UNIQUE_ITEM_TYPES, DEFAULT_RESALE_PERCENT
 } from '/systems/foundryvtt-swse/scripts/engine/store/resale-authority.js';
 import { verifyAcquisition } from '/systems/foundryvtt-swse/scripts/engine/store/acquisition-record.js';
 
@@ -176,15 +176,15 @@ export class ResaleService {
 
     const gmOwnerships = {};
     for (const u of globalThis.game?.users ?? []) if (u?.isGM) gmOwnerships[u.id] = ownerLevel();
-    const soldAt = Date.now();
-    const dispositionUpdate = buildAssetDispositionUpdate({ asset: assetData, owner: ownerData, transactionId: null, authority: RESALE_AUTHORITY.GM_APPRAISAL, amount: v.amount, soldAt, soldBy: user.id, gmOwnerships });
+    // The disposition itself is built by TransactionEngine, which owns the transaction id (it must reference the real sale transaction).
+    const dispositionInputs = { asset: assetData, owner: ownerData, authority: RESALE_AUTHORITY.GM_APPRAISAL, amount: v.amount, soldBy: user.id, gmOwnerships };
     const undoUpdate = {
       ownership: assetData.ownership ?? { default: 0 },
       'system.ownedByActorId': assetData.system?.ownedByActorId ?? null,
       'system.ownedByActorName': assetData.system?.ownedByActorName ?? null,
       'flags.foundryvtt-swse.-=resale': null
     };
-    return { ok: true, asset, amount: v.amount, dispositionUpdate, undoUpdate, evidence: { lines: assessed.lines, reference: assessed.reference, kind: assessed.kind },
+    return { ok: true, asset, amount: v.amount, dispositionInputs, undoUpdate, previous: { ownership: assetData.ownership ?? { default: 0 }, ownedByActorId: assetData.system?.ownedByActorId ?? null }, evidence: { lines: assessed.lines, reference: assessed.reference, kind: assessed.kind },
       appraisal: { amount: v.amount, reason: v.reason, gmUserId: user.id, gmName: user.name ?? null } };
   }
 

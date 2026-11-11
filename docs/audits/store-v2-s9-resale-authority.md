@@ -105,3 +105,19 @@ New: `tests/store-v2-s9-resale-authority.test.mjs` (14 checks, incl. forged / co
 - Existing assets purchased before this change have no acquisition record: Items fall back to published cost (labelled); assets are "acquisition cost unknown".
 - Trade-ins/ownership transfer between actors are not implemented.
 - Policy question for the owner (not a rules ruling): confirm `resaleBasis` default `acquisition` and whether auto-resale should additionally be allowed for unmodified published whole assets (currently GM-approved with a policy reference).
+
+## Final integrity corrections (post-review of 8933b88)
+
+**Whole-asset sale recovery (`TransactionEngine.executeAssetSaleTransaction`).** Two Actors cannot be written atomically; no multi-Actor atomicity is invented. Order is now:
+0. GM / ownership / eligibility / appraisal / replay re-verified, then **owner recovery is established** (verified snapshot). No snapshot → refused before any write.
+1. The asset is disposed as `resale.status = 'sale-pending'`, carrying **this transaction's id** and the owner's credit before/after. A failed disposal leaves the owner untouched (verified unpaid; asset state verified by reading it).
+2. ONE owner plan (credit + unlink + ledger record) with `transactional: true`.
+3. The outcome is **observed on the owner**, never inferred from a resolved/thrown call:
+   - paid (credits = after, ledger record present, asset unlinked) — even if the call threw → asset finalized `sold`; post-commit errors are warnings, never failures; the asset is never returned to a paid seller.
+   - verified unpaid (ActorEngine reported `FAILED_COMPENSATED` AND the owner reads exactly as before) → asset reverted and the revert verified; if the revert fails → `indeterminate`, owner verified unpaid, asset GM-held `sale-pending`.
+   - anything else (`INDETERMINATE`, partial mutation, disagreeing observation) → `indeterminate`/`paymentUnverified`: **asset not restored, owner not refunded**, asset flagged `needsReconciliation` with evidence; the message never claims "unpaid".
+4. `TransactionEngine.reconcileAssetSale({ownerActor, assetActorId})` (GM only) resolves a `sale-pending` asset from the ledger: record present → `sold`; no record, asset still linked and balance exactly `ownerCreditsBefore` → restore (verified); anything else → left for manual review.
+
+**Transaction-wide lot allocation.** `executeMutationTransaction` creates one `claimedLots` set per transaction and passes it to every `stampAcquisitions` call; a doc is matched to an unclaimed ledger line of the same listing **and** exact unit price, otherwise it receives no lot (no entitlement). Covered: repeated identical Items, identical Droids/Vehicles, different prices for one listing, mixed types, multiple plans.
+
+**Runtime limitations (unchanged status: OFFLINE_TESTED, not FOUNDRY_TESTED).** ActorEngine's `transactional` rollback and the pending→sold/reconcile flow have only been exercised against stubs; live Foundry acceptance of interrupted asset sales is still required (see the acceptance checklist, section J).

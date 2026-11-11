@@ -227,13 +227,13 @@ export function assessAssetForResale({ asset, owner, designProject = null, acqui
 }
 
 /** Disposition contract for a sold asset: the Actor is kept (never deleted), stripped of player access, and its prior state recorded for recovery. */
-export function buildAssetDispositionUpdate({ asset, owner, transactionId, authority, amount, soldAt, soldBy, gmOwnerships }) {
+export function buildAssetDispositionUpdate({ asset, owner, transactionId, authority, amount, soldAt, soldBy, gmOwnerships, status = 'sold' }) {
   return {
     ownership: { default: 0, ...gmOwnerships },
     'system.ownedByActorId': null,
     'system.ownedByActorName': null,
     'flags.foundryvtt-swse.resale': {
-      status: 'sold', transactionId, authority, amount, soldAt, soldBy,
+      status, transactionId, authority, amount, soldAt, soldBy,
       previousOwnerActorId: owner._id, previousOwnerActorName: owner.name,
       previousOwnership: asset.ownership ?? {},
       previousOwnedByActorId: asset.system?.ownedByActorId ?? null,
