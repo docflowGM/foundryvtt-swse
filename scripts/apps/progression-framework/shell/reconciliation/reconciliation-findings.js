@@ -82,14 +82,14 @@ function derivedFinding(row) {
     severity: 'invalid',
     title: row.label || 'Derived statistic',
     explanation: isHp
-      ? `${row.issue || 'Your maximum HP is lower than expected.'} Review your hit points or level-up history. No automatic correction is offered: the stored maximum can include rolled hit points and bonuses, and the HP rules code and this check use different formulas.`
+      ? `${row.issue || 'Your maximum HP is lower than expected.'} Review your hit points or level-up history. No automatic correction is offered: the stored maximum can include rolled hit points and bonuses that cannot be reconstructed, so it is never overwritten.`
       : (row.issue || `${row.label || 'This statistic'} does not match your class progression.`),
     expected,
     actual,
     source: 'canonical-class-progression',
     // A repair is offered only when the system can PROVE it yields the correct result. BAB / defense come from the
-    // one canonical recalculation. Max HP does not qualify yet (see docs: ActorEngine.recomputeHP and the history-based
-    // audit use different formulas), so it is review + ignore only.
+    // one canonical recalculation. Max HP stays review + ignore only: history-preserving HP (engine/HP/hp-accounting.js) never
+    // reconstructs a maximum, so there is nothing safe to "resolve" to until the owner approves an HP repair flow.
     resolve: isHp
       ? { kind: 'none', label: '', reviewOnly: true }
       : { kind: 'recalc', label: 'Recalculate' },

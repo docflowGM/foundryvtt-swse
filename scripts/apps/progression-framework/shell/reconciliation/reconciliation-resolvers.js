@@ -4,8 +4,7 @@
  * Rules:
  *  - Only existing V2 authorities mutate: derived BAB/defenses are repaired by invoking the canonical
  *    recalculation (ActorEngine.recalcAll) - a derived display field is never overwritten. Max HP has NO
- *    resolver: recomputeHP uses a different formula from the reconciliation HP audit, so a one-click
- *    correction could replace a valid maximum with another formula's result. Missing feat / talent / ability choices OPEN the existing progression step in
+ *    resolver: the stored maximum is additive history (hp-accounting.js) and is never reconstructed, so there is no value to resolve to. Missing feat / talent / ability choices OPEN the existing progression step in
  *    reconcile mode (no level increment, no chargen restart, no mutation by this module).
  *  - Idempotent: the finding is re-derived from a FRESH report before acting; if it no longer exists
  *    nothing happens (so a second click cannot award twice, add an increase twice, or recompute twice),

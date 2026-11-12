@@ -15,9 +15,9 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 import { captureHydrationSnapshot, collectHydrationSensitivePaths, emitHydrationError, emitHydrationWarning } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
-import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { planHpRecompute, HP_LEDGER_PATH } from "/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { SecondWindRules } from "/systems/foundryvtt-swse/scripts/engine/combat/SecondWindRules.js";
@@ -25,7 +25,6 @@ import { MutationNormalizationService } from "/systems/foundryvtt-swse/scripts/g
 import { MutationBoundaryService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-boundary-service.js";
 import * as PlanBuilders from "/systems/foundryvtt-swse/scripts/governance/actor-engine/plan-builders.js";
 import { normalizeActiveEffectDataForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
-import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 
 /**
  * ActorEngine
@@ -3982,140 +3981,43 @@ export const ActorEngine = {
   },
 
   /**
-   * Recompute actor's system.hp.max using SWSE Saga RAW formula.
-   * ONLY writer of system.hp.max. Uses PERSISTENT (non-derived) canonical inputs only.
-   * Called on: level-up, CON change, class change, species apply, feat change.
+   * Apply VERIFIED changes to system.hp.max. ONLY writer of system.hp.max (besides validated plans).
    *
-   * Guardrails:
-   * - Recursion prevention: guardKey in meta options prevents updateActor hook re-trigger
-   * - Idempotency: Early return if newHPMax === current hp.max (avoids unnecessary updates)
+   * Owner decision: maximum HP is additive history (see engine/HP/hp-accounting.js). This method NEVER
+   * reconstructs a maximum from class tables or current level. It applies the delta between the variable
+   * contributions now (CON modifier, HP-affecting feats, hp.bonus) and those already recorded in
+   * system.progression.hpLedger, so recorded level gains and rolled HP are preserved and recomputing twice is a no-op.
+   * - no class history (statblock NPC, manual actor) => stored maximum preserved, nothing written
+   * - no ledger => stored maximum preserved; a baseline ledger is recorded (maximum unchanged)
+   * - contributions unreadable => nothing written
    *
-   * @param {Actor} actor - Character to recompute HP for
+   * @param {Actor} actor
    * @param {Object} [options={}]
-   * @param {boolean} [options.fromHook] - If true, omit DerivedCalculator call
-   * @returns {Promise<number>} - New HP max value
-   * @throws {Error} if actor/class invalid
+   * @returns {Promise<number>} the maximum HP after the call (unchanged unless a verified delta applied)
    */
   async recomputeHP(actor, options = {}) {
     try {
       if (!actor) {
         throw new Error('ActorEngine.recomputeHP() requires actor');
       }
-
-      // SSOT ENFORCEMENT: Get class from registry
-      const classItem = ActorAbilityBridge.getClasses(actor)[0] || null;
-      if (!classItem) {
-        // Statblock-imported NPCs never get a class Item (their HP max is
-        // written directly to system.hp.max by the statblock importer, see
-        // docs/audits/v2-phase-2-actor-authority-normalization.md "NPC HP
-        // authority"). Without this guard, the very first CON/level edit a
-        // GM makes on such an NPC (both wired to call recomputeHP via
-        // HPRecomputeHooks) would fall into the "no class = minimum 1 HP"
-        // branch below and silently collapse the imported HP max to 1.
-        if (actor.type === 'npc' && isNpcStatblockMode(actor)) {
-          return actor.system.hp?.max ?? 1;
-        }
-        // No class = minimum 1 HP; but check if it's already 1
-        const currentMax = actor.system.hp?.max ?? 1;
-        if (currentMax === 1) {
-          return 1; // Already at minimum, no update needed
-        }
-        await this.updateActor(actor, { 'system.hp.max': 1 }, {
-          ...options,
-          isRecomputeHPCall: true,
-          meta: { ...(options.meta || {}), guardKey: 'hp-recompute' }
-        });
-        return 1;
+      const plan = planHpRecompute(actor);
+      const current = Number(actor.system?.hp?.max ?? 1) || 1;
+      if (plan.action === 'preserve' || plan.action === 'unchanged' || plan.action === 'uncertain') {
+        if (plan.action === 'uncertain') SWSELogger.warn(`ActorEngine.recomputeHP: ${actor.name} not mutated (${plan.reason})`);
+        return current;
       }
-
-      const level = Math.max(1, actor.system.level ?? 1);
-      const isDroid = actor.type === 'droid';
-      const bonusHP = actor.system.hp?.bonus ?? 0;
-      const featHPBonus = MetaResourceFeatResolver.getHitPointMaxBonus(actor);
-
-      // Compute CON modifier from canonical persistent path (system.attributes),
-      // falling back to compatibility mirror (system.abilities) for old actors.
-      let conMod = 0;
-      if (!isDroid) {
-        const conSrc = actor.system.attributes?.con ?? actor.system.abilities?.con ?? {};
-        const conBase = Number(conSrc.base ?? 10);
-        const conRacial = Number(conSrc.racial ?? 0);
-        const conEnhancement = Number(conSrc.enhancement ?? 0);
-        const conTemp = Number(conSrc.temp ?? 0);
-        const conTotal = conBase + conRacial + conEnhancement + conTemp;
-        conMod = Math.floor((conTotal - 10) / 2);
-      }
-
-      // HP progression: primary source is progression fields; fallback to hitDie
-      let hpAtFirstLevel, hpPerLevel;
-      if (classItem.system.progression?.hpAtFirstLevel !== undefined) {
-        hpAtFirstLevel = classItem.system.progression.hpAtFirstLevel;
-        hpPerLevel = classItem.system.progression.hpPerLevel ?? (Math.floor((classItem.system.hitDie ?? 6) / 2) + 1);
-      } else {
-        const hitDie = classItem.system.hitDie ?? 6;
-        hpAtFirstLevel = hitDie * 3;
-        hpPerLevel = Math.floor(hitDie / 2) + 1;
-      }
-
-      // CANONICAL formula: base + per-level gains + CON at every level + bonus
-      // DO NOT split into baseHP + levelGains + conGains separately (avoids misreading)
-      const newHPMax = Math.max(1,
-        hpAtFirstLevel + (level - 1) * hpPerLevel + (conMod * level) + bonusHP + featHPBonus
-      );
-
-      // Guardrail: Only update if value changed (idempotency)
-      const currentMax = actor.system.hp?.max ?? 0;
-      if (newHPMax === currentMax) {
-        SWSELogger.debug(`ActorEngine.recomputeHP: ${actor.name} (no change)`, {
-          level,
-          hitDie: classItem.system.hitDie,
-          hpAtFirstLevel,
-          hpPerLevel,
-          conMod,
-          bonusHP,
-        featHPBonus,
-          isDroid,
-          result: newHPMax
-        });
-        return newHPMax; // Early return, no update needed
-      }
-
-      SWSELogger.debug(`ActorEngine.recomputeHP: ${actor.name}`, {
-        level,
-        hitDie: classItem.system.hitDie,
-        hpAtFirstLevel,
-        hpPerLevel,
-        conTotal: conBase + conRacial + conEnhancement + conTemp,
-        conMod,
-        bonusHP,
-        featHPBonus,
-        isDroid,
-        oldValue: currentMax,
-        newValue: newHPMax
-      });
-
-      // Update system.hp.max via ActorEngine mutation (not direct write)
-      // isRecomputeHPCall flag bypasses HP write guard (see 4D enforcement)
-      // meta.guardKey prevents updateActor hook from re-triggering
-      await this.updateActor(actor, { 'system.hp.max': newHPMax }, {
+      const update = { [HP_LEDGER_PATH]: plan.ledger };
+      if (plan.action === 'adjust') update['system.hp.max'] = plan.newMax;
+      SWSELogger.debug(`ActorEngine.recomputeHP: ${actor.name} ${plan.action}`, { reason: plan.reason, delta: plan.delta, from: current, to: plan.newMax });
+      // isRecomputeHPCall bypasses the HP write guard; meta.guardKey prevents updateActor hook re-trigger
+      await this.updateActor(actor, update, {
         ...options,
         isRecomputeHPCall: true,
         meta: { ...(options.meta || {}), guardKey: 'hp-recompute' }
       });
-
-      // Trigger DerivedCalculator to mirror HP if not called from hook (prevent recursion)
-      if (!options.fromHook) {
-        // Optional: Queue DerivedCalculator refresh for this actor
-        // (implementation depends on existing async queue pattern)
-      }
-
-      return newHPMax;
+      return plan.action === 'adjust' ? plan.newMax : current;
     } catch (err) {
-      SWSELogger.error(`ActorEngine.recomputeHP failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        level: actor?.system?.level,
-        classItem: actor?.items.find(i => i.type === 'class')?.name
-      });
+      SWSELogger.error(`ActorEngine.recomputeHP failed for ${actor?.name ?? 'unknown actor'}`, { error: err, level: actor?.system?.level });
       throw err;
     }
   },

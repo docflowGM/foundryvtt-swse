@@ -42,15 +42,13 @@ function hpActor({ items, level, max, con = 14, type = 'character' }) {
   };
 }
 
-await check('1. DELIBERATELY NOT FIXED: the recomputeHP ReferenceError is still pinned by the existing HP-authority test, because fixing it alone would unmask a destructive overwrite', () => {
-  // tests/hp-preservation-authority.test.mjs documents (Defects A and B) that recomputeHP() throws before it can write,
-  // and that the throw is the only thing currently stopping it from replacing a certified maximum (108) with a
-  // history-discarding reconstruction (88). It states the two defects must be fixed together, or A first.
-  const pinned = read('tests/hp-preservation-authority.test.mjs');
-  assert.match(pinned, /must currently throw a ReferenceError \(Defect B\)/);
-  assert.match(pinned, /Defect A and Defect B must be fixed together/);
+await check('1. recomputeHP no longer reconstructs a maximum: it applies ledger deltas only (Defect A retired; Defect B moot)', () => {
   const engine = read('scripts/governance/actor-engine/actor-engine.js');
-  assert.match(engine, /const conTotal = conBase \+ conRacial \+ conEnhancement \+ conTemp;/, 'the scope bug is intact on purpose');
+  assert.doesNotMatch(engine, /conTotal = conBase/, 'out-of-scope CON variables are gone');
+  assert.doesNotMatch(engine, /hpAtFirstLevel \+ \(level - 1\)/, 'stateless reconstruction formula is retired');
+  assert.match(engine, /planHpRecompute\(actor\)/);
+  const pinned = read('tests/hp-preservation-authority.test.mjs');
+  assert.match(pinned, /108/);
 });
 
 await check('2. HP repair is not wired: no Resolve for the finding, none in the resolver registry, none from the sheet', async () => {

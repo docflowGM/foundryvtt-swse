@@ -5,6 +5,7 @@
  * derived-stat audit from the same canonical class-level authority.
  */
 
+import { readHpLedger, auditHp } from '/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js';
 import { readActorClassLevels } from './class-level-reader.js';
 import { getClassLevelProgressionEntry } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 
@@ -100,7 +101,10 @@ function buildHpAudit(actor, summaries, heroicLevel) {
   const firstIdentity = normalizeKey(actor?.system?.class);
   const first = heroic.find(summary => normalizeKey(summary) === firstIdentity) || heroic[0] || null;
   const base = first ? classBaseHp(first) : null;
-  const con = conModifier(actor);
+  // Same accounting as ActorEngine.recomputeHP: the CON modifier recorded in the HP ledger is the one already inside
+  // the stored maximum; the current modifier is only an estimate used when no ledger exists.
+  const ledger = readHpLedger(actor);
+  const con = ledger ? ledger.conMod : conModifier(actor);
   const starting = Number.isFinite(base) ? Math.max(1, base + con) : null;
   const expectedRecords = Math.max(0, heroicLevel - 1);
   const records = hpRecords(actor).slice(0, expectedRecords);
@@ -127,7 +131,9 @@ function buildHpAudit(actor, summaries, heroicLevel) {
   let detail = exact !== null
     ? 'Exact total reconstructed from starting HP and durable level-up records.'
     : 'HP history is incomplete; the audit shows a plausible range and does not rewrite HP.';
-  if (Number.isFinite(current) && current < lower) {
+  if (exact !== null && Number.isFinite(current) && current < lower) {
+    // A definite discrepancy needs COMPLETE recorded history. With missing records `lower` is an estimate
+    // (minimum gain assumed per unrecorded level) and is never reported as an error.
     status = 'issue';
     issue = `Current HP ${current} is below the supported minimum ${lower}.`;
   } else if (Number.isFinite(upper) && Number.isFinite(current) && current > upper) {
@@ -138,6 +144,7 @@ function buildHpAudit(actor, summaries, heroicLevel) {
   }
 
   return {
+    accounting: auditHp(actor),
     status, current, lower, upper, exact, expectedRecords, recordCount: records.length, missing,
     label: exact !== null ? String(exact) : `${lower}${upper === null ? '+' : `-${upper}`} plausible; ${missing} record${missing === 1 ? '' : 's'} missing`,
     issue,

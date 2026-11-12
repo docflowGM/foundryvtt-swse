@@ -2733,3 +2733,20 @@ No provisional recommendation has been converted into a ruling.
 | Resolution | |
 
 - **Revision 64 (2026-11-12):** appended RECON-005 from the house-rule coverage audit (`docs/audits/reconciliation-v2-house-rule-coverage.md`). No ruling made.
+
+## HP-001 — CON change in the same transaction as a level-up
+
+| Field | |
+|---|---|
+| Rules domain | Hit points / Constitution |
+| Feature | Order of a CON modifier change relative to the new level's HP gain |
+| Source | No published page consulted. Repository evidence only. |
+| Evidence | The finalizer records each level gain with the CON modifier in effect when generated; `ActorEngine.recomputeHP` applies later CON changes as a retroactive delta (modifier change x recorded levels) over `system.progression.hpLedger.level`. |
+| Confirmed behavior | Owner decision (2026-11-12): historical HP is preserved; CON changes and HP feats apply verified deltas without rerolling or double counting. |
+| Unresolved question | When a level-up and a CON increase are committed together, whether the new level's gain uses the old or the new modifier. The ledger keeps the pre-transaction modifier, so a later recompute applies the difference over all recorded levels including the new one. |
+| Options | None source-certified. |
+| Recommended ruling | None |
+| Implementation impact | Only the combined level-up + CON-change transaction; each alone is fully specified. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
