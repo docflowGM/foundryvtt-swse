@@ -137,4 +137,19 @@ await check('EVD-04b. a missing record is never resurrected, and an already-veri
   updates.length = 0; await ProgressionFinalizer._recordAbilityIncreaseVerification(gone, pg, { str: 12, dex: 12, con: 12, int: 12, wis: 12, cha: 12 });
   assert.equal(updates.length, 0); assert.deepEqual(gone.system.progression.abilityIncreaseHistory, []);
 });
+
+// ---- EVR-02 (post-commit side): a plan that omitted a declared mutation can never verify itself --------------------------------------
+await check('EVR-02d. declared +1 WIS with no WIS mutation applied: verification FAILS (expected = pre-commit base + delta, not the plan\'s own numbers)', () => {
+  const { a, p, before } = planned(); delete p.set['system.attributes.wis.base']; applied(a, p);
+  const v = G.verifyAbilityIncreaseCommit(a, p, { before });
+  assert.equal(v.state, 'failed'); assert.equal(v.checks.scores, false); assert.ok(v.reasons.some(r => /wis is not 13/.test(r)));
+});
+await check('EVR-02e. the latest-event record must match the exact selection, entitlement and transaction, not only the id', () => {
+  const { a, p, before } = planned(); applied(a, p);
+  a.system.progression.lastAbilityIncrease = { ...a.system.progression.lastAbilityIncrease, increases: { str: 1, dex: 1 } };
+  const v = G.verifyAbilityIncreaseCommit(a, p, { before });
+  assert.equal(v.state, 'failed'); assert.equal(v.checks.latest, false);
+  const ent = planned(); applied(ent.a, ent.p); ent.a.system.progression.lastAbilityIncrease = { ...ent.a.system.progression.lastAbilityIncrease, entitlementId: 'ability-increase-level-4' };
+  assert.equal(G.verifyAbilityIncreaseCommit(ent.a, ent.p, { before: ent.before }).checks.latest, false);
+});
 console.log('ability-increase-verification.test.mjs: all assertions passed');

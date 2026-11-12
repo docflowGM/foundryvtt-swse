@@ -175,9 +175,11 @@ check('14. no ability-increase history: unverifiable, not missing', () => {
   assert.equal(count(r, 'abilityIncreases', 'unverifiable'), 2);
 });
 
-check('14b. a partial durable SYSTEM record (recognised writer) IS a proven shortfall', () => {
+check('14b. EVR-03: a partial SYSTEM record (recognised writer) keeps its known part and leaves the rest UNVERIFIABLE - never an open finding from history alone', () => {
   const r = run(actor({ level: 4, ledger: [row('Soldier', 4)], items: [cls('Soldier', 4)], abilityHist: [{ level: 4, increases: { str: 1 }, source: 'progression-finalizer' }] }));
-  assert.equal(count(r, 'abilityIncreases', 'open'), 1);
+  assert.equal(count(r, 'abilityIncreases', 'open'), 0);
+  const slot = r.slots.abilityIncreases[0];
+  assert.equal(slot.status, 'unverifiable'); assert.equal(slot.filledCount, 1); assert.equal(slot.unverifiableCount, 1);
 });
 
 check('14c. Q2: a record of unrecognised provenance is preserved and shown but is NOT trusted as system evidence (unverifiable, never open, never filled)', () => {

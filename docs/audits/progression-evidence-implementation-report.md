@@ -92,3 +92,29 @@ and any manual statement leaves the remainder unknown (Q3); an active GM stateme
 
 **Verification (Node harness, ActorEngine stubbed).** New / extended: `ability-increase-entitlement-integrity` (EVD-01c, EVD-02a-e), `ability-increase-verification` (EVD-03a-d, EVD-04a-b), `progression-completion-reader` (EVD-01a-b, EVD-05a-e). Full sweep of all `tests/*.test.mjs`
 (170 s per-test limit): only the same five force-power baseline failures (also red at PR #1145's merge base). Validators: partials, data, `system.json` pass. Foundry V13 acceptance: not performed.
+
+## Final evidence-integrity corrections EVR-01 … EVR-05 (independent review of 4862d1e)
+Owner decisions applied: progression legality stays in `ProgressionFinalizer` (ActorEngine stays generic); verification covers the direct ability-base changes and transaction records only (derived HP / skills / modifiers are not implicitly certified);
+system Apply consumes exactly the source-established count (unknown fails closed; invalid allocations are rejected, not clamped); any existing partial system or manual record blocks automatic Apply; cross-client race protection stays an unverified runtime limitation.
+
+**EVR-01 - complete contract at the final boundary.** The history record now stores the contract it was built under (`entitledCount`, `allocationMode`). `beginAbilityIncreaseTransaction` re-reads, from the canonical authorities supplied by the finalizer, existence, the CURRENT count,
+deferred status and the CURRENT allocation rule, and refuses a stale plan: `ENTITLEMENT_NOT_FOUND`, `ENTITLEMENT_COUNT_DEFERRED`, `ENTITLEMENT_COUNT_UNKNOWN`, `ENTITLEMENT_CHANGED` (count differs from compile time), `ALLOCATION_RULE_UNKNOWN` / `ALLOCATION_RULE_CHANGED`; the recorded selection is re-validated
+against the current cap and count; duplicate / in-flight / changed-score checks remain. No formula is duplicated (existence and count come from the level-up manifest or the reconciler slot list).
+
+**EVR-02 - exact plan / evidence equivalence, before and after commit.** Before commit (`checkPlanEvidenceEquivalence`): every declared positive increase has exactly one `base` mutation equal to the actor's CURRENT base + delta; no other ability-score key (`base`, `temp`, `racial`, `system.abilities.*`) is touched;
+the plan's history carries this transaction exactly once and identical to the latest-event record. A record that claims +2 with only one score mutation is refused before ActorEngine (`PLAN_EVIDENCE_MISMATCH`). After commit, verification no longer trusts the plan's own numbers: a declared increase must equal the verified PRE-COMMIT base + delta, every other score must equal its pre-commit base
+(no snapshot => fails closed), the history must hold this transaction once as planned, and `lastAbilityIncrease` must match the exact transaction, entitlement and selection (not only the id). A partially verified result is `failed`, never `SYSTEM_VERIFIED`.
+
+**EVR-03 - a partial historical record is not a proven error.** `provenShortfall` is never set from history. A short record - recognised writer, verified or not - keeps its known part and leaves the remainder unknown (`PARTIAL`), so the reconciler shows it as `unverifiable` and never `open`; a confirmed missing-increase would need independent evidence the history cannot supply.
+Behavior change from 4862d1e: a short system record used to be an open finding; it is now informational (contract test 14b rewritten).
+
+**EVR-04 - malformed selections are rejected.** `validateAbilitySelection` (shared by the builder and the boundary) validates the submitted selection as given: excess on one ability, negative, fractional, non-numeric, `null`, numeric strings, unknown ability keys, a non-object selection, a total different from the entitled count, and an unreadable allocation rule are all refusals. Nothing is clamped, rounded or dropped. An empty selection is "nothing to apply".
+
+**EVR-05 - deferred Droid / Nonheroic.** For a rules-deferred entitlement (RECON-002/003) the reader classifies the entitlement `UNVERIFIABLE` whatever the history (even a verified record), keeps the recorded selections visible, reports `remainingUnknown: null`, and never counts attestations. Previously recorded increases no longer read as a satisfied entitlement.
+
+**Tests.** `ability-increase-entitlement-integrity` (EVR-01a-e, EVR-02a-c, EVR-04), `ability-increase-verification` (EVR-02d-e), `progression-completion-reader` (EVR-03 / EVR-05 updates), `reconciliation-v2-contract` 14b. Mutation checks: removing the equivalence check or the count revalidation makes the new tests fail.
+Full sweep of all `tests/*.test.mjs`: only the same five force-power baseline failures (also red at PR #1145's merge base); no new failures. Validators: partials, data, `system.json` pass. Node harness only; ActorEngine stubbed; Foundry V13 not tested.
+
+**Remaining limitations.** (1) Cross-client concurrency: Foundry has no compare-and-set. Absolute score writes, the in-process in-flight set, the fresh boundary re-read and the pre-write history comparison narrow the window; two different selections prepared from the same stale read by two clients and committed inside that window, or a change inside the final
+check-to-call gap of the verification write, are not provably excluded. Needs Foundry V13 testing. (2) Callers that bypass `ProgressionFinalizer` and call `ActorEngine.applyMutationPlan` directly are not covered (owner-approved separation). (3) Derived effects of an increase are not verified. (4) Apply for a level with any existing record stays blocked; completing the remainder needs Checkpoint D's separately evidenced workflow.
+Checkpoints D, E and F remain stopped.

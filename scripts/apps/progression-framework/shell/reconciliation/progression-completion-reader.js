@@ -134,14 +134,20 @@ export function getAbilityIncreaseCompletion(actor, level, { expectedCount = nul
   let provenShortfall = false;
   let remaining = expected === null ? null : Math.max(0, expected - total);
   // With an UNKNOWN count nothing can be called complete or short: the evidence is shown, the verdict stays UNVERIFIABLE.
-  if (expected !== null && total > 0) {
+  if (deferred) {
+    // EVR-05: an unresolved count-based entitlement (RECON-002/003) is never certified: recorded history stays visible but proves nothing about a rule that is not decided.
+    classification = COMPLETION.UNVERIFIABLE;
+    remaining = null;
+  } else if (expected !== null && total > 0) {
     if (total >= expected) {
       if (manualCount === 0) classification = verified ? COMPLETION.SYSTEM_VERIFIED : COMPLETION.SYSTEM_COMMITTED_UNVERIFIED;
       else classification = gmCount > 0 ? COMPLETION.GM_AUTHORIZED : COMPLETION.PLAYER_ATTESTED; // weakest link: any manual part makes the whole attested
     } else {
       classification = COMPLETION.PARTIAL;
-      // A durable SYSTEM record that is short, with no manual statement about the rest, is a proven shortfall; any manual statement leaves the rest unknown (Q3).
-      provenShortfall = appliedCount > 0 && manualCount === 0 && !deferred;
+      // EVR-03: a short record - even one from a recognised system writer - does NOT prove an increase was omitted (it may have been applied by hand, or the
+      // entitlement count may have changed since). The known part is kept, the remainder is UNKNOWN, and a confirmed missing-increase needs INDEPENDENT
+      // evidence that history alone cannot supply, so `provenShortfall` is never set from history.
+      provenShortfall = false;
     }
   }
 

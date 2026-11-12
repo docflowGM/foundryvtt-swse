@@ -39,9 +39,11 @@ check('4. Q2: unrecognised provenance is preserved and visible but never trusted
     assert.equal(c.classification, C.UNVERIFIABLE); assert.equal(c.legacy.length, 1); assert.deepEqual(c.legacy[0].increases, { con: 1, wis: 1 }); assert.ok(c.conflicts.includes('unrecognized-provenance-record'));
   }
 });
-check('5. a short SYSTEM record is a proven shortfall (PARTIAL + provenShortfall)', () => {
-  const c = comp(actorWith([sys(8, { con: 1 })]));
-  assert.equal(c.classification, C.PARTIAL); assert.equal(c.provenShortfall, true); assert.equal(c.remainingUnknown, 1);
+check('5. EVR-03: a short SYSTEM record keeps its known part and leaves the rest UNKNOWN - history alone never proves an omitted increase', () => {
+  for (const rec of [sys(8, { con: 1 }), sys(8, { con: 1 }, { verification: { state: 'verified' } })]) {
+    const c = comp(actorWith([rec]));
+    assert.equal(c.classification, C.PARTIAL); assert.equal(c.provenShortfall, false); assert.equal(c.remainingUnknown, 1); assert.deepEqual(c.applied, { con: 1 });
+  }
 });
 check('6. Q3: full, partial and GM attestations; partial manual evidence is NOT a proven shortfall', () => {
   assert.equal(comp(actorWith([manual(8, { con: 1, wis: 1 })])).classification, C.PLAYER_ATTESTED);
@@ -65,7 +67,10 @@ check('9. Q1 / C7: deferred (droid / Nonheroic) entitlements never accept attest
   const c = comp(actorWith([manual(8, { con: 1 })]), 8, { expectedCount: 1, rulesDeferred: true });
   assert.equal(c.classification, C.UNVERIFIABLE); assert.deepEqual(c.attested, {}); assert.equal(c.rulesDeferred, true);
   const s = comp(actorWith([sys(8, { con: 1 })]), 8, { expectedCount: 1, rulesDeferred: ['RECON-002'] });
-  assert.equal(s.classification, C.SYSTEM_COMMITTED_UNVERIFIED); assert.deepEqual(s.applied, { con: 1 });
+  // EVR-05: a historical record that happens to match the PROVISIONAL count does not certify an undecided rule; it stays visible
+  assert.equal(s.classification, C.UNVERIFIABLE); assert.deepEqual(s.applied, { con: 1 }); assert.equal(s.remainingUnknown, null); assert.equal(s.provenShortfall, false);
+  const v = comp(actorWith([sys(8, { con: 1 }, { verification: { state: 'verified' } })]), 8, { expectedCount: 1, rulesDeferred: true });
+  assert.equal(v.classification, C.UNVERIFIABLE, 'not even a verified record certifies an unresolved count');
 });
 check('10. C6: lastAbilityIncrease never overrides canonical history, and is only supplementary legacy evidence for an untracked level', () => {
   const stale = actorWith([manual(8, { con: 1, wis: 1 })], { lastAbilityIncrease: sys(8, { str: 1, dex: 1 }) });
@@ -95,8 +100,8 @@ check('13. the reconciler consumes the reader: slot status / counts / completion
   assert.equal(slotOf([manual(8, { con: 1, wis: 1 })]).status, 'filled'); assert.equal(slotOf([manual(8, { con: 1, wis: 1 })]).completion.classification, 'PLAYER_ATTESTED');
   const part = slotOf([manual(8, { con: 1 })]);
   assert.equal(part.status, 'unverifiable'); assert.equal(part.openCount, 0); assert.equal(part.filledCount, 1); assert.equal(part.unverifiableCount, 1);
-  const proven = slotOf([sys(8, { con: 1 })]);
-  assert.equal(proven.status, 'open'); assert.equal(proven.openCount, 1);
+  const short = slotOf([sys(8, { con: 1 })]);
+  assert.equal(short.status, 'unverifiable'); assert.equal(short.openCount, 0); assert.equal(short.filledCount, 1); assert.equal(short.unverifiableCount, 1);
 });
 
 // ---- EVD-01: unknown counts stay unknown -------------------------------------------------------------------------------
@@ -122,8 +127,8 @@ check('EVD-05a. a short system record completed by an attestation is PLAYER_ATTE
   assert.equal(c.classification, C.PLAYER_ATTESTED); assert.equal(c.mixed, true); assert.deepEqual(c.applied, { con: 1 }); assert.deepEqual(c.attested, { wis: 1 });
   assert.equal(c.provenShortfall, false); assert.equal(c.remainingUnknown, 0);
 });
-check('EVD-05b. a short system record with NO manual statement stays a proven shortfall; any manual statement leaves the rest unknown', () => {
-  assert.equal(comp(actorWith([sys(8, { con: 1 })])).provenShortfall, true);
+check('EVD-05b. a short system record is never a proven shortfall (EVR-03); a manual statement still leaves the rest unknown', () => {
+  assert.equal(comp(actorWith([sys(8, { con: 1 })])).provenShortfall, false);
   const stillShort = comp(actorWith([sys(8, { con: 1 }), manual(8, { wis: 1 })]), 8, { expectedCount: 3 });
   assert.equal(stillShort.classification, C.PARTIAL); assert.equal(stillShort.provenShortfall, false); assert.equal(stillShort.remainingUnknown, 1);
 });

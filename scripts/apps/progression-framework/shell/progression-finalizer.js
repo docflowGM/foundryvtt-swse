@@ -3848,6 +3848,7 @@ export class ProgressionFinalizer {
   static async _applyMutationPlan(actor, mutationPlan) {
     const guard = beginAbilityIncreaseTransaction(actor, mutationPlan, {
       entitlementCheck: (level) => this._abilityEntitlementCheck(actor, level, mutationPlan?.set?.['flags.swse.levelUpEntitlementManifest'] || null),
+      getAllocationMode: () => ProgressionRules.getAbilityIncreaseAllocationMode?.(),
     });
     if (!guard.ok) {
       swseLogger.error('[ProgressionFinalizer] Ability-increase guard refused the mutation plan', { code: guard.code, actorId: actor?.id });

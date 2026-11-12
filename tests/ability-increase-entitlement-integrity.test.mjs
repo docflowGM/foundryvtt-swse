@@ -183,4 +183,77 @@ await check('EVD-02e. the SAME existence check runs again at the ActorEngine bou
   delete p2.set['system.progression.lastAbilityIncrease'].transactionId;
   assert.equal((await ProgressionFinalizer._applyMutationPlan(noId, p2)).code, 'MISSING_TRANSACTION_ID');
 });
+
+// ---- EVR-01: the COMPLETE entitlement contract is revalidated at the final boundary ----------------------------------------------
+const fresh = () => { const a = actorAt(9); return { a, p: compile(a, reconcileSession(attrFor(8))) }; };
+const okCheck = () => ({ exists: true, count: 2, rulesDeferred: false });
+const begin = (a, p, over = {}) => G.beginAbilityIncreaseTransaction(a, p, { entitlementCheck: okCheck, getAllocationMode: mode, ...over });
+await check('EVR-01a. a valid, unchanged contract passes the boundary; the record carries the contract it was built under', () => {
+  const { a, p } = fresh();
+  const rec = p.set['system.progression.lastAbilityIncrease'];
+  assert.equal(rec.entitledCount, 2); assert.equal(rec.allocationMode, 'raw_two_different');
+  const g = begin(a, p); assert.equal(g.ok, true); g.release();
+});
+await check('EVR-01b. the entitlement COUNT changed after compilation => stale plan refused (up, down, unknown, absent)', () => {
+  for (const [count, code] of [[1, 'ENTITLEMENT_CHANGED'], [3, 'ENTITLEMENT_CHANGED'], [null, 'ENTITLEMENT_COUNT_UNKNOWN'], [0, 'ENTITLEMENT_COUNT_UNKNOWN'], [undefined, 'ENTITLEMENT_COUNT_UNKNOWN']]) {
+    const { a, p } = fresh(); const g = begin(a, p, { entitlementCheck: () => ({ exists: true, count, rulesDeferred: false }) });
+    assert.equal(g.ok, false); assert.equal(g.code, code, String(count));
+  }
+});
+await check('EVR-01c. the entitlement became rules-deferred after compilation => refused', () => {
+  const { a, p } = fresh(); const g = begin(a, p, { entitlementCheck: () => ({ exists: true, count: 2, rulesDeferred: true }) });
+  assert.equal(g.code, 'ENTITLEMENT_COUNT_DEFERRED');
+});
+await check('EVR-01d. the allocation house rule changed (or cannot be read) after compilation => refused', () => {
+  const { a, p } = fresh();
+  assert.equal(begin(a, p, { getAllocationMode: () => 'allow_stacked_two' }).code, 'ALLOCATION_RULE_CHANGED');
+  assert.equal(begin(a, p, { getAllocationMode: () => null }).code, 'ALLOCATION_RULE_UNKNOWN');
+  assert.equal(begin(a, p, { getAllocationMode: null }).code, 'ALLOCATION_RULE_UNKNOWN');
+});
+await check('EVR-01e. through the REAL boundary: actor turns into a droid after compilation (count becomes a pending rule) => nothing committed', async () => {
+  const { a, p } = fresh(); a.type = 'droid'; engineCalls = 0;
+  const res = await ProgressionFinalizer._applyMutationPlan(a, p);
+  assert.equal(res.success, false); assert.ok(['ENTITLEMENT_COUNT_DEFERRED', 'ENTITLEMENT_CHANGED'].includes(res.code), res.code); assert.equal(engineCalls, 0);
+});
+
+// ---- EVR-02: exact plan / evidence equivalence BEFORE commit -------------------------------------------------------------------
+await check('EVR-02a. a record that claims two increases but a plan with only one score mutation is refused before ActorEngine', async () => {
+  const { a, p } = fresh(); delete p.set['system.attributes.wis.base']; engineCalls = 0;
+  const res = await ProgressionFinalizer._applyMutationPlan(a, p);
+  assert.equal(res.success, false); assert.equal(res.code, 'PLAN_EVIDENCE_MISMATCH'); assert.match(res.error, /wis/); assert.equal(engineCalls, 0);
+  assert.equal(a.system.attributes.con.base, 12); assert.deepEqual(histLevels(a), []);
+});
+await check('EVR-02b. a stray ability-score mutation for an UNSELECTED ability, or a wrong planned value, is refused', async () => {
+  const stray = fresh(); stray.p.set['system.attributes.str.base'] = 13;
+  assert.equal(begin(stray.a, stray.p).code, 'PLAN_EVIDENCE_MISMATCH');
+  const other = fresh(); other.p.set['system.attributes.cha.temp'] = 2;
+  assert.equal(begin(other.a, other.p).code, 'PLAN_EVIDENCE_MISMATCH');
+  const wrong = fresh(); wrong.p.set['system.attributes.con.base'] = 15;
+  assert.ok(['SCORES_CHANGED', 'PLAN_EVIDENCE_MISMATCH'].includes(begin(wrong.a, wrong.p).code));
+});
+await check('EVR-02c. the history record in the plan must be the latest-event record exactly (selection, entitlement, transaction)', () => {
+  const diff = fresh(); diff.p.set['system.progression.abilityIncreaseHistory'][0].increases = { str: 1, dex: 1 };
+  assert.equal(begin(diff.a, diff.p).code, 'PLAN_EVIDENCE_MISMATCH');
+  const missing = fresh(); missing.p.set['system.progression.abilityIncreaseHistory'] = [];
+  assert.equal(begin(missing.a, missing.p).code, 'PLAN_EVIDENCE_MISMATCH');
+  const twice = fresh(); twice.p.set['system.progression.abilityIncreaseHistory'].push(structuredClone(twice.p.set['system.progression.abilityIncreaseHistory'][0]));
+  assert.equal(begin(twice.a, twice.p).code, 'PLAN_EVIDENCE_MISMATCH');
+});
+
+// ---- EVR-04: malformed selections are REJECTED, never clamped ------------------------------------------------------------------------
+await check('EVR-04. invalid selections are rejected as submitted (excess, negative, fractional, non-numeric, null, unknown key, wrong total); a legal selection is kept exactly', () => {
+  const a = actorAt(9);
+  const mk = (inc, m = mode) => AbilityScorePlanBuilder.buildSet({ mode: 'levelup', actor: a, attr: { ...attrFor(8), increases: inc }, manifest: null, getAllocationMode: m, source: 'progression-finalizer', entitlementCheck: () => ({ exists: true, count: 2 }) });
+  const cases = [
+    [{ con: 2 }, 'ALLOCATION_NOT_ALLOWED'], [{ con: 3 }, 'ALLOCATION_NOT_ALLOWED'], [{ con: -1, wis: 3 }, 'INVALID_SELECTION_VALUE'], [{ con: 0.5, wis: 1.5 }, 'INVALID_SELECTION_VALUE'],
+    [{ con: 'x', wis: 1 }, 'INVALID_SELECTION_VALUE'], [{ con: NaN, wis: 1 }, 'INVALID_SELECTION_VALUE'], [{ con: null, wis: 1 }, 'INVALID_SELECTION_VALUE'], [{ con: '1', wis: 1 }, 'INVALID_SELECTION_VALUE'],
+    [{ con: 1, foo: 1 }, 'UNKNOWN_ABILITY'], [{ con: 1 }, 'ENTITLEMENT_COUNT_MISMATCH'], [{ con: 1, wis: 1, str: 1 }, 'ENTITLEMENT_COUNT_MISMATCH'], [[1, 1], 'INVALID_SELECTION'],
+  ];
+  for (const [inc, code] of cases) assert.throws(() => mk(inc), e => e.code === code, `${JSON.stringify(inc)} -> ${code}`);
+  assert.deepEqual(histLevels(a), []);
+  const ok = mk({ con: 1, wis: 1, str: 0, dex: undefined });
+  assert.deepEqual(ok['system.progression.lastAbilityIncrease'].increases, { con: 1, wis: 1 });
+  const stacked = mk({ con: 2 }, () => 'allow_stacked_two');
+  assert.deepEqual(stacked['system.progression.lastAbilityIncrease'].increases, { con: 2 }); assert.equal(stacked['system.progression.lastAbilityIncrease'].allocationMode, 'allow_stacked_two');
+});
 console.log('ability-increase-entitlement-integrity.test.mjs: all assertions passed');
