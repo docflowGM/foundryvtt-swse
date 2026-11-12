@@ -29,7 +29,7 @@ export function strictCount(value) {
  * cap, and a total different from the entitled count are all rejected.
  * @returns {{increases:object, total:number}} the selection exactly as submitted (positive entries only)
  */
-export function validateAbilitySelection(rawIncreases, { maxPerAbility, entitledCount }) {
+export function validateSelectionShape(rawIncreases, { maxPerAbility }) {
   const fail = (code, message) => { throw new AbilityIncreaseError(code, `${message}; nothing was changed.`); };
   if (rawIncreases === null || typeof rawIncreases !== 'object' || Array.isArray(rawIncreases)) fail('INVALID_SELECTION', 'The ability-increase selection is not an object');
   const increases = {};
@@ -43,8 +43,13 @@ export function validateAbilitySelection(rawIncreases, { maxPerAbility, entitled
     if (value > maxPerAbility) fail('ALLOCATION_NOT_ALLOWED', `${key.toUpperCase()} +${value} exceeds the allowed ${maxPerAbility} per ability under the current allocation rule`);
     increases[key] = value; total += value;
   }
-  if (total !== entitledCount) fail('ENTITLEMENT_COUNT_MISMATCH', `This entitlement grants ${entitledCount} ability increase(s) but ${total} were selected`);
   return { increases, total };
+}
+
+export function validateAbilitySelection(rawIncreases, { maxPerAbility, entitledCount }) {
+  const result = validateSelectionShape(rawIncreases, { maxPerAbility });
+  if (result.total !== entitledCount) throw new AbilityIncreaseError('ENTITLEMENT_COUNT_MISMATCH', `This entitlement grants ${entitledCount} ability increase(s) but ${result.total} were selected; nothing was changed.`);
+  return result;
 }
 
 export const newTransactionId = () => `abtx-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
@@ -172,6 +177,13 @@ const canonical = (value) => {
   if (value && typeof value === 'object') return `{${Object.keys(value).sort().map(k => `${JSON.stringify(k)}:${canonical(value[k])}`).join(',')}}`;
   return JSON.stringify(value === undefined ? null : value);
 };
+/** Order-insensitive, multiplicity-sensitive equality of two history arrays (canonical content). Shared by the system Apply guard and the acknowledgment service. */
+export function historiesMatch(a, b) {
+  const left = (Array.isArray(a) ? a : []).map(canonical).sort();
+  const right = (Array.isArray(b) ? b : []).map(canonical).sort();
+  return left.length === right.length && left.every((x, i) => x === right[i]);
+}
+
 export function checkPlannedHistoryFresh(actor, planSet) {
   const info = describeAbilityTransaction(planSet);
   if (!info) return [];
@@ -272,4 +284,4 @@ export function verifyAbilityIncreaseCommit(actor, mutationPlan, { before = null
   return { state: scores && record && latest ? 'verified' : 'failed', transactionId: tid, verifiedAt: now, sessionId, checks: { scores, record, latest }, reasons };
 }
 
-export default { checkPlannedHistoryFresh, validateAbilitySelection, checkPlanEvidenceEquivalence, strictCount, newTransactionId, resolveEntitlementLevel, assertEntitlementOpen, beginAbilityIncreaseTransaction, strictLevel, entitlementIdForLevel, levelFromEntitlementId };
+export default { historiesMatch, validateSelectionShape, checkPlannedHistoryFresh, validateAbilitySelection, checkPlanEvidenceEquivalence, strictCount, newTransactionId, resolveEntitlementLevel, assertEntitlementOpen, beginAbilityIncreaseTransaction, strictLevel, entitlementIdForLevel, levelFromEntitlementId };

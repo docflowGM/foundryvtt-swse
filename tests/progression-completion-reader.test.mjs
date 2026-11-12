@@ -138,11 +138,18 @@ check('EVD-05c. the allocation rule caps the combined total per ability: overlap
   const stacked = R.getAbilityIncreaseCompletion(actorWith([sys(8, { con: 1 }), manual(8, { con: 1 })]), 8, { expectedCount: 2, maxPerAbility: 2 });
   assert.equal(stacked.classification, C.PLAYER_ATTESTED); assert.deepEqual(stacked.attested, { con: 1 });
 });
-check('EVD-05d. GM and player attestations: the GM statement takes precedence (reported); manual evidence never exceeds the entitlement', () => {
-  const c = comp(actorWith([manual(8, { con: 1, wis: 1 }), manual(8, { str: 1, dex: 1 }, { evidence: 'gm-authorized' })]));
-  assert.equal(c.classification, C.GM_AUTHORIZED); assert.deepEqual(c.gmAuthorized, { str: 1, dex: 1 }); assert.deepEqual(c.attested, {}); assert.ok(c.conflicts.includes('gm-and-player-attestations'));
+check('EVD-05d. D4: GM and player attestations COEXIST (no blanket GM precedence); overlap goes to the GM part; the whole is PLAYER_ATTESTED when any player part counts; manual evidence never exceeds the entitlement', () => {
+  const both = comp(actorWith([manual(8, { con: 1 }), manual(8, { str: 1 }, { evidence: 'gm-authorized' })]));
+  assert.equal(both.classification, C.PLAYER_ATTESTED); assert.deepEqual(both.gmAuthorized, { str: 1 }); assert.deepEqual(both.attested, { con: 1 });
+  const gmOnly = comp(actorWith([manual(8, { str: 1, dex: 1 }, { evidence: 'gm-authorized' })]));
+  assert.equal(gmOnly.classification, C.GM_AUTHORIZED);
+  const overlap = comp(actorWith([manual(8, { con: 1, wis: 1 }), manual(8, { con: 1, dex: 1 }, { evidence: 'gm-authorized' })]));
+  assert.deepEqual(overlap.gmAuthorized, { con: 1, dex: 1 }); assert.deepEqual(overlap.attested, {}); assert.ok(overlap.conflicts.includes('overlapping-or-excess-selection') || overlap.conflicts.includes('selections-exceed-entitlement'));
   const over = comp(actorWith([manual(8, { con: 1, wis: 1, str: 1 })]));
   assert.equal(over.classification, C.PLAYER_ATTESTED); assert.equal(Object.values(over.attested).reduce((n, d) => n + d, 0), 2); assert.ok(over.conflicts.includes('selections-exceed-entitlement'));
+  // superseding ONE record leaves the unrelated player attestation counting
+  const superseded = comp(actorWith([manual(8, { con: 1 }), manual(8, { wis: 1 }, { status: 'superseded' }), manual(8, { dex: 1 }, { evidence: 'gm-authorized' })]));
+  assert.deepEqual(superseded.attested, { con: 1 }); assert.deepEqual(superseded.gmAuthorized, { dex: 1 }); assert.equal(superseded.classification, C.PLAYER_ATTESTED);
 });
 check('EVD-05e. Apply is still refused while ANY record (mixed, partial or manual) exists for the level, so mixed evidence can never be double applied', () => {
   const a = actorWith([sys(8, { con: 1 }), manual(8, { wis: 1 })]);

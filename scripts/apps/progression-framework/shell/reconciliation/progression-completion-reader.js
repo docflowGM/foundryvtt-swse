@@ -103,7 +103,8 @@ export function getAbilityIncreaseCompletion(actor, level, { expectedCount = nul
   const manualAllowed = !deferred;
   let gm = manualAllowed ? merge(buckets['gm-authorized']) : {};
   let attested = manualAllowed ? merge(buckets['player-attested']) : {};
-  if (countOf(gm) > 0 && countOf(attested) > 0) { conflicts.push('gm-and-player-attestations'); attested = {}; }
+  // D4: a GM supersession deactivates the INTENDED record (status 'superseded'); unrelated active player attestations for the same entitlement keep counting. GM statements
+  // are tallied first so that, when selections overlap, the GM-authorized part wins the shared capacity and the overlapping player claim is reported, not double counted.
 
   // EVD-05: system-applied and manual evidence may be MIXED for one entitlement (a short system record completed by an attestation). They are
   // combined per ability and the canonical allocation rule caps the total: a manual selection that would exceed it (for example the same ability
@@ -141,7 +142,7 @@ export function getAbilityIncreaseCompletion(actor, level, { expectedCount = nul
   } else if (expected !== null && total > 0) {
     if (total >= expected) {
       if (manualCount === 0) classification = verified ? COMPLETION.SYSTEM_VERIFIED : COMPLETION.SYSTEM_COMMITTED_UNVERIFIED;
-      else classification = gmCount > 0 ? COMPLETION.GM_AUTHORIZED : COMPLETION.PLAYER_ATTESTED; // weakest link: any manual part makes the whole attested
+      else classification = attestedCount > 0 ? COMPLETION.PLAYER_ATTESTED : COMPLETION.GM_AUTHORIZED; // weakest link: any player-attested part keeps the whole attested; GM_AUTHORIZED only when every manual part is GM
     } else {
       classification = COMPLETION.PARTIAL;
       // EVR-03: a short record - even one from a recognised system writer - does NOT prove an increase was omitted (it may have been applied by hand, or the
