@@ -24,6 +24,7 @@ const F = await import('/systems/foundryvtt-swse/scripts/apps/progression-framew
 const { resolveFinding } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-resolvers.js');
 const acq = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/acquisition-authority.js');
 const { AbilityEngine } = await import('/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js');
+const { settleDerived } = await import('./helpers/derived-lifecycle-fixture.mjs');
 const { DropResolutionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js');
 
 for (const line of fs.readFileSync(path.join(ROOT, 'packs/classes.db'), 'utf8').split(/\r?\n/).filter(Boolean)) {
@@ -34,7 +35,7 @@ ClassesDB.isBuilt = true;
 
 let seq = 0;
 const cls = (name, level) => ({ id: `c${++seq}`, type: 'class', name, system: { level, classId: name.toLowerCase() }, flags: { swse: {} } });
-const man = (name, level, extra = {}) => ({
+const man = (name, level, extra = {}) => settleDerived({
   id: `a${++seq}`, name: 'Manual', type: 'character', flags: { swse: {} }, _stats: { modifiedTime: 1 },
   items: [cls(name, level)],
   system: { level, hp: {}, progression: { classLevels: [{ class: name, classId: name.toLowerCase(), level }] }, ...extra },
@@ -96,6 +97,9 @@ await check('4. Ignore all => header ! disappears; material change => NEW findin
   assert.equal(s.validation.playerActionable, false, 'every finding ignored => hidden');
   // level up: expected BAB changes (4 -> 5) while actual stays 2: a different discrepancy
   actor.items[0].system.level = 5; actor.system.level = 5; actor.system.progression.classLevels[0].level = 5; actor._stats.modifiedTime = 2;
+  s = sheet(actor);
+  assert.ok(!s.validation.findings.some(f => f.code === 'BAB_MISMATCH'), 'derived calculation not yet applied for the new state: no BAB accusation');
+  settleDerived(actor); // the authoritative derived pass completes for the new state
   s = sheet(actor);
   assert.ok(s.validation.findings.some(f => f.id === 'derived:bab:5:2'), 'the changed discrepancy resurfaces');
   assert.ok(s.validation.staleIgnored.some(r => r.id === 'derived:bab:4:2'), 'the old ignore record is reported stale');

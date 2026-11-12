@@ -11,6 +11,8 @@
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { ClassesDB } from '/systems/foundryvtt-swse/scripts/data/classes-db.js';
 import { readActorClassLevels } from './class-level-reader.js';
+import { readOverride } from './override-provenance.js';
+import { derivedLifecycle } from './derived-lifecycle.js';
 
 export const DOMAIN_STATUS = Object.freeze({
   VALID: 'VALID',
@@ -66,17 +68,59 @@ export function forcePointMaxAdapter(actor) {
   if (expected === null) return result({ ...base, reason: 'authority-unreadable' });
 
   if (expected === actual) return result({ ...base, status: DOMAIN_STATUS.VALID, expected, actual });
-  return result({
-    ...base,
-    status: DOMAIN_STATUS.CONFIRMED_DISCREPANCY,
-    expected, actual,
-    reason: 'persisted-max-differs',
-    issue: `Maximum Force Points is ${actual}, but your class levels and Force Point feats give ${expected}.`,
-    resolve: { kind: 'set-force-point-max', label: 'Set to ' + expected, dataset: { value: expected } },
-  });
+
+  // The persisted maximum differs from the formula. That alone is NOT a character error (owner decision D-2): the field is
+  // player-editable and is 0 on a manually built character that never ran progression. Classify by evidence:
+  const override = readOverride(actor, 'forcePointsMax');
+  if (override && override.value === actual) {
+    return result({ ...base, status: DOMAIN_STATUS.VALID, expected, actual, reason: 'authorized-override', provenance: 'gm-override' });
+  }
+  const refresh = actor?.system?.progression?.lastForcePointRefresh;
+  const formulaManaged = finiteOrNull(refresh?.newMax) === actual; // value untouched since progression last wrote it
+  const optional = { kind: 'set-force-point-max', label: `Set to ${expected}`, dataset: { value: expected } };
+  if (formulaManaged) {
+    // Proven: progression wrote this value from the formula, nobody changed it since, and the formula now disagrees.
+    return result({
+      ...base,
+      status: DOMAIN_STATUS.CONFIRMED_DISCREPANCY,
+      expected, actual,
+      reason: 'formula-managed-value-stale',
+      issue: `Maximum Force Points is ${actual}, but your class levels and Force Point feats now give ${expected}.`,
+      resolve: optional,
+    });
+  }
+  if (actual === 0) {
+    return result({ ...base, expected, actual, reason: 'uninitialized', optional, optionalText: `Maximum Force Points has not been set. Your class levels and Force Point feats give ${expected}.` });
+  }
+  return result({ ...base, expected, actual, reason: 'unknown-provenance', optional, optionalText: `Maximum Force Points is ${actual}; your class levels and Force Point feats give ${expected}. It may be a deliberate adjustment, so this is not treated as an error.` });
 }
 
 export const DOMAIN_ADAPTERS = Object.freeze([forcePointMaxAdapter]);
+
+/**
+ * Asynchronous adapters run by async-enrichment.js ONLY after the derived lifecycle is current. They may await canonical
+ * asynchronous authorities and must stay read-only. `derivedPreparationAdapter` is a DIAGNOSTIC: it reports whether the
+ * authoritative calculation has been applied and can never produce a character error (D-1 / P1-F5).
+ */
+export async function derivedPreparationAdapter(actor) {
+  const life = derivedLifecycle(actor);
+  return result({
+    domain: 'derived-preparation', id: 'derived-preparation', label: 'Calculated statistics', authority: 'actors/derived/derived-generation.js', diagnostic: true,
+    status: life.state === 'current' ? DOMAIN_STATUS.VALID : DOMAIN_STATUS.UNVERIFIABLE,
+    reason: life.state === 'current' ? 'applied' : (life.state === 'pending' ? 'calculation-pending' : 'signature-unavailable'),
+  });
+}
+export const ASYNC_DOMAIN_ADAPTERS = Object.freeze([derivedPreparationAdapter]);
+
+export async function runAsyncDomainAdapters(actor, adapters = ASYNC_DOMAIN_ADAPTERS) {
+  const out = [];
+  for (const adapter of adapters) {
+    try { out.push(await adapter(actor)); } catch (_err) {
+      out.push(result({ domain: adapter?.name || 'unknown', id: adapter?.name || 'unknown', reason: 'adapter-error' }));
+    }
+  }
+  return out;
+}
 
 /** Run every adapter; a thrown adapter is UNVERIFIABLE (diagnostic), never a character error and never a thrown report. */
 export function runDomainAdapters(actor, adapters = DOMAIN_ADAPTERS) {
@@ -93,7 +137,7 @@ export function runDomainAdapters(actor, adapters = DOMAIN_ADAPTERS) {
 
 /** Map one adapter verdict onto the existing derived-stat row shape (so findings, Ignore and the overlay need no new surface). */
 export function adapterToRow(verdict) {
-  if (verdict.status === DOMAIN_STATUS.NOT_APPLICABLE) return null;
+  if (verdict.status === DOMAIN_STATUS.NOT_APPLICABLE || verdict.diagnostic === true) return null;
   const confirmed = verdict.status === DOMAIN_STATUS.CONFIRMED_DISCREPANCY;
   return {
     id: verdict.id,
@@ -110,6 +154,8 @@ export function adapterToRow(verdict) {
     issue: confirmed ? verdict.issue : '',
     detail: confirmed ? `Canonical authority: ${verdict.authority}.` : (verdict.reason || ''),
     resolve: confirmed ? verdict.resolve : { kind: 'none', label: '' },
+    optionalAction: !confirmed && verdict.optional ? { ...verdict.optional, text: verdict.optionalText || '' } : null,
+    reason: verdict.reason || '',
     domain: verdict.domain,
     authority: verdict.authority,
     targetTab: 'abilities',
@@ -134,4 +180,4 @@ export function applyDomainAdapterRows(derivedStats, verdicts) {
   };
 }
 
-export default { DOMAIN_STATUS, DOMAIN_ADAPTERS, forcePointMaxAdapter, runDomainAdapters, adapterToRow, applyDomainAdapterRows };
+export default { DOMAIN_STATUS, DOMAIN_ADAPTERS, ASYNC_DOMAIN_ADAPTERS, forcePointMaxAdapter, derivedPreparationAdapter, runDomainAdapters, runAsyncDomainAdapters, adapterToRow, applyDomainAdapterRows };

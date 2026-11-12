@@ -36,7 +36,9 @@ import {
   buildEvidenceIndex,
   checkCertificationConsistency,
 } from '../../../engine/progression/utils/progression-evidence.js';
-import { buildFindings, partitionFindings, readIgnored } from './reconciliation/reconciliation-findings.js';
+import { buildFindings, buildOptionalActions, partitionFindings, readIgnored } from './reconciliation/reconciliation-findings.js';
+import { derivedLifecycle } from './reconciliation/derived-lifecycle.js';
+import { AsyncReconciliationEnrichment } from './reconciliation/async-enrichment.js';
 import { actorHasGrant, enabledGrants, getFeatTalentRulesSignature } from '../../../houserules/house-rule-grant-table.js';
 import {
   getClassLevelProgressionEntry,
@@ -139,7 +141,11 @@ function memoKeyForActor(actor, options = {}) {
   try { rules = getFeatTalentRulesSignature(); } catch (_err) { rules = 'rules?'; }
   let registry = '';
   try { registry = `${ClassesRegistry.isInitialized?.() ? 1 : 0}:${ClassesRegistry.count?.() ?? 0}`; } catch (_err) { registry = 'registry?'; }
-  return [actorId, actorStamp, items, rules, registry, options.mode || ''].join('::');
+  // The report reads prepared `system.derived.*`; a derived pass that lands without any actor update must not leave a stale
+  // (suppressed-while-pending) report cached, so the derived lifecycle is part of the key.
+  let derived = '';
+  try { const life = derivedLifecycle(actor); derived = `${life.state}:${life.applied ?? ''}:${life.generation}`; } catch (_err) { derived = 'derived?'; }
+  return [actorId, actorStamp, items, rules, registry, derived, options.mode || ''].join('::');
 }
 
 function memoGet(key) {
@@ -429,6 +435,10 @@ export class ProgressionReconciler {
         safeReport = this.sanitizeReconciliationReport(report, { actor, options });
         memoSet(memoKey, safeReport);
       }
+      // Asynchronous enrichment: only a result that still describes the CURRENT actor state is merged (never memoized).
+      // Interactive sheet reads (not fresh verification reads) also request enrichment for the current revision.
+      if (output === 'sheet' && options.fresh !== true) AsyncReconciliationEnrichment.ensureRequested(actor);
+      safeReport = AsyncReconciliationEnrichment.mergeApplicable(actor, safeReport);
       return output === 'sheet' ? this._safeToSheetAudit(safeReport, { ...options, actor }) : safeReport;
     } catch (err) {
       swseLogger.error('[ProgressionReconciler] Safe reconciliation failed; returning engine-failure report', {
@@ -1017,6 +1027,7 @@ export class ProgressionReconciler {
       staleIgnored: (partition?.stale || []).map(r => ({ id: r.id, code: r.code, ignoredAt: r.ignoredAt || null })),
       engineFindings,
       notes,
+      optional: buildOptionalActions(report),
       repairs: (Array.isArray(report?.repairSuggestions) ? report.repairSuggestions : []).map(r => ({ label: r.label || '', detail: r.detail || '' })),
     };
   }
@@ -1785,11 +1796,22 @@ export class ProgressionReconciler {
       }));
     }
 
+    // Prepared statistics are only comparable once the authoritative derived calculation has been applied for the CURRENT
+    // actor state. A pending / unknown lifecycle is a normal transient state: the rows are informational, never an error
+    // (owner decision D-1 / P1-F5). Completion is observed through the existing derived-generation stamp, never a timer.
+    const lifecycle = derivedLifecycle(actor);
+    if (lifecycle.state !== 'current') {
+      for (let i = 0; i < rows.length; i += 1) {
+        if (rows[i].status === 'unavailable') continue; // already not comparable (class authority unresolved)
+        rows[i] = { ...rows[i], status: 'unverifiable', statusLabel: 'Calculation pending', tone: 'neutral', needsAttention: false, issue: '', detail: 'Calculated statistics are still being prepared; this will be checked when they are ready.' };
+      }
+    }
     for (const row of rows) {
       if (row.needsAttention && row.issue) warnings.push(`${row.label}: ${row.issue}`);
     }
 
     return {
+      lifecycle: { state: lifecycle.state, generation: lifecycle.generation },
       kind: 'swse-derived-class-stat-audit',
       status: rows.some(row => row.status === 'issue') ? 'needs-attention' : (rows.some(row => row.status === 'warning' || row.status === 'unavailable') ? 'review' : 'ok'),
       hasIssues: rows.some(row => row.needsAttention),
@@ -1970,18 +1992,15 @@ export class ProgressionReconciler {
   }
 
   _readCurrentDerivedStats(actor) {
+    // Prepared (derived) values only. Persisted `system.defenses.*` are player-editable overrides (owner decision D-2) and
+    // legacy BAB / HP mirrors are not canonical; neither is read, so a deliberate override can never be reported as a build error.
     const readDefenseClassBonus = (key) => {
-      const values = [
-        actor?.system?.derived?.defenses?.[key]?.classBonus,
-        actor?.system?.defenses?.[key]?.classBonus,
-        actor?.system?.defenses?.[key]?.class,
-        actor?.system?.defenses?.[key]?.classBonusValue,
-      ].map(value => Number(value)).filter(Number.isFinite);
-      return values.length ? Math.max(...values) : null;
+      const value = actor?.system?.derived?.defenses?.[key]?.classBonus;
+      return value === null || value === undefined ? null : (Number.isFinite(Number(value)) ? Number(value) : null);
     };
     return {
-      hpMax: this._firstFiniteNumber(actor?.system?.hp?.max, actor?.system?.derived?.hp?.max, actor?.system?.hitPoints?.max),
-      bab: this._firstFiniteNumber(actor?.system?.derived?.bab, actor?.system?.bab?.total, actor?.system?.bab, actor?.system?.baseAttackBonus),
+      hpMax: this._firstFiniteNumber(actor?.system?.hp?.max, actor?.system?.derived?.hp?.max),
+      bab: this._firstFiniteNumber(actor?.system?.derived?.bab),
       classDefenses: Object.fromEntries(DEFENSE_KEYS.map(key => [key, readDefenseClassBonus(key)])),
     };
   }

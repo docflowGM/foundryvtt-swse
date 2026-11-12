@@ -1,3 +1,4 @@
+import { OVERRIDE_KEYS, buildOverrideUpdate } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/override-provenance.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 
 const STYLE_ID = 'swse-v2-character-resource-editor-style';
@@ -164,7 +165,12 @@ export function bindCharacterResourceEditor(sheet, root, { signal } = {}) {
     card?.classList.add('is-saving');
     committing = true;
     try {
-      await ActorEngine.updateActor(sheet.actor, { [path]: value });
+      const update = { [path]: value };
+      // A GM edit of a formula-governed maximum is a documented, authorized override (reconciliation owner decision D-2).
+      if (path === OVERRIDE_KEYS.forcePointsMax && globalThis.game?.user?.isGM === true) {
+        Object.assign(update, buildOverrideUpdate('forcePointsMax', value, globalThis.game.user));
+      }
+      await ActorEngine.updateActor(sheet.actor, update);
     } catch (error) {
       card?.classList.add('is-error');
       globalThis.ui?.notifications?.error?.(`Could not update ${path}: ${error?.message || error}`);

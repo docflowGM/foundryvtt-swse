@@ -22,7 +22,7 @@ import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ProgressionReconciler } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js";
-import { buildFindings, addIgnored, removeIgnored, readIgnored, IGNORE_FLAG_PATH } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-findings.js";
+import { buildFindings, buildOptionalActions, addIgnored, removeIgnored, readIgnored, IGNORE_FLAG_PATH } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-findings.js";
 import { resolveFinding } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-resolvers.js";
 import { getAcquisitionMode, isGatedAcquisitionType, recordAcquisitionEvidence, resolveGmOverride, validateAcquisition } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/acquisition-authority.js";
 import { requestWithPostureChoices } from "/systems/foundryvtt-swse/scripts/sheets/v2/weapon-posture-choice-dialog.js";
@@ -8083,6 +8083,12 @@ const forcePoints = [];
   }
 
   /** Fresh (non-memoized) findings, ignored ones included. */
+  /** Findings plus optional (non-error) actions: the set the Resolve path may act on. Only findings count toward the `!`. */
+  _freshReconciliationActionables(actor = this.actor) {
+    const report = ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true });
+    return [...buildFindings(report), ...buildOptionalActions(report)];
+  }
+
   _freshReconciliationFindings(actor = this.actor) {
     const report = ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true });
     return buildFindings(report);
@@ -8108,9 +8114,19 @@ const forcePoints = [];
         actor: this.actor,
         findingId: id,
         deps: {
-          findFindings: (actor) => this._freshReconciliationFindings(actor),
+          findFindings: (actor) => this._freshReconciliationActionables(actor),
           recalcAll: (actor) => ActorEngine.recalcAll(actor),
-          setForcePointMax: (actor, value) => ActorEngine.updateActor(actor, { 'system.forcePoints.max': value }, { source: 'reconciliation-resolve', meta: { guardKey: 'force-points-update' } }),
+          actorRevision: (actor) => actor?._stats?.modifiedTime ?? null,
+          setForcePointMax: async (actor, value, { previous } = {}) => {
+            // Re-check immediately before the write: the stored value must still be the one the finding was built from.
+            if (Number(actor?.system?.forcePoints?.max) !== Number(previous)) { const e = new Error('Force Point maximum changed'); e.code = 'STALE_VALUE'; throw e; }
+            const now = new Date().toISOString();
+            await ActorEngine.updateActor(actor, {
+              'system.forcePoints.max': value,
+              // keeps the value classified as formula-managed (progression's own refresh record), so it is still verified later
+              'system.progression.lastForcePointRefresh': { reason: 'reconciliation-resolve', previousValue: Number(actor?.system?.forcePoints?.value ?? 0) || 0, previousMax: Number(previous), newValue: Number(actor?.system?.forcePoints?.value ?? 0) || 0, newMax: value, timestamp: now },
+            }, { source: 'reconciliation-resolve', meta: { guardKey: 'force-points-update' } });
+          },
           grantHouseRule: async (actor, key) => (await import('/systems/foundryvtt-swse/scripts/houserules/houserule-feat-grants.js')).HouseRuleFeatGrants.grantMissing(actor, key),
           openStep: (ds) => this._openProgressionReconciliationStep(ds),
           confirm: (message) => SWSEDialogV2.confirm({ title: 'Confirm', content: `<p>${message}</p>`, yes: () => true, no: () => false, defaultYes: false }),

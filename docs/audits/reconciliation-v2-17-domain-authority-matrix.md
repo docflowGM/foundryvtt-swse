@@ -155,9 +155,9 @@ Legend — Coverage: **Wired** (verdict feeds findings today), **Partial**, **No
 - Caveat: five force-power tests fail at the PR merge base (missing `scripts/combat/damage-system.js`); they are unrelated and must stay isolated.
 
 ### 12. Force Points, Destiny Points, resources — Coverage: None
-- Authority (audited): `calculateMaxForcePoints(actor)` (sync, pure; base 5/6/7 + floor(level/2) + `MetaResourceFeatResolver.getForcePointMaxBonus`),
-  `calculateMaxForcePointsForBuildPlan` (used by the economy builder). Persisted `system.forcePoints.{value,max}` written by
-  `updateActorForcePoints` / builders. **This is a true persisted-mirror-vs-authority comparison and is the cleanest Phase 1 adapter.**
+- Authority (audited): `calculateMaxForcePoints(actor)` (sync but **NOT pure**: its helper `getForcePointBase` calls `actor.setFlag('swse', 'hasBase7FP' | 'hasPrestigeFPBonus', true)` while computing; base 5/6/7 + floor(level/2) + `MetaResourceFeatResolver.getForcePointMaxBonus`),
+  `calculateMaxForcePointsForBuildPlan` (read-only; used by the economy builder and by the reconciliation adapter). Planned convergence (not done): one pure rules function shared by both entry points, with the high-water flag persistence performed separately through an authorized writer. Persisted `system.forcePoints.{value,max}` written by
+  `updateActorForcePoints` / builders. **Persisted-mirror-vs-authority comparison, but `system.forcePoints.max` is player-editable and is 0 on a manually built character; a difference is a confirmed error only with evidence the value was formula-managed (see the Phase 1 section of the implementation report).**
 - Value below max is never a finding. Destiny Points / Second Wind: authority located only (`system.destinyPoints`, `system.secondWind`), not audited.
 
 ### 13. Movement and encumbrance — Coverage: None

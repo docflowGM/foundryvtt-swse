@@ -137,6 +137,31 @@ export function buildFindings(report) {
   return findings;
 }
 
+/**
+ * Optional, non-error suggestions (for example initializing an unset Force Point maximum). They are NOT findings: they never
+ * count toward the header `!`, cannot be ignored, and are shown only inside the review overlay. They carry the same stable
+ * shape as a finding so the existing Resolve path can act on them.
+ */
+export function buildOptionalActions(report) {
+  const out = [];
+  for (const row of Array.isArray(report?.derivedStats?.rows) ? report.derivedStats.rows : []) {
+    const action = row?.optionalAction;
+    if (!action?.kind || row.needsAttention === true) continue;
+    out.push({
+      id: `optional:${row.id}`,
+      subject: `optional:${row.id}`,
+      code: 'OPTIONAL_ACTION',
+      title: row.label,
+      text: action.text || '',
+      expected: row.expected ?? null,
+      actual: row.current ?? null,
+      optional: true,
+      resolve: { kind: action.kind, label: action.label || 'Apply', dataset: action.dataset || {} },
+    });
+  }
+  return out;
+}
+
 export function readIgnored(actor) {
   const raw = actor?.flags?.swse?.reconciliationIgnored;
   return Array.isArray(raw) ? raw.filter(r => r && typeof r.id === 'string') : [];
@@ -186,4 +211,4 @@ export function removeIgnored(existing, ids) {
   return (Array.isArray(existing) ? existing : []).filter(r => r && !drop.has(r.id));
 }
 
-export default { buildFindings, partitionFindings, addIgnored, removeIgnored, readIgnored, IGNORE_FLAG_PATH };
+export default { buildFindings, buildOptionalActions, partitionFindings, addIgnored, removeIgnored, readIgnored, IGNORE_FLAG_PATH };

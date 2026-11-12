@@ -52,3 +52,52 @@ change made here.
 
 **Verification:** Node harness only. Foundry V13: not performed (live `prepareDerivedData`, sheet `!`, Resolve through the real
 `ActorEngine.updateActor`, and the `force-points-update` guard key are untested at runtime).
+
+## Phase 1 corrections — owner decisions D-1, D-2, D-3 (P1-F1 … P1-F5)
+
+**Decisions applied.** D-1 (no duplicate arithmetic; verify inputs and calculation freshness; freshness is diagnostic), D-2 (editable
+values may be deliberate; only a proven inconsistency is a player-facing discrepancy), D-3 (asynchronous enrichment around the unchanged
+synchronous report).
+
+**P1-F1 Force Point classification** (`domain-adapters.js`). A differing persisted `system.forcePoints.max` is classified by evidence:
+- `authorized-override` (VALID): `flags.swse.overrides.forcePointsMax` with `authority: 'gm'` whose `value` equals the stored value. Written
+  only when a GM edits the maximum in the sheet resource editor (same ActorEngine update); never invented for existing data; no migration.
+- `formula-managed-value-stale` (CONFIRMED_DISCREPANCY, the only error case): progression's own `system.progression.lastForcePointRefresh.newMax`
+  equals the stored value (untouched since progression wrote it) and the canonical formula now disagrees.
+- `uninitialized` (stored 0, no progression record) and `unknown-provenance` (anything else): informational, never a `!`. They carry an
+  **optional** action (`optional:force-points-max`) shown in a separate "Optional (not an error)" overlay section; it cannot be ignored and
+  does not count toward the header indicator.
+
+**P1-F2 Safe Resolve.** The resolver re-derives the finding from a fresh report immediately before writing, requires the canonical value to
+equal the displayed one, requires the actor modification stamp to be unchanged since the action began, and the sheet writer additionally
+re-checks the previous stored value (`STALE_VALUE`). Any mismatch returns `stale` and writes nothing. The write goes through
+`ActorEngine.updateActor` and also records `lastForcePointRefresh`, so the value stays formula-managed.
+
+**P1-F3 Force Point authority.** The Phase 0 matrix wrongly described `calculateMaxForcePoints` as pure; corrected. Convergence on one
+pure rules function with separately authorized flag persistence is **planned, not done** (a change to that module's owners' code).
+
+**P1-F4 BAB / class-defense duplication.** Not retired: replacing the reconciler's own expectation arithmetic needs the canonical calculators
+to be consumed through the new async seam and a proof that the two agree, which has not been established. Done under D-2: the class-defense and BAB
+rows now read **only the prepared `system.derived.*` values**; persisted editable `system.defenses.*` overrides and the legacy `system.bab` /
+`baseAttackBonus` / `hitPoints` fallbacks are no longer read, so a deliberate override cannot be reported as a build error.
+
+**P1-F5 / D-3 Derived lifecycle and enrichment.**
+- `reconciliation/derived-lifecycle.js` reads the **existing** derived-generation authority (`getDerivedAppliedSignature`,
+  `getDerivedGeneration`) against `DerivedCalculator.getActorComputeSignature`. States: `current | pending | unavailable`.
+- Prepared-value rows (BAB, class defenses) are `unverifiable` ("Calculation pending") unless the lifecycle is `current`; never an error. The
+  reconciliation memo key now includes the lifecycle, so a derived pass that lands without any actor update is not hidden by a cached report.
+- `derived-generation.js` gains `announceDerivedApplied` (a `swseDerivedApplied` hook event) called from both derived write paths
+  (`SWSEV2BaseActor._computeDerivedAsync`, including the unchanged pass, and `ActorEngine._applyDerivedUpdates`). It is the completion signal;
+  there are no timers.
+- `reconciliation/async-enrichment.js`: captures a revision (actor stamp, feat/talent house-rule signature, derived source signature); runs
+  asynchronous adapters only when the lifecycle is `current`; discards a result if the revision changed while evaluating; **re-validates at read
+  time**; merges only an applicable result into a cloned report (never the synchronous memo); refreshes open sheets only when it changes what is
+  shown; never mutates the actor. The shipped asynchronous adapter (`derivedPreparationAdapter`) is a diagnostic and cannot produce a finding.
+- Known limit: the revision does not include non-feat/talent house rules (for example HP rules) — those do not feed any asynchronous adapter today.
+
+**Tests.** `tests/reconciliation-domain-adapters.test.mjs` (25 groups) covers: initialized, uninitialized, override, unknown provenance,
+prestige/feat bonuses, stale Resolve (revision, changed canonical value, changed stored value), optional action, Ignore stability, derived
+pending/applied/reset/reapplied, memo (verified to fail when the lifecycle is removed from the key), results arriving after a newer update,
+read-time revalidation, a house-rule change while pending, non-mutation, and no false `!` during preparation. Existing reconciliation tests were
+updated to represent a settled derived pass (`tests/helpers/derived-lifecycle-fixture.mjs`) where they assert prepared-value discrepancies.
+Node harness only; Foundry V13 not performed.
