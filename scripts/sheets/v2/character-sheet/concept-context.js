@@ -636,41 +636,35 @@ function buildActionGroups(combatActions, actionEconomy = {}) {
 /** Contract-test seam: the pure action-group presentation builder. */
 export const buildActionGroupsForTest = (...args) => buildActionGroups(...args);
 
-function buildSheetProgressionAudit(actor) {
+/**
+ * Silent Success Contract: the sheet renders NO reconciliation UI unless this returns visible:true.
+ * Only actionable findings (missing / invalid) show the header `!` to players. Validation-engine
+ * problems show it to a GM only, worded as a tooling problem, never as a character error.
+ */
+function buildValidationIndicator(actor) {
+  let audit = null;
   try {
-    return ProgressionReconciler.safeReconcileActor(actor, { output: 'sheet' });
+    audit = ProgressionReconciler.safeReconcileActor(actor, { output: 'sheet' });
   } catch (err) {
-    console.warn('[SWSE] Progression audit unavailable for character sheet', err);
-    return {
-      status: 'unavailable',
-      warnings: ['Progression audit unavailable'],
-      abilityIncreases: {
-        expected: 0,
-        filled: 0,
-        open: 0,
-        hasOpenSlots: false,
-        slots: [],
-        openSlots: []
-      },
-      classChoices: {
-        expected: 0,
-        filled: 0,
-        open: 0,
-        hasOpenSlots: false,
-        openSlots: []
-      },
-      generalFeats: { expected: 0, filled: 0, current: 0, open: 0, overfilled: 0, slots: [], openSlots: [], overfilledSlots: [] },
-      classFeats: { expected: 0, filled: 0, current: 0, open: 0, overfilled: 0, slots: [], openSlots: [], overfilledSlots: [] },
-      heroicTalents: { expected: 0, filled: 0, current: 0, open: 0, overfilled: 0, slots: [], openSlots: [], overfilledSlots: [] },
-      classTalents: { expected: 0, filled: 0, current: 0, open: 0, overfilled: 0, slots: [], openSlots: [], overfilledSlots: [] },
-      trainingLedgers: [],
-      byClass: [],
-      tasks: []
-    };
+    console.warn('[SWSE] Progression validation unavailable for character sheet', err);
+    audit = { validation: { playerActionable: false, gmDiagnostic: true, findings: [], engineFindings: [{ code: 'engine-failure', message: String(err?.message || err) }] } };
   }
+  const validation = audit?.validation || {};
+  const findingCount = asArray(validation.findings).length;
+  const isGM = game?.user?.isGM === true;
+  const engineVisible = isGM && validation.gmDiagnostic === true;
+  if (findingCount === 0 && !engineVisible) return { visible: false };
+  return {
+    visible: true,
+    count: findingCount,
+    engineOnly: findingCount === 0,
+    title: findingCount > 0
+      ? `Character validation: ${findingCount} item${findingCount === 1 ? '' : 's'} need attention`
+      : 'Character validation tooling problem (GM only)'
+  };
 }
 
-function buildAbilityTab(abilities, progressionAudit = {}) {
+function buildAbilityTab(abilities) {
   const entries = asArray(abilities)
     .map((ability) => ({
       key: ability.key,
@@ -695,12 +689,6 @@ function buildAbilityTab(abilities, progressionAudit = {}) {
   if (secondary && secondary.key !== primary?.key) secondary.isSecondary = true;
   if (lowest && lowest.key !== primary?.key && lowest.key !== secondary?.key) lowest.isLowest = true;
 
-  const abilityAudit = progressionAudit?.abilityIncreases || {};
-  const openIncreaseCount = Number(abilityAudit.open || 0) || 0;
-  const expectedIncreaseCount = Number(abilityAudit.expected || 0) || 0;
-  const filledIncreaseCount = Number(abilityAudit.filled || 0) || 0;
-  const openIncreaseSlots = asArray(abilityAudit.openSlots);
-
   return {
     entries,
     summaryCards: [
@@ -708,21 +696,8 @@ function buildAbilityTab(abilities, progressionAudit = {}) {
       { label: 'Secondary', value: secondary ? `${secondary.label} ${secondary.total}` : '—' },
       { label: 'Lowest', value: lowest ? `${lowest.label} ${lowest.total}` : '—' },
       { label: 'Modifier Sum', value: totalMods >= 0 ? `+${totalMods}` : String(totalMods) },
-      { label: 'Ability Total', value: String(totalScore || 0) },
-      { label: 'Ability Increases', value: expectedIncreaseCount ? `${filledIncreaseCount}/${expectedIncreaseCount} resolved` : 'None due' }
-    ],
-    abilityIncreasePanel: {
-      expected: expectedIncreaseCount,
-      filled: filledIncreaseCount,
-      open: openIncreaseCount,
-      hasOpenSlots: openIncreaseCount > 0,
-      slots: asArray(abilityAudit.slots),
-      openSlots: openIncreaseSlots,
-      statusLabel: openIncreaseCount > 0 ? `${openIncreaseCount} unresolved` : 'Resolved',
-      hint: openIncreaseCount > 0
-        ? 'These are progression-created ability score increase slots that have not been recorded as resolved.'
-        : 'Ability score increase accounting is resolved for recorded progression levels.'
-    }
+      { label: 'Ability Total', value: String(totalScore || 0) }
+    ]
   };
 }
 
@@ -1931,8 +1906,8 @@ export function buildConceptSheetViewModel(context = {}) {
   const campaignLog = flags?.campaignLog || '';
   const profileSummary = flags?.profileSummary || '';
   const forceAccess = hasForceSensitivityAccess(context, identity);
-  const progressionAudit = buildSheetProgressionAudit(actor);
-  const abilitiesTab = buildAbilityTab(abilities, progressionAudit);
+  const validationIndicator = buildValidationIndicator(actor);
+  const abilitiesTab = buildAbilityTab(abilities);
   const skills = buildSkillsTab(context, abilities, identity);
   const talents = buildTalentsTab(context, { isDroidActor });
   const force = buildForceTab(context);
@@ -2021,7 +1996,7 @@ export function buildConceptSheetViewModel(context = {}) {
       forceSensitive: forceAccess
     },
     tabs,
-    progressionAudit,
+    validationIndicator,
     abilities: abilities.map((ability) => ({
       key: ability.key,
       label: ability.label,

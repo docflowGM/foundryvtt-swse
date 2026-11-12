@@ -7,10 +7,27 @@
  */
 import { ProgressionTimelineBuilder } from './progression-timeline-builder.js';
 
+/**
+ * Rule deferrals. Each entry corresponds to a DEFERRED_RULES_REVIEW item in
+ * docs/audits/swse-rules-decisions-pending.md. While a ruling is pending, an
+ * affected slot that would be "missing" is reported as unverifiable instead,
+ * so a pending rules question can never raise a player-facing alert.
+ */
+const RULE_DEFERRALS = Object.freeze({
+  'RECON-001': 'Multiclass talent entitlement (class-table choices vs heroic cadence) is pending a rules ruling.',
+  'RECON-002': 'Droid ability-increase count is pending a rules ruling.',
+  'RECON-003': 'Nonheroic and mixed-actor entitlement level basis is pending a rules ruling.',
+});
+
+const SLOT_GROUP_KEYS = Object.freeze(['abilityIncreases', 'generalFeats', 'heroicTalents', 'classFeats', 'classTalents']);
+
 export class ProgressionReconciliationReportBuilder {
   build(actor, entitlementPlan = {}, ownership = {}, _options = {}) {
-    const actorLevel = this._actorTotalLevel(actor, entitlementPlan);
-    const classSummaries = this._normalizedClassSummaries(actor, entitlementPlan?.classSummaries, actorLevel);
+    // Levels and class summaries come from the entitlement plan (class-level-reader). This
+    // layer does NOT re-derive them.
+    const totalLevel = Number(entitlementPlan?.totalLevel || 0) || 0;
+    const totalHeroicLevel = Number(entitlementPlan?.totalHeroicLevel || 0) || 0;
+    const classSummaries = Array.isArray(entitlementPlan?.classSummaries) ? entitlementPlan.classSummaries.map(row => ({ ...row })) : [];
     const rawSlots = entitlementPlan?.slots || {};
     const slots = {
       abilityIncreases: this._cloneSlots(rawSlots.abilityIncreases),
@@ -22,37 +39,32 @@ export class ProgressionReconciliationReportBuilder {
       derivedStats: this._cloneDerivedStats(rawSlots.derivedStats || entitlementPlan?.derivedStats),
     };
 
-    this._dropFutureSlots(slots, actorLevel);
-    this._applyAmbiguousCrediting(slots, ownership);
+    const engineFindings = this._collectEngineFindings(entitlementPlan, ownership);
+
+    this._dropFutureSlots(slots, totalLevel);
+    const deferredRules = this._applyDeferredRules(slots, actor, entitlementPlan);
+    this._applyUnattributedCrediting(slots, ownership);
     this._attachRemediationActions(slots);
 
     const report = {
       kind: 'swse-actor-progression-reconciliation',
-      version: 8,
+      version: 9,
       actorId: actor?.id || entitlementPlan?.actorId || null,
       actorName: actor?.name || entitlementPlan?.actorName || 'Actor',
-      totalLevel: actorLevel,
-      totalHeroicLevel: actorLevel,
+      totalLevel,
+      totalHeroicLevel,
       classSummaries,
       slots,
       derivedStats: slots.derivedStats,
       ownership: this._publicOwnershipSummary(ownership),
       classification: this._buildClassificationSummary(slots, ownership),
+      engineFindings,
+      deferredRules,
+      coverage: { unauditedChoiceTypes: entitlementPlan?.diagnostics?.unauditedChoiceTypes || {} },
       layers: {
         entitlements: entitlementPlan?.diagnostics || { layer: 'entitlement-calculator' },
         ownership: ownership?.diagnostics || { layer: 'ownership-classifier' },
-        report: {
-          layer: 'reconciliation-report-builder',
-          phase: 9,
-          ambiguousCrediting: true,
-          remediationActions: true,
-          classProgressionSource: 'actor-level-capped',
-          cadenceFallback: false,
-          derivedStatsAudit: true,
-          derivedStatsSanityCaps: true,
-          futureSlotCapping: true,
-          timelineBuilder: true,
-        },
+        report: { layer: 'reconciliation-report-builder', phase: 10, remediationActions: true, timelineBuilder: true },
       },
       warnings: [],
       status: 'ok',
@@ -60,50 +72,16 @@ export class ProgressionReconciliationReportBuilder {
 
     this._normalizeDerivedStatsAudit(report);
 
-    const slotGroups = [
-      ['ability score increase', report.slots.abilityIncreases],
-      ['general feat', report.slots.generalFeats],
-      ['heroic talent', report.slots.heroicTalents],
-      ['class feat', report.slots.classFeats],
-      ['class talent', report.slots.classTalents],
-    ];
+    const counts = this._rollupCounts(report);
+    report.rollup = {
+      playerActionable: counts.missing > 0 || counts.invalid > 0,
+      gmDiagnostic: engineFindings.length > 0,
+      counts,
+    };
+    report.status = report.rollup.playerActionable ? 'needs-attention' : (report.rollup.gmDiagnostic ? 'engine-failure' : 'ok');
 
-    const openCounts = slotGroups.map(([label, groupSlots]) => ({
-      label,
-      count: this._slotCount(groupSlots, 'open'),
-    }));
-    const ambiguousCounts = slotGroups.map(([label, groupSlots]) => ({
-      label,
-      count: this._slotCount(groupSlots, 'ambiguous'),
-    }));
-    const overfilledCounts = slotGroups.map(([label, groupSlots]) => ({
-      label,
-      count: this._slotCount(groupSlots, 'overfilled'),
-    }));
-
-    const derivedIssueCount = Number(report.derivedStats?.issueCount || 0) || 0;
-
-    if (
-      openCounts.some(entry => entry.count > 0)
-      || ambiguousCounts.some(entry => entry.count > 0)
-      || overfilledCounts.some(entry => entry.count > 0)
-      || derivedIssueCount > 0
-    ) {
-      report.status = 'needs-attention';
-    }
-
-    for (const { label, count } of openCounts) {
-      if (count > 0) report.warnings.push(`${count} missing ${label}${count === 1 ? '' : 's'}`);
-    }
-    for (const { label, count } of ambiguousCounts) {
-      if (count > 0) report.warnings.push(`${count} unclassified ${label}${count === 1 ? '' : 's'} need classification`);
-    }
-    for (const { label, count } of overfilledCounts) {
-      if (count > 0) report.warnings.push(`${count} extra ${label}${count === 1 ? '' : 's'} detected`);
-    }
-    if (derivedIssueCount > 0) {
-      report.warnings.push(`${derivedIssueCount} derived class stat${derivedIssueCount === 1 ? '' : 's'} need review`);
-    }
+    if (counts.missing > 0) report.warnings.push(`${counts.missing} missing progression choice${counts.missing === 1 ? '' : 's'}`);
+    if (counts.invalid > 0) report.warnings.push(`${counts.invalid} derived class stat${counts.invalid === 1 ? '' : 's'} disagree with class progression`);
 
     report.timeline = new ProgressionTimelineBuilder().build(report, { source: 'report-builder' });
     report.layers.timeline = report.timeline?.diagnostics || { layer: 'progression-timeline-builder' };
@@ -111,73 +89,67 @@ export class ProgressionReconciliationReportBuilder {
     return report;
   }
 
-  _actorTotalLevel(actor = {}, entitlementPlan = {}) {
-    const explicit = this._positiveInteger(actor?.system?.level ?? actor?.system?.details?.level ?? actor?.system?.progression?.level);
-    if (explicit > 0) return explicit;
-    const classLevelTotal = this._actorClassLevelLedger(actor)
-      .reduce((sum, row) => sum + (Number(row?.level || 0) || 0), 0);
-    if (classLevelTotal > 0) return classLevelTotal;
-    return this._positiveInteger(entitlementPlan?.totalLevel || entitlementPlan?.totalHeroicLevel);
-  }
-
-  _actorClassLevelLedger(actor = {}) {
-    const rows = [];
-    const add = (entry = {}) => {
-      const classId = String(entry?.classId ?? entry?.id ?? entry?.sourceId ?? entry?.class ?? entry?.name ?? '').trim();
-      const className = String(entry?.className ?? entry?.name ?? entry?.class ?? entry?.label ?? classId).trim();
-      const level = this._positiveInteger(entry?.level ?? entry?.levels ?? entry?.value ?? entry?.rank);
-      if (!classId && !className) return;
-      if (level <= 0) return;
-      rows.push({ classId, className, level });
-    };
-
-    const addRows = (value) => {
-      if (!value) return;
-      if (Array.isArray(value)) {
-        for (const entry of value) add(entry);
-      } else if (typeof value === 'object') {
-        for (const [key, entry] of Object.entries(value)) {
-          add({ classId: key, className: key, ...(entry && typeof entry === 'object' ? entry : { level: entry }) });
-        }
+  _collectEngineFindings(plan = {}, ownership = {}) {
+    const findings = [];
+    const authority = plan?.classAuthority || {};
+    for (const conflict of Array.isArray(authority.conflicts) ? authority.conflicts : []) {
+      findings.push({ code: conflict.code, severity: 'engine', message: `Class levels disagree (${conflict.code}).`, detail: conflict });
+    }
+    for (const entry of Array.isArray(authority.unresolved) ? authority.unresolved : []) {
+      findings.push({ code: entry.code, severity: 'engine', message: `Class "${entry.className}" is not in the class registry; its entitlements cannot be derived.`, detail: entry });
+    }
+    for (const gap of Array.isArray(plan?.diagnostics?.progressionGaps) ? plan.diagnostics.progressionGaps : []) {
+      findings.push({ code: gap.code, severity: 'engine', message: `${gap.className} level ${gap.classLevel} has no class progression entry.`, detail: gap });
+    }
+    for (const layer of [plan?.diagnostics, ownership?.diagnostics]) {
+      if (layer?.status === 'failed-soft') {
+        findings.push({ code: 'layer-failed', severity: 'engine', message: `Reconciliation layer "${layer.layer || 'unknown'}" failed.`, detail: { layer: layer.layer, message: layer.message || '' } });
       }
-    };
-
-    addRows(actor?.system?.progression?.classLevels);
-    addRows(actor?.system?.classes);
-    for (const item of this._actorItems(actor).filter(entry => entry?.type === 'class')) {
-      add({
-        classId: item?.system?.classId || item?.system?.id || item?.name,
-        className: item?.system?.className || item?.name || item?.system?.classId,
-        level: item?.system?.level ?? item?.system?.levels ?? item?.system?.rank,
-      });
     }
-    return rows;
+    return findings;
   }
 
-  _normalizedClassSummaries(actor = {}, rawSummaries = [], actorLevel = 0) {
-    const actorLedger = this._actorClassLevelLedger(actor);
-    const actorLedgerTotal = actorLedger.reduce((sum, row) => sum + (Number(row.level || 0) || 0), 0);
-    if (actorLevel > 0 && actorLedgerTotal === actorLevel && actorLedger.length) {
-      return actorLedger.map(row => ({
-        classId: row.classId,
-        className: row.className || row.classId,
-        level: row.level,
-        sources: ['actor-level-ledger'],
-        levelSource: 'actor.system.progression.classLevels',
-        sourceConfidence: 'high',
-        isHeroic: true,
-        isNonheroic: false,
-        isPrestige: String(row.classId || '').toLowerCase().includes('prestige') || String(row.className || '').toLowerCase().includes('imperial knight'),
-      }));
+  /** Pending-ruling slots may not read as "missing". See RULE_DEFERRALS. */
+  _applyDeferredRules(slots = {}, actor = {}, plan = {}) {
+    const isDroid = actor?.type === 'droid' || actor?.system?.isDroid === true;
+    const heroicClasses = (Array.isArray(plan?.classSummaries) ? plan.classSummaries : []).filter(row => row.isNonheroic !== true);
+    const rulesFor = {
+      abilityIncreases: [isDroid ? 'RECON-002' : null, plan?.hasNonheroic ? 'RECON-003' : null],
+      generalFeats: [plan?.hasNonheroic ? 'RECON-003' : null],
+      heroicTalents: [plan?.hasNonheroic ? 'RECON-003' : null, heroicClasses.length > 1 ? 'RECON-001' : null],
+      classTalents: [heroicClasses.length > 1 ? 'RECON-001' : null],
+    };
+    const applied = new Set();
+    for (const [group, ids] of Object.entries(rulesFor)) {
+      const active = ids.filter(Boolean);
+      if (!active.length) continue;
+      for (const slot of slots[group] || []) {
+        if (slot?.status !== 'open') continue;
+        const n = Number(slot.openCount ?? slot.count ?? 1) || 1;
+        slot.status = 'unverifiable';
+        slot.unverifiableCount = n;
+        slot.openCount = 0;
+        slot.rulesDeferred = active;
+        slot.unverifiableReason = active.map(id => RULE_DEFERRALS[id]).join(' ');
+        active.forEach(id => applied.add(id));
+      }
     }
+    this._syncClassChoiceSlots(slots);
+    return Array.from(applied).map(id => ({ id, reason: RULE_DEFERRALS[id] }));
+  }
 
-    const summaries = Array.isArray(rawSummaries) ? rawSummaries : [];
-    let remaining = Math.max(0, actorLevel);
-    return summaries.map(summary => {
-      const level = Math.min(this._positiveInteger(summary?.level), remaining || this._positiveInteger(summary?.level));
-      remaining = Math.max(0, remaining - level);
-      return { ...summary, level };
-    }).filter(summary => this._positiveInteger(summary?.level) > 0);
+  _rollupCounts(report = {}) {
+    const slots = report.slots || {};
+    const otherChoices = (Array.isArray(slots.classChoices) ? slots.classChoices : []).filter(slot => slot?.type !== 'class-feat' && slot?.type !== 'class-talent');
+    const sum = (status) => SLOT_GROUP_KEYS.reduce((total, group) => total + this._slotCount(slots[group], status), 0) + this._slotCount(otherChoices, status);
+    const derivedRows = Array.isArray(report.derivedStats?.rows) ? report.derivedStats.rows : [];
+    return {
+      missing: sum('open'),
+      invalid: derivedRows.filter(row => row?.needsAttention === true).length,
+      unverifiable: sum('unverifiable') + derivedRows.filter(row => row?.needsAttention !== true && ['warning', 'unavailable', 'unverifiable'].includes(row?.status)).length,
+      extra: sum('overfilled'),
+      engine: Array.isArray(report.engineFindings) ? report.engineFindings.length : 0,
+    };
   }
 
   _dropFutureSlots(slots = {}, actorLevel = 0) {
@@ -194,14 +166,6 @@ export class ProgressionReconciliationReportBuilder {
   _positiveInteger(value) {
     const numeric = Number(value);
     return Number.isFinite(numeric) && numeric > 0 ? Math.floor(numeric) : 0;
-  }
-
-  _actorItems(actor = {}) {
-    try {
-      return Array.from(actor?.items ?? []);
-    } catch (_err) {
-      return [];
-    }
   }
 
   _cloneSlots(slots = []) {
@@ -237,28 +201,7 @@ export class ProgressionReconciliationReportBuilder {
     if (!audit || typeof audit !== 'object' || !Array.isArray(audit.rows)) return;
 
     const totalLevel = Math.max(0, Number(report.totalLevel || report.totalHeroicLevel || 0) || 0);
-    const hpRow = audit.rows.find(row => row?.id === 'hp-max' || row?.type === 'hp');
-    if (hpRow) {
-      const currentHp = Number(hpRow.current ?? hpRow.currentValue);
-      const expectedHp = Number(hpRow.expected ?? hpRow.expectedValue);
-      if (Number.isFinite(currentHp) && Number.isFinite(expectedHp)) {
-        if (currentHp >= expectedHp) {
-          hpRow.status = 'ok';
-          hpRow.statusLabel = 'OK';
-          hpRow.tone = 'ok';
-          hpRow.needsAttention = false;
-          hpRow.issue = '';
-          hpRow.detail = 'Current HP is at or above the audited minimum. Campaign HP mode and rolled/custom HP may legally exceed this value.';
-        } else {
-          hpRow.status = 'issue';
-          hpRow.statusLabel = 'Current Hit Points is below the known expected minimum.';
-          hpRow.tone = 'warn';
-          hpRow.needsAttention = true;
-          hpRow.issue = 'Current Hit Points is below the known expected minimum.';
-        }
-      }
-    }
-
+    // Hit Points are evaluated once (ProgressionEntitlementCalculator.buildHpAudit); this layer never rewrites that verdict.
     const babRow = audit.rows.find(row => row?.id === 'bab' || row?.type === 'bab');
     // Never touch an already-"unavailable" row: canonical class authority
     // could not resolve BAB for at least one contributing class, and that
@@ -267,9 +210,11 @@ export class ProgressionReconciliationReportBuilder {
     // current-vs-expected comparison below silently flipping status back to
     // "ok" because neither of its numeric branches matched a non-finite
     // (unavailable) expected value.
-    if (babRow && totalLevel > 0 && babRow.status !== 'unavailable') {
-      const rawExpected = Number(babRow.expected ?? babRow.expectedValue);
-      const currentBab = Number(babRow.current ?? babRow.currentValue);
+    if (babRow && totalLevel > 0 && !['unavailable', 'unverifiable'].includes(babRow.status)) {
+      const expectedRaw = babRow.expected ?? babRow.expectedValue;
+      const rawExpected = expectedRaw === null || expectedRaw === undefined || expectedRaw === '' ? NaN : Number(expectedRaw);
+      const currentRaw = babRow.current ?? babRow.currentValue;
+      const currentBab = currentRaw === null || currentRaw === undefined || currentRaw === '' ? NaN : Number(currentRaw);
       const cappedExpected = Number.isFinite(rawExpected) ? Math.min(rawExpected, totalLevel) : rawExpected;
       if (Number.isFinite(cappedExpected)) {
         babRow.expected = cappedExpected;
@@ -306,68 +251,60 @@ export class ProgressionReconciliationReportBuilder {
 
   _refreshDerivedStatsAuditStatus(audit = {}) {
     const rows = Array.isArray(audit.rows) ? audit.rows : [];
-    const activeIssues = rows.filter(row => row?.needsAttention === true || row?.status === 'issue' || row?.status === 'warning' || row?.status === 'unavailable' || !!row?.issue);
+    const activeIssues = rows.filter(row => row?.needsAttention === true);
     audit.issueCount = activeIssues.length;
     audit.hasIssues = activeIssues.length > 0;
-    audit.status = rows.some(row => row?.status === 'issue')
+    audit.status = activeIssues.length > 0
       ? 'needs-attention'
-      : (rows.some(row => row?.status === 'warning' || row?.status === 'unavailable') ? 'review' : 'ok');
+      : (rows.some(row => ['warning', 'unavailable', 'unverifiable'].includes(row?.status)) ? 'review' : 'ok');
     audit.warnings = activeIssues.map(row => `${row?.label || 'Derived stat'}: ${row?.issue || row?.statusLabel || 'Review needed'}`);
   }
 
-  _applyAmbiguousCrediting(slots = {}, ownership = {}) {
-    const unknownFeats = this._summarizeItems(ownership?.rawPools?.featPools?.unknown || ownership?.featPools?.unknown || []);
-    const unknownTalents = this._summarizeItems(ownership?.rawPools?.talentPools?.unknown || ownership?.talentPools?.unknown || []);
-
-    // A dropped/manual feat without acquisition metadata may satisfy a general
-    // feat slot or a class feat slot. Class-specific debt gets first review
-    // because it is the most common failure mode after compendium class drops.
-    this._markAmbiguousSlots([slots.classFeats, slots.generalFeats], unknownFeats, {
-      candidateKind: 'feat',
-      reason: 'Owned feat has no reliable acquisition metadata; classify it as a general feat or class feat.',
-    });
-
-    // A dropped/manual talent without acquisition metadata may satisfy a heroic
-    // talent slot or a class talent slot. Class talent debt gets first review
-    // for the same class-drop reason.
-    this._markAmbiguousSlots([slots.classTalents, slots.heroicTalents], unknownTalents, {
-      candidateKind: 'talent',
-      reason: 'Owned talent has no reliable acquisition metadata; classify it as a heroic talent or class talent.',
-    });
-
+  /**
+   * Unattributed items (no class identity / no usable provenance) cannot prove that any slot
+   * is filled, and they are not extras either. Per kind (feats, talents) they are COUNTED against
+   * the still-open slots: that many open slots become `unverifiable`, the rest stay `open`.
+   * Which individual slot carries the label is positional, but the counts - and therefore the
+   * player-facing roll-up - are independent of item order.
+   */
+  _applyUnattributedCrediting(slots = {}, ownership = {}) {
+    const pools = ownership?.rawPools || {};
+    const unattributed = (p) => (p?.classUntagged?.length || 0) + (p?.unknown?.length || 0);
+    this._creditUnattributed([slots.classFeats, slots.generalFeats], unattributed(pools.featPools), 'feat');
+    this._creditUnattributed([slots.classTalents, slots.heroicTalents], unattributed(pools.talentPools), 'talent');
     this._syncClassChoiceSlots(slots);
   }
 
-  _markAmbiguousSlots(slotGroups = [], candidates = [], { candidateKind = 'item', reason = '' } = {}) {
-    const queue = [...(Array.isArray(candidates) ? candidates : [])];
-    if (!queue.length) return;
-
+  _creditUnattributed(slotGroups = [], budget = 0, kind = 'item') {
+    let remaining = Math.max(0, Number(budget) || 0);
+    if (!remaining) return;
     for (const group of slotGroups) {
-      if (!Array.isArray(group) || !queue.length) continue;
+      if (!Array.isArray(group)) continue;
       for (const slot of group) {
-        if (!queue.length) break;
-        const openCount = Number(slot?.openCount ?? (slot?.status === 'open' ? slot?.count : 0)) || 0;
-        if (slot?.status !== 'open' || openCount <= 0) continue;
-        const candidate = queue.shift();
-        slot.status = 'ambiguous';
+        if (!remaining) return;
+        const open = Number(slot?.openCount ?? (slot?.status === 'open' ? slot?.count : 0)) || 0;
+        if (slot?.status !== 'open' || open <= 0) continue;
+        const take = Math.min(open, remaining);
+        remaining -= take;
+        slot.status = 'unverifiable';
+        slot.unverifiableCount = take;
         slot.openCount = 0;
-        slot.ambiguousCount = Math.max(1, Math.min(openCount, Number(slot?.count || 1) || 1));
-        slot.classificationRequired = true;
-        slot.classificationReason = reason;
-        slot.classificationKind = candidateKind;
-        slot.ambiguousCandidates = [candidate];
-        slot.primaryCandidateId = candidate?.id || null;
-        slot.primaryCandidateName = candidate?.name || 'Unclassified item';
-        slot.candidateNames = [candidate?.name || 'Unclassified item'];
-        slot.selections = [candidate?.name || 'Unclassified item'];
+        slot.unverifiableReason = `An owned ${kind} has no acquisition provenance, so this slot cannot be shown to be unfilled.`;
       }
     }
   }
 
+  /** Defined on the class itself (previously injected by two competing monkeypatch shims). */
+  _attachRemediationActions(slots = {}) {
+    for (const value of Object.values(slots || {})) {
+      if (!Array.isArray(value)) continue;
+      for (const slot of value) this._attachSlotRemediation(slot);
+    }
+  }
 
   _attachSlotRemediation(slot = {}) {
     if (!slot || typeof slot !== 'object') return;
-    const status = slot.status === 'ambiguous' || slot.classificationRequired ? 'ambiguous' : (slot.status || 'unknown');
+    const status = slot.status || 'unknown';
     const stepId = this._stepIdForSlot(slot);
     const base = {
       slotId: slot.id || null,
@@ -398,26 +335,6 @@ export class ProgressionReconciliationReportBuilder {
           routeIntent: 'progression-reconciliation',
           entryPoint: 'sheet-audit',
         },
-      });
-    } else if (status === 'ambiguous') {
-      actions.push({
-        ...base,
-        action: 'classify-progression-slot',
-        actionType: 'classify-existing-item',
-        label: 'Classify',
-        title: `Classify ${slot.primaryCandidateName || slot.label || 'existing item'}`,
-        itemId: slot.primaryCandidateId || null,
-        itemName: slot.primaryCandidateName || '',
-      });
-    } else if (status === 'overfilled') {
-      actions.push({
-        ...base,
-        action: 'review-progression-slot',
-        actionType: 'review-extra-item',
-        label: 'Review',
-        title: `Review ${slot.filledByName || slot.label || 'extra item'}`,
-        itemId: slot.filledBy || null,
-        itemName: slot.filledByName || '',
       });
     }
 
@@ -467,56 +384,37 @@ export class ProgressionReconciliationReportBuilder {
 
   _slotCount(slots = [], status) {
     return (Array.isArray(slots) ? slots : [])
-      .filter(slot => {
-        if (status === 'ambiguous') return slot?.status === 'ambiguous' || slot?.classificationRequired;
-        return slot?.status === status;
-      })
+      .filter(slot => slot?.status === status)
       .reduce((sum, slot) => {
         if (status === 'open') return sum + (Number(slot?.openCount ?? slot?.count ?? 1) || 0);
-        if (status === 'ambiguous') return sum + (Number(slot?.ambiguousCount ?? slot?.count ?? 1) || 0);
+        if (status === 'unverifiable') return sum + (Number(slot?.unverifiableCount ?? slot?.count ?? 1) || 0);
         if (status === 'overfilled') return sum + (Number(slot?.overfilledCount ?? 1) || 0);
         return sum + 1;
       }, 0);
   }
 
   _buildClassificationSummary(slots = {}, ownership = {}) {
-    const featCandidates = this._summarizeItems(ownership?.rawPools?.featPools?.unknown || ownership?.featPools?.unknown || []);
-    const talentCandidates = this._summarizeItems(ownership?.rawPools?.talentPools?.unknown || ownership?.talentPools?.unknown || []);
-    const ambiguousSlots = [
-      ...(slots.generalFeats || []),
-      ...(slots.classFeats || []),
-      ...(slots.heroicTalents || []),
-      ...(slots.classTalents || []),
-    ].filter(slot => slot?.status === 'ambiguous' || slot?.classificationRequired);
+    const pools = ownership?.rawPools || {};
+    const feats = this._summarizeItems([...(pools.featPools?.classUntagged || []), ...(pools.featPools?.unknown || [])]);
+    const talents = this._summarizeItems([...(pools.talentPools?.classUntagged || []), ...(pools.talentPools?.unknown || [])]);
     return {
-      required: ambiguousSlots.length > 0,
-      ambiguousSlotCount: ambiguousSlots.reduce((sum, slot) => sum + (Number(slot?.ambiguousCount ?? slot?.count ?? 1) || 0), 0),
-      unclassifiedFeatCount: featCandidates.length,
-      unclassifiedTalentCount: talentCandidates.length,
-      unclassifiedFeats: featCandidates,
-      unclassifiedTalents: talentCandidates,
-      ambiguousSlots: ambiguousSlots.map(slot => ({
-        id: slot.id || null,
-        type: slot.type || '',
-        label: slot.label || '',
-        source: slot.source || '',
-        candidateNames: slot.candidateNames || [],
-        reason: slot.classificationReason || '',
-      })),
+      // Informational only: unattributed items never raise a player-facing finding on their own.
+      required: false,
+      unclassifiedFeatCount: feats.length,
+      unclassifiedTalentCount: talents.length,
+      unclassifiedFeats: feats,
+      unclassifiedTalents: talents,
     };
   }
 
   _publicOwnershipSummary(ownership = {}) {
     return {
       kind: ownership?.kind || 'swse-progression-ownership-classification',
-      version: ownership?.version || 1,
+      version: ownership?.version || 2,
       items: ownership?.items || { total: 0, byType: {} },
-      featPools: ownership?.featPools || { general: [], class: [], unknown: [] },
-      talentPools: ownership?.talentPools || { heroic: [], class: [], unknown: [] },
-      unclassified: {
-        feats: ownership?.featPools?.unknown || [],
-        talents: ownership?.talentPools?.unknown || [],
-      },
+      featPools: ownership?.featPools || { general: [], class: [], classUntagged: [], unknown: [] },
+      talentPools: ownership?.talentPools || { general: [], class: [], classUntagged: [], unknown: [] },
+      unclassified: ownership?.unclassified || { feats: [], talents: [] },
     };
   }
 

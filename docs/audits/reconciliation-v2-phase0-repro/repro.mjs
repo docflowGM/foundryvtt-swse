@@ -1,4 +1,4 @@
-// Phase 0 forensic repro harness. READ-ONLY: builds in-memory fixture actors,
+// Reconciliation V2 repro harness (written in Phase 0; re-run after Phases 1-5). READ-ONLY: builds in-memory fixture actors,
 // loads REAL class data from packs/classes.db through the REAL normalizer, runs
 // the REAL ProgressionReconciler, and prints observed output. It asserts nothing
 // and mutates nothing. Run from repo root:
@@ -13,9 +13,7 @@ globalThis.window = globalThis.window ?? { addEventListener() {}, removeEventLis
 
 const { ClassesDB } = await import('/systems/foundryvtt-swse/scripts/data/classes-db.js');
 const { normalizeClass } = await import('/systems/foundryvtt-swse/scripts/data/class-normalizer.js');
-// Production gets `_attachRemediationActions` only via this side-effect monkeypatch
-// (imported by scripts/talents/squad-actions-init.js). See finding RCN-P0-09.
-await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-remediation-hotfix.js');
+
 const { ProgressionReconciler } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js');
 
 // ---- real class data -> real ClassModel -> real registry --------------------
@@ -157,7 +155,8 @@ const cs = r => r.classSummaries.map(c => `${c.className}:${c.level}[${c.levelSo
 // ---- CASE 5b: raw reconciler class summaries when system.class has no level --
 {
   const a = actor({ level: 7, classObj: { id: 'soldier', name: 'Soldier' }, items: [cls('Soldier', 4), cls('Scout', 3)] });
-  show('C5b reconciler._buildClassSummaries (pre-calculator) for C5', R._buildClassSummaries(a).map(s => `${s.className}:${s.level}[${s.sources.join('+')}]`));
+  const { readActorClassLevels } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/class-level-reader.js');
+  show('C5b class-level reader (Phase 1+; the Phase 0 harness read R._buildClassSummaries here and got Soldier:7)', readActorClassLevels(a).rows.map(s => `${s.className}:${s.level}[${s.source}]`));
 }
 
 // ---- CASE 6b: calculator's own HP verdict BEFORE the report builder rewrites it

@@ -197,23 +197,43 @@ const JEDI_MODEL = {
  * class Item AND a system.progression.classLevels ledger row).
  * ==================================================================== */
 {
+  // Reconciliation V2: class levels come from the single class-level reader, which resolves
+  // classes through the REAL registry. Load real class data (packs/classes.db -> normalizeClass).
+  const fs = await import('node:fs');
+  const { ClassesDB } = await import('/systems/foundryvtt-swse/scripts/data/classes-db.js');
+  const { normalizeClass } = await import('/systems/foundryvtt-swse/scripts/data/class-normalizer.js');
+  for (const line of fs.readFileSync(new URL('../packs/classes.db', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean)) {
+    const model = normalizeClass(JSON.parse(line));
+    ClassesDB.classes.set(model.id, model);
+  }
+  ClassesDB.isBuilt = true;
+
   const jediItem = { id: 'item-1', type: 'class', name: 'Jedi', system: { classId: 'jedi', level: 3 } };
   const actor = {
     id: 'dup-actor',
     items: [jediItem],
     system: { level: 3, progression: { classLevels: [{ classId: 'jedi', class: 'Jedi', level: 3 }] } },
   };
-  const rawSummaries = [
-    { classId: 'jedi', className: 'Jedi', level: 3, model: JEDI_MODEL, item: jediItem, isNonheroic: false },
-  ];
-  const calc = new ProgressionEntitlementCalculator({ helpers: { buildClassSummaries: () => rawSummaries } });
+  const calc = new ProgressionEntitlementCalculator({ helpers: {} });
   const result = calc.calculate(actor, {});
 
+  assert.equal(result.classAuthority.status, 'ok');
   assert.equal(result.internalClassSummaries.length, 1,
     'the same class represented as both an owned item and a classLevels ledger row must merge into exactly one summary, not two');
   assert.equal(result.internalClassSummaries[0].level, 3, 'the merged summary must keep the real level, not sum duplicate representations (3+3=6 would be wrong)');
   assert.equal(result.totalLevel, 3, 'totalLevel must not double-count a duplicated class representation');
   assert.equal(result.totalHeroicLevel, 3);
+
+  // Disagreeing sources are a conflict: no precedence guess, no entitlements derived.
+  const conflicted = calc.calculate({ ...actor, items: [{ ...jediItem, system: { classId: 'jedi', level: 2 } }] }, {});
+  assert.equal(conflicted.classAuthority.status, 'conflict');
+  assert.equal(conflicted.totalLevel, 0, 'a class-level conflict must not produce a level');
+  assert.deepEqual(conflicted.slots.generalFeats, [], 'a class-level conflict must not derive slots');
+
+  // Unresolvable class: fail closed.
+  const unknown = calc.calculate({ id: 'u', items: [{ id: 'x', type: 'class', name: 'Mystery', system: { classId: 'mystery', level: 2 } }], system: { level: 2 } }, {});
+  assert.equal(unknown.classAuthority.status, 'unresolved');
+  assert.deepEqual(unknown.slots.heroicTalents, [], 'an unresolved class must not fabricate heroic-talent slots');
 }
 
 console.log('progression-derived-class-stat-audit-contract: all assertions passed');

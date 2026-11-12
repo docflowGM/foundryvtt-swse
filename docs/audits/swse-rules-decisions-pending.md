@@ -2712,3 +2712,5 @@ No provisional recommendation has been converted into a ruling.
 | Resolution | |
 
 - **Revision 62 (2026-11-12):** appended RECON-001 … RECON-004 from the Reconciliation V2 Phase 0 audit (`docs/audits/reconciliation-v2-phase0-findings.md`). No rulings made; no recommended ruling given.
+
+- **Revision 63 (2026-11-12):** RECON-001…004 implementation note (no ruling). The reconciliation evaluator now renders the slots affected by RECON-001 (multiclass talents), RECON-002 (droid ability increases) and RECON-003 (Nonheroic/mixed actors) as `unverifiable`/`rulesDeferred` and never as missing; RECON-004 (HP above the audited maximum) is `unverifiable`, neither OK nor an error. Existing cadence code paths are unchanged and not endorsed as rules. See `docs/audits/reconciliation-v2-implementation-report.md`.

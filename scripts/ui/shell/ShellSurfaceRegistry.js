@@ -85,6 +85,10 @@ export class ShellSurfaceRegistry {
       return this._buildGameSessionComposerOverlayVm(actor, overlayOptions, shellHost);
     }
 
+    if (overlayId === 'character-validation') {
+      return this._buildCharacterValidationOverlayVm(actor);
+    }
+
     if (overlayId.startsWith('confirm-')) {
       return this._buildConfirmOverlayVm(overlayId, overlayOptions);
     }
@@ -94,6 +98,35 @@ export class ShellSurfaceRegistry {
     }
 
     return { overlayId, title: overlayId };
+  }
+
+  /**
+   * Character Validation overlay VM. Reads the SAME reconciliation report the header `!` was
+   * derived from (memoized in ProgressionReconciler) - it never computes a second status.
+   * Engine diagnostics are included for GMs only.
+   */
+  static async _buildCharacterValidationOverlayVm(actor) {
+    try {
+      const { ProgressionReconciler } = await import(
+        '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js'
+      );
+      const audit = ProgressionReconciler.safeReconcileActor(actor, { output: 'sheet' });
+      const validation = audit?.validation || {};
+      const isGM = game?.user?.isGM === true;
+      return {
+        overlayId: 'character-validation',
+        title: 'Character Validation',
+        findings: validation.findings || [],
+        notes: validation.notes || [],
+        repairs: validation.repairs || [],
+        isGM,
+        engineFindings: isGM ? (validation.engineFindings || []) : [],
+        hasFindings: (validation.findings || []).length > 0
+      };
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Character validation overlay VM failed:', err);
+      return { overlayId: 'character-validation', title: 'Character Validation', error: game?.user?.isGM ? err.message : 'Validation is unavailable.' };
+    }
   }
 
   /**

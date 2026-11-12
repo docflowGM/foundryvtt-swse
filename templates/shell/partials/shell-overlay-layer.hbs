@@ -6,6 +6,7 @@
 
   Overlay IDs and their rendered content:
     upgrade-single-item  → single item upgrade panel
+    character-validation → read-only character validation report (header `!`)
     confirm-*            → short confirmation dialog
     warning-*            → warning / invalid-action notice
 
@@ -47,6 +48,67 @@
       {{else}}
         {{> "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs"
             vm=vm.vm}}
+      {{/if}}
+    </div>
+
+    {{/if}}
+
+    {{!-- ─── Character Validation (header `!`; read-only report) ─────────── --}}
+    {{#if (eq overlayId "character-validation")}}
+
+    <div class="swse-shell-overlay__header">
+      <span class="swse-shell-overlay__title">
+        <i class="fas fa-clipboard-check"></i>
+        {{vm.title}}
+      </span>
+      <button class="swse-shell-overlay__close"
+              data-shell-action="close-overlay"
+              type="button"
+              title="{{localize 'SWSE.ShellUI.Close'}}">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="swse-shell-overlay__body swse-shell-overlay__body--validation">
+      {{#if vm.error}}
+        <div class="swse-shell-overlay__error">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>{{vm.error}}</span>
+        </div>
+      {{else}}
+        {{#each vm.findings as |finding|}}
+          <section class="swse-validation-finding swse-validation-finding--{{finding.severity}}">
+            <h4>{{finding.title}}</h4>
+            {{#each finding.detail as |line|}}<p>{{line}}</p>{{/each}}
+            {{#each finding.slots as |slot|}}
+              <div class="swse-validation-slot">
+                <span>{{slot.label}}{{#if slot.source}} &middot; {{slot.source}}{{/if}}</span>
+                <button type="button" class="swse-btn swse-btn--primary" data-action="resolve-progression-slot" data-step-id="{{slot.stepId}}" data-slot-id="{{slot.id}}" data-slot-type="{{slot.type}}" data-class-id="{{slot.classId}}" data-class-name="{{slot.className}}" data-class-level="{{slot.classLevel}}" data-character-level="{{slot.characterLevel}}">{{slot.actionLabel}}</button>
+              </div>
+            {{/each}}
+          </section>
+        {{/each}}
+        {{#unless vm.hasFindings}}
+          <p class="swse-validation-note">No character issues need attention.</p>
+        {{/unless}}
+        {{#if vm.notes.length}}
+          <section class="swse-validation-notes">
+            <h4>Cannot be verified (informational)</h4>
+            {{#each vm.notes as |note|}}<p>{{note.text}}</p>{{/each}}
+          </section>
+        {{/if}}
+        {{#if vm.repairs.length}}
+          <section class="swse-validation-notes">
+            <h4>Suggested repairs (never applied automatically)</h4>
+            {{#each vm.repairs as |repair|}}<p><strong>{{repair.label}}</strong>{{#if repair.detail}} &mdash; {{repair.detail}}{{/if}}</p>{{/each}}
+          </section>
+        {{/if}}
+        {{#if vm.isGM}}{{#if vm.engineFindings.length}}
+          <section class="swse-validation-notes swse-validation-notes--gm">
+            <h4>GM diagnostics (validation tooling, not a character error)</h4>
+            {{#each vm.engineFindings as |finding|}}<p><code>{{finding.code}}</code> {{finding.message}}</p>{{/each}}
+          </section>
+        {{/if}}{{/if}}
       {{/if}}
     </div>
 

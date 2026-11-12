@@ -1,0 +1,408 @@
+# loaded 37 ClassModels from packs/classes.db; ids sample: medic,jedi_master,gunslinger,outlaw,sith_apprentice,scoundrel
+
+## C1 Soldier 4 (ledger + class item)
+{
+  "classSummaries": [
+    "Soldier:4[system.progression.classLevels + owned class item]"
+  ],
+  "totalLevel": 4,
+  "totalHeroicLevel": 4,
+  "plan": "see C1b",
+  "slots": {
+    "abilityIncreases": {
+      "unverifiable": 1
+    },
+    "generalFeats": {
+      "open": 2
+    },
+    "heroicTalents": {},
+    "classFeats": {
+      "open": 2
+    },
+    "classTalents": {
+      "open": 2
+    }
+  }
+}
+
+## C1b entitlement diagnostics
+[
+  {
+    "classId": "soldier",
+    "className": "Soldier",
+    "level": 4,
+    "sources": [
+      "system.progression.classLevels",
+      "owned class item"
+    ],
+    "classProgressionSource": "class-level-reader",
+    "cadenceFallback": false
+  }
+]
+
+## C2 Soldier 4 / Scout 3 (ledger + items)
+{
+  "classSummaries": [
+    "Soldier:4[system.progression.classLevels + owned class item]",
+    "Scout:3[system.progression.classLevels + owned class item]"
+  ],
+  "totalLevel": 7,
+  "totalHeroicLevel": 7,
+  "slots": {
+    "abilityIncreases": {
+      "unverifiable": 1
+    },
+    "generalFeats": {
+      "open": 3
+    },
+    "heroicTalents": {},
+    "classFeats": {
+      "open": 3
+    },
+    "classTalents": {
+      "unverifiable": 4
+    }
+  },
+  "planClassSources": [
+    {
+      "classId": "soldier",
+      "className": "Soldier",
+      "level": 4,
+      "sources": [
+        "system.progression.classLevels",
+        "owned class item"
+      ],
+      "classProgressionSource": "class-level-reader",
+      "cadenceFallback": false
+    },
+    {
+      "classId": "scout",
+      "className": "Scout",
+      "level": 3,
+      "sources": [
+        "system.progression.classLevels",
+        "owned class item"
+      ],
+      "classProgressionSource": "class-level-reader",
+      "cadenceFallback": false
+    }
+  ]
+}
+
+## C3 Soldier 4 / Scout 3 (class items only)
+{
+  "classSummaries": [
+    "Soldier:4[owned class item]",
+    "Scout:3[owned class item]"
+  ],
+  "classSummaryRaw": [
+    {
+      "itemId": "i6",
+      "classId": "soldier",
+      "className": "Soldier",
+      "level": 4,
+      "sources": [
+        "owned class item"
+      ],
+      "levelSource": "owned class item",
+      "resolved": true,
+      "isHeroic": true,
+      "isNonheroic": false,
+      "isPrestige": false
+    },
+    {
+      "itemId": "i7",
+      "classId": "scout",
+      "className": "Scout",
+      "level": 3,
+      "sources": [
+        "owned class item"
+      ],
+      "levelSource": "owned class item",
+      "resolved": true,
+      "isHeroic": true,
+      "isNonheroic": false,
+      "isPrestige": false
+    }
+  ],
+  "totalLevel": 7,
+  "slots": {
+    "abilityIncreases": {
+      "unverifiable": 1
+    },
+    "generalFeats": {
+      "open": 3
+    },
+    "heroicTalents": {},
+    "classFeats": {
+      "open": 3
+    },
+    "classTalents": {
+      "unverifiable": 4
+    }
+  }
+}
+
+## C4 chargen L1 Soldier (system.class object, no classLevels)
+{
+  "classSummaries": [
+    "Soldier:1[owned class item]"
+  ],
+  "totalLevel": 1,
+  "slots": {
+    "abilityIncreases": {},
+    "generalFeats": {
+      "open": 1
+    },
+    "heroicTalents": {},
+    "classFeats": {},
+    "classTalents": {
+      "open": 1
+    }
+  },
+  "hp": {
+    "id": "hp-max",
+    "label": "Hit Points",
+    "type": "hp",
+    "expected": 32,
+    "expectedValue": 32,
+    "expectedLabel": "32",
+    "current": 42,
+    "currentValue": 42,
+    "currentLabel": "42",
+    "status": "unverifiable",
+    "issue": "",
+    "detail": "Current HP 42 is above the audited maximum 32. Whether that is legal depends on an unresolved rules question (RECON-004), so it is not reported as an error.",
+    "needsAttention": false,
+    "targetTab": "abilities",
+    "sheetAnchor": "derived-class-stats",
+    "actions": []
+  }
+}
+
+## C5 Soldier 4 / Scout 3 where system.class={Soldier} has no level (reconciler ledger copies actor.system.level)
+{
+  "classSummaries": [
+    "Soldier:4[owned class item]",
+    "Scout:3[owned class item]"
+  ],
+  "totalLevel": 7,
+  "plan": [
+    {
+      "classId": "soldier",
+      "className": "Soldier",
+      "level": 4,
+      "sources": [
+        "owned class item"
+      ],
+      "classProgressionSource": "class-level-reader",
+      "cadenceFallback": false
+    },
+    {
+      "classId": "scout",
+      "className": "Scout",
+      "level": 3,
+      "sources": [
+        "owned class item"
+      ],
+      "classProgressionSource": "class-level-reader",
+      "cadenceFallback": false
+    }
+  ]
+}
+
+## C6 HP exact record set, current HP 999
+{
+  "hpRow": {
+    "id": "hp-max",
+    "label": "Hit Points",
+    "type": "hp",
+    "expected": 42,
+    "expectedValue": 42,
+    "expectedLabel": "42",
+    "current": 999,
+    "currentValue": 999,
+    "currentLabel": "999",
+    "status": "unverifiable",
+    "issue": "",
+    "detail": "Current HP 999 is above the audited maximum 42. Whether that is legal depends on an unresolved rules question (RECON-004), so it is not reported as an error.",
+    "needsAttention": false,
+    "targetTab": "abilities",
+    "sheetAnchor": "derived-class-stats",
+    "actions": []
+  }
+}
+
+## C7 multiclass; legit feat with source=class but no class id
+{
+  "classFeatSlots": [
+    "soldier-2-class-feat-1:unverifiable",
+    "soldier-4-class-feat-1:open",
+    "scout-2-class-feat-1:open"
+  ]
+}
+
+## C8 un-annotated feat & talent
+{
+  "featUnknown": [
+    "Skill Focus (Perception)"
+  ],
+  "talentUnknown": [
+    "Dastardly Strike"
+  ],
+  "generalFeats": [
+    "general-feat-level-1:open",
+    "general-feat-level-3:open"
+  ],
+  "classTalents": [
+    "scoundrel-1-class-talent-1:unverifiable",
+    "scoundrel-3-class-talent-1:open"
+  ],
+  "warnings": [
+    "3 missing progression choices"
+  ]
+}
+
+## C9 Nonheroic 3 / Soldier 2
+{
+  "classSummaries": [
+    "Nonheroic:3[system.progression.classLevels + owned class item,nonheroic]",
+    "Soldier:2[system.progression.classLevels + owned class item]"
+  ],
+  "report": {
+    "totalLevel": 5,
+    "totalHeroicLevel": 2
+  },
+  "planHeroic": [
+    {
+      "classId": "nonheroic",
+      "className": "Nonheroic",
+      "level": 3,
+      "sources": [
+        "system.progression.classLevels",
+        "owned class item"
+      ],
+      "classProgressionSource": "class-level-reader",
+      "cadenceFallback": false
+    },
+    {
+      "classId": "soldier",
+      "className": "Soldier",
+      "level": 2,
+      "sources": [
+        "system.progression.classLevels",
+        "owned class item"
+      ],
+      "classProgressionSource": "class-level-reader",
+      "cadenceFallback": false
+    }
+  ],
+  "slotCounts": {
+    "abilityIncreases": {
+      "unverifiable": 1
+    },
+    "generalFeats": {
+      "unverifiable": 1
+    },
+    "heroicTalents": {},
+    "classFeats": {
+      "open": 1
+    },
+    "classTalents": {
+      "open": 1
+    }
+  },
+  "abilityIncreaseSlots": [
+    "ability-increase-level-4:count1:unverifiable"
+  ]
+}
+## C10 unresolvable class
+{
+  "classSummaries": [],
+  "classSlots": 0,
+  "status": "engine-failure",
+  "warnings": [],
+  "derivedStatus": "ok"
+}
+## C11 engine failure
+{
+  "status": "engine-failure",
+  "warnings": [],
+  "sheetStatus": "engine-failure",
+  "sheetHasOpen": false,
+  "sheetDiag": {
+    "safeMode": true,
+    "error": true,
+    "stage": "safe-reconcile",
+    "message": "simulated registry failure",
+        "sanitized": true,
+    "fallback": true,
+    "output": "sheet",
+    "schema": {
+      "valid": true,
+      "issues": [],
+      "checkedAt": "<ts>"
+    },
+    "layerErrors": []
+  }
+}
+
+## C12 Soldier 8, no abilityIncreaseHistory
+{
+  "abilityIncreaseSlots": [
+    "ability-increase-level-4:unverifiable",
+    "ability-increase-level-8:unverifiable"
+  ],
+  "warnings": [
+    "11 missing progression choices"
+  ]
+}
+
+## C13 droid L4 ability increase count (reconciler)
+{
+  "slots": [
+    "ability-increase-level-4:count1"
+  ]
+}
+
+## C5b class-level reader (Phase 1+; the Phase 0 harness read R._buildClassSummaries here and got Soldier:7)
+[
+  "Soldier:4[owned class item]",
+  "Scout:3[owned class item]"
+]
+
+## C6b calculator verdict (pre-builder)
+{
+  "calculatorStatus": "unverifiable",
+  "issue": "",
+  "upper": 42
+}
+
+## C10b diagnostics for unresolved class
+{
+  "heroicTalentSlotsFabricated": 0,
+  "classChoiceSlots": 0,
+  "layerWarnMentioningMissingProgression": 0,
+  "reportWarnings": []
+}
+
+## C14 Soldier 3 / Scout 1: reconciler class-talent slots vs TalentCadenceEngine count (NO RULING MADE; see RCN-DR-01)
+{
+  "classTalentSlots": 3,
+  "heroicTalentSlotsReported": 0,
+  "cadenceEngineCountAtHeroicLevel4": 2
+}
+
+## C15 pure Nonheroic 5 (heroic-level-driven slots; NO RULING MADE)
+{
+  "reportTotalHeroic": 0,
+  "planTotalHeroic": 0,
+  "generalFeatSlots": [],
+  "heroicTalentSlots": []
+}
+
+## TIMING safeReconcileActor(output:sheet), level-20 triple-class, 90 feat/talent items (Node, no Foundry)
+{
+  "meanMsPerCall": 3.53,
+  "calls": 200
+}

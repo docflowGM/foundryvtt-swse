@@ -24,10 +24,10 @@ export class ProgressionOwnershipClassifier {
       : Array.from(actor?.items ?? []);
     const featPools = typeof buildFeatPools === 'function'
       ? buildFeatPools(actor)
-      : { general: [], class: [], unknown: [] };
+      : { general: [], class: [], classUntagged: [], unknown: [] };
     const talentPools = typeof buildTalentPools === 'function'
       ? buildTalentPools(actor)
-      : { heroic: [], class: [], unknown: [] };
+      : { general: [], class: [], classUntagged: [], unknown: [] };
 
     const byType = items.reduce((acc, item) => {
       const type = item?.type || 'unknown';
@@ -49,16 +49,18 @@ export class ProgressionOwnershipClassifier {
       featPools: {
         general: this._summarizeItems(featPools.general),
         class: this._summarizeItems(featPools.class),
+        classUntagged: this._summarizeItems(featPools.classUntagged),
         unknown: this._summarizeItems(featPools.unknown),
       },
       talentPools: {
-        heroic: this._summarizeItems(talentPools.heroic),
+        general: this._summarizeItems(talentPools.general),
         class: this._summarizeItems(talentPools.class),
+        classUntagged: this._summarizeItems(talentPools.classUntagged),
         unknown: this._summarizeItems(talentPools.unknown),
       },
       unclassified: {
-        feats: this._summarizeItems(featPools.unknown),
-        talents: this._summarizeItems(talentPools.unknown),
+        feats: this._summarizeItems([...(featPools.classUntagged || []), ...(featPools.unknown || [])]),
+        talents: this._summarizeItems([...(talentPools.classUntagged || []), ...(talentPools.unknown || [])]),
       },
       rawPools: {
         featPools,
@@ -68,8 +70,8 @@ export class ProgressionOwnershipClassifier {
         layer: 'ownership-classifier',
         delegated: true,
         phase: 2,
-        unclassifiedFeatCount: Array.isArray(featPools.unknown) ? featPools.unknown.length : 0,
-        unclassifiedTalentCount: Array.isArray(talentPools.unknown) ? talentPools.unknown.length : 0,
+        unclassifiedFeatCount: (featPools.unknown?.length || 0) + (featPools.classUntagged?.length || 0),
+        unclassifiedTalentCount: (talentPools.unknown?.length || 0) + (talentPools.classUntagged?.length || 0),
       },
     };
   }

@@ -30,7 +30,7 @@ import {
 import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 import { GENERAL_FEAT_LEVELS } from '../../../engine/progression/data/progression-data.js';
 import TalentCadenceEngine from '../../../engine/progression/talents/talent-cadence-engine.js';
-import { resolveClassModel } from '../../../engine/progression/utils/class-resolution.js';
+import { ClassesRegistry } from '../../../engine/registries/classes-registry.js';
 import {
   getClassLevelProgressionEntry,
   normalizeClassKey,
@@ -59,7 +59,6 @@ const DEFENSE_LABELS = Object.freeze({
   reflex: 'Reflex',
   will: 'Will',
 });
-const NONHEROIC_BAB_PROGRESSION = Object.freeze([0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10, 11, 12, 12, 13, 14, 15]);
 
 const CHOICE_FEATURE_TYPES = Object.freeze({
   feat_choice: 'class-feat',
@@ -72,8 +71,8 @@ const CHOICE_FEATURE_TYPES = Object.freeze({
 });
 
 
-const RECONCILIATION_CACHE = new Map();
-const RECONCILIATION_CACHE_LIMIT = 100;
+const RECONCILIATION_MEMO = new Map();
+const RECONCILIATION_MEMO_LIMIT = 100;
 const REPORT_SCHEMA_VERSION = 9;
 
 const DANGEROUS_REPORT_KEYS = new Set([
@@ -105,52 +104,50 @@ function summarizeDocument(value) {
   };
 }
 
-function cacheKeyForActor(actor, options = {}) {
-  const itemStats = (() => {
-    try {
-      return Array.from(actor?.items ?? [])
-        .map(item => `${item?.id || item?._id || '?'}:${item?._stats?.modifiedTime || item?.system?.level || ''}`)
-        .join('|');
-    } catch (_err) {
-      return '';
-    }
-  })();
-  const effectStats = (() => {
-    try {
-      return Array.from(actor?.effects ?? [])
-        .map(effect => `${effect?.id || effect?._id || '?'}:${effect?._stats?.modifiedTime || effect?.disabled || ''}`)
-        .join('|');
-    } catch (_err) {
-      return '';
-    }
-  })();
-  return [
-    actor?.id || actor?.uuid || 'unknown-actor',
-    actor?._stats?.modifiedTime || actor?.system?._stats?.modifiedTime || '',
-    actor?.system?.level || actor?.system?.progression?.level || '',
-    itemStats,
-    effectStats,
-    options.mode || '',
-  ].join('::');
-}
-
-function setReconciliationCache(key, report) {
-  if (!key || !report) return;
-  RECONCILIATION_CACHE.set(key, report);
-  if (RECONCILIATION_CACHE.size <= RECONCILIATION_CACHE_LIMIT) return;
-  const first = RECONCILIATION_CACHE.keys().next().value;
-  if (first) RECONCILIATION_CACHE.delete(first);
-}
-
-function findLastKnownGoodReport(actor) {
+/**
+ * Memo key for a reconciliation report. The report is a pure function of:
+ *   - the actor document (any actor change bumps _stats.modifiedTime),
+ *   - the progression-relevant owned items (class / feat / talent / force & maneuver items),
+ *   - the class registry (built flag + class count; class definitions are static per world load),
+ *   - the house-rule settings the cadences read.
+ * Returns null (=> no memoization, always recompute) when the actor exposes no modification
+ * stamp, so a missing signal can never produce a stale hit.
+ */
+const PROGRESSION_ITEM_TYPE_RE = /^(class|feat|talent|maneuver|starshipManeuver)$|force|secret|technique/i;
+function memoKeyForActor(actor, options = {}) {
+  const actorStamp = actor?._stats?.modifiedTime;
   const actorId = actor?.id || actor?.uuid;
-  if (!actorId) return null;
-  let newest = null;
-  for (const [key, report] of RECONCILIATION_CACHE.entries()) {
-    if (!key.startsWith(actorId)) continue;
-    newest = report;
+  if (!actorId || actorStamp === undefined || actorStamp === null) return null;
+  let items;
+  try {
+    items = Array.from(actor?.items ?? [])
+      .filter(item => PROGRESSION_ITEM_TYPE_RE.test(String(item?.type || '')))
+      .map(item => `${item?.id || item?._id || '?'}:${item?._stats?.modifiedTime ?? 'x'}`)
+      .join('|');
+  } catch (_err) {
+    return null;
   }
-  return newest;
+  let rules = '';
+  try { rules = JSON.stringify(TalentCadenceEngine.getHouseRuleSettings()); } catch (_err) { rules = 'rules?'; }
+  let registry = '';
+  try { registry = `${ClassesRegistry.isInitialized?.() ? 1 : 0}:${ClassesRegistry.count?.() ?? 0}`; } catch (_err) { registry = 'registry?'; }
+  return [actorId, actorStamp, items, rules, registry, options.mode || ''].join('::');
+}
+
+function memoGet(key) {
+  if (!key || !RECONCILIATION_MEMO.has(key)) return null;
+  const value = RECONCILIATION_MEMO.get(key);
+  RECONCILIATION_MEMO.delete(key); // refresh LRU position
+  RECONCILIATION_MEMO.set(key, value);
+  return structuredClone(value);
+}
+
+function memoSet(key, report) {
+  if (!key || !report) return;
+  RECONCILIATION_MEMO.set(key, structuredClone(report));
+  while (RECONCILIATION_MEMO.size > RECONCILIATION_MEMO_LIMIT) {
+    RECONCILIATION_MEMO.delete(RECONCILIATION_MEMO.keys().next().value);
+  }
 }
 
 function sanitizePlainData(value, path = 'report', seen = new WeakSet(), depth = 0) {
@@ -220,6 +217,11 @@ function emptyLedger(type, label, route = {}) {
   };
 }
 
+/** Number.isFinite(Number(x)) treats null/''/undefined-as-0 as finite; an absent value is NOT zero. */
+function isPresentNumber(value) {
+  return value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value));
+}
+
 function normalizeText(value) {
   return String(value || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
@@ -238,93 +240,6 @@ function readActorItems(actor) {
   } catch (_err) {
     return [];
   }
-}
-
-function readClassLevel(item) {
-  return Math.max(0, Number(item?.system?.level ?? item?.system?.levels ?? item?.system?.rank ?? item?.level ?? 0) || 0);
-}
-
-function normalizeClassLevelEntry(entry = {}) {
-  const rawClassId = entry?.classId ?? entry?.id ?? entry?.sourceId ?? entry?.class ?? entry?.name ?? entry?.className;
-  const rawClassName = entry?.className ?? entry?.name ?? entry?.class ?? entry?.label ?? entry?.classId ?? entry?.id;
-  const classId = normalizeClassKey(rawClassId);
-  const className = normalizeText(rawClassName) || titleCase(classId);
-  const level = Math.max(0, Number(entry?.level ?? entry?.levels ?? entry?.value ?? entry?.rank ?? 0) || 0);
-  if (!classId && !className) return null;
-  if (level <= 0) return null;
-  return { classId, className, level, raw: entry };
-}
-
-function readActorClassLevelLedger(actor) {
-  const rows = [];
-  const addRows = (value) => {
-    if (!value) return;
-    if (Array.isArray(value)) {
-      for (const entry of value) {
-        const normalized = normalizeClassLevelEntry(entry);
-        if (normalized) rows.push(normalized);
-      }
-      return;
-    }
-    if (typeof value === 'object') {
-      for (const [key, entry] of Object.entries(value)) {
-        const normalized = normalizeClassLevelEntry({ classId: key, className: key, ...(entry && typeof entry === 'object' ? entry : { level: entry }) });
-        if (normalized) rows.push(normalized);
-      }
-    }
-  };
-
-  addRows(actor?.system?.progression?.classLevels);
-  addRows(actor?.system?.classes);
-
-  const singleClass = actor?.system?.class;
-  if (singleClass && typeof singleClass === 'object') {
-    const normalized = normalizeClassLevelEntry({
-      classId: singleClass.id || singleClass.classId || singleClass.sourceId,
-      className: singleClass.name || singleClass.className || singleClass.id,
-      level: singleClass.level || actor?.system?.level,
-    });
-    if (normalized) rows.push(normalized);
-  }
-
-  return rows;
-}
-
-function buildClassLevelLookup(actor) {
-  const map = new Map();
-  const add = (entry = {}) => {
-    const level = Math.max(0, Number(entry.level || 0) || 0);
-    if (!level) return;
-    const keys = [
-      normalizeClassKey(entry.classId),
-      normalizeClassKey(entry.className),
-      normalizeNameKey(entry.className),
-    ].filter(Boolean);
-    for (const key of keys) {
-      const existing = map.get(key);
-      if (!existing || level > existing.level) map.set(key, { ...entry, level });
-    }
-  };
-  for (const entry of readActorClassLevelLedger(actor)) add(entry);
-  for (const item of readActorItems(actor).filter(entry => entry?.type === 'class')) {
-    add({
-      classId: item?.system?.classId || item?.system?.id || item?.id || item?.name,
-      className: item?.system?.className || item?.name || item?.system?.classId,
-      level: readClassLevel(item),
-      item,
-    });
-  }
-  return map;
-}
-
-function highestClassLevelFor(actor, identifiers = []) {
-  const lookup = buildClassLevelLookup(actor);
-  let level = 0;
-  for (const identifier of identifiers) {
-    const keys = [normalizeClassKey(identifier), normalizeNameKey(identifier)].filter(Boolean);
-    for (const key of keys) level = Math.max(level, Number(lookup.get(key)?.level || 0) || 0);
-  }
-  return level;
 }
 
 function featureType(feature = {}) {
@@ -359,17 +274,6 @@ function normalizeAbilityIncreases(value = {}) {
 function abilityIncreaseCount(value = {}) {
   return Object.values(normalizeAbilityIncreases(value)).reduce((sum, delta) => sum + delta, 0);
 }
-
-function getActorTotalLevel(actor) {
-  const explicit = normalizeLevel(actor?.system?.level ?? actor?.system?.details?.level ?? actor?.system?.progression?.level);
-  const fromItems = readActorItems(actor)
-    .filter(item => item?.type === 'class')
-    .reduce((sum, item) => sum + readClassLevel(item), 0);
-  const fromProgressionLedger = readActorClassLevelLedger(actor)
-    .reduce((sum, entry) => sum + (Number(entry.level || 0) || 0), 0);
-  return Math.max(explicit, fromItems, fromProgressionLedger, 0);
-}
-
 
 function normalizeSourceToken(value) {
   return String(value || '')
@@ -474,35 +378,6 @@ function itemClassLevel(item = {}) {
   );
 }
 
-function isNonheroicClassSummary(summary = {}) {
-  const model = summary.model || {};
-  const item = summary.item || {};
-  const nameKey = normalizeNameKey(summary.className || summary.classId || item?.name || model?.name);
-  return nameKey === 'nonheroic'
-    || item?.system?.isNonheroic === true
-    || model?.system?.isNonheroic === true
-    || model?.isNonheroic === true
-    || normalizeSourceToken(model?.system?.classType || model?.classType) === 'nonheroic';
-}
-
-function isPrestigeClassSummary(summary = {}) {
-  const model = summary.model || {};
-  const item = summary.item || {};
-  if (isNonheroicClassSummary(summary)) return false;
-  const base = model?.system?.base_class ?? model?.system?.baseClass ?? model?.base_class ?? model?.baseClass ?? item?.system?.base_class ?? item?.system?.baseClass;
-  if (base === false) return true;
-  const type = normalizeSourceToken(model?.system?.classType || model?.classType || item?.system?.classType);
-  return type === 'prestige' || type === 'prestige-class';
-}
-
-function getActorHeroicLevel(actor, classSummaries = []) {
-  const heroicFromClasses = (Array.isArray(classSummaries) ? classSummaries : [])
-    .filter(summary => !isNonheroicClassSummary(summary))
-    .reduce((sum, summary) => sum + (Number(summary.level || 0) || 0), 0);
-  if (heroicFromClasses > 0) return heroicFromClasses;
-  return getActorTotalLevel(actor);
-}
-
 export class ProgressionReconciler {
   /**
    * Build an actor-wide progression reconciliation report.
@@ -526,23 +401,24 @@ export class ProgressionReconciler {
 
   safeReconcileActor(actor, options = {}) {
     const output = options.output || 'report';
-    const cacheKey = cacheKeyForActor(actor, options);
+    const memoKey = options.fresh === true ? null : memoKeyForActor(actor, options);
     try {
-      const report = this.reconcileActor(actor, { ...options, output: 'report' });
-      const safeReport = this.sanitizeReconciliationReport(report, { actor, options });
-      setReconciliationCache(cacheKey, safeReport);
+      let safeReport = memoGet(memoKey);
+      if (!safeReport) {
+        const report = this.reconcileActor(actor, { ...options, output: 'report' });
+        safeReport = this.sanitizeReconciliationReport(report, { actor, options });
+        memoSet(memoKey, safeReport);
+      }
       return output === 'sheet' ? this._safeToSheetAudit(safeReport, options) : safeReport;
     } catch (err) {
-      swseLogger.error('[ProgressionReconciler] Safe reconciliation failed; returning fallback report', {
+      swseLogger.error('[ProgressionReconciler] Safe reconciliation failed; returning engine-failure report', {
         actorId: actor?.id || null,
         actorName: actor?.name || 'Actor',
         message: err?.message || String(err),
         stack: err?.stack || null,
       });
-      const cached = findLastKnownGoodReport(actor);
-      const fallback = cached
-        ? this._markReportStale(cached, err)
-        : this._buildFallbackReport(actor, {}, err, { stage: 'safe-reconcile' });
+      // Fail closed: an engine-failure report. Never a previous report presented as current.
+      const fallback = this._buildFallbackReport(actor, {}, err, { stage: 'safe-reconcile' });
       const safeFallback = this.sanitizeReconciliationReport(fallback, { actor, options, fallback: true });
       return output === 'sheet' ? this._safeToSheetAudit(safeFallback, options) : safeFallback;
     }
@@ -601,7 +477,7 @@ export class ProgressionReconciler {
     sanitized.version = Math.max(Number(sanitized.version || 0) || 0, REPORT_SCHEMA_VERSION);
     sanitized.actorId = sanitized.actorId || actor?.id || null;
     sanitized.actorName = sanitized.actorName || actor?.name || 'Actor';
-    sanitized.status = sanitized.status || (fallback ? 'degraded' : 'ok');
+    sanitized.status = fallback ? 'engine-failure' : (sanitized.status || 'ok');
     sanitized.warnings = Array.isArray(sanitized.warnings) ? sanitized.warnings : [];
     sanitized.slots = sanitized.slots && typeof sanitized.slots === 'object' ? sanitized.slots : {};
     sanitized.slots.abilityIncreases = Array.isArray(sanitized.slots.abilityIncreases) ? sanitized.slots.abilityIncreases : [];
@@ -675,6 +551,8 @@ export class ProgressionReconciler {
         derivedStats: { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0 },
       },
       derivedStats: { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0 },
+      classAuthority: { status: 'engine-failure', conflicts: [], unresolved: [] },
+      hasNonheroic: false,
       diagnostics: {
         layer: 'entitlement-calculator',
         status: 'failed-soft',
@@ -687,11 +565,11 @@ export class ProgressionReconciler {
   _buildEmptyOwnership(_actor, err = null) {
     return {
       rawPools: {
-        featPools: { general: [], class: [], unknown: [] },
-        talentPools: { heroic: [], class: [], unknown: [] },
+        featPools: { general: [], class: [], classUntagged: [], unknown: [] },
+        talentPools: { general: [], class: [], classUntagged: [], unknown: [] },
       },
-      featPools: { general: [], class: [], unknown: [] },
-      talentPools: { heroic: [], class: [], unknown: [] },
+      featPools: { general: [], class: [], classUntagged: [], unknown: [] },
+      talentPools: { general: [], class: [], classUntagged: [], unknown: [] },
       diagnostics: {
         layer: 'ownership-classifier',
         status: err ? 'failed-soft' : 'unavailable',
@@ -730,8 +608,11 @@ export class ProgressionReconciler {
         ownership: context?.ownership?.diagnostics || { layer: 'ownership-classifier', status: 'unavailable' },
         report: { layer: 'reconciliation-report-builder', status: 'fallback', stage },
       },
-      warnings: ['Progression audit unavailable. Character sheet opened with safe fallback data.'],
-      status: 'degraded',
+      warnings: [],
+      status: 'engine-failure',
+      engineFindings: [{ code: 'engine-failure', severity: 'engine', message, detail: { stage } }],
+      deferredRules: [],
+      rollup: { playerActionable: false, gmDiagnostic: true, counts: { missing: 0, invalid: 0, unverifiable: 0, extra: 0, engine: 1 } },
       timeline: { entries: [], flatSteps: [], hasRecoveryDebt: false, diagnostics: { layer: 'progression-timeline-builder', status: 'unavailable' } },
       repairSuggestions: [],
       diagnostics: {
@@ -761,10 +642,11 @@ export class ProgressionReconciler {
     ];
     return {
       kind: 'swse-actor-progression-reconciliation-sheet',
-      status: 'degraded',
+      status: 'engine-failure',
       totalLevel: Number(report?.totalLevel || 0) || 0,
-      totalHeroicLevel: Number(report?.totalHeroicLevel || report?.totalLevel || 0) || 0,
-      warnings: ['Progression audit unavailable. Character sheet opened safely.'],
+      totalHeroicLevel: Number(report?.totalHeroicLevel || 0) || 0,
+      warnings: [],
+      validation: { playerActionable: false, gmDiagnostic: true, findings: [], engineFindings: [{ code: 'engine-failure', message: error?.message || 'Progression audit unavailable.' }], notes: [] },
       classSummaries: [],
       hasOpenProgression: false,
       hasTrainingProgression: false,
@@ -807,19 +689,6 @@ export class ProgressionReconciler {
         ...(Array.isArray(patch.layerErrors) ? patch.layerErrors : []),
       ],
     };
-  }
-
-  _markReportStale(report = {}, err = null) {
-    const stale = sanitizePlainData(report) || {};
-    stale.status = stale.status === 'ok' ? 'stale' : (stale.status || 'stale');
-    stale.warnings = Array.isArray(stale.warnings) ? [...stale.warnings] : [];
-    stale.warnings.unshift('Using last-known-good progression audit because the latest reconciliation failed.');
-    stale.diagnostics = this._mergeDiagnostics(stale.diagnostics, {
-      staleCache: true,
-      error: !!err,
-      message: err?.message || '',
-    });
-    return stale;
   }
 
   _validateReconciliationReport(report = {}) {
@@ -938,9 +807,6 @@ export class ProgressionReconciler {
   _buildActorAuditLayerHelpers() {
     return {
       readActorItems,
-      getActorTotalLevel,
-      getActorHeroicLevel,
-      buildClassSummaries: this._buildClassSummaries.bind(this),
       toPublicClassSummary: this._toPublicClassSummary.bind(this),
       buildAbilityIncreaseSlots: this._buildAbilityIncreaseSlots.bind(this),
       buildGeneralFeatSlots: this._buildGeneralFeatSlots.bind(this),
@@ -1005,8 +871,10 @@ export class ProgressionReconciler {
       kind: 'swse-actor-progression-reconciliation-sheet',
       status: report?.status || 'ok',
       totalLevel: Number(report?.totalLevel || 0) || 0,
-      totalHeroicLevel: Number(report?.totalHeroicLevel || report?.totalLevel || 0) || 0,
+      totalHeroicLevel: Number(report?.totalHeroicLevel || 0) || 0,
       warnings: Array.isArray(report?.warnings) ? report.warnings : [],
+      rollup: report?.rollup && typeof report.rollup === 'object' ? report.rollup : { playerActionable: false, gmDiagnostic: false, counts: {} },
+      validation: this._buildValidationProjection(report, { trainingLedgers, derivedStats }),
       diagnostics: report?.diagnostics && typeof report.diagnostics === 'object' ? report.diagnostics : {},
       debugExport: report?.debugExport && typeof report.debugExport === 'object' ? report.debugExport : {},
       repairSuggestions: Array.isArray(report?.repairSuggestions) ? report.repairSuggestions : [],
@@ -1052,6 +920,71 @@ export class ProgressionReconciler {
         classTalentLedger,
         derivedStats,
       }),
+    };
+  }
+
+  /**
+   * The ONLY input the header `!` indicator and the validation overlay consume.
+   *  - findings:        actionable (missing / invalid). Non-empty => the player sees `!`.
+   *  - engineFindings:  tooling problems; GM diagnostics only, never worded as a character error.
+   *  - notes:           unverifiable / deferred / informational; shown inside the overlay only,
+   *                     never a reason by itself to show `!`.
+   */
+  _buildValidationProjection(report = {}, { trainingLedgers = [], derivedStats = {} } = {}) {
+    const findings = [];
+    for (const ledger of trainingLedgers) {
+      const open = Number(ledger.open || 0) || 0;
+      if (open <= 0) continue;
+      const firstOpen = (ledger.openSlots || [])[0] || null;
+      findings.push({
+        id: `missing:${ledger.type}`,
+        severity: 'missing',
+        title: `${open} unspent ${ledger.label.toLowerCase()}`,
+        detail: [],
+        action: firstOpen?.primaryAction || firstOpen?.remediation?.primaryAction || null,
+        slots: (ledger.openSlots || []).map(slot => ({
+          id: slot.id || '',
+          label: slot.label || '',
+          source: slot.source || '',
+          type: slot.type || '',
+          classId: slot.classId || '',
+          className: slot.className || '',
+          classLevel: slot.classLevel || 0,
+          characterLevel: slot.characterLevel || 0,
+          stepId: slot.primaryAction?.stepId || '',
+          actionLabel: slot.primaryAction?.label || 'Resolve',
+        })),
+      });
+    }
+    for (const row of Array.isArray(derivedStats?.rows) ? derivedStats.rows : []) {
+      if (row?.needsAttention !== true) continue;
+      findings.push({
+        slots: [],
+        id: `invalid:${row.id}`,
+        severity: 'invalid',
+        title: `${row.label} does not match class progression`,
+        detail: [row.issue].filter(Boolean),
+        action: null,
+      });
+    }
+    const notes = [];
+    for (const ledger of trainingLedgers) {
+      const n = (ledger.slots || []).reduce((sum, slot) => sum + (slot.status === 'unverifiable' ? (Number(slot.unverifiableCount ?? 1) || 1) : 0), 0);
+      if (n > 0) notes.push({ id: `unverifiable:${ledger.type}`, text: `${n} ${ledger.label.toLowerCase()} cannot be verified from the recorded history.` });
+    }
+    for (const rule of Array.isArray(report?.deferredRules) ? report.deferredRules : []) {
+      notes.push({ id: `deferred:${rule.id}`, text: rule.reason });
+    }
+    const unclassified = (report?.classification?.unclassifiedFeatCount || 0) + (report?.classification?.unclassifiedTalentCount || 0);
+    if (unclassified > 0) notes.push({ id: 'unclassified', text: `${unclassified} owned feat/talent record${unclassified === 1 ? ' has' : 's have'} no acquisition provenance.` });
+    const engineFindings = (Array.isArray(report?.engineFindings) ? report.engineFindings : []).map(f => ({ code: f.code, message: f.message }));
+    return {
+      playerActionable: findings.length > 0,
+      gmDiagnostic: engineFindings.length > 0,
+      findings,
+      engineFindings,
+      notes,
+      repairs: (Array.isArray(report?.repairSuggestions) ? report.repairSuggestions : []).map(r => ({ label: r.label || '', detail: r.detail || '' })),
     };
   }
 
@@ -1118,7 +1051,7 @@ export class ProgressionReconciler {
     const normalizedRows = rows.map((row, index) => {
       const id = row?.id || row?.key || `derived-stat-${index}`;
       const label = row?.label || row?.name || 'Derived Stat';
-      const needsAttention = row?.needsAttention === true || row?.status === 'issue' || row?.status === 'warning' || row?.status === 'unavailable' || !!row?.issue;
+      const needsAttention = row?.needsAttention === true;
       const targetTab = row?.targetTab || row?.tab || 'abilities';
       const sheetAnchor = row?.sheetAnchor || 'derived-class-stats';
       const primaryAction = row?.primaryAction || {
@@ -1137,7 +1070,7 @@ export class ProgressionReconciler {
         expectedLabel: row?.expectedLabel || (row?.expected !== undefined ? String(row.expected) : 'Unknown'),
         current: row?.current ?? row?.currentValue ?? null,
         currentLabel: row?.currentLabel || (row?.current !== undefined ? String(row.current) : 'Unknown'),
-        status: row?.status || (needsAttention ? 'review' : 'ok'),
+        status: row?.status || (needsAttention ? 'issue' : 'ok'),
         statusLabel: row?.statusLabel || row?.issue || (needsAttention ? 'Review needed' : 'OK'),
         tone: row?.tone || (needsAttention ? 'warn' : 'ok'),
         needsAttention,
@@ -1304,8 +1237,8 @@ export class ProgressionReconciler {
     }
 
     const pools = this._buildTalentPools(actor);
-    const consumed = this._fillLinearSlots(slots, pools.heroic);
-    this._appendOverfilledSlots(slots, pools.heroic, 'heroic-talent-extra', 'Extra heroic talent', consumed);
+    const consumed = this._fillLinearSlots(slots, pools.general);
+    this._appendOverfilledSlots(slots, pools.general, 'heroic-talent-extra', 'Extra heroic talent', consumed);
     return slots;
   }
 
@@ -1348,49 +1281,40 @@ export class ProgressionReconciler {
     }
   }
 
-  _buildFeatPools(actor) {
-    const hints = this._readProgressionSelectionHints(actor, 'feats');
-    const classPool = [];
-    const generalPool = [];
-    const unknownPool = [];
-    for (const item of readActorItems(actor).filter(entry => entry?.type === 'feat')) {
+  /**
+   * Provenance-only ownership pools (Reconciliation V2).
+   *   general       explicit general/heroic evidence
+   *   class         explicit class evidence INCLUDING a class identity (classId/className)
+   *   classUntagged says "class" but names no class (cannot be tied to any slot)
+   *   unknown       no usable provenance at all (feats and talents are treated identically)
+   * Only `general` and `class` may satisfy a slot. Unattributed items (classUntagged + unknown)
+   * can never prove a slot filled and never create a missing/extra verdict by themselves.
+   */
+  _buildProvenancePools(actor, { type, hintKey, classSources }) {
+    const hints = this._readProgressionSelectionHints(actor, hintKey);
+    const pools = { general: [], class: [], classUntagged: [], unknown: [] };
+    for (const item of readActorItems(actor).filter(entry => entry?.type === type)) {
       if (isAutomaticProgressionItem(item)) continue;
       const hint = this._getSelectionHintForItem(item, hints);
       const slot = this._slotTypeForItemOrHint(item, hint);
       const source = itemSourceToken(item);
-      const hasClassSource = slot === 'class'
-        || source === 'class'
-        || source === 'class-feat'
-        || source === 'multiclass-starting-feat'
-        || !!itemClassId(item)
-        || !!itemClassName(item);
-      if (hasClassSource) classPool.push(item);
-      else if (slot === 'heroic' || slot === 'general' || source === 'general' || source === 'heroic' || source === '') generalPool.push(item);
-      else unknownPool.push(item);
+      const hasClassIdentity = !!(itemClassId(item) || itemClassName(item));
+      const claimsClass = slot === 'class' || classSources.includes(source);
+      const claimsGeneral = slot === 'heroic' || slot === 'general' || source === 'general' || source === 'heroic';
+      if (hasClassIdentity) pools.class.push(item);
+      else if (claimsClass) pools.classUntagged.push(item);
+      else if (claimsGeneral) pools.general.push(item);
+      else pools.unknown.push(item);
     }
-    return { general: generalPool, class: classPool, unknown: unknownPool };
+    return pools;
+  }
+
+  _buildFeatPools(actor) {
+    return this._buildProvenancePools(actor, { type: 'feat', hintKey: 'feats', classSources: ['class', 'class-feat', 'multiclass-starting-feat'] });
   }
 
   _buildTalentPools(actor) {
-    const hints = this._readProgressionSelectionHints(actor, 'talents');
-    const heroic = [];
-    const classPool = [];
-    const unknown = [];
-    for (const item of readActorItems(actor).filter(entry => entry?.type === 'talent')) {
-      if (isAutomaticProgressionItem(item)) continue;
-      const hint = this._getSelectionHintForItem(item, hints);
-      const slot = this._slotTypeForItemOrHint(item, hint);
-      const source = itemSourceToken(item);
-      const hasClassSource = slot === 'class'
-        || source === 'class'
-        || source === 'class-talent'
-        || !!itemClassId(item)
-        || !!itemClassName(item);
-      if (hasClassSource) classPool.push(item);
-      else if (slot === 'heroic' || slot === 'general' || source === 'heroic' || source === 'general') heroic.push(item);
-      else unknown.push(item);
-    }
-    return { heroic, class: classPool, unknown };
+    return this._buildProvenancePools(actor, { type: 'talent', hintKey: 'talents', classSources: ['class', 'class-talent'] });
   }
 
   _slotTypeForItemOrHint(item = {}, hint = null) {
@@ -1444,83 +1368,23 @@ export class ProgressionReconciler {
     }) || null;
   }
 
-  _buildClassSummaries(actor) {
-    const summaries = new Map();
-    const upsert = ({ item = null, ledger = null } = {}) => {
-      const seed = item || ledger || {};
-      const model = resolveClassModel(item || ledger || {
-        id: ledger?.classId,
-        classId: ledger?.classId,
-        name: ledger?.className,
-        className: ledger?.className,
-      }) || item || seed;
-      const classId = normalizeClassKey(model || item || ledger)
-        || normalizeClassKey(item?.system?.classId || ledger?.classId || item?.name || ledger?.className);
-      if (!classId) return;
-      const className = model?.name || item?.name || ledger?.className || titleCase(classId);
-      const itemLevel = item ? readClassLevel(item) : 0;
-      const ledgerLevel = Number(ledger?.level || 0) || 0;
-      const lookupLevel = highestClassLevelFor(actor, [classId, className, item?.system?.classId, item?.name, ledger?.classId, ledger?.className]);
-      const level = Math.max(itemLevel, ledgerLevel, lookupLevel, 0);
-      const key = classId || normalizeNameKey(className);
-      const previous = summaries.get(key);
-      const summary = {
-        ...(previous || {}),
-        itemId: previous?.itemId || item?.id || null,
-        classId,
-        className: previous?.className || className,
-        level: Math.max(Number(previous?.level || 0) || 0, level),
-        model: previous?.model || model,
-        item: previous?.item || item,
-        sources: [
-          ...(previous?.sources || []),
-          ...(item ? ['class-item'] : []),
-          ...(ledger ? ['progression-ledger'] : []),
-        ],
-      };
-      summary.isNonheroic = isNonheroicClassSummary(summary);
-      summary.isPrestige = isPrestigeClassSummary(summary);
-      summary.isHeroic = !summary.isNonheroic;
-      summaries.set(key, summary);
-    };
-
-    for (const item of readActorItems(actor).filter(entry => entry?.type === 'class')) upsert({ item });
-    for (const ledger of readActorClassLevelLedger(actor)) upsert({ ledger });
-
-    return Array.from(summaries.values()).filter(entry => entry.level > 0);
-  }
-
   _toPublicClassSummary(summary = {}) {
+    const sources = Array.from(new Set(Array.isArray(summary.sources) ? summary.sources : []));
     return {
       itemId: summary.itemId || null,
       classId: summary.classId || '',
       className: summary.className || titleCase(summary.classId),
       level: Number(summary.level || 0) || 0,
-      sources: Array.from(new Set(Array.isArray(summary.sources) ? summary.sources : [])),
-      levelSource: this._classSummaryLevelSource(summary),
-      sourceConfidence: this._classSummarySourceConfidence(summary),
+      sources,
+      levelSource: sources.join(' + ') || 'unknown',
+      resolved: summary.resolved === true,
       isHeroic: summary.isHeroic !== false,
       isNonheroic: summary.isNonheroic === true,
       isPrestige: summary.isPrestige === true,
     };
   }
 
-  _classSummaryLevelSource(summary = {}) {
-    const sources = Array.isArray(summary.sources) ? summary.sources : [];
-    if (sources.includes('progression-ledger')) return 'system.progression.classLevels';
-    if (sources.includes('class-item')) return 'owned class item';
-    return 'unknown';
-  }
-
-  _classSummarySourceConfidence(summary = {}) {
-    const sources = Array.isArray(summary.sources) ? summary.sources : [];
-    if (sources.includes('progression-ledger') && sources.includes('class-item')) return 'high';
-    if (sources.includes('progression-ledger')) return 'medium-high';
-    if (sources.includes('class-item')) return 'medium';
-    return 'low';
-  }
-
-  _buildAbilityIncreaseSlots(actor, totalLevel) {
+  _buildAbilityIncreaseSlots(actor, totalLevel, classSummaries = []) {
     const expectedLevels = [];
     const maxLevel = Math.min(Math.max(0, Number(totalLevel) || 0), 20);
     for (let level = 4; level <= maxLevel; level += 4) {
@@ -1542,10 +1406,15 @@ export class ProgressionReconciler {
     }
 
     return expectedLevels.map(level => {
-      const expectedCount = this._abilityIncreaseCountForActor(actor, level);
+      const expectedCount = this._abilityIncreaseCountForActor(actor, level, classSummaries);
       const record = byLevel.get(level) || null;
       const filledCount = Math.min(expectedCount, Number(record?.count || 0) || 0);
-      const openCount = Math.max(0, expectedCount - filledCount);
+      const shortfall = Math.max(0, expectedCount - filledCount);
+      // A shortfall is only PROVEN when a durable record for this level exists and is partial.
+      // No record at all means the history is absent (older/imported actors), which cannot show
+      // that an increase was skipped, so it is unverifiable rather than missing.
+      const openCount = record ? shortfall : 0;
+      const unverifiableCount = record ? 0 : shortfall;
       const selections = Object.entries(record?.increases || {})
         .filter(([, delta]) => Number(delta || 0) > 0)
         .map(([key, delta]) => `${ABILITY_LABELS[key] || key.toUpperCase()} +${delta}`);
@@ -1558,7 +1427,9 @@ export class ProgressionReconciler {
         count: expectedCount,
         filledCount,
         openCount,
-        status: openCount > 0 ? 'open' : 'filled',
+        status: openCount > 0 ? 'open' : (unverifiableCount > 0 ? 'unverifiable' : 'filled'),
+        unverifiableCount,
+        unverifiableReason: unverifiableCount > 0 ? 'No ability-increase history record exists for this level.' : '',
         label: `Level ${level} Ability Increase`,
         source: `Character Level ${level}`,
         selections,
@@ -1578,22 +1449,24 @@ export class ProgressionReconciler {
     return history;
   }
 
-  _abilityIncreaseCountForActor(actor, _level) {
+  /**
+   * Count per ability-increase level. The droid/Nonheroic branch is carried over unchanged
+   * and is a PENDING rules question (RECON-002/RECON-003); the report builder marks those
+   * slots `rulesDeferred` so they can never raise a missing-choice verdict.
+   */
+  _abilityIncreaseCountForActor(actor, _level, classSummaries = []) {
     const isDroid = actor?.type === 'droid' || actor?.system?.isDroid === true;
-    const isNonheroic = actor?.system?.class?.id === 'nonheroic'
-      || actor?.system?.class?.name === 'Nonheroic'
-      || readActorItems(actor).some(item => item?.type === 'class' && String(item?.name || '').toLowerCase() === 'nonheroic');
-    if (isDroid || isNonheroic) return 1;
-    return 2;
+    const hasNonheroic = classSummaries.some(summary => summary.isNonheroic === true);
+    return (isDroid || hasNonheroic) ? 1 : 2;
   }
 
   _buildClassChoiceSlots(actor, classSummaries = []) {
     const slots = [];
     for (const classSummary of classSummaries) {
       for (let classLevel = 1; classLevel <= classSummary.level; classLevel += 1) {
-        const levelEntry = getClassLevelProgressionEntry(classSummary.model, classLevel) || {};
-        const features = Array.isArray(levelEntry.features) ? levelEntry.features : [];
-        let classChoiceCountForLevel = 0;
+        // A missing entry yields no slots; the calculator reports it as a `class-progression-missing` engine finding.
+        const levelEntry = getClassLevelProgressionEntry(classSummary.model, classLevel);
+        const features = Array.isArray(levelEntry?.features) ? levelEntry.features : [];
         for (const feature of features) {
           const type = featureType(feature);
           const slotKind = CHOICE_FEATURE_TYPES[type];
@@ -1618,18 +1491,7 @@ export class ProgressionReconciler {
               label: `${classSummary.className} ${classLevel} ${titleCase(slotKind)}`,
               source: `${classSummary.className} ${classLevel}`,
             });
-            if (slotKind === 'class-feat' || slotKind === 'class-talent') classChoiceCountForLevel += 1;
           }
-        }
-
-        if (classChoiceCountForLevel === 0 && !classSummary.isNonheroic && !levelEntry) {
-          swseLogger.warn('[ProgressionReconciler] Missing class progression entry; no fallback cadence applied', {
-            classId: classSummary.classId,
-            className: classSummary.className,
-            classLevel,
-            level: classLevel,
-            source: 'class-compendium-ssot',
-          });
         }
       }
     }
@@ -1651,25 +1513,24 @@ export class ProgressionReconciler {
       'force-power': readActorItems(actor).filter(item => item?.type === 'force-power'),
     };
 
-    const singleClass = classSummaries.length === 1 ? classSummaries[0] : null;
     const consumed = new Set();
     for (const slot of slots) {
       const pool = poolsByType[slot.type] || [];
-      const strict = pool.find(item => !consumed.has(item) && this._itemMatchesClassSlot(item, slot, { allowUnknownClass: false }));
-      const flexible = strict || pool.find(item => !consumed.has(item) && this._itemMatchesClassSlot(item, slot, { allowUnknownClass: !!singleClass }));
-      if (!flexible) continue;
-      consumed.add(flexible);
+      const match = pool.find(item => !consumed.has(item) && this._itemMatchesClassSlot(item, slot));
+      if (!match) continue;
+      consumed.add(match);
       slot.status = 'filled';
       slot.filledCount = 1;
       slot.openCount = 0;
-      slot.filledBy = flexible.id || flexible._id || null;
-      slot.filledByName = flexible.name || 'Recorded selection';
-      slot.selections = [flexible.name || 'Recorded selection'];
+      slot.filledBy = match.id || match._id || null;
+      slot.filledByName = match.name || 'Recorded selection';
+      slot.selections = [match.name || 'Recorded selection'];
     }
 
-    for (const [slotType, pool] of Object.entries(poolsByType)) {
-      for (const item of pool.filter(entry => !consumed.has(entry))) {
-        if (slotType !== 'class-feat' && slotType !== 'class-talent') continue;
+    // Items that DO carry class provenance but fit no slot are informational extras.
+    // (Items without class provenance never reach this pool.)
+    for (const slotType of ['class-feat', 'class-talent']) {
+      for (const item of (poolsByType[slotType] || []).filter(entry => !consumed.has(entry))) {
         const assignedClass = this._resolveItemClassForOverfill(item, classSummaries);
         slots.push({
           id: `${slotType}-extra-${item.id || item._id || normalizeNameKey(item.name)}`,
@@ -1693,27 +1554,30 @@ export class ProgressionReconciler {
     }
   }
 
-  _itemMatchesClassSlot(item = {}, slot = {}, { allowUnknownClass = false } = {}) {
+  /**
+   * A class-feat / class-talent slot is satisfied only by an item whose recorded class identity
+   * (and class level, when recorded) matches the slot. Typed auxiliary pools (force secrets,
+   * techniques, powers, medical secrets, maneuvers) carry no class tag and match by type alone.
+   */
+  _itemMatchesClassSlot(item = {}, slot = {}) {
+    if (slot.type !== 'class-feat' && slot.type !== 'class-talent') return true;
     const slotClassId = slot.classId || '';
     const slotClassName = normalizeText(slot.className).toLowerCase();
     const slotClassLevel = normalizeLevel(slot.classLevel);
     const classId = itemClassId(item);
     const className = itemClassName(item);
     const classLevel = itemClassLevel(item);
+    if (!classId && !className) return false;
     if (classLevel && slotClassLevel && classLevel !== slotClassLevel) return false;
     if (classId && slotClassId && classId !== slotClassId) return false;
     if (className && slotClassName && className !== slotClassName) return false;
-    if (classId || className) return true;
-    return allowUnknownClass;
+    return true;
   }
 
   _resolveItemClassForOverfill(item = {}, classSummaries = []) {
     const classId = itemClassId(item);
     const className = itemClassName(item);
-    if (classId || className) {
-      return classSummaries.find(summary => (classId && summary.classId === classId) || (className && normalizeText(summary.className).toLowerCase() === className)) || null;
-    }
-    return classSummaries.length === 1 ? classSummaries[0] : null;
+    return classSummaries.find(summary => (classId && summary.classId === classId) || (className && normalizeText(summary.className).toLowerCase() === className)) || null;
   }
 
   _buildDerivedStatsAudit(actor, classSummaries = [], { totalHeroicLevel = 0 } = {}) {
@@ -1723,20 +1587,7 @@ export class ProgressionReconciler {
     const rows = [];
     const warnings = [];
 
-    rows.push(this._buildDerivedStatRow({
-      id: 'hp-max',
-      label: 'Hit Points',
-      type: 'hp',
-      expectedValue: expected.hp.knownMinimum,
-      expectedLabel: expected.hp.expectedLabel,
-      currentValue: current.hpMax,
-      currentLabel: Number.isFinite(current.hpMax) ? String(current.hpMax) : 'Unknown',
-      status: expected.hp.status,
-      issue: expected.hp.issue,
-      detail: expected.hp.detail,
-      targetTab: 'abilities',
-      sheetAnchor: 'derived-class-stats',
-    }));
+    // Hit Points are evaluated once, by ProgressionEntitlementCalculator (buildHpAudit).
 
     rows.push(this._buildDerivedStatRow({
       id: 'bab',
@@ -1900,7 +1751,7 @@ export class ProgressionReconciler {
   _buildDerivedStatRow({ id, label, type, expectedValue, expectedLabel, currentValue, currentLabel, status = 'ok', issue = '', detail = '', targetTab = 'abilities', sheetAnchor = 'derived-class-stats' } = {}) {
     let finalStatus = status || 'ok';
     let finalIssue = issue || '';
-    if (!finalIssue && finalStatus !== 'unavailable' && Number.isFinite(Number(expectedValue)) && Number.isFinite(Number(currentValue))) {
+    if (!finalIssue && finalStatus !== 'unavailable' && isPresentNumber(expectedValue) && isPresentNumber(currentValue)) {
       const current = Number(currentValue);
       const expected = Number(expectedValue);
       if (type === 'hp' && current < expected) {
@@ -1908,8 +1759,10 @@ export class ProgressionReconciler {
         finalIssue = `Current ${label} is below the known expected minimum.`;
       }
     }
-    const needsAttention = finalStatus === 'issue' || finalStatus === 'warning' || finalStatus === 'unavailable' || !!finalIssue;
-    const tone = finalStatus === 'issue' || finalStatus === 'unavailable' ? 'warn' : (finalStatus === 'warning' ? 'neutral' : 'ok');
+    // Only a CONFIRMED discrepancy needs attention. 'warning' (incomplete history) and
+    // 'unavailable' (data missing) are unverifiable, never a character error.
+    const needsAttention = finalStatus === 'issue' || (!!finalIssue && finalStatus !== 'unavailable' && finalStatus !== 'warning');
+    const tone = needsAttention ? 'warn' : (finalStatus === 'ok' ? 'ok' : 'neutral');
     return {
       id,
       type,
@@ -1918,12 +1771,12 @@ export class ProgressionReconciler {
       expectedLabel: expectedLabel || (Number.isFinite(Number(expectedValue)) ? String(expectedValue) : 'Unknown'),
       current: currentValue,
       currentLabel: currentLabel || (Number.isFinite(Number(currentValue)) ? String(currentValue) : 'Unknown'),
-      status: needsAttention ? (finalStatus === 'ok' ? 'issue' : finalStatus) : 'ok',
-      statusLabel: needsAttention ? (finalIssue || 'Review needed') : 'OK',
+      status: needsAttention ? 'issue' : (finalStatus === 'issue' ? 'ok' : finalStatus),
+      statusLabel: needsAttention ? (finalIssue || 'Review needed') : (finalStatus === 'ok' ? 'OK' : 'Cannot be verified'),
       tone,
       needsAttention,
-      issue: finalIssue,
-      detail,
+      issue: needsAttention ? finalIssue : '',
+      detail: needsAttention ? detail : (finalIssue || detail),
       targetTab,
       sheetAnchor,
       primaryAction: {
@@ -1947,12 +1800,9 @@ export class ProgressionReconciler {
 
   _compareExactDerivedValue(label, currentValue, expectedValue, status = 'ok') {
     if (status === 'unavailable') return '';
-    if (!Number.isFinite(Number(expectedValue))) return '';
+    if (!isPresentNumber(expectedValue)) return '';
     const expected = Number(expectedValue);
-    if (!Number.isFinite(Number(currentValue))) {
-      if (expected === 0) return '';
-      return `${label} is not currently present on the actor.`;
-    }
+    if (!isPresentNumber(currentValue)) return '';
     const current = Number(currentValue);
     if (current !== expected) return `${label} should be ${expected >= 0 ? '+' : ''}${expected} from class progression but is ${current >= 0 ? '+' : ''}${current}.`;
     return '';
@@ -2054,10 +1904,6 @@ export class ProgressionReconciler {
   }
 
   _readClassBabAtLevel(summary = {}, classLevel = 0, levelEntry = {}) {
-    if (summary.isNonheroic) {
-      const index = Math.max(0, Math.min(NONHEROIC_BAB_PROGRESSION.length - 1, classLevel - 1));
-      return NONHEROIC_BAB_PROGRESSION[index] ?? null;
-    }
     const direct = Number(levelEntry?.bab);
     if (Number.isFinite(direct)) return direct;
     const progression = this._resolveClassLevelProgression(summary.model || summary.item || {});
