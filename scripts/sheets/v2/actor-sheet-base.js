@@ -571,7 +571,7 @@ export class SWSEV2ActorSheetBase extends
     }
 
     // Header validation `!` (rendered only when there is something actionable) opens the read-only report.
-    root.querySelectorAll('[data-action="open-validation-report"]').forEach(el => {
+    root.querySelectorAll('[data-action="open-validation-report"], [data-action="open-progress-review"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         await this.openOverlay('character-validation');

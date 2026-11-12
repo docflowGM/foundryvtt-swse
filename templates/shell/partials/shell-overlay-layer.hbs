@@ -117,6 +117,27 @@
             {{#each vm.notes as |note|}}<p>{{note.text}}</p>{{/each}}
           </section>
         {{/if}}
+        {{#if vm.progress.hasRows}}
+          <section class="swse-validation-notes swse-progress-review" data-progress-review>
+            <h4>Review Progress (ability-score increases)</h4>
+            <p class="swse-validation-note">Neutral history review. Nothing here is an error. "Already Applied" records your statement and never changes an ability score.</p>
+            {{#each vm.progress.rows as |row|}}
+            <div class="swse-progress-row swse-progress-row--{{row.state}}" data-entitlement-id="{{row.id}}">
+              <p><strong>{{row.label}}</strong> &mdash; {{row.expectedLabel}} &mdash; <span class="swse-progress-state">{{row.stateText}}</span></p>
+              <p>{{row.summary}}</p>
+              {{#each row.records as |rec|}}
+              <p class="swse-progress-record{{#if rec.inactive}} swse-progress-record--inactive{{/if}}">{{rec.sourceText}}: {{rec.selectionText}}{{#if rec.note}} ({{rec.note}}){{/if}}
+                {{#if rec.canCorrect}}<button type="button" class="swse-btn" data-action="correct-acknowledgment" data-acknowledgment-id="{{rec.acknowledgmentId}}" data-level="{{row.level}}">Correct</button>{{/if}}
+                {{#if rec.canWithdraw}}<button type="button" class="swse-btn" data-action="withdraw-acknowledgment" data-acknowledgment-id="{{rec.acknowledgmentId}}" data-level="{{row.level}}">Withdraw</button>{{/if}}
+                {{#if rec.canSupersede}}<button type="button" class="swse-btn" data-action="supersede-acknowledgment" data-acknowledgment-id="{{rec.acknowledgmentId}}" data-level="{{row.level}}">Supersede (GM)</button>{{/if}}
+              </p>
+              {{/each}}
+              {{#if row.canAcknowledge}}<button type="button" class="swse-btn" data-action="acknowledge-ability-increase" data-level="{{row.level}}">Already Applied</button>{{/if}}
+              {{#if row.canApply}}<button type="button" class="swse-btn swse-btn--primary" data-action="apply-ability-increase" data-level="{{row.level}}" data-slot-id="{{row.id}}">Apply Increases</button>{{/if}}
+            </div>
+            {{/each}}
+          </section>
+        {{/if}}
         {{#if vm.ignored.length}}
           <section class="swse-validation-notes">
             <h4>Ignored warnings ({{vm.ignored.length}})</h4>
