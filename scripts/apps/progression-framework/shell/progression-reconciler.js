@@ -1801,6 +1801,17 @@ export class ProgressionReconciler {
       }));
     }
 
+    // OWNER DECISION (R17-F2): this comparison is INFORMATIONAL. The reconciler still carries its own class-progression arithmetic, which has
+    // not been converged with BABCalculator / DefenseCalculator / the modifier authority (nor does it know that BABCalculator returns a
+    // provisional heroic BAB while class data is still loading). A difference is therefore never asserted as a character error.
+    for (let i = 0; i < rows.length; i += 1) {
+      if (rows[i].needsAttention !== true) continue;
+      rows[i] = {
+        ...rows[i], status: 'unverifiable', statusLabel: 'Differs from class progression', tone: 'neutral', needsAttention: false,
+        noteText: `${rows[i].issue} This is shown for information only: permanent modifiers and class data are evaluated by other authorities, so it is not reported as an error.`,
+        issue: '',
+      };
+    }
     // Prepared statistics are only comparable once the authoritative derived calculation has been applied for the CURRENT
     // actor state. A pending / unknown lifecycle is a normal transient state: the rows are informational, never an error
     // (owner decision D-1 / P1-F5). Completion is observed through the existing derived-generation stamp, never a timer.
@@ -1808,7 +1819,7 @@ export class ProgressionReconciler {
     if (lifecycle.state !== 'current') {
       for (let i = 0; i < rows.length; i += 1) {
         if (rows[i].status === 'unavailable') continue; // already not comparable (class authority unresolved)
-        rows[i] = { ...rows[i], status: 'unverifiable', statusLabel: 'Calculation pending', tone: 'neutral', needsAttention: false, issue: '', detail: 'Calculated statistics are still being prepared; this will be checked when they are ready.' };
+        rows[i] = { ...rows[i], status: 'unverifiable', statusLabel: 'Calculation pending', tone: 'neutral', needsAttention: false, issue: '', noteText: '', detail: 'Calculated statistics are still being prepared; this will be checked when they are ready.' };
       }
     }
     for (const row of rows) {
@@ -2005,7 +2016,13 @@ export class ProgressionReconciler {
     };
     return {
       hpMax: this._firstFiniteNumber(actor?.system?.hp?.max, actor?.system?.derived?.hp?.max),
-      bab: this._firstFiniteNumber(actor?.system?.derived?.bab),
+      // `derived.bab` already INCLUDES permanent modifiers (BABCalculator returns class BAB + adjustment). Only the class portion is
+      // comparable with a class-progression expectation, so the stored adjustment is removed; without it the two cannot be separated.
+      bab: (() => {
+        const total = this._firstFiniteNumber(actor?.system?.derived?.bab);
+        const adjustment = this._firstFiniteNumber(actor?.system?.derived?.babAdjustment);
+        return total === null || adjustment === null ? null : total - adjustment;
+      })(),
       classDefenses: Object.fromEntries(DEFENSE_KEYS.map(key => [key, readDefenseClassBonus(key)])),
     };
   }

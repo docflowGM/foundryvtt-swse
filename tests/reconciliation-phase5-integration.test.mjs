@@ -42,19 +42,23 @@ await check('2. manual and wizard-shaped builds differ only in provenance and pr
   const wizard = legit({ flags: { speciesGrantManifest: { grantKey: 'human' }, progressionCertifications: [] } });
   wizard.system.progression.lastForcePointRefresh = { reason: 'chargen-finalization', newMax: 5 };
   assert.deepEqual(F.buildFindings(report(manual)).map(f => f.id), F.buildFindings(report(wizard)).map(f => f.id));
-  manual.system.derived.bab = 3; settleDerived(manual); wizard.system.derived.bab = 3; settleDerived(wizard);
+  for (const x of [manual, wizard]) { x.items = x.items.filter(i => i.type !== 'talent'); x._stats.modifiedTime += 1; settleDerived(x); }   // same real discrepancy in both
+  assert.ok(F.buildFindings(report(manual)).length > 0);
   assert.deepEqual(F.buildFindings(report(manual)).map(f => f.id), F.buildFindings(report(wizard)).map(f => f.id));
 });
 
 await check('3. several simultaneous discrepancies are independent: distinct stable ids; ignoring one does not hide the others; resolving one leaves the others', async () => {
   const a = legit();
-  a.system.derived.bab = 3; a.system.forcePoints.max = 4; a.system.progression.lastForcePointRefresh = { newMax: 4 }; settleDerived(a);
+  a.items = a.items.filter(i => i.type !== 'talent'); a.system.forcePoints.max = 4; a.system.progression.lastForcePointRefresh = { newMax: 4 }; settleDerived(a);
   const found = F.buildFindings(report(a));
-  const bab = found.find(f => f.code === 'BAB_MISMATCH'), fp = found.find(f => f.code === 'FORCE_POINT_MAX_MISMATCH');
-  assert.ok(bab && fp); assert.notEqual(bab.id, fp.id);
+  const bab = found.find(f => f.code === 'MISSING_CLASS_TALENT');
+  assert.ok(bab); assert.equal(found.some(f => /FORCE_POINT/.test(f.code)), false, 'Force Point differences are optional, never findings');
+  const fp = F.buildOptionalActions(report(a)).find(o => o.id === 'optional:force-points-max');
+  assert.ok(fp); assert.notEqual(bab.id, fp.id);
   a.flags.swse.reconciliationIgnored = F.addIgnored([], bab, {});
   const part = F.partitionFindings(F.buildFindings(report(a)), F.readIgnored(a));
-  assert.deepEqual(part.visible.map(f => f.id), [fp.id]); assert.equal(sheet(a).validation.playerActionable, true);
+  assert.equal(part.visible.some(f => f.id === bab.id), false); assert.equal(sheet(a).validation.playerActionable, false, 'ignored finding + optional action => no !');
+  assert.equal(sheet(a).validation.optional.length, 1);
   // resolve the Force Point finding through the safe path; the (ignored) BAB finding is untouched
   const deps = {
     findFindings: x => [...F.buildFindings(report(x)), ...F.buildOptionalActions(report(x))],
@@ -64,7 +68,7 @@ await check('3. several simultaneous discrepancies are independent: distinct sta
   };
   assert.equal((await resolveFinding({ actor: a, findingId: fp.id, deps })).status, 'resolved');
   const after = F.buildFindings(report(a));
-  assert.equal(after.some(f => f.code === 'FORCE_POINT_MAX_MISMATCH'), false); assert.equal(after.some(f => f.id === bab.id), true);
+  assert.equal(F.buildOptionalActions(report(a)).length, 0); assert.equal(after.some(f => f.id === bab.id), true);
 });
 
 await check('4. one failing domain adapter never hides or corrupts the others, and never mutates the actor', () => {
@@ -72,7 +76,7 @@ await check('4. one failing domain adapter never hides or corrupts the others, a
   const before = JSON.stringify([a.system, a.flags, a.items]);
   const out = A.runDomainAdapters(a, [function broken() { throw new Error('boom'); }, ...A.DOMAIN_ADAPTERS]);
   assert.equal(out[0].reason, 'adapter-error');
-  assert.equal(out.find(v => v.id === 'force-points-max').status, A.DOMAIN_STATUS.CONFIRMED_DISCREPANCY);
+  assert.equal(out.find(v => v.id === 'force-points-max').reason, 'matches-last-progression-write');
   assert.equal(JSON.stringify([a.system, a.flags, a.items]), before);
 });
 
@@ -115,7 +119,7 @@ await check('8. authority hygiene (static): adapters import no mutating authorit
 
 await check('9. the cumulative report names every one of the 17 domains with a status and a reason', () => {
   const rep = fs.readFileSync('docs/audits/reconciliation-v2-17-domain-implementation-report.md', 'utf8');
-  assert.match(rep, /## Phase 5/); assert.match(rep, /Domain-by-domain certification/);
+  assert.match(rep, /## Phase 5/); assert.match(rep, /Domain-by-domain status/);
   for (let d = 1; d <= 17; d += 1) assert.match(rep, new RegExp(`\\|\\s*${d}\\s*\\|`), `domain ${d} row`);
 });
 console.log('reconciliation-phase5-integration.test.mjs: all assertions passed');

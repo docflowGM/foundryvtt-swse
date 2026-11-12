@@ -133,7 +133,7 @@ Not implemented (reasons recorded):
 Tests: `tests/reconciliation-phase3-equipment.test.mjs`.
 
 ## Phase 4 — droid mechanics — COMPLETE (mode-aware, narrow)
-Implemented: Domain 16 `droidConstructionAdapter`. Mode comes from the existing `resolveDroidCalculationMode` / `isStockImportedDroid`:
+Implemented: SUPERSEDED BY R17-F1 (see 'Review corrections'): the original adapter applied `DroidValidationEngine` to every finalized custom droid and false-flagged Store-built droids. Original description: Domain 16 `droidConstructionAdapter`. Mode comes from the existing `resolveDroidCalculationMode` / `isStockImportedDroid`:
 - stock-statblock droids and stock droids converted to playable: NOT_APPLICABLE (their authority is the published statblock / the conversion service,
   not custom-construction requirements); the existing droid conversion / installation reconciliation services are untouched and are not merged in;
 - custom droids whose `system.droidSystems.stateMode` is not `FINALIZED` (or with no build record): UNVERIFIABLE;
@@ -147,7 +147,7 @@ Tests: `tests/reconciliation-phase4-droid.test.mjs`.
 
 ## Phase 5 — integration and certification
 
-### Domain-by-domain certification
+### Domain-by-domain status (implementation checkpoints - NOT mechanical certification; superseded where noted by 'Review corrections' below)
 Legend: **IMPL** implemented, **OFFLINE** covered by Node-harness tests, **FOUNDRY** runtime-tested (none are), **DEFER** deferred with reason. A domain with no verdict
 still emits nothing (Silent Success). "Evidence-bound" means only independent persisted evidence can produce a finding.
 
@@ -157,18 +157,18 @@ still emits nothing (Silent Success). "Evidence-bound" means only independent pe
 | 2 | Classes and levels | Class-level reader with conflict reporting (PR #1145). | IMPL, OFFLINE, FOUNDRY no; prestige eligibility DEFER |
 | 3 | Ability scores | Ability-increase entitlements (existing). Mods/totals are prepared values (D-1). | partial; input-vs-record check DEFER (original scores unknowable) |
 | 4 | Hit points | Ledger-based additive accounting; verdict only for unreflected recorded CON / feat / bonus contributions; Resolve disabled (PR #1145). | IMPL, OFFLINE, FOUNDRY no; HP-001 open |
-| 5 | Base Attack Bonus | Class-model expectation vs prepared value, only once the derived calculation is applied; second arithmetic not yet retired. | IMPL (existing), OFFLINE; consolidation DEFER |
-| 6 | Defenses | Class defense bonus vs prepared value, same gating; persisted editable overrides no longer read (D-2). Total defenses not re-derived (D-1). | partial |
+| 5 | Base Attack Bonus | Class-only cross-check (derived BAB minus its stored adjustment) vs class-model expectation, INFORMATIONAL ONLY (never a finding) until the arithmetic is converged. | IMPL, OFFLINE; consolidation DEFER (D-6 #2) |
+| 6 | Defenses | Class defense bonus vs prepared value, INFORMATIONAL ONLY; persisted editable overrides not read (D-2). Total defenses not re-derived (D-1). | partial |
 | 7 | Damage threshold, DR, shields | Nothing: threshold is prepared; persisted shield / DR sources not audited. | DEFER |
 | 8 | Feats | Slot/entitlement accounting, house-rule grants (existing). No historical prerequisite re-validation by design. | IMPL (existing); RECON-001/002/005 open |
 | 9 | Talents | Slot/entitlement accounting (existing). | IMPL (existing); RECON-001/005 open |
 | 10 | Skills | Nothing: no canonical trained-skill entitlement authority; totals prepared. | DEFER (RECON-007) |
-| 11 | Force abilities | Class-derived Force choices (existing). Feat-derived entitlement not checked. | partial; DEFER (RECON-006) |
-| 12 | Force Points / resources | Force Point maximum with evidence classification, optional initialization, safe Resolve. Other resources not audited. | IMPL, OFFLINE, FOUNDRY no |
+| 11 | Force abilities | Class-derived Force choices (existing). Force Training: informational diagnostic that consumes the existing `FeatGrantEntitlementResolver` (possible unspent selections); no attribution or confirmation. | partial; attribution DEFER (RECON-006) |
+| 12 | Force Points / resources | Force Point maximum: GM-documented override valid; every other difference is an OPTIONAL action (uninitialized / matches last progression write / unknown provenance), never a `!`; safe Resolve. Other resources not audited. | IMPL, OFFLINE, FOUNDRY no |
 | 13 | Movement and encumbrance | Carried-weight evidence note (items without a recorded weight). Load category not re-derived. | IMPL, OFFLINE, FOUNDRY no; movement DEFER |
 | 14 | Combat statistics | Nothing: prepared values; contextual rolls excluded. | DEFER |
 | 15 | Equipment and modifications | Nothing: armor effects are a calculation, modification certification is gated by open register entries and is not character correctness. | DEFER |
-| 16 | Droid mechanics | Mode-aware: finalized custom droid missing a required system is a review-only finding; stock and converted droids not applicable. | IMPL, OFFLINE, FOUNDRY no |
+| 16 | Droid mechanics | Provenance-aware: only a Store-built finalized droid is checked, against `quoteDroidBuild`; stock, converted and unknown-provenance droids are not confirmed. | IMPL, OFFLINE, FOUNDRY no |
 | 17 | Progression integrity | Evidence model, certification, ownership classification, house-rule accounting, targeted routing (PR #1145). | IMPL, OFFLINE, FOUNDRY no |
 
 ### Integration properties (Node harness)
@@ -192,3 +192,52 @@ compendium-backed class data; hook-driven refresh of open sheets.
 Only five files fail: `force-power-final-integration`, `phase3-force-power-corrections`, `phase4-force-modifier-automation`, `phase5-force-healing-mitigation`,
 `phase6-force-direct-damage`. All five also fail at the PR #1145 merge base (`33ce3f7`; missing module `scripts/combat/damage-system.js`), so they are pre-existing and
 unrelated; no force-power code was touched. `rolling-ci-support-check` (~109 s) passes. No newly introduced failures. Validators: partials, data, `system.json` pass.
+
+
+## Review corrections R17-F1 … R17-F5 (independent review of 6230c74) and owner decisions D-4 … D-7
+
+**Status distinction.** Phases 0-5 are *implementation checkpoints*. They are not *verified domain coverage*: most domains remain deferred, informational-only, or
+unverified in Foundry. Nothing here certifies the 17-domain mechanical scope.
+
+**Decisions recorded.** D-4 keep the actor-stamp memo key (no relevance key). D-5 no heuristic species verification; informational species integrity only; a future source-certified
+applied-grant snapshot at the authorized mutation boundary is to be investigated (not done). D-6 consolidation order: Force Point pure calculation, BAB / class-defense convergence,
+Force Training attribution, modification slots (none started; separate workstreams). D-7 HP-001 and RECON-001..007 remain open.
+
+**R17-F1 - false droid finding (FIXED).** `quoteDroidBuild()` (the Store's own authority) requires locomotion, processor and appendage only; `buildCustomDroidActorData()` produces
+`stateMode: 'FINALIZED'` with no armor, which `DroidValidationEngine` rejects. The adapter now: stock-statblock (explicit mode) and converted-stock droids (conversion
+provenance flags) are NOT_APPLICABLE; an explicit `playable-derived` mode alone is NOT treated as a stock import; unfinalized builds and finalized builds of unknown provenance
+are UNVERIFIABLE; a Store-built droid (`system.storeAcquisition.source` / `flags.swse.storeDroidConstruction`) is checked with `quoteDroidBuild` (OK => VALID; INCOMPLETE => review-only
+finding; BLOCKED such as catalog drift => UNVERIFIABLE). `DroidValidationEngine` is no longer used by reconciliation. Regression uses the real `quoteDroidBuild` ->
+`buildCustomDroidActorData` output (test 0 proves the old validator rejects it). Limitation: droids finalized through the Droid Builder (non-Store) have no provenance marker, so they
+are UNVERIFIABLE.
+
+**R17-F2 - BAB / class-defense false warnings (MITIGATED; convergence pending).** Verified: `BABCalculator.calculate` returns `class BAB + adjustment` and `DerivedCalculator` stores
+`system.derived.babAdjustment`, so the reconciler's class-only expectation would flag any permanent BAB modifier; `BABCalculator._startupSafeBab` returns a provisional heroic BAB while
+class data is loading, and a derived pass stamped in that window would read as "current". Class defense `classBonus` is the class-only value (modifiers are separate fields); the persisted
+editable value is only a fallback inside `DefenseCalculator`. Changes: the BAB comparison removes the stored adjustment (and is silent when it is absent); BAB and class-defense differences
+are INFORMATIONAL only (note, never `BAB_MISMATCH` / `DEFENSE_MISMATCH`); the `recalc` resolver kind now has no real producer (kept, exercised with a synthetic finding, candidate for
+removal when the convergence workstream decides). Existing tests that used BAB as a finding vehicle were rewritten (ignore flows use slot findings). Open: whether a provisional startup value can
+persist in `DerivedCalculator`'s compute cache after class data loads is not verified (Foundry-only).
+
+**R17-F3 - Force Training authority (CORRECTED).** Earlier statements that no Force Training entitlement authority exists were wrong. `FeatGrantEntitlementResolver` computes
+`max(1, 1 + configured ability modifier)` per instance, repeatable and dynamic (it follows the CURRENT modifier). RECON-006 now documents the precise gaps: attribution of owned
+powers to a specific instance, repeated instances, whether a later modifier change is retroactive, and overlap with class-granted powers. A diagnostic reads the existing resolver (no second
+formula) and only says that selections may be unspent when fewer Force powers are owned in total than the resolver currently opens. Note: both item type spellings `forcePower` and
+`force-power` exist in the codebase.
+
+**R17-F4 - Force Point evidence (REVISED).** `lastForcePointRefresh.newMax === system.forcePoints.max` is numerical agreement with an earlier progression write, not proof of
+uninterrupted formula ownership (an edited-then-restored value is indistinguishable). The "formula-managed stale = confirmed" path was therefore REMOVED: the Force Point adapter can
+no longer produce a finding. The cases stay distinct: documented GM override (VALID), matches last progression write, uninitialized (0), unknown provenance - the last three are optional
+actions only. Resolve keeps its safeguards (fresh re-derivation, actor-revision check, previous-value check, ActorEngine write). Not verified in Foundry: GM/player permission behavior of the
+write, and the `ActorEngine` guard behavior for the two new flag paths.
+
+**R17-F5 - async / cache integration (VERIFIED in Node, real write paths).** `swseDerivedApplied` is announced by the real `SWSEV2BaseActor._computeDerivedAsync` (changed and unchanged
+passes, and again after a destination reset) and by the real `ActorEngine._applyDerivedUpdates`; hook registration is idempotent; a request made while pending runs exactly once when the
+derived pass lands; repeated sheet reads do not re-run or loop; a newer actor update discards an outdated result before and after settling. Remaining Foundry-only questions: the load order
+that guarantees `async-enrichment.js` is imported (through the reconciler) before the first derived pass of interest, and real open-sheet refresh behavior.
+
+**Tests added/changed.** New: `reconciliation-async-lifecycle-paths` (7), `reconciliation-force-training-diagnostic` (4), revised `reconciliation-phase4-droid` (10, real Store path),
+`reconciliation-domain-adapters` (revised for R17-F2/F4), `reconciliation-phase6-advisory` (BAB informational + permanent-modifier regression), `reconciliation-phase5-integration`.
+
+**Verification of this correction round (Node harness).** Full sweep of all `tests/*.test.mjs` (170 s per-test limit): only the same five force-power files fail, all red at the PR #1145 merge base
+(`33ce3f7`) and untouched here; no new failures. Validators: partials, data, `system.json` pass. Foundry V13 acceptance: not performed.

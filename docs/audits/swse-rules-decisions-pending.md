@@ -2758,12 +2758,12 @@ No provisional recommendation has been converted into a ruling.
 | Rules domain | Force abilities / feat-derived entitlements |
 | Feature | Force Training (number of Force powers it grants) |
 | Source | No published page consulted. Repository evidence only. |
-| Evidence | `FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance(actor)` yields a per-instance slot count from the ability modifier at the time it is evaluated; owned Force power items do not reliably record which feat instance granted them. |
+| Evidence | `FeatGrantEntitlementResolver` DOES compute Force Training entitlements: `getForceTrainingSlotsPerInstance` = `max(1, 1 + configured ability modifier)`, `resolveForFeat` returns `forcePowerSlots` grants marked `repeatable` and `dynamic` (they follow the CURRENT modifier). The gaps are attribution and history: owned Force power items do not reliably record which feat instance granted them; repeated instances must not be double-counted; class-granted powers overlap; and it is not established whether a later modifier change is retroactive. |
 | Confirmed behavior | The resolver defines the number of selections a Force Training instance opens in the progression flow. |
 | Unresolved question | Whether a later change to the governing ability modifier changes an already-taken Force Training instance's entitlement, and how owned powers are attributed to a specific instance when provenance is absent. |
 | Options | Entitlement fixed when the feat is taken; entitlement tracks the current modifier (code evidence for the resolver only; none source-certified). |
 | Recommended ruling | None |
-| Implementation impact | No reconciliation check of feat-derived Force power entitlements (Domain 11) is implemented; class-derived Force choices remain covered. |
+| Implementation impact | Only an informational diagnostic (possible unspent selections, a lower bound) consumes the existing resolver; no attribution, no confirmed finding. Class-derived Force choices remain covered. |
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |

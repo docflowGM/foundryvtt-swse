@@ -44,15 +44,15 @@ const find = (actor, id) => F.buildFindings(ProgressionReconciler.safeReconcileA
 const sheet = actor => ProgressionReconciler.safeReconcileActor(actor, { output: 'sheet', fresh: true });
 const check = async (name, fn) => { await fn(); console.log(`PASS ${name}`); };
 
-await check('1. findings are specific mechanical discrepancies with stable identity, explanation and a resolve action', () => {
-  const actor = man('Soldier', 4, { derived: { bab: 2 } });
+await check('1. findings are specific mechanical discrepancies with stable identity, explanation and a resolve action; a BAB cross-check difference is informational only (R17-F2)', () => {
+  const actor = man('Soldier', 4, { derived: { bab: 2, babAdjustment: 0 } });
   const r = ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true });
   const fs_ = F.buildFindings(r);
-  const bab = fs_.find(f => f.code === 'BAB_MISMATCH');
-  assert.equal(bab.id, 'derived:bab:4:2');
-  assert.equal(bab.expected, 4); assert.equal(bab.actual, 2);
-  assert.equal(bab.resolve.kind, 'recalc');
-  assert.match(bab.explanation, /BAB/);
+  assert.equal(fs_.some(f => f.code === 'BAB_MISMATCH' || f.code === 'DEFENSE_MISMATCH'), false, 'no confirmed BAB / defense finding from the competing arithmetic');
+  const row = r.derivedStats.rows.find(x => x.id === 'bab');
+  assert.equal(row.needsAttention, false); assert.equal(row.status, 'unverifiable');
+  assert.match(row.noteText, /BAB.*not reported as an error/);
+  assert.ok(sheet(actor).validation.notes.some(n => n.id === 'note:bab'), 'shown as an informational note');
   const talent = fs_.find(f => f.code === 'MISSING_CLASS_TALENT');
   assert.match(talent.id, /^slot:soldier-1-class-talent-1$/);
   assert.equal(talent.resolve.kind, 'open-step');
@@ -61,8 +61,17 @@ await check('1. findings are specific mechanical discrepancies with stable ident
   assert.ok(talent.resolve.dataset.stepId);
 });
 
+await check('1b. a legitimate permanent BAB modifier is NOT a discrepancy (derived BAB includes the adjustment)', () => {
+  const actor = man('Soldier', 4, { derived: { bab: 6, babAdjustment: 2 } }); // class BAB 4 + a +2 permanent modifier
+  const row = ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true }).derivedStats.rows.find(x => x.id === 'bab');
+  assert.equal(row.status, 'ok'); assert.equal(row.needsAttention, false); assert.ok(!row.noteText);
+  assert.equal(sheet(actor).validation.notes.some(n => n.id === 'note:bab'), false);
+  const noAdj = man('Soldier', 4, { derived: { bab: 6 } });   // adjustment unknown => cannot separate => silent
+  assert.equal(sheet(noAdj).validation.notes.some(n => n.id === 'note:bab'), false);
+});
+
 await check('2. manual build with no provenance/certification and correct mechanics: no findings, no !', () => {
-  const actor = man('Soldier', 1, { derived: { bab: 1, defenses: { fortitude: { classBonus: 2 }, reflex: { classBonus: 1 }, will: { classBonus: 0 } } }, hp: {} });
+  const actor = man('Soldier', 1, { derived: { bab: 1, babAdjustment: 0, defenses: { fortitude: { classBonus: 2 }, reflex: { classBonus: 1 }, will: { classBonus: 0 } } }, hp: {} });
   actor.items.push({ id: 'f1', type: 'feat', name: 'Toughness', system: {}, flags: { swse: {} } }, { id: 't1', type: 'talent', name: 'Armor Specialization', system: {}, flags: { swse: {} } });
   const s = sheet(actor);
   assert.equal(s.validation.findings.length, 0);
@@ -70,15 +79,15 @@ await check('2. manual build with no provenance/certification and correct mechan
 });
 
 await check('3. Ignore: suppresses ONLY that warning, persists, changes nothing mechanical, header state follows', () => {
-  const actor = man('Soldier', 4, { derived: { bab: 2 } });
+  const actor = man('Soldier', 4, { derived: { bab: 2, babAdjustment: 0 } });
   const before = sheet(actor);
-  assert.ok(before.validation.findings.some(f => f.id === 'derived:bab:4:2'));
-  const babFinding = find(actor, 'derived:bab:4:2');
+  assert.ok(before.validation.findings.some(f => f.id === 'slot:soldier-1-class-talent-1'));
+  const babFinding = find(actor, 'slot:soldier-1-class-talent-1');
   actor.flags.swse.reconciliationIgnored = F.addIgnored(F.readIgnored(actor), babFinding, { userId: 'u1', userName: 'Pat' });
   actor.flags.swse.reconciliationIgnored = F.addIgnored(F.readIgnored(actor), babFinding, { userId: 'u1' });
   assert.equal(actor.flags.swse.reconciliationIgnored.length, 1, 'ignoring twice is idempotent');
   const after = sheet(actor);
-  assert.ok(!after.validation.findings.some(f => f.id === 'derived:bab:4:2'));
+  assert.ok(!after.validation.findings.some(f => f.id === 'slot:soldier-1-class-talent-1'));
   assert.equal(after.validation.ignored.length, 1);
   assert.equal(after.validation.ignored[0].ignoredByName, 'Pat');
   assert.equal(actor.system.derived.bab, 2, 'character statistics are untouched');
@@ -89,27 +98,30 @@ await check('3. Ignore: suppresses ONLY that warning, persists, changes nothing 
 });
 
 await check('4. Ignore all => header ! disappears; material change => NEW finding reappears; old record is stale', () => {
-  const actor = man('Soldier', 4, { derived: { bab: 2 } });
+  const actor = man('Soldier', 4, { derived: { bab: 2, babAdjustment: 0 } });
   let all = F.buildFindings(ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true }));
   for (const f of all) actor.flags.swse.reconciliationIgnored = F.addIgnored(F.readIgnored(actor), f, {});
   let s = sheet(actor);
   assert.equal(s.validation.findings.length, 0);
   assert.equal(s.validation.playerActionable, false, 'every finding ignored => hidden');
-  // level up: expected BAB changes (4 -> 5) while actual stays 2: a different discrepancy
+  // level up: a new entitlement appears, which the earlier ignores do not cover
+  const ignoredIds = new Set(all.map(f => f.id));
   actor.items[0].system.level = 5; actor.system.level = 5; actor.system.progression.classLevels[0].level = 5; actor._stats.modifiedTime = 2;
+  settleDerived(actor);
   s = sheet(actor);
-  assert.ok(!s.validation.findings.some(f => f.code === 'BAB_MISMATCH'), 'derived calculation not yet applied for the new state: no BAB accusation');
-  settleDerived(actor); // the authoritative derived pass completes for the new state
+  assert.ok(s.validation.findings.length > 0 && s.validation.findings.every(f => !ignoredIds.has(f.id)), 'the NEW finding reappears; the old ones stay ignored');
+  assert.equal(s.validation.playerActionable, true);
+  // an ignore record whose discrepancy no longer exists is reported stale and can be cleared
+  actor.flags.swse.reconciliationIgnored = [...F.readIgnored(actor), { id: 'slot:gone-1', code: 'MISSING_CLASS_TALENT' }];
   s = sheet(actor);
-  assert.ok(s.validation.findings.some(f => f.id === 'derived:bab:5:2'), 'the changed discrepancy resurfaces');
-  assert.ok(s.validation.staleIgnored.some(r => r.id === 'derived:bab:4:2'), 'the old ignore record is reported stale');
+  assert.ok(s.validation.staleIgnored.some(r => r.id === 'slot:gone-1'), 'the stale ignore record is reported');
   actor.flags.swse.reconciliationIgnored = F.removeIgnored(F.readIgnored(actor), s.validation.staleIgnored.map(r => r.id));
   assert.ok(!sheet(actor).validation.staleIgnored.length);
 });
 
 await check('5. Restore returns the warning; restore is idempotent', () => {
-  const actor = man('Soldier', 4, { derived: { bab: 2 } });
-  const f = find(actor, 'derived:bab:4:2');
+  const actor = man('Soldier', 4, { derived: { bab: 2, babAdjustment: 0 } });
+  const f = find(actor, 'slot:soldier-1-class-talent-1');
   actor.flags.swse.reconciliationIgnored = F.addIgnored([], f, {});
   assert.ok(!sheet(actor).validation.findings.some(x => x.id === f.id));
   actor.flags.swse.reconciliationIgnored = F.removeIgnored(F.readIgnored(actor), f.id);
@@ -118,17 +130,21 @@ await check('5. Restore returns the warning; restore is idempotent', () => {
 });
 
 await check('6. memo: an ignore/restore flag change is honoured on the very next sheet projection (no stale memo)', () => {
-  const actor = man('Soldier', 4, { derived: { bab: 2 } });
-  assert.ok(ProgressionReconciler.safeReconcileActor(actor, { output: 'sheet' }).validation.findings.some(f => f.id === 'derived:bab:4:2'));
-  const f = find(actor, 'derived:bab:4:2');
+  const actor = man('Soldier', 4, { derived: { bab: 2, babAdjustment: 0 } });
+  assert.ok(ProgressionReconciler.safeReconcileActor(actor, { output: 'sheet' }).validation.findings.some(f => f.id === 'slot:soldier-1-class-talent-1'));
+  const f = find(actor, 'slot:soldier-1-class-talent-1');
   actor.flags.swse.reconciliationIgnored = F.addIgnored([], f, {});
   actor._stats.modifiedTime = 2;
   assert.ok(!ProgressionReconciler.safeReconcileActor(actor, { output: 'sheet' }).validation.findings.some(x => x.id === f.id));
 });
 
+// BAB cross-checks are informational (R17-F2), so no REAL finding carries a 'recalc' resolve any more. The resolver registry's
+// idempotence / verification / in-flight guarantees are exercised against a synthetic finding of that shape.
+const SYNTH = 'derived:bab:4:2';
+const synthBab = a => (a.system.derived.bab === 4 ? [] : [{ id: SYNTH, subject: 'derived:bab', code: 'SYNTHETIC_RECALC', resolve: { kind: 'recalc', label: 'Recalculate' } }]);
 function resolverDeps(actor, log, overrides = {}) {
   return {
-    findFindings: a => F.buildFindings(ProgressionReconciler.safeReconcileActor(a, { output: 'report', fresh: true })),
+    findFindings: a => [...F.buildFindings(ProgressionReconciler.safeReconcileActor(a, { output: 'report', fresh: true })), ...synthBab(a)],
     recalcAll: async a => { log.push('recalc'); a.system.derived.bab = 4; },
     openStep: async ds => { log.push(`open:${ds.stepId}`); },
     confirm: async () => true,
@@ -137,26 +153,26 @@ function resolverDeps(actor, log, overrides = {}) {
 }
 
 await check('7. Resolve BAB: invokes the canonical recalculation (never overwrites), verifies, and a second click is a no-op', async () => {
-  const actor = man('Soldier', 4, { derived: { bab: 2 } });
+  const actor = man('Soldier', 4, { derived: { bab: 2, babAdjustment: 0 } });
   const log = [];
-  const first = await resolveFinding({ actor, findingId: 'derived:bab:4:2', deps: resolverDeps(actor, log) });
+  const first = await resolveFinding({ actor, findingId: SYNTH, deps: resolverDeps(actor, log) });
   assert.equal(first.status, 'resolved');
-  const second = await resolveFinding({ actor, findingId: 'derived:bab:4:2', deps: resolverDeps(actor, log) });
+  const second = await resolveFinding({ actor, findingId: SYNTH, deps: resolverDeps(actor, log) });
   assert.equal(second.status, 'already-resolved');
   assert.deepEqual(log, ['recalc'], 'recalculated exactly once');
 });
 
 await check('8. Resolve that does not fix the value says so (no false success, no forced value)', async () => {
-  const actor = man('Soldier', 4, { derived: { bab: 2 } });
+  const actor = man('Soldier', 4, { derived: { bab: 2, babAdjustment: 0 } });
   const log = [];
-  const res = await resolveFinding({ actor, findingId: 'derived:bab:4:2', deps: resolverDeps(actor, log, { recalcAll: async () => { log.push('recalc'); } }) });
+  const res = await resolveFinding({ actor, findingId: SYNTH, deps: resolverDeps(actor, log, { recalcAll: async () => { log.push('recalc'); } }) });
   assert.equal(res.status, 'unchanged');
   assert.equal(actor.system.derived.bab, 2);
 });
 
 await check('9. a repair that moves the value to ANOTHER wrong value is not reported as resolved', async () => {
-  const actor = man('Soldier', 4, { derived: { bab: 2 } });
-  const res = await resolveFinding({ actor, findingId: 'derived:bab:4:2', deps: resolverDeps(actor, [], { recalcAll: async a => { a.system.derived.bab = 3; } }) });
+  const actor = man('Soldier', 4, { derived: { bab: 2, babAdjustment: 0 } });
+  const res = await resolveFinding({ actor, findingId: SYNTH, deps: resolverDeps(actor, [], { recalcAll: async a => { a.system.derived.bab = 3; } }) });
   assert.equal(res.status, 'unchanged', 'subject-based verification: BAB still mismatched');
 });
 
@@ -192,12 +208,12 @@ await check('11. Resolve missing talent: opens the matching selection step (no m
 });
 
 await check('12. rapid double click is absorbed by the in-flight guard', async () => {
-  const actor = man('Soldier', 4, { derived: { bab: 2 } });
+  const actor = man('Soldier', 4, { derived: { bab: 2, babAdjustment: 0 } });
   const log = [];
   let release; const gate = new Promise(r => { release = r; });
   const deps = resolverDeps(actor, log, { recalcAll: async a => { log.push('recalc'); await gate; a.system.derived.bab = 4; } });
-  const p1 = resolveFinding({ actor, findingId: 'derived:bab:4:2', deps });
-  const p2 = await resolveFinding({ actor, findingId: 'derived:bab:4:2', deps });
+  const p1 = resolveFinding({ actor, findingId: SYNTH, deps });
+  const p2 = await resolveFinding({ actor, findingId: SYNTH, deps });
   assert.equal(p2.status, 'busy');
   release();
   assert.equal((await p1).status, 'resolved');

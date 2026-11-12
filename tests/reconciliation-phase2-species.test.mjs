@@ -47,6 +47,8 @@ await check('5. read-only', () => {
 await check('6. deferred domains are recorded, not guessed (register + no adapter)', () => {
   const reg = fs.readFileSync('docs/audits/swse-rules-decisions-pending.md', 'utf8');
   assert.match(reg, /## RECON-006/); assert.match(reg, /## RECON-007/);
-  assert.equal(A.DOMAIN_ADAPTERS.some(f => /skill|forcetraining/i.test(f.name)), false);
+  assert.equal(A.DOMAIN_ADAPTERS.some(f => /skill/i.test(f.name)), false);
+  // Force Training has only the informational diagnostic over the existing resolver (R17-F3), never an entitlement verdict
+  assert.deepEqual(A.DOMAIN_ADAPTERS.filter(f => /forcetraining/i.test(f.name)).map(f => f.name), ['forceTrainingEntitlementDiagnosticAdapter']);
 });
 console.log('reconciliation-phase2-species.test.mjs: all assertions passed');

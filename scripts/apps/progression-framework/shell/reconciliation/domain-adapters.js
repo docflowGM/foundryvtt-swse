@@ -13,8 +13,10 @@ import { ClassesDB } from '/systems/foundryvtt-swse/scripts/data/classes-db.js';
 import { readActorClassLevels } from './class-level-reader.js';
 import { readOverride } from './override-provenance.js';
 import { derivedLifecycle } from './derived-lifecycle.js';
-import { DroidValidationEngine } from '/systems/foundryvtt-swse/scripts/engine/droid-validation-engine.js';
-import { resolveDroidCalculationMode, isStockImportedDroid, DROID_CALCULATION_MODE } from '/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js';
+import { quoteDroidBuild } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-build-quote.js';
+import { STORE_DROID_APPROVAL_KIND } from '/systems/foundryvtt-swse/scripts/engine/store/store-droid-construction.js';
+import { resolveDroidCalculationMode, DROID_CALCULATION_MODE } from '/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js';
+import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { EncumbranceEngine } from '/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js';
 
 export const DOMAIN_STATUS = Object.freeze({
@@ -78,19 +80,14 @@ export function forcePointMaxAdapter(actor) {
   if (override && override.value === actual) {
     return result({ ...base, status: DOMAIN_STATUS.VALID, expected, actual, reason: 'authorized-override', provenance: 'gm-override' });
   }
+  // `lastForcePointRefresh.newMax === stored max` is only NUMERICAL agreement with an earlier progression write: it cannot show the value was
+  // never edited and restored, nor that it was meant to keep following the formula (R17-F4). So even this case is never a confirmed error;
+  // it is reported distinctly, with an optional action, and the player decides.
   const refresh = actor?.system?.progression?.lastForcePointRefresh;
-  const formulaManaged = finiteOrNull(refresh?.newMax) === actual; // value untouched since progression last wrote it
+  const matchesLastProgressionWrite = finiteOrNull(refresh?.newMax) === actual;
   const optional = { kind: 'set-force-point-max', label: `Set to ${expected}`, dataset: { value: expected } };
-  if (formulaManaged) {
-    // Proven: progression wrote this value from the formula, nobody changed it since, and the formula now disagrees.
-    return result({
-      ...base,
-      status: DOMAIN_STATUS.CONFIRMED_DISCREPANCY,
-      expected, actual,
-      reason: 'formula-managed-value-stale',
-      issue: `Maximum Force Points is ${actual}, but your class levels and Force Point feats now give ${expected}.`,
-      resolve: optional,
-    });
+  if (matchesLastProgressionWrite) {
+    return result({ ...base, expected, actual, reason: 'matches-last-progression-write', optional, optionalText: `Maximum Force Points is ${actual}, the value progression last set, but your class levels and Force Point feats now give ${expected}. Nothing records whether you meant to keep it, so this is not treated as an error.` });
   }
   if (actual === 0) {
     return result({ ...base, expected, actual, reason: 'uninitialized', optional, optionalText: `Maximum Force Points has not been set. Your class levels and Force Point feats give ${expected}.` });
@@ -142,31 +139,73 @@ export function carriedWeightEvidenceAdapter(actor) {
 }
 
 /**
- * Domain 16 - droid construction (mode-aware). Applies ONLY to a custom-built droid whose build was FINALIZED
- * (`system.droidSystems.stateMode === 'FINALIZED'`): finalization is the point at which the builder's own required-system check
- * (`DroidValidationEngine.validateDroidConfiguration`) was satisfied, so a finalized droid that no longer has a required system is a
- * proven inconsistency. Stock-statblock droids and stock droids converted to playable are NOT_APPLICABLE (their authority is the
- * published statblock / the conversion service, never custom-construction requirements). Unfinalized builds are UNVERIFIABLE.
+ * Domain 16 - droid construction (provenance-aware). The requirements that governed a build depend on how it was made, so a
+ * single validator is never applied to every finalized droid (the older `DroidValidationEngine` requires an armor component that the
+ * authorized Store construction path does not).
+ *
+ *   NOT_APPLICABLE : stock-statblock droids (explicit calculation mode) and stock droids converted to playable (the conversion service
+ *                    wrote `flags.swse.stockDroidImport` / `stockDroidConversion`). An explicit `playable-derived` mode ALONE is not
+ *                    evidence of a stock import - a custom droid carries it too.
+ *   UNVERIFIABLE   : no build record, a build that is not FINALIZED, or a finalized build whose governing requirements cannot be
+ *                    established from its provenance (only Store-constructed droids carry a provenance marker today).
+ *   Store-built    : governed by the shared construction-quote authority (`quoteDroidBuild`), the same authority the Store used to
+ *                    price and approve the build. OK => VALID. INCOMPLETE (a required locomotion / processor / appendage is missing)
+ *                    => CONFIRMED_DISCREPANCY, review-only. BLOCKED (unknown component identity, unresolved pricing) => UNVERIFIABLE:
+ *                    catalog drift is not a character error.
  * Read-only; no resolve (components are never auto-installed or removed).
  */
 export function droidConstructionAdapter(actor) {
-  const base = { domain: 'droid', id: 'droid-construction', label: 'Droid construction', authority: 'engine/droid-validation-engine.js' };
+  const base = { domain: 'droid', id: 'droid-construction', label: 'Droid construction', authority: 'domain/droids/droid-build-quote.js quoteDroidBuild' };
   if (actor?.type !== 'droid') return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'actor-type' });
   if (resolveDroidCalculationMode(actor).mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK) return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'stock-statblock' });
-  if (isStockImportedDroid(actor)) return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'converted-stock-droid' });
+  if (actor?.flags?.swse?.stockDroidImport || actor?.flags?.swse?.stockDroidConversion) return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'converted-stock-droid' });
   const systems = actor?.system?.droidSystems;
   if (!systems || typeof systems !== 'object') return result({ ...base, reason: 'no-build-record' });
   if (systems.stateMode !== 'FINALIZED') return result({ ...base, reason: 'build-not-finalized' });
-  const validation = DroidValidationEngine.validateDroidConfiguration(systems);
-  if (validation.valid) return result({ ...base, status: DOMAIN_STATUS.VALID });
+  const storeBuilt = actor?.system?.storeAcquisition?.source === STORE_DROID_APPROVAL_KIND || !!actor?.flags?.swse?.storeDroidConstruction;
+  if (!storeBuilt) return result({ ...base, reason: 'governing-requirements-not-established' });
+
+  let quote;
+  try { quote = quoteDroidBuild(actor.system, { speciesDroidBuilder: null }); } catch (_err) { return result({ ...base, reason: 'quote-authority-error' }); }
+  if (quote.status === 'OK') return result({ ...base, status: DOMAIN_STATUS.VALID });
+  if (quote.status === 'INCOMPLETE') {
+    const missing = quote.reasons.filter(r => r.startsWith('MISSING_REQUIRED')).map(r => r.replace(/^MISSING_REQUIRED:\s*/, ''));
+    return result({
+      ...base, status: DOMAIN_STATUS.CONFIRMED_DISCREPANCY,
+      expected: 'complete', actual: missing.join(', '), reason: 'store-build-missing-required-systems',
+      issue: `This droid's finalized build is missing a required system: ${missing.join(', ')}.`,
+    });
+  }
+  return result({ ...base, reason: 'quote-blocked' });
+}
+
+/**
+ * Domain 11 - Force Training entitlement DIAGNOSTIC (informational only, RECON-006). The existing `FeatGrantEntitlementResolver` is the
+ * authority for how many power selections each Force Training instance opens (`max(1, 1 + configured ability modifier)`, repeatable and
+ * DYNAMIC: it follows the current modifier). It is consumed unchanged; no second formula exists here. What is NOT established is which
+ * owned power came from which instance, whether a later modifier change is retroactive, and how class-granted powers overlap, so no
+ * attribution is attempted and nothing is ever confirmed. The only statement made is a lower-bound one: if the actor owns FEWER Force powers in
+ * total than the resolver's current Force Training selections, some of those selections are certainly unspent.
+ */
+const normalizedName = (item) => String(item?.name ?? '').trim().toLowerCase();
+export function forceTrainingEntitlementDiagnosticAdapter(actor) {
+  const base = { domain: 'force-training', id: 'force-training-entitlement', label: 'Force Training selections', authority: 'engine/progression/feats/feat-grant-entitlement-resolver.js' };
+  if (actor?.type !== 'character') return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'actor-type' });
+  const instances = Array.from(actor?.items ?? []).filter(item => item?.type === 'feat' && normalizedName(item) === 'force training');
+  if (!instances.length) return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'no-force-training' });
+  const selections = instances
+    .flatMap((feat, index) => FeatGrantEntitlementResolver.resolveForFeat(actor, feat, index))
+    .filter(entry => entry?.grantType === 'forcePowerSlots')
+    .reduce((sum, entry) => sum + (Number(entry.count) || 0), 0);
+  const owned = Array.from(actor?.items ?? []).filter(item => item?.type === 'forcePower' || item?.type === 'force-power').length;
+  if (!(selections > 0) || owned >= selections) return result({ ...base, status: DOMAIN_STATUS.VALID, expected: selections, actual: owned });
   return result({
-    ...base, status: DOMAIN_STATUS.CONFIRMED_DISCREPANCY,
-    expected: 'complete', actual: validation.errors.join('; '), reason: 'finalized-build-missing-required-systems',
-    issue: `This droid's build is finalized but is missing a required system: ${validation.errors.join('; ')}.`,
+    ...base, expected: selections, actual: owned, reason: 'possible-unspent-force-training',
+    noteText: `Force Training currently provides ${selections} Force power selection${selections === 1 ? '' : 's'} (from your current ability modifier) but this character owns ${owned} Force power${owned === 1 ? '' : 's'} in total, so some may be unspent. The record does not say which power came from which source, so this is not checked further.`,
   });
 }
 
-export const DOMAIN_ADAPTERS = Object.freeze([forcePointMaxAdapter, speciesGrantIntegrityAdapter, carriedWeightEvidenceAdapter, droidConstructionAdapter]);
+export const DOMAIN_ADAPTERS = Object.freeze([forcePointMaxAdapter, speciesGrantIntegrityAdapter, carriedWeightEvidenceAdapter, droidConstructionAdapter, forceTrainingEntitlementDiagnosticAdapter]);
 
 /**
  * Asynchronous adapters run by async-enrichment.js ONLY after the derived lifecycle is current. They may await canonical

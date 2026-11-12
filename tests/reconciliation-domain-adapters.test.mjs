@@ -57,6 +57,8 @@ const fpFinding = a => F.buildFindings(report(a)).find(f => f.code === 'FORCE_PO
 const check = async (name, fn) => { await fn(); console.log(`PASS ${name}`); };
 
 const optionals = a => F.buildOptionalActions(report(a));
+const sheetActionable = x => F.buildFindings(report(x)).some(f => /FORCE_POINT/.test(f.code));
+const fpOptional = a => optionals(a).find(o => o.id === 'optional:force-points-max');
 const wait = () => new Promise(r => setImmediate(r)); // lets already-settled microtasks drain; NOT a correctness gate
 const verdict = (over = {}) => ({ domain: 'test', id: 'test-domain', label: 'Test', status: 'CONFIRMED_DISCREPANCY', expected: 1, actual: 2, issue: 'Test discrepancy.', authority: 'test', reason: '', resolve: { kind: 'none', label: '' }, ...over });
 
@@ -67,11 +69,14 @@ await check('1. correctly initialized maximum (progression-written, formula agre
   assert.equal(fpFinding(a), undefined); assert.equal(optionals(a).length, 0);
 });
 
-await check('2. PROVEN stale formula-managed value (progression wrote it, untouched since, formula now differs) is the only confirmed case', () => {
-  const f = fpFinding(pc({ fpMax: 5, refreshMax: 5 }));
-  assert.ok(f); assert.equal(f.expected, 6); assert.equal(f.actual, 5);
-  assert.equal(f.id, 'derived:force-points-max:6:5');
-  assert.equal(f.resolve.kind, 'set-force-point-max'); assert.equal(f.resolve.dataset.value, 6); assert.equal(f.ignorable, true);
+await check('2. a value equal to the last progression write is NUMERICAL agreement only: distinct, optional, never a confirmed error (R17-F4)', () => {
+  const a = pc({ fpMax: 5, refreshMax: 5 });
+  assert.equal(fpFinding(a), undefined); assert.equal(fpRow(a).needsAttention, false); assert.equal(fpRow(a).reason, 'matches-last-progression-write');
+  const o = fpOptional(a);
+  assert.ok(o); assert.equal(o.resolve.kind, 'set-force-point-max'); assert.equal(o.resolve.dataset.value, 6); assert.equal(o.optional, true);
+  assert.equal(sheetActionable(a), false);
+  assert.notEqual(fpRow(a).reason, fpRow(pc({ fpMax: 0, fpValue: 0 })).reason, 'distinct from uninitialized');
+  assert.notEqual(fpRow(a).reason, fpRow(pc({ fpMax: 9 })).reason, 'distinct from unknown provenance');
 });
 
 await check('3. manual character with the template default 0: NO error; optional initialization only, not counted toward the !', () => {
@@ -105,7 +110,7 @@ await check('5. documented GM override is VALID; a stale override record (value 
 
 await check('6. Force Point feat bonus and prestige / high-water bases are honored by the canonical formula', () => {
   assert.equal(fpRow(pc({ fpMax: 9, items: [forceBoon()] })).status, 'ok');
-  assert.equal(fpFinding(pc({ fpMax: 6, refreshMax: 6, items: [forceBoon()] })).expected, 9);
+  assert.equal(fpOptional(pc({ fpMax: 6, refreshMax: 6, items: [forceBoon()] })).resolve.dataset.value, 9);
   assert.equal(fpRow(pc({ classes: [['Soldier', 2], ['Gunslinger', 2]], fpMax: 8 })).status, 'ok');
   assert.equal(fpRow(pc({ classes: [['Soldier', 4], ['Jedi Master', 2]], fpMax: 10 })).status, 'ok');
   assert.equal(fpRow(pc({ fpMax: 7, flags: { hasPrestigeFPBonus: true } })).status, 'ok');
@@ -162,23 +167,23 @@ function resolveDeps(actor, over = {}) {
 await check('11. Resolve revalidates and writes the verified value once; idempotent; unchanged is reported honestly', async () => {
   const a = pc({ fpMax: 5, refreshMax: 5 });
   const { calls, deps } = resolveDeps(a);
-  const id = fpFinding(a).id;
+  const id = fpOptional(a).id;
   assert.equal((await resolveFinding({ actor: a, findingId: id, deps })).status, 'resolved'); assert.deepEqual(calls, [6]);
   assert.equal((await resolveFinding({ actor: a, findingId: id, deps })).status, 'already-resolved'); assert.equal(calls.length, 1);
   const b = pc({ fpMax: 5, refreshMax: 5 });
   const noop = resolveDeps(b, { setForcePointMax: async () => {} });
-  assert.equal((await resolveFinding({ actor: b, findingId: fpFinding(b).id, deps: noop.deps })).status, 'unchanged');
+  assert.equal((await resolveFinding({ actor: b, findingId: fpOptional(b).id, deps: noop.deps })).status, 'unchanged');
 });
 
 await check('12. stale Resolve: actor changed after the finding was built => nothing written', async () => {
   // revision moves between the start of the action and the write
   const a = pc({ fpMax: 5, refreshMax: 5 });
   let n = 0; const { calls, deps } = resolveDeps(a, { actorRevision: () => (n += 1) });
-  const res = await resolveFinding({ actor: a, findingId: fpFinding(a).id, deps });
+  const res = await resolveFinding({ actor: a, findingId: fpOptional(a).id, deps });
   assert.equal(res.status, 'stale'); assert.equal(calls.length, 0);
   // the canonical expected value changed (a Force Point feat was added) after the finding was displayed
   const b = pc({ fpMax: 5, refreshMax: 5 });
-  const stalePlan = fpFinding(b);
+  const stalePlan = fpOptional(b);
   b.items.push(forceBoon()); b._stats.modifiedTime += 1;
   const fixed = resolveDeps(b);
   // simulate the displayed (old) finding by serving it on the first read only
@@ -189,7 +194,7 @@ await check('12. stale Resolve: actor changed after the finding was built => not
   // the stored value changed under us: the writer refuses
   const c = pc({ fpMax: 5, refreshMax: 5 });
   const guard = resolveDeps(c);
-  const f = fpFinding(c); c.system.forcePoints.max = 5; // unchanged here...
+  const f = fpOptional(c); c.system.forcePoints.max = 5; // unchanged here...
   let first = true; const w = guard.deps.setForcePointMax;
   guard.deps.setForcePointMax = async (x, v, o) => { if (first) { first = false; x.system.forcePoints.max = 8; } return w(x, v, o); };
   assert.equal((await resolveFinding({ actor: c, findingId: f.id, deps: guard.deps })).status, 'stale'); assert.equal(guard.calls.length, 0);
@@ -202,15 +207,14 @@ await check('13. optional initialization resolves through the same safe path', a
   assert.deepEqual(calls, [6]); assert.equal(optionals(a).length, 0);
 });
 
-await check('14. Ignore persists and a materially changed discrepancy is a NEW finding', () => {
+await check('14. the optional action is stable while the canonical value is unchanged, follows it when it changes, and is not ignorable', () => {
   const a = pc({ fpMax: 5, refreshMax: 5 });
-  const f = fpFinding(a);
-  a.flags.swse.reconciliationIgnored = F.addIgnored([], f, {});
-  const part = F.partitionFindings(F.buildFindings(report(a)), F.readIgnored(a));
-  assert.equal(part.visible.filter(x => x.code === 'FORCE_POINT_MAX_MISMATCH').length, 0); assert.equal(part.ignored.length, 1);
+  const o1 = fpOptional(a);
+  a.flags.swse.reconciliationIgnored = [{ id: o1.id, code: 'OPTIONAL_ACTION' }];
+  assert.ok(fpOptional(a), 'an ignore record cannot hide an optional action (it is not a finding)');
   a.system.level = 4; a.items[0].system.level = 4; a.system.progression.classLevels = [row('Soldier', 4)]; a._stats.modifiedTime += 1;
-  const next = F.buildFindings(report(a)).find(x => x.code === 'FORCE_POINT_MAX_MISMATCH');
-  assert.equal(next.expected, 7); assert.notEqual(next.id, f.id);
+  assert.equal(fpOptional(a).resolve.dataset.value, 7);
+  assert.equal(fpFinding(a), undefined);
 });
 
 // ---------------------------------------------------------------- derived lifecycle (D-1 / P1-F5)
@@ -218,37 +222,46 @@ function babActor(derivedBab = 2) {
   return {
     id: `b${++seq}`, name: 'Bab', type: 'character', flags: { swse: {} }, _stats: { modifiedTime: 1 },
     items: [cls('Soldier', 4)],
-    system: { level: 4, hp: {}, derived: { bab: derivedBab }, progression: { classLevels: [row('Soldier', 4)] } },
+    system: { level: 4, hp: {}, derived: { bab: derivedBab, babAdjustment: 0 }, progression: { classLevels: [row('Soldier', 4)] } },
   };
 }
-const babFinding = (a, opts = {}) => F.buildFindings(ProgressionReconciler.safeReconcileActor(a, { output: 'report', ...opts })).find(f => f.code === 'BAB_MISMATCH');
+// R17-F2: the class-progression cross-check is INFORMATIONAL. Its observable form is the note (and the row's text), never a finding.
+const babNote = (a, opts = {}) => ProgressionReconciler.safeReconcileActor(a, { output: 'sheet', ...opts }).validation.notes.some(n => n.id === 'note:bab');
+const babFinding = (a, opts = {}) => F.buildFindings(ProgressionReconciler.safeReconcileActor(a, { output: 'report', ...opts })).find(f => f.code === 'BAB_MISMATCH' || f.code === 'DEFENSE_MISMATCH');
 
-await check('15. calculation pending => NO accusation; applied => the discrepancy is evaluated', () => {
+await check('15. calculation pending => nothing shown; applied => the difference is evaluated, but only as information (never a finding)', () => {
   const a = babActor();
   assert.equal(L.derivedLifecycle(a).state, 'pending');
-  assert.equal(babFinding(a, { fresh: true }), undefined, 'no false ! while the derived pass has not been applied');
+  assert.equal(babNote(a, { fresh: true }), false, 'no note while the derived pass has not been applied');
   const row = ProgressionReconciler.safeReconcileActor(a, { output: 'report', fresh: true }).derivedStats.rows.find(r => r.id === 'bab');
   assert.equal(row.status, 'unverifiable'); assert.equal(row.needsAttention, false);
   settleDerived(a);
   assert.equal(L.derivedLifecycle(a).state, 'current');
-  assert.ok(babFinding(a, { fresh: true }), 'applied for the current state: real discrepancy is reported');
+  assert.equal(babNote(a, { fresh: true }), true, 'applied for the current state: shown as information');
+  assert.equal(babFinding(a, { fresh: true }), undefined, 'never a confirmed finding');
 });
 
 await check('16. derived reset and reapplication: a reset destination is pending again, reapplication restores it', () => {
   const a = settleDerived(babActor());
-  assert.ok(babFinding(a, { fresh: true }));
-  const bab = a.system.derived.bab; a.system.derived = {}; // Foundry reconstructs system.derived
-  assert.equal(L.derivedLifecycle(a).state, 'pending'); assert.equal(babFinding(a, { fresh: true }), undefined);
-  a.system.derived = { bab }; settleDerived(a);
-  assert.ok(babFinding(a, { fresh: true }));
+  assert.equal(babNote(a, { fresh: true }), true);
+  const { bab, babAdjustment } = a.system.derived; a.system.derived = {}; // Foundry reconstructs system.derived
+  assert.equal(L.derivedLifecycle(a).state, 'pending'); assert.equal(babNote(a, { fresh: true }), false);
+  a.system.derived = { bab, babAdjustment }; settleDerived(a);
+  assert.equal(babNote(a, { fresh: true }), true);
 });
 
 await check('17. memo: a derived pass landing WITHOUT any actor update is not hidden by a cached pending report', () => {
   const a = babActor();
-  assert.equal(babFinding(a), undefined);            // cached while pending (memoized)
+  assert.equal(babNote(a), false);                   // cached while pending (memoized)
   settleDerived(a);                                  // _stats.modifiedTime unchanged
-  assert.ok(babFinding(a), 'lifecycle is part of the memo key');
-  assert.equal(babFinding(a) !== undefined, true);
+  assert.equal(babNote(a), true, 'lifecycle is part of the memo key');
+});
+
+await check('17b. valid permanent BAB modifier (derived BAB includes the adjustment): no note, no finding; unknown adjustment is silent', () => {
+  const a = settleDerived(babActor(6)); a.system.derived.babAdjustment = 2; settleDerived(a);   // class BAB 4 + 2
+  assert.equal(babNote(a, { fresh: true }), false); assert.equal(babFinding(a, { fresh: true }), undefined);
+  const unknown = babActor(6); delete unknown.system.derived.babAdjustment; settleDerived(unknown);
+  assert.equal(babNote(unknown, { fresh: true }), false);
 });
 
 await check('18. persisted defense overrides are never read as the class defense (D-2); only the prepared value is', () => {
