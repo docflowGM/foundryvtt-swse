@@ -8,6 +8,7 @@
  */
 
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
+import { buildChargenLedger, buildLevelUpLedger, HP_LEDGER_PATH } from '/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
@@ -291,6 +292,11 @@ export class ProgressionEconomyPlanBuilder {
     if (Number.isFinite(startingHp) && startingHp > 0) {
       set['system.hp.value'] = startingHp;
       set['system.hp.max'] = startingHp;
+      // Ledger only when this builder computed the maximum; an externally supplied startingHp has unknown contents.
+      if (!Number(summary.startingHp || 0)) {
+        // the exact CON modifier computeStartingHP folded into the starting maximum
+        set[HP_LEDGER_PATH] = buildChargenLedger({ conMod: isDroidProgression ? 0 : computeStartingHP(clazz, attrValues, actor, selections.droid).modifiers });
+      }
     }
 
     const baseStartingCredits = computeStartingCredits(clazz, background);
@@ -347,6 +353,9 @@ export class ProgressionEconomyPlanBuilder {
       const nextHpValue = resolveLevelUpCurrentHp({ currentHpValue, hpGain, nextHpMax, mode: hpRecoveryMode });
       set['system.hp.max'] = nextHpMax;
       set['system.hp.value'] = nextHpValue;
+      const ledgerLevel = Number(planSet['system.level'] || sessionState.targetLevel || sessionState.progressionSession?.targetLevel || (Number(actor?.system?.level || 1) + 1)) || 1;
+      const nextLedger = buildLevelUpLedger(actor, ledgerLevel);
+      if (nextLedger) set[HP_LEDGER_PATH] = nextLedger;
       set['system.progression.lastHpGain'] = {
         amount: hpGain,
         method: summary.hpGainMethod || null,

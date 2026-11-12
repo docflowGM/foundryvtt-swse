@@ -5,62 +5,48 @@
  * derived-stat audit from the same canonical class-level authority.
  */
 
+import { readHpLedger, auditHp } from '/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js';
+import { readActorClassLevels } from './class-level-reader.js';
+import { getClassLevelProgressionEntry } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
+
+// Choice-style class features the slot builders understand. Any other `*_choice`
+// feature found in a resolved class's levelProgression is reported as "unaudited"
+// instead of being silently ignored.
+const AUDITED_CHOICE_TYPES = Object.freeze([
+  'feat_choice', 'talent_choice', 'force_secret_choice', 'force_technique_choice',
+  'force_power_choice', 'medical_secret_choice', 'starship_maneuver_choice',
+]);
+
 function normalizeKey(value) {
-  return String(value?.classId || value?.system?.classId || value?.system?.sourceId || value?.id || value?.name || value?.className || value || '')
-    .trim().toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '');
+  return String(value?.classId || value?.id || value?.name || value?.className || value || '')
+    .trim().toLowerCase().replace(/[\u2019']/g, '').replace(/[^a-z0-9]+/g, '');
 }
 
 function normalizeLevel(value) {
-  const n = Number(value?.system?.level ?? value?.system?.levels ?? value?.system?.rank ?? value?.level ?? value?.levels ?? value?.rank ?? value);
+  const n = Number(value?.level ?? value);
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
 }
 
-function toEntries(value) {
-  if (!value) return [];
-  if (Array.isArray(value)) return value;
-  if (typeof value !== 'object') return [];
-  return Object.entries(value).map(([key, entry]) => ({
-    classId: key,
-    className: key,
-    ...(entry && typeof entry === 'object' ? entry : { level: entry }),
+/** Map reader rows onto the summary shape the slot builders already consume. */
+function toSummaries(rows = []) {
+  return rows.map(row => ({
+    itemId: row.itemId,
+    classId: row.classId,
+    className: row.className,
+    level: row.level,
+    model: row.model,
+    item: row.item,
+    resolved: row.resolved,
+    sources: row.sources || [row.source],
+    isNonheroic: row.isNonheroic,
+    isPrestige: row.isPrestige,
+    isHeroic: !row.isNonheroic,
   }));
-}
-
-function readActorItems(actor) {
-  try { return Array.from(actor?.items || []); } catch (_err) { return []; }
-}
-
-function canonicalClassSummaries(actor, raw = []) {
-  const progression = toEntries(actor?.system?.progression?.classLevels);
-  const items = readActorItems(actor).filter(item => item?.type === 'class');
-  const legacy = toEntries(actor?.system?.classes);
-  const entries = progression.length ? progression : items.length ? items : legacy.length ? legacy : raw;
-  const source = progression.length ? 'system.progression.classLevels' : items.length ? 'owned class item' : legacy.length ? 'system.classes' : 'reconciler fallback';
-  const byClass = new Map();
-
-  for (const entry of entries) {
-    const key = normalizeKey(entry);
-    const level = normalizeLevel(entry);
-    if (!key || !level) continue;
-    const matched = raw.find(row => normalizeKey(row) === key) || {};
-    const summary = {
-      ...matched,
-      classId: matched.classId || entry.classId || entry.system?.classId || key,
-      className: matched.className || entry.className || entry.name || entry.system?.className || key,
-      level,
-      model: matched.model || entry,
-      item: matched.item || (entry.type === 'class' ? entry : null),
-      itemId: matched.itemId || entry.id || entry._id || null,
-      sources: Array.from(new Set([...(matched.sources || []), source])),
-    };
-    const prior = byClass.get(key);
-    if (!prior || level > prior.level) byClass.set(key, summary);
-  }
-  return Array.from(byClass.values());
 }
 
 function finite(...values) {
   for (const value of values) {
+    if (value === null || value === undefined || value === '') continue;
     const n = Number(value);
     if (Number.isFinite(n)) return n;
   }
@@ -68,11 +54,7 @@ function finite(...values) {
 }
 
 function isNonheroic(summary = {}) {
-  return normalizeKey(summary.className || summary.classId) === 'nonheroic'
-    || summary.isNonheroic === true
-    || summary.model?.isNonheroic === true
-    || summary.model?.system?.isNonheroic === true
-    || summary.item?.system?.isNonheroic === true;
+  return summary.isNonheroic === true;
 }
 
 function conModifier(actor) {
@@ -86,22 +68,15 @@ function conModifier(actor) {
   return 0;
 }
 
+/** Canonical ClassModel.baseHp; null (never 0) when the model does not carry one. */
 function classBaseHp(summary = {}) {
-  const model = summary.model || {};
-  const item = summary.item || {};
-  return finite(model.system?.base_hp, model.system?.baseHp, model.base_hp, model.baseHp, item.system?.base_hp, item.system?.baseHp, item.system?.baseHP);
+  return finite(summary.model?.baseHp);
 }
 
+/** Canonical ClassModel.hitDie; null when the model does not carry a valid die. No name-based defaults. */
 function classHitDie(summary = {}) {
-  const model = summary.model || {};
-  const item = summary.item || {};
-  const direct = finite(model.system?.hitDie, model.system?.hit_die, model.hitDie, model.hit_die, item.system?.hitDie, item.system?.hit_die);
-  if ([4, 6, 8, 10, 12].includes(direct)) return direct;
-  const key = normalizeKey(summary);
-  if (['elitetrooper', 'independentdroid'].includes(key)) return 12;
-  if (['noble', 'scoundrel', 'slicer'].includes(key)) return 6;
-  if (['acepilot', 'beastrider', 'charlatan', 'corporateagent', 'crimelord', 'enforcer', 'forceadept', 'forcedisciple', 'gunslinger', 'improviser', 'infiltrator', 'medic', 'meleeduelist', 'militaryengineer', 'officer', 'outlaw', 'saboteur', 'scout', 'shaper'].includes(key)) return 8;
-  return 10;
+  const direct = finite(summary.model?.hitDie);
+  return [4, 6, 8, 10, 12].includes(direct) ? direct : null;
 }
 
 function hpRecords(actor) {
@@ -126,7 +101,10 @@ function buildHpAudit(actor, summaries, heroicLevel) {
   const firstIdentity = normalizeKey(actor?.system?.class);
   const first = heroic.find(summary => normalizeKey(summary) === firstIdentity) || heroic[0] || null;
   const base = first ? classBaseHp(first) : null;
-  const con = conModifier(actor);
+  // Same accounting as ActorEngine.recomputeHP: the CON modifier recorded in the HP ledger is the one already inside
+  // the stored maximum; the current modifier is only an estimate used when no ledger exists.
+  const ledger = readHpLedger(actor);
+  const con = ledger ? ledger.conMod : conModifier(actor);
   const starting = Number.isFinite(base) ? Math.max(1, base + con) : null;
   const expectedRecords = Math.max(0, heroicLevel - 1);
   const records = hpRecords(actor).slice(0, expectedRecords);
@@ -134,26 +112,52 @@ function buildHpAudit(actor, summaries, heroicLevel) {
   const recorded = records.reduce((sum, record) => sum + record.amount, 0);
   const current = finite(actor?.system?.hp?.max, actor?.system?.derived?.hp?.max, actor?.system?.hitPoints?.max);
 
-  if (starting === null) {
-    return { status: 'unavailable', current, lower: null, upper: null, exact: null, label: 'Unavailable', issue: 'No heroic starting-class HP value could be resolved.', detail: 'HP reconciliation requires a heroic starting class with base HP data.' };
+  const accounting = auditHp(actor);
+  if (starting === null && accounting.status !== 'pending-delta') {
+    return { accounting, status: 'unverifiable', current, lower: null, upper: null, exact: null, expectedVerdict: null, label: 'Unverifiable', issue: '', detail: 'HP cannot be verified: no heroic starting-class base HP is available from the class model.' };
   }
 
-  const maximumGain = heroic.reduce((max, summary) => Math.max(max, Math.max(1, classHitDie(summary) + con)), Math.max(1, 6 + con));
-  const lower = starting + recorded + missing;
-  const upper = starting + recorded + (missing * maximumGain);
-  const exact = missing === 0 ? starting + recorded : null;
-  let status = missing ? 'warning' : 'ok';
-  let issue = missing ? `${missing} of ${expectedRecords} post-1st-level HP gain records are missing.` : '';
-  if (Number.isFinite(current) && current < lower) { status = 'issue'; issue = `Current HP ${current} is below the supported minimum ${lower}.`; }
-  else if (Number.isFinite(current) && current > upper) { status = 'issue'; issue = `Current HP ${current} exceeds the supported maximum ${upper}.`; }
+  const dice = heroic.map(classHitDie);
+  const dieKnown = dice.length > 0 && dice.every(Number.isFinite);
+  const maximumGain = dieKnown ? Math.max(...dice.map(die => Math.max(1, die + con))) : null;
+  const lower = Number.isFinite(starting) ? starting + recorded + missing : null;
+  const upper = !Number.isFinite(starting) ? null : (missing === 0 ? starting + recorded : (maximumGain === null ? null : starting + recorded + (missing * maximumGain)));
+  const exact = Number.isFinite(starting) && missing === 0 ? starting + recorded : null;
 
+  // The verdict comes ONLY from the canonical accounting (engine/HP/hp-accounting.js). The reconstruction above
+  // (starting HP + recorded gains) is an ESTIMATE shown for context: recorded gains contain the CON modifier of their own
+  // level, so after a legitimate CON change it can legitimately differ from the stored maximum. It is never a verdict.
+  //   issue        : the ledger shows a recorded contribution (CON / HP feat / hp.bonus) the stored maximum does not reflect
+  //   ok           : ledger present and fully accounted
+  //   unverifiable : no ledger / incomplete history / above the estimated range (RECON-004) - informational, never an error
+  let status = 'unverifiable';
+  let issue = '';
+  let detail = 'HP history is not fully recorded; the range shown is an estimate and no correction is implied.';
+  let expectedVerdict = null;
+  if (accounting.status === 'pending-delta') {
+    status = 'issue';
+    expectedVerdict = accounting.expectedMax;
+    issue = `Maximum HP is ${current} but the recorded Constitution / HP-bonus changes imply ${accounting.expectedMax}.`;
+    detail = 'Computed from the contributions already recorded in your HP ledger; recorded level gains are never rerolled.';
+  } else if (accounting.status === 'consistent') {
+    status = 'ok';
+    detail = 'Maximum HP is consistent with the recorded HP history and current bonuses.';
+  }
+  if (status !== 'issue' && Number.isFinite(upper) && Number.isFinite(current) && current > upper) {
+    status = 'unverifiable';
+    detail = `Current HP ${current} is above the estimated range. Whether that is legal depends on an unresolved rules question (RECON-004), so it is not reported as an error.`;
+  }
+
+  // Historical evidence: a recorded gain stands on the rules that were active when it was earned. It is never compared with
+  // today's hpGeneration / maxHPLevels, so a legitimate roll, average or maximum is never an error because settings changed later.
+  const withRules = records.filter(record => record.houseRules && typeof record.houseRules === 'object').length;
   return {
-    status, current, lower, upper, exact, expectedRecords, recordCount: records.length, missing,
-    label: exact !== null ? String(exact) : `${lower}-${upper} plausible; ${missing} record${missing === 1 ? '' : 's'} missing`,
+    accounting,
+    historyEvidence: { recorded: records.length, withRules, withoutRules: records.length - withRules },
+    status, current, lower, upper, exact: null, estimate: exact, expectedVerdict, expectedRecords, recordCount: records.length, missing,
+    label: expectedVerdict !== null ? String(expectedVerdict) : `${lower}${upper === null ? '+' : `-${upper}`} estimated${missing ? `; ${missing} record${missing === 1 ? '' : 's'} missing` : ''}`,
     issue,
-    detail: exact !== null
-      ? 'Exact total reconstructed from starting HP and durable level-up records.'
-      : 'This legacy actor lacks complete HP history. The audit shows a safe range and does not rewrite HP; future level-ups now append durable records.',
+    detail,
   };
 }
 
@@ -163,8 +167,8 @@ function applyHpAudit(derivedStats, hp) {
   const row = {
     ...(index >= 0 ? rows[index] : {}),
     id: 'hp-max', label: 'Hit Points', type: 'hp',
-    expected: hp.exact ?? hp.lower,
-    expectedValue: hp.exact ?? hp.lower,
+    expected: hp.expectedVerdict ?? hp.lower,
+    expectedValue: hp.expectedVerdict ?? hp.lower,
     expectedLabel: hp.label,
     current: hp.current,
     currentValue: hp.current,
@@ -172,23 +176,43 @@ function applyHpAudit(derivedStats, hp) {
     status: hp.status,
     issue: hp.issue,
     detail: hp.detail,
-    needsAttention: ['issue', 'warning', 'unavailable'].includes(hp.status),
+    needsAttention: hp.status === 'issue',
     targetTab: 'abilities',
     sheetAnchor: 'derived-class-stats',
   };
   if (index >= 0) rows[index] = row; else rows.unshift(row);
-  const issueCount = rows.filter(item => item?.needsAttention || ['issue', 'warning', 'unavailable'].includes(item?.status)).length;
+  const issueCount = rows.filter(item => item?.needsAttention === true).length;
   return {
     ...derivedStats,
     rows,
     hpAudit: hp,
     issueCount,
     hasIssues: issueCount > 0,
-    status: rows.some(item => item?.status === 'issue') ? 'needs-attention' : rows.some(item => ['warning', 'unavailable'].includes(item?.status)) ? 'review' : 'ok',
-    expected: { ...(derivedStats?.expected || {}), hpMaxKnownMinimum: hp.lower, hpMaxKnownMaximum: hp.upper, hpMaxExact: hp.exact },
+    status: rows.some(item => item?.status === 'issue') ? 'needs-attention' : rows.some(item => ['warning', 'unavailable', 'unverifiable'].includes(item?.status)) ? 'review' : 'ok',
+    expected: { ...(derivedStats?.expected || {}), hpMaxKnownMinimum: hp.lower, hpMaxKnownMaximum: hp.upper, hpMaxExact: hp.expectedVerdict },
     current: { ...(derivedStats?.current || {}), hpMax: hp.current },
     warnings: rows.filter(item => item?.needsAttention && item?.issue).map(item => `${item.label}: ${item.issue}`),
   };
+}
+
+function progressionGaps(summaries = []) {
+  const gaps = [];
+  const unaudited = {};
+  for (const summary of summaries) {
+    if (!summary.resolved) continue;
+    for (let level = 1; level <= summary.level; level += 1) {
+      const entry = getClassLevelProgressionEntry(summary.model, level);
+      if (!entry) {
+        gaps.push({ code: 'class-progression-missing', classId: summary.classId, className: summary.className, classLevel: level });
+        continue;
+      }
+      for (const feature of Array.isArray(entry.features) ? entry.features : []) {
+        const type = String(feature?.type || '').toLowerCase();
+        if (type.endsWith('_choice') && !AUDITED_CHOICE_TYPES.includes(type)) unaudited[type] = (unaudited[type] || 0) + 1;
+      }
+    }
+  }
+  return { gaps, unaudited };
 }
 
 export class ProgressionEntitlementCalculator {
@@ -197,32 +221,51 @@ export class ProgressionEntitlementCalculator {
   }
 
   calculate(actor, options = {}) {
-    const rawSummaries = typeof this.helpers.buildClassSummaries === 'function' ? this.helpers.buildClassSummaries(actor) : [];
-    const internalClassSummaries = canonicalClassSummaries(actor, rawSummaries);
-    const summedLevel = internalClassSummaries.reduce((sum, summary) => sum + normalizeLevel(summary.level), 0);
-    const explicitLevel = normalizeLevel(actor?.system?.level ?? actor?.system?.details?.level ?? actor?.system?.progression?.level);
-    const totalLevel = summedLevel || explicitLevel;
-    const totalHeroicLevel = internalClassSummaries.filter(summary => !isNonheroic(summary)).reduce((sum, summary) => sum + normalizeLevel(summary.level), 0) || totalLevel;
+    const classRead = readActorClassLevels(actor);
+    const classAuthority = {
+      status: classRead.status,
+      levelSource: classRead.levelSource,
+      conflicts: classRead.conflicts,
+      unresolved: classRead.unresolved,
+    };
+    const established = classRead.status === 'ok';
+    const internalClassSummaries = established ? toSummaries(classRead.rows) : [];
+    const totalLevel = established ? classRead.totalLevel : 0;
+    const totalHeroicLevel = established ? classRead.totalHeroicLevel : 0;
+    const hasNonheroic = internalClassSummaries.some(isNonheroic);
+    const { gaps, unaudited } = established ? progressionGaps(internalClassSummaries) : { gaps: [], unaudited: {} };
 
-    const abilityIncreases = typeof this.helpers.buildAbilityIncreaseSlots === 'function' ? this.helpers.buildAbilityIncreaseSlots(actor, totalLevel) : [];
-    const generalFeats = typeof this.helpers.buildGeneralFeatSlots === 'function' ? this.helpers.buildGeneralFeatSlots(actor, totalHeroicLevel) : [];
-    const classChoices = typeof this.helpers.buildClassChoiceSlots === 'function' ? this.helpers.buildClassChoiceSlots(actor, internalClassSummaries) : [];
+    // Fail closed: with no established class authority NO entitlement is derived.
+    const call = (name, ...args) => (established && typeof this.helpers[name] === 'function' ? this.helpers[name](...args) : []);
+    const abilityIncreases = call('buildAbilityIncreaseSlots', actor, totalLevel, internalClassSummaries);
+    const generalFeats = call('buildGeneralFeatSlots', actor, totalHeroicLevel);
+    const classChoices = call('buildClassChoiceSlots', actor, internalClassSummaries);
     const classFeats = classChoices.filter(slot => slot?.type === 'class-feat');
     const classTalents = classChoices.filter(slot => slot?.type === 'class-talent');
-    const heroicTalents = classTalents.length > 0 ? [] : (typeof this.helpers.buildHeroicTalentSlots === 'function' ? this.helpers.buildHeroicTalentSlots(actor, totalHeroicLevel) : []);
-    const baseDerivedStats = typeof this.helpers.buildDerivedStatsAudit === 'function'
+    const heroicTalents = [...(classTalents.length > 0 || totalHeroicLevel <= 0 ? [] : call('buildHeroicTalentSlots', actor, totalHeroicLevel))];
+    // House-rule entitlements are separate from ordinary slots (see _buildHouseRuleEntitlements).
+    const houseRule = established && typeof this.helpers.buildHouseRuleEntitlements === 'function'
+      ? this.helpers.buildHouseRuleEntitlements(actor, internalClassSummaries, classTalents)
+      : { slots: [], notes: [], missingGrants: [] };
+    if (houseRule.slots.length && typeof this.helpers.fillHouseRuleSlots === 'function') this.helpers.fillHouseRuleSlots(actor, houseRule.slots);
+    heroicTalents.push(...houseRule.slots);
+    const baseDerivedStats = established && typeof this.helpers.buildDerivedStatsAudit === 'function'
       ? this.helpers.buildDerivedStatsAudit(actor, internalClassSummaries, { totalLevel, totalHeroicLevel })
       : { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0 };
-    const derivedStats = applyHpAudit(baseDerivedStats, buildHpAudit(actor, internalClassSummaries, totalHeroicLevel));
+    const derivedStats = established
+      ? applyHpAudit(baseDerivedStats, buildHpAudit(actor, internalClassSummaries, totalHeroicLevel))
+      : baseDerivedStats;
 
     return {
       kind: 'swse-progression-entitlement-plan',
-      version: 4,
+      version: 5,
       actorId: actor?.id || null,
       actorName: actor?.name || 'Actor',
       totalLevel,
       totalHeroicLevel,
       mode: options.mode || 'actor-audit',
+      classAuthority,
+      hasNonheroic,
       internalClassSummaries,
       classSummaries: internalClassSummaries.map(summary => (
         typeof this.helpers.toPublicClassSummary === 'function'
@@ -231,23 +274,27 @@ export class ProgressionEntitlementCalculator {
       )),
       slots: { abilityIncreases, generalFeats, heroicTalents, classChoices, classFeats, classTalents, derivedStats },
       derivedStats,
+      houseRule: { notes: houseRule.notes, missingGrants: houseRule.missingGrants },
       diagnostics: {
         layer: 'entitlement-calculator',
         delegated: true,
-        phase: 7,
+        phase: 9,
+        classAuthority,
+        progressionGaps: gaps,
+        unauditedChoiceTypes: unaudited,
         classLevelSources: internalClassSummaries.map(summary => ({
           classId: summary.classId || '',
           className: summary.className || '',
           level: Number(summary.level || 0) || 0,
           sources: Array.from(new Set(Array.isArray(summary.sources) ? summary.sources : [])),
-          classProgressionSource: 'canonical-deduplicated-actor-ledger',
+          classProgressionSource: 'class-level-reader',
           cadenceFallback: false,
         })),
         derivedStats: {
           status: derivedStats?.status || 'unavailable',
           rowCount: Array.isArray(derivedStats?.rows) ? derivedStats.rows.length : 0,
           issueCount: Number(derivedStats?.issueCount || 0) || 0,
-          source: 'class-compendium-ssot-plus-hp-ledger',
+          source: 'class-model-plus-hp-ledger',
         },
       },
     };

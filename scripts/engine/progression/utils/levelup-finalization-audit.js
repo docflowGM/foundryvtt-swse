@@ -327,7 +327,8 @@ export function buildLevelUpFinalizationReceipt(manifest, progressionSession) {
 export function auditLevelUpActorAfterFinalization(actor, manifest, progressionSession, mutationPlan = null) {
   const errors = [];
   const warnings = [];
-  if (!manifest) return { ok: true, errors, warnings };
+  // No manifest means nothing was actually verified: report it as vacuous so no caller can mistake it for a passed audit.
+  if (!manifest) return { ok: true, vacuous: true, errors, warnings };
 
   const actorLevel = Number(actor?.system?.level ?? actor?.system?.details?.level ?? 0) || 0;
   if (actorLevel < Number(manifest.characterLevel || 0)) {
@@ -384,7 +385,55 @@ export function auditLevelUpActorAfterFinalization(actor, manifest, progressionS
   return { ok: errors.length === 0, errors, warnings };
 }
 
+/**
+ * Transaction-specific materialization audit (the verification behind progression CERTIFICATION).
+ *
+ * Proves that the feats/talents this transaction selected exist as CURRENT, PERSISTED embedded items
+ * that carry THIS transaction's acquisition stamp (`sourceSession`). It deliberately does not accept:
+ *   - an older item that merely has the same name (the new grant may never have materialized),
+ *   - an item in a planned mutation (planned is not persisted).
+ * Each selected rank must be matched by its own distinct item (one-to-one), so one stamped item cannot
+ * vouch for two selections. `vacuous` when the transaction selected no feat/talent (nothing to prove;
+ * callers must not treat that as a passed audit).
+ *
+ * @param {Actor} actor
+ * @param {{feats?:Array, talents?:Array}} selections raw session selections (the same input FeatTalentPlanBuilder consumes)
+ * @param {string} sessionId the transaction id stamped on created items
+ * @param {{expand?:Function}} [options] expand: combined-talent-grant expander (FeatTalentPlanBuilder's), so the expected set matches what the builder creates
+ */
+export function auditTransactionMaterialization(actor, selections = {}, sessionId = null, { expand = null } = {}) {
+  const errors = [];
+  let checked = 0;
+  if (!sessionId || sessionId === 'unknown') {
+    return { ok: false, vacuous: false, kind: 'transaction-materialization', checked: 0, errors: ['No transaction identity to verify against'], warnings: [] };
+  }
+  const owned = Array.from(actor?.items || []);
+  const claimed = new Set();
+  const stampOf = item => item?.flags?.swse?.progression?.sourceSession ?? item?.system?.acquisition?.sourceSession ?? null;
+  for (const [key, type] of [['feats', 'feat'], ['talents', 'talent']]) {
+    const raw = asArray(selections?.[key]);
+    const entries = key === 'talents' && typeof expand === 'function' ? raw.flatMap(entry => asArray(expand(entry))) : raw;
+    for (const entry of entries) {
+      const name = entryName(entry);
+      if (!name) continue;
+      const count = Math.max(0, Number(entry?.count ?? 1) || 0);
+      const wanted = identityCandidates(entry);
+      for (let i = 0; i < count; i += 1) {
+        checked += 1;
+        const hit = owned.find(item => !claimed.has(item)
+          && item?.type === type
+          && stampOf(item) === sessionId
+          && identityCandidates(item).some(candidate => wanted.includes(candidate)));
+        if (hit) claimed.add(hit);
+        else errors.push(`This transaction's ${type} did not materialize as a persisted item: ${name}`);
+      }
+    }
+  }
+  return { ok: errors.length === 0 && checked > 0, vacuous: checked === 0, kind: 'transaction-materialization', checked, errors, warnings: [] };
+}
+
 export default {
+  auditTransactionMaterialization,
   validateLevelUpRequiredSelections,
   buildLevelUpFinalizationReceipt,
   auditLevelUpActorAfterFinalization,

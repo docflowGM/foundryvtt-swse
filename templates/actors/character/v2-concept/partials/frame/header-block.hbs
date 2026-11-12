@@ -82,6 +82,9 @@
         {{#unless actorSheetMode.hideSpeciesSection}}<button type="button" data-action="cmd-select-species" class="swse-concept-btn">Species</button>{{/unless}}
       {{/unless}}
       <button type="button" data-action="open-settings-app" class="swse-concept-btn">Settings</button>
+      {{#if conceptLayout.validationIndicator.visible}}
+        <button type="button" data-action="open-validation-report" class="swse-concept-btn swse-concept-btn--alert" title="{{conceptLayout.validationIndicator.title}}" aria-label="{{conceptLayout.validationIndicator.title}}">!{{#if conceptLayout.validationIndicator.count}}<span class="swse-concept-btn__count">{{conceptLayout.validationIndicator.count}}</span>{{/if}}</button>
+      {{/if}}
       <button type="button" data-action="toggle-help-mode" class="swse-concept-btn swse-concept-btn--help" title="{{helpLevelDescription}}">{{helpLevelLabel}}</button>
       {{#if biographyPanel.identity.canEdit}}
         <button type="button" data-action="reset-character" class="swse-concept-btn swse-concept-btn--danger" title="Reset this character to a blank slate">⟳ Reset</button>

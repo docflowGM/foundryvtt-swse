@@ -77,6 +77,13 @@ function historyKey(record = {}, index = 0) {
   return `legacy:${Number(record?.amount || 0)}:${String(record?.method || '')}:${index}`;
 }
 
+/** Optional numeric evidence: absent (null / undefined / '' / non-numeric) stays null - Number(null) must never become a fabricated 0. */
+function optionalNumber(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
 function buildHpGainHistory(actor, sessionState = {}) {
   if (sessionState.mode !== 'levelup') return null;
 
@@ -110,10 +117,20 @@ function buildHpGainHistory(actor, sessionState = {}) {
     amount,
     method: summary.hpGainMethod || null,
     formula: summary.hpGainFormula || null,
-    hitDie: parsedFormula.hitDie,
-    constitutionModifier: Number.isFinite(parsedFormula.constitutionModifier)
+    constitutionModifier: optionalNumber(summary.hpGainConMod) !== null
+      ? optionalNumber(summary.hpGainConMod)
+      : Number.isFinite(parsedFormula.constitutionModifier)
       ? parsedFormula.constitutionModifier
       : readActorConModifier(actor),
+    // Evidence of how this gain was earned. The rules recorded are those active when the level was gained (captured by the
+    // summary step); they are never recomputed from today's settings. Absent evidence stays null - nothing is fabricated.
+    hitDie: optionalNumber(summary.hpGainHitDie) ?? parsedFormula.hitDie,
+    generationMethod: summary.hpGainMethod || null,
+    autoMaximum: summary.hpGainAutoMax === true ? true : (summary.hpGainRules ? false : null),
+    playerChoice: summary.hpGainPlayerChoice === true,
+    rolledResult: optionalNumber(summary.hpGainRolled),
+    houseRules: summary.hpGainRules ? { ...summary.hpGainRules } : null,
+    sessionId: completedSessionId(sessionState) || null,
     timestamp,
     source: 'progression-finalizer',
   };

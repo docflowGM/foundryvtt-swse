@@ -23,6 +23,7 @@ import { AttributeStep } from './steps/attribute-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
 import { ReconciliationOverviewStep } from './steps/reconciliation-overview-step.js';
+import { focusResolutionSteps } from './shell/reconciliation/progression-timeline-builder.js';
 import { ProgressionReconciler } from './shell/progression-reconciler.js';
 import { NullStepPlugin } from './steps/null-step-plugin.js';
 import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
@@ -206,6 +207,20 @@ export class LevelupShell extends ProgressionShell {
       startedAt: new Date().toISOString(),
       actorId: this.actor?.id || null,
     };
+
+    // Focused repair mode (Resolve on one finding): only that finding's selection step, no briefing and no
+    // unrelated choices. No class step exists in reconcile mode, so no level can be added; the step plugin
+    // keeps its own prerequisite validation (historical evaluation context) and the finalizer treats the
+    // session as a reconciliation session (no manifest, no level mutation).
+    const focusSlotId = this.options?.reconciliation?.slotId || null;
+    const focused = focusResolutionSteps(timeline, focusSlotId)
+      .map(step => this._descriptorForReconciliationStep(step))
+      .filter(Boolean);
+    if (focused.length) {
+      this._reconciliationFocus = { slotId: focusSlotId, stepIds: focused.map(d => d.stepId) };
+      console.log('[LevelupShell] Focused reconciliation step:', this._reconciliationFocus);
+      return focused;
+    }
 
     const descriptors = [createStepDescriptor({
       stepId: 'reconciliation-overview',

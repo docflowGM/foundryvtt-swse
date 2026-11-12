@@ -41,9 +41,14 @@ import { pendingEnforcerResources, planEnforcerResourceEntitlement } from '/syst
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 import {
   auditLevelUpActorAfterFinalization,
+  auditTransactionMaterialization,
   buildLevelUpFinalizationReceipt,
   validateLevelUpRequiredSelections,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js';
+import {
+  buildProgressionCertification,
+  persistCertification,
+} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/progression-evidence.js';
 import {
   filterDroidForbiddenItemSpecs,
   getDroidAcquisitionBlockReason,
@@ -88,7 +93,7 @@ const PHASE4_SPECIES_BACKGROUND_SET_KEYS = new Set([
 const PHASE4_ECONOMY_SET_KEYS = new Set([
   'system.hp.value', 'system.hp.max', 'system.credits', 'flags.swse.progressionHistory',
   'system.forcePoints.max', 'system.forcePoints.value', 'system.progression.lastForcePointRefresh',
-  'system.progression.lastHpGain', 'system.progression.lastCreditDelta',
+  'system.progression.lastHpGain', 'system.progression.hpLedger', 'system.progression.lastCreditDelta',
 ]);
 const PHASE4_FORCE_KEYS = ['forcePowers', 'forceRegimens', 'forceTechniques', 'forceSecrets'];
 
@@ -444,9 +449,13 @@ export class ProgressionFinalizer {
         return result;
       }
 
+      let certificationAudit = null;
       if (sessionState.mode === 'levelup' && !this._isReconciliationSession(sessionState)) {
         const postAudit = this._auditLevelUpFinalization(actor, finalMutationPlan, sessionState);
+        certificationAudit = postAudit;
         if (!postAudit.ok) {
+          // Record the failed outcome (untrusted evidence) so reconciliation never treats this transaction as certified.
+          await this._certifyProgressionSession(actor, sessionState, finalMutationPlan, postAudit);
           swseLogger.error('[ProgressionFinalizer] Level-up finalization audit failed', {
             actorId: actor.id,
             actorName: actor.name,
@@ -469,6 +478,9 @@ export class ProgressionFinalizer {
           });
         }
       }
+
+      // Durable, event-specific evidence that this transaction committed and (for level-up) passed its post-apply audit.
+      await this._certifyProgressionSession(actor, sessionState, finalMutationPlan, certificationAudit);
 
       swseLogger.log('[ProgressionFinalizer] Finalization successful', {
         actorId: actor.id,
@@ -3732,11 +3744,68 @@ export class ProgressionFinalizer {
     }
   }
 
+  /**
+   * Persist a progression certification (flags.swse.progressionCertifications) after the actor mutation has
+   * been applied. Read by reconciliation as authoritative acquisition evidence; see progression-evidence.js.
+   * Best effort by design: the transaction is already committed, so a failure here must never fail or roll
+   * back finalization - it only means the transaction is not certified (an evidence gap, not an error).
+   * Written through the actor mutation authority; only an audit-ok outcome is ever trusted by readers.
+   */
+  static async _certifyProgressionSession(actor, sessionState, mutationPlan, audit = null) {
+    try {
+      const sessionId = sessionState?.sessionId;
+      const reconcile = this._isReconciliationSession(sessionState);
+      const mode = reconcile ? 'reconcile' : sessionState?.mode;
+      const manifest = mode === 'levelup' ? (mutationPlan?.set?.['flags.swse.levelUpEntitlementManifest'] || null) : null;
+      const classObj = actor?.system?.class;
+      const fallbackClass = manifest ? null : {
+        classId: classObj?.id || classObj?.classId || null,
+        className: classObj?.name || classObj?.className || null,
+        classLevel: mode === 'chargen' ? 1 : 0,
+        characterLevel: mode === 'chargen' ? 1 : 0,
+      };
+      // Certification requires a REAL post-commit verification that this TRANSACTION's grants exist as
+      // persisted items carrying this transaction's stamp (older same-name items and planned mutation
+      // items do not count). Level-up additionally requires its own post-apply audit to have passed
+      // (vacuous when no manifest existed). Anything not verified is left `unverified`, never assumed.
+      const draft = sessionState?.progressionSession?.draftSelections || {};
+      const materialization = auditTransactionMaterialization(
+        actor,
+        { feats: draft.feats, talents: draft.talents },
+        sessionId,
+        { expand: entry => FeatTalentPlanBuilder.expandCombinedTalentGrantEntries(entry) },
+      );
+      let verification;
+      if (mode === 'levelup') {
+        verification = audit
+          ? {
+            kind: 'levelup-post-finalization+transaction-materialization',
+            ok: audit.ok === true && materialization.ok !== false,
+            vacuous: audit.vacuous === true || !manifest,
+            checked: materialization.checked,
+            errors: [...(audit.errors || []), ...materialization.errors],
+          }
+          : null;
+        // a level-up that selected no feat/talent has nothing for materialization to prove; the post-apply audit decides
+        if (verification && materialization.vacuous) verification.ok = audit.ok === true;
+      } else {
+        verification = materialization;
+      }
+      const record = buildProgressionCertification({ actor, sessionId, mode, manifest, audit: verification, fallbackClass });
+      if (!record) return { certified: false, reason: 'no-session-identity' };
+      if (!record.grants.length && record.outcome !== 'audit-failed') return { certified: false, reason: 'nothing-to-certify' };
+      return await persistCertification(this._resolveActorEngine(), actor, record, 'ProgressionFinalizer.certify');
+    } catch (error) {
+      swseLogger.warn('[ProgressionFinalizer] Progression certification was not recorded (transaction already committed)', error);
+      return { certified: false, reason: 'write-failed', error: error?.message ?? String(error) };
+    }
+  }
+
   static _auditLevelUpFinalization(actor, mutationPlan, sessionState) {
     const manifest = mutationPlan?.set?.['flags.swse.levelUpEntitlementManifest']
       || sessionState?.progressionSession?.levelUpEntitlementManifest
       || null;
-    if (!manifest) return { ok: true, errors: [], warnings: [] };
+    if (!manifest) return { ok: true, vacuous: true, errors: [], warnings: [] };
     return auditLevelUpActorAfterFinalization(actor, manifest, sessionState?.progressionSession || null);
   }
 

@@ -21,6 +21,10 @@ import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interact
 import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { ProgressionReconciler } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js";
+import { buildFindings, addIgnored, removeIgnored, readIgnored, IGNORE_FLAG_PATH } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-findings.js";
+import { resolveFinding } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-resolvers.js";
+import { getAcquisitionMode, isGatedAcquisitionType, recordAcquisitionEvidence, resolveGmOverride, validateAcquisition } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/acquisition-authority.js";
 import { requestWithPostureChoices } from "/systems/foundryvtt-swse/scripts/sheets/v2/weapon-posture-choice-dialog.js";
 import { reconcileItemTransactions } from "/systems/foundryvtt-swse/scripts/sheets/v2/equipment-reconcile-dialog.js";
 import { getReadiedWeapons, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
@@ -5368,6 +5372,26 @@ const forcePoints = [];
       }
     }, { signal, capture: false });
 
+    // Character Review (validation overlay): Resolve / Ignore / Restore. Advisory repair assistant:
+    // nothing here changes a character except through the canonical authorities named in
+    // reconciliation-resolvers.js, and Ignore only records a dismissal flag.
+    html.addEventListener("click", async (event) => {
+      const button = event.target.closest('[data-action="resolve-finding"], [data-action="ignore-finding"], [data-action="restore-finding"]');
+      if (!button) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (button.dataset.swseBusy) return;
+      button.dataset.swseBusy = '1';
+      try {
+        await this._handleReconciliationAction(button.dataset);
+      } catch (err) {
+        swseLogger.error('[SWSEV2CharacterSheet] Reconciliation action failed:', err);
+        ui?.notifications?.error?.(`Reconciliation action failed: ${err.message}`);
+      } finally {
+        delete button.dataset.swseBusy;
+      }
+    }, { signal, capture: false });
+
     // Add feat button
     html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
       button.addEventListener("click", async (event) => {
@@ -5471,13 +5495,18 @@ const forcePoints = [];
       openedAt: new Date().toISOString(),
     };
 
+    // With an exact slot the shell enters ONLY that selection (focused repair: no briefing, no other choices, no new
+    // level). Without one (or if the slot is no longer in the timeline) it opens the recovery briefing as before.
+    const focused = !!reconciliation.slotId;
     await this.setSurface('progression', {
       source: 'sheet-reconciliation',
       mode: 'reconcile',
-      stepId: 'reconciliation-overview',
-      currentStep: 'reconciliation-overview',
-      targetStep: 'reconciliation-overview',
-      targetStepId: 'reconciliation-overview',
+      ...(focused ? {} : {
+        stepId: 'reconciliation-overview',
+        currentStep: 'reconciliation-overview',
+        targetStep: 'reconciliation-overview',
+        targetStepId: 'reconciliation-overview',
+      }),
       routeIntent: 'progression-reconciliation',
       singleStep: false,
       skipIntro: true,
@@ -5485,7 +5514,9 @@ const forcePoints = [];
       reconciliation,
     });
     await this.requestSurfaceRender({ reason: `progression-reconciliation-${slotType || stepId}`, surfaceId: 'progression' });
-    ui?.notifications?.info?.('Opening progression recovery briefing. Missing choices will resolve in level order.');
+    ui?.notifications?.info?.(focused
+      ? 'Opening the selection for this item.'
+      : 'Opening progression recovery briefing. Missing choices will resolve in level order.');
   }
 
   async _classifyProgressionSlot(dataset = {}) {
@@ -8018,10 +8049,19 @@ const forcePoints = [];
       return this._handleBackgroundDrop(droppedDocument);
     }
 
-    // ITEM DROP: Use standard resolution
+    // ITEM DROP: validate interactive feat/talent/class acquisitions BEFORE any actor change.
+    let acquisition = null;
+    if (droppedDocument && droppedDocument.documentName === 'Item') {
+      const gate = await this._gateItemAcquisition(droppedDocument);
+      if (gate.stop) return;
+      acquisition = gate.acquisition;
+    }
+
+    // Use standard resolution
     const result = await DropResolutionEngine.resolve({
       actor: this.actor,
-      dropData: data
+      dropData: data,
+      acquisition
     });
 
     // If no plan (duplicate or invalid), silently skip
@@ -8030,6 +8070,8 @@ const forcePoints = [];
     // Apply mutations via sovereign ActorEngine
     try {
       await ActorEngine.apply(this.actor, result.mutationPlan);
+      // Durable evidence for a drop that was proven to satisfy an open slot (best effort, never fails the drop).
+      if (acquisition?.slotType) await recordAcquisitionEvidence({ actor: this.actor, acquisition, engine: ActorEngine });
       // UI feedback: pulse the target tab
       if (result.uiTargetTab) {
         this._pulseTab(result.uiTargetTab);
@@ -8038,6 +8080,83 @@ const forcePoints = [];
       // console.error('Drop application failed:', err);
       ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
     }
+  }
+
+  /** Fresh (non-memoized) findings, ignored ones included. */
+  _freshReconciliationFindings(actor = this.actor) {
+    const report = ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true });
+    return buildFindings(report);
+  }
+
+  async _handleReconciliationAction(dataset = {}) {
+    const action = dataset.action;
+    const id = String(dataset.findingId || '');
+    if (!id) return;
+    if (action === 'ignore-finding') {
+      const finding = this._freshReconciliationFindings().find(f => f.id === id);
+      if (!finding) return this.requestSurfaceRender({ reason: 'reconciliation-ignore-noop', surfaceId: this._shellSurface });
+      await ActorEngine.updateActor(this.actor, {
+        [IGNORE_FLAG_PATH]: addIgnored(readIgnored(this.actor), finding, { userId: game?.user?.id, userName: game?.user?.name }),
+      }, { source: 'reconciliation-ignore', meta: { guardKey: 'reconciliation-ignore' } });
+    } else if (action === 'restore-finding') {
+      const ids = dataset.pruneStale ? id.split(',').filter(Boolean) : [id];
+      await ActorEngine.updateActor(this.actor, {
+        [IGNORE_FLAG_PATH]: removeIgnored(readIgnored(this.actor), ids),
+      }, { source: 'reconciliation-restore', meta: { guardKey: 'reconciliation-ignore' } });
+    } else if (action === 'resolve-finding') {
+      const result = await resolveFinding({
+        actor: this.actor,
+        findingId: id,
+        deps: {
+          findFindings: (actor) => this._freshReconciliationFindings(actor),
+          recalcAll: (actor) => ActorEngine.recalcAll(actor),
+          grantHouseRule: async (actor, key) => (await import('/systems/foundryvtt-swse/scripts/houserules/houserule-feat-grants.js')).HouseRuleFeatGrants.grantMissing(actor, key),
+          openStep: (ds) => this._openProgressionReconciliationStep(ds),
+          confirm: (message) => SWSEDialogV2.confirm({ title: 'Confirm', content: `<p>${message}</p>`, yes: () => true, no: () => false, defaultYes: false }),
+        },
+      });
+      const level = result.status === 'resolved' || result.status === 'opened-step' || result.status === 'already-resolved' ? 'info' : 'warn';
+      if (result.status !== 'busy' && result.status !== 'cancelled') ui?.notifications?.[level]?.(result.message);
+      if (result.status === 'opened-step') return; // surface changes; the progression step takes over
+    }
+    await this.requestSurfaceRender({ reason: `reconciliation-${action}`, surfaceId: this._shellSurface });
+  }
+
+  /**
+   * Advisory acquisition check for dropped Items (shared authority: acquisition-authority.js).
+   * Manual building is fully supported: class, feat and talent drops are NEVER blocked or redirected by
+   * default. Classes continue through DropResolutionEngine's existing class-level writer (no second
+   * writer); reconciliation then reports any mechanical discrepancy. A feat/talent drop that has a
+   * proven problem (unmet prerequisites, no identified open entitlement) is added and the player gets a
+   * non-blocking notice. Opt-in strict mode (getAcquisitionMode() === 'strict') keeps the old behavior:
+   * refuse a player on a proven problem; offer a GM the explicit GM-grant dialog (always asked).
+   * @returns {Promise<{stop:boolean, acquisition:object|null}>}
+   */
+  async _gateItemAcquisition(item) {
+    const actorType = this.actor?.type;
+    if (!['character', 'droid'].includes(actorType)) return { stop: false, acquisition: null };
+    if (!isGatedAcquisitionType(item.type)) return { stop: false, acquisition: null };
+    const isGM = game?.user?.isGM === true;
+    const strict = getAcquisitionMode() === 'strict';
+    const verdict = validateAcquisition({ actor: this.actor, item, isGM, user: game?.user, strict });
+    if (verdict.decision === 'block') {
+      ui?.notifications?.warn?.(`${item.name} was not added. ${verdict.reasons.join(' ')} Ask a GM to grant it if it is intended.`);
+      return { stop: true, acquisition: null };
+    }
+    if (verdict.decision === 'needs-gm') {
+      // Always ask. Acquisition metadata already on the dropped source item is NOT an authorization.
+      try {
+        const { GMGrantDialog } = await import('/systems/foundryvtt-swse/scripts/apps/gm-grant-dialog.js');
+        return await resolveGmOverride({ actor: this.actor, item, prompt: (args) => GMGrantDialog.prompt(args) });
+      } catch (err) {
+        ui?.notifications?.error?.(`GM grant prompt failed: ${err.message}`);
+        return { stop: true, acquisition: null };
+      }
+    }
+    if (verdict.advisories?.length) {
+      ui?.notifications?.info?.(`${item.name} was added. Note: ${verdict.advisories.join(' ')}`);
+    }
+    return { stop: false, acquisition: verdict.acquisition };
   }
 
   /**

@@ -268,4 +268,15 @@ export class ProgressionTimelineBuilder {
   }
 }
 
+/**
+ * Focused repair: the resolution step(s) that belong to ONE finding's slot, so Resolve can enter exactly that
+ * entitlement instead of the whole recovery briefing / every outstanding choice. Empty when the slot is not
+ * (or no longer) in the timeline; callers then fall back to the briefing.
+ */
+export function focusResolutionSteps(timeline, slotId) {
+  if (!slotId) return [];
+  const steps = Array.isArray(timeline?.resolutionSteps) ? timeline.resolutionSteps : [];
+  return steps.filter(step => step?.slotId === slotId);
+}
+
 export default ProgressionTimelineBuilder;

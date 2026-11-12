@@ -5815,6 +5815,86 @@ form.swse-character-sheet-form-root .swse-ability-accent--cha,
   color: #ffd0d0;
 }
 
+.swse-concept-btn--alert {
+  border-color: rgba(255, 196, 82, 0.55);
+  color: #ffe2a0;
+  font-weight: 800;
+}
+
+.swse-concept-btn--alert:hover {
+  border-color: rgba(255, 196, 82, 0.9);
+  box-shadow: 0 0 18px rgba(255, 196, 82, 0.2);
+}
+
+.swse-concept-btn__count {
+  margin-left: 0.35em;
+  font-size: 0.8em;
+  opacity: 0.85;
+}
+
+.swse-validation-finding,
+.swse-validation-notes {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+}
+
+.swse-validation-finding--invalid {
+  border-color: rgba(255, 112, 112, 0.45);
+}
+
+.swse-validation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+
+.swse-validation-table th,
+.swse-validation-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.swse-validation-row--invalid .swse-validation-cell--error {
+  color: #ffd0d0;
+}
+
+.swse-validation-ignore {
+  background: none;
+  border: 1px solid rgba(255, 112, 112, 0.5);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  line-height: 20px;
+  color: #ff8a8a;
+  cursor: pointer;
+}
+
+.swse-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.swse-validation-slot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.swse-validation-notes p,
+.swse-validation-note {
+  opacity: 0.75;
+  margin: 2px 0;
+}
+
 .swse-concept-btn--danger:hover {
   border-color: rgba(255, 112, 112, 0.72);
   box-shadow: 0 0 18px rgba(255, 112, 112, 0.14);

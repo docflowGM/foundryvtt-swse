@@ -570,6 +570,15 @@ export class SWSEV2ActorSheetBase extends
       }, { signal });
     }
 
+    // Header validation `!` (rendered only when there is something actionable) opens the read-only report.
+    root.querySelectorAll('[data-action="open-validation-report"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.openOverlay('character-validation');
+        await this.requestSurfaceRender({ reason: 'open-validation-report', surfaceId: this._shellSurface });
+      }, { signal });
+    });
+
     root.querySelectorAll('[data-action="open-settings-app"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();

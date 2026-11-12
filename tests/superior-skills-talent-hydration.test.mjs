@@ -415,12 +415,14 @@ await TalentRegistry.initialize();
     false,
     'the synthetic Superior Skills hotfix file still exists'
   );
-  const remediation = fs.readFileSync(
-    path.join(ROOT, 'scripts/apps/progression-framework/shell/reconciliation/reconciliation-remediation-hotfix.js'),
-    'utf8'
-  );
-  assert.ok(!/Superior Skills/i.test(remediation), 'the reconciliation hotfix still injects Superior Skills talents');
-  assert.ok(!/TalentRegistry/.test(remediation), 'the reconciliation hotfix still mutates TalentRegistry internals');
+  // The reconciliation remediation monkeypatch was retired in Reconciliation V2 (the report builder
+  // now defines _attachRemediationActions itself); if it ever returns it must stay clean.
+  const remediationPath = path.join(ROOT, 'scripts/apps/progression-framework/shell/reconciliation/reconciliation-remediation-hotfix.js');
+  if (fs.existsSync(remediationPath)) {
+    const remediation = fs.readFileSync(remediationPath, 'utf8');
+    assert.ok(!/Superior Skills/i.test(remediation), 'the reconciliation hotfix still injects Superior Skills talents');
+    assert.ok(!/TalentRegistry/.test(remediation), 'the reconciliation hotfix still mutates TalentRegistry internals');
+  }
 }
 
 console.log('superior-skills-talent-hydration: all assertions passed');

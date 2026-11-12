@@ -12,7 +12,6 @@
  */
 
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
-import { ProgressionReconciliationReportBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/progression-reconciliation-report-builder.js';
 
 let registered = false;
 let syncingActors = false;
@@ -246,51 +245,9 @@ function installClassItemLedgerSync() {
   });
 }
 
-function remediationForSlot(slot = {}, groupKey = '') {
-  const status = String(slot?.status || '').toLowerCase();
-  const needsClassification = status === 'ambiguous' || slot?.classificationRequired === true;
-  const isOverfilled = status === 'overfilled' || Number(slot?.overfilledCount || 0) > 0;
-  const label = needsClassification ? 'Classify' : (isOverfilled ? 'Review extra' : 'Resolve');
-  const tab = groupKey === 'abilityIncreases' ? 'abilities' : 'talents';
-  const sheetAnchor = groupKey === 'abilityIncreases' ? 'ability-increases' : (String(slot?.type || '').includes('feat') ? 'feat-ledger' : 'talent-ledger');
-  const action = {
-    action: needsClassification ? 'classify-existing-progression-item' : (isOverfilled ? 'review-overfilled-progression-slot' : 'resolve-open-progression-slot'),
-    actionType: needsClassification ? 'classification' : (isOverfilled ? 'review' : 'open-progression-step'),
-    label,
-    tab,
-    sheetAnchor,
-    slotId: slot?.id || '',
-    stepId: slot?.stepId || slot?.type || groupKey,
-    routeId: 'sheet'
-  };
-  return { primaryAction: action, actions: [action] };
-}
-
-function installReportBuilderRemediationShim() {
-  const proto = ProgressionReconciliationReportBuilder?.prototype;
-  if (!proto || typeof proto._attachRemediationActions === 'function') return;
-  proto._attachRemediationActions = function attachRemediationActions(slots = {}) {
-    for (const [groupKey, groupSlots] of Object.entries(slots || {})) {
-      if (!Array.isArray(groupSlots)) continue;
-      for (const slot of groupSlots) {
-        if (!slot || typeof slot !== 'object') continue;
-        const open = Number(slot.openCount ?? (slot.status === 'open' ? slot.count : 0)) || 0;
-        const ambiguous = Number(slot.ambiguousCount ?? ((slot.status === 'ambiguous' || slot.classificationRequired) ? slot.count : 0)) || 0;
-        const overfilled = Number(slot.overfilledCount ?? (slot.status === 'overfilled' ? 1 : 0)) || 0;
-        if (open <= 0 && ambiguous <= 0 && overfilled <= 0) continue;
-        const remediation = remediationForSlot(slot, groupKey);
-        slot.remediation = { ...(slot.remediation || {}), ...remediation };
-        slot.primaryAction = slot.primaryAction || remediation.primaryAction;
-        slot.actions = Array.isArray(slot.actions) && slot.actions.length ? slot.actions : remediation.actions;
-      }
-    }
-  };
-}
-
 export function registerProgressionLedgerReconciliationHotfix() {
   if (registered) return false;
   registered = true;
-  installReportBuilderRemediationShim();
   installClassItemLedgerSync();
   return true;
 }

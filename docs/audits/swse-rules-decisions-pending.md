@@ -2640,3 +2640,113 @@ No provisional recommendation has been converted into a ruling.
 | Resolution | |
 
 - **Revision 61 (2026-11-10):** appended DROID-BUILD-001.
+
+---
+
+## RECON-001 — Multiclass talent entitlement: class-table talent choices vs heroic-level cadence
+
+| Field | |
+|---|---|
+| Rules domain | Talent entitlement (progression reconciliation) |
+| Feature | Number of talent choices a multiclass heroic actor is owed |
+| Source | No published page consulted in this engineering audit. Repository evidence only: `packs/classes.db` `level_progression[].features[].type === 'talent_choice'` (per class level) and `TalentCadenceEngine.grantsHeroicTalent` (`scripts/engine/progression/talents/talent-cadence-engine.js:43`, odd character levels). |
+| Evidence | The reconciler (`progression-reconciler.js` via `…entitlement-calculator.js:212`) counts talent slots from per-class `talent_choice` rows and creates **no** heroic-cadence slots whenever any class talent slot exists. The level-up manifest (`levelup-entitlement-manifest.js:364,389`) reports both the class-table choices and a heroic-cadence talent for the entering level. Harness case C14 (Soldier 3 / Scout 1, character level 4): reconciler = 3 class-table talent slots, cadence engine = 2. |
+| Confirmed behavior | The two code paths produce different counts for the same actor; for single-class actors and for some multiclass splits they coincide. |
+| Unresolved question | Which source defines the number of talents owed to a multiclass actor — the per-class table, the character-level cadence, or a combination — and how the two interact. |
+| Options | (a) per-class table only. (b) character-level cadence only. (c) both, additive. (Repository evidence exists for each path; none is source-certified here.) |
+| Recommended ruling | None |
+| Implementation impact | Talent slot generation in the reconciliation evaluator; until ruled, multiclass talent entitlement beyond single-class cases must render as non-alerting `unverifiable`. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## RECON-002 — Ability-score increase count for droids and Nonheroic characters
+
+| Field | |
+|---|---|
+| Rules domain | Ability-score increases (progression reconciliation) |
+| Feature | Increases owed per fourth character level |
+| Source | No published page consulted. Repository evidence only. |
+| Evidence | Reconciler `_abilityIncreaseCountForActor` (`progression-reconciler.js:1581-1588`) returns 1 for droids and Nonheroic, else 2. The level-up manifest (`levelup-entitlement-manifest.js:387`) returns 2 at every 4th level with no droid/Nonheroic branch. Harness C13: droid L4 → reconciler count 1. |
+| Confirmed behavior | The reconciliation path and the level-up manifest disagree for droids. |
+| Unresolved question | The intended count for droids, for Nonheroic characters, and for an actor with both heroic and Nonheroic levels. |
+| Options | Two code paths exist (1 vs 2); neither is source-certified here. |
+| Recommended ruling | None |
+| Implementation impact | Ability-increase slot counts in the evaluator; until ruled, droid/Nonheroic/mixed ability-increase entitlement is `unverifiable`. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## RECON-003 — Which level drives entitlements for Nonheroic and mixed actors
+
+| Field | |
+|---|---|
+| Rules domain | Feat / talent / ability entitlement basis |
+| Feature | Total level vs heroic level as the cadence input |
+| Source | No published page consulted. Repository evidence only. |
+| Evidence | Reconciler: general feats and heroic talents use heroic level; ability increases use total level. Manifest: all three use the entering character level (`levelup-entitlement-manifest.js:386-389`). For a pure Nonheroic actor the calculator falls back to `totalHeroicLevel = totalLevel` (`…entitlement-calculator.js:205`), so harness C15 (Nonheroic 5) yields general-feat slots L1,L3 and heroic-talent slots L1,L3,L5 even though the synthetic Nonheroic model grants no talent choices (`nonheroic-class-model.js`: `bonus_talents: 0`). Harness C9: Nonheroic 3 / Soldier 2 reports `totalHeroicLevel 5`. |
+| Confirmed behavior | The cadence basis differs between reconciliation and level-up, and the pure-Nonheroic fallback is an implementation default, not a sourced rule. |
+| Unresolved question | Whether Nonheroic levels count toward feat, talent and ability cadences, and for a mixed actor which level applies to each. |
+| Options | Total level; heroic level; per-class tables only (code evidence for each; none source-certified). |
+| Recommended ruling | None |
+| Implementation impact | Level input to all cadence-based slots; pure/mixed Nonheroic actors render `unverifiable` until ruled. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## RECON-004 — Hit-point bounds under campaign HP-generation modes
+
+| Field | |
+|---|---|
+| Rules domain | Hit points (derived-stat reconciliation) |
+| Feature | Whether current maximum HP above the audited upper bound is an error |
+| Source | No published page consulted. Repository evidence only. |
+| Evidence | The calculator flags HP above `starting + recorded + missing×maxGain` as an issue (`…entitlement-calculator.js:147-148`); the report builder then rewrites any HP at or above the lower bound to OK with the note that "campaign HP mode and rolled/custom HP may legally exceed this value" (`…report-builder.js:245-251`). Harness C6b/C6 show the contradiction (issue → ok). |
+| Confirmed behavior | The two layers disagree; which one reflects the intended rule is not established. |
+| Unresolved question | Whether HP above the maximum-die total can be legal under the project's HP-generation settings, and what the exact/lower/upper bounds should be per mode. |
+| Options | Treat the maximum-die total as a hard upper bound; treat only the lower bound as enforceable; mode-dependent bounds. (Code evidence for the first two; none source-certified.) |
+| Recommended ruling | None |
+| Implementation impact | HP verdict classification (`invalid` vs `satisfied`/`unverifiable`) in the evaluator. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 62 (2026-11-12):** appended RECON-001 … RECON-004 from the Reconciliation V2 Phase 0 audit (`docs/audits/reconciliation-v2-phase0-findings.md`). No rulings made; no recommended ruling given.
+
+- **Revision 63 (2026-11-12):** RECON-001…004 implementation note (no ruling). The reconciliation evaluator now renders the slots affected by RECON-001 (multiclass talents), RECON-002 (droid ability increases) and RECON-003 (Nonheroic/mixed actors) as `unverifiable`/`rulesDeferred` and never as missing; RECON-004 (HP above the audited maximum) is `unverifiable`, neither OK nor an error. Existing cadence code paths are unchanged and not endorsed as rules. See `docs/audits/reconciliation-v2-implementation-report.md`.
+
+## RECON-005 — Talent cadence under "Talent Every Level" and how heroic-cadence talents combine with class-table talents
+
+| Field | |
+|---|---|
+| Rules domain | Talent entitlement / house rule `talentEveryLevel` (+ `talentEveryLevelExtraL1`, `talentDoubleLevels`) |
+| Feature | Number of talents owed per level with the house rule off and on |
+| Source | No published page consulted. Repository evidence only. |
+| Evidence | (a) `TalentCadenceEngine.grantsClassTalent` returns a class talent at EVERY class level when `talentEveryLevel` is on, but `packs/classes.db` `talent_choice` rows exist only at odd class levels and are not house-rule aware. (b) `buildLevelUpEntitlementManifest` requires a heroic-cadence talent (`grantsHeroicTalent`: odd levels RAW, every level with the rule) AND the class-table talent choices, so level-ups can owe both at an odd level, while L1 chargen (`calculateL1TalentCount`, `TalentSlotCalculator`) owes one RAW (two with the rule + extra-L1). (c) The reconciler derives class-table talents only and suppresses heroic-cadence slots whenever a class-table talent slot exists. (d) `talentDoubleLevels` is registered and listed as `wired` in the manifest but no engine code reads it. |
+| Confirmed behavior | The extra level-1 talent under `talentEveryLevel` + `talentEveryLevelExtraL1` is established by `TalentCadenceEngine.calculateL1TalentCount` and `TalentSlotCalculator` (source `houserule:talentEveryLevelExtraL1`); reconciliation now represents it as its own entitlement. |
+| Unresolved question | How many talents are owed at each level, with and without `talentEveryLevel`, when both heroic-cadence and class-table talents exist; what `talentDoubleLevels` is intended to do; whether the class-table talents should follow the house-rule cadence. |
+| Options | Class table only; heroic cadence only; both stacking; class table made house-rule aware (code evidence for each; none source-certified). |
+| Recommended ruling | None |
+| Implementation impact | Reconciliation does NOT derive talent entitlements from the house-rule cadence at levels 2+ (an informational note is shown instead); `talentDoubleLevels` is not audited. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 64 (2026-11-12):** appended RECON-005 from the house-rule coverage audit (`docs/audits/reconciliation-v2-house-rule-coverage.md`). No ruling made.
+
+## HP-001 — CON change in the same transaction as a level-up
+
+| Field | |
+|---|---|
+| Rules domain | Hit points / Constitution |
+| Feature | Order of a CON modifier change relative to the new level's HP gain |
+| Source | No published page consulted. Repository evidence only. |
+| Evidence | The finalizer records each level gain with the CON modifier in effect when generated; `ActorEngine.recomputeHP` applies later CON changes as a retroactive delta (modifier change x recorded levels) over `system.progression.hpLedger.level`. |
+| Confirmed behavior | Owner decision (2026-11-12): historical HP is preserved; CON changes and HP feats apply verified deltas without rerolling or double counting. |
+| Unresolved question | When a level-up and a CON increase are committed together, whether the new level's gain uses the old or the new modifier. The ledger keeps the pre-transaction modifier, so a later recompute applies the difference over all recorded levels including the new one. |
+| Options | None source-certified. |
+| Recommended ruling | None |
+| Implementation impact | Only the combined level-up + CON-change transaction; each alone is fully specified. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
