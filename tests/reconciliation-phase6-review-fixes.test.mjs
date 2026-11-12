@@ -55,7 +55,9 @@ await check('2. HP repair is not wired: no Resolve for the finding, none in the 
   const actor = hpActor({ items: [cls('Soldier', 3, { hitDie: 10 })], level: 3, max: 5, con: 10 });
   actor.system.class = { id: 'soldier', name: 'Soldier' };
   actor.system.progression = { classLevels: [{ class: 'Soldier', classId: 'soldier', level: 3 }], hpGainHistory: [{ level: 2, amount: 6 }, { level: 3, amount: 6 }] };
-  const hp = F.buildFindings(ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true })).find(f => f.code === 'HP_BELOW_MINIMUM');
+  actor.system.attributes.con.base = 14;
+  actor.system.progression.hpLedger = { conMod: 0, featBonus: 0, bonus: 0, level: 3 };
+  const hp = F.buildFindings(ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true })).find(f => f.code === 'HP_LEDGER_MISMATCH');
   assert.ok(hp);
   assert.equal(hp.resolve.kind, 'none');
   assert.ok(!read('scripts/apps/progression-framework/shell/reconciliation/reconciliation-resolvers.js').includes("'recompute-hp'"));

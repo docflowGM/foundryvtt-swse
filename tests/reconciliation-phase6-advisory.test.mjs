@@ -159,7 +159,10 @@ await check('9. a repair that moves the value to ANOTHER wrong value is not repo
 await check('10. HP discrepancy is review + ignore only: no Resolve is offered (different HP formulas), and it stays ignorable', async () => {
   const actor = man('Soldier', 3, { hp: { max: 5 } });
   actor.system.progression.hpGainHistory = [{ level: 2, amount: 6 }, { level: 3, amount: 6 }];
-  const hp = F.buildFindings(ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true })).find(f => f.code === 'HP_BELOW_MINIMUM');
+  // a recorded contribution the stored maximum does not reflect: ledger says CON +0 was included, CON is now +2 (x 3 levels)
+  actor.system.attributes = { con: { base: 14 } };
+  actor.system.progression.hpLedger = { conMod: 0, featBonus: 0, bonus: 0, level: 3 };
+  const hp = F.buildFindings(ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true })).find(f => f.code === 'HP_LEDGER_MISMATCH');
   assert.ok(hp, 'the discrepancy is still detected');
   assert.equal(hp.resolve.kind, 'none');
   assert.equal(hp.resolve.reviewOnly, true);

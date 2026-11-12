@@ -963,15 +963,26 @@ export class SummaryStep extends ProgressionStepPlugin {
       const resolvedRule = HPGeneratorEngine.resolveMethod({ newLevel, hpGeneration, maxHPLevels });
       const needsResolution = resolvedRule.method === 'roll' || resolvedRule.method === 'average_minimum';
       const rules = HPGeneratorEngine.snapshotRules();
+      // Everything that governs HOW this level's HP is earned. A pending player resolution (roll / chosen maximum) is only
+      // valid for the context it was made in; any change discards it so it is never mislabelled as earned under new inputs.
+      const contextKey = JSON.stringify({
+        level: newLevel,
+        cls: String(classData?.id ?? classData?.classId ?? classData?.sourceId ?? classData?.name ?? ''),
+        hitDie, conMod,
+        hpGeneration: rules.hpGeneration, maxHPLevels: rules.maxHPLevels,
+      });
+      const staleResolution = this._hpGainState.contextKey !== undefined && this._hpGainState.contextKey !== contextKey && (this._hpGainState.resolved || this._hpGainState.rollTotal != null);
 
       // Keep an earlier player resolution (a roll, or an explicit maximum choice) - never an automatic one produced
       // under different rules, which would otherwise be recorded as if the player had resolved it under these rules.
-      const priorPlayerResolution = ['rolled', 'rolled-average-minimum'].includes(this._hpGainState.method) || this._hpGainState.playerChoice === true;
+      const priorPlayerResolution = !staleResolution && this._hpGainState.contextKey === contextKey
+        && (['rolled', 'rolled-average-minimum'].includes(this._hpGainState.method) || this._hpGainState.playerChoice === true);
       if (needsResolution && this._hpGainState.resolved && Number(this._hpGainState.gain) > 0 && priorPlayerResolution) {
         this._hpGainState = {
           ...this._hpGainState,
           autoMax: false,
           rules,
+          contextKey,
           needsResolution: true,
           hitDie,
           dieFormula: `1d${hitDie}`,
@@ -1006,6 +1017,7 @@ export class SummaryStep extends ProgressionStepPlugin {
         method,
         autoMax: resolvedRule.autoMax,
         rules,
+        contextKey,
         formula: `1d${hitDie} ${conMod >= 0 ? '+' : ''}${conMod}`,
         needsResolution,
         hitDie,
@@ -1015,6 +1027,8 @@ export class SummaryStep extends ProgressionStepPlugin {
         maximumGain,
         averageGain,
       };
+      // The session survey still holds the discarded roll / choice; replace it so it cannot be finalized.
+      if (staleResolution) this._commitBusinessItems(shell);
     } catch (e) {
       swseLogger.error('[SummaryStep._checkHPGainResolution]', e);
       this._hpGainState.resolved = true;
@@ -1706,7 +1720,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       hpGainFormula: this._hpGainState?.formula || '',
       // Evidence for the historical HP record (what was rolled, which die / CON modifier, which rules were active)
       hpGainHitDie: this._hpGainState?.hitDie ?? null,
-      hpGainConMod: Number.isFinite(Number(this._hpGainState?.conMod)) ? Number(this._hpGainState.conMod) : null,
+      hpGainConMod: (this._hpGainState?.conMod === null || this._hpGainState?.conMod === undefined) ? null : (Number.isFinite(Number(this._hpGainState.conMod)) ? Number(this._hpGainState.conMod) : null),
       hpGainRolled: this._hpGainState?.rollTotal ?? null,
       hpGainAutoMax: this._hpGainState?.autoMax === true,
       hpGainPlayerChoice: this._hpGainState?.playerChoice === true,

@@ -32,7 +32,7 @@ const CODE_FOR_ROW = Object.freeze({
   'fortitude-class-defense': 'DEFENSE_MISMATCH',
   'reflex-class-defense': 'DEFENSE_MISMATCH',
   'will-class-defense': 'DEFENSE_MISMATCH',
-  'hp-max': 'HP_BELOW_MINIMUM',
+  'hp-max': 'HP_LEDGER_MISMATCH',
 });
 
 function openCount(slot) {
@@ -74,7 +74,7 @@ function derivedFinding(row) {
   const code = CODE_FOR_ROW[row.id] || 'DERIVED_STAT_MISMATCH';
   const expected = row.expected ?? row.expectedValue ?? null;
   const actual = row.current ?? row.currentValue ?? null;
-  const isHp = code === 'HP_BELOW_MINIMUM';
+  const isHp = code === 'HP_LEDGER_MISMATCH';
   return {
     id: `derived:${row.id}:${expected}:${actual}`,
     subject: `derived:${row.id}`,

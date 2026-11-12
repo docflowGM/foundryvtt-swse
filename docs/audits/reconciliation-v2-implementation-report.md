@@ -171,3 +171,23 @@ compares a recorded gain with today's settings. HP Resolve remains disabled.
 deletion candidate). Chargen starting HP uses `computeStartingHP` (class base HP + CON) and does not consult `maxHPLevels`.
 The finalizer's inline level-up/chargen HP block duplicates the economy builder's (also dead while the builder is applied).
 Rules question HP-001 (level-up + CON change in one transaction) is in the decision register.
+
+### HP review corrections (HP-F1..F4)
+
+- **HP-F1** `tests/hp-house-rule-authority.test.mjs` imports the real `SummaryStep` unconditionally; a load failure fails the test.
+- **HP-F2** The reconciliation HP verdict now comes only from `hp-accounting.js`. The "starting HP + recorded gains" reconstruction is
+  an estimate shown for context (`estimate`, range label) and is never a verdict, because recorded gains contain the CON modifier of
+  their own level. Definite finding (`HP_LEDGER_MISMATCH`, review-only, no Resolve): the ledger shows a recorded CON / HP-feat /
+  `hp.bonus` contribution the stored maximum does not reflect (expected = canonical accounting). `ok` only with a fully accounted
+  ledger; no ledger / incomplete history / above range (RECON-004) is `unverifiable` and never an error. The former
+  `HP_BELOW_MINIMUM` code and its history-based "below minimum" verdict are retired.
+- **HP-F3** `ProgressionMetadataPlanBuilder` / `SummaryStep`: absent hit die, rolled result and CON modifier stay `null`
+  (`Number(null)` no longer yields a fabricated 0); a genuine 0 is preserved.
+- **HP-F4** `SummaryStep` keys a pending HP resolution to its context (character level, class, hit die, CON modifier,
+  `hpGeneration`, `maxHPLevels`). A change discards the roll / chosen maximum, recomputes the result under the new inputs and
+  re-commits the survey. A recovery-mode change does not invalidate (not a generation input).
+- **Baselines.** The five force-power test files (`force-power-final-integration`, `phase3-force-power-corrections`,
+  `phase4-force-modifier-automation`, `phase5-force-healing-mitigation`, `phase6-force-direct-damage`) also fail at the PR's merge
+  base (`33ce3f7`), so they predate PR #1145 (missing module `scripts/combat/damage-system.js`). `rolling-ci-support-check` takes
+  ~109 s; it failed in the sweep and in baseline runs only because of 60 s / 100 s per-test timeouts and passes when run to completion.
+- HP-001 remains open (no ruling).

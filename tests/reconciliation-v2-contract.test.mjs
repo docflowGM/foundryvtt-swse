@@ -137,18 +137,36 @@ check('12. unresolvable class: engine finding, nothing fabricated, GM only', () 
   assert.ok(r.engineFindings.some(f => f.code === 'class-unresolved'));
 });
 
-check('13. HP: verdict is never rewritten; above-maximum is a pending rules question, below-minimum is invalid', () => {
+check('13. HP: verdict comes from the canonical accounting only; estimates (above / below / exact) are never errors', () => {
   const hist = [{ level: 2, amount: 6 }, { level: 3, amount: 6 }];
   const base = { level: 3, ledger: [row('Soldier', 3)], items: [cls('Soldier', 3)], hist };
-  const high = run(actor({ ...base, hpMax: 999 })).derivedStats.rows.find(x => x.id === 'hp-max');
-  assert.equal(high.status, 'unverifiable');
-  assert.equal(high.needsAttention, false);
+  const rowOf = r => r.derivedStats.rows.find(x => x.id === 'hp-max');
+  const high = rowOf(run(actor({ ...base, hpMax: 999 })));
+  assert.equal(high.status, 'unverifiable'); assert.equal(high.needsAttention, false);
+  // no ledger: a low maximum is only an unverified estimate, not a definite error
   const low = run(actor({ ...base, hpMax: 5 }));
-  const lowRow = low.derivedStats.rows.find(x => x.id === 'hp-max');
-  assert.equal(lowRow.status, 'issue');
-  assert.equal(low.rollup.playerActionable, true);
-  const exact = run(actor({ ...base, hpMax: 42 })).derivedStats.rows.find(x => x.id === 'hp-max');
-  assert.equal(exact.status, 'ok');
+  assert.equal(rowOf(low).status, 'unverifiable'); assert.equal(rowOf(low).needsAttention, false);
+  // ledger present and fully accounted: ok, whatever the historical rolls were
+  const ok = actor({ ...base, hpMax: 42 }); ok.system.progression.hpLedger = { conMod: 0, featBonus: 0, bonus: 0, level: 3 };
+  assert.equal(rowOf(run(ok)).status, 'ok');
+  // ledger records CON +2 across 3 levels; CON dropped to +1: stored max 45 is CORRECT (48 - 3), reconstruction would say 47
+  const conDown = actor({ level: 3, ledger: [row('Soldier', 3)], items: [cls('Soldier', 3)], hpMax: 45,
+    hist: [{ level: 2, amount: 8 }, { level: 3, amount: 8 }] });
+  conDown.system.attributes = { con: { base: 12 } };
+  conDown.system.progression.hpLedger = { conMod: 1, featBonus: 0, bonus: 0, level: 3 };
+  assert.equal(rowOf(run(conDown)).status, 'ok', 'consistent after a legitimate CON decrease already applied');
+  assert.equal(rowOf(run(conDown)).needsAttention, false);
+  // CON decreased but the delta was never applied: a DEFINITE, accounted discrepancy with the canonical expectation
+  const pending = actor({ level: 3, ledger: [row('Soldier', 3)], items: [cls('Soldier', 3)], hpMax: 48, hist });
+  pending.system.attributes = { con: { base: 12 } };
+  pending.system.progression.hpLedger = { conMod: 2, featBonus: 0, bonus: 0, level: 3 };
+  const pr = rowOf(run(pending));
+  assert.equal(pr.status, 'issue'); assert.equal(pr.expected, 45);
+  // HP feat gained but not yet reflected
+  const feat = actor({ level: 3, ledger: [row('Soldier', 3)], items: [cls('Soldier', 3), { type: 'feat', name: 'Toughness', system: { abilityMeta: { resourceRules: { hitPoints: [{ type: 'MAX_BONUS_PER_LEVEL', value: 1 }] } } } }], hpMax: 40, hist });
+  feat.system.attributes = { con: { base: 10 } };
+  feat.system.progression.hpLedger = { conMod: 0, featBonus: 0, bonus: 0, level: 3 };
+  assert.equal(rowOf(run(feat)).expected, 43);
 });
 
 check('14. no ability-increase history: unverifiable, not missing', () => {

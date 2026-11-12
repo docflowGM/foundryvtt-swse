@@ -112,45 +112,50 @@ function buildHpAudit(actor, summaries, heroicLevel) {
   const recorded = records.reduce((sum, record) => sum + record.amount, 0);
   const current = finite(actor?.system?.hp?.max, actor?.system?.derived?.hp?.max, actor?.system?.hitPoints?.max);
 
-  if (starting === null) {
-    return { status: 'unverifiable', current, lower: null, upper: null, exact: null, label: 'Unverifiable', issue: '', detail: 'HP cannot be verified: no heroic starting-class base HP is available from the class model.' };
+  const accounting = auditHp(actor);
+  if (starting === null && accounting.status !== 'pending-delta') {
+    return { accounting, status: 'unverifiable', current, lower: null, upper: null, exact: null, expectedVerdict: null, label: 'Unverifiable', issue: '', detail: 'HP cannot be verified: no heroic starting-class base HP is available from the class model.' };
   }
 
   const dice = heroic.map(classHitDie);
   const dieKnown = dice.length > 0 && dice.every(Number.isFinite);
   const maximumGain = dieKnown ? Math.max(...dice.map(die => Math.max(1, die + con))) : null;
-  const lower = starting + recorded + missing;
-  const upper = missing === 0 ? starting + recorded : (maximumGain === null ? null : starting + recorded + (missing * maximumGain));
-  const exact = missing === 0 ? starting + recorded : null;
+  const lower = Number.isFinite(starting) ? starting + recorded + missing : null;
+  const upper = !Number.isFinite(starting) ? null : (missing === 0 ? starting + recorded : (maximumGain === null ? null : starting + recorded + (missing * maximumGain)));
+  const exact = Number.isFinite(starting) && missing === 0 ? starting + recorded : null;
 
-  // Statuses: ok (verified), issue (confirmed below the arithmetic minimum),
-  // unverifiable (incomplete history, or above the audited maximum - RECON-004 is a
-  // pending rules question, so that case is never reported as an error or as OK).
-  let status = 'ok';
+  // The verdict comes ONLY from the canonical accounting (engine/HP/hp-accounting.js). The reconstruction above
+  // (starting HP + recorded gains) is an ESTIMATE shown for context: recorded gains contain the CON modifier of their own
+  // level, so after a legitimate CON change it can legitimately differ from the stored maximum. It is never a verdict.
+  //   issue        : the ledger shows a recorded contribution (CON / HP feat / hp.bonus) the stored maximum does not reflect
+  //   ok           : ledger present and fully accounted
+  //   unverifiable : no ledger / incomplete history / above the estimated range (RECON-004) - informational, never an error
+  let status = 'unverifiable';
   let issue = '';
-  let detail = exact !== null
-    ? 'Exact total reconstructed from starting HP and durable level-up records.'
-    : 'HP history is incomplete; the audit shows a plausible range and does not rewrite HP.';
-  if (exact !== null && Number.isFinite(current) && current < lower) {
-    // A definite discrepancy needs COMPLETE recorded history. With missing records `lower` is an estimate
-    // (minimum gain assumed per unrecorded level) and is never reported as an error.
+  let detail = 'HP history is not fully recorded; the range shown is an estimate and no correction is implied.';
+  let expectedVerdict = null;
+  if (accounting.status === 'pending-delta') {
     status = 'issue';
-    issue = `Current HP ${current} is below the supported minimum ${lower}.`;
-  } else if (Number.isFinite(upper) && Number.isFinite(current) && current > upper) {
+    expectedVerdict = accounting.expectedMax;
+    issue = `Maximum HP is ${current} but the recorded Constitution / HP-bonus changes imply ${accounting.expectedMax}.`;
+    detail = 'Computed from the contributions already recorded in your HP ledger; recorded level gains are never rerolled.';
+  } else if (accounting.status === 'consistent') {
+    status = 'ok';
+    detail = 'Maximum HP is consistent with the recorded HP history and current bonuses.';
+  }
+  if (status !== 'issue' && Number.isFinite(upper) && Number.isFinite(current) && current > upper) {
     status = 'unverifiable';
-    detail = `Current HP ${current} is above the audited maximum ${upper}. Whether that is legal depends on an unresolved rules question (RECON-004), so it is not reported as an error.`;
-  } else if (missing > 0) {
-    status = 'unverifiable';
+    detail = `Current HP ${current} is above the estimated range. Whether that is legal depends on an unresolved rules question (RECON-004), so it is not reported as an error.`;
   }
 
   // Historical evidence: a recorded gain stands on the rules that were active when it was earned. It is never compared with
   // today's hpGeneration / maxHPLevels, so a legitimate roll, average or maximum is never an error because settings changed later.
   const withRules = records.filter(record => record.houseRules && typeof record.houseRules === 'object').length;
   return {
-    accounting: auditHp(actor),
+    accounting,
     historyEvidence: { recorded: records.length, withRules, withoutRules: records.length - withRules },
-    status, current, lower, upper, exact, expectedRecords, recordCount: records.length, missing,
-    label: exact !== null ? String(exact) : `${lower}${upper === null ? '+' : `-${upper}`} plausible; ${missing} record${missing === 1 ? '' : 's'} missing`,
+    status, current, lower, upper, exact: null, estimate: exact, expectedVerdict, expectedRecords, recordCount: records.length, missing,
+    label: expectedVerdict !== null ? String(expectedVerdict) : `${lower}${upper === null ? '+' : `-${upper}`} estimated${missing ? `; ${missing} record${missing === 1 ? '' : 's'} missing` : ''}`,
     issue,
     detail,
   };
@@ -162,8 +167,8 @@ function applyHpAudit(derivedStats, hp) {
   const row = {
     ...(index >= 0 ? rows[index] : {}),
     id: 'hp-max', label: 'Hit Points', type: 'hp',
-    expected: hp.exact ?? hp.lower,
-    expectedValue: hp.exact ?? hp.lower,
+    expected: hp.expectedVerdict ?? hp.lower,
+    expectedValue: hp.expectedVerdict ?? hp.lower,
     expectedLabel: hp.label,
     current: hp.current,
     currentValue: hp.current,
@@ -184,7 +189,7 @@ function applyHpAudit(derivedStats, hp) {
     issueCount,
     hasIssues: issueCount > 0,
     status: rows.some(item => item?.status === 'issue') ? 'needs-attention' : rows.some(item => ['warning', 'unavailable', 'unverifiable'].includes(item?.status)) ? 'review' : 'ok',
-    expected: { ...(derivedStats?.expected || {}), hpMaxKnownMinimum: hp.lower, hpMaxKnownMaximum: hp.upper, hpMaxExact: hp.exact },
+    expected: { ...(derivedStats?.expected || {}), hpMaxKnownMinimum: hp.lower, hpMaxKnownMaximum: hp.upper, hpMaxExact: hp.expectedVerdict },
     current: { ...(derivedStats?.current || {}), hpMax: hp.current },
     warnings: rows.filter(item => item?.needsAttention && item?.issue).map(item => `${item.label}: ${item.issue}`),
   };
