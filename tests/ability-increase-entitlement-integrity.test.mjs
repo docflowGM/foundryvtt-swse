@@ -321,4 +321,43 @@ await check('EVI-06i. history ORDER is not data: an out-of-order but unchanged h
   const res = await ProgressionFinalizer._applyMutationPlan(a, p);
   assert.equal(res.success !== false, true, JSON.stringify(res)); assert.deepEqual(histLevels(a), [4, 8, 12]);
 });
+
+// ---- EVI-06a: multiplicity -------------------------------------------------------------------------------------------------------------
+const recA = () => sys4();
+const recB = () => ({ level: 12, characterLevel: 12, entitlementId: 'ability-increase-level-12', transactionId: 'abtx-l12', increases: { int: 1, cha: 1 }, source: 'progression-finalizer', timestamp: 't12' });
+const withHistory = (hist) => { const a = actorAt(9, hist); return { a, p: compile(a, reconcileSession(attrFor(8))) }; };
+await check('EVI-06a-1. planned [A, A, B] but the actor now holds [A, B, B] (same members, same length) => refused, current history preserved, ActorEngine not called', async () => {
+  const { a, p } = withHistory([recA(), recA(), recB()]);
+  a.system.progression.abilityIncreaseHistory = [recA(), recB(), recB()];
+  assert.ok(G.checkPlannedHistoryFresh(a, p.set).length > 0);
+  await refusedClean(a, p);
+  assert.deepEqual(a.system.progression.abilityIncreaseHistory.map(r => r.level), [4, 12, 12]);
+});
+await check('EVI-06a-2. two identical records becoming one => refused', async () => {
+  const { a, p } = withHistory([recA(), recA(), recB()]);
+  a.system.progression.abilityIncreaseHistory = [recA(), recB()];
+  assert.match(G.checkPlannedHistoryFresh(a, p.set).join(';'), /changed or removed/);
+  await refusedClean(a, p);
+});
+await check('EVI-06a-3. one record becoming two identical records => refused', async () => {
+  const { a, p } = withHistory([recA(), recB()]);
+  a.system.progression.abilityIncreaseHistory = [recA(), recA(), recB()];
+  assert.match(G.checkPlannedHistoryFresh(a, p.set).join(';'), /would be overwritten/);
+  await refusedClean(a, p);
+});
+await check('EVI-06a-4. the same records (including duplicates) in a DIFFERENT order are accepted, and the commit keeps every copy', async () => {
+  const { a, p } = withHistory([recA(), recA(), recB()]);
+  a.system.progression.abilityIncreaseHistory = [recB(), recA(), recA()];
+  assert.deepEqual(G.checkPlannedHistoryFresh(a, p.set), []);
+  const res = await ProgressionFinalizer._applyMutationPlan(a, p);
+  assert.equal(res.success !== false, true, JSON.stringify(res)); assert.deepEqual(histLevels(a), [4, 4, 8, 12]);
+});
+await check('EVI-06a-5. ordinary valid progression with duplicate-free history still commits; every earlier stale case (edit / add / remove) still refuses', async () => {
+  const { a, p } = withHistory([recA(), recB()]);
+  assert.equal((await ProgressionFinalizer._applyMutationPlan(a, p)).success !== false, true);
+  const e = withHistory([recA(), recB()]); e.a.system.progression.abilityIncreaseHistory[1].increases = { str: 1, dex: 1 };
+  assert.ok(G.checkPlannedHistoryFresh(e.a, e.p.set).length > 0);
+  const r = withHistory([recA(), recB()]); r.a.system.progression.abilityIncreaseHistory.pop();
+  assert.ok(G.checkPlannedHistoryFresh(r.a, r.p.set).length > 0);
+});
 console.log('ability-increase-entitlement-integrity.test.mjs: all assertions passed');

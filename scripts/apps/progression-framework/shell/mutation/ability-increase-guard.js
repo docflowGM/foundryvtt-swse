@@ -180,12 +180,18 @@ export function checkPlannedHistoryFresh(actor, planSet) {
   const currentRaw = actor?.system?.progression?.abilityIncreaseHistory;
   const current = (Array.isArray(currentRaw) ? currentRaw : []).map(canonical).sort();
   const problems = [];
-  const only = (a, b) => a.filter(x => !b.includes(x));
-  const missingNow = only(preExisting, current);   // in the plan, not in the actor: edited or removed since compilation
-  const newerNow = only(current, preExisting);     // in the actor, not in the plan: added or edited since compilation
-  if (missingNow.length) problems.push(`${missingNow.length} history record(s) the plan expects were changed or removed`);
-  if (newerNow.length) problems.push(`${newerNow.length} newer history record(s) would be overwritten`);
-  if (!problems.length && preExisting.length !== current.length) problems.push('the history differs in size');
+  // EVI-06a: an exact, order-insensitive, MULTIPLICITY-sensitive comparison. Both lists are sorted canonical strings; the histories are equal only if
+  // every record appears the same number of times (membership alone would treat [A, A, B] and [A, B, B] as the same).
+  const tally = (list) => list.reduce((m, x) => m.set(x, (m.get(x) || 0) + 1), new Map());
+  const want = tally(preExisting); const have = tally(current);
+  let missingNow = 0; let newerNow = 0;
+  for (const key of new Set([...want.keys(), ...have.keys()])) {
+    const w = want.get(key) || 0; const h = have.get(key) || 0;
+    if (w > h) missingNow += w - h;   // the plan expects more copies than the actor has: edited, removed or duplicated-away since compilation
+    if (h > w) newerNow += h - w;     // the actor has copies the plan would overwrite: added, edited or duplicated since compilation
+  }
+  if (missingNow) problems.push(`${missingNow} history record(s) the plan expects were changed or removed`);
+  if (newerNow) problems.push(`${newerNow} newer history record(s) would be overwritten`);
   return problems;
 }
 

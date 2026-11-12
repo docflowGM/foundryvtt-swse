@@ -134,3 +134,9 @@ a refusal with several concurrent changes erases or reverts nothing; a fresh pla
 Full sweep: only the same five force-power baseline failures (red at PR #1145's merge base); validators pass. Foundry V13: not tested.
 
 **Limitation (unchanged, not claimed fixed).** This closes the DETECTABLE stale-plan case. The final synchronous check and the Foundry update are separate steps and Foundry offers no compare-and-set, so a change landing between them is not provably excluded; it needs Foundry V13 testing. Checkpoints D, E, F remain stopped pending review.
+
+### EVI-06a - record multiplicity (final review correction)
+`checkPlannedHistoryFresh` compared the planned pre-existing records with the actor's current records using membership (`includes`), so `[A, A, B]` and `[A, B, B]` (same members, same length) were accepted. It now builds a count per canonical record on both sides and reports any record whose
+count differs, so removed / duplicated-away copies and newly added / duplicated copies are both detected, while ordering alone is still ignored. Deep snapshot, entitlement / allocation / plan-equivalence guards and the single ActorEngine write path are unchanged.
+Tests EVI-06a-1…5 (`ability-increase-entitlement-integrity`): `[A,A,B]`→`[A,B,B]` refused; two identical → one refused; one → two identical refused; the same records in a different order accepted and every copy kept; ordinary progression still commits and the earlier stale cases still refuse. Refusals leave the current history intact and never call ActorEngine.
+The previous (membership) implementation fails the new tests. Full sweep: only the five force-power baseline failures; validators pass. Node harness only; the cross-client race remains a Foundry V13 item.
