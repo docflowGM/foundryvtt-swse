@@ -160,6 +160,35 @@ export function checkPlanEvidenceEquivalence(actor, planSet) {
   return problems;
 }
 
+/**
+ * EVI-06: the history the plan will WRITE is [pre-existing records captured at compile time] + [this transaction's record]. The write replaces the
+ * whole array, so any change another writer made to the pre-existing records after compilation (an edit, addition, withdrawal, supersession, removal,
+ * or a changed verification block - at ANY level) would be silently destroyed. Separate the new record by its transaction id and require the rest to be
+ * identical to the actor's CURRENT canonical history. Order is not data (the builder sorts by level), so the comparison is order-insensitive; content is exact.
+ * @returns {string[]} problems (empty = the plan is not stale)
+ */
+const canonical = (value) => {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
+  if (value && typeof value === 'object') return `{${Object.keys(value).sort().map(k => `${JSON.stringify(k)}:${canonical(value[k])}`).join(',')}}`;
+  return JSON.stringify(value === undefined ? null : value);
+};
+export function checkPlannedHistoryFresh(actor, planSet) {
+  const info = describeAbilityTransaction(planSet);
+  if (!info) return [];
+  const planned = Array.isArray(planSet?.[ABILITY_HISTORY_KEY]) ? planSet[ABILITY_HISTORY_KEY] : [];
+  const preExisting = planned.filter(entry => entry?.transactionId !== info.record.transactionId).map(canonical).sort();
+  const currentRaw = actor?.system?.progression?.abilityIncreaseHistory;
+  const current = (Array.isArray(currentRaw) ? currentRaw : []).map(canonical).sort();
+  const problems = [];
+  const only = (a, b) => a.filter(x => !b.includes(x));
+  const missingNow = only(preExisting, current);   // in the plan, not in the actor: edited or removed since compilation
+  const newerNow = only(current, preExisting);     // in the actor, not in the plan: added or edited since compilation
+  if (missingNow.length) problems.push(`${missingNow.length} history record(s) the plan expects were changed or removed`);
+  if (newerNow.length) problems.push(`${newerNow.length} newer history record(s) would be overwritten`);
+  if (!problems.length && preExisting.length !== current.length) problems.push('the history differs in size');
+  return problems;
+}
+
 const sameRecord = (a, b) => a?.entitlementId === b?.entitlementId && recordLevel(a) === recordLevel(b) && a?.transactionId === b?.transactionId
   && ABILITY_KEYS.every(k => (Number(a?.increases?.[k] || 0) || 0) === (Number(b?.increases?.[k] || 0) || 0));
 
@@ -188,6 +217,9 @@ export function beginAbilityIncreaseTransaction(actor, mutationPlan, { entitleme
   if (inFlight.has(key)) return refuse('APPLICATION_IN_PROGRESS', `The level ${info.level} ability increase is already being applied; nothing was changed.`);
   const history = actor?.system?.progression?.abilityIncreaseHistory;
   if (recordsForLevel(history, info.level).length) return refuse('ENTITLEMENT_ALREADY_RECORDED', `The level ${info.level} ability increase was recorded since this was prepared; applying it again would increase the scores twice. Nothing was changed.`);
+  // EVI-06: the plan REPLACES the history array; refuse a stale plan rather than overwrite (or merge) newer evidence at any level.
+  const staleHistory = checkPlannedHistoryFresh(actor, mutationPlan.set);
+  if (staleHistory.length) return refuse('HISTORY_CHANGED', `The ability-increase history changed since this was prepared (${staleHistory.join('; ')}); review the character and try again. Nothing was changed.`);
   for (const [ability, { delta, next }] of Object.entries(info.bases)) {
     const current = Number(actor?.system?.attributes?.[ability]?.base);
     if (current !== next - delta) return refuse('SCORES_CHANGED', `The ${ability.toUpperCase()} score changed since this was prepared; review the character and try again. Nothing was changed.`);
@@ -234,4 +266,4 @@ export function verifyAbilityIncreaseCommit(actor, mutationPlan, { before = null
   return { state: scores && record && latest ? 'verified' : 'failed', transactionId: tid, verifiedAt: now, sessionId, checks: { scores, record, latest }, reasons };
 }
 
-export default { validateAbilitySelection, checkPlanEvidenceEquivalence, strictCount, newTransactionId, resolveEntitlementLevel, assertEntitlementOpen, beginAbilityIncreaseTransaction, strictLevel, entitlementIdForLevel, levelFromEntitlementId };
+export default { checkPlannedHistoryFresh, validateAbilitySelection, checkPlanEvidenceEquivalence, strictCount, newTransactionId, resolveEntitlementLevel, assertEntitlementOpen, beginAbilityIncreaseTransaction, strictLevel, entitlementIdForLevel, levelFromEntitlementId };

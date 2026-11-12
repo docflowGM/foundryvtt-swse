@@ -118,8 +118,10 @@ export class AbilityScorePlanBuilder {
     if (entitledCount === null) throw new AbilityIncreaseError('ENTITLEMENT_COUNT_UNKNOWN', `The number of level ${level} ability increases is not established; nothing was changed.`);
     // EVR-04: the submitted selection is validated AS SUBMITTED. It is never clamped, rounded or altered into a different legal selection.
     const { increases: normalizedIncreases } = validateAbilitySelection(rawIncreases, { maxPerAbility, entitledCount });
+    // EVI-06: the plan's copy of the pre-existing history is a deep SNAPSHOT taken now, never an alias of the actor's live objects, so the boundary can tell
+    // whether anything in it changed after compilation.
     const history = Array.isArray(actor?.system?.progression?.abilityIncreaseHistory)
-      ? actor.system.progression.abilityIncreaseHistory
+      ? structuredClone(actor.system.progression.abilityIncreaseHistory)
       : [];
     // One active record per entitlement (C1 / C2): an existing entry blocks a second additive application.
     assertEntitlementOpen(history, level);

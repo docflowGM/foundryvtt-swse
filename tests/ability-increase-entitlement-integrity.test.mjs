@@ -256,4 +256,69 @@ await check('EVR-04. invalid selections are rejected as submitted (excess, negat
   const stacked = mk({ con: 2 }, () => 'allow_stacked_two');
   assert.deepEqual(stacked['system.progression.lastAbilityIncrease'].increases, { con: 2 }); assert.equal(stacked['system.progression.lastAbilityIncrease'].allocationMode, 'allow_stacked_two');
 });
+
+// ---- EVI-06: a stale plan must never overwrite newer history belonging to ANY entitlement ------------------------------------------------
+const sys4 = () => ({ level: 4, characterLevel: 4, entitlementId: 'ability-increase-level-4', transactionId: 'abtx-l4', increases: { str: 1, dex: 1 }, source: 'progression-finalizer', timestamp: 't4' });
+const manual4 = () => ({ level: 4, characterLevel: 4, increases: { con: 1 }, source: 'manual-attestation', evidence: 'player-confirmed', appliedBySystem: false, attestedBy: 'u2' });
+const withL4 = () => { const a = actorAt(9, [sys4()]); return { a, p: compile(a, reconcileSession(attrFor(8))) }; };
+const snapshotOf = (a) => JSON.stringify([a.system.progression.abilityIncreaseHistory, a.system.attributes]);
+const refusedClean = async (a, p, code = 'HISTORY_CHANGED') => {
+  engineCalls = 0; const before = snapshotOf(a);
+  const res = await ProgressionFinalizer._applyMutationPlan(a, p);
+  assert.equal(res.success, false); assert.equal(res.code, code, res.code); assert.equal(engineCalls, 0, 'ActorEngine was never called');
+  assert.equal(snapshotOf(a), before, 'the newer history and all scores are exactly as the other writer left them');
+};
+await check('EVI-06a. unchanged level 4 history: the level 8 application succeeds and level 4 is preserved untouched', async () => {
+  const { a, p } = withL4(); const l4 = JSON.stringify(a.system.progression.abilityIncreaseHistory[0]);
+  const res = await ProgressionFinalizer._applyMutationPlan(a, p);
+  assert.equal(res.success !== false, true, JSON.stringify(res));
+  assert.deepEqual(histLevels(a), [4, 8]); assert.equal(JSON.stringify(a.system.progression.abilityIncreaseHistory.find(r => r.level === 4)), l4);
+});
+await check('EVI-06b. level 4 history EDITED after the level 8 plan was compiled => refused, the edit survives', async () => {
+  const { a, p } = withL4(); a.system.progression.abilityIncreaseHistory[0].increases = { str: 1, wis: 1 };
+  await refusedClean(a, p);
+  assert.deepEqual(a.system.progression.abilityIncreaseHistory[0].increases, { str: 1, wis: 1 });
+});
+await check('EVI-06c. another entitlement record ADDED after compilation => refused, it survives', async () => {
+  const { a, p } = withL4(); a.system.progression.abilityIncreaseHistory.push({ level: 12, characterLevel: 12, entitlementId: 'ability-increase-level-12', transactionId: 'abtx-l12', increases: { int: 1, cha: 1 }, source: 'progression-finalizer' });
+  await refusedClean(a, p);
+  assert.ok(a.system.progression.abilityIncreaseHistory.some(r => r.level === 12));
+});
+await check('EVI-06d. a manual acknowledgment added after compilation => refused, it survives', async () => {
+  const { a, p } = withL4(); a.system.progression.abilityIncreaseHistory.push(manual4());
+  await refusedClean(a, p);
+  assert.ok(a.system.progression.abilityIncreaseHistory.some(r => r.source === 'manual-attestation'));
+});
+await check('EVI-06e. a record WITHDRAWN, SUPERSEDED or REMOVED after compilation => refused', async () => {
+  for (const mutate of [(h) => { h[0].status = 'withdrawn'; }, (h) => { h[0].status = 'superseded'; }, (h) => { h.length = 0; }]) {
+    const { a, p } = withL4(); mutate(a.system.progression.abilityIncreaseHistory);
+    await refusedClean(a, p);
+  }
+});
+await check('EVI-06f. a record\'s VERIFICATION block changed after compilation (for example the async marker landed) => refused, the new evidence is preserved', async () => {
+  const { a, p } = withL4(); a.system.progression.abilityIncreaseHistory[0].verification = { state: 'verified', transactionId: 'abtx-l4', verifiedAt: 'later' };
+  await refusedClean(a, p);
+  assert.equal(a.system.progression.abilityIncreaseHistory[0].verification.state, 'verified');
+});
+await check('EVI-06g. a stale plan cannot revert or erase unrelated history, and a refusal changes no score', async () => {
+  const { a, p } = withL4();
+  a.system.progression.abilityIncreaseHistory.push(manual4(), { level: 16, characterLevel: 16, increases: { str: 1, dex: 1 }, source: 'progression-finalizer', transactionId: 'abtx-l16', entitlementId: 'ability-increase-level-16' });
+  a.system.progression.abilityIncreaseHistory[0].status = 'superseded';
+  const sizeBefore = a.system.progression.abilityIncreaseHistory.length;
+  await refusedClean(a, p);
+  assert.equal(a.system.progression.abilityIncreaseHistory.length, sizeBefore); assert.equal(a.system.attributes.con.base, 12); assert.equal(a.system.attributes.wis.base, 12);
+});
+await check('EVI-06h. a FRESH plan compiled from the latest state proceeds when otherwise legal and keeps the newer history', async () => {
+  const { a } = withL4(); a.system.progression.abilityIncreaseHistory.push({ level: 12, characterLevel: 12, entitlementId: 'ability-increase-level-12', transactionId: 'abtx-l12', increases: { int: 1, cha: 1 }, source: 'progression-finalizer' });
+  const fresh2 = compile(a, reconcileSession(attrFor(8)));
+  const res = await ProgressionFinalizer._applyMutationPlan(a, fresh2);
+  assert.equal(res.success !== false, true, JSON.stringify(res)); assert.deepEqual(histLevels(a), [4, 8, 12]);
+});
+await check('EVI-06i. history ORDER is not data: an out-of-order but unchanged history does not make a plan stale; the helper reports nothing', async () => {
+  const a = actorAt(9, [{ level: 12, characterLevel: 12, increases: { int: 1, cha: 1 }, source: 'progression-finalizer', transactionId: 'abtx-l12', entitlementId: 'ability-increase-level-12' }, sys4()]);
+  const p = compile(a, reconcileSession(attrFor(8)));
+  assert.deepEqual(G.checkPlannedHistoryFresh(a, p.set), []);
+  const res = await ProgressionFinalizer._applyMutationPlan(a, p);
+  assert.equal(res.success !== false, true, JSON.stringify(res)); assert.deepEqual(histLevels(a), [4, 8, 12]);
+});
 console.log('ability-increase-entitlement-integrity.test.mjs: all assertions passed');

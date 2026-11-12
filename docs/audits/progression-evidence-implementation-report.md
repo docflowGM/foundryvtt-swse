@@ -118,3 +118,19 @@ Full sweep of all `tests/*.test.mjs`: only the same five force-power baseline fa
 **Remaining limitations.** (1) Cross-client concurrency: Foundry has no compare-and-set. Absolute score writes, the in-process in-flight set, the fresh boundary re-read and the pre-write history comparison narrow the window; two different selections prepared from the same stale read by two clients and committed inside that window, or a change inside the final
 check-to-call gap of the verification write, are not provably excluded. Needs Foundry V13 testing. (2) Callers that bypass `ProgressionFinalizer` and call `ActorEngine.applyMutationPlan` directly are not covered (owner-approved separation). (3) Derived effects of an increase are not verified. (4) Apply for a level with any existing record stays blocked; completing the remainder needs Checkpoint D's separately evidenced workflow.
 Checkpoints D, E and F remain stopped.
+
+## EVI-06 - stale history replacement during the main mutation (independent review of add8b8c)
+**Finding (static, accepted).** `AbilityScorePlanBuilder.buildLevelUpSet` writes `system.progression.abilityIncreaseHistory` as `[...history at compile time, new record]`, which REPLACES the actor's array. The boundary checked only the entitlement being applied, so a prepared level 8 plan
+could overwrite a newer change to another entitlement's record (an edit, addition, acknowledgment, withdrawal, supersession, or verification block).
+
+**Second defect found while fixing it.** The plan's "pre-existing history" was a SHALLOW copy: its entries were the actor's own live objects, so an in-place edit of an entry also changed the plan's copy and no comparison could ever see it. The builder now takes a deep snapshot (`structuredClone`) of the history at compile time; the plan no longer aliases actor data.
+
+**Fix.** `checkPlannedHistoryFresh` (in `ability-increase-guard.js`, called from `beginAbilityIncreaseTransaction` at the ProgressionFinalizer boundary): the new transaction record is identified by its `transactionId` and separated from the plan's history; the remainder must be IDENTICAL in content to the actor's CURRENT canonical history
+(order-insensitive - the builder sorts by level - but exact in content, including `status`, `source`, `evidence`, `verification`, `increases`, `transactionId`). Any record the plan expects that was edited or removed, and any newer record in the actor that the plan would overwrite, refuses the mutation with
+`HISTORY_CHANGED` before ActorEngine runs; nothing is merged. All earlier guards (entitlement contract, allocation, exact plan/evidence equivalence, in-flight, changed scores) are unchanged; writes still go through ActorEngine; no second ledger, migration or shim.
+
+**Tests** (`ability-increase-entitlement-integrity`, EVI-06a-i): unchanged level 4 history succeeds and is preserved; a level 4 edit, an added level 12 record, an added manual acknowledgment, a withdrawn / superseded / removed record, and a changed verification block each refuse the stale level 8 plan with ActorEngine never called, no score changed, and the newer evidence intact;
+a refusal with several concurrent changes erases or reverts nothing; a fresh plan compiled from the latest state proceeds and keeps the newer records; an out-of-order but unchanged history is not stale. Removing the guard makes the tests fail. Node harness, ActorEngine stubbed.
+Full sweep: only the same five force-power baseline failures (red at PR #1145's merge base); validators pass. Foundry V13: not tested.
+
+**Limitation (unchanged, not claimed fixed).** This closes the DETECTABLE stale-plan case. The final synchronous check and the Foundry update are separate steps and Foundry offers no compare-and-set, so a change landing between them is not provably excluded; it needs Foundry V13 testing. Checkpoints D, E, F remain stopped pending review.
