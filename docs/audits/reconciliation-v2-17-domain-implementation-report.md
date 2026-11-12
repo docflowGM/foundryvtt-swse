@@ -115,3 +115,19 @@ Not implemented (reasons recorded):
 - Domains 8/9 feat and talent prerequisites: historical acquisitions are intentionally not re-validated; RECON-001/002/005 remain open.
 - Persistent resources other than Force Points (Second Wind, Destiny): no persisted-mirror evidence audited.
 Tests: `tests/reconciliation-phase2-species.test.mjs`.
+
+## Phase 3 — equipment and combat — COMPLETE (narrow, evidence-bound)
+Implemented: Domain 13 `carriedWeightEvidenceAdapter` (informational only) using the canonical `EncumbranceEngine.carriedWeightReport`.
+Items without a verified recorded weight contribute 0 to the load, so the load may be understated; this is reported as uncertainty in the
+review overlay and is never a load finding. The load category itself is prepared data and is not re-derived (D-1).
+Not implemented (reasons recorded):
+- **Armor effects / proficiency (Domain 15/6):** `resolveArmorUsageEffects` is a calculation of prepared effects, not an integrity validator; wearing armor without
+  proficiency is a rules penalty, not a build discrepancy. No persisted mirror exists to compare. No "multiple equipped armor" rule was established.
+- **Modification slots (Domain 15):** `resolveSlotState` only reports certified totals when every occupant has a certified cost; certification is supplied by the
+  Modification V2 catalog/planner and is gated by open register entries (D-005 development tier). Without the catalog lookup every state is `unresolved`, and
+  certification is explicitly not character correctness, so no verdict is produced. Two slot authorities coexist (`modification-slot-authority.js` and `UpgradeSlotEngine`);
+  consolidation is an owner task.
+- **Combat statistics (Domain 14):** initiative, grapple, attack and damage values are prepared by `DerivedCalculator` / `combat-roll-math.js` (D-1); contextual rolls are
+  excluded by the command. Persisted weapon inputs have no independent authority audited in this pass.
+- **Damage threshold / DR / shields (Domain 7):** threshold is prepared; persisted shield and DR sources were not audited.
+Tests: `tests/reconciliation-phase3-equipment.test.mjs`.

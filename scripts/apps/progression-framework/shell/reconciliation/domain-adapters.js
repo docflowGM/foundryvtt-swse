@@ -13,6 +13,7 @@ import { ClassesDB } from '/systems/foundryvtt-swse/scripts/data/classes-db.js';
 import { readActorClassLevels } from './class-level-reader.js';
 import { readOverride } from './override-provenance.js';
 import { derivedLifecycle } from './derived-lifecycle.js';
+import { EncumbranceEngine } from '/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js';
 
 export const DOMAIN_STATUS = Object.freeze({
   VALID: 'VALID',
@@ -119,7 +120,26 @@ export function speciesGrantIntegrityAdapter(actor) {
   });
 }
 
-export const DOMAIN_ADAPTERS = Object.freeze([forcePointMaxAdapter, speciesGrantIntegrityAdapter]);
+/**
+ * Domain 13 - carried-weight evidence (INFORMATIONAL ONLY). The load category is prepared by the encumbrance authority, so it is not
+ * re-derived here. What reconciliation can honestly say is whether the evidence the load rests on is complete: the canonical
+ * `EncumbranceEngine.carriedWeightReport` lists carried items without a verified recorded weight. Such items contribute 0 to the load,
+ * so the load may be understated; that is reported as uncertainty, never as a load error.
+ */
+export function carriedWeightEvidenceAdapter(actor) {
+  const base = { domain: 'encumbrance', id: 'carried-weight-evidence', label: 'Carried weight', authority: 'engine/encumbrance/EncumbranceEngine.js carriedWeightReport' };
+  if (actor?.type !== 'character' && actor?.type !== 'droid') return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'actor-type' });
+  const report = EncumbranceEngine.carriedWeightReport(actor);
+  if (report.complete) return result({ ...base, status: DOMAIN_STATUS.VALID });
+  const names = report.unverified.slice(0, 3).map(i => i.name).filter(Boolean).join(', ');
+  const n = report.unverified.length;
+  return result({
+    ...base, reason: 'unverified-item-weight',
+    noteText: `${n} carried item${n === 1 ? ' has' : 's have'} no recorded weight (${names}${n > 3 ? ', …' : ''}), so your carried load cannot be fully verified.`,
+  });
+}
+
+export const DOMAIN_ADAPTERS = Object.freeze([forcePointMaxAdapter, speciesGrantIntegrityAdapter, carriedWeightEvidenceAdapter]);
 
 /**
  * Asynchronous adapters run by async-enrichment.js ONLY after the derived lifecycle is current. They may await canonical
