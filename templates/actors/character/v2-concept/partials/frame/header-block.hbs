@@ -82,6 +82,7 @@
         {{#unless actorSheetMode.hideSpeciesSection}}<button type="button" data-action="cmd-select-species" class="swse-concept-btn">Species</button>{{/unless}}
       {{/unless}}
       <button type="button" data-action="open-settings-app" class="swse-concept-btn">Settings</button>
+      <button type="button" data-action="open-progress-review" class="swse-concept-btn" title="Review which progression choices are recorded, verified, or acknowledged. Neutral: this is not an error indicator.">Review Progress</button>
       {{#if conceptLayout.validationIndicator.visible}}
         <button type="button" data-action="open-validation-report" class="swse-concept-btn swse-concept-btn--alert" title="{{conceptLayout.validationIndicator.title}}" aria-label="{{conceptLayout.validationIndicator.title}}">!{{#if conceptLayout.validationIndicator.count}}<span class="swse-concept-btn__count">{{conceptLayout.validationIndicator.count}}</span>{{/if}}</button>
       {{/if}}

@@ -1,0 +1,158 @@
+/** Checkpoint B - the read-only progression completion reader and its use by the reconciler. Real reader, real builder output. Node harness only. */
+import assert from 'node:assert/strict';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+registerFoundryPathLoader(); installFoundryShimGlobals();
+globalThis.window = globalThis.window ?? { addEventListener() {}, removeEventListener() {} };
+const R = await import(new URL('../scripts/apps/progression-framework/shell/reconciliation/progression-completion-reader.js', import.meta.url).href);
+const { AbilityScorePlanBuilder } = await import(new URL('../scripts/apps/progression-framework/shell/mutation/ability-score-plan-builder.js', import.meta.url).href);
+const { character } = await import('./helpers/recon-fixture.mjs');
+const { settleDerived } = await import('./helpers/derived-lifecycle-fixture.mjs');
+const { ProgressionReconciler } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js');
+const C = R.COMPLETION;
+const check = (name, fn) => { fn(); console.log(`PASS ${name}`); };
+const actorWith = (history, extra = {}) => { const a = character({ classes: [['Soldier', 8]] }); a.system.progression.abilityIncreaseHistory = history; Object.assign(a.system.progression, extra); return a; };
+const sys = (level, inc, extra = {}) => ({ level, characterLevel: level, increases: inc, source: 'progression-finalizer', ...extra });
+const manual = (level, inc, extra = {}) => ({ level, characterLevel: level, increases: inc, source: 'manual-attestation', evidence: 'player-confirmed', appliedBySystem: false, ...extra });
+const comp = (a, level = 8, ctx = { expectedCount: 2 }) => R.getAbilityIncreaseCompletion(a, level, ctx);
+
+check('1. no history: UNVERIFIABLE (never open / discrepancy)', () => {
+  const c = comp(actorWith([]));
+  assert.equal(c.classification, C.UNVERIFIABLE); assert.equal(c.provenShortfall, false); assert.equal(c.remainingUnknown, 2); assert.equal(c.entitlementId, 'ability-increase-level-8');
+});
+check('2. the reader consumes the ACTUAL persisted builder output (id, level, selections)', () => {
+  const a = actorWith([]);
+  const set = AbilityScorePlanBuilder.buildLevelUpSet({ actor: a, attr: { mode: 'levelup-ability-increase', increases: { con: 1, wis: 1 }, abilityIncreaseLevel: 8 }, manifest: null, getAllocationMode: () => 'raw_two_different', source: 'progression-finalizer', entitlementCheck: () => ({ exists: true, count: 2 }) });
+  a.system.progression.abilityIncreaseHistory = set['system.progression.abilityIncreaseHistory'];
+  const c = comp(a);
+  assert.equal(c.classification, C.SYSTEM_COMMITTED_UNVERIFIED); assert.deepEqual(c.applied, { con: 1, wis: 1 }); assert.equal(c.verification, 'committed-unverified');
+});
+check('3. a committed record is NOT verified until a verification marker exists; a failed/absent verification never becomes SYSTEM_VERIFIED', () => {
+  assert.equal(comp(actorWith([sys(8, { con: 1, wis: 1 })])).classification, C.SYSTEM_COMMITTED_UNVERIFIED);
+  assert.equal(comp(actorWith([sys(8, { con: 1, wis: 1 }, { verification: { state: 'failed' } })])).classification, C.SYSTEM_COMMITTED_UNVERIFIED);
+  assert.equal(comp(actorWith([sys(8, { con: 1, wis: 1 }, { verification: { state: 'verified', sessionId: 's1' } })])).classification, C.SYSTEM_VERIFIED);
+  assert.deepEqual(comp(actorWith([sys(8, { con: 1, wis: 1 }, { verification: { state: 'verified', sessionId: 's1' } })])).references.sessionIds, ['s1']);
+});
+check('4. Q2: unrecognised provenance is preserved and visible but never trusted as system evidence', () => {
+  for (const rec of [{ level: 8, increases: { con: 1, wis: 1 } }, { level: 8, increases: { con: 1, wis: 1 }, source: 'hand-edit' }, manual(8, { con: 1, wis: 1 }, { evidence: undefined })]) {
+    const c = comp(actorWith([rec]));
+    assert.equal(c.classification, C.UNVERIFIABLE); assert.equal(c.legacy.length, 1); assert.deepEqual(c.legacy[0].increases, { con: 1, wis: 1 }); assert.ok(c.conflicts.includes('unrecognized-provenance-record'));
+  }
+});
+check('5. EVR-03: a short SYSTEM record keeps its known part and leaves the rest UNKNOWN - history alone never proves an omitted increase', () => {
+  for (const rec of [sys(8, { con: 1 }), sys(8, { con: 1 }, { verification: { state: 'verified' } })]) {
+    const c = comp(actorWith([rec]));
+    assert.equal(c.classification, C.PARTIAL); assert.equal(c.provenShortfall, false); assert.equal(c.remainingUnknown, 1); assert.deepEqual(c.applied, { con: 1 });
+  }
+});
+check('6. Q3: full, partial and GM attestations; partial manual evidence is NOT a proven shortfall', () => {
+  assert.equal(comp(actorWith([manual(8, { con: 1, wis: 1 })])).classification, C.PLAYER_ATTESTED);
+  const p = comp(actorWith([manual(8, { con: 1 })]));
+  assert.equal(p.classification, C.PARTIAL); assert.equal(p.provenShortfall, false); assert.equal(p.remainingUnknown, 1); assert.deepEqual(p.attested, { con: 1 });
+  assert.equal(comp(actorWith([manual(8, { con: 1, wis: 1 }, { evidence: 'gm-authorized' })])).classification, C.GM_AUTHORIZED);
+});
+check('7. withdrawn / superseded statements do not count; duplicates do not count twice', () => {
+  assert.equal(comp(actorWith([manual(8, { con: 1, wis: 1 }, { status: 'withdrawn' })])).classification, C.UNVERIFIABLE);
+  const sup = comp(actorWith([manual(8, { con: 1, wis: 1 }, { status: 'superseded' }), manual(8, { str: 1, dex: 1 }, { evidence: 'gm-authorized' })]));
+  assert.equal(sup.classification, C.GM_AUTHORIZED); assert.deepEqual(sup.gmAuthorized, { str: 1, dex: 1 }); assert.equal(sup.inactive, 1);
+  const dup = comp(actorWith([manual(8, { con: 1 }), manual(8, { con: 1 })]));
+  assert.equal(dup.classification, C.PARTIAL); assert.deepEqual(dup.attested, { con: 1 });
+});
+check('8. C1: an attestation never overrides or relabels a COMPLETE system record (excess is reported, not counted)', () => {
+  const c = comp(actorWith([sys(8, { con: 1, wis: 1 }), manual(8, { str: 1, dex: 1 })]));
+  assert.equal(c.classification, C.SYSTEM_COMMITTED_UNVERIFIED); assert.deepEqual(c.applied, { con: 1, wis: 1 }); assert.deepEqual(c.attested, {});
+  assert.ok(c.conflicts.includes('selections-exceed-entitlement')); assert.equal(c.mixed, false);
+});
+check('9. Q1 / C7: deferred (droid / Nonheroic) entitlements never accept attestations as completion; recorded history stays visible', () => {
+  const c = comp(actorWith([manual(8, { con: 1 })]), 8, { expectedCount: 1, rulesDeferred: true });
+  assert.equal(c.classification, C.UNVERIFIABLE); assert.deepEqual(c.attested, {}); assert.equal(c.rulesDeferred, true);
+  const s = comp(actorWith([sys(8, { con: 1 })]), 8, { expectedCount: 1, rulesDeferred: ['RECON-002'] });
+  // EVR-05: a historical record that happens to match the PROVISIONAL count does not certify an undecided rule; it stays visible
+  assert.equal(s.classification, C.UNVERIFIABLE); assert.deepEqual(s.applied, { con: 1 }); assert.equal(s.remainingUnknown, null); assert.equal(s.provenShortfall, false);
+  const v = comp(actorWith([sys(8, { con: 1 }, { verification: { state: 'verified' } })]), 8, { expectedCount: 1, rulesDeferred: true });
+  assert.equal(v.classification, C.UNVERIFIABLE, 'not even a verified record certifies an unresolved count');
+});
+check('10. C6: lastAbilityIncrease never overrides canonical history, and is only supplementary legacy evidence for an untracked level', () => {
+  const stale = actorWith([manual(8, { con: 1, wis: 1 })], { lastAbilityIncrease: sys(8, { str: 1, dex: 1 }) });
+  assert.equal(comp(stale).classification, C.PLAYER_ATTESTED); assert.deepEqual(comp(stale).attested, { con: 1, wis: 1 });
+  const only = actorWith([], { lastAbilityIncrease: sys(8, { str: 1, dex: 1 }) });
+  assert.equal(comp(only).classification, C.SYSTEM_COMMITTED_UNVERIFIED);
+  assert.equal(comp(actorWith([], { lastAbilityIncrease: sys(4, { str: 1, dex: 1 }) })).classification, C.UNVERIFIABLE, 'other level: ignored');
+});
+check('11. house-rule / count changes re-evaluate WITHOUT rewriting records; Ignore is never evidence; the reader is read-only', () => {
+  const a = actorWith([manual(8, { con: 1 })]); a.flags.swse.reconciliationIgnored = [{ id: 'ability-increase-level-8' }];
+  const frozen = JSON.stringify(a);
+  assert.equal(comp(a, 8, { expectedCount: 2 }).classification, C.PARTIAL);
+  assert.equal(comp(a, 8, { expectedCount: 1 }).classification, C.PLAYER_ATTESTED, 'entitlement changed: re-evaluated');
+  assert.equal(JSON.stringify(a), frozen, 'no mutation');
+  assert.equal(comp(actorWith([]) ).classification, C.UNVERIFIABLE);
+});
+check('12. invalid level and unsupported entitlement ids are UNVERIFIABLE, never guessed; batch API', () => {
+  assert.equal(R.getAbilityIncreaseCompletion(actorWith([]), 0, { expectedCount: 2 }).classification, C.UNVERIFIABLE);
+  assert.equal(R.getEntitlementCompletion(actorWith([]), 'general-feat-3').supported, false);
+  assert.equal(R.getEntitlementCompletion(actorWith([sys(4, { str: 1, dex: 1 })]), 'ability-increase-level-4', { expectedCount: 2 }).classification, C.SYSTEM_COMMITTED_UNVERIFIED);
+  const m = R.getAbilityIncreaseCompletions(actorWith([sys(4, { str: 1, dex: 1 })]), [{ level: 4, expectedCount: 2 }, { level: 8, expectedCount: 2 }]);
+  assert.equal(m.get(4).classification, C.SYSTEM_COMMITTED_UNVERIFIED); assert.equal(m.get(8).classification, C.UNVERIFIABLE);
+});
+check('13. the reconciler consumes the reader: slot status / counts / completion block follow the classification (no finding from unknown or partial manual evidence)', () => {
+  const slotOf = (hist) => ProgressionReconciler.safeReconcileActor(settleDerived(actorWith(hist)), { output: 'report', fresh: true }).slots.abilityIncreases.find(s => s.characterLevel === 8);
+  assert.equal(slotOf([]).status, 'unverifiable');
+  assert.equal(slotOf([manual(8, { con: 1, wis: 1 })]).status, 'filled'); assert.equal(slotOf([manual(8, { con: 1, wis: 1 })]).completion.classification, 'PLAYER_ATTESTED');
+  const part = slotOf([manual(8, { con: 1 })]);
+  assert.equal(part.status, 'unverifiable'); assert.equal(part.openCount, 0); assert.equal(part.filledCount, 1); assert.equal(part.unverifiableCount, 1);
+  const short = slotOf([sys(8, { con: 1 })]);
+  assert.equal(short.status, 'unverifiable'); assert.equal(short.openCount, 0); assert.equal(short.filledCount, 1); assert.equal(short.unverifiableCount, 1);
+});
+
+// ---- EVD-01: unknown counts stay unknown -------------------------------------------------------------------------------
+const G = await import(new URL('../scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js', import.meta.url).href);
+check('EVD-01a. strictCount: only positive integers are counts; null / undefined / "" / 0 / negatives / NaN / fractions / booleans are UNKNOWN (never 0)', () => {
+  for (const bad of [null, undefined, '', 0, -1, NaN, 1.5, 'x', true, false]) assert.equal(G.strictCount(bad), null, String(bad));
+  assert.equal(G.strictCount(2), 2); assert.equal(G.strictCount('1'), 1);
+});
+check('EVD-01b. the reader never turns an unknown count into 0: expected / remaining stay null and NOTHING is called complete, whatever the evidence', () => {
+  for (const unknown of [null, undefined, '', 0, NaN]) {
+    for (const hist of [[], [sys(8, { con: 1, wis: 1 })], [manual(8, { con: 1, wis: 1 })]]) {
+      const c = R.getAbilityIncreaseCompletion(actorWith(hist), 8, { expectedCount: unknown });
+      assert.equal(c.expectedCount, null); assert.equal(c.remainingUnknown, null); assert.equal(c.classification, C.UNVERIFIABLE); assert.equal(c.provenShortfall, false);
+    }
+  }
+  const shown = R.getAbilityIncreaseCompletion(actorWith([sys(8, { con: 1 })]), 8, {});
+  assert.deepEqual(shown.applied, { con: 1 }, 'the evidence is still visible');
+});
+
+// ---- EVD-05: mixed system + manual evidence -----------------------------------------------------------------------------
+check('EVD-05a. a short system record completed by an attestation is PLAYER_ATTESTED (weakest link), mixed, with both parts listed', () => {
+  const c = comp(actorWith([sys(8, { con: 1 }), manual(8, { wis: 1 })]));
+  assert.equal(c.classification, C.PLAYER_ATTESTED); assert.equal(c.mixed, true); assert.deepEqual(c.applied, { con: 1 }); assert.deepEqual(c.attested, { wis: 1 });
+  assert.equal(c.provenShortfall, false); assert.equal(c.remainingUnknown, 0);
+});
+check('EVD-05b. a short system record is never a proven shortfall (EVR-03); a manual statement still leaves the rest unknown', () => {
+  assert.equal(comp(actorWith([sys(8, { con: 1 })])).provenShortfall, false);
+  const stillShort = comp(actorWith([sys(8, { con: 1 }), manual(8, { wis: 1 })]), 8, { expectedCount: 3 });
+  assert.equal(stillShort.classification, C.PARTIAL); assert.equal(stillShort.provenShortfall, false); assert.equal(stillShort.remainingUnknown, 1);
+});
+check('EVD-05c. the allocation rule caps the combined total per ability: overlap is not double counted (cap 1) and is allowed when stacking is permitted (cap 2)', () => {
+  const overlap = comp(actorWith([sys(8, { con: 1 }), manual(8, { con: 1 })]));
+  assert.equal(overlap.classification, C.PARTIAL); assert.deepEqual(overlap.attested, {}); assert.ok(overlap.conflicts.includes('overlapping-or-excess-selection'));
+  const stacked = R.getAbilityIncreaseCompletion(actorWith([sys(8, { con: 1 }), manual(8, { con: 1 })]), 8, { expectedCount: 2, maxPerAbility: 2 });
+  assert.equal(stacked.classification, C.PLAYER_ATTESTED); assert.deepEqual(stacked.attested, { con: 1 });
+});
+check('EVD-05d. D4: GM and player attestations COEXIST (no blanket GM precedence); overlap goes to the GM part; the whole is PLAYER_ATTESTED when any player part counts; manual evidence never exceeds the entitlement', () => {
+  const both = comp(actorWith([manual(8, { con: 1 }), manual(8, { str: 1 }, { evidence: 'gm-authorized' })]));
+  assert.equal(both.classification, C.PLAYER_ATTESTED); assert.deepEqual(both.gmAuthorized, { str: 1 }); assert.deepEqual(both.attested, { con: 1 });
+  const gmOnly = comp(actorWith([manual(8, { str: 1, dex: 1 }, { evidence: 'gm-authorized' })]));
+  assert.equal(gmOnly.classification, C.GM_AUTHORIZED);
+  const overlap = comp(actorWith([manual(8, { con: 1, wis: 1 }), manual(8, { con: 1, dex: 1 }, { evidence: 'gm-authorized' })]));
+  assert.deepEqual(overlap.gmAuthorized, { con: 1, dex: 1 }); assert.deepEqual(overlap.attested, {}); assert.ok(overlap.conflicts.includes('overlapping-or-excess-selection') || overlap.conflicts.includes('selections-exceed-entitlement'));
+  const over = comp(actorWith([manual(8, { con: 1, wis: 1, str: 1 })]));
+  assert.equal(over.classification, C.PLAYER_ATTESTED); assert.equal(Object.values(over.attested).reduce((n, d) => n + d, 0), 2); assert.ok(over.conflicts.includes('selections-exceed-entitlement'));
+  // superseding ONE record leaves the unrelated player attestation counting
+  const superseded = comp(actorWith([manual(8, { con: 1 }), manual(8, { wis: 1 }, { status: 'superseded' }), manual(8, { dex: 1 }, { evidence: 'gm-authorized' })]));
+  assert.deepEqual(superseded.attested, { con: 1 }); assert.deepEqual(superseded.gmAuthorized, { dex: 1 }); assert.equal(superseded.classification, C.PLAYER_ATTESTED);
+});
+check('EVD-05e. Apply is still refused while ANY record (mixed, partial or manual) exists for the level, so mixed evidence can never be double applied', () => {
+  const a = actorWith([sys(8, { con: 1 }), manual(8, { wis: 1 })]);
+  assert.throws(() => G.assertEntitlementOpen(a.system.progression.abilityIncreaseHistory, 8), e => e.code === 'ENTITLEMENT_ALREADY_RECORDED');
+});
+console.log('progression-completion-reader.test.mjs: all assertions passed');

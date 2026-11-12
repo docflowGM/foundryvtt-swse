@@ -113,6 +113,17 @@ export class ShellSurfaceRegistry {
       const audit = ProgressionReconciler.safeReconcileActor(actor, { output: 'sheet' });
       const validation = audit?.validation || {};
       const isGM = game?.user?.isGM === true;
+      // Review Progress (read-only display model): the same memoized report's ability-increase slots plus the raw history records.
+      // Never feeds `findings`/the header `!`; Ignore is not consulted.
+      let progress = { rows: [], hasRows: false, isGM };
+      try {
+        const [{ buildProgressReview }] = await Promise.all([
+          import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/progression-evidence-review.js'),
+        ]);
+        progress = buildProgressReview(ProgressionReconciler.safeReconcileActor(actor, { output: 'report' }), actor, { user: game?.user });
+      } catch (err) {
+        SWSELogger.warn?.('[ShellSurfaceRegistry] Review Progress model unavailable:', err);
+      }
       return {
         overlayId: 'character-validation',
         title: 'Character Validation',
@@ -125,7 +136,8 @@ export class ShellSurfaceRegistry {
         repairs: validation.repairs || [],
         isGM,
         engineFindings: isGM ? (validation.engineFindings || []) : [],
-        hasFindings: (validation.findings || []).length > 0
+        hasFindings: (validation.findings || []).length > 0,
+        progress
       };
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Character validation overlay VM failed:', err);

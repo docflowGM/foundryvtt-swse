@@ -5376,7 +5376,7 @@ const forcePoints = [];
     // nothing here changes a character except through the canonical authorities named in
     // reconciliation-resolvers.js, and Ignore only records a dismissal flag.
     html.addEventListener("click", async (event) => {
-      const button = event.target.closest('[data-action="resolve-finding"], [data-action="ignore-finding"], [data-action="restore-finding"]');
+      const button = event.target.closest('[data-action="resolve-finding"], [data-action="ignore-finding"], [data-action="restore-finding"], [data-action="acknowledge-ability-increase"], [data-action="apply-ability-increase"], [data-action="correct-acknowledgment"], [data-action="withdraw-acknowledgment"], [data-action="supersede-acknowledgment"]');
       if (!button) return;
       event.preventDefault();
       event.stopPropagation();
@@ -8094,8 +8094,58 @@ const forcePoints = [];
     return buildFindings(report);
   }
 
+  /**
+   * Review Progress actions (Checkpoint E). Acknowledgments are statements recorded through the production-wired AbilityAcknowledgmentService
+   * (ActorEngine); they never change an ability score. "Apply Increases" is the existing focused progression route. Ignore is not involved.
+   */
+  async _handleProgressEvidenceAction(dataset = {}) {
+    const action = dataset.action;
+    const level = Number(dataset.level) || null;
+    if (action === 'apply-ability-increase') {
+      return this._openProgressionReconciliationStep({ slotId: dataset.slotId || `ability-increase-level-${level}`, slotType: 'ability-increase', characterLevel: level });
+    }
+    const { buildProgressReview, buildAcknowledgmentDialogContent, readAcknowledgmentDialog } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/progression-evidence-review.js');
+    const { buildAbilityEvidenceDeps, runAbilityEvidenceOperation } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-evidence-wiring.js');
+    const wired = await buildAbilityEvidenceDeps(this.actor);
+    if (!wired.ok) { ui?.notifications?.warn?.(wired.message); return; }
+    const review = buildProgressReview(ProgressionReconciler.safeReconcileActor(this.actor, { output: 'report', fresh: true }), this.actor, { user: wired.user });
+    const row = review.rows.find(r => r.level === level);
+    const cap = wired.deps.getAllocationMode?.() === 'allow_stacked_two' ? 2 : 1;
+    const notify = (result) => {
+      const kind = result.status === 'ok' ? 'info' : 'warn'; // 'indeterminate' is never reported as success
+      ui?.notifications?.[kind]?.(result.message);
+    };
+    if (action === 'withdraw-acknowledgment') {
+      const ok = await SWSEDialogV2.confirm({ title: 'Withdraw acknowledgment', content: '<p>Withdraw this statement? It stays in the history as withdrawn but no longer counts. No ability score is changed.</p>', yes: () => true, no: () => false, defaultYes: false });
+      if (!ok) return;
+      notify(await runAbilityEvidenceOperation(this.actor, 'withdraw', { acknowledgmentId: dataset.acknowledgmentId }));
+    } else {
+      const mode = action === 'acknowledge-ability-increase' ? 'acknowledge' : (action === 'supersede-acknowledgment' ? 'supersede' : 'correct');
+      if (!row) { ui?.notifications?.warn?.('That entitlement is no longer listed; nothing was changed.'); return; }
+      const existing = row.records.find(r => r.acknowledgmentId && r.acknowledgmentId === dataset.acknowledgmentId);
+      const entry = (this.actor.system?.progression?.abilityIncreaseHistory || []).find(e => e?.acknowledgmentId === dataset.acknowledgmentId);
+      const chosen = await SWSEDialogV2.prompt({
+        title: mode === 'acknowledge' ? 'Already Applied' : (mode === 'supersede' ? 'Supersede acknowledgment (GM)' : 'Correct acknowledgment'),
+        label: mode === 'acknowledge' ? 'Record statement' : 'Save',
+        content: buildAcknowledgmentDialogContent({ label: row.label, entitledCount: row.entitledCount, remaining: row.remaining, cap, initial: mode === 'acknowledge' ? {} : (entry?.increases || {}), mode, gm: wired.user.isGM === true }),
+        callback: (html) => readAcknowledgmentDialog(html),
+      });
+      if (!chosen) return;
+      if (chosen.invalid?.length) { ui?.notifications?.warn?.(`Some entries are not valid whole numbers (${chosen.invalid.map(k => k.toUpperCase()).join(', ')}); nothing was changed. Enter 0 for an ability you did not increase.`); return; }
+      if (!chosen.confirmed) { ui?.notifications?.warn?.('Confirmation is required; nothing was changed.'); return; }
+      if (mode !== 'acknowledge' && !existing) { ui?.notifications?.warn?.('That acknowledgment is no longer available; nothing was changed.'); return; }
+      const args = mode === 'acknowledge' ? { level, increases: chosen.increases, origin: wired.user.isGM === true ? 'gm' : 'player' } : { acknowledgmentId: dataset.acknowledgmentId, increases: chosen.increases };
+      notify(await runAbilityEvidenceOperation(this.actor, mode, args));
+    }
+    // The actor update bumps _stats.modifiedTime, which is part of the reconciliation memo key, so the next read recomputes; re-render the overlay.
+    await this.requestSurfaceRender({ reason: `progress-evidence-${action}`, surfaceId: this._shellSurface });
+  }
+
   async _handleReconciliationAction(dataset = {}) {
     const action = dataset.action;
+    if (['acknowledge-ability-increase', 'apply-ability-increase', 'correct-acknowledgment', 'withdraw-acknowledgment', 'supersede-acknowledgment'].includes(action)) {
+      return this._handleProgressEvidenceAction(dataset);
+    }
     const id = String(dataset.findingId || '');
     if (!id) return;
     if (action === 'ignore-finding') {
