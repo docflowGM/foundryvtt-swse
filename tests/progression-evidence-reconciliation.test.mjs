@@ -195,7 +195,9 @@ await check('10. finalizer writes the certification only after the mutation, via
   assert.ok(apply > 0 && audit > apply && success > audit, 'certification must follow apply and post-audit');
   assert.match(src, /await this\._certifyProgressionSession\(actor, sessionState, finalMutationPlan, postAudit\);/);
   const body = src.slice(src.indexOf('static async _certifyProgressionSession'));
-  assert.match(body, /engine\.updateActor\(actor/);
+  assert.match(body, /persistCertification\(this\._resolveActorEngine\(\), actor, record/);
+  const evidenceSrc = fs.readFileSync(path.join(ROOT, 'scripts/engine/progression/utils/progression-evidence.js'), 'utf8');
+  assert.match(evidenceSrc, /engine\.updateActor\(actor/);
   assert.match(body, /catch \(error\)[\s\S]*certified: false/);
   assert.ok(!/actor\.update\(|actor\.setFlag\(/.test(body.slice(0, body.indexOf('static _auditLevelUpFinalization') > 0 ? body.length : body.length)));
 });

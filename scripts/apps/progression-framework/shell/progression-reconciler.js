@@ -1371,6 +1371,7 @@ export class ProgressionReconciler {
     const pools = { general: [], class: [], classUntagged: [], unknown: [] };
     for (const item of readActorItems(actor).filter(entry => entry?.type === type)) {
       if (isAutomaticProgressionItem(item)) continue;
+      if (this._evidence?.byItemId?.get(item?.id ?? item?._id)?.status === 'external') continue; // GM-authorized exception: outside slot accounting
       const prov = this._provenance(item);
       if (prov.certified) { (prov.kind === 'class' ? pools.class : pools.general).push(item); continue; }
       const hint = this._getSelectionHintForItem(item, hints);

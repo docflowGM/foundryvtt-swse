@@ -114,6 +114,12 @@ export function getAcquisitionEvidence(actor, item, history = null) {
       }
     }
   }
+  // A GM-authorized grant that explicitly does NOT count against a progression slot is an authorized
+  // exception (GMGrantDialog: gm-reward / manual with countsAgainstSlot:false). It is outside slot accounting.
+  const acq = item?.system?.acquisition || item?.flags?.swse?.acquisition || item?.flags?.['foundryvtt-swse']?.acquisition || null;
+  if (acq && acq.countsAgainstSlot === false && acq.grantedBy) {
+    return { status: 'external', sessionId: null, slotKind: 'unknown', slotType: null, classId: null, className: null, classLevel: 0, characterLevel: 0, certification: null, grant: { source: acq.source || null, grantedByName: acq.grantedByName || null, reason: acq.reason || '' } };
+  }
   const meta = progressionMeta(item);
   if (meta.sourceSession || meta.selectionKey) {
     return {
@@ -175,14 +181,16 @@ export function buildEvidenceIndex(actor) {
   let certified = 0;
   let stamped = 0;
   let none = 0;
+  let external = 0;
   for (const item of actorItems(actor).filter(i => GRANT_ITEM_TYPES.includes(i?.type))) {
     const evidence = getAcquisitionEvidence(actor, item, history);
     byItemId.set(item?.id ?? item?._id, evidence);
     if (evidence.status === 'certified') certified += 1;
+    else if (evidence.status === 'external') external += 1;
     else if (evidence.status === 'stamped') stamped += 1;
     else none += 1;
   }
-  return { history, byItemId, counts: { certified, stamped, none, untrustedRecords: history.untrusted.length } };
+  return { history, byItemId, counts: { certified, stamped, none, external, untrustedRecords: history.untrusted.length } };
 }
 
 /**
@@ -243,6 +251,23 @@ export function buildProgressionCertification({ actor, sessionId, mode, manifest
   };
 }
 
+/**
+ * Persist a certification through the actor mutation authority. Best effort: never throws.
+ * @param {object} engine ActorEngine-like object exposing updateActor
+ */
+export async function persistCertification(engine, actor, record, source = 'progression-evidence') {
+  try {
+    if (!record) return { certified: false, reason: 'no-record' };
+    if (!engine?.updateActor) return { certified: false, reason: 'actor-engine-unavailable' };
+    await engine.updateActor(actor, {
+      [CERTIFICATION_FLAG_PATH]: appendCertification(actor?.flags?.swse?.progressionCertifications, record),
+    }, { source, meta: { guardKey: 'progression-certification' } });
+    return { certified: record.outcome === 'certified', outcome: record.outcome, grantCount: record.grants.length };
+  } catch (error) {
+    return { certified: false, reason: 'write-failed', error: error?.message ?? String(error) };
+  }
+}
+
 /** Append-only (per sessionId), bounded. Pure: returns the new array to persist. */
 export function appendCertification(existing, record) {
   const list = Array.isArray(existing) ? existing.filter(r => r && r.sessionId !== record.sessionId) : [];
@@ -257,4 +282,5 @@ export default {
   buildEvidenceIndex,
   buildProgressionCertification,
   appendCertification,
+  persistCertification,
 };

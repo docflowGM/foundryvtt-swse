@@ -45,9 +45,8 @@ import {
   validateLevelUpRequiredSelections,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js';
 import {
-  CERTIFICATION_FLAG_PATH,
-  appendCertification,
   buildProgressionCertification,
+  persistCertification,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/progression-evidence.js';
 import {
   filterDroidForbiddenItemSpecs,
@@ -3767,12 +3766,7 @@ export class ProgressionFinalizer {
       const record = buildProgressionCertification({ actor, sessionId, mode, manifest, audit, fallbackClass });
       if (!record) return { certified: false, reason: 'no-session-identity' };
       if (!record.grants.length && record.outcome === 'certified') return { certified: false, reason: 'nothing-to-certify' };
-      const engine = this._resolveActorEngine();
-      if (!engine?.updateActor) return { certified: false, reason: 'actor-engine-unavailable' };
-      await engine.updateActor(actor, {
-        [CERTIFICATION_FLAG_PATH]: appendCertification(actor?.flags?.swse?.progressionCertifications, record),
-      }, { source: 'ProgressionFinalizer.certify', meta: { guardKey: 'progression-certification' } });
-      return { certified: record.outcome === 'certified', outcome: record.outcome, grantCount: record.grants.length };
+      return await persistCertification(this._resolveActorEngine(), actor, record, 'ProgressionFinalizer.certify');
     } catch (error) {
       swseLogger.warn('[ProgressionFinalizer] Progression certification was not recorded (transaction already committed)', error);
       return { certified: false, reason: 'write-failed', error: error?.message ?? String(error) };

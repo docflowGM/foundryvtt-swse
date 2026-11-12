@@ -21,6 +21,7 @@ import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interact
 import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { isGatedAcquisitionType, recordAcquisitionEvidence, validateAcquisition } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/acquisition-authority.js";
 import { requestWithPostureChoices } from "/systems/foundryvtt-swse/scripts/sheets/v2/weapon-posture-choice-dialog.js";
 import { reconcileItemTransactions } from "/systems/foundryvtt-swse/scripts/sheets/v2/equipment-reconcile-dialog.js";
 import { getReadiedWeapons, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
@@ -8018,10 +8019,19 @@ const forcePoints = [];
       return this._handleBackgroundDrop(droppedDocument);
     }
 
-    // ITEM DROP: Use standard resolution
+    // ITEM DROP: validate interactive feat/talent/class acquisitions BEFORE any actor change.
+    let acquisition = null;
+    if (droppedDocument && droppedDocument.documentName === 'Item') {
+      const gate = await this._gateItemAcquisition(droppedDocument);
+      if (gate.stop) return;
+      acquisition = gate.acquisition;
+    }
+
+    // Use standard resolution
     const result = await DropResolutionEngine.resolve({
       actor: this.actor,
-      dropData: data
+      dropData: data,
+      acquisition
     });
 
     // If no plan (duplicate or invalid), silently skip
@@ -8030,6 +8040,8 @@ const forcePoints = [];
     // Apply mutations via sovereign ActorEngine
     try {
       await ActorEngine.apply(this.actor, result.mutationPlan);
+      // Durable evidence for a drop that was proven to satisfy an open slot (best effort, never fails the drop).
+      if (acquisition?.slotType) await recordAcquisitionEvidence({ actor: this.actor, acquisition, engine: ActorEngine });
       // UI feedback: pulse the target tab
       if (result.uiTargetTab) {
         this._pulseTab(result.uiTargetTab);
@@ -8038,6 +8050,56 @@ const forcePoints = [];
       // console.error('Drop application failed:', err);
       ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
     }
+  }
+
+  /**
+   * Acquisition gate for dropped Items (shared authority: acquisition-authority.js).
+   * - class: never silently creates a class level. Players are sent to Level Up; a GM may explicitly
+   *   override (direct add bypasses HP records, starting feats and choices).
+   * - feat / talent on a character or droid: prerequisites + available entitlement are checked before
+   *   the actor changes. A player is refused on a PROVEN problem; a GM is offered the existing GM grant
+   *   dialog (explicit, recorded provenance). Undeterminable cases are allowed and recorded unattributed.
+   * @returns {Promise<{stop:boolean, acquisition:object|null}>}
+   */
+  async _gateItemAcquisition(item) {
+    const actorType = this.actor?.type;
+    if (!['character', 'droid'].includes(actorType)) return { stop: false, acquisition: null };
+    const isGM = game?.user?.isGM === true;
+
+    if (item.type === 'class') {
+      if (!isGM) {
+        ui?.notifications?.warn?.(`Classes are added through Level Up so HP, starting feats and choices are recorded. Opening Level Up for ${this.actor.name}.`);
+        await this.setSurface('progression', { source: 'sheet', skipIntro: true });
+        await this.requestSurfaceRender({ reason: 'class-drop-levelup', surfaceId: 'progression' });
+        return { stop: true, acquisition: null };
+      }
+      const direct = await SWSEDialogV2.confirm({
+        title: 'Add class directly?',
+        content: '<p>Adding a class by drop bypasses Level Up: no HP record, starting feats, or choices are made. Continue as a GM override, or cancel and use Level Up.</p>',
+        yes: () => true, no: () => false, defaultYes: false,
+      });
+      return { stop: direct !== true, acquisition: null };
+    }
+
+    if (!isGatedAcquisitionType(item.type)) return { stop: false, acquisition: null };
+    const verdict = validateAcquisition({ actor: this.actor, item, isGM, user: game?.user });
+    if (verdict.decision === 'block') {
+      ui?.notifications?.warn?.(`${item.name} was not added. ${verdict.reasons.join(' ')} Ask a GM to grant it if it is intended.`);
+      return { stop: true, acquisition: null };
+    }
+    if (verdict.decision === 'needs-gm') {
+      if (item.system?.acquisition || item.flags?.['foundryvtt-swse']?.acquisition) return { stop: false, acquisition: null };
+      try {
+        const { GMGrantDialog } = await import('/systems/foundryvtt-swse/scripts/apps/gm-grant-dialog.js');
+        const granted = await GMGrantDialog.prompt({ actor: this.actor, item });
+        if (!granted) return { stop: true, acquisition: null };
+        return { stop: false, acquisition: granted };
+      } catch (err) {
+        ui?.notifications?.error?.(`GM grant prompt failed: ${err.message}`);
+        return { stop: true, acquisition: null };
+      }
+    }
+    return { stop: false, acquisition: verdict.acquisition };
   }
 
   /**
