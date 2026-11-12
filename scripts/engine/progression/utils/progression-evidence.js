@@ -67,6 +67,36 @@ export function normalizeGrantSlotKind(token) {
   return 'unknown';
 }
 
+/** Stable identity of an awarded feat/talent: type + canonical source id when the item carries one + name key. */
+function canonicalIdOf(item) {
+  return norm(item?.flags?.core?.sourceId ?? item?.system?.sourceId ?? item?.system?.canonicalId ?? item?.system?.slug ?? '');
+}
+
+export function itemIdentity(item) {
+  return { itemType: item?.type || null, canonicalId: canonicalIdOf(item) || null, nameKey: norm(item?.name) || null };
+}
+
+/**
+ * Does the item currently stored under a certified grant's id still BE the awarded item?
+ *  - same item type;
+ *  - same canonical source id when both sides have one (a cosmetic rename does not matter), otherwise
+ *    the same name key;
+ *  - it still carries the acquisition stamp of the certified transaction (a replaced / rewritten item
+ *    that kept the embedded id loses or changes it).
+ */
+export function grantMatchesItem(record, grant, item) {
+  if (!item || !grant) return false;
+  if (grant.itemType && item.type !== grant.itemType) return false;
+  const gid = norm(grant.canonicalId);
+  const iid = canonicalIdOf(item);
+  if (gid && iid) { if (gid !== iid) return false; }
+  else if (!grant.nameKey || grant.nameKey !== norm(item.name)) return false;
+  const stamp = progressionMeta(item);
+  if (!stamp.sourceSession || stamp.sourceSession !== record?.sessionId) return false;
+  if (grant.selectionId && stamp.selectionId && norm(grant.selectionId) !== norm(stamp.selectionId)) return false;
+  return true;
+}
+
 function certifiedRecords(actor) {
   const raw = actor?.flags?.swse?.progressionCertifications;
   return Array.isArray(raw) ? raw.filter(r => r && typeof r === 'object' && r.kind === 'swse-progression-certification') : [];
@@ -81,7 +111,9 @@ export function getVerifiedHistory(actor) {
   const untrusted = [];
   for (const record of certifiedRecords(actor)) {
     const wellFormed = record.sessionId && Array.isArray(record.grants);
-    if (wellFormed && record.outcome === 'certified' && record.audit?.ok === true) trusted.push(record);
+    // Trusted only if a REAL, labelled, non-vacuous post-commit verification passed.
+    const verified = record.audit?.ok === true && record.audit?.vacuous !== true && typeof record.audit?.kind === 'string' && record.audit.kind;
+    if (wellFormed && record.outcome === 'certified' && verified) trusted.push(record);
     else untrusted.push(record);
   }
   return { trusted, untrusted };
@@ -99,6 +131,22 @@ export function getAcquisitionEvidence(actor, item, history = null) {
   if (id) {
     for (const record of trusted) {
       const grant = record.grants.find(g => g?.itemId === id);
+      if (grant && !grantMatchesItem(record, grant, item)) {
+        // Same embedded id, different item: the predecessor's certification does NOT carry over.
+        const meta = progressionMeta(item);
+        return {
+          status: 'identity-mismatch',
+          sessionId: meta.sourceSession,
+          slotKind: normalizeGrantSlotKind(meta.slotType),
+          slotType: meta.slotType,
+          classId: meta.classId,
+          className: meta.className,
+          classLevel: meta.classLevel,
+          characterLevel: meta.characterLevel,
+          certification: null,
+          replacedGrant: { sessionId: record.sessionId, name: grant.name || '' },
+        };
+      }
       if (grant) {
         return {
           status: 'certified',
@@ -146,12 +194,23 @@ export function getAcquisitionEvidence(actor, item, history = null) {
  */
 export function checkCertificationConsistency(actor, classLevels = null) {
   const { trusted, untrusted } = getVerifiedHistory(actor);
-  const owned = new Set(actorItems(actor).map(i => i?.id ?? i?._id).filter(Boolean));
+  const ownedById = new Map(actorItems(actor).map(i => [i?.id ?? i?._id, i]).filter(([id]) => id));
+  const owned = new Set(ownedById.keys());
   const levelByClass = new Map((Array.isArray(classLevels) ? classLevels : []).map(r => [norm(r.classId || r.className), positiveInt(r.level)]));
   const actorLevel = positiveInt(actor?.system?.level);
   const findings = [];
   for (const record of trusted) {
     for (const grant of record.grants) {
+      const current = ownedById.get(grant.itemId);
+      if (current && !grantMatchesItem(record, grant, current)) {
+        findings.push({
+          code: 'certified-item-replaced', sessionId: record.sessionId, itemId: grant.itemId, name: grant.name || '', itemType: grant.itemType || null,
+          currentName: current.name || '', currentType: current.type || null,
+          slotType: grant.slotType || null, slotKind: normalizeGrantSlotKind(grant.slotType),
+          classId: grant.classId || null, className: grant.className || null, classLevel: positiveInt(grant.classLevel), characterLevel: positiveInt(grant.characterLevel),
+        });
+        continue;
+      }
       if (!owned.has(grant.itemId)) {
         findings.push({
           code: 'certified-item-removed', sessionId: record.sessionId, itemId: grant.itemId, name: grant.name || '', itemType: grant.itemType || null,
@@ -182,15 +241,17 @@ export function buildEvidenceIndex(actor) {
   let stamped = 0;
   let none = 0;
   let external = 0;
+  let identityMismatch = 0;
   for (const item of actorItems(actor).filter(i => GRANT_ITEM_TYPES.includes(i?.type))) {
     const evidence = getAcquisitionEvidence(actor, item, history);
     byItemId.set(item?.id ?? item?._id, evidence);
     if (evidence.status === 'certified') certified += 1;
     else if (evidence.status === 'external') external += 1;
+    else if (evidence.status === 'identity-mismatch') identityMismatch += 1;
     else if (evidence.status === 'stamped') stamped += 1;
     else none += 1;
   }
-  return { history, byItemId, counts: { certified, stamped, none, external, untrustedRecords: history.untrusted.length } };
+  return { history, byItemId, counts: { certified, stamped, none, external, identityMismatch, untrustedRecords: history.untrusted.length } };
 }
 
 /**
@@ -219,6 +280,8 @@ export function buildProgressionCertification({ actor, sessionId, mode, manifest
       itemId: item.id ?? item._id ?? null,
       itemType: item.type,
       name: item.name || '',
+      canonicalId: canonicalIdOf(item) || null,
+      nameKey: norm(item.name) || null,
       selectionKey: meta.selectionKey || null,
       selectionId: meta.selectionId || null,
       slotType: meta.slotType || null,
@@ -229,21 +292,28 @@ export function buildProgressionCertification({ actor, sessionId, mode, manifest
       characterLevel: kind === 'general' ? (meta.characterLevel || ctx.characterLevel || 0) : (meta.characterLevel || 0),
     });
   }
-  const auditOk = audit ? audit.ok === true : true;
+  // A transaction is `certified` only when a REAL, labelled, non-vacuous post-commit verification passed.
+  // No audit, an unlabelled audit, or a vacuous one (nothing was actually checked) is `unverified`; a
+  // failing audit is `audit-failed`. Neither is ever trusted. No success is ever assumed.
+  const hasKind = typeof audit?.kind === 'string' && !!audit.kind;
+  const verified = !!audit && hasKind && audit.vacuous !== true;
+  const outcome = !verified ? 'unverified' : (audit.ok === true ? 'certified' : 'audit-failed');
   return {
     kind: 'swse-progression-certification',
-    version: 1,
+    version: 2,
     sessionId,
     mode: mode || null,
-    outcome: auditOk ? 'certified' : 'audit-failed',
+    outcome,
     certifiedAt: now,
     characterLevel: ctx.characterLevel || positiveInt(actor?.system?.level) || null,
     classId: ctx.classId || null,
     className: ctx.className || null,
     classLevel: ctx.classLevel || null,
     audit: {
-      kind: manifest ? 'levelup-post-finalization' : 'item-presence',
-      ok: auditOk,
+      kind: hasKind ? audit.kind : null,
+      ok: verified && audit.ok === true,
+      vacuous: audit?.vacuous === true,
+      checked: Number(audit?.checked) || 0,
       errorCount: Array.isArray(audit?.errors) ? audit.errors.length : 0,
       errors: Array.isArray(audit?.errors) ? audit.errors.slice(0, 10) : [],
     },

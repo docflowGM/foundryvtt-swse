@@ -41,6 +41,7 @@ import { pendingEnforcerResources, planEnforcerResourceEntitlement } from '/syst
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 import {
   auditLevelUpActorAfterFinalization,
+  auditSelectionsMaterialized,
   buildLevelUpFinalizationReceipt,
   validateLevelUpRequiredSelections,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js';
@@ -3763,9 +3764,18 @@ export class ProgressionFinalizer {
         classLevel: mode === 'chargen' ? 1 : 0,
         characterLevel: mode === 'chargen' ? 1 : 0,
       };
-      const record = buildProgressionCertification({ actor, sessionId, mode, manifest, audit, fallbackClass });
+      // Certification requires a REAL post-commit verification. Level-up uses its post-apply audit (which is
+      // vacuous when no manifest existed); chargen / recovery use the selection-presence audit. Anything
+      // else is left unverified - never defaulted to success.
+      let verification = null;
+      if (mode === 'levelup') {
+        verification = audit ? { ...audit, kind: 'levelup-post-finalization', vacuous: audit.vacuous === true || !manifest } : null;
+      } else {
+        verification = auditSelectionsMaterialized(actor, sessionState?.progressionSession || null, mutationPlan);
+      }
+      const record = buildProgressionCertification({ actor, sessionId, mode, manifest, audit: verification, fallbackClass });
       if (!record) return { certified: false, reason: 'no-session-identity' };
-      if (!record.grants.length && record.outcome === 'certified') return { certified: false, reason: 'nothing-to-certify' };
+      if (!record.grants.length && record.outcome !== 'audit-failed') return { certified: false, reason: 'nothing-to-certify' };
       return await persistCertification(this._resolveActorEngine(), actor, record, 'ProgressionFinalizer.certify');
     } catch (error) {
       swseLogger.warn('[ProgressionFinalizer] Progression certification was not recorded (transaction already committed)', error);
@@ -3777,7 +3787,7 @@ export class ProgressionFinalizer {
     const manifest = mutationPlan?.set?.['flags.swse.levelUpEntitlementManifest']
       || sessionState?.progressionSession?.levelUpEntitlementManifest
       || null;
-    if (!manifest) return { ok: true, errors: [], warnings: [] };
+    if (!manifest) return { ok: true, vacuous: true, errors: [], warnings: [] };
     return auditLevelUpActorAfterFinalization(actor, manifest, sessionState?.progressionSession || null);
   }
 

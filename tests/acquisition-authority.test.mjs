@@ -1,4 +1,6 @@
 /**
+ * [UNIT / MOCK-ENVIRONMENT: hand-built actors, stub ActorEngine, stubbed AbilityEngine verdicts; the live sheet
+ * drop handler is only checked statically.]
  * Acquisition authority: interactive feat/talent drops are validated BEFORE the actor changes, a
  * proven problem refuses a player (offers a GM override), anything undeterminable is allowed and
  * recorded unattributed, GM-authorized exceptions stay outside slot accounting, and a drop that is
@@ -40,7 +42,7 @@ function soldier1(extraItems = [], { satisfied = false } = {}) {
   };
   if (satisfied) {
     actor.items.push(certified('feat', 'Toughness', 'general'), certified('talent', 'Armor Specialization', 'class'));
-    const rec = evidence.buildProgressionCertification({ actor, sessionId: 'S1', mode: 'chargen', audit: { ok: true }, fallbackClass: { classId: 'soldier', className: 'Soldier', classLevel: 1, characterLevel: 1 } });
+    const rec = evidence.buildProgressionCertification({ actor, sessionId: 'S1', mode: 'chargen', audit: { ok: true, kind: 'selection-presence', checked: 2 }, fallbackClass: { classId: 'soldier', className: 'Soldier', classLevel: 1, characterLevel: 1 } });
     actor.flags.swse.progressionCertifications = evidence.appendCertification(null, rec);
   }
   return actor;
@@ -114,6 +116,7 @@ await check('7. a drop proven to satisfy a slot leaves certified evidence that r
   const res = await acq.recordAcquisitionEvidence({ actor, acquisition: v.acquisition, engine });
   assert.equal(res.certified, true);
   assert.equal(writes[0]['flags.swse.progressionCertifications'][0].mode, 'drop');
+  assert.equal(writes[0]['flags.swse.progressionCertifications'][0].audit.kind, 'selection-presence');
   const r = new ProgressionReconciler().reconcileActor(actor, {});
   assert.equal(r.slots.generalFeats.find(s => s.characterLevel === 1).status, 'filled');
   assert.equal(r.slots.generalFeats.find(s => s.characterLevel === 1).evidence, 'certified');

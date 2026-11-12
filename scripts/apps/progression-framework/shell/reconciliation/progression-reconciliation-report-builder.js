@@ -131,7 +131,7 @@ export class ProgressionReconciliationReportBuilder {
   _provenRemovedKeys(inconsistencies = []) {
     const keys = new Set();
     for (const entry of Array.isArray(inconsistencies) ? inconsistencies : []) {
-      if (entry?.code !== 'certified-item-removed') continue;
+      if (entry?.code !== 'certified-item-removed' && entry?.code !== 'certified-item-replaced') continue;
       if (entry.slotKind === 'class' && entry.classId) keys.add(`${entry.itemType}:class:${entry.classId}:${entry.classLevel}`);
       else if (entry.slotKind === 'general') keys.add(`${entry.itemType}:general:${entry.characterLevel}`);
     }

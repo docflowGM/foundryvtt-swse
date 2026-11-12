@@ -987,6 +987,9 @@ export class ProgressionReconciler {
     for (const entry of (Array.isArray(report?.evidence?.inconsistencies) ? report.evidence.inconsistencies : []).filter(e => e.code === 'certified-item-removed')) {
       notes.push({ id: `removed:${entry.itemId}`, text: `${entry.name || 'An awarded item'} was awarded through progression but is no longer on the character.` });
     }
+    for (const entry of (Array.isArray(report?.evidence?.inconsistencies) ? report.evidence.inconsistencies : []).filter(e => e.code === 'certified-item-replaced')) {
+      notes.push({ id: `replaced:${entry.itemId}`, text: `${entry.name || 'An awarded item'} was awarded through progression, but a different item now occupies its place.` });
+    }
     const uncertified = (Number(report?.evidence?.counts?.stamped) || 0) + (Number(report?.evidence?.counts?.none) || 0);
     if (uncertified > 0) notes.push({ id: 'uncertified', text: `${uncertified} owned feat/talent record${uncertified === 1 ? ' predates' : 's predate'} verified progression history and cannot be checked against it.` });
     const unclassified = (report?.classification?.unclassifiedFeatCount || 0) + (report?.classification?.unclassifiedTalentCount || 0);
@@ -1321,9 +1324,10 @@ export class ProgressionReconciler {
       const slot = slots.find(entry => entry.status !== 'filled' && entry.levelLabel !== 'Bonus' && entry.characterLevel === prov.characterLevel);
       if (slot) fill(slot, item);
     }
-    // Pass 2: remaining slots are filled by remaining items, certified grants first.
-    const rest = candidates.filter(item => !consumed.has(item))
-      .sort((a, b) => Number(this._provenance(b).certified) - Number(this._provenance(a).certified));
+    // Pass 2: remaining slots are filled by remaining UNCERTIFIED items only. A certified grant whose
+    // exact slot does not exist stays certified-but-unmatched (GM diagnostic); it is never credited to a
+    // different slot, which could hide a genuinely missing entitlement.
+    const rest = candidates.filter(item => !consumed.has(item) && !this._provenance(item).certified);
     let cursor = 0;
     for (const slot of slots) {
       if (slot.status === 'filled') continue;
@@ -1612,17 +1616,6 @@ export class ProgressionReconciler {
         if (match) fill(slot, match);
       }
     }
-    // Pass 2: a certified class grant whose exact level slot does not exist still satisfies an open
-    // slot of the same class; if none exists it is evidence to review, never an "extra" item.
-    for (const slotType of ['class-feat', 'class-talent']) {
-      for (const item of (poolsByType[slotType] || []).filter(entry => !consumed.has(entry))) {
-        const prov = this._provenance(item);
-        if (!prov.certified) continue;
-        const slot = slots.find(entry => entry.type === slotType && entry.status !== 'filled' && (!prov.classId || entry.classId === prov.classId));
-        if (slot) fill(slot, item);
-      }
-    }
-
     // Items that DO carry class provenance but fit no slot are informational extras.
     // (Items without class provenance never reach this pool.)
     for (const slotType of ['class-feat', 'class-talent']) {
@@ -1666,6 +1659,8 @@ export class ProgressionReconciler {
     const className = prov.className;
     const classLevel = prov.classLevel;
     if (!classId && !className) return false;
+    // A certified grant is bound to an exact class level; without one it cannot target a slot.
+    if (prov.certified && (!classLevel || !slotClassLevel)) return false;
     if (classLevel && slotClassLevel && classLevel !== slotClassLevel) return false;
     if (classId && slotClassId && classId !== slotClassId) return false;
     if (className && slotClassName && className !== slotClassName) return false;

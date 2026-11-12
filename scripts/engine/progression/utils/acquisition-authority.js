@@ -22,6 +22,7 @@
  */
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
+import { auditSelectionsMaterialized } from './levelup-finalization-audit.js';
 import { buildProgressionCertification, persistCertification } from './progression-evidence.js';
 
 const GATED_TYPES = Object.freeze(['feat', 'talent']);
@@ -117,9 +118,15 @@ export function validateAcquisition({ actor, item, isGM = false, user = null, no
  * After the drop committed: certify the new item when (and only when) a slot context was proven.
  * Best effort; never throws; the acquisition itself is already applied.
  */
-export async function recordAcquisitionEvidence({ actor, acquisition, engine } = {}) {
+export async function recordAcquisitionEvidence({ actor, acquisition, engine, itemType = null, itemName = null } = {}) {
   if (!actor || !acquisition?.sourceSession || !acquisition.slotType) return { certified: false, reason: 'no-slot-context' };
-  const record = buildProgressionCertification({ actor, sessionId: acquisition.sourceSession, mode: 'drop', manifest: null, audit: { ok: true, errors: [] } });
+  const stamped = Array.from(actor?.items ?? []).find(i => (i?.system?.acquisition?.sourceSession ?? i?.flags?.swse?.progression?.sourceSession) === acquisition.sourceSession);
+  if (!stamped) return { certified: false, reason: 'item-not-found' };
+  // Real post-commit verification (the same item-presence check the finalizer uses for chargen/recovery):
+  // the dropped selection must actually exist on the actor. Nothing is assumed to have passed.
+  const key = (itemType || stamped.type) === 'talent' ? 'talents' : 'feats';
+  const audit = auditSelectionsMaterialized(actor, { draftSelections: { [key]: [{ name: itemName || stamped.name }] } });
+  const record = buildProgressionCertification({ actor, sessionId: acquisition.sourceSession, mode: 'drop', manifest: null, audit });
   if (!record || !record.grants.length) return { certified: false, reason: 'item-not-found' };
   return persistCertification(engine, actor, record, 'AcquisitionAuthority.drop');
 }

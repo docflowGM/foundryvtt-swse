@@ -327,7 +327,8 @@ export function buildLevelUpFinalizationReceipt(manifest, progressionSession) {
 export function auditLevelUpActorAfterFinalization(actor, manifest, progressionSession, mutationPlan = null) {
   const errors = [];
   const warnings = [];
-  if (!manifest) return { ok: true, errors, warnings };
+  // No manifest means nothing was actually verified: report it as vacuous so no caller can mistake it for a passed audit.
+  if (!manifest) return { ok: true, vacuous: true, errors, warnings };
 
   const actorLevel = Number(actor?.system?.level ?? actor?.system?.details?.level ?? 0) || 0;
   if (actorLevel < Number(manifest.characterLevel || 0)) {
@@ -384,7 +385,25 @@ export function auditLevelUpActorAfterFinalization(actor, manifest, progressionS
   return { ok: errors.length === 0, errors, warnings };
 }
 
+/**
+ * Post-commit verification for sessions that have no level-up manifest (chargen, recovery, drops):
+ * every selected feat/talent/force item/etc. in the session must exist on the actor. Reuses the same
+ * item-presence checks as the level-up audit. `vacuous` when the session selected nothing checkable,
+ * which callers must NOT treat as a passed audit.
+ */
+export function auditSelectionsMaterialized(actor, progressionSession, mutationPlan = null) {
+  const errors = [];
+  const checks = expectedItemChecks(null, progressionSession);
+  for (const check of checks) {
+    if (!hasActorItemNamed(actor, check.name, check.itemKinds, check.refs, mutationPlan)) {
+      errors.push(`Missing ${check.kind}: ${check.name || asArray(check.refs).find(Boolean) || 'unknown selection'}`);
+    }
+  }
+  return { ok: errors.length === 0 && checks.length > 0, vacuous: checks.length === 0, kind: 'selection-presence', checked: checks.length, errors, warnings: [] };
+}
+
 export default {
+  auditSelectionsMaterialized,
   validateLevelUpRequiredSelections,
   buildLevelUpFinalizationReceipt,
   auditLevelUpActorAfterFinalization,

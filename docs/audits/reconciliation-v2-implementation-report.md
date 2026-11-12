@@ -78,3 +78,7 @@ Implemented after the owner's addendum; see `reconciliation-v2-progression-autho
 ## Addendum 2 — Acquisition pathways
 
 See `reconciliation-v2-acquisition-pathways-audit.md`. Live drag-and-drop of feats/talents is now validated before the actor changes (shared `acquisition-authority.js`: existing prerequisite authority + reconciliation entitlement + certified evidence), blocking players only on a proven problem and routing GMs to the existing GM-grant dialog (previously unreachable dead code). GM-authorized exceptions are `external` evidence outside slot accounting. Class drops no longer silently add a level for players. New test: `tests/acquisition-authority.test.mjs` (11 checks). Residuals: add-ability buttons, importers, dead duplicate drop modules, in-Foundry verification.
+
+## Addendum 3 — Independent review corrections
+
+Certification now requires a real labelled, non-vacuous post-commit audit (else `unverified`); grants bind item type / canonical id / transaction stamp so a replaced item keeping an embedded id inherits nothing; certified grants are never credited to a different slot. Details and the explicit unit-vs-integration test scope: `reconciliation-v2-progression-authority-audit.md` §7. PR stays draft pending Foundry runtime verification.
