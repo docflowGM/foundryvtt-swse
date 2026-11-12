@@ -126,7 +126,6 @@ function resolverDeps(actor, log, overrides = {}) {
   return {
     findFindings: a => F.buildFindings(ProgressionReconciler.safeReconcileActor(a, { output: 'report', fresh: true })),
     recalcAll: async a => { log.push('recalc'); a.system.derived.bab = 4; },
-    recomputeHP: async () => { log.push('hp'); },
     openStep: async ds => { log.push(`open:${ds.stepId}`); },
     confirm: async () => true,
     ...overrides,
@@ -157,20 +156,18 @@ await check('9. a repair that moves the value to ANOTHER wrong value is not repo
   assert.equal(res.status, 'unchanged', 'subject-based verification: BAB still mismatched');
 });
 
-await check('10. Resolve HP: only after confirmation, only via the canonical HP authority; cancel changes nothing', async () => {
+await check('10. HP discrepancy is review + ignore only: no Resolve is offered (different HP formulas), and it stays ignorable', async () => {
   const actor = man('Soldier', 3, { hp: { max: 5 } });
   actor.system.progression.hpGainHistory = [{ level: 2, amount: 6 }, { level: 3, amount: 6 }];
   const hp = F.buildFindings(ProgressionReconciler.safeReconcileActor(actor, { output: 'report', fresh: true })).find(f => f.code === 'HP_BELOW_MINIMUM');
-  assert.ok(hp);
-  assert.equal(hp.resolve.kind, 'recompute-hp');
-  assert.equal(hp.resolve.confirm, true);
-  const log = [];
-  const cancelled = await resolveFinding({ actor, findingId: hp.id, deps: resolverDeps(actor, log, { confirm: async () => false }) });
-  assert.equal(cancelled.status, 'cancelled');
-  assert.deepEqual(log, []);
-  const ok = await resolveFinding({ actor, findingId: hp.id, deps: resolverDeps(actor, log, { recomputeHP: async a => { log.push('hp'); a.system.hp.max = 42; } }) });
-  assert.equal(ok.status, 'resolved');
-  assert.deepEqual(log, ['hp']);
+  assert.ok(hp, 'the discrepancy is still detected');
+  assert.equal(hp.resolve.kind, 'none');
+  assert.equal(hp.resolve.reviewOnly, true);
+  assert.match(hp.explanation, /Review your hit points/);
+  const res = await resolveFinding({ actor, findingId: hp.id, deps: resolverDeps(actor, []) });
+  assert.equal(res.status, 'unsupported', 'even a forced Resolve cannot recompute HP');
+  actor.flags.swse.reconciliationIgnored = F.addIgnored([], hp, {});
+  assert.ok(!sheet(actor).validation.findings.some(f => f.id === hp.id));
 });
 
 await check('11. Resolve missing talent: opens the matching selection step (no mutation, no level change); repeated clicks never mutate', async () => {
@@ -230,7 +227,7 @@ await check('15. wiring (static): handlers use only canonical authorities; the o
   const sheetSrc = fs.readFileSync(path.join(ROOT, 'scripts/sheets/v2/character-like-sheet.js'), 'utf8');
   const body = sheetSrc.slice(sheetSrc.indexOf('async _handleReconciliationAction'), sheetSrc.indexOf('async _gateItemAcquisition') > 0 ? sheetSrc.indexOf('/**\n   * Advisory acquisition check') : undefined);
   assert.match(body, /ActorEngine\.recalcAll/);
-  assert.match(body, /ActorEngine\.recomputeHP/);
+  assert.ok(!/recomputeHP/.test(body), 'no HP repair is wired from the sheet');
   assert.match(body, /_openProgressionReconciliationStep/);
   assert.match(body, /IGNORE_FLAG_PATH/);
   assert.ok(!/system\.hp\.max|system\.derived\.bab|actor\.update\(/.test(body));

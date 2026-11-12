@@ -5495,13 +5495,18 @@ const forcePoints = [];
       openedAt: new Date().toISOString(),
     };
 
+    // With an exact slot the shell enters ONLY that selection (focused repair: no briefing, no other choices, no new
+    // level). Without one (or if the slot is no longer in the timeline) it opens the recovery briefing as before.
+    const focused = !!reconciliation.slotId;
     await this.setSurface('progression', {
       source: 'sheet-reconciliation',
       mode: 'reconcile',
-      stepId: 'reconciliation-overview',
-      currentStep: 'reconciliation-overview',
-      targetStep: 'reconciliation-overview',
-      targetStepId: 'reconciliation-overview',
+      ...(focused ? {} : {
+        stepId: 'reconciliation-overview',
+        currentStep: 'reconciliation-overview',
+        targetStep: 'reconciliation-overview',
+        targetStepId: 'reconciliation-overview',
+      }),
       routeIntent: 'progression-reconciliation',
       singleStep: false,
       skipIntro: true,
@@ -5509,7 +5514,9 @@ const forcePoints = [];
       reconciliation,
     });
     await this.requestSurfaceRender({ reason: `progression-reconciliation-${slotType || stepId}`, surfaceId: 'progression' });
-    ui?.notifications?.info?.('Opening progression recovery briefing. Missing choices will resolve in level order.');
+    ui?.notifications?.info?.(focused
+      ? 'Opening the selection for this item.'
+      : 'Opening progression recovery briefing. Missing choices will resolve in level order.');
   }
 
   async _classifyProgressionSlot(dataset = {}) {
@@ -8103,7 +8110,6 @@ const forcePoints = [];
         deps: {
           findFindings: (actor) => this._freshReconciliationFindings(actor),
           recalcAll: (actor) => ActorEngine.recalcAll(actor),
-          recomputeHP: (actor) => ActorEngine.recomputeHP(actor),
           grantHouseRule: async (actor, key) => (await import('/systems/foundryvtt-swse/scripts/houserules/houserule-feat-grants.js')).HouseRuleFeatGrants.grantMissing(actor, key),
           openStep: (ds) => this._openProgressionReconciliationStep(ds),
           confirm: (message) => SWSEDialogV2.confirm({ title: 'Confirm', content: `<p>${message}</p>`, yes: () => true, no: () => false, defaultYes: false }),

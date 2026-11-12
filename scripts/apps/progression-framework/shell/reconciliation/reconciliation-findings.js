@@ -81,12 +81,17 @@ function derivedFinding(row) {
     code,
     severity: 'invalid',
     title: row.label || 'Derived statistic',
-    explanation: row.issue || `${row.label || 'This statistic'} does not match your class progression.`,
+    explanation: isHp
+      ? `${row.issue || 'Your maximum HP is lower than expected.'} Review your hit points or level-up history. No automatic correction is offered: the stored maximum can include rolled hit points and bonuses, and the HP rules code and this check use different formulas.`
+      : (row.issue || `${row.label || 'This statistic'} does not match your class progression.`),
     expected,
     actual,
     source: 'canonical-class-progression',
+    // A repair is offered only when the system can PROVE it yields the correct result. BAB / defense come from the
+    // one canonical recalculation. Max HP does not qualify yet (see docs: ActorEngine.recomputeHP and the history-based
+    // audit use different formulas), so it is review + ignore only.
     resolve: isHp
-      ? { kind: 'recompute-hp', label: 'Recompute', confirm: true }
+      ? { kind: 'none', label: '', reviewOnly: true }
       : { kind: 'recalc', label: 'Recalculate' },
     ignorable: true,
   };

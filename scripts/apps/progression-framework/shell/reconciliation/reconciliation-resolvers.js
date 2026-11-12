@@ -3,9 +3,9 @@
  *
  * Rules:
  *  - Only existing V2 authorities mutate: derived BAB/defenses are repaired by invoking the canonical
- *    recalculation (ActorEngine.recalcAll) - a derived display field is never overwritten; max HP
- *    only through ActorEngine.recomputeHP (the sole writer of system.hp.max), and only after
- *    confirmation; missing feat / talent / ability choices OPEN the existing progression step in
+ *    recalculation (ActorEngine.recalcAll) - a derived display field is never overwritten. Max HP has NO
+ *    resolver: recomputeHP uses a different formula from the reconciliation HP audit, so a one-click
+ *    correction could replace a valid maximum with another formula's result. Missing feat / talent / ability choices OPEN the existing progression step in
  *    reconcile mode (no level increment, no chargen restart, no mutation by this module).
  *  - Idempotent: the finding is re-derived from a FRESH report before acting; if it no longer exists
  *    nothing happens (so a second click cannot award twice, add an increase twice, or recompute twice),
@@ -25,7 +25,6 @@ const inFlight = new Set();
  * @param {object} args.deps injected authorities:
  *   findFindings(actor) -> finding[]      fresh findings (all, including ignored)
  *   recalcAll(actor)                      ActorEngine.recalcAll
- *   recomputeHP(actor)                    ActorEngine.recomputeHP
  *   grantHouseRule(actor, settingKey)     HouseRuleFeatGrants.grantMissing
  *   openStep(dataset)                     opens the existing reconcile-mode progression step
  *   confirm(message) -> Promise<boolean>  confirmation dialog
@@ -50,12 +49,6 @@ export async function resolveFinding({ actor, findingId, deps }) {
       case 'recalc': {
         await deps.recalcAll(actor);
         return verify(actor, before, deps, 'Recalculated from your class levels.', 'Recalculation did not change this value. It is derived from your class levels, so review those.');
-      }
-      case 'recompute-hp': {
-        const ok = await deps.confirm('Recompute maximum HP using the canonical HP rules? This replaces the stored maximum and may change it.');
-        if (!ok) return { status: 'cancelled', message: 'No change was made.' };
-        await deps.recomputeHP(actor);
-        return verify(actor, before, deps, 'Maximum HP was recomputed.', 'Recomputed HP still differs from the expected minimum. Review your level-up HP history or ignore this warning.');
       }
       case 'grant-house-rule': {
         // The canonical grant service (HouseRuleFeatGrants.grantMissing) is silent, idempotent (skips an owned item),

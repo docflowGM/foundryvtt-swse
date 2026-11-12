@@ -114,3 +114,28 @@ Class-level conflicts, unverifiable data and engine failures are GM diagnostics 
 ## Phase 6 addendum - House-rule coverage
 
 Full matrix and defects: `reconciliation-v2-house-rule-coverage.md`. Implemented: a single canonical grant table (`house-rule-grant-table.js`); the duplicate live materializer removed so `HouseRuleFeatGrants` is the only creator (and offers replacements only on rule switch-on, once); durable provenance on new grants and replacements (existing items untouched); reconciliation recognizes house-rule grants outside slot accounting (explicit marker, or inferred only for unstamped canonical items of currently enabled rules), reports a missing enabled grant as its own finding with an **Add** resolve through `HouseRuleFeatGrants.grantMissing`, represents the extra level-1 talent as its own entitlement, and replaces the per-feature cadence key in the memo with one complete feat/talent-rules signature plus sheet refresh on rule change. Not decided: talent cadence under `talentEveryLevel` (RECON-005); `talentDoubleLevels` and `multiclassBonusChoice` have no consumer and are informational. Tests: `tests/reconciliation-house-rules.test.mjs` (18 checks; unit + stub-integration, no Foundry runtime).
+
+## Phase 6 independent review (b9356c0) - follow-up
+
+**1. HP repair authority (blocker) - Resolve disabled; the recomputeHP crash is intentionally NOT fixed.**
+* *Finding confirmed:* `ActorEngine.recomputeHP()` declares `conBase/conRacial/conEnhancement/conTemp` inside `if (!isDroid) {...}` and its changed-HP log reads them outside that block, so any call that would CHANGE the maximum throws a `ReferenceError` first.
+* *Why I did not fix it:* the repository already pins this as "Defect B" in `tests/hp-preservation-authority.test.mjs` and states, with executed evidence, that it must NOT be fixed alone. The crash is currently the only thing preventing `recomputeHP()` ("Defect A": a stateless reconstruction from the first class item and an average hit die) from overwriting a certified, history-accumulated maximum (that test's character: certified 108, reconstruction 88) whenever a CON change, HP-affecting item or level change triggers a recompute. Hoisting the variable alone would turn a crash into silent HP corruption on every affected actor. I made the one-line fix, found the pinned test failing, and reverted it. **The review's request to fix and test this path conflicts with that standing project constraint; defect A has to be fixed first (or together).** This needs an owner decision on the HP authority (below).
+* *Authority audit:* two HP formulas exist and disagree.
+
+| | `ActorEngine.recomputeHP` | reconciliation HP audit |
+|---|---|---|
+| Starting HP | first class item: `progression.hpAtFirstLevel` or `hitDie x 3` (item fields, default d6) | first heroic class `ClassModel.baseHp` + CON (min 1) |
+| Later levels | `(level-1) x (progression.hpPerLevel or floor(hitDie/2)+1)` using the FIRST class item for every level | the player's recorded `hpGainHistory` amounts |
+| CON | `conMod x level` | included in recorded gains / once at start |
+| Multiclass | uses the first class's die for every level | per-record |
+| Rolled / custom HP | overwritten | allowed (bounds) |
+| Bonuses | `hp.bonus` + feat bonus | not modelled |
+
+* *What Phase 6 does:* the HP finding is review + ignore only (`resolve.kind = 'none'`, `reviewOnly`); the `recompute-hp` resolver and its sheet wiring were removed; a forced Resolve returns `unsupported`. A one-click correction is offered only where the system can prove the result.
+* *Open engineering decision for the owner (not a rules ruling):* fix Defect A first - make HP recomputation history-aware (the finalizer's additive, per-level-locked records are the working authority) - and only then fix the scope bug and consider a proven HP repair. Until then HP stays review/ignore.
+
+**2. Targeted progression repair - implemented.** The existing reconcile-mode framework already produces one resolution step per outstanding slot (`ProgressionTimelineBuilder._toResolutionStep`, `reconciliationContext` with class, class level, character level, slot id) but the sheet always opened the whole briefing. Now: the sheet passes the exact `slotId` and omits the briefing target; `LevelupShell._getReconciliationCanonicalDescriptors` calls `focusResolutionSteps(timeline, slotId)` (new, in the timeline builder) and returns ONLY that step; if the slot is no longer in the timeline it falls back to the briefing. Reconcile mode has no class-selection step and the finalizer builds no level-up manifest for reconciliation sessions, so no level can be added; the step plugin keeps its historical prerequisite evaluation. Tests #5-7 use the real timeline builder.
+
+**3. House-rule addendum.** Already delivered after this review's target commit (`71483df`); see `reconciliation-v2-house-rule-coverage.md`.
+
+**Still requires Foundry V13:** the focused step actually opening and committing only its choice; `recalcAll` for BAB/defense; everything in the acceptance checklist above.
