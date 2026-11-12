@@ -21,7 +21,7 @@ import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interact
 import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
-import { isGatedAcquisitionType, recordAcquisitionEvidence, validateAcquisition } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/acquisition-authority.js";
+import { isGatedAcquisitionType, recordAcquisitionEvidence, resolveGmOverride, validateAcquisition } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/acquisition-authority.js";
 import { requestWithPostureChoices } from "/systems/foundryvtt-swse/scripts/sheets/v2/weapon-posture-choice-dialog.js";
 import { reconcileItemTransactions } from "/systems/foundryvtt-swse/scripts/sheets/v2/equipment-reconcile-dialog.js";
 import { getReadiedWeapons, isWeaponHeld } from "/systems/foundryvtt-swse/scripts/engine/equipment/combat-readiness.js";
@@ -8088,12 +8088,10 @@ const forcePoints = [];
       return { stop: true, acquisition: null };
     }
     if (verdict.decision === 'needs-gm') {
-      if (item.system?.acquisition || item.flags?.['foundryvtt-swse']?.acquisition) return { stop: false, acquisition: null };
+      // Always ask. Acquisition metadata already on the dropped source item is NOT an authorization.
       try {
         const { GMGrantDialog } = await import('/systems/foundryvtt-swse/scripts/apps/gm-grant-dialog.js');
-        const granted = await GMGrantDialog.prompt({ actor: this.actor, item });
-        if (!granted) return { stop: true, acquisition: null };
-        return { stop: false, acquisition: granted };
+        return await resolveGmOverride({ actor: this.actor, item, prompt: (args) => GMGrantDialog.prompt(args) });
       } catch (err) {
         ui?.notifications?.error?.(`GM grant prompt failed: ${err.message}`);
         return { stop: true, acquisition: null };

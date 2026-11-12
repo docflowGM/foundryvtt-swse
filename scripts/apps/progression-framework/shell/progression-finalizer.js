@@ -41,7 +41,7 @@ import { pendingEnforcerResources, planEnforcerResourceEntitlement } from '/syst
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 import {
   auditLevelUpActorAfterFinalization,
-  auditSelectionsMaterialized,
+  auditTransactionMaterialization,
   buildLevelUpFinalizationReceipt,
   validateLevelUpRequiredSelections,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js';
@@ -3764,14 +3764,32 @@ export class ProgressionFinalizer {
         classLevel: mode === 'chargen' ? 1 : 0,
         characterLevel: mode === 'chargen' ? 1 : 0,
       };
-      // Certification requires a REAL post-commit verification. Level-up uses its post-apply audit (which is
-      // vacuous when no manifest existed); chargen / recovery use the selection-presence audit. Anything
-      // else is left unverified - never defaulted to success.
-      let verification = null;
+      // Certification requires a REAL post-commit verification that this TRANSACTION's grants exist as
+      // persisted items carrying this transaction's stamp (older same-name items and planned mutation
+      // items do not count). Level-up additionally requires its own post-apply audit to have passed
+      // (vacuous when no manifest existed). Anything not verified is left `unverified`, never assumed.
+      const draft = sessionState?.progressionSession?.draftSelections || {};
+      const materialization = auditTransactionMaterialization(
+        actor,
+        { feats: draft.feats, talents: draft.talents },
+        sessionId,
+        { expand: entry => FeatTalentPlanBuilder.expandCombinedTalentGrantEntries(entry) },
+      );
+      let verification;
       if (mode === 'levelup') {
-        verification = audit ? { ...audit, kind: 'levelup-post-finalization', vacuous: audit.vacuous === true || !manifest } : null;
+        verification = audit
+          ? {
+            kind: 'levelup-post-finalization+transaction-materialization',
+            ok: audit.ok === true && materialization.ok !== false,
+            vacuous: audit.vacuous === true || !manifest,
+            checked: materialization.checked,
+            errors: [...(audit.errors || []), ...materialization.errors],
+          }
+          : null;
+        // a level-up that selected no feat/talent has nothing for materialization to prove; the post-apply audit decides
+        if (verification && materialization.vacuous) verification.ok = audit.ok === true;
       } else {
-        verification = auditSelectionsMaterialized(actor, sessionState?.progressionSession || null, mutationPlan);
+        verification = materialization;
       }
       const record = buildProgressionCertification({ actor, sessionId, mode, manifest, audit: verification, fallbackClass });
       if (!record) return { certified: false, reason: 'no-session-identity' };

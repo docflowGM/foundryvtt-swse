@@ -82,3 +82,7 @@ See `reconciliation-v2-acquisition-pathways-audit.md`. Live drag-and-drop of fea
 ## Addendum 3 — Independent review corrections
 
 Certification now requires a real labelled, non-vacuous post-commit audit (else `unverified`); grants bind item type / canonical id / transaction stamp so a replaced item keeping an embedded id inherits nothing; certified grants are never credited to a different slot. Details and the explicit unit-vs-integration test scope: `reconciliation-v2-progression-authority-audit.md` §7. PR stays draft pending Foundry runtime verification.
+
+## Addendum 4 — Final certification-integrity corrections
+
+Transaction-specific materialization evidence (older/planned items do not prove a grant), GM-authorization bypass removed (`resolveGmOverride`), canonical identity continuity enforced. See `reconciliation-v2-progression-authority-audit.md` §8. PR remains draft pending Foundry V13 acceptance: chargen → multiclass level-ups → save/close/reopen → delete a certified grant → `!`; live drag-and-drop; GM override dialog; retained class-ledger hotfix.

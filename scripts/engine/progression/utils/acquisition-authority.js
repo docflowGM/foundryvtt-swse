@@ -22,7 +22,7 @@
  */
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
-import { auditSelectionsMaterialized } from './levelup-finalization-audit.js';
+import { auditTransactionMaterialization } from './levelup-finalization-audit.js';
 import { buildProgressionCertification, persistCertification } from './progression-evidence.js';
 
 const GATED_TYPES = Object.freeze(['feat', 'talent']);
@@ -105,6 +105,8 @@ export function validateAcquisition({ actor, item, isGM = false, user = null, no
     acquiredByName: user?.name || null,
     acquiredAt: now,
     entitlementStatus: entitlement.status,
+    // Explicitly clear any stale placement metadata the dropped source item may carry (e.g. dragged from another actor).
+    slotType: null, slotKey: null, classId: null, className: null, classLevel: null, characterLevel: null,
     ...(entitlement.slot ? { slotType: entitlement.slot.slotType, slotKey: entitlement.slot.slotId, characterLevel: entitlement.slot.characterLevel } : {}),
   };
 
@@ -122,13 +124,34 @@ export async function recordAcquisitionEvidence({ actor, acquisition, engine, it
   if (!actor || !acquisition?.sourceSession || !acquisition.slotType) return { certified: false, reason: 'no-slot-context' };
   const stamped = Array.from(actor?.items ?? []).find(i => (i?.system?.acquisition?.sourceSession ?? i?.flags?.swse?.progression?.sourceSession) === acquisition.sourceSession);
   if (!stamped) return { certified: false, reason: 'item-not-found' };
-  // Real post-commit verification (the same item-presence check the finalizer uses for chargen/recovery):
-  // the dropped selection must actually exist on the actor. Nothing is assumed to have passed.
+  // Real post-commit verification: THIS drop's item must exist as a persisted item stamped with this
+  // acquisition's session id (not merely an older same-name item).
   const key = (itemType || stamped.type) === 'talent' ? 'talents' : 'feats';
-  const audit = auditSelectionsMaterialized(actor, { draftSelections: { [key]: [{ name: itemName || stamped.name }] } });
+  const audit = auditTransactionMaterialization(actor, { [key]: [{ name: itemName || stamped.name }] }, acquisition.sourceSession);
   const record = buildProgressionCertification({ actor, sessionId: acquisition.sourceSession, mode: 'drop', manifest: null, audit });
   if (!record || !record.grants.length) return { certified: false, reason: 'item-not-found' };
   return persistCertification(engine, actor, record, 'AcquisitionAuthority.drop');
 }
 
-export default { isGatedAcquisitionType, assessEntitlement, assessPrerequisites, validateAcquisition, recordAcquisitionEvidence };
+/**
+ * GM override for a proven problem. ALWAYS asks (the injected `prompt` is the existing GMGrantDialog);
+ * metadata already present on the dropped source item is never treated as authorization. An approved
+ * exception returns explicit, freshly-stamped GM-grant evidence (who, when, why) with any stale
+ * placement metadata from the source item cleared; a cancelled prompt stops the acquisition.
+ * @returns {Promise<{stop:boolean, acquisition:object|null}>}
+ */
+export async function resolveGmOverride({ actor, item, prompt, now = new Date().toISOString() } = {}) {
+  const granted = await prompt({ actor, item });
+  if (!granted || typeof granted !== 'object' || !granted.grantedBy) return { stop: true, acquisition: null };
+  return {
+    stop: false,
+    acquisition: {
+      ...granted,
+      sourceSession: `gm-grant:${globalThis.foundry?.utils?.randomID?.() ?? Math.random().toString(36).slice(2, 10)}`,
+      grantedAt: granted.grantedAt || now,
+      slotType: null, slotKey: null, classId: null, className: null, classLevel: null, characterLevel: null,
+    },
+  };
+}
+
+export default { resolveGmOverride, isGatedAcquisitionType, assessEntitlement, assessPrerequisites, validateAcquisition, recordAcquisitionEvidence };

@@ -42,7 +42,7 @@ function soldier1(extraItems = [], { satisfied = false } = {}) {
   };
   if (satisfied) {
     actor.items.push(certified('feat', 'Toughness', 'general'), certified('talent', 'Armor Specialization', 'class'));
-    const rec = evidence.buildProgressionCertification({ actor, sessionId: 'S1', mode: 'chargen', audit: { ok: true, kind: 'selection-presence', checked: 2 }, fallbackClass: { classId: 'soldier', className: 'Soldier', classLevel: 1, characterLevel: 1 } });
+    const rec = evidence.buildProgressionCertification({ actor, sessionId: 'S1', mode: 'chargen', audit: { ok: true, kind: 'transaction-materialization', checked: 2 }, fallbackClass: { classId: 'soldier', className: 'Soldier', classLevel: 1, characterLevel: 1 } });
     actor.flags.swse.progressionCertifications = evidence.appendCertification(null, rec);
   }
   return actor;
@@ -87,7 +87,7 @@ await check('4. undeterminable entitlement (unattributed history / engine unavai
   const v = acq.validateAcquisition({ actor: withManual, item: feat('Another') });
   assert.equal(v.decision, 'allow');
   assert.equal(v.entitlement.status, 'unverifiable');
-  assert.equal(v.acquisition.slotType, undefined);
+  assert.ok(!v.acquisition.slotType);
   const noClass = { id: 'x', name: 'Blank', type: 'character', items: [], flags: {}, system: { level: 0 } };
   assert.equal(acq.validateAcquisition({ actor: noClass, item: feat() }).decision, 'allow');
 });
@@ -98,7 +98,7 @@ await check('5. an open CLASS slot is never claimed (class-list/tree eligibility
   lvl2.items[0].system.level = 2; lvl2.system.level = 2; lvl2.system.progression.classLevels[0].level = 2;
   const v = acq.validateAcquisition({ actor: lvl2, item: feat() });
   assert.equal(v.decision, 'allow');
-  assert.equal(v.acquisition.slotType, undefined);
+  assert.ok(!v.acquisition.slotType);
 });
 
 await check('6. non-gated item types pass through untouched', () => {
@@ -116,7 +116,7 @@ await check('7. a drop proven to satisfy a slot leaves certified evidence that r
   const res = await acq.recordAcquisitionEvidence({ actor, acquisition: v.acquisition, engine });
   assert.equal(res.certified, true);
   assert.equal(writes[0]['flags.swse.progressionCertifications'][0].mode, 'drop');
-  assert.equal(writes[0]['flags.swse.progressionCertifications'][0].audit.kind, 'selection-presence');
+  assert.equal(writes[0]['flags.swse.progressionCertifications'][0].audit.kind, 'transaction-materialization');
   const r = new ProgressionReconciler().reconcileActor(actor, {});
   assert.equal(r.slots.generalFeats.find(s => s.characterLevel === 1).status, 'filled');
   assert.equal(r.slots.generalFeats.find(s => s.characterLevel === 1).evidence, 'certified');

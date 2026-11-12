@@ -57,7 +57,7 @@ function buildLifecycle() {
     },
   };
   const certs = [];
-  const certify = (session, mode, manifest, audit = { ok: true, errors: [], kind: manifest ? 'levelup-post-finalization' : 'selection-presence', checked: 2 }) => {
+  const certify = (session, mode, manifest, audit = { ok: true, errors: [], kind: manifest ? 'levelup-post-finalization' : 'transaction-materialization', checked: 2 }) => {
     const record = evidence.buildProgressionCertification({
       actor, sessionId: session, mode, manifest, audit,
       fallbackClass: manifest ? null : { classId: 'soldier', className: 'Soldier', classLevel: 1, characterLevel: 1 },
@@ -235,7 +235,7 @@ await check('11. _certifyProgressionSession end-to-end with a stub ActorEngine',
 
 await check('12. [unit] no audit / unlabelled audit / vacuous audit => "unverified", never certified or trusted', () => {
   const { actor } = buildLifecycle();
-  for (const audit of [null, { ok: true }, { ok: true, kind: 'selection-presence', vacuous: true, checked: 0 }]) {
+  for (const audit of [null, { ok: true }, { ok: true, kind: 'transaction-materialization', vacuous: true, checked: 0 }]) {
     const rec = evidence.buildProgressionCertification({ actor, sessionId: 'S3', mode: 'chargen', audit });
     assert.equal(rec.outcome, 'unverified');
     assert.equal(rec.audit.ok, false);
@@ -247,7 +247,7 @@ await check('12. [unit] no audit / unlabelled audit / vacuous audit => "unverifi
 });
 
 await check('13. [unit] level-up audit with no manifest is vacuous and is NOT certified', async () => {
-  const { auditLevelUpActorAfterFinalization, auditSelectionsMaterialized } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js');
+  const { auditLevelUpActorAfterFinalization } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js');
   assert.equal(auditLevelUpActorAfterFinalization({ items: [], system: {} }, null, null).vacuous, true);
   const { ProgressionFinalizer } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer.js');
   const { actor } = buildLifecycle();
@@ -259,10 +259,9 @@ await check('13. [unit] level-up audit with no manifest is vacuous and is NOT ce
   assert.equal(writes[0]['flags.swse.progressionCertifications'][0].outcome, 'unverified');
   const none = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S3', mode: 'levelup', progressionSession: {} }, { set: { 'flags.swse.levelUpEntitlementManifest': man('scout', 'Scout', 1, 3) } }, null);
   assert.equal(none.certified, false, 'a level-up with no post-apply audit result is unverified');
-  assert.ok(auditSelectionsMaterialized);
 });
 
-await check('14. [unit, real validators] chargen/recovery are certified only by a real selection-presence audit', async () => {
+await check('14. [unit, real validators] chargen/recovery are certified only by a real transaction-materialization audit', async () => {
   const { ProgressionFinalizer } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer.js');
   const { actor } = buildLifecycle();
   const writes = [];
@@ -270,7 +269,7 @@ await check('14. [unit, real validators] chargen/recovery are certified only by 
   const session = names => ({ draftSelections: { feats: names.feats || [], talents: names.talents || [] } });
   const ok = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S1', mode: 'chargen', progressionSession: session({ feats: [{ name: 'Toughness' }], talents: [{ name: 'Armor Specialization' }] }) }, {}, null);
   assert.equal(ok.certified, true);
-  assert.equal(writes.at(-1).audit.kind, 'selection-presence');
+  assert.equal(writes.at(-1).audit.kind, 'transaction-materialization');
   const missing = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S1', mode: 'chargen', progressionSession: session({ feats: [{ name: 'Toughness' }, { name: 'Never Created' }] }) }, {}, null);
   assert.equal(missing.certified, false);
   assert.equal(writes.at(-1).outcome, 'audit-failed');
@@ -351,6 +350,88 @@ await check('17. [unit] a certified grant is never credited to a DIFFERENT slot:
   const gr = run(g);
   assert.equal(gr.slots.generalFeats.find(s => s.characterLevel === 1).status, 'open', 'a level-2 certified feat must not satisfy the level-1 entitlement');
   assert.ok(gr.engineFindings.some(x => x.code === 'certified-grant-unmatched'));
+});
+
+
+await check('18. [unit] F1: an OLDER same-name item or a PLANNED item does not prove this transaction materialized', async () => {
+  const { auditTransactionMaterialization } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js');
+  const old = stamp('feat', 'Weapon Focus', 'S-OLD', 'general');
+  const unstamped = { id: 'u1', type: 'feat', name: 'Weapon Focus', system: {}, flags: {} };
+  const actor = { items: [old, unstamped] };
+  const sel = { feats: [{ name: 'Weapon Focus' }] };
+  const a = auditTransactionMaterialization(actor, sel, 'S2', { plannedItems: [{ name: 'Weapon Focus', type: 'feat' }] });
+  assert.equal(a.ok, false);
+  assert.match(a.errors[0], /did not materialize/);
+  // materialized for real (stamped with THIS transaction): passes
+  actor.items.push(stamp('feat', 'Weapon Focus', 'S2', 'class'));
+  assert.equal(auditTransactionMaterialization(actor, sel, 'S2').ok, true);
+  // one stamped item cannot vouch for two selections of the same name
+  assert.equal(auditTransactionMaterialization(actor, { feats: [{ name: 'Weapon Focus' }, { name: 'Weapon Focus' }] }, 'S2').ok, false);
+  // wrong type does not count
+  assert.equal(auditTransactionMaterialization({ items: [stamp('talent', 'Weapon Focus', 'S2', 'class')] }, sel, 'S2').ok, false);
+  // no transaction identity => cannot verify
+  assert.equal(auditTransactionMaterialization(actor, sel, 'unknown').ok, false);
+  // nothing selected => vacuous, not a pass
+  const none = auditTransactionMaterialization(actor, {}, 'S2');
+  assert.equal(none.vacuous, true); assert.equal(none.ok, false);
+});
+
+await check('19. [unit, real validators] F1 through the finalizer: same-name older item => audit-failed, never certified; level-up needs BOTH audits', async () => {
+  const { ProgressionFinalizer } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer.js');
+  const writes = [];
+  globalThis.SWSE = { ...(globalThis.SWSE || {}), ActorEngine: { applyMutationPlan: async () => ({}), updateActor: async (a, data) => { writes.push(data['flags.swse.progressionCertifications'].at(-1)); } } };
+  const actor = { id: 'z', type: 'character', flags: { swse: {} }, system: { level: 2 }, items: [stamp('feat', 'Weapon Focus', 'S-OLD', 'general'), stamp('feat', 'Dodge', 'S2', 'class')] };
+  const plan = { add: { items: [{ name: 'Weapon Focus', type: 'feat' }] } };
+  const chargen = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S2', mode: 'chargen', progressionSession: { draftSelections: { feats: [{ name: 'Weapon Focus' }] } } }, plan, null);
+  assert.equal(chargen.certified, false);
+  assert.equal(writes.at(-1).outcome, 'audit-failed');
+  // level-up: post-apply audit passed, but this transaction's selection never materialized
+  const manifest = man('soldier', 'Soldier', 2, 2);
+  const lvl = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S2', mode: 'levelup', progressionSession: { draftSelections: { feats: [{ name: 'Weapon Focus' }] } } }, { set: { 'flags.swse.levelUpEntitlementManifest': manifest } }, { ok: true, errors: [] });
+  assert.equal(lvl.certified, false);
+  assert.equal(writes.at(-1).outcome, 'audit-failed');
+  assert.match(writes.at(-1).audit.errors.join(' '), /did not materialize/);
+  // and when it did materialize, level-up certifies
+  const ok = await ProgressionFinalizer._certifyProgressionSession(actor, { sessionId: 'S2', mode: 'levelup', progressionSession: { draftSelections: { feats: [{ name: 'Dodge' }] } } }, { set: { 'flags.swse.levelUpEntitlementManifest': manifest } }, { ok: true, errors: [] });
+  assert.equal(ok.certified, true);
+  assert.equal(writes.at(-1).audit.kind, 'levelup-post-finalization+transaction-materialization');
+});
+
+await check('20. [unit] F2: GM override ALWAYS asks; metadata already on the source item is not authorization', async () => {
+  const acqMod = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/acquisition-authority.js');
+  const itemWithMeta = { type: 'feat', name: 'Dragged', system: { acquisition: { source: 'gm-reward', grantedBy: 'someone-else', classId: 'soldier', classLevel: 2, slotType: 'class' } }, flags: {} };
+  let asked = 0;
+  const approve = async () => { asked += 1; return { mode: 'gm-reward', source: 'gm-reward', countsAgainstSlot: false, grantedBy: 'gm1', grantedByName: 'GM', reason: 'quest' }; };
+  const res = await acqMod.resolveGmOverride({ actor: {}, item: itemWithMeta, prompt: approve });
+  assert.equal(asked, 1, 'the dialog is asked even though the item already carries acquisition metadata');
+  assert.equal(res.stop, false);
+  assert.equal(res.acquisition.grantedBy, 'gm1');
+  assert.match(res.acquisition.sourceSession, /^gm-grant:/);
+  assert.deepEqual([res.acquisition.slotType, res.acquisition.classId, res.acquisition.classLevel, res.acquisition.characterLevel], [null, null, null, null], 'stale placement metadata is cleared');
+  assert.equal((await acqMod.resolveGmOverride({ actor: {}, item: itemWithMeta, prompt: async () => null })).stop, true, 'cancel stops the acquisition');
+  assert.equal((await acqMod.resolveGmOverride({ actor: {}, item: itemWithMeta, prompt: async () => ({ source: 'gm-reward' }) })).stop, true, 'a result without a grantor is not evidence');
+  // the sheet no longer has the shortcut and delegates to the shared resolver
+  const sheet = fs.readFileSync(path.join(ROOT, 'scripts/sheets/v2/character-like-sheet.js'), 'utf8');
+  const body = sheet.slice(sheet.indexOf('async _gateItemAcquisition(item)'), sheet.indexOf('async _handleBackgroundDrop'));
+  assert.ok(!/item\.system\?\.acquisition \|\|/.test(body) && !/flags\?\.\['foundryvtt-swse'\]\?\.acquisition\) return/.test(body));
+  assert.match(body, /resolveGmOverride\(/);
+});
+
+await check('21. [unit] F3: a grant with a canonical identity never falls back to the name when the item loses/changes it', () => {
+  const { actor } = buildLifecycle();
+  const t = actor.items.find(i => i.name === 'Evasion');
+  t.flags.core = { sourceId: 'Compendium.x.talents.Evasion' };
+  const record = evidence.buildProgressionCertification({ actor, sessionId: 'S3', mode: 'levelup', manifest: man('scout', 'Scout', 1, 3), audit: { ok: true, kind: 'levelup-post-finalization' } });
+  actor.flags.swse.progressionCertifications = evidence.appendCertification(actor.flags.swse.progressionCertifications, record);
+  assert.equal(evidence.getAcquisitionEvidence(actor, t).status, 'certified');
+  delete t.flags.core;                       // canonical identity lost, SAME name, SAME stamp
+  assert.equal(evidence.getAcquisitionEvidence(actor, t).status, 'identity-mismatch');
+  const r = run(actor);
+  assert.equal(r.slots.classTalents.find(s => s.classId === 'scout').status, 'open');
+  assert.ok(r.engineFindings.some(f => f.code === 'certified-item-replaced'));
+  // a grant that NEVER had canonical identity still matches by name
+  const { actor: plain } = buildLifecycle();
+  assert.equal(evidence.getAcquisitionEvidence(plain, plain.items.find(i => i.name === 'Evasion')).status, 'certified');
 });
 
 console.log('progression-evidence-reconciliation: all assertions passed');

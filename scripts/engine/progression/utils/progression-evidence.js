@@ -79,8 +79,8 @@ export function itemIdentity(item) {
 /**
  * Does the item currently stored under a certified grant's id still BE the awarded item?
  *  - same item type;
- *  - same canonical source id when both sides have one (a cosmetic rename does not matter), otherwise
- *    the same name key;
+ *  - the same canonical source id whenever the certified grant had one (a cosmetic rename does not matter;
+ *    losing the canonical id does NOT fall back to the name), otherwise the same name key;
  *  - it still carries the acquisition stamp of the certified transaction (a replaced / rewritten item
  *    that kept the embedded id loses or changes it).
  */
@@ -89,8 +89,14 @@ export function grantMatchesItem(record, grant, item) {
   if (grant.itemType && item.type !== grant.itemType) return false;
   const gid = norm(grant.canonicalId);
   const iid = canonicalIdOf(item);
-  if (gid && iid) { if (gid !== iid) return false; }
-  else if (!grant.nameKey || grant.nameKey !== norm(item.name)) return false;
+  if (gid) {
+    // The certified grant had a canonical source identity: the item must still carry the SAME one.
+    // Losing it (or changing it) never falls back to name matching.
+    if (!iid || gid !== iid) return false;
+  } else if (!grant.nameKey || grant.nameKey !== norm(item.name)) {
+    // Name matching is reserved for grants that never had canonical identity evidence.
+    return false;
+  }
   const stamp = progressionMeta(item);
   if (!stamp.sourceSession || stamp.sourceSession !== record?.sessionId) return false;
   if (grant.selectionId && stamp.selectionId && norm(grant.selectionId) !== norm(stamp.selectionId)) return false;
