@@ -25,6 +25,8 @@ const inFlight = new Set();
  *   findFindings(actor) -> finding[]      fresh findings (all, including ignored)
  *   recalcAll(actor)                      ActorEngine.recalcAll
  *   grantHouseRule(actor, settingKey)     HouseRuleFeatGrants.grantMissing
+ *   setForcePointMax(actor, value, {previous}) ActorEngine.updateActor('system.forcePoints.max'); rejects a changed previous value
+ *   actorRevision(actor)                  the actor's modification stamp, compared before any revalidated write
  *   openStep(dataset)                     opens the existing reconcile-mode progression step
  *   confirm(message) -> Promise<boolean>  confirmation dialog
  * @returns {Promise<{status:string, message:string}>}
@@ -34,6 +36,7 @@ export async function resolveFinding({ actor, findingId, deps }) {
   if (inFlight.has(key)) return { status: 'busy', message: 'This repair is already running.' };
   inFlight.add(key);
   try {
+    const revision = deps.actorRevision ? deps.actorRevision(actor) : null;
     const before = deps.findFindings(actor).find(f => f.id === findingId);
     if (!before) return { status: 'already-resolved', message: 'This item no longer needs attention.' };
     const resolve = before.resolve || { kind: 'none' };
@@ -54,6 +57,23 @@ export async function resolveFinding({ actor, findingId, deps }) {
         // creates through ActorEngine with house-rule provenance, and never consumes an ordinary selection.
         await deps.grantHouseRule(actor, resolve.dataset?.settingKey);
         return verify(actor, before, deps, 'The house-rule grant was added.', 'The grant could not be added. Check that the rule is still enabled.');
+      }
+      case 'set-force-point-max': {
+        // The value in the finding is NOT sufficient authority. Immediately before writing: re-derive the finding from a fresh
+        // report (canonical maximum recomputed), require it to still say the same thing, and require the actor revision to be
+        // unchanged since this action began. The writer additionally re-checks the previous stored value.
+        const value = Number(resolve.dataset?.value);
+        if (!Number.isFinite(value) || value < 0) return { status: 'unsupported', message: 'There is no safe automatic repair for this item.' };
+        const fresh = deps.findFindings(actor).find(f => f.id === findingId);
+        const stale = !fresh || Number(fresh.resolve?.dataset?.value) !== value || (deps.actorRevision && deps.actorRevision(actor) !== revision);
+        if (stale) return { status: 'stale', message: 'Your character changed while this was open. Review it and try again.' };
+        try {
+          await deps.setForcePointMax(actor, value, { previous: before.actual });
+        } catch (err) {
+          if (err?.code === 'STALE_VALUE') return { status: 'stale', message: 'Your character changed while this was open. Review it and try again.' };
+          throw err;
+        }
+        return verify(actor, before, deps, 'Maximum Force Points was updated.', 'Maximum Force Points did not change. Review your class levels and Force Point feats.');
       }
       default:
         return { status: 'unsupported', message: 'There is no safe automatic repair for this item.' };

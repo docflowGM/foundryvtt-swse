@@ -2,7 +2,7 @@
 import { SWSEActorBase } from "/systems/foundryvtt-swse/scripts/actors/base/swse-actor-base.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { stampDerivedGeneration, getDerivedAppliedSignature } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
+import { stampDerivedGeneration, getDerivedAppliedSignature, announceDerivedApplied } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
 import { AbilityExecutionCoordinator } from "/systems/foundryvtt-swse/scripts/engine/abilities/ability-execution-coordinator.js";
 import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js";
 import { computeNpcDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/npc-actor.js";
@@ -183,6 +183,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
       // while still catching a destination that was reset out from under it.
       system.derived.meta ??= {};
       if (signature) system.derived.meta.appliedSignature = signature;
+      announceDerivedApplied(this, signature);
 
       // DerivedCalculator.computeAll() is the authoritative, already-modified
       // derived snapshot. It already folds in static/passive modifiers, so no

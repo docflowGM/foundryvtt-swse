@@ -5,6 +5,7 @@
  * derived-stat audit from the same canonical class-level authority.
  */
 
+import { runDomainAdapters, applyDomainAdapterRows } from './domain-adapters.js';
 import { readHpLedger, auditHp } from '/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js';
 import { readActorClassLevels } from './class-level-reader.js';
 import { getClassLevelProgressionEntry } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
@@ -252,9 +253,12 @@ export class ProgressionEntitlementCalculator {
     const baseDerivedStats = established && typeof this.helpers.buildDerivedStatsAudit === 'function'
       ? this.helpers.buildDerivedStatsAudit(actor, internalClassSummaries, { totalLevel, totalHeroicLevel })
       : { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0 };
-    const derivedStats = established
+    const hpDerivedStats = established
       ? applyHpAudit(baseDerivedStats, buildHpAudit(actor, internalClassSummaries, totalHeroicLevel))
       : baseDerivedStats;
+    // Domain adapters (read-only, one canonical authority each); a thrown adapter is diagnostics, never a character error.
+    // Adapters are independent of class establishment (a custom droid may have no class); each decides applicability itself.
+    const derivedStats = applyDomainAdapterRows(hpDerivedStats, runDomainAdapters(actor));
 
     return {
       kind: 'swse-progression-entitlement-plan',

@@ -102,6 +102,15 @@
         {{#unless vm.hasFindings}}
           <p class="swse-validation-note">No character issues need attention.</p>
         {{/unless}}
+        {{#if vm.optional.length}}
+          <section class="swse-validation-notes">
+            <h4>Optional (not an error)</h4>
+            {{#each vm.optional as |opt|}}
+            <p>{{opt.title}} &mdash; {{opt.text}}
+              <button type="button" class="swse-btn" data-action="resolve-finding" data-finding-id="{{opt.id}}">{{opt.resolve.label}}</button></p>
+            {{/each}}
+          </section>
+        {{/if}}
         {{#if vm.notes.length}}
           <section class="swse-validation-notes">
             <h4>Cannot be verified (informational)</h4>

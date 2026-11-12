@@ -121,6 +121,7 @@ export class ShellSurfaceRegistry {
         staleIgnoredIds: (validation.staleIgnored || []).map(r => r.id),
         hasStaleIgnored: (validation.staleIgnored || []).length > 0,
         notes: validation.notes || [],
+        optional: validation.optional || [],
         repairs: validation.repairs || [],
         isGM,
         engineFindings: isGM ? (validation.engineFindings || []) : [],

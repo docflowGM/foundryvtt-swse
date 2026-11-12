@@ -6,7 +6,7 @@ import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/a
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
 import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { stampDerivedGeneration } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
+import { stampDerivedGeneration, announceDerivedApplied } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
 import { MutationApplicationError } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js";
 import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
 import { PreflightValidator } from "/systems/foundryvtt-swse/scripts/governance/enforcement/preflight-validator.js";
@@ -139,6 +139,7 @@ export const ActorEngine = {
     // shared stamp keeps both paths on one coherent invalidation authority
     // instead of two counters that could drift out of sync.
     stampDerivedGeneration(actor, actor.system, signature);
+    announceDerivedApplied(actor, signature);
   },
 
   /**

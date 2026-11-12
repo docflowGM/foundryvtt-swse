@@ -33,6 +33,7 @@ const CODE_FOR_ROW = Object.freeze({
   'reflex-class-defense': 'DEFENSE_MISMATCH',
   'will-class-defense': 'DEFENSE_MISMATCH',
   'hp-max': 'HP_LEDGER_MISMATCH',
+  'droid-construction': 'DROID_CONSTRUCTION_INCOMPLETE',
 });
 
 function openCount(slot) {
@@ -90,9 +91,9 @@ function derivedFinding(row) {
     // A repair is offered only when the system can PROVE it yields the correct result. BAB / defense come from the
     // one canonical recalculation. Max HP stays review + ignore only: history-preserving HP (engine/HP/hp-accounting.js) never
     // reconstructs a maximum, so there is nothing safe to "resolve" to until the owner approves an HP repair flow.
-    resolve: isHp
-      ? { kind: 'none', label: '', reviewOnly: true }
-      : { kind: 'recalc', label: 'Recalculate' },
+    resolve: row.resolve && typeof row.resolve === 'object'
+      ? row.resolve
+      : (isHp ? { kind: 'none', label: '', reviewOnly: true } : { kind: 'recalc', label: 'Recalculate' }),
     ignorable: true,
   };
 }
@@ -134,6 +135,31 @@ export function buildFindings(report) {
     if (row?.needsAttention === true && row.id) findings.push(derivedFinding(row));
   }
   return findings;
+}
+
+/**
+ * Optional, non-error suggestions (for example initializing an unset Force Point maximum). They are NOT findings: they never
+ * count toward the header `!`, cannot be ignored, and are shown only inside the review overlay. They carry the same stable
+ * shape as a finding so the existing Resolve path can act on them.
+ */
+export function buildOptionalActions(report) {
+  const out = [];
+  for (const row of Array.isArray(report?.derivedStats?.rows) ? report.derivedStats.rows : []) {
+    const action = row?.optionalAction;
+    if (!action?.kind || row.needsAttention === true) continue;
+    out.push({
+      id: `optional:${row.id}`,
+      subject: `optional:${row.id}`,
+      code: 'OPTIONAL_ACTION',
+      title: row.label,
+      text: action.text || '',
+      expected: row.expected ?? null,
+      actual: row.current ?? null,
+      optional: true,
+      resolve: { kind: action.kind, label: action.label || 'Apply', dataset: action.dataset || {} },
+    });
+  }
+  return out;
 }
 
 export function readIgnored(actor) {
@@ -185,4 +211,4 @@ export function removeIgnored(existing, ids) {
   return (Array.isArray(existing) ? existing : []).filter(r => r && !drop.has(r.id));
 }
 
-export default { buildFindings, partitionFindings, addIgnored, removeIgnored, readIgnored, IGNORE_FLAG_PATH };
+export default { buildFindings, buildOptionalActions, partitionFindings, addIgnored, removeIgnored, readIgnored, IGNORE_FLAG_PATH };

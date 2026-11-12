@@ -59,3 +59,13 @@ export function getDerivedGeneration(actor) {
 export function getDerivedAppliedSignature(actor) {
   return actor?.system?.derived?.meta?.appliedSignature ?? null;
 }
+
+/**
+ * Announce that an authoritative derived snapshot (for `signature`) is now applied to the actor's live destination.
+ * Both derived write paths call this AFTER the destination is stamped, including the "nothing changed" pass, so consumers
+ * that depend on completion (reconciliation enrichment) get an event instead of polling or guessing with timers.
+ * Best effort and side-effect free for the actor: it only notifies listeners.
+ */
+export function announceDerivedApplied(actor, signature = null) {
+  try { globalThis.Hooks?.callAll?.('swseDerivedApplied', actor, signature); } catch (_err) { /* listeners must never break derived application */ }
+}
