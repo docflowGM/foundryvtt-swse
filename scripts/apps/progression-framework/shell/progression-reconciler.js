@@ -1018,6 +1018,10 @@ export class ProgressionReconciler {
     for (const note of Array.isArray(report?.houseRule?.notes) ? report.houseRule.notes : []) notes.push({ id: `houserule:${note.code}`, text: note.text });
     const unclassified = (report?.classification?.unclassifiedFeatCount || 0) + (report?.classification?.unclassifiedTalentCount || 0);
     if (unclassified > 0) notes.push({ id: 'unclassified', text: `${unclassified} owned feat/talent record${unclassified === 1 ? ' has' : 's have'} no acquisition provenance.` });
+    // Domain adapters may attach an informational note to an unverifiable row. Notes never count toward the `!`.
+    for (const row of Array.isArray(report?.derivedStats?.rows) ? report.derivedStats.rows : []) {
+      if (row?.noteText) notes.push({ id: `note:${row.id}`, text: row.noteText });
+    }
     const engineFindings = (Array.isArray(report?.engineFindings) ? report.engineFindings : []).map(f => ({ code: f.code, message: f.message }));
     return {
       playerActionable: visible.length > 0,

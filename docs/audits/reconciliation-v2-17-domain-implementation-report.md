@@ -101,3 +101,17 @@ pending/applied/reset/reapplied, memo (verified to fail when the lifecycle is re
 read-time revalidation, a house-rule change while pending, non-mutation, and no false `!` during preparation. Existing reconciliation tests were
 updated to represent a settled derived pass (`tests/helpers/derived-lifecycle-fixture.mjs`) where they assert prepared-value discrepancies.
 Node harness only; Foundry V13 not performed.
+
+## Phase 2 — species, skills, character eligibility — COMPLETE (narrow, evidence-bound)
+Implemented: Domain 1 `speciesGrantIntegrityAdapter` (informational only). Evidence used: the species apply step's manifest
+(`flags.swse.speciesGrantManifest.grantKey`) and the grant key stamped on species-granted items. Items stamped with a different grant key
+produce an informational note in the review overlay; a missing manifest (normal for manual builds) is silent. It can never produce a finding.
+Not implemented (reasons recorded):
+- Racial ability adjustments / movement / languages vs the species ledger: the ledger is async, compendium-backed and classifies trait text
+  heuristically (`SpeciesGrantLedgerBuilder._classifyTrait`), and the persisted values are player-editable. No independent persisted evidence of the
+  applied values exists (the manifest stores key kinds, not values). Left to a future owner decision on a species verification model.
+- Domain 10 trained-skill entitlement: no canonical entitlement calculator; RECON-007.
+- Domain 11 feat-derived Force power entitlement: RECON-006 (retroactivity / attribution).
+- Domains 8/9 feat and talent prerequisites: historical acquisitions are intentionally not re-validated; RECON-001/002/005 remain open.
+- Persistent resources other than Force Points (Second Wind, Destiny): no persisted-mirror evidence audited.
+Tests: `tests/reconciliation-phase2-species.test.mjs`.

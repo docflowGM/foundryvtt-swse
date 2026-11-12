@@ -95,7 +95,31 @@ export function forcePointMaxAdapter(actor) {
   return result({ ...base, expected, actual, reason: 'unknown-provenance', optional, optionalText: `Maximum Force Points is ${actual}; your class levels and Force Point feats give ${expected}. It may be a deliberate adjustment, so this is not treated as an error.` });
 }
 
-export const DOMAIN_ADAPTERS = Object.freeze([forcePointMaxAdapter]);
+/**
+ * Domain 1 - species grant integrity (INFORMATIONAL ONLY). The only independent evidence available without rebuilding the
+ * heuristic species ledger (async, compendium-backed, trait text classification) is the manifest the species apply step
+ * writes and the grant key stamped on species-granted items. Items stamped with a DIFFERENT grant key than the recorded
+ * manifest are left over from another species grant. This never produces a confirmed discrepancy: a missing manifest is the
+ * normal state of a manually built character, and racial adjustments are player-editable.
+ */
+export function speciesGrantIntegrityAdapter(actor) {
+  const base = { domain: 'species', id: 'species-grant-integrity', label: 'Species grants', authority: 'species/species-grant-reconciliation.js manifest' };
+  if (actor?.type !== 'character') return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'actor-type' });
+  const manifest = actor?.flags?.swse?.speciesGrantManifest;
+  if (!manifest || typeof manifest !== 'object' || !manifest.grantKey) return result({ ...base, reason: 'no-species-manifest' });
+  const stale = Array.from(actor?.items ?? []).filter(item => {
+    const swse = item?.flags?.swse;
+    return swse?.speciesGranted === true && swse?.speciesGrantKey && swse.speciesGrantKey !== manifest.grantKey;
+  });
+  if (!stale.length) return result({ ...base, status: DOMAIN_STATUS.VALID });
+  const names = stale.slice(0, 3).map(i => i.name).filter(Boolean).join(', ');
+  return result({
+    ...base, reason: 'stale-species-items',
+    noteText: `${stale.length} item${stale.length === 1 ? '' : 's'} (${names}${stale.length > 3 ? ', …' : ''}) came from a different species grant than the one recorded on this character. Nothing was changed.`,
+  });
+}
+
+export const DOMAIN_ADAPTERS = Object.freeze([forcePointMaxAdapter, speciesGrantIntegrityAdapter]);
 
 /**
  * Asynchronous adapters run by async-enrichment.js ONLY after the derived lifecycle is current. They may await canonical
@@ -156,6 +180,7 @@ export function adapterToRow(verdict) {
     resolve: confirmed ? verdict.resolve : { kind: 'none', label: '' },
     optionalAction: !confirmed && verdict.optional ? { ...verdict.optional, text: verdict.optionalText || '' } : null,
     reason: verdict.reason || '',
+    noteText: !confirmed && verdict.noteText ? verdict.noteText : '',
     domain: verdict.domain,
     authority: verdict.authority,
     targetTab: 'abilities',
@@ -180,4 +205,4 @@ export function applyDomainAdapterRows(derivedStats, verdicts) {
   };
 }
 
-export default { DOMAIN_STATUS, DOMAIN_ADAPTERS, ASYNC_DOMAIN_ADAPTERS, forcePointMaxAdapter, derivedPreparationAdapter, runDomainAdapters, runAsyncDomainAdapters, adapterToRow, applyDomainAdapterRows };
+export default { DOMAIN_STATUS, DOMAIN_ADAPTERS, ASYNC_DOMAIN_ADAPTERS, forcePointMaxAdapter, speciesGrantIntegrityAdapter, derivedPreparationAdapter, runDomainAdapters, runAsyncDomainAdapters, adapterToRow, applyDomainAdapterRows };

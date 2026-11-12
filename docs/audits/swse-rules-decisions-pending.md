@@ -2750,3 +2750,37 @@ No provisional recommendation has been converted into a ruling.
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+## RECON-006 — Force Training: power entitlement count, retroactivity and source attribution
+
+| Field | |
+|---|---|
+| Rules domain | Force abilities / feat-derived entitlements |
+| Feature | Force Training (number of Force powers it grants) |
+| Source | No published page consulted. Repository evidence only. |
+| Evidence | `FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance(actor)` yields a per-instance slot count from the ability modifier at the time it is evaluated; owned Force power items do not reliably record which feat instance granted them. |
+| Confirmed behavior | The resolver defines the number of selections a Force Training instance opens in the progression flow. |
+| Unresolved question | Whether a later change to the governing ability modifier changes an already-taken Force Training instance's entitlement, and how owned powers are attributed to a specific instance when provenance is absent. |
+| Options | Entitlement fixed when the feat is taken; entitlement tracks the current modifier (code evidence for the resolver only; none source-certified). |
+| Recommended ruling | None |
+| Implementation impact | No reconciliation check of feat-derived Force power entitlements (Domain 11) is implemented; class-derived Force choices remain covered. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## RECON-007 — Trained-skill entitlement under the skill house rules
+
+| Field | |
+|---|---|
+| Rules domain | Skills / training entitlement |
+| Feature | How many skills a character may have trained and from which sources |
+| Source | No published page consulted. Repository evidence only. |
+| Evidence | No synchronous canonical trained-skill entitlement calculator was found. Training is written through progression builders and `SkillEngine`, and `SkillRules` exposes several skill house rules (training points, caps, cross-class training, focus variants, consolidation). |
+| Confirmed behavior | `SkillRules` setting readers exist; `DerivedCalculator` computes skill totals (prepared, so not independently verifiable). |
+| Unresolved question | The authoritative formula that combines class, ability modifier, species, feat and house-rule sources into an entitlement, and whether it is retroactive to later ability changes. |
+| Options | None source-certified. |
+| Recommended ruling | None |
+| Implementation impact | No trained-skill count / eligibility reconciliation (Domain 10). Skill totals are not checked (prepared values, D-1). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
