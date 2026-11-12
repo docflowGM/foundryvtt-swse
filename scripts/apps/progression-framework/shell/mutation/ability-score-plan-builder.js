@@ -14,6 +14,8 @@
  * - system.abilities is legacy read fallback only
  */
 
+import { resolveEntitlementLevel, assertEntitlementOpen, entitlementIdForLevel } from './ability-increase-guard.js';
+
 const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
 const ABILITY_ALIASES = {
@@ -102,6 +104,17 @@ export class AbilityScorePlanBuilder {
     const maxPerAbility = allocationMode === 'allow_stacked_two' ? 2 : 1;
     const normalizedIncreases = {};
 
+    // Identity first, before any score is computed. The level comes from the ENTITLEMENT being resolved (attribute step level / slot id /
+    // manifest) and fails closed when missing, invalid or ambiguous - never the actor's current level, never null / 0.
+    const hasSelection = ABILITY_KEYS.some(key => (numeric(increases?.[key], 0) || 0) > 0);
+    if (!hasSelection) return set;
+    const { level, entitlementId } = resolveEntitlementLevel({ attr, manifest });
+    const history = Array.isArray(actor?.system?.progression?.abilityIncreaseHistory)
+      ? actor.system.progression.abilityIncreaseHistory
+      : [];
+    // One active record per entitlement (C1 / C2): an existing entry blocks a second additive application.
+    assertEntitlementOpen(history, level);
+
     for (const key of ABILITY_KEYS) {
       const delta = Math.max(0, Math.min(maxPerAbility, numeric(increases?.[key], 0) || 0));
       if (delta <= 0) continue;
@@ -109,27 +122,18 @@ export class AbilityScorePlanBuilder {
       normalizedIncreases[key] = delta;
     }
 
-    if (!Object.keys(normalizedIncreases).length) return set;
-
-    const level = numeric(manifest?.characterLevel, null);
     const record = {
       level,
       characterLevel: level,
+      entitlementId,
       increases: normalizedIncreases,
       timestamp: new Date().toISOString(),
       source,
     };
 
-    const history = Array.isArray(actor?.system?.progression?.abilityIncreaseHistory)
-      ? actor.system.progression.abilityIncreaseHistory
-      : [];
-    const filteredHistory = level
-      ? history.filter(entry => Number(entry?.level ?? entry?.characterLevel ?? 0) !== Number(level))
-      : history;
-
     set['system.progression.lastAbilityIncrease'] = record;
     set['system.progression.abilityIncreaseHistory'] = [
-      ...filteredHistory,
+      ...history,
       record,
     ].sort((a, b) => Number(a?.level ?? a?.characterLevel ?? 0) - Number(b?.level ?? b?.characterLevel ?? 0));
 

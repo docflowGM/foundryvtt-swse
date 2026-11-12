@@ -73,6 +73,7 @@ import { ForcePlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progress
 import { SkillsLanguagesPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js';
 import { SpeciesBackgroundPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/species-background-plan-builder.js';
 import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
+import { beginAbilityIncreaseTransaction } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js';
 import { ProgressionMetadataPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-metadata-plan-builder.js';
 
 /* -------------------------------------------------------------------------- */
@@ -738,9 +739,9 @@ export class ProgressionFinalizer {
       actor,
       attr,
       attrValues: mode === 'chargen' ? {} : undefined,
-      manifest: {
-        characterLevel: Number(attr?.abilityIncreaseLevel || attr?.characterLevel || attr?.level || actor?.system?.level || actor?.system?.details?.level || 0) || null,
-      },
+      // The level is the ENTITLEMENT's level, carried by the attribute step (`abilityIncreaseLevel`) and validated by the builder, which fails
+      // closed when it is missing. It is never inferred from the actor's current level.
+      manifest: null,
       getAllocationMode: () => ProgressionRules.getAbilityIncreaseAllocationMode?.(),
       source: 'single-step-progression',
     });
@@ -3836,7 +3837,25 @@ export class ProgressionFinalizer {
       || CanonicalActorEngine;
   }
 
+  /**
+   * The single transaction boundary for every finalize path. An additive ability-score increase is guarded here, immediately before the plan
+   * reaches ActorEngine: valid entitlement level, no concurrent duplicate from this client, and a fresh re-read of the actor (entitlement still
+   * unrecorded, increased scores unchanged since the plan was built). A refusal returns before any mutation.
+   */
   static async _applyMutationPlan(actor, mutationPlan) {
+    const guard = beginAbilityIncreaseTransaction(actor, mutationPlan);
+    if (!guard.ok) {
+      swseLogger.error('[ProgressionFinalizer] Ability-increase guard refused the mutation plan', { code: guard.code, actorId: actor?.id });
+      return { success: false, error: guard.error, guardRefused: true, code: guard.code };
+    }
+    try {
+      return await this._applyMutationPlanUnguarded(actor, mutationPlan);
+    } finally {
+      guard.release();
+    }
+  }
+
+  static async _applyMutationPlanUnguarded(actor, mutationPlan) {
     // TI-3 (TX-09 sub-gap): two different outcomes used to share one `catch`. A throw from the plan itself means the transactional apply failed (and ActorEngine
     // attempted a rollback whose verification it reports — see the catch below). A throw from the post-apply bookkeeping AFTER a successful plan means the plan IS applied and is NOT rolled back; reporting
     // that as `{ success:false }` invites the player to finalize again.
