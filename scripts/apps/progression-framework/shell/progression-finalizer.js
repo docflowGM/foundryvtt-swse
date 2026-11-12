@@ -73,7 +73,7 @@ import { ForcePlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progress
 import { SkillsLanguagesPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js';
 import { SpeciesBackgroundPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/species-background-plan-builder.js';
 import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
-import { beginAbilityIncreaseTransaction } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js';
+import { beginAbilityIncreaseTransaction, verifyAbilityIncreaseCommit, describeAbilityTransaction, ABILITY_HISTORY_KEY } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js';
 import { ProgressionMetadataPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-metadata-plan-builder.js';
 
 /* -------------------------------------------------------------------------- */
@@ -3849,9 +3849,30 @@ export class ProgressionFinalizer {
       return { success: false, error: guard.error, guardRefused: true, code: guard.code };
     }
     try {
-      return await this._applyMutationPlanUnguarded(actor, mutationPlan);
+      const result = await this._applyMutationPlanUnguarded(actor, mutationPlan);
+      if (result?.success !== false) await this._recordAbilityIncreaseVerification(actor, mutationPlan);
+      return result;
     } finally {
       guard.release();
+    }
+  }
+
+  /**
+   * Checkpoint C: AFTER ActorEngine committed, record whether the effect actually persisted. The marker is written onto the existing canonical
+   * history record (no second receipt array) and only ever says 'verified' when the persisted scores and record match the plan; a failed check is
+   * recorded as 'failed'; if the marker itself cannot be persisted the record simply stays committed-unverified. Never fails the finalization.
+   */
+  static async _recordAbilityIncreaseVerification(actor, mutationPlan) {
+    try {
+      const verification = verifyAbilityIncreaseCommit(actor, mutationPlan);
+      if (!verification) return;
+      const info = describeAbilityTransaction(mutationPlan.set);
+      const history = (Array.isArray(actor?.system?.progression?.abilityIncreaseHistory) ? actor.system.progression.abilityIncreaseHistory : [])
+        .map(entry => (entry?.entitlementId === info.record.entitlementId && entry?.timestamp === info.record.timestamp ? { ...entry, verification } : entry));
+      const engine = this._resolveActorEngine();
+      await engine.updateActor(actor, { [ABILITY_HISTORY_KEY]: history }, { source: 'ProgressionFinalizer.verifyAbilityIncrease', meta: { guardKey: 'ability-increase-verification' } });
+    } catch (error) {
+      swseLogger.warn('[ProgressionFinalizer] Ability-increase verification marker could not be persisted; the record stays committed-unverified', error);
     }
   }
 

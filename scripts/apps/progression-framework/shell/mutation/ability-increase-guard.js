@@ -116,4 +116,26 @@ export function beginAbilityIncreaseTransaction(actor, mutationPlan) {
   return { ok: true, release: () => inFlight.delete(key) };
 }
 
+/**
+ * Post-commit verification (Checkpoint C). Called ONLY after ActorEngine reported success. It compares the plan's intended effect with what the
+ * actor now actually holds: every increased score equals the planned value, and the canonical history contains the planned record for the entitlement.
+ * A failed check yields state 'failed' (never 'verified'). Pure; the caller persists the block.
+ * @returns {{state:'verified'|'failed', verifiedAt:string, sessionId:string|null, checks:{scores:boolean, record:boolean}, reasons:string[]}|null} null when the plan carried no ability increase
+ */
+export function verifyAbilityIncreaseCommit(actor, mutationPlan, { now = new Date().toISOString() } = {}) {
+  const info = describeAbilityTransaction(mutationPlan?.set);
+  if (!info || info.level === null) return null;
+  const reasons = [];
+  let scores = true;
+  for (const [ability, { next }] of Object.entries(info.bases)) {
+    if (Number(actor?.system?.attributes?.[ability]?.base) !== next) { scores = false; reasons.push(`${ability} is not ${next}`); }
+  }
+  const rec = recordsForLevel(actor?.system?.progression?.abilityIncreaseHistory, info.level)
+    .find(entry => entry?.entitlementId === info.record.entitlementId && ABILITY_KEYS.every(k => (Number(entry?.increases?.[k] || 0) || 0) === (Number(info.record.increases?.[k] || 0) || 0)));
+  const record = !!rec;
+  if (!record) reasons.push('the history record is not present as planned');
+  const sessionId = mutationPlan?.set?.['system.progression.completedSessionId'] ?? null;
+  return { state: scores && record ? 'verified' : 'failed', verifiedAt: now, sessionId, checks: { scores, record }, reasons };
+}
+
 export default { resolveEntitlementLevel, assertEntitlementOpen, beginAbilityIncreaseTransaction, strictLevel, entitlementIdForLevel, levelFromEntitlementId };

@@ -29,7 +29,7 @@ function actorAt(level, history = [], bases = {}) {
 }
 // stub engine: applies plan.set to the in-memory actor (the only thing ActorEngine contributes to these assertions)
 let engineCalls = 0; let failNext = false; let gate = null;
-globalThis.game.swse = { ActorEngine: { applyMutationPlan: async (actor, plan) => {
+globalThis.game.swse = { ActorEngine: { updateActor: async (actor, patch) => { for (const [k, v] of Object.entries(patch)) setPath(actor, k, structuredClone(v)); }, applyMutationPlan: async (actor, plan) => {
   engineCalls += 1; if (gate) await gate; if (failNext) { failNext = false; throw new Error('engine failure'); }
   for (const [k, v] of Object.entries(plan.set || {})) setPath(actor, k, structuredClone(v));
 } } };

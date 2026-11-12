@@ -46,3 +46,16 @@ a history record with no recognised `source` used to fill the slot and now shows
 Other domains are NOT migrated to the reader (feats, talents, skills, Force, HP keep their existing readers until proven equivalent).
 
 Tests: `tests/progression-completion-reader.test.mjs` (13 groups); `tests/reconciliation-v2-contract.test.mjs` 14b updated and 14c / 14d added.
+
+## Checkpoint C - verified progression evidence for ability increases - IMPLEMENTED, Node-tested
+After `ActorEngine` reports success, `ProgressionFinalizer._applyMutationPlan` (the single transaction boundary for `finalize` and `finalizeSingleStep`) calls `_recordAbilityIncreaseVerification`:
+`verifyAbilityIncreaseCommit` compares the plan's intended effect with what the actor now holds (each increased score equals the planned value; the canonical history contains the planned record for the
+entitlement) and the result is written as a `verification` block on that SAME history record (`state: 'verified' | 'failed'`, `verifiedAt`, `sessionId` from `system.progression.completedSessionId`, `checks`, `reasons`).
+Nothing is labelled verified in the plan; no second receipt array exists; a failed check is recorded as `failed` and the reader keeps `SYSTEM_COMMITTED_UNVERIFIED`; if the marker cannot be persisted the finalization still
+succeeds and the record stays committed-unverified; a failed mutation records no evidence; a later manual score edit does not erase the historical record (C8). Plans without an ability increase are untouched.
+Scope: ability increases only. HP history, feat / talent certification (`progressionCertifications`, `_certifyProgressionSession`) and the level-up receipt keep their existing behavior and are not re-labelled; no other domain is marked verified.
+Tests: `tests/ability-increase-verification.test.mjs` (7 groups; ActorEngine stubbed).
+
+## STOP - acceptance gate before Checkpoint D
+Per the assignment, Checkpoint A must be accepted before manual acknowledgments are enabled. Checkpoints D (acknowledgment / correction / withdrawal / GM supersession mutations), E (Character Review: Already Applied, Apply Increases,
+Review Progress) and F (integration, Foundry acceptance) are NOT started. Open items carried forward: the cross-client race residual (Checkpoint A), Apply for a level that already has a PARTIAL system record is blocked (no completion route yet - needs an owner decision), Q1-Q8 are encoded in the reader but have no UI yet.
