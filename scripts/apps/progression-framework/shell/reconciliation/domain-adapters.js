@@ -13,6 +13,8 @@ import { ClassesDB } from '/systems/foundryvtt-swse/scripts/data/classes-db.js';
 import { readActorClassLevels } from './class-level-reader.js';
 import { readOverride } from './override-provenance.js';
 import { derivedLifecycle } from './derived-lifecycle.js';
+import { DroidValidationEngine } from '/systems/foundryvtt-swse/scripts/engine/droid-validation-engine.js';
+import { resolveDroidCalculationMode, isStockImportedDroid, DROID_CALCULATION_MODE } from '/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js';
 import { EncumbranceEngine } from '/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js';
 
 export const DOMAIN_STATUS = Object.freeze({
@@ -139,7 +141,32 @@ export function carriedWeightEvidenceAdapter(actor) {
   });
 }
 
-export const DOMAIN_ADAPTERS = Object.freeze([forcePointMaxAdapter, speciesGrantIntegrityAdapter, carriedWeightEvidenceAdapter]);
+/**
+ * Domain 16 - droid construction (mode-aware). Applies ONLY to a custom-built droid whose build was FINALIZED
+ * (`system.droidSystems.stateMode === 'FINALIZED'`): finalization is the point at which the builder's own required-system check
+ * (`DroidValidationEngine.validateDroidConfiguration`) was satisfied, so a finalized droid that no longer has a required system is a
+ * proven inconsistency. Stock-statblock droids and stock droids converted to playable are NOT_APPLICABLE (their authority is the
+ * published statblock / the conversion service, never custom-construction requirements). Unfinalized builds are UNVERIFIABLE.
+ * Read-only; no resolve (components are never auto-installed or removed).
+ */
+export function droidConstructionAdapter(actor) {
+  const base = { domain: 'droid', id: 'droid-construction', label: 'Droid construction', authority: 'engine/droid-validation-engine.js' };
+  if (actor?.type !== 'droid') return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'actor-type' });
+  if (resolveDroidCalculationMode(actor).mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK) return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'stock-statblock' });
+  if (isStockImportedDroid(actor)) return result({ ...base, status: DOMAIN_STATUS.NOT_APPLICABLE, reason: 'converted-stock-droid' });
+  const systems = actor?.system?.droidSystems;
+  if (!systems || typeof systems !== 'object') return result({ ...base, reason: 'no-build-record' });
+  if (systems.stateMode !== 'FINALIZED') return result({ ...base, reason: 'build-not-finalized' });
+  const validation = DroidValidationEngine.validateDroidConfiguration(systems);
+  if (validation.valid) return result({ ...base, status: DOMAIN_STATUS.VALID });
+  return result({
+    ...base, status: DOMAIN_STATUS.CONFIRMED_DISCREPANCY,
+    expected: 'complete', actual: validation.errors.join('; '), reason: 'finalized-build-missing-required-systems',
+    issue: `This droid's build is finalized but is missing a required system: ${validation.errors.join('; ')}.`,
+  });
+}
+
+export const DOMAIN_ADAPTERS = Object.freeze([forcePointMaxAdapter, speciesGrantIntegrityAdapter, carriedWeightEvidenceAdapter, droidConstructionAdapter]);
 
 /**
  * Asynchronous adapters run by async-enrichment.js ONLY after the derived lifecycle is current. They may await canonical

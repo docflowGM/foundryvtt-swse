@@ -34,6 +34,7 @@ const CODE_FOR_ROW = Object.freeze({
   'will-class-defense': 'DEFENSE_MISMATCH',
   'hp-max': 'HP_LEDGER_MISMATCH',
   'force-points-max': 'FORCE_POINT_MAX_MISMATCH',
+  'droid-construction': 'DROID_CONSTRUCTION_INCOMPLETE',
 });
 
 function openCount(slot) {

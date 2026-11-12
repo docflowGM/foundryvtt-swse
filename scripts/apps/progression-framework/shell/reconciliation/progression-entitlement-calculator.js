@@ -257,7 +257,8 @@ export class ProgressionEntitlementCalculator {
       ? applyHpAudit(baseDerivedStats, buildHpAudit(actor, internalClassSummaries, totalHeroicLevel))
       : baseDerivedStats;
     // Domain adapters (read-only, one canonical authority each); a thrown adapter is diagnostics, never a character error.
-    const derivedStats = established ? applyDomainAdapterRows(hpDerivedStats, runDomainAdapters(actor)) : hpDerivedStats;
+    // Adapters are independent of class establishment (a custom droid may have no class); each decides applicability itself.
+    const derivedStats = applyDomainAdapterRows(hpDerivedStats, runDomainAdapters(actor));
 
     return {
       kind: 'swse-progression-entitlement-plan',

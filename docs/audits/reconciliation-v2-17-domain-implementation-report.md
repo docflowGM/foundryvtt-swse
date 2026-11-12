@@ -131,3 +131,16 @@ Not implemented (reasons recorded):
   excluded by the command. Persisted weapon inputs have no independent authority audited in this pass.
 - **Damage threshold / DR / shields (Domain 7):** threshold is prepared; persisted shield and DR sources were not audited.
 Tests: `tests/reconciliation-phase3-equipment.test.mjs`.
+
+## Phase 4 — droid mechanics — COMPLETE (mode-aware, narrow)
+Implemented: Domain 16 `droidConstructionAdapter`. Mode comes from the existing `resolveDroidCalculationMode` / `isStockImportedDroid`:
+- stock-statblock droids and stock droids converted to playable: NOT_APPLICABLE (their authority is the published statblock / the conversion service,
+  not custom-construction requirements); the existing droid conversion / installation reconciliation services are untouched and are not merged in;
+- custom droids whose `system.droidSystems.stateMode` is not `FINALIZED` (or with no build record): UNVERIFIABLE;
+- a `FINALIZED` custom droid that fails `DroidValidationEngine.validateDroidConfiguration` (a required locomotion / appendage / processor / armor is
+  missing): CONFIRMED_DISCREPANCY (`DROID_CONSTRUCTION_INCOMPLETE`), review-only (no resolve; components are never auto-installed or removed). Rationale:
+  finalization is when the builder's own required-system check was satisfied.
+Adapters now run independently of class establishment (a custom droid may carry no class item); each adapter decides applicability.
+Not implemented: component prerequisites / capacity conflicts / droid-specific stat calculations (installation authority audited only by location), droid
+HP/CON rules (covered by the HP work). Droid HP, droid CON=0 and droid Force Point applicability remain as established by their own domains.
+Tests: `tests/reconciliation-phase4-droid.test.mjs`.
