@@ -11,7 +11,7 @@
  *
  * Completion confidence is separate from mechanical correctness: a completion can be PLAYER_ATTESTED while its effect stays unverified.
  */
-import { strictLevel, recordLevel, entitlementIdForLevel } from '../mutation/ability-increase-guard.js';
+import { strictLevel, strictCount, recordLevel, entitlementIdForLevel } from '../mutation/ability-increase-guard.js';
 
 export const COMPLETION = Object.freeze({
   SYSTEM_VERIFIED: 'SYSTEM_VERIFIED',                         // committed AND post-commit verification recorded on the record
@@ -67,7 +67,7 @@ function merge(records) {
  * @param {number} level the entitlement's character level
  * @param {{expectedCount?:number|null, rulesDeferred?:string[]|boolean}} [context] supplied by the caller from the existing authorities
  */
-export function getAbilityIncreaseCompletion(actor, level, { expectedCount = null, rulesDeferred = false } = {}) {
+export function getAbilityIncreaseCompletion(actor, level, { expectedCount = null, rulesDeferred = false, maxPerAbility = 1 } = {}) {
   const L = strictLevel(level);
   const progression = actor?.system?.progression || {};
   const history = Array.isArray(progression.abilityIncreaseHistory) ? progression.abilityIncreaseHistory : [];
@@ -77,7 +77,8 @@ export function getAbilityIncreaseCompletion(actor, level, { expectedCount = nul
     type: 'ability-increase',
     level: L,
     authority: 'ProgressionReconciler._abilityIncreaseCountForActor (count) / system.progression.abilityIncreaseHistory (evidence)',
-    expectedCount: Number.isFinite(Number(expectedCount)) ? Number(expectedCount) : null,
+    // EVD-01: an unknown count stays UNKNOWN (null). Number(null) is 0 and must never be read as "zero increases are owed".
+    expectedCount: strictCount(expectedCount),
     rulesDeferred: deferred,
   };
   if (!L) return { ...base, classification: COMPLETION.UNVERIFIABLE, applied: {}, attested: {}, gmAuthorized: {}, remainingUnknown: base.expectedCount, provenShortfall: false, evidenceSources: [], references: { sessionIds: [] }, verification: 'none', conflicts: ['invalid-level'], legacy: [] };
@@ -96,38 +97,56 @@ export function getAbilityIncreaseCompletion(actor, level, { expectedCount = nul
 
   const systemRecords = [...buckets['system-verified'], ...buckets['system-committed']];
   const applied = merge(systemRecords);
-  // Attestations never count for a deferred-rules entitlement (Q1) and never together with a system record for the same level (C1: reported).
   const conflicts = [];
-  if (systemRecords.length && (buckets['player-attested'].length || buckets['gm-authorized'].length)) conflicts.push('system-and-manual-records-coexist');
-  const manualAllowed = !deferred && !systemRecords.length;
-  const gm = manualAllowed ? merge(buckets['gm-authorized']) : {};
-  const attested = manualAllowed ? merge(buckets['player-attested']) : {};
-  const gmCount = countOf(gm), attestedCount = countOf(attested), appliedCount = countOf(applied);
   if (buckets.unrecognized.length) conflicts.push('unrecognized-provenance-record');
+  // Q1 / C7: attestations never count for a deferred-rules entitlement. Q5: an active GM-authorized statement takes precedence over player attestations.
+  const manualAllowed = !deferred;
+  let gm = manualAllowed ? merge(buckets['gm-authorized']) : {};
+  let attested = manualAllowed ? merge(buckets['player-attested']) : {};
+  if (countOf(gm) > 0 && countOf(attested) > 0) { conflicts.push('gm-and-player-attestations'); attested = {}; }
 
+  // EVD-05: system-applied and manual evidence may be MIXED for one entitlement (a short system record completed by an attestation). They are
+  // combined per ability and the canonical allocation rule caps the total: a manual selection that would exceed it (for example the same ability
+  // twice when stacking is not allowed) is not counted and is reported. Manual evidence never replaces or erases system evidence.
+  const cap = Math.max(1, Number(maxPerAbility) || 1);
+  const counted = { applied: { ...applied }, attested: {}, gm: {} };
+  const used = { ...applied };
+  // Manual evidence only ever fills what the system evidence has not already satisfied: it can neither exceed the entitlement nor re-label a complete system record.
+  let needLeft = base.expectedCount === null ? Infinity : Math.max(0, base.expectedCount - countOf(applied));
+  for (const [bucketName, bucket] of [['gm', gm], ['attested', attested]]) {
+    for (const [k, d] of Object.entries(bucket)) {
+      const room = Math.max(0, cap - (used[k] || 0));
+      const take = Math.min(d, room, needLeft);
+      if (take < d) conflicts.push(room < d ? 'overlapping-or-excess-selection' : 'selections-exceed-entitlement');
+      if (take > 0) { counted[bucketName][k] = take; used[k] = (used[k] || 0) + take; needLeft -= take; }
+    }
+  }
+  gm = counted.gm; attested = counted.attested;
+  const appliedCount = countOf(applied), gmCount = countOf(gm), attestedCount = countOf(attested);
+  const manualCount = gmCount + attestedCount;
+  const total = appliedCount + manualCount;
   const expected = base.expectedCount;
-  const satisfied = (n) => expected !== null && n >= expected;
   const verified = buckets['system-committed'].length === 0 && buckets['system-verified'].length > 0;
   const evidenceSources = [...new Set([...systemRecords, ...buckets['player-attested'], ...buckets['gm-authorized'], ...buckets.unrecognized].map(r => r.source || 'unknown'))];
-  const sessionIds = [...new Set([...history.filter(e => recordLevel(e) === L)].map(e => e?.verification?.sessionId || e?.sessionId).filter(Boolean))];
+  const sessionIds = [...new Set(history.filter(e => recordLevel(e) === L).map(e => e?.verification?.sessionId || e?.sessionId).filter(Boolean))];
 
   let classification = COMPLETION.UNVERIFIABLE;
   let provenShortfall = false;
-  let remaining = expected;
-  if (appliedCount > 0) {
-    remaining = expected === null ? null : Math.max(0, expected - appliedCount);
-    if (satisfied(appliedCount)) classification = verified ? COMPLETION.SYSTEM_VERIFIED : COMPLETION.SYSTEM_COMMITTED_UNVERIFIED;
-    else { classification = COMPLETION.PARTIAL; provenShortfall = expected !== null && !deferred; } // a durable system record that is short is a PROVEN shortfall
-  } else if (gmCount > 0) {
-    remaining = expected === null ? null : Math.max(0, expected - gmCount);
-    classification = satisfied(gmCount) ? COMPLETION.GM_AUTHORIZED : COMPLETION.PARTIAL;
-  } else if (attestedCount > 0) {
-    remaining = expected === null ? null : Math.max(0, expected - attestedCount);
-    classification = satisfied(attestedCount) ? COMPLETION.PLAYER_ATTESTED : COMPLETION.PARTIAL; // partial manual evidence: the rest is UNKNOWN, not proven missing (Q3)
+  let remaining = expected === null ? null : Math.max(0, expected - total);
+  // With an UNKNOWN count nothing can be called complete or short: the evidence is shown, the verdict stays UNVERIFIABLE.
+  if (expected !== null && total > 0) {
+    if (total >= expected) {
+      if (manualCount === 0) classification = verified ? COMPLETION.SYSTEM_VERIFIED : COMPLETION.SYSTEM_COMMITTED_UNVERIFIED;
+      else classification = gmCount > 0 ? COMPLETION.GM_AUTHORIZED : COMPLETION.PLAYER_ATTESTED; // weakest link: any manual part makes the whole attested
+    } else {
+      classification = COMPLETION.PARTIAL;
+      // A durable SYSTEM record that is short, with no manual statement about the rest, is a proven shortfall; any manual statement leaves the rest unknown (Q3).
+      provenShortfall = appliedCount > 0 && manualCount === 0 && !deferred;
+    }
   }
 
   return {
-    ...base, classification, applied, attested, gmAuthorized: gm, remainingUnknown: remaining, provenShortfall,
+    ...base, classification, applied, attested, gmAuthorized: gm, remainingUnknown: remaining, provenShortfall, mixed: appliedCount > 0 && manualCount > 0,
     evidenceSources, references: { sessionIds },
     verification: verified ? 'verified' : (appliedCount > 0 ? 'committed-unverified' : 'none'),
     conflicts,

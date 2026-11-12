@@ -37,6 +37,7 @@ import {
   checkCertificationConsistency,
 } from '../../../engine/progression/utils/progression-evidence.js';
 import { buildFindings, buildOptionalActions, partitionFindings, readIgnored } from './reconciliation/reconciliation-findings.js';
+import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { derivedLifecycle } from './reconciliation/derived-lifecycle.js';
 import { getAbilityIncreaseCompletion, COMPLETION } from './reconciliation/progression-completion-reader.js';
 import { AsyncReconciliationEnrichment } from './reconciliation/async-enrichment.js';
@@ -1547,12 +1548,13 @@ export class ProgressionReconciler {
     const isDeferred = actor?.type === 'droid' || actor?.system?.isDroid === true || classSummaries.some(summary => summary.isNonheroic === true);
     return expectedLevels.map(level => {
       const expectedCount = this._abilityIncreaseCountForActor(actor, level, classSummaries);
-      const completion = getAbilityIncreaseCompletion(actor, level, { expectedCount, rulesDeferred: isDeferred });
+      const completion = getAbilityIncreaseCompletion(actor, level, { expectedCount, rulesDeferred: isDeferred, maxPerAbility: ProgressionRules.getAbilityIncreaseAllocationMode() === 'allow_stacked_two' ? 2 : 1 });
       const C = COMPLETION;
       const satisfied = [C.SYSTEM_VERIFIED, C.SYSTEM_COMMITTED_UNVERIFIED, C.PLAYER_ATTESTED, C.GM_AUTHORIZED].includes(completion.classification);
       const countOfSel = (sel) => Object.values(sel || {}).reduce((n, d) => n + d, 0);
-      const supported = completion.applied && countOfSel(completion.applied) ? completion.applied
-        : (countOfSel(completion.gmAuthorized) ? completion.gmAuthorized : completion.attested);
+      const combined = {};
+      for (const sel of [completion.applied, completion.gmAuthorized, completion.attested]) for (const [k, d] of Object.entries(sel || {})) combined[k] = (combined[k] || 0) + d;
+      const supported = combined;
       const knownCount = Math.min(expectedCount, countOfSel(supported));
       let filledCount = 0; let openCount = 0; let unverifiableCount = 0;
       if (satisfied) filledCount = expectedCount;
@@ -1587,7 +1589,7 @@ export class ProgressionReconciler {
         completion: {
           classification: completion.classification, verification: completion.verification, evidenceSources: completion.evidenceSources,
           rulesDeferred: completion.rulesDeferred, conflicts: completion.conflicts,
-          attestedCount: countOfSel(completion.attested), gmAuthorizedCount: countOfSel(completion.gmAuthorized), appliedCount: countOfSel(completion.applied),
+          attestedCount: countOfSel(completion.attested), gmAuthorizedCount: countOfSel(completion.gmAuthorized), appliedCount: countOfSel(completion.applied), mixed: completion.mixed === true,
         },
       };
     });

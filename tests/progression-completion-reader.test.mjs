@@ -22,7 +22,7 @@ check('1. no history: UNVERIFIABLE (never open / discrepancy)', () => {
 });
 check('2. the reader consumes the ACTUAL persisted builder output (id, level, selections)', () => {
   const a = actorWith([]);
-  const set = AbilityScorePlanBuilder.buildLevelUpSet({ actor: a, attr: { mode: 'levelup-ability-increase', increases: { con: 1, wis: 1 }, abilityIncreaseLevel: 8 }, manifest: null, getAllocationMode: () => 'raw_two_different', source: 'progression-finalizer' });
+  const set = AbilityScorePlanBuilder.buildLevelUpSet({ actor: a, attr: { mode: 'levelup-ability-increase', increases: { con: 1, wis: 1 }, abilityIncreaseLevel: 8 }, manifest: null, getAllocationMode: () => 'raw_two_different', source: 'progression-finalizer', entitlementCheck: () => ({ exists: true, count: 2 }) });
   a.system.progression.abilityIncreaseHistory = set['system.progression.abilityIncreaseHistory'];
   const c = comp(a);
   assert.equal(c.classification, C.SYSTEM_COMMITTED_UNVERIFIED); assert.deepEqual(c.applied, { con: 1, wis: 1 }); assert.equal(c.verification, 'committed-unverified');
@@ -56,10 +56,10 @@ check('7. withdrawn / superseded statements do not count; duplicates do not coun
   const dup = comp(actorWith([manual(8, { con: 1 }), manual(8, { con: 1 })]));
   assert.equal(dup.classification, C.PARTIAL); assert.deepEqual(dup.attested, { con: 1 });
 });
-check('8. C1: an attestation coexisting with a system record never overrides it (reported conflict; system counts)', () => {
+check('8. C1: an attestation never overrides or relabels a COMPLETE system record (excess is reported, not counted)', () => {
   const c = comp(actorWith([sys(8, { con: 1, wis: 1 }), manual(8, { str: 1, dex: 1 })]));
   assert.equal(c.classification, C.SYSTEM_COMMITTED_UNVERIFIED); assert.deepEqual(c.applied, { con: 1, wis: 1 }); assert.deepEqual(c.attested, {});
-  assert.ok(c.conflicts.includes('system-and-manual-records-coexist'));
+  assert.ok(c.conflicts.includes('selections-exceed-entitlement')); assert.equal(c.mixed, false);
 });
 check('9. Q1 / C7: deferred (droid / Nonheroic) entitlements never accept attestations as completion; recorded history stays visible', () => {
   const c = comp(actorWith([manual(8, { con: 1 })]), 8, { expectedCount: 1, rulesDeferred: true });
@@ -97,5 +97,50 @@ check('13. the reconciler consumes the reader: slot status / counts / completion
   assert.equal(part.status, 'unverifiable'); assert.equal(part.openCount, 0); assert.equal(part.filledCount, 1); assert.equal(part.unverifiableCount, 1);
   const proven = slotOf([sys(8, { con: 1 })]);
   assert.equal(proven.status, 'open'); assert.equal(proven.openCount, 1);
+});
+
+// ---- EVD-01: unknown counts stay unknown -------------------------------------------------------------------------------
+const G = await import(new URL('../scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js', import.meta.url).href);
+check('EVD-01a. strictCount: only positive integers are counts; null / undefined / "" / 0 / negatives / NaN / fractions / booleans are UNKNOWN (never 0)', () => {
+  for (const bad of [null, undefined, '', 0, -1, NaN, 1.5, 'x', true, false]) assert.equal(G.strictCount(bad), null, String(bad));
+  assert.equal(G.strictCount(2), 2); assert.equal(G.strictCount('1'), 1);
+});
+check('EVD-01b. the reader never turns an unknown count into 0: expected / remaining stay null and NOTHING is called complete, whatever the evidence', () => {
+  for (const unknown of [null, undefined, '', 0, NaN]) {
+    for (const hist of [[], [sys(8, { con: 1, wis: 1 })], [manual(8, { con: 1, wis: 1 })]]) {
+      const c = R.getAbilityIncreaseCompletion(actorWith(hist), 8, { expectedCount: unknown });
+      assert.equal(c.expectedCount, null); assert.equal(c.remainingUnknown, null); assert.equal(c.classification, C.UNVERIFIABLE); assert.equal(c.provenShortfall, false);
+    }
+  }
+  const shown = R.getAbilityIncreaseCompletion(actorWith([sys(8, { con: 1 })]), 8, {});
+  assert.deepEqual(shown.applied, { con: 1 }, 'the evidence is still visible');
+});
+
+// ---- EVD-05: mixed system + manual evidence -----------------------------------------------------------------------------
+check('EVD-05a. a short system record completed by an attestation is PLAYER_ATTESTED (weakest link), mixed, with both parts listed', () => {
+  const c = comp(actorWith([sys(8, { con: 1 }), manual(8, { wis: 1 })]));
+  assert.equal(c.classification, C.PLAYER_ATTESTED); assert.equal(c.mixed, true); assert.deepEqual(c.applied, { con: 1 }); assert.deepEqual(c.attested, { wis: 1 });
+  assert.equal(c.provenShortfall, false); assert.equal(c.remainingUnknown, 0);
+});
+check('EVD-05b. a short system record with NO manual statement stays a proven shortfall; any manual statement leaves the rest unknown', () => {
+  assert.equal(comp(actorWith([sys(8, { con: 1 })])).provenShortfall, true);
+  const stillShort = comp(actorWith([sys(8, { con: 1 }), manual(8, { wis: 1 })]), 8, { expectedCount: 3 });
+  assert.equal(stillShort.classification, C.PARTIAL); assert.equal(stillShort.provenShortfall, false); assert.equal(stillShort.remainingUnknown, 1);
+});
+check('EVD-05c. the allocation rule caps the combined total per ability: overlap is not double counted (cap 1) and is allowed when stacking is permitted (cap 2)', () => {
+  const overlap = comp(actorWith([sys(8, { con: 1 }), manual(8, { con: 1 })]));
+  assert.equal(overlap.classification, C.PARTIAL); assert.deepEqual(overlap.attested, {}); assert.ok(overlap.conflicts.includes('overlapping-or-excess-selection'));
+  const stacked = R.getAbilityIncreaseCompletion(actorWith([sys(8, { con: 1 }), manual(8, { con: 1 })]), 8, { expectedCount: 2, maxPerAbility: 2 });
+  assert.equal(stacked.classification, C.PLAYER_ATTESTED); assert.deepEqual(stacked.attested, { con: 1 });
+});
+check('EVD-05d. GM and player attestations: the GM statement takes precedence (reported); manual evidence never exceeds the entitlement', () => {
+  const c = comp(actorWith([manual(8, { con: 1, wis: 1 }), manual(8, { str: 1, dex: 1 }, { evidence: 'gm-authorized' })]));
+  assert.equal(c.classification, C.GM_AUTHORIZED); assert.deepEqual(c.gmAuthorized, { str: 1, dex: 1 }); assert.deepEqual(c.attested, {}); assert.ok(c.conflicts.includes('gm-and-player-attestations'));
+  const over = comp(actorWith([manual(8, { con: 1, wis: 1, str: 1 })]));
+  assert.equal(over.classification, C.PLAYER_ATTESTED); assert.equal(Object.values(over.attested).reduce((n, d) => n + d, 0), 2); assert.ok(over.conflicts.includes('selections-exceed-entitlement'));
+});
+check('EVD-05e. Apply is still refused while ANY record (mixed, partial or manual) exists for the level, so mixed evidence can never be double applied', () => {
+  const a = actorWith([sys(8, { con: 1 }), manual(8, { wis: 1 })]);
+  assert.throws(() => G.assertEntitlementOpen(a.system.progression.abilityIncreaseHistory, 8), e => e.code === 'ENTITLEMENT_ALREADY_RECORDED');
 });
 console.log('progression-completion-reader.test.mjs: all assertions passed');

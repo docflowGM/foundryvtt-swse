@@ -16,6 +16,15 @@ export class AbilityIncreaseError extends Error {
   constructor(code, message) { super(message); this.name = 'AbilityIncreaseError'; this.code = code; }
 }
 
+/** EVD-01: an entitlement COUNT is a positive integer or UNKNOWN (null). null / undefined / '' / 0 / negatives / NaN / non-integers never become 0 or any other number. */
+export function strictCount(value) {
+  if (typeof value === 'boolean' || value === null || value === undefined || value === '') return null;
+  const n = Number(value);
+  return Number.isInteger(n) && n >= 1 ? n : null;
+}
+
+export const newTransactionId = () => `abtx-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+
 export const entitlementIdForLevel = (level) => `ability-increase-level-${level}`;
 
 /** Strict positive integer or null. null / undefined / '' / 0 / negatives / NaN / non-integers / booleans are NOT levels. */
@@ -98,12 +107,17 @@ export const _resetAbilityIncreaseGuard = () => inFlight.clear();
  * selections prepared from the same stale read) is narrowed to this revalidation window, not eliminated - Foundry has no document transaction.
  * @returns {{ok:boolean, error?:string, code?:string, release:Function}}
  */
-export function beginAbilityIncreaseTransaction(actor, mutationPlan) {
+export function beginAbilityIncreaseTransaction(actor, mutationPlan, { entitlementCheck = null } = {}) {
   const noop = () => {};
   const info = describeAbilityTransaction(mutationPlan?.set);
-  if (!info) return { ok: true, release: noop };
+  if (!info) return { ok: true, release: noop, before: null };
   const refuse = (code, error) => ({ ok: false, code, error, release: noop });
   if (info.level === null) return refuse('INVALID_ENTITLEMENT_LEVEL', 'The ability-increase record has no valid level; nothing was changed.');
+  if (!info.record.transactionId) return refuse('MISSING_TRANSACTION_ID', 'The ability-increase record has no transaction identity; nothing was changed.');
+  // EVD-02: the entitlement must EXIST (per the canonical authorities, supplied by the caller) at the moment of commit - re-checked here, not only at compile time.
+  if (typeof entitlementCheck !== 'function') return refuse('ENTITLEMENT_UNVALIDATED', `The level ${info.level} ability-increase entitlement could not be validated; nothing was changed.`);
+  const exists = entitlementCheck(info.level);
+  if (!exists?.exists) return refuse('ENTITLEMENT_NOT_FOUND', `No level ${info.level} ability-increase entitlement exists for this character${exists?.reason ? ` (${exists.reason})` : ''}; nothing was changed.`);
   const key = `${actor?.id}:${info.level}`;
   if (inFlight.has(key)) return refuse('APPLICATION_IN_PROGRESS', `The level ${info.level} ability increase is already being applied; nothing was changed.`);
   const history = actor?.system?.progression?.abilityIncreaseHistory;
@@ -112,8 +126,10 @@ export function beginAbilityIncreaseTransaction(actor, mutationPlan) {
     const current = Number(actor?.system?.attributes?.[ability]?.base);
     if (current !== next - delta) return refuse('SCORES_CHANGED', `The ${ability.toUpperCase()} score changed since this was prepared; review the character and try again. Nothing was changed.`);
   }
+  // snapshot of ALL six permanent bases immediately before the commit: lets verification prove the unselected scores were not touched either.
+  const before = Object.fromEntries(ABILITY_KEYS.map(k => [k, Number(actor?.system?.attributes?.[k]?.base)]));
   inFlight.add(key);
-  return { ok: true, release: () => inFlight.delete(key) };
+  return { ok: true, release: () => inFlight.delete(key), before };
 }
 
 /**
@@ -122,20 +138,30 @@ export function beginAbilityIncreaseTransaction(actor, mutationPlan) {
  * A failed check yields state 'failed' (never 'verified'). Pure; the caller persists the block.
  * @returns {{state:'verified'|'failed', verifiedAt:string, sessionId:string|null, checks:{scores:boolean, record:boolean}, reasons:string[]}|null} null when the plan carried no ability increase
  */
-export function verifyAbilityIncreaseCommit(actor, mutationPlan, { now = new Date().toISOString() } = {}) {
+export function verifyAbilityIncreaseCommit(actor, mutationPlan, { before = null, now = new Date().toISOString() } = {}) {
   const info = describeAbilityTransaction(mutationPlan?.set);
   if (!info || info.level === null) return null;
   const reasons = [];
+  // 1. EVERY permanent base: selected scores equal the planned value; every other score is unchanged from the pre-commit snapshot (or from its planned value).
   let scores = true;
-  for (const [ability, { next }] of Object.entries(info.bases)) {
-    if (Number(actor?.system?.attributes?.[ability]?.base) !== next) { scores = false; reasons.push(`${ability} is not ${next}`); }
+  for (const ability of ABILITY_KEYS) {
+    const planned = mutationPlan.set?.[`system.attributes.${ability}.base`];
+    const expected = Number.isFinite(Number(planned)) && planned !== undefined && planned !== null ? Number(planned) : (before ? before[ability] : null);
+    if (expected === null || !Number.isFinite(expected)) { scores = false; reasons.push(`${ability}: no basis to verify`); continue; }
+    if (Number(actor?.system?.attributes?.[ability]?.base) !== expected) { scores = false; reasons.push(`${ability} is not ${expected}`); }
   }
-  const rec = recordsForLevel(actor?.system?.progression?.abilityIncreaseHistory, info.level)
-    .find(entry => entry?.entitlementId === info.record.entitlementId && ABILITY_KEYS.every(k => (Number(entry?.increases?.[k] || 0) || 0) === (Number(info.record.increases?.[k] || 0) || 0)));
-  const record = !!rec;
-  if (!record) reasons.push('the history record is not present as planned');
+  // 2. the history holds THIS transaction (matched by its unique transaction id, not by timestamp or level alone) exactly as planned.
+  const tid = info.record.transactionId;
+  const matches = (Array.isArray(actor?.system?.progression?.abilityIncreaseHistory) ? actor.system.progression.abilityIncreaseHistory : []).filter(entry => entry?.transactionId === tid);
+  const sameIncreases = (entry) => ABILITY_KEYS.every(k => (Number(entry?.increases?.[k] || 0) || 0) === (Number(info.record.increases?.[k] || 0) || 0));
+  const record = matches.length === 1 && recordLevel(matches[0]) === info.level && matches[0].entitlementId === info.record.entitlementId && sameIncreases(matches[0]);
+  if (!record) reasons.push(matches.length > 1 ? 'the transaction appears more than once in the history' : 'the history record is not present as planned');
+  // 3. the latest-event record is this same transaction.
+  const last = actor?.system?.progression?.lastAbilityIncrease;
+  const latest = !!last && last.transactionId === tid;
+  if (!latest) reasons.push('lastAbilityIncrease is not this transaction');
   const sessionId = mutationPlan?.set?.['system.progression.completedSessionId'] ?? null;
-  return { state: scores && record ? 'verified' : 'failed', verifiedAt: now, sessionId, checks: { scores, record }, reasons };
+  return { state: scores && record && latest ? 'verified' : 'failed', transactionId: tid, verifiedAt: now, sessionId, checks: { scores, record, latest }, reasons };
 }
 
-export default { resolveEntitlementLevel, assertEntitlementOpen, beginAbilityIncreaseTransaction, strictLevel, entitlementIdForLevel, levelFromEntitlementId };
+export default { strictCount, newTransactionId, resolveEntitlementLevel, assertEntitlementOpen, beginAbilityIncreaseTransaction, strictLevel, entitlementIdForLevel, levelFromEntitlementId };

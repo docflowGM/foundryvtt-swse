@@ -59,3 +59,36 @@ Tests: `tests/ability-increase-verification.test.mjs` (7 groups; ActorEngine stu
 ## STOP - acceptance gate before Checkpoint D
 Per the assignment, Checkpoint A must be accepted before manual acknowledgments are enabled. Checkpoints D (acknowledgment / correction / withdrawal / GM supersession mutations), E (Character Review: Already Applied, Apply Increases,
 Review Progress) and F (integration, Foundry acceptance) are NOT started. Open items carried forward: the cross-client race residual (Checkpoint A), Apply for a level that already has a PARTIAL system record is blocked (no completion route yet - needs an owner decision), Q1-Q8 are encoded in the reader but have no UI yet.
+
+## Correction checkpoint EVD-01 … EVD-05 (independent review of b478776)
+**Provenance note.** The review message referred to a "previously issued EVD-01 through EVD-05 correction directive" that was not available in this session; the corrections below were implemented from the five findings and their one-line
+descriptions in the review. Where a finding left a choice open the conservative option was taken and is listed under "Assumptions". Checkpoints D, E, F were NOT started.
+
+**EVD-01 - unknown counts stay unknown.** `strictCount` (positive integer, else `null`). The reader's `expectedCount` was `Number.isFinite(Number(x)) ? Number(x) : null`, i.e. `Number(null) === 0` (the same coercion class as the earlier `Number(null)` defects); it now stays `null`,
+`remainingUnknown` stays `null`, and with an unknown count NOTHING is called complete or short whatever the evidence (the evidence is still shown). The builder refuses to award against an unknown or mismatched count
+(`ENTITLEMENT_COUNT_UNKNOWN` / `ENTITLEMENT_COUNT_MISMATCH`: selected total must equal the entitled count).
+
+**EVD-02 - the entitlement must exist.** Before any score is computed the builder requires an injected existence check and refuses without one (`ENTITLEMENT_UNVALIDATED`) or when it fails (`ENTITLEMENT_NOT_FOUND`). The check uses the canonical authorities, not a cadence re-derived here:
+`ProgressionFinalizer._abilityEntitlementCheck` - a normal level-up is checked against the level-up manifest (`abilityIncreases.required`, `count`, same entering level); a reconcile / single-step application against the reconciler's slot list
+(`ability-increase-level-N` must exist; a deferred droid / Nonheroic slot is refused with `ENTITLEMENT_COUNT_DEFERRED`, RECON-002/003). The SAME check runs again at the transaction boundary (`beginAbilityIncreaseTransaction`) so an entitlement that disappeared
+between preparation and commit (for example the level changed) commits nothing. A record without a `transactionId` is refused.
+
+**EVD-03 - every intended effect and the exact transaction identity.** Each record now carries a unique `transactionId`. `verifyAbilityIncreaseCommit` matches the history record by that id (not by timestamp or level), requires it to appear exactly once with the
+planned entitlement id and increases, requires `lastAbilityIncrease` to be the same transaction, and checks ALL six permanent bases: selected scores equal the planned values and every other score equals the pre-commit snapshot taken at the boundary (no snapshot => fails closed).
+The persisted marker records `transactionId` and `checks {scores, record, latest}`.
+
+**EVD-04 - no overwrite of newer history.** The marker write re-reads the history, locates the record by transaction id, refuses to resurrect a missing record, is idempotent for an already-verified record, rebuilds the array from the CURRENT state, and makes a last synchronous
+comparison immediately before `updateActor`; if newer history landed it rebuilds (two attempts) instead of overwriting. The race test fails when that comparison is removed. **Residual:** Foundry has no compare-and-set, so a change inside the final check-to-call gap is not provably excluded.
+
+**EVD-05 - mixed system + attested evidence.** The reader combines system-applied and manual selections per ability under the canonical allocation rule (`ProgressionRules.getAbilityIncreaseAllocationMode`, cap 1 or 2). A short system record completed by an attestation is `PLAYER_ATTESTED` with `mixed: true` (weakest link)
+and both parts listed; overlap beyond the cap is not double counted and is reported; manual evidence only fills what the system evidence has not satisfied (never relabels a complete system record, never exceeds the entitlement); a short system record with no manual statement stays a proven shortfall,
+and any manual statement leaves the remainder unknown (Q3); an active GM statement outranks player attestations (Q5). Apply remains refused while ANY record exists for the level (`assertEntitlementOpen`), so mixed evidence cannot be double applied. No attestation writer exists yet (Checkpoint D).
+
+**Assumptions / decisions for the owner.**
+1. EVD-02 is enforced at the `ProgressionFinalizer` transaction boundary (the single path every progression plan takes to `ActorEngine.applyMutationPlan`), not inside `ActorEngine` itself, because `ActorEngine` (governance) must not depend on progression modules. A caller that bypasses the finalizer and calls `ActorEngine.applyMutationPlan` directly is not covered. Moving the check into ActorEngine needs a dependency decision.
+2. "Every intended mechanical effect" covers the six permanent ability bases, the history record and the latest-event record. Derived consequences of an increase (the CON-driven HP delta, INT-driven skill training, modifiers) are not verified here.
+3. Behavior changes: Apply now requires the selected total to equal the entitled count; the reconcile-route Apply is refused for deferred (droid / Nonheroic) slots; a level-up whose manifest count is unknown is refused.
+4. Apply for a level that already has a partial system or manual record stays blocked (no completion route until D).
+
+**Verification (Node harness, ActorEngine stubbed).** New / extended: `ability-increase-entitlement-integrity` (EVD-01c, EVD-02a-e), `ability-increase-verification` (EVD-03a-d, EVD-04a-b), `progression-completion-reader` (EVD-01a-b, EVD-05a-e). Full sweep of all `tests/*.test.mjs`
+(170 s per-test limit): only the same five force-power baseline failures (also red at PR #1145's merge base). Validators: partials, data, `system.json` pass. Foundry V13 acceptance: not performed.

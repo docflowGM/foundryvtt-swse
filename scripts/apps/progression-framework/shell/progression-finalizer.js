@@ -73,7 +73,8 @@ import { ForcePlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progress
 import { SkillsLanguagesPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js';
 import { SpeciesBackgroundPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/species-background-plan-builder.js';
 import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
-import { beginAbilityIncreaseTransaction, verifyAbilityIncreaseCommit, describeAbilityTransaction, ABILITY_HISTORY_KEY } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js';
+import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
+import { beginAbilityIncreaseTransaction, verifyAbilityIncreaseCommit, describeAbilityTransaction, ABILITY_HISTORY_KEY, strictCount } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js';
 import { ProgressionMetadataPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-metadata-plan-builder.js';
 
 /* -------------------------------------------------------------------------- */
@@ -134,6 +135,7 @@ function phase4BuildFinalizerAbilitySet(actor, sessionState = {}, plan = {}) {
     manifest: plan?.set?.['flags.swse.levelUpEntitlementManifest'] || null,
     getAllocationMode: () => ProgressionRules.getAbilityIncreaseAllocationMode?.(),
     source: 'progression-finalizer',
+    entitlementCheck: (level) => ProgressionFinalizer._abilityEntitlementCheck(actor, level, plan?.set?.['flags.swse.levelUpEntitlementManifest'] || null),
   });
 }
 function phase4AssertNonEmptyAbilitySet(set = {}, message) {
@@ -744,6 +746,7 @@ export class ProgressionFinalizer {
       manifest: null,
       getAllocationMode: () => ProgressionRules.getAbilityIncreaseAllocationMode?.(),
       source: 'single-step-progression',
+      entitlementCheck: (level) => ProgressionFinalizer._abilityEntitlementCheck(actor, level, null),
     });
     phase4AssertNonEmptyAbilitySet(set, mode === 'levelup'
       ? 'Choose at least one ability score increase before confirming.'
@@ -3843,14 +3846,16 @@ export class ProgressionFinalizer {
    * unrecorded, increased scores unchanged since the plan was built). A refusal returns before any mutation.
    */
   static async _applyMutationPlan(actor, mutationPlan) {
-    const guard = beginAbilityIncreaseTransaction(actor, mutationPlan);
+    const guard = beginAbilityIncreaseTransaction(actor, mutationPlan, {
+      entitlementCheck: (level) => this._abilityEntitlementCheck(actor, level, mutationPlan?.set?.['flags.swse.levelUpEntitlementManifest'] || null),
+    });
     if (!guard.ok) {
       swseLogger.error('[ProgressionFinalizer] Ability-increase guard refused the mutation plan', { code: guard.code, actorId: actor?.id });
       return { success: false, error: guard.error, guardRefused: true, code: guard.code };
     }
     try {
       const result = await this._applyMutationPlanUnguarded(actor, mutationPlan);
-      if (result?.success !== false) await this._recordAbilityIncreaseVerification(actor, mutationPlan);
+      if (result?.success !== false) await this._recordAbilityIncreaseVerification(actor, mutationPlan, guard.before);
       return result;
     } finally {
       guard.release();
@@ -3858,19 +3863,54 @@ export class ProgressionFinalizer {
   }
 
   /**
-   * Checkpoint C: AFTER ActorEngine committed, record whether the effect actually persisted. The marker is written onto the existing canonical
-   * history record (no second receipt array) and only ever says 'verified' when the persisted scores and record match the plan; a failed check is
-   * recorded as 'failed'; if the marker itself cannot be persisted the record simply stays committed-unverified. Never fails the finalization.
+   * EVD-02: does the ability-increase entitlement for `level` exist? Uses the canonical authorities only - never a cadence re-derived here:
+   *  - a normal level-up carries the level-up entitlement manifest (`abilityIncreases.required` / `count`) for the ENTERING level;
+   *  - a reconciliation (or single-step) application is checked against the reconciler's slot list for the actor (the slot id is the entitlement id).
+   * @returns {{exists:boolean, count:number|null, rulesDeferred:boolean, reason:string}}
    */
-  static async _recordAbilityIncreaseVerification(actor, mutationPlan) {
+  static _abilityEntitlementCheck(actor, level, manifest = null) {
     try {
-      const verification = verifyAbilityIncreaseCommit(actor, mutationPlan);
+      if (manifest) {
+        const required = manifest?.abilityIncreases?.required === true;
+        const sameLevel = Number(manifest?.characterLevel) === Number(level);
+        return { exists: required && sameLevel, count: strictCount(manifest?.abilityIncreases?.count), rulesDeferred: false, reason: required ? (sameLevel ? '' : 'manifest is for a different level') : 'the level-up manifest requires no ability increase' };
+      }
+      const report = ProgressionReconciler.reconcileActor(actor, { output: 'report', fresh: true });
+      const slot = (report?.slots?.abilityIncreases || []).find(entry => Number(entry?.characterLevel) === Number(level));
+      if (!slot) return { exists: false, count: null, rulesDeferred: false, reason: 'no such entitlement in the progression record' };
+      const deferred = slot.completion?.rulesDeferred === true || (Array.isArray(slot.rulesDeferred) && slot.rulesDeferred.length > 0) || slot.rulesDeferred === true;
+      return { exists: true, count: strictCount(slot.count), rulesDeferred: deferred, reason: '' };
+    } catch (_err) {
+      return { exists: false, count: null, rulesDeferred: false, reason: 'entitlement authority unavailable' };
+    }
+  }
+
+  /**
+   * Checkpoint C / EVD-03 / EVD-04: AFTER ActorEngine committed, record whether the effect actually persisted. The marker is written onto the
+   * existing canonical history record (no second receipt array), matched by the transaction's UNIQUE id. It never overwrites newer history: the
+   * array is re-read immediately before the write and rebuilt from the CURRENT state; if the transaction's record is gone, already verified, or the
+   * history changed between the read and the write, nothing is overwritten. A failure to persist leaves the record committed-unverified and never
+   * fails the finalization. (Residual: Foundry has no compare-and-set, so a change landing inside the final synchronous check-to-call gap is not provably excluded.)
+   */
+  static async _recordAbilityIncreaseVerification(actor, mutationPlan, before = null) {
+    try {
+      const verification = verifyAbilityIncreaseCommit(actor, mutationPlan, { before });
       if (!verification) return;
-      const info = describeAbilityTransaction(mutationPlan.set);
-      const history = (Array.isArray(actor?.system?.progression?.abilityIncreaseHistory) ? actor.system.progression.abilityIncreaseHistory : [])
-        .map(entry => (entry?.entitlementId === info.record.entitlementId && entry?.timestamp === info.record.timestamp ? { ...entry, verification } : entry));
       const engine = this._resolveActorEngine();
-      await engine.updateActor(actor, { [ABILITY_HISTORY_KEY]: history }, { source: 'ProgressionFinalizer.verifyAbilityIncrease', meta: { guardKey: 'ability-increase-verification' } });
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const current = Array.isArray(actor?.system?.progression?.abilityIncreaseHistory) ? actor.system.progression.abilityIncreaseHistory : [];
+        const target = current.find(entry => entry?.transactionId === verification.transactionId);
+        if (!target) { swseLogger.warn('[ProgressionFinalizer] Ability-increase record is no longer in the history; verification marker not written'); return; }
+        if (target.verification) return;                                   // already recorded (idempotent)
+        const snapshot = JSON.stringify(current);
+        const next = current.map(entry => (entry?.transactionId === verification.transactionId ? { ...entry, verification } : entry));
+        // last synchronous check immediately before the write: nothing newer than what this array was built from
+        const latest = Array.isArray(actor?.system?.progression?.abilityIncreaseHistory) ? actor.system.progression.abilityIncreaseHistory : [];
+        if (JSON.stringify(latest) !== snapshot) continue;                 // newer history landed: rebuild from it
+        await engine.updateActor(actor, { [ABILITY_HISTORY_KEY]: next }, { source: 'ProgressionFinalizer.verifyAbilityIncrease', meta: { guardKey: 'ability-increase-verification' } });
+        return;
+      }
+      swseLogger.warn('[ProgressionFinalizer] Ability-increase history kept changing; verification marker not written (record stays committed-unverified)');
     } catch (error) {
       swseLogger.warn('[ProgressionFinalizer] Ability-increase verification marker could not be persisted; the record stays committed-unverified', error);
     }

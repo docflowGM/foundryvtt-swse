@@ -35,7 +35,7 @@ await check('2. after a successful commit the marker is recorded on the existing
   const res = await ProgressionFinalizer._applyMutationPlan(a, plan(a));
   assert.equal(res.success !== false, true);
   const rec = a.system.progression.abilityIncreaseHistory[0];
-  assert.equal(rec.verification.state, 'verified'); assert.equal(rec.verification.sessionId, 'sess-1'); assert.deepEqual(rec.verification.checks, { scores: true, record: true });
+  assert.equal(rec.verification.state, 'verified'); assert.equal(rec.verification.sessionId, 'sess-1'); assert.deepEqual(rec.verification.checks, { scores: true, record: true, latest: true }); assert.equal(rec.verification.transactionId, rec.transactionId); assert.match(rec.transactionId, /^abtx-/);
   assert.equal(a.system.progression.abilityIncreaseHistory.length, 1, 'no second receipt array / record');
   const c = comp(a); assert.equal(c.classification, R.COMPLETION.SYSTEM_VERIFIED); assert.deepEqual(c.references.sessionIds, ['sess-1']);
   assert.equal(updates.length, 1);
@@ -69,5 +69,72 @@ await check('7. plans with no ability increase are untouched (no marker, no extr
   const a = actorAt(9); mode = 'ok'; updates.length = 0;
   const res = await ProgressionFinalizer._applyMutationPlan(a, { set: { 'system.hp.max': 40 } });
   assert.equal(res.success !== false, true); assert.equal(updates.length, 0);
+});
+
+// ---- EVD-03: every intended effect and the exact transaction identity -------------------------------------------------------------
+const planned = () => { const a = actorAt(9); const p = plan(a); const before = Object.fromEntries(['str', 'dex', 'con', 'int', 'wis', 'cha'].map(k => [k, a.system.attributes[k].base])); return { a, p, before }; };
+const applied = (a, p) => { for (const [k, v] of Object.entries(p.set)) setPath(a, k, structuredClone(v)); return a; };
+await check('EVD-03a. an UNSELECTED score that changed during the commit fails verification', () => {
+  const { a, p, before } = planned(); applied(a, p); a.system.attributes.str.base = 13;
+  const v = G.verifyAbilityIncreaseCommit(a, p, { before });
+  assert.equal(v.state, 'failed'); assert.equal(v.checks.scores, false); assert.ok(v.reasons.some(r => /str/.test(r)));
+});
+await check('EVD-03b. identity is the unique transaction id: a look-alike record (same level, entitlement and increases, different id) does not verify', () => {
+  const { a, p, before } = planned(); applied(a, p);
+  a.system.progression.abilityIncreaseHistory[0].transactionId = 'abtx-someone-else';
+  assert.equal(G.verifyAbilityIncreaseCommit(a, p, { before }).state, 'failed');
+  const dup = planned(); applied(dup.a, dup.p); dup.a.system.progression.abilityIncreaseHistory.push(structuredClone(dup.a.system.progression.abilityIncreaseHistory[0]));
+  const v = G.verifyAbilityIncreaseCommit(dup.a, dup.p, { before: dup.before });
+  assert.equal(v.state, 'failed'); assert.ok(v.reasons.some(r => /more than once/.test(r)));
+});
+await check('EVD-03c. the latest-event record must be the same transaction; changed increases or a missing record fail', () => {
+  const { a, p, before } = planned(); applied(a, p);
+  a.system.progression.lastAbilityIncrease = { ...a.system.progression.lastAbilityIncrease, transactionId: 'abtx-other' };
+  assert.equal(G.verifyAbilityIncreaseCommit(a, p, { before }).checks.latest, false);
+  const b = planned(); applied(b.a, b.p); b.a.system.progression.abilityIncreaseHistory[0].increases = { str: 1, dex: 1 };
+  assert.equal(G.verifyAbilityIncreaseCommit(b.a, b.p, { before: b.before }).checks.record, false);
+  const c = planned(); applied(c.a, c.p); c.a.system.progression.abilityIncreaseHistory = [];
+  assert.equal(G.verifyAbilityIncreaseCommit(c.a, c.p, { before: c.before }).state, 'failed');
+});
+await check('EVD-03d. with no pre-commit snapshot there is no basis to verify unselected scores, so verification fails closed', () => {
+  const { a, p } = planned(); applied(a, p);
+  assert.equal(G.verifyAbilityIncreaseCommit(a, p, {}).state, 'failed');
+});
+
+// ---- EVD-04: post-commit evidence must not overwrite newer history ----------------------------------------------------------------
+await check('EVD-04a. concurrent-append race: history that changes between the read and the write is detected and rebuilt (the newer record survives)', async () => {
+  const newer = { level: 4, characterLevel: 4, increases: { str: 1, dex: 1 }, source: 'progression-finalizer', transactionId: 'abtx-newer', entitlementId: 'ability-increase-level-4' };
+  const E = globalThis.game.swse.ActorEngine; const realUpdate = E.updateActor; const realApply = E.applyMutationPlan;
+  // run once WITHOUT interference to learn which history read is the pre-write recheck, then inject the newer record exactly there
+  async function run(injectAt) {
+    const a = actorAt(9); mode = 'ok'; const p = plan(a); let injected = false; let readsAtWrite = 0; let n = 0; const stored = [];
+    E.applyMutationPlan = async (actor, pl) => {
+      await realApply(actor, pl); stored.push(...actor.system.progression.abilityIncreaseHistory);
+      Object.defineProperty(actor.system.progression, 'abilityIncreaseHistory', { configurable: true, enumerable: true,
+        get() { n += 1; if (injectAt && n === injectAt && !injected) { injected = true; stored.push(newer); } return stored; },
+        set(v) { stored.length = 0; stored.push(...v); } });
+    };
+    E.updateActor = async (actor, patch) => { readsAtWrite = n; return realUpdate(actor, patch); };
+    await ProgressionFinalizer._applyMutationPlan(a, p);
+    E.applyMutationPlan = realApply; E.updateActor = realUpdate;
+    return { hist: stored, injected, readsAtWrite };
+  }
+  const probe = await run(0);
+  const recheckRead = probe.readsAtWrite;                                 // the last read before the write is the pre-write recheck
+  const raced = await run(recheckRead);
+  assert.ok(raced.injected, 'the race was exercised at the pre-write recheck');
+  assert.ok(raced.hist.some(r => r.transactionId === 'abtx-newer'), 'the newer record was not overwritten');
+  assert.equal(raced.hist.find(r => r.level === 8).verification?.state, 'verified');
+});
+await check('EVD-04b. a missing record is never resurrected, and an already-verified record is not written again', async () => {
+  const a = actorAt(9); mode = 'ok'; updates.length = 0;
+  const p = plan(a);
+  await ProgressionFinalizer._applyMutationPlan(a, p);                 // verified once
+  updates.length = 0;
+  await ProgressionFinalizer._recordAbilityIncreaseVerification(a, p, { str: 12, dex: 12, con: 12, int: 12, wis: 12, cha: 12 });
+  assert.equal(updates.length, 0, 'idempotent: no second write');
+  const gone = actorAt(9); const pg = plan(gone); applied(gone, pg); gone.system.progression.abilityIncreaseHistory = [];
+  updates.length = 0; await ProgressionFinalizer._recordAbilityIncreaseVerification(gone, pg, { str: 12, dex: 12, con: 12, int: 12, wis: 12, cha: 12 });
+  assert.equal(updates.length, 0); assert.deepEqual(gone.system.progression.abilityIncreaseHistory, []);
 });
 console.log('ability-increase-verification.test.mjs: all assertions passed');

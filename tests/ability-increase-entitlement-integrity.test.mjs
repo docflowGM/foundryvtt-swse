@@ -40,10 +40,11 @@ const histLevels = (a) => a.system.progression.abilityIncreaseHistory.map(r => r
 
 await check('1. normal level-up (full manifest): records the entering level, entitlement id, +1 to each chosen score', () => {
   const a = actorAt(3);
-  const set = AbilityScorePlanBuilder.buildSet({ mode: 'levelup', actor: a, attr: { mode: 'levelup-ability-increase', increases: { str: 1, dex: 1 }, abilityIncreaseLevel: 4 }, manifest: { characterLevel: 4 }, getAllocationMode: mode, source: 'progression-finalizer' });
+  const manifest = { characterLevel: 4, abilityIncreases: { required: true, count: 2 } };
+  const set = AbilityScorePlanBuilder.buildSet({ mode: 'levelup', actor: a, attr: { mode: 'levelup-ability-increase', increases: { str: 1, dex: 1 }, abilityIncreaseLevel: 4 }, manifest, getAllocationMode: mode, source: 'progression-finalizer', entitlementCheck: (l) => ProgressionFinalizer._abilityEntitlementCheck(a, l, manifest) });
   assert.equal(set['system.attributes.str.base'], 13); assert.equal(set['system.attributes.dex.base'], 13);
   const rec = set['system.progression.lastAbilityIncrease'];
-  assert.equal(rec.level, 4); assert.equal(rec.entitlementId, 'ability-increase-level-4');
+  assert.equal(rec.level, 4); assert.equal(rec.entitlementId, 'ability-increase-level-4'); assert.match(rec.transactionId, /^abtx-/);
   assert.deepEqual(set['system.progression.abilityIncreaseHistory'].map(r => r.level), [4]);
 });
 await check('2. chargen completion fabricates no level-up increase history', () => {
@@ -135,7 +136,51 @@ await check('11. wiring (static): single-step compile no longer falls back to th
   const fs = await import('node:fs');
   const src = fs.readFileSync('scripts/apps/progression-framework/shell/progression-finalizer.js', 'utf8');
   assert.doesNotMatch(src, /characterLevel: Number\(attr\?\.abilityIncreaseLevel \|\| attr\?\.characterLevel \|\| attr\?\.level \|\| actor\?\.system\?\.level/);
-  assert.match(src, /beginAbilityIncreaseTransaction\(actor, mutationPlan\)/);
+  assert.match(src, /beginAbilityIncreaseTransaction\(actor, mutationPlan, \{/);
   assert.match(src, /level: levelUpManifest\?\.characterLevel \|\| null,/, 'the dead inline writer is intentionally untouched (C5)');
+});
+
+// ---- EVD-01 / EVD-02: the entitlement must exist, with a KNOWN count, before anything is awarded --------------------------------
+const build = (a, attr, check, manifest = null) => AbilityScorePlanBuilder.buildSet({ mode: 'levelup', actor: a, attr, manifest, getAllocationMode: mode, source: 'progression-finalizer', entitlementCheck: check });
+await check('EVD-01c. an unknown (null / 0 / missing) entitlement count is never coerced: nothing is awarded; a wrong count is refused', () => {
+  const a = actorAt(9);
+  for (const count of [null, undefined, 0, NaN, '']) assert.throws(() => build(a, attrFor(8), () => ({ exists: true, count })), e => e.code === 'ENTITLEMENT_COUNT_UNKNOWN', String(count));
+  assert.throws(() => build(a, attrFor(8, { con: 1 }), () => ({ exists: true, count: 2 })), e => e.code === 'ENTITLEMENT_COUNT_MISMATCH');
+  assert.throws(() => build(a, attrFor(8, { con: 1, wis: 1, str: 1 }), () => ({ exists: true, count: 2 })), e => e.code === 'ENTITLEMENT_COUNT_MISMATCH');
+  assert.deepEqual(histLevels(a), []);
+});
+await check('EVD-02a. the entitlement must EXIST: no check, a negative check, or a missing slot refuses before any score is computed', () => {
+  const a = actorAt(9);
+  assert.throws(() => build(a, attrFor(8), null), e => e.code === 'ENTITLEMENT_UNVALIDATED');
+  assert.throws(() => build(a, attrFor(8), () => ({ exists: false, reason: 'x' })), e => e.code === 'ENTITLEMENT_NOT_FOUND');
+  assert.throws(() => build(a, attrFor(8), () => ({ exists: true, count: 2, rulesDeferred: true })), e => e.code === 'ENTITLEMENT_COUNT_DEFERRED');
+});
+await check('EVD-02b. REAL authorities: a level that grants no ability increase, or a future level, is refused through the real reconciler slot list; a real level is accepted', () => {
+  const a = actorAt(9);
+  for (const level of [5, 9, 12]) assert.throws(() => compile(a, reconcileSession({ ...attrFor(level) })), e => e.code === 'ENTITLEMENT_NOT_FOUND', `level ${level}`);
+  assert.deepEqual(compile(a, reconcileSession(attrFor(4))).set['system.progression.abilityIncreaseHistory'].map(r => r.level), [4]);
+  assert.deepEqual(histLevels(a), []);
+});
+await check('EVD-02c. a normal level-up is checked against the level-up manifest: not required, or a different level, is refused', () => {
+  const a = actorAt(3);
+  assert.equal(ProgressionFinalizer._abilityEntitlementCheck(a, 4, { characterLevel: 4, abilityIncreases: { required: false, count: 0 } }).exists, false);
+  assert.equal(ProgressionFinalizer._abilityEntitlementCheck(a, 8, { characterLevel: 4, abilityIncreases: { required: true, count: 2 } }).exists, false);
+  const ok = ProgressionFinalizer._abilityEntitlementCheck(a, 4, { characterLevel: 4, abilityIncreases: { required: true, count: 2 } });
+  assert.equal(ok.exists, true); assert.equal(ok.count, 2);
+});
+await check('EVD-02d. droid / Nonheroic: the count is a pending rules question, so the reconcile-route Apply is refused (RECON-002/003)', () => {
+  const d = actorAt(9); d.type = 'droid';
+  assert.throws(() => compile(d, reconcileSession(attrFor(8))), e => e.code === 'ENTITLEMENT_COUNT_DEFERRED');
+});
+await check('EVD-02e. the SAME existence check runs again at the ActorEngine boundary: if the entitlement disappears after preparation, nothing is committed', async () => {
+  const a = actorAt(9);
+  const p = compile(a, reconcileSession(attrFor(8)));
+  a.system.level = 5; a.system.progression.classLevels = [{ class: 'Soldier', classId: 'soldier', level: 5 }]; a.items[0].system.level = 5; a._stats.modifiedTime += 1;
+  engineCalls = 0;
+  const res = await ProgressionFinalizer._applyMutationPlan(a, p);
+  assert.equal(res.success, false); assert.equal(res.code, 'ENTITLEMENT_NOT_FOUND'); assert.equal(engineCalls, 0);
+  const noId = actorAt(9); const p2 = compile(noId, reconcileSession(attrFor(8)));
+  delete p2.set['system.progression.lastAbilityIncrease'].transactionId;
+  assert.equal((await ProgressionFinalizer._applyMutationPlan(noId, p2)).code, 'MISSING_TRANSACTION_ID');
 });
 console.log('ability-increase-entitlement-integrity.test.mjs: all assertions passed');
