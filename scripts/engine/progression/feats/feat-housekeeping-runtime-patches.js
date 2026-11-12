@@ -7,7 +7,7 @@ import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities
 import { FeatRulesAdapter } from '/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js';
 import { FeatRegistry as CompendiumFeatRegistry } from '/systems/foundryvtt-swse/scripts/registries/feat-registry.js';
 import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/talent-registry.js';
-import { HOUSE_RULE_GRANTS, isFeatTalentRuleKey, isGrantEnabled } from '/systems/foundryvtt-swse/scripts/houserules/house-rule-grant-table.js';
+import { HOUSE_RULE_GRANTS, canWriteGrants, isFeatTalentRuleKey, isGrantEnabled } from '/systems/foundryvtt-swse/scripts/houserules/house-rule-grant-table.js';
 import { HouseRuleFeatGrants } from '/systems/foundryvtt-swse/scripts/houserules/houserule-feat-grants.js';
 import { invalidateReconciliationForRuleChange } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 
@@ -460,7 +460,7 @@ function registerHouseRuleGrantMaterialization() {
   globalThis[MATERIALIZE_FLAG] = true;
 
   Hooks.once('ready', async () => {
-    if (!game?.user?.isGM) return;
+    if (!canWriteGrants()) return; // only the active GM client runs the world-load pass
     for (const actor of game.actors || []) {
       if (actor.type !== 'character') continue;
       await HouseRuleFeatGrants.reconcileActorGrants(actor).catch(err => {

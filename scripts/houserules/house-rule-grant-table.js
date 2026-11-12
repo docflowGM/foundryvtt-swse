@@ -119,6 +119,43 @@ export function actorHasGrant(actor, grant) {
   return false;
 }
 
+/**
+ * Single-writer election for AUTOMATIC grant paths (setting change, world load). `isGM` alone lets every GM
+ * client write; Foundry's `game.users.activeGM` is the one client designated to act on world-level events.
+ * Unknown activeGM => this GM (matches the rest of the system's pattern).
+ */
+export function canWriteGrants() {
+  const user = globalThis.game?.user;
+  if (user?.isGM !== true) return false;
+  const active = globalThis.game?.users?.activeGM;
+  return !active || active.id === undefined || active.id === user.id;
+}
+
+function cyrb53(str, seed = 0) {
+  let h1 = 0xdeadbeef ^ seed;
+  let h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0; i < str.length; i += 1) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+}
+
+/**
+ * Deterministic 16-character embedded-document id for one grant instance (actor + setting + kind). Created with
+ * `keepId`, Foundry's own primary-key uniqueness makes a concurrent second create fail instead of producing a
+ * duplicate item - duplicate safety that does not depend on any client-side coordination.
+ */
+export function deterministicGrantItemId(actorId, settingKey, grantKind = 'automatic') {
+  const seed = `swse-houserule|${actorId}|${settingKey}|${grantKind}`;
+  let out = '';
+  for (let i = 0; i < 4; i += 1) out += cyrb53(seed, i + 1).toString(36).padStart(11, '0').slice(-4);
+  return out;
+}
+
 /** Acquisition record for a NEW grant (written by the granting service through ActorEngine). */
 export function buildGrantAcquisition({ settingKey, grantKind = 'automatic', replacesName = null, actorId = null, now = new Date().toISOString() } = {}) {
   return {

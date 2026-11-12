@@ -139,3 +139,7 @@ Full matrix and defects: `reconciliation-v2-house-rule-coverage.md`. Implemented
 **3. House-rule addendum.** Already delivered after this review's target commit (`71483df`); see `reconciliation-v2-house-rule-coverage.md`.
 
 **Still requires Foundry V13:** the focused step actually opening and committing only its choice; `recalcAll` for BAB/defense; everything in the acceptance checklist above.
+
+## House-rule addendum - independent review follow-up (HR-F1..F3)
+
+Details in `reconciliation-v2-house-rule-coverage.md` section 7. HR-F1: inferred (unstamped) house-rule items are now uncertain - they satisfy the grant expectation but also count as unattributed, so an ordinary selection is never reported definitely missing because of them. HR-F2: automatic grant paths use the `activeGM` election; every creation uses a deterministic document id with `keepId` so a concurrent duplicate is rejected by Foundry's primary key; same-client re-entry shares one operation. HR-F3: Armored Defense already works through the owned talent in the real DefenseCalculator (no competing evaluator added; character-only scope and the proficiency requirement noted for the owner). The HP-logging and targeted-routing items from the Phase 6 review were handled in `50a6800` (HP Resolve disabled and the recomputeHP crash intentionally left pinned; focused step routing implemented) - the review of 71483df predates that commit. RECON-005 remains unresolved.

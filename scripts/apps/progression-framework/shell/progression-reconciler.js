@@ -1001,6 +1001,8 @@ export class ProgressionReconciler {
     for (const entry of (Array.isArray(report?.evidence?.inconsistencies) ? report.evidence.inconsistencies : []).filter(e => e.code === 'certified-item-replaced')) {
       notes.push({ id: `replaced:${entry.itemId}`, text: `${entry.name || 'An awarded item'} was awarded through progression, but a different item now occupies its place.` });
     }
+    const inferred = Array.isArray(report?.evidence?.houseRuleInferred) ? report.evidence.houseRuleInferred : [];
+    if (inferred.length) notes.push({ id: 'houserule:inferred', text: `${inferred.join(', ')} could be your free house-rule grant or an ordinary selection, and the character record does not say which. It is counted for the house rule, and your ordinary selection is not reported missing. If it was the free grant, you may have an unspent selection or can take the replacement.` });
     const uncertified = (Number(report?.evidence?.counts?.stamped) || 0) + (Number(report?.evidence?.counts?.none) || 0);
     if (uncertified > 0) notes.push({ id: 'uncertified', text: `${uncertified} owned feat/talent record${uncertified === 1 ? ' predates' : 's predate'} verified progression history and cannot be checked against it.` });
     for (const note of Array.isArray(report?.houseRule?.notes) ? report.houseRule.notes : []) notes.push({ id: `houserule:${note.code}`, text: note.text });
@@ -1223,6 +1225,7 @@ export class ProgressionReconciler {
     const consistency = checkCertificationConsistency(actor, classRows);
     return {
       counts: index.counts,
+      houseRuleInferred: index.houseRuleInferred || [],
       untrustedRecords: index.history.untrusted.map(r => ({ sessionId: r.sessionId || null, outcome: r.outcome || 'malformed', errors: r.audit?.errors || [] })),
       inconsistencies: consistency.findings,
       certifiedUnmatched: Array.isArray(this._certifiedUnmatched) ? [...this._certifiedUnmatched] : [],
@@ -1435,7 +1438,12 @@ export class ProgressionReconciler {
       if (isAutomaticProgressionItem(item)) continue;
       const evidenceStatus = this._evidence?.byItemId?.get(item?.id ?? item?._id)?.status;
       // GM-authorized exceptions and house-rule grants are outside ordinary slot accounting (they neither fill a slot nor are "extra").
-      if (evidenceStatus === 'external' || evidenceStatus === 'house-rule' || evidenceStatus === 'house-rule-inferred') continue;
+      if (evidenceStatus === 'external' || evidenceStatus === 'house-rule') continue;
+      // INFERRED house-rule grant (unstamped item that happens to be an enabled rule's canonical feat/talent): the system
+      // cannot know whether it is the free grant or an ordinary selection the player made. It satisfies the grant
+      // expectation (no missing-grant finding) but is ALSO treated as unattributed for ordinary accounting, so the
+      // competing ordinary entitlement becomes `unverifiable`, never a definite missing selection.
+      if (evidenceStatus === 'house-rule-inferred') { pools.unknown.push(item); continue; }
       const prov = this._provenance(item);
       if (prov.certified) { (prov.kind === 'class' ? pools.class : pools.general).push(item); continue; }
       const hint = this._getSelectionHintForItem(item, hints);

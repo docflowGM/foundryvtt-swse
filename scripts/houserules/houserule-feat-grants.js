@@ -14,7 +14,7 @@ import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-r
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
-import { HOUSE_RULE_GRANTS, actorHasGrant, buildGrantAcquisition, grantForSetting, isGrantEnabled } from "/systems/foundryvtt-swse/scripts/houserules/house-rule-grant-table.js";
+import { HOUSE_RULE_GRANTS, actorHasGrant, buildGrantAcquisition, canWriteGrants, deterministicGrantItemId, grantForSetting, isGrantEnabled } from "/systems/foundryvtt-swse/scripts/houserules/house-rule-grant-table.js";
 
 /**
  * Mapping of house rule settings to feats/talents they grant
@@ -31,8 +31,8 @@ export class HouseRuleFeatGrants {
 
     // Monitor setting changes
     Hooks.on('updateSetting', (setting, value, options) => {
-      // Only one client may grant (non-GM clients cannot write other users' actors and would race the GM).
-      if (game.user?.isGM && setting.key.startsWith('foundryvtt-swse.')) {
+      // Only the ACTIVE GM client acts on a world-level setting change (isGM alone lets every GM client write).
+      if (canWriteGrants() && setting.key.startsWith('foundryvtt-swse.')) {
         this._onSettingChanged(setting, value, options);
       }
     });
@@ -152,8 +152,25 @@ export class HouseRuleFeatGrants {
     // no ordinary progression selection. (Existing items are never rewritten.)
     itemData = this._withGrantProvenance(itemData, actor, { settingKey, grantKind: 'automatic', canonicalId: id, canonicalName: name });
 
-    // PHASE 7: Create through ActorEngine
-    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
+    return this._createGrantItem(actor, itemData, settingKey, 'automatic', { type, name, id });
+  }
+
+  /**
+   * Create a grant item with a deterministic `_id` + keepId. If a concurrent writer (second GM client, overlapping
+   * world-load / setting-change / Resolve) created the same grant first, Foundry rejects the duplicate key; that is
+   * treated as "already granted", never as a failure and never as a second item.
+   */
+  static async _createGrantItem(actor, itemData, settingKey, grantKind, grant = null) {
+    const data = { ...itemData, _id: deterministicGrantItemId(actor?.id, settingKey, grantKind) };
+    try {
+      // PHASE 7: Create through ActorEngine
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', [data], { keepId: true });
+      return { created: true };
+    } catch (err) {
+      const raced = grant ? actorHasGrant(actor, grant) : actor?.items?.some?.((i) => i.id === data._id || i._id === data._id);
+      if (raced) return { created: false, reason: 'already-owned' };
+      throw err;
+    }
   }
 
   static _withGrantProvenance(itemData, actor, { settingKey, grantKind, canonicalId = null, canonicalName = null, replacesName = null }) {
@@ -184,8 +201,20 @@ export class HouseRuleFeatGrants {
     if (!entry || actor?.type !== 'character') return { created: false, reason: 'not-applicable' };
     if (!isGrantEnabled(settingName)) return { created: false, reason: 'rule-disabled' };
     if (actorHasGrant(actor, entry)) return { created: false, reason: 'already-owned' };
-    await this._createFeatItem(actor, entry, settingName);
-    return { created: true };
+    // Overlapping callers in THIS client (setting change + world-load pass + a Resolve click) share one operation.
+    const key = `${actor.id}:${settingName}`;
+    if (!this._inFlight) this._inFlight = new Map();
+    if (this._inFlight.has(key)) return this._inFlight.get(key);
+    const op = (async () => {
+      try {
+        const result = await this._createFeatItem(actor, entry, settingName);
+        return result?.created ? { created: true } : { created: false, reason: 'already-owned' };
+      } finally {
+        this._inFlight.delete(key);
+      }
+    })();
+    this._inFlight.set(key, op);
+    return op;
   }
 
   /** World-load pass (GM client): grant any enabled rule's item a character lacks. Silent; never offers replacements. */
@@ -365,8 +394,12 @@ export class HouseRuleFeatGrants {
 
       // Distinct house-rule entitlement identity: a replacement consumes NO ordinary progression slot.
       const itemData = this._withGrantProvenance(item.toObject(), actor, { settingKey: settingName, grantKind: 'replacement', replacesName });
-      // PHASE 7: Create through ActorEngine
-    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
+      // Deterministic id: one replacement per actor + setting, duplicate-safe across clients.
+      const result = await this._createGrantItem(actor, itemData, settingName, 'replacement');
+      if (!result.created) {
+        ui.notifications.info(`${actor.name} already has a replacement for this house rule.`);
+        return;
+      }
 
       ui.notifications.info(
         `Granted ${type} "${item.name}" to ${actor.name}`

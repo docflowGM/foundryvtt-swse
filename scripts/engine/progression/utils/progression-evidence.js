@@ -264,17 +264,19 @@ export function buildEvidenceIndex(actor) {
   let external = 0;
   let identityMismatch = 0;
   let houseRule = 0;
+  const houseRuleInferred = [];
   for (const item of actorItems(actor).filter(i => GRANT_ITEM_TYPES.includes(i?.type))) {
     const evidence = getAcquisitionEvidence(actor, item, history);
     byItemId.set(item?.id ?? item?._id, evidence);
     if (evidence.status === 'certified') certified += 1;
     else if (evidence.status === 'external') external += 1;
-    else if (evidence.status === 'house-rule' || evidence.status === 'house-rule-inferred') houseRule += 1;
+    else if (evidence.status === 'house-rule') houseRule += 1;
+    else if (evidence.status === 'house-rule-inferred') houseRuleInferred.push(item?.name || 'An item');
     else if (evidence.status === 'identity-mismatch') identityMismatch += 1;
     else if (evidence.status === 'stamped') stamped += 1;
     else none += 1;
   }
-  return { history, byItemId, counts: { certified, stamped, none, external, houseRule, identityMismatch, untrustedRecords: history.untrusted.length } };
+  return { history, byItemId, houseRuleInferred, counts: { certified, stamped, none, external, houseRule, houseRuleInferred: houseRuleInferred.length, identityMismatch, untrustedRecords: history.untrusted.length } };
 }
 
 /**

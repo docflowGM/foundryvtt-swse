@@ -47,12 +47,13 @@ Constraints honoured: one canonical authority per concern; no new rules engine; 
 |---|---|---|
 | General / class progression | certified or stamped items, ClassModel slots | consumes the matching entitlement |
 | House-rule choice (extra L1 talent) | `slot:houserule-talent-extra-l1` from `TalentCadenceEngine` | only its own entitlement |
-| House-rule automatic grant | explicit marker (`houseRuleGranted`, `acquisition.source === 'house-rule'`) -> `house-rule`; unmarked item that is the canonical feat/talent of a CURRENTLY ENABLED rule and has no progression/acquisition stamps -> `house-rule-inferred` | none |
+| House-rule automatic grant | explicit marker (`houseRuleGranted`, `acquisition.source === 'house-rule'`) -> `house-rule` (certain) | none |
+| Possible house-rule grant (inferred) | unmarked, unstamped item that is the canonical feat/talent of a CURRENTLY ENABLED rule -> `house-rule-inferred` (uncertain; see HR-F1) | satisfies the grant expectation, but ALSO counts as unattributed for ordinary accounting: the competing ordinary selection becomes `unverifiable`, never a definite missing finding |
 | House-rule replacement | `grantKind: 'replacement'` marker | none |
 | Authorized GM grant | existing `external` evidence | none |
 | Manual acquisition | unstamped, unmarked -> unattributed -> only ever `unverifiable`, never extra | decided by evidence; never assumed illegal |
 
-An ordinary stamped Dodge keeps its ordinary meaning even when `dodgeDefault` is on (it consumed a real selection). Inference never overrides stamps.
+A progression-stamped Dodge keeps its ordinary meaning even when `dodgeDefault` is on. Inference never overrides stamps and never rewrites an item.
 
 ## 5. Coverage of the 20 required test topics
 
@@ -68,3 +69,21 @@ Test kinds: **unit** - table, evidence, findings, signature; **integration with 
 4. Chargen with the extra-L1 rule: the two L1 talents leave no false finding; skipping one produces the house-rule row and Choose opens the right step without leveling.
 5. Disable a granting rule after creation: items remain, no `!`.
 6. Two clients, both able to see the setting change: only the GM client grants.
+
+## 7. Independent-review follow-up (HR-F1..F3, after 71483df)
+
+**HR-F1 - inference overstated what is known [fixed].** The first implementation treated an unstamped item that matched an enabled rule's canonical feat/talent as THE free grant and removed it from ordinary accounting. A manually built Soldier who already owned Dodge when `dodgeDefault` was enabled could therefore be shown a definite "missing general feat". The system cannot know whether that Dodge is the grant or the player's ordinary pick. Now: an inferred item (a) satisfies the grant expectation (no missing-grant finding, no duplicate created), (b) is counted as unattributed for ordinary slots, so the competing ordinary selection is `unverifiable`, and (c) produces an informational note telling the player it could be either (and that, if it was the free grant, they may have an unspent selection or the replacement). Only EXPLICIT markers (written by the grant service, including replacements) remove an item from ordinary accounting. Nothing is rewritten and no provenance is invented. Test 7 covers before/after enabling, explicit vs inferred vs stamped, and replacement accept/decline.
+
+**HR-F2 - concurrency across GM clients [fixed + needs Foundry].** Audit of overlapping paths:
+
+| Path | Who runs it | Race before | Now |
+|---|---|---|---|
+| `updateSetting` (service) | every GM client (`isGM`) | all GMs grant and show replacement dialogs | `canWriteGrants()`: only `game.users.activeGM` |
+| world-load pass (`ready`) | every GM client | all GMs grant | `canWriteGrants()` |
+| `createActor` | creating user only | none between clients | unchanged |
+| `grantMissing` (Resolve / pass) | clicker or GM | check-then-create across clients and within one client | in-process shared operation + deterministic `_id` |
+| any creation | - | non-atomic check then create | item `_id` is deterministic per actor + setting + kind and created with `keepId`: a concurrent second create hits Foundry's primary-key uniqueness and is treated as "already granted" |
+
+Tests 19-21 simulate two GM clients (election), two clients that both pass the ownership check (the stub enforces id uniqueness like Foundry, with an await between check and write), same-client re-entry, and replacements. **Foundry V13 must verify:** (1) `game.users.activeGM` is defined and stable with two GMs online; (2) `createEmbeddedDocuments` with `keepId: true` and an explicit `_id` rejects a duplicate key rather than silently renaming (this is the assumption the duplicate-safety rests on); (3) one replacement dialog total with two GMs. Pre-existing design note, not changed: the replacement dialog is shown on the GM's screen for each owning actor (its text is addressed to the player).
+
+**HR-F3 - Armored Defense mechanics [traced; no change needed].** `DefenseCalculator._getDefenseSourceProfile` collects owned talent names; with proficient armor `reflexLevelTerm = max(heroicLevel, armorBonus)` when `Armored Defense` is owned (improved variant adds half the armor bonus) and `armorBonus` otherwise; `ModifierEngine` uses the same owned-talent test. No code reads `armoredDefenseForAll` (asserted). So the existing runtime applies the rule correctly exactly when the granted talent item exists, and test 22 runs the REAL calculator: with heroic level 10 and a +6 armor bonus, owning the granted talent raises Reflex by 4. Consequences, documented not changed: (a) the rule only works for actors that receive the item - the grant service covers `character` actors only, so droids and NPCs get no effect; (b) the calculator requires armor proficiency, whereas the setting text says "all characters can apply armor bonus" without mentioning proficiency; both are owner/rules questions, not decided here.

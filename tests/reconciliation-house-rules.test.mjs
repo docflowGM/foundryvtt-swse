@@ -147,19 +147,31 @@ await check('6. free grants are recognized and consume NO ordinary slot; an ordi
   }
 });
 
-await check('7. legacy grant without markers: attributed to the ENABLED rule by canonical identity; ordinary when the rule is off', () => {
-  setRule('dodgeDefault', true);
-  const a = actorOf([plainItem('feat', 'Dodge')]);
-  assert.equal(report(a).evidence.counts.houseRule, 1);
-  assert.equal(report(a).slots.generalFeats.find(s => s.characterLevel === 1).status, 'open', 'inferred grant does not hide the general feat entitlement');
+await check('7. manual Dodge before/after enabling dodgeDefault: an UNSTAMPED item is inferred, never proof - ordinary accounting becomes unverifiable, not a definite missing selection', () => {
+  const generalL1 = a => report(a).slots.generalFeats.find(s => s.characterLevel === 1).status;
   setRule('dodgeDefault', false);
-  const b = actorOf([plainItem('feat', 'Dodge')]);
-  assert.equal(report(b).evidence.counts.houseRule, 0);
-  assert.equal(report(b).slots.generalFeats.find(s => s.characterLevel === 1).status, 'unverifiable', 'with the rule off it is an ordinary unattributed feat: unverifiable, never extra or accusing');
-  // progression-stamped Dodge keeps its ordinary meaning even with the rule on
+  const manual = actorOf([plainItem('feat', 'Dodge')]);
+  assert.equal(generalL1(manual), 'unverifiable', 'before: an ordinary unattributed feat');
   setRule('dodgeDefault', true);
-  const c = actorOf([stamped('feat', 'Dodge', 'S1', 'general', { characterLevel: 1 })]);
-  assert.equal(report(c).evidence.counts.houseRule, 0);
+  const r = report(manual);
+  assert.equal(r.evidence.counts.houseRuleInferred, 1);
+  assert.equal(r.evidence.counts.houseRule, 0, 'not recorded as a certain house-rule grant');
+  assert.deepEqual(ids(manual).filter(i => i.startsWith('houserule-grant')), [], 'the grant expectation is satisfied by the owned Dodge (no duplicate is created)');
+  assert.equal(generalL1(manual), 'unverifiable', 'after: STILL not a definite missing selection (it may be the ordinary pick)');
+  assert.ok(!ids(manual).includes('slot:general-feat-level-1'), 'no definite missing-selection finding is manufactured from the ambiguity');
+  assert.ok(sheet(manual).validation.notes.some(n => /free house-rule grant or an ordinary selection/.test(n.text)), 'the player is told, informationally');
+  assert.equal(sheet(manual).validation.findings.length, 0 + findings(manual).filter(f => f.code === 'MISSING_CLASS_TALENT').length);
+  // contrast: an EXPLICITLY marked grant is certain, so the ordinary selection stays definitely missing
+  const marked = actorOf([ruleItem('dodgeDefault')]);
+  assert.equal(generalL1(marked), 'open');
+  // a progression-stamped ordinary Dodge keeps its ordinary meaning
+  const stampedOrdinary = actorOf([stamped('feat', 'Dodge', 'S1', 'general', { characterLevel: 1 })]);
+  assert.equal(report(stampedOrdinary).evidence.counts.houseRuleInferred, 0);
+  assert.equal(generalL1(stampedOrdinary), 'filled');
+  // declining the replacement: nothing created, nothing missing; accepting: replacement is a distinct explicit grant, consumes no slot
+  const withReplacement = actorOf([plainItem('feat', 'Dodge'), ruleItem('dodgeDefault', 'replacement')]);
+  assert.equal(report(withReplacement).evidence.counts.houseRule, 1);
+  assert.equal(generalL1(withReplacement), 'unverifiable');
 });
 
 await check('8. rule disabled AFTER creation: explicitly granted item stays identifiable, is never extra, nothing is deleted or flagged', () => {
@@ -203,10 +215,20 @@ await check('10. a setting change while a report is memoized is never served sta
 });
 
 // ---- real HouseRuleFeatGrants service with captured creation ----
-function captureCreation() {
+function captureCreation({ yieldBeforeWrite = false } = {}) {
   const created = [];
   const original = ActorEngine.createEmbeddedDocuments;
-  ActorEngine.createEmbeddedDocuments = async (actor, type, docs) => { for (const d of docs) { const item = { id: `n${++seq}`, flags: {}, ...d }; actor.items.push(item); created.push(item); } return docs; };
+  ActorEngine.createEmbeddedDocuments = async (actor, type, docs, options = {}) => {
+    if (yieldBeforeWrite) await Promise.resolve();            // lets a concurrent client interleave between its check and its write
+    for (const d of docs) {
+      const id = options.keepId && d._id ? d._id : `n${++seq}`;
+      if (actor.items.some(i => i.id === id)) throw new Error(`Item "${id}" already exists`);   // Foundry primary-key uniqueness
+      const item = { flags: {}, ...d, id };
+      actor.items.push(item);
+      created.push(item);
+    }
+    return docs;
+  };
   const origFeat = FeatRegistry.getDocumentById;
   FeatRegistry.getDocumentById = async () => null;
   return { created, restore() { ActorEngine.createEmbeddedDocuments = original; FeatRegistry.getDocumentById = origFeat; } };
@@ -228,6 +250,7 @@ await check('11. [real grant service] grantMissing creates the item with durable
     const second = await HouseRuleFeatGrants.grantMissing(a, 'weaponFinesseDefault');
     assert.equal(second.created, false);
     assert.equal(second.reason, 'already-owned');
+    assert.equal(cap.created[0].id.length, 16, 'deterministic 16-char document id');
     assert.equal(cap.created.length, 1, 'idempotent');
     setRule('weaponFinesseDefault', false);
     assert.equal((await HouseRuleFeatGrants.grantMissing(actorOf(), 'weaponFinesseDefault')).reason, 'rule-disabled');
@@ -334,6 +357,95 @@ await check('16. Silent Success: a mechanically consistent character (manual or 
   assert.equal(sheet(built).validation.findings.length, 0);
 });
 
+await check('19. HR-F2 single-writer election: with two GM clients only the ACTIVE GM runs automatic grant paths; players never do', () => {
+  const asClient = (user, activeGM) => { gameObj.user = user; gameObj.users = { activeGM }; return T.canWriteGrants(); };
+  const gm1 = { id: 'gm1', isGM: true }; const gm2 = { id: 'gm2', isGM: true }; const player = { id: 'p1', isGM: false };
+  assert.equal(asClient(gm1, gm1), true);
+  assert.equal(asClient(gm2, gm1), false, 'the second GM client stands down');
+  assert.equal(asClient(player, gm1), false);
+  assert.equal(asClient(gm1, undefined), true, 'no election info => this GM');
+  // the service handler really consults it
+  const handlers = [];
+  const origOn = globalThis.Hooks?.on;
+  globalThis.Hooks = globalThis.Hooks ?? {};
+  globalThis.Hooks.on = (name, fn) => { handlers.push({ name, fn }); };
+  HouseRuleFeatGrants.initialize();
+  globalThis.Hooks.on = origOn;
+  const onSetting = handlers.find(h => h.name === 'updateSetting').fn;
+  const origActors = gameObj.actors;
+  gameObj.actors = [actorOf()];
+  let calls = 0;
+  const origGrant = HouseRuleFeatGrants._grantFeatsToActor;
+  HouseRuleFeatGrants._grantFeatsToActor = async () => { calls += 1; };
+  try {
+    setRule('dodgeDefault', true);
+    gameObj.user = gm2; gameObj.users = { activeGM: gm1 };
+    onSetting({ key: 'foundryvtt-swse.dodgeDefault' }, true, {});
+    assert.equal(calls, 0, 'non-active GM: no grant');
+    gameObj.user = gm1;
+    onSetting({ key: 'foundryvtt-swse.dodgeDefault' }, true, {});
+    return new Promise(resolve => setTimeout(() => { assert.equal(calls, 1, 'active GM: exactly one'); HouseRuleFeatGrants._grantFeatsToActor = origGrant; gameObj.actors = origActors; resolve(); }, 0));
+  } finally { gameObj.user = gm1; }
+});
+
+await check('20. HR-F2 duplicate safety when two clients BOTH pass the ownership check: deterministic document id makes the second create fail, leaving exactly one item', async () => {
+  const cap = captureCreation({ yieldBeforeWrite: true });
+  try {
+    setRule('dodgeDefault', true);
+    const a = actorOf();
+    const grant = T.grantForSetting('dodgeDefault');
+    // two independent "clients": each saw no Dodge, each now writes (bypassing the in-process guard on purpose)
+    const [r1, r2] = await Promise.all([
+      HouseRuleFeatGrants._createFeatItem(a, grant, 'dodgeDefault'),
+      HouseRuleFeatGrants._createFeatItem(a, grant, 'dodgeDefault'),
+    ]);
+    assert.deepEqual([r1.created, r2.created].sort(), [false, true]);
+    assert.equal(a.items.filter(i => i.name === 'Dodge' || i.type === 'feat').length, 1, 'exactly one granted item');
+    // the same client re-entering (setting change + world load + Resolve click) shares ONE operation
+    const b = actorOf();
+    const [s1, s2, s3] = await Promise.all([1, 2, 3].map(() => HouseRuleFeatGrants.grantMissing(b, 'dodgeDefault')));
+    assert.equal(b.items.filter(i => i.type === 'feat').length, 1);
+    assert.equal([s1, s2, s3].filter(r => r.created).length >= 1, true);
+    // replacement: one per actor + setting, duplicate-safe
+    const FeatReg = (await import('/systems/foundryvtt-swse/scripts/registries/feat-registry.js')).FeatRegistry;
+    FeatReg.getDocumentById = async () => ({ name: 'Skill Focus', toObject: () => ({ name: 'Skill Focus', type: 'feat', system: {} }) });
+    const c = actorOf([plainItem('feat', 'Dodge')]);
+    await Promise.all([HouseRuleFeatGrants._grantReplacementFeat(c, 'feat', 'x', 'dodgeDefault', 'Dodge'), HouseRuleFeatGrants._grantReplacementFeat(c, 'feat', 'x', 'dodgeDefault', 'Dodge')]);
+    assert.equal(c.items.filter(i => i.system?.acquisition?.grantKind === 'replacement').length, 1);
+    // ids are stable per actor/setting/kind and distinct across them
+    assert.equal(T.deterministicGrantItemId('A', 'dodgeDefault'), T.deterministicGrantItemId('A', 'dodgeDefault'));
+    assert.notEqual(T.deterministicGrantItemId('A', 'dodgeDefault'), T.deterministicGrantItemId('B', 'dodgeDefault'));
+    assert.notEqual(T.deterministicGrantItemId('A', 'dodgeDefault'), T.deterministicGrantItemId('A', 'dodgeDefault', 'replacement'));
+    assert.match(T.deterministicGrantItemId('A', 'dodgeDefault'), /^[a-z0-9]{16}$/);
+  } finally { cap.restore(); }
+});
+
+await check('21. HR-F2 wiring (static): the world-load pass and setting handler use the election; creation uses keepId', () => {
+  const patches = fs.readFileSync(path.join(ROOT, 'scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js'), 'utf8');
+  assert.match(patches, /if \(!canWriteGrants\(\)\) return;/);
+  const service = fs.readFileSync(path.join(ROOT, 'scripts/houserules/houserule-feat-grants.js'), 'utf8');
+  assert.match(service, /canWriteGrants\(\) && setting\.key/);
+  assert.match(service, /\{ keepId: true \}/);
+});
+
+await check('22. HR-F3 Armored Defense: the REAL DefenseCalculator already applies it from the owned talent - enabling the rule works exactly when the grant materializes', async () => {
+  const { DefenseCalculator } = await import('/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js');
+  const armor = { id: 'ar', name: 'Body Armor', type: 'armor', system: { equipped: true, armorType: 'light', maxDexBonus: 3, armorCheckPenalty: 0, reflexBonus: 6, fortitudeBonus: 0 } };
+  const prof = { id: 'pf', name: 'Armor Proficiency (light)', type: 'feat', system: {} };
+  const soldier10 = { id: 'cl', type: 'class', name: 'Soldier', system: { level: 10, classId: 'soldier' } };
+  const mk = items => ({ type: 'character', items: [soldier10, ...items], effects: [], system: { attributes: { dex: { base: 10, racial: 0, enhancement: 0, temp: 0 } }, abilities: {}, defenses: {}, conditionTrack: { current: 0 } } });
+  const levels = [{ class: 'Soldier', level: 10 }];
+  const without = await DefenseCalculator.calculate(mk([armor, prof]), levels, {}, {});
+  const withTalent = await DefenseCalculator.calculate(mk([armor, prof, ruleItem('armoredDefenseForAll')]), levels, {}, {});
+  assert.equal(withTalent.reflex.total - without.reflex.total, 10 - 6, 'heroic level (10) replaces the armor bonus (6) once the talent item is owned');
+  // proof of mechanism: no code reads the setting; only the owned talent matters
+  const src = fs.readFileSync(path.join(ROOT, 'scripts/actors/derived/defense-calculator.js'), 'utf8');
+  assert.ok(!src.includes('armoredDefenseForAll'));
+  // and when the talent is absent (rule enabled but grant not materialized) nothing changes - so the missing-grant finding is mechanically meaningful
+  setRule('armoredDefenseForAll', true);
+  assert.ok(ids(actorOf()).includes('houserule-grant:armoredDefenseForAll'));
+});
+
 await check('17. audit tripwire: settings the manifest calls "wired" but no engine code consumes (update the audit if this fails)', () => {
   const read = rel => fs.readFileSync(path.join(ROOT, rel), 'utf8');
   const sources = [];
@@ -350,7 +462,7 @@ await check('18. one canonical grant table: the services no longer keep private 
   assert.ok(!/id: '252b67d6e31c377e'/.test(patches) && !/createEmbeddedDocuments/.test(patches), 'patch file has no private table and no materializer');
   const service = read('scripts/houserules/houserule-feat-grants.js');
   assert.ok(!/id: '252b67d6e31c377e'/.test(service));
-  assert.match(service, /game\.user\?\.isGM/);
+  assert.match(service, /canWriteGrants\(\)/);
   assert.match(read('scripts/sheets/v2/character-like-sheet.js'), /grantMissing\(actor, key\)/);
 });
 
