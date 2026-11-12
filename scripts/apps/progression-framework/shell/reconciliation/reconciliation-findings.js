@@ -41,6 +41,7 @@ function openCount(slot) {
 
 function slotFinding(slot, code) {
   const n = openCount(slot);
+  if (slot.houseRule) code = 'MISSING_HOUSE_RULE_TALENT';
   const action = slot.primaryAction || slot.remediation?.primaryAction || null;
   return {
     id: `slot:${slot.id}`,
@@ -48,7 +49,9 @@ function slotFinding(slot, code) {
     code,
     severity: 'missing',
     title: slot.label || 'Progression selection',
-    explanation: `Your class progression indicates ${n > 1 ? `${n} selections` : 'a selection'} here (${slot.label || slot.source || 'progression choice'}) that ${n > 1 ? 'are' : 'is'} not accounted for. You may have an unspent selection, or it may have been granted another way.`,
+    explanation: slot.houseRule
+      ? 'An enabled house rule (Talent Every Level with the extra level-1 talent) provides an additional talent selection that is not accounted for. It is separate from your ordinary talent selections.'
+      : `Your class progression indicates ${n > 1 ? `${n} selections` : 'a selection'} here (${slot.label || slot.source || 'progression choice'}) that ${n > 1 ? 'are' : 'is'} not accounted for. You may have an unspent selection, or it may have been granted another way.`,
     expected: Number(slot.count || n) || n,
     actual: Number(slot.filledCount || 0) || 0,
     source: 'canonical-class-progression',
@@ -104,6 +107,23 @@ export function buildFindings(report) {
     if (slot?.status === 'open' && openCount(slot) > 0 && slot.id) {
       findings.push(slotFinding(slot, `MISSING_${String(slot.type || 'CHOICE').toUpperCase().replace(/[^A-Z0-9]+/g, '_')}`));
     }
+  }
+  // Free (automatic) house-rule grants the GM has enabled that this character does not own. The grant is a specific
+  // item, never a free selection, so it is reported on its own and never consumes or hides an ordinary entitlement.
+  for (const grant of Array.isArray(report?.houseRule?.missingGrants) ? report.houseRule.missingGrants : []) {
+    findings.push({
+      id: `houserule-grant:${grant.setting}`,
+      subject: `houserule-grant:${grant.setting}`,
+      code: 'MISSING_HOUSE_RULE_GRANT',
+      severity: 'missing',
+      title: `House rule: free ${grant.name}`,
+      explanation: `Your GM enabled a house rule that gives every character ${grant.name}, but this character does not have it.`,
+      expected: 1,
+      actual: 0,
+      source: `houserule:${grant.setting}`,
+      resolve: { kind: 'grant-house-rule', label: 'Add', dataset: { settingKey: grant.setting } },
+      ignorable: true,
+    });
   }
   for (const row of Array.isArray(report?.derivedStats?.rows) ? report.derivedStats.rows : []) {
     if (row?.needsAttention === true && row.id) findings.push(derivedFinding(row));

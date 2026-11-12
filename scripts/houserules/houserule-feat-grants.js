@@ -14,31 +14,13 @@ import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-r
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { HOUSE_RULE_GRANTS, actorHasGrant, buildGrantAcquisition, grantForSetting, isGrantEnabled } from "/systems/foundryvtt-swse/scripts/houserules/house-rule-grant-table.js";
 
 /**
  * Mapping of house rule settings to feats/talents they grant
  */
-const GRANT_MAPPINGS = {
-  // Setting: [{ type, name, id }]
-  armoredDefenseForAll: [
-    { type: 'talent', name: 'Armored Defense', id: '4c236343b01ea763' }
-  ],
-  weaponFinesseDefault: [
-    { type: 'feat', name: 'Weapon Finesse', id: '252b67d6e31c377e' }
-  ],
-  pointBlankShotDefault: [
-    { type: 'feat', name: 'Point-Blank Shot', id: '05459ac4d439f229' }
-  ],
-  powerAttackDefault: [
-    { type: 'feat', name: 'Power Attack', id: '3f76464c43c73f84' }
-  ],
-  preciseShotDefault: [
-    { type: 'feat', name: 'Precise Shot', id: 'c180eee7d3bc29b2' }
-  ],
-  dodgeDefault: [
-    { type: 'feat', name: 'Dodge', id: '45366d4f3a5e443d' }
-  ]
-};
+// Derived from the ONE canonical table (house-rule-grant-table.js); shape kept for existing callers.
+const GRANT_MAPPINGS = Object.fromEntries(HOUSE_RULE_GRANTS.map(g => [g.setting, [{ type: g.type, name: g.name, id: g.id }]]));
 
 export class HouseRuleFeatGrants {
   /**
@@ -49,7 +31,8 @@ export class HouseRuleFeatGrants {
 
     // Monitor setting changes
     Hooks.on('updateSetting', (setting, value, options) => {
-      if (setting.key.startsWith('foundryvtt-swse.')) {
+      // Only one client may grant (non-GM clients cannot write other users' actors and would race the GM).
+      if (game.user?.isGM && setting.key.startsWith('foundryvtt-swse.')) {
         this._onSettingChanged(setting, value, options);
       }
     });
@@ -57,7 +40,7 @@ export class HouseRuleFeatGrants {
     // Grant feats to newly created actors
     Hooks.on('createActor', (actor, options, userId) => {
       if (game.user.id === userId) {
-        this._grantFeatsToActor(actor);
+        this._grantFeatsToActor(actor, null, { offerReplacement: false });
       }
     });
 
@@ -78,14 +61,14 @@ export class HouseRuleFeatGrants {
 
     // Grant to all actors
     for (const actor of game.actors) {
-      await this._grantFeatsToActor(actor, settingName);
+      await this._grantFeatsToActor(actor, settingName, { offerReplacement: true });
     }
   }
 
   /**
    * Grant applicable feats to an actor
    */
-  static async _grantFeatsToActor(actor, specificSetting = null) {
+  static async _grantFeatsToActor(actor, specificSetting = null, { offerReplacement = false } = {}) {
     try {
       // Skip non-character actors
       if (!actor.isToken && actor.type !== 'character') {return;}
@@ -100,7 +83,7 @@ export class HouseRuleFeatGrants {
         if (!isEnabled) {continue;}
 
         for (const grant of grants) {
-          await this._grantFeatToActor(actor, grant, settingName);
+          await this._grantFeatToActor(actor, grant, settingName, { offerReplacement });
         }
       }
     } catch (err) {
@@ -111,25 +94,22 @@ export class HouseRuleFeatGrants {
   /**
    * Grant a specific feat/talent to an actor
    */
-  static async _grantFeatToActor(actor, grant, settingName) {
+  static async _grantFeatToActor(actor, grant, settingName, { offerReplacement = false } = {}) {
     try {
       const { type, name, id } = grant;
 
-      // Check if actor already has this feat/talent
-      const existing = actor.items.find(
-        (i) =>
-          i.type === type &&
-          i.name.toLowerCase() === name.toLowerCase()
-      );
-
-      if (existing) {
-        // Actor already has it, offer replacement
-        await this._offerReplacement(actor, type, name, settingName);
+      // Check if actor already has this feat/talent (canonical id or normalized name)
+      if (actorHasGrant(actor, grant)) {
+        // Replacement is offered ONLY when a rule is switched on (never at world load / new actor), and only once per
+        // actor + setting: an already-granted replacement means the opportunity was taken.
+        const replacementId = buildGrantAcquisition({ settingKey: settingName, grantKind: 'replacement', replacesName: name }).grantId;
+        const alreadyReplaced = actor.items.some((i) => (i.system?.acquisition?.grantId === replacementId));
+        if (offerReplacement && !alreadyReplaced) await this._offerReplacement(actor, type, name, settingName);
         return;
       }
 
       // Grant the feat/talent
-      await this._createFeatItem(actor, grant);
+      await this._createFeatItem(actor, grant, settingName);
 
       SWSELogger.info(
         `Granted ${type} "${name}" to ${actor.name} (${settingName})`
@@ -145,8 +125,9 @@ export class HouseRuleFeatGrants {
   /**
    * Create a feat/talent item on the actor
    */
-  static async _createFeatItem(actor, grant) {
+  static async _createFeatItem(actor, grant, settingName = null) {
     const { type, name, id } = grant;
+    const settingKey = settingName || HOUSE_RULE_GRANTS.find(g => g.id === id)?.setting || null;
 
     // Try to load from compendium for complete data
     let itemData = {
@@ -167,8 +148,51 @@ export class HouseRuleFeatGrants {
       SWSELogger.warn(`Could not load ${type} from compendium, using basic data`);
     }
 
+    // Durable provenance for NEW grants: which setting caused it, automatic vs replacement, and that it consumes
+    // no ordinary progression selection. (Existing items are never rewritten.)
+    itemData = this._withGrantProvenance(itemData, actor, { settingKey, grantKind: 'automatic', canonicalId: id, canonicalName: name });
+
     // PHASE 7: Create through ActorEngine
     await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
+  }
+
+  static _withGrantProvenance(itemData, actor, { settingKey, grantKind, canonicalId = null, canonicalName = null, replacesName = null }) {
+    const acquisition = buildGrantAcquisition({ settingKey, grantKind, replacesName, actorId: actor?.id ?? null });
+    const swseFlags = { ...(itemData.flags?.swse || {}), houseRuleGranted: true, houseRuleSetting: settingKey, ...(canonicalId ? { canonicalGrantId: canonicalId } : {}) };
+    return {
+      ...itemData,
+      system: {
+        ...(itemData.system || {}),
+        sourceType: 'house-rule',
+        grantedBy: 'house-rule',
+        houseRuleGranted: true,
+        houseRuleSetting: settingKey,
+        ...(canonicalId ? { canonicalGrantId: canonicalId, canonicalGrantName: canonicalName } : {}),
+        acquisition: { ...(itemData.system?.acquisition || {}), ...acquisition },
+      },
+      flags: { ...(itemData.flags || {}), swse: swseFlags },
+    };
+  }
+
+  /**
+   * Silent, idempotent grant of ONE rule's item if the character does not already own it. No dialogs, no
+   * replacement offer. Used by the world-load pass and by the reconciliation "Add" action.
+   * @returns {Promise<{created:boolean, reason?:string}>}
+   */
+  static async grantMissing(actor, settingName) {
+    const entry = grantForSetting(settingName);
+    if (!entry || actor?.type !== 'character') return { created: false, reason: 'not-applicable' };
+    if (!isGrantEnabled(settingName)) return { created: false, reason: 'rule-disabled' };
+    if (actorHasGrant(actor, entry)) return { created: false, reason: 'already-owned' };
+    await this._createFeatItem(actor, entry, settingName);
+    return { created: true };
+  }
+
+  /** World-load pass (GM client): grant any enabled rule's item a character lacks. Silent; never offers replacements. */
+  static async reconcileActorGrants(actor) {
+    for (const entry of HOUSE_RULE_GRANTS) {
+      if (isGrantEnabled(entry.setting)) await this.grantMissing(actor, entry.setting);
+    }
   }
 
   /**
@@ -199,7 +223,7 @@ export class HouseRuleFeatGrants {
             yes: {
               label: 'Yes, Choose Replacement',
               callback: () => {
-                this._openReplacementDialog(actor, type, name);
+                this._openReplacementDialog(actor, type, name, settingName);
                 resolve();
               }
             },
@@ -225,7 +249,7 @@ export class HouseRuleFeatGrants {
   /**
    * Open a dialog for selecting a replacement feat/talent
    */
-  static async _openReplacementDialog(actor, type, rejectedName) {
+  static async _openReplacementDialog(actor, type, rejectedName, settingName = null) {
     try {
       const entries = type === 'feat' ? (FeatRegistry.getAll?.() || []) : (TalentRegistry.getAll?.() || []);
       const available = entries.filter(
@@ -244,7 +268,8 @@ export class HouseRuleFeatGrants {
         actor,
         type,
         available,
-        rejectedName
+        rejectedName,
+        settingName
       );
     } catch (err) {
       SWSELogger.error(`Error opening replacement dialog`, err);
@@ -257,7 +282,7 @@ export class HouseRuleFeatGrants {
   /**
    * Show the actual replacement selection dialog with list of feats
    */
-  static _showReplacementSelectionDialog(actor, type, availableItems, rejectedName) {
+  static _showReplacementSelectionDialog(actor, type, availableItems, rejectedName, settingName = null) {
     const typeLabel = type === 'feat' ? 'Feat' : 'Talent';
 
     // Create HTML for selection
@@ -305,7 +330,7 @@ export class HouseRuleFeatGrants {
               }
 
               // Grant the replacement
-              this._grantReplacementFeat(actor, type, selectedId);
+              this._grantReplacementFeat(actor, type, selectedId, settingName, rejectedName);
             }
           },
           cancel: {
@@ -328,7 +353,7 @@ export class HouseRuleFeatGrants {
   /**
    * Grant the replacement feat/talent to the actor
    */
-  static async _grantReplacementFeat(actor, type, itemId) {
+  static async _grantReplacementFeat(actor, type, itemId, settingName = null, replacesName = null) {
     try {
       const item = type === 'feat'
         ? await FeatRegistry.getDocumentById?.(itemId)
@@ -338,7 +363,8 @@ export class HouseRuleFeatGrants {
         return;
       }
 
-      const itemData = item.toObject();
+      // Distinct house-rule entitlement identity: a replacement consumes NO ordinary progression slot.
+      const itemData = this._withGrantProvenance(item.toObject(), actor, { settingKey: settingName, grantKind: 'replacement', replacesName });
       // PHASE 7: Create through ActorEngine
     await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
 
@@ -360,14 +386,6 @@ export class HouseRuleFeatGrants {
    * Out-of-scope rules (armoredDefenseForAll) use direct read
    */
   static _isDefaultGrantEnabled(settingName) {
-    // Pilot family (FeatRulesAdapter)
-    if (settingName === 'weaponFinesseDefault') return FeatRulesAdapter.weaponFinesseDefaultEnabled();
-    if (settingName === 'pointBlankShotDefault') return FeatRulesAdapter.pointBlankShotDefaultEnabled();
-    if (settingName === 'powerAttackDefault') return FeatRulesAdapter.powerAttackDefaultEnabled();
-    if (settingName === 'preciseShotDefault') return FeatRulesAdapter.preciseShotDefaultEnabled();
-    if (settingName === 'dodgeDefault') return FeatRulesAdapter.dodgeDefaultEnabled();
-
-    // Out-of-scope rules (will be routed in Phase 3B)
-    return HouseRuleService.getSafe(settingName, false);
+    return isGrantEnabled(settingName);
   }
 }

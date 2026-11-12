@@ -26,6 +26,7 @@ const inFlight = new Set();
  *   findFindings(actor) -> finding[]      fresh findings (all, including ignored)
  *   recalcAll(actor)                      ActorEngine.recalcAll
  *   recomputeHP(actor)                    ActorEngine.recomputeHP
+ *   grantHouseRule(actor, settingKey)     HouseRuleFeatGrants.grantMissing
  *   openStep(dataset)                     opens the existing reconcile-mode progression step
  *   confirm(message) -> Promise<boolean>  confirmation dialog
  * @returns {Promise<{status:string, message:string}>}
@@ -55,6 +56,12 @@ export async function resolveFinding({ actor, findingId, deps }) {
         if (!ok) return { status: 'cancelled', message: 'No change was made.' };
         await deps.recomputeHP(actor);
         return verify(actor, before, deps, 'Maximum HP was recomputed.', 'Recomputed HP still differs from the expected minimum. Review your level-up HP history or ignore this warning.');
+      }
+      case 'grant-house-rule': {
+        // The canonical grant service (HouseRuleFeatGrants.grantMissing) is silent, idempotent (skips an owned item),
+        // creates through ActorEngine with house-rule provenance, and never consumes an ordinary selection.
+        await deps.grantHouseRule(actor, resolve.dataset?.settingKey);
+        return verify(actor, before, deps, 'The house-rule grant was added.', 'The grant could not be added. Check that the rule is still enabled.');
       }
       default:
         return { status: 'unsupported', message: 'There is no safe automatic repair for this item.' };

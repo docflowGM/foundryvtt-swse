@@ -2714,3 +2714,22 @@ No provisional recommendation has been converted into a ruling.
 - **Revision 62 (2026-11-12):** appended RECON-001 … RECON-004 from the Reconciliation V2 Phase 0 audit (`docs/audits/reconciliation-v2-phase0-findings.md`). No rulings made; no recommended ruling given.
 
 - **Revision 63 (2026-11-12):** RECON-001…004 implementation note (no ruling). The reconciliation evaluator now renders the slots affected by RECON-001 (multiclass talents), RECON-002 (droid ability increases) and RECON-003 (Nonheroic/mixed actors) as `unverifiable`/`rulesDeferred` and never as missing; RECON-004 (HP above the audited maximum) is `unverifiable`, neither OK nor an error. Existing cadence code paths are unchanged and not endorsed as rules. See `docs/audits/reconciliation-v2-implementation-report.md`.
+
+## RECON-005 — Talent cadence under "Talent Every Level" and how heroic-cadence talents combine with class-table talents
+
+| Field | |
+|---|---|
+| Rules domain | Talent entitlement / house rule `talentEveryLevel` (+ `talentEveryLevelExtraL1`, `talentDoubleLevels`) |
+| Feature | Number of talents owed per level with the house rule off and on |
+| Source | No published page consulted. Repository evidence only. |
+| Evidence | (a) `TalentCadenceEngine.grantsClassTalent` returns a class talent at EVERY class level when `talentEveryLevel` is on, but `packs/classes.db` `talent_choice` rows exist only at odd class levels and are not house-rule aware. (b) `buildLevelUpEntitlementManifest` requires a heroic-cadence talent (`grantsHeroicTalent`: odd levels RAW, every level with the rule) AND the class-table talent choices, so level-ups can owe both at an odd level, while L1 chargen (`calculateL1TalentCount`, `TalentSlotCalculator`) owes one RAW (two with the rule + extra-L1). (c) The reconciler derives class-table talents only and suppresses heroic-cadence slots whenever a class-table talent slot exists. (d) `talentDoubleLevels` is registered and listed as `wired` in the manifest but no engine code reads it. |
+| Confirmed behavior | The extra level-1 talent under `talentEveryLevel` + `talentEveryLevelExtraL1` is established by `TalentCadenceEngine.calculateL1TalentCount` and `TalentSlotCalculator` (source `houserule:talentEveryLevelExtraL1`); reconciliation now represents it as its own entitlement. |
+| Unresolved question | How many talents are owed at each level, with and without `talentEveryLevel`, when both heroic-cadence and class-table talents exist; what `talentDoubleLevels` is intended to do; whether the class-table talents should follow the house-rule cadence. |
+| Options | Class table only; heroic cadence only; both stacking; class table made house-rule aware (code evidence for each; none source-certified). |
+| Recommended ruling | None |
+| Implementation impact | Reconciliation does NOT derive talent entitlements from the house-rule cadence at levels 2+ (an informational note is shown instead); `talentDoubleLevels` is not audited. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 64 (2026-11-12):** appended RECON-005 from the house-rule coverage audit (`docs/audits/reconciliation-v2-house-rule-coverage.md`). No ruling made.

@@ -8104,6 +8104,7 @@ const forcePoints = [];
           findFindings: (actor) => this._freshReconciliationFindings(actor),
           recalcAll: (actor) => ActorEngine.recalcAll(actor),
           recomputeHP: (actor) => ActorEngine.recomputeHP(actor),
+          grantHouseRule: async (actor, key) => (await import('/systems/foundryvtt-swse/scripts/houserules/houserule-feat-grants.js')).HouseRuleFeatGrants.grantMissing(actor, key),
           openStep: (ds) => this._openProgressionReconciliationStep(ds),
           confirm: (message) => SWSEDialogV2.confirm({ title: 'Confirm', content: `<p>${message}</p>`, yes: () => true, no: () => false, defaultYes: false }),
         },

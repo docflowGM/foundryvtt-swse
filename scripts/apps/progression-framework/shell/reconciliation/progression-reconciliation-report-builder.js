@@ -61,6 +61,7 @@ export class ProgressionReconciliationReportBuilder {
       classification: this._buildClassificationSummary(slots, ownership),
       engineFindings,
       deferredRules,
+      houseRule: entitlementPlan?.houseRule || { notes: [], missingGrants: [] },
       coverage: { unauditedChoiceTypes: entitlementPlan?.diagnostics?.unauditedChoiceTypes || {} },
       evidence: entitlementPlan?.evidence || { counts: { certified: 0, stamped: 0, none: 0, untrustedRecords: 0 }, inconsistencies: [], certifiedUnmatched: [], untrustedRecords: [] },
       layers: {

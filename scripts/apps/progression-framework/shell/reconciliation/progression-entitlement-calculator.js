@@ -226,7 +226,13 @@ export class ProgressionEntitlementCalculator {
     const classChoices = call('buildClassChoiceSlots', actor, internalClassSummaries);
     const classFeats = classChoices.filter(slot => slot?.type === 'class-feat');
     const classTalents = classChoices.filter(slot => slot?.type === 'class-talent');
-    const heroicTalents = classTalents.length > 0 || totalHeroicLevel <= 0 ? [] : call('buildHeroicTalentSlots', actor, totalHeroicLevel);
+    const heroicTalents = [...(classTalents.length > 0 || totalHeroicLevel <= 0 ? [] : call('buildHeroicTalentSlots', actor, totalHeroicLevel))];
+    // House-rule entitlements are separate from ordinary slots (see _buildHouseRuleEntitlements).
+    const houseRule = established && typeof this.helpers.buildHouseRuleEntitlements === 'function'
+      ? this.helpers.buildHouseRuleEntitlements(actor, internalClassSummaries, classTalents)
+      : { slots: [], notes: [], missingGrants: [] };
+    if (houseRule.slots.length && typeof this.helpers.fillHouseRuleSlots === 'function') this.helpers.fillHouseRuleSlots(actor, houseRule.slots);
+    heroicTalents.push(...houseRule.slots);
     const baseDerivedStats = established && typeof this.helpers.buildDerivedStatsAudit === 'function'
       ? this.helpers.buildDerivedStatsAudit(actor, internalClassSummaries, { totalLevel, totalHeroicLevel })
       : { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0 };
@@ -252,10 +258,11 @@ export class ProgressionEntitlementCalculator {
       )),
       slots: { abilityIncreases, generalFeats, heroicTalents, classChoices, classFeats, classTalents, derivedStats },
       derivedStats,
+      houseRule: { notes: houseRule.notes, missingGrants: houseRule.missingGrants },
       diagnostics: {
         layer: 'entitlement-calculator',
         delegated: true,
-        phase: 8,
+        phase: 9,
         classAuthority,
         progressionGaps: gaps,
         unauditedChoiceTypes: unaudited,

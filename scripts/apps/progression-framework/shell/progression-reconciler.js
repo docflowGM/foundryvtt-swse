@@ -30,12 +30,14 @@ import {
 import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 import { GENERAL_FEAT_LEVELS } from '../../../engine/progression/data/progression-data.js';
 import TalentCadenceEngine from '../../../engine/progression/talents/talent-cadence-engine.js';
+import { HouseRuleService } from '../../../engine/system/HouseRuleService.js';
 import { ClassesRegistry } from '../../../engine/registries/classes-registry.js';
 import {
   buildEvidenceIndex,
   checkCertificationConsistency,
 } from '../../../engine/progression/utils/progression-evidence.js';
 import { buildFindings, partitionFindings, readIgnored } from './reconciliation/reconciliation-findings.js';
+import { actorHasGrant, enabledGrants, getFeatTalentRulesSignature } from '../../../houserules/house-rule-grant-table.js';
 import {
   getClassLevelProgressionEntry,
   normalizeClassKey,
@@ -132,8 +134,9 @@ function memoKeyForActor(actor, options = {}) {
   } catch (_err) {
     return null;
   }
+  // ONE canonical effective-settings signature for every feat/talent rule (house-rule-grant-table.js).
   let rules = '';
-  try { rules = JSON.stringify(TalentCadenceEngine.getHouseRuleSettings()); } catch (_err) { rules = 'rules?'; }
+  try { rules = getFeatTalentRulesSignature(); } catch (_err) { rules = 'rules?'; }
   let registry = '';
   try { registry = `${ClassesRegistry.isInitialized?.() ? 1 : 0}:${ClassesRegistry.count?.() ?? 0}`; } catch (_err) { registry = 'registry?'; }
   return [actorId, actorStamp, items, rules, registry, options.mode || ''].join('::');
@@ -145,6 +148,18 @@ function memoGet(key) {
   RECONCILIATION_MEMO.delete(key); // refresh LRU position
   RECONCILIATION_MEMO.set(key, value);
   return structuredClone(value);
+}
+
+/** A feat/talent house rule changed: drop cached reports and refresh open actor sheets (no stale header `!` / overlay). */
+export function invalidateReconciliationForRuleChange() {
+  RECONCILIATION_MEMO.clear();
+  try {
+    for (const app of globalThis.foundry?.applications?.instances?.values?.() ?? []) {
+      if (app?.document?.documentName === 'Actor' && typeof app.render === 'function') app.render({ force: false });
+    }
+  } catch (_err) {
+    // best effort UI refresh; the memo is already cleared so the next render is fresh
+  }
 }
 
 function memoSet(key, report) {
@@ -824,6 +839,8 @@ export class ProgressionReconciler {
       buildClassChoiceSlots: this._buildClassChoiceSlots.bind(this),
       buildDerivedStatsAudit: this._buildDerivedStatsAudit.bind(this),
       buildFeatPools: this._buildFeatPools.bind(this),
+      buildHouseRuleEntitlements: this._buildHouseRuleEntitlements.bind(this),
+      fillHouseRuleSlots: (actor, slots) => this._fillLinearSlots(slots, this._buildTalentPools(actor).general),
       buildTalentPools: this._buildTalentPools.bind(this),
     };
   }
@@ -986,6 +1003,7 @@ export class ProgressionReconciler {
     }
     const uncertified = (Number(report?.evidence?.counts?.stamped) || 0) + (Number(report?.evidence?.counts?.none) || 0);
     if (uncertified > 0) notes.push({ id: 'uncertified', text: `${uncertified} owned feat/talent record${uncertified === 1 ? ' predates' : 's predate'} verified progression history and cannot be checked against it.` });
+    for (const note of Array.isArray(report?.houseRule?.notes) ? report.houseRule.notes : []) notes.push({ id: `houserule:${note.code}`, text: note.text });
     const unclassified = (report?.classification?.unclassifiedFeatCount || 0) + (report?.classification?.unclassifiedTalentCount || 0);
     if (unclassified > 0) notes.push({ id: 'unclassified', text: `${unclassified} owned feat/talent record${unclassified === 1 ? ' has' : 's have'} no acquisition provenance.` });
     const engineFindings = (Array.isArray(report?.engineFindings) ? report.engineFindings : []).map(f => ({ code: f.code, message: f.message }));
@@ -1211,6 +1229,50 @@ export class ProgressionReconciler {
     };
   }
 
+  /**
+   * House-rule entitlements, accounted for INDEPENDENTLY of ordinary progression slots.
+   *  - extra level-1 talent (talentEveryLevel + talentEveryLevelExtraL1): its own entitlement with its own source,
+   *    represented only alongside the ordinary class talent slot it is "extra" to. TalentCadenceEngine is the sole reader.
+   *  - automatic grants (specific feat/talent): expected-but-absent grants for characters (the granting service's scope).
+   *  - everything the code does not establish is returned as an informational note, never a finding:
+   *    talentEveryLevel at levels >= 2 (interplay with the class-table talents is an open rules question),
+   *    talentDoubleLevels and multiclassBonusChoice (registered settings with no consumer in engine code).
+   */
+  _buildHouseRuleEntitlements(actor, classSummaries = [], classTalentSlots = []) {
+    const settings = TalentCadenceEngine.getHouseRuleSettings();
+    const slots = [];
+    const notes = [];
+    const hasHeroic = classSummaries.some(summary => !summary.isNonheroic && Number(summary.level) > 0);
+    if (settings.talentEveryLevel && settings.talentEveryLevelExtraL1 && hasHeroic && classTalentSlots.length > 0) {
+      slots.push({
+        id: 'houserule-talent-extra-l1',
+        type: 'heroic-talent',
+        houseRule: 'talentEveryLevelExtraL1',
+        characterLevel: 1,
+        levelLabel: 'House rule',
+        count: 1,
+        filledCount: 0,
+        openCount: 1,
+        status: 'open',
+        label: 'House Rule: Extra Level 1 Talent',
+        source: 'houserule:talentEveryLevelExtraL1',
+        filledBy: null,
+        filledByName: null,
+      });
+    }
+    if (settings.talentEveryLevel) {
+      notes.push({ code: 'house-rule-talent-cadence-undetermined', text: 'Talent Every Level is enabled; how it combines with each class table is an open rules question (RECON-005), so levels 2 and above are not audited for talents.' });
+    }
+    try {
+      if (HouseRuleService.getBoolean('talentDoubleLevels', false)) notes.push({ code: 'house-rule-unimplemented', text: 'Talent Double Level Option is enabled but has no implementation in the rules code; it is not audited.' });
+      if (HouseRuleService.getString('multiclassBonusChoice', 'single_feat') !== 'single_feat') notes.push({ code: 'house-rule-unimplemented', text: 'Multi-class Bonus Selection is set to a variant the progression code does not read; multiclass grants are not audited for it.' });
+    } catch (_err) { /* settings unavailable: nothing to note */ }
+    const missingGrants = actor?.type === 'character'
+      ? enabledGrants().filter(grant => !actorHasGrant(actor, grant)).map(grant => ({ setting: grant.setting, type: grant.type, name: grant.name }))
+      : [];
+    return { slots, notes, missingGrants };
+  }
+
   _buildGeneralFeatSlots(actor, heroicLevel) {
     const slots = [];
     const maxLevel = Math.max(0, Number(heroicLevel || 0) || 0);
@@ -1371,7 +1433,9 @@ export class ProgressionReconciler {
     const pools = { general: [], class: [], classUntagged: [], unknown: [] };
     for (const item of readActorItems(actor).filter(entry => entry?.type === type)) {
       if (isAutomaticProgressionItem(item)) continue;
-      if (this._evidence?.byItemId?.get(item?.id ?? item?._id)?.status === 'external') continue; // GM-authorized exception: outside slot accounting
+      const evidenceStatus = this._evidence?.byItemId?.get(item?.id ?? item?._id)?.status;
+      // GM-authorized exceptions and house-rule grants are outside ordinary slot accounting (they neither fill a slot nor are "extra").
+      if (evidenceStatus === 'external' || evidenceStatus === 'house-rule' || evidenceStatus === 'house-rule-inferred') continue;
       const prov = this._provenance(item);
       if (prov.certified) { (prov.kind === 'class' ? pools.class : pools.general).push(item); continue; }
       const hint = this._getSelectionHintForItem(item, hints);

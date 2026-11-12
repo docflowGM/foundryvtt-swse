@@ -23,6 +23,8 @@
  * No legacy migration: existing items without a certification stay "stamped" or "none".
  */
 
+import { grantForItem, isGrantEnabled, readHouseRuleMarker } from '/systems/foundryvtt-swse/scripts/houserules/house-rule-grant-table.js';
+
 export const CERTIFICATION_FLAG_PATH = 'flags.swse.progressionCertifications';
 export const MAX_CERTIFICATIONS = 64;
 
@@ -133,6 +135,15 @@ export function getVerifiedHistory(actor) {
  */
 export function getAcquisitionEvidence(actor, item, history = null) {
   const id = item?.id ?? item?._id ?? null;
+  // House-rule grants are legitimate abilities outside ordinary slot accounting: they consume no ordinary
+  // selection and are never "extra". Explicit markers (any current granting path) win; an item with NO
+  // progression/acquisition evidence at all that is the canonical item of a CURRENTLY ENABLED automatic rule
+  // is attributed to that rule (inferred - the rule guarantees every character owns it). A rule later
+  // disabled never un-grants an explicitly marked item and never deletes anything.
+  const marker = readHouseRuleMarker(item);
+  if (marker) {
+    return { status: 'house-rule', sessionId: null, slotKind: 'unknown', slotType: null, classId: null, className: null, classLevel: 0, characterLevel: 0, certification: null, houseRule: marker };
+  }
   const { trusted } = history || getVerifiedHistory(actor);
   if (id) {
     for (const record of trusted) {
@@ -187,6 +198,10 @@ export function getAcquisitionEvidence(actor, item, history = null) {
       characterLevel: meta.characterLevel,
       certification: null,
     };
+  }
+  const inferredGrant = grantForItem(item);
+  if (inferredGrant && isGrantEnabled(inferredGrant.setting)) {
+    return { status: 'house-rule-inferred', sessionId: null, slotKind: 'unknown', slotType: null, classId: null, className: null, classLevel: 0, characterLevel: 0, certification: null, houseRule: { settingKey: inferredGrant.setting, grantKind: 'automatic', active: true, inferred: true } };
   }
   return { status: 'none', sessionId: null, slotKind: 'unknown', slotType: null, classId: null, className: null, classLevel: 0, characterLevel: 0, certification: null };
 }
@@ -248,16 +263,18 @@ export function buildEvidenceIndex(actor) {
   let none = 0;
   let external = 0;
   let identityMismatch = 0;
+  let houseRule = 0;
   for (const item of actorItems(actor).filter(i => GRANT_ITEM_TYPES.includes(i?.type))) {
     const evidence = getAcquisitionEvidence(actor, item, history);
     byItemId.set(item?.id ?? item?._id, evidence);
     if (evidence.status === 'certified') certified += 1;
     else if (evidence.status === 'external') external += 1;
+    else if (evidence.status === 'house-rule' || evidence.status === 'house-rule-inferred') houseRule += 1;
     else if (evidence.status === 'identity-mismatch') identityMismatch += 1;
     else if (evidence.status === 'stamped') stamped += 1;
     else none += 1;
   }
-  return { history, byItemId, counts: { certified, stamped, none, external, identityMismatch, untrustedRecords: history.untrusted.length } };
+  return { history, byItemId, counts: { certified, stamped, none, external, houseRule, identityMismatch, untrustedRecords: history.untrusted.length } };
 }
 
 /**

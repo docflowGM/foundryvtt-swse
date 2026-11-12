@@ -7,7 +7,9 @@ import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities
 import { FeatRulesAdapter } from '/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js';
 import { FeatRegistry as CompendiumFeatRegistry } from '/systems/foundryvtt-swse/scripts/registries/feat-registry.js';
 import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/talent-registry.js';
-import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { HOUSE_RULE_GRANTS, isFeatTalentRuleKey, isGrantEnabled } from '/systems/foundryvtt-swse/scripts/houserules/house-rule-grant-table.js';
+import { HouseRuleFeatGrants } from '/systems/foundryvtt-swse/scripts/houserules/houserule-feat-grants.js';
+import { invalidateReconciliationForRuleChange } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 
 const PATCH_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.v1');
 const TALENT_PATCH_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.talent.v1');
@@ -15,20 +17,10 @@ const ABILITY_PATCH_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.abili
 const HOOK_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.hooks.v1');
 const MATERIALIZE_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.materialize.v1');
 
-const HOUSERULE_FEAT_GRANTS = [
-  { setting: 'weaponFinesseDefault', type: 'feat', name: 'Weapon Finesse', id: '252b67d6e31c377e' },
-  { setting: 'pointBlankShotDefault', type: 'feat', name: 'Point Blank Shot', id: '05459ac4d439f229' },
-  { setting: 'powerAttackDefault', type: 'feat', name: 'Power Attack', id: '3f76464c43c73f84' },
-  { setting: 'preciseShotDefault', type: 'feat', name: 'Precise Shot', id: 'c180eee7d3bc29b2' },
-  { setting: 'dodgeDefault', type: 'feat', name: 'Dodge', id: '45366d4f3a5e443d' },
-];
-
-const HOUSERULE_TALENT_GRANTS = [
-  { setting: 'armoredDefenseForAll', type: 'talent', name: 'Armored Defense', id: '4c236343b01ea763' },
-];
-
-const HOUSERULE_GRANTS = [...HOUSERULE_FEAT_GRANTS, ...HOUSERULE_TALENT_GRANTS];
-const HOUSERULE_GRANT_SETTINGS = new Set(HOUSERULE_GRANTS.map(entry => entry.setting));
+// One canonical table (house-rule-grant-table.js); this file no longer keeps its own copy.
+const HOUSERULE_FEAT_GRANTS = HOUSE_RULE_GRANTS.filter(g => g.type === 'feat');
+const HOUSERULE_TALENT_GRANTS = HOUSE_RULE_GRANTS.filter(g => g.type === 'talent');
+const HOUSERULE_GRANTS = HOUSE_RULE_GRANTS;
 
 function normalizeFeatName(value) {
   return String(value || '')
@@ -63,19 +55,7 @@ function namesMatch(a, b) {
 }
 
 function isHouseruleGrantEnabled(setting) {
-  try {
-    if (setting === 'weaponFinesseDefault') return FeatRulesAdapter.weaponFinesseDefaultEnabled();
-    if (setting === 'pointBlankShotDefault') return FeatRulesAdapter.pointBlankShotDefaultEnabled();
-    if (setting === 'powerAttackDefault') return FeatRulesAdapter.powerAttackDefaultEnabled();
-    if (setting === 'preciseShotDefault') return FeatRulesAdapter.preciseShotDefaultEnabled();
-    if (setting === 'dodgeDefault') return FeatRulesAdapter.dodgeDefaultEnabled();
-    if (typeof HouseRuleService.getBoolean === 'function') return HouseRuleService.getBoolean(setting, false);
-    if (typeof HouseRuleService.isEnabled === 'function') return HouseRuleService.isEnabled(setting);
-    if (typeof HouseRuleService.getSafe === 'function') return HouseRuleService.getSafe(setting, false);
-  } catch (_err) {
-    // fall through to disabled
-  }
-  return false;
+  return isGrantEnabled(setting);
 }
 
 export function getHouseruleGrantedFeatNames() {
@@ -470,125 +450,21 @@ function patchHouseruleFeatPendingForAbilityEngine() {
   AbilityEngine[ABILITY_PATCH_FLAG] = true;
 }
 
-async function resolveGrantItemData(grant) {
-  let itemData = {
-    name: grant.name,
-    type: grant.type,
-    img: grant.type === 'talent' ? 'icons/svg/aura.svg' : 'icons/svg/upgrade.svg',
-    system: {},
-  };
-
-  try {
-    const doc = grant.type === 'feat'
-      ? await CompendiumFeatRegistry.getDocumentById?.(grant.id)
-      : await TalentRegistry.getDocumentById?.(grant.id);
-    if (doc?.toObject) itemData = doc.toObject();
-  } catch (err) {
-    console.warn('SWSE | Could not load house-rule grant from compendium; using fallback item data', grant, err);
-  }
-
-  const system = {
-    ...(itemData.system || {}),
-    sourceType: 'house-rule',
-    grantedBy: 'house-rule',
-    houseRuleGranted: true,
-    houseRuleSetting: grant.setting,
-    canonicalGrantId: grant.id,
-    canonicalGrantName: grant.name,
-  };
-
-  return {
-    ...itemData,
-    name: itemData.name || grant.name,
-    type: itemData.type || grant.type,
-    system,
-    flags: {
-      ...(itemData.flags || {}),
-      swse: {
-        ...(itemData.flags?.swse || {}),
-        id: itemData.flags?.swse?.id || grant.id,
-        houseRuleGranted: true,
-        houseRuleSetting: grant.setting,
-        canonicalGrantId: grant.id,
-        canonicalGrantName: grant.name,
-      },
-      'foundryvtt-swse': {
-        ...(itemData.flags?.['foundryvtt-swse'] || {}),
-        id: itemData.flags?.['foundryvtt-swse']?.id || grant.id,
-        houseRuleGranted: true,
-        houseRuleSetting: grant.setting,
-        canonicalGrantId: grant.id,
-        canonicalGrantName: grant.name,
-      },
-    },
-  };
-}
-
-function actorAlreadyHasGrant(actor, grant) {
-  const items = actor?.items?.contents || actor?.items || [];
-  for (const item of items) {
-    if (item?.type !== grant.type) continue;
-    const itemNames = [
-      item.name,
-      item.system?.canonicalGrantName,
-      item.flags?.swse?.canonicalGrantName,
-      item.flags?.['foundryvtt-swse']?.canonicalGrantName,
-    ];
-    if (itemNames.some(name => namesMatch(name, grant.name))) return true;
-    const ids = [
-      item.id,
-      item._id,
-      item.system?.canonicalGrantId,
-      item.flags?.swse?.id,
-      item.flags?.swse?.canonicalGrantId,
-      item.flags?.['foundryvtt-swse']?.id,
-      item.flags?.['foundryvtt-swse']?.canonicalGrantId,
-      item.flags?.core?.sourceId,
-    ].filter(Boolean).map(value => String(value));
-    if (ids.some(value => value.includes(grant.id))) return true;
-  }
-  return false;
-}
-
-async function materializeHouseruleGrantsForActor(actor) {
-  if (!actor || actor.type !== 'character') return;
-  const toCreate = [];
-  for (const grant of HOUSERULE_GRANTS) {
-    if (!isHouseruleGrantEnabled(grant.setting)) continue;
-    if (actorAlreadyHasGrant(actor, grant)) continue;
-    toCreate.push(await resolveGrantItemData(grant));
-  }
-  if (!toCreate.length) return;
-  await ActorEngine.createEmbeddedDocuments(actor, 'Item', toCreate);
-}
-
+/**
+ * World-load pass only. Granting itself (new actor, rule switched on, replacement offers, provenance) is owned by
+ * HouseRuleFeatGrants; this file previously ran a SECOND materializer that raced it (and could trigger a spurious
+ * "you already own it" replacement dialog). Silent: never offers replacements.
+ */
 function registerHouseRuleGrantMaterialization() {
   if (globalThis[MATERIALIZE_FLAG]) return;
   globalThis[MATERIALIZE_FLAG] = true;
 
-  Hooks.on('createActor', (actor, options, userId) => {
-    if (game?.user?.id !== userId) return;
-    materializeHouseruleGrantsForActor(actor).catch(err => {
-      console.warn('SWSE | House-rule grant materialization failed for new actor', err);
-    });
-  });
-
   Hooks.once('ready', async () => {
     if (!game?.user?.isGM) return;
     for (const actor of game.actors || []) {
-      await materializeHouseruleGrantsForActor(actor).catch(err => {
-        console.warn('SWSE | House-rule grant materialization failed', actor?.name, err);
-      });
-    }
-  });
-
-  Hooks.on('updateSetting', (setting, value) => {
-    const key = String(setting?.key || '').split('.').pop();
-    if (!HOUSERULE_GRANT_SETTINGS.has(key) || value === false) return;
-    if (!game?.user?.isGM) return;
-    for (const actor of game.actors || []) {
-      materializeHouseruleGrantsForActor(actor).catch(err => {
-        console.warn('SWSE | House-rule grant materialization failed after setting change', actor?.name, err);
+      if (actor.type !== 'character') continue;
+      await HouseRuleFeatGrants.reconcileActorGrants(actor).catch(err => {
+        console.warn('SWSE | House-rule grant pass failed', actor?.name, err);
       });
     }
   });
@@ -597,13 +473,13 @@ function registerHouseRuleGrantMaterialization() {
 function registerHouseRuleCacheInvalidation() {
   if (globalThis[HOOK_FLAG]) return;
   globalThis[HOOK_FLAG] = true;
-  Hooks.on('swse:houserule-changed', (key) => {
+  const onChange = (key) => {
     if (HOUSERULE_GRANT_SETTINGS.has(key)) AbilityEngine.clearAcquisitionCache?.();
-  });
-  Hooks.on('updateSetting', (setting) => {
-    const key = String(setting?.key || '').split('.').pop();
-    if (HOUSERULE_GRANT_SETTINGS.has(key)) AbilityEngine.clearAcquisitionCache?.();
-  });
+    // Any feat/talent house rule can change entitlements: drop reconciliation reports and refresh open sheets.
+    if (isFeatTalentRuleKey(key)) invalidateReconciliationForRuleChange();
+  };
+  Hooks.on('swse:houserule-changed', (key) => onChange(key));
+  Hooks.on('updateSetting', (setting) => onChange(String(setting?.key || '').split('.').pop()));
 }
 
 export function registerFeatHousekeepingRuntimePatches() {
