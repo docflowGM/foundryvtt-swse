@@ -241,3 +241,12 @@ that guarantees `async-enrichment.js` is imported (through the reconciler) befor
 
 **Verification of this correction round (Node harness).** Full sweep of all `tests/*.test.mjs` (170 s per-test limit): only the same five force-power files fail, all red at the PR #1145 merge base
 (`33ce3f7`) and untouched here; no new failures. Validators: partials, data, `system.json` pass. Foundry V13 acceptance: not performed.
+
+
+## Approved future requirement: Manual Progression Completion Acknowledgments
+Design addendum: `docs/audits/reconciliation-v2-manual-completion-addendum.md` (documentation only; **no implementation, UI, history field or mutation exists yet**, and it does not change the
+Foundry V13 acceptance package). Principle: manual progression is first-class; a player may record that an entitlement was completed by hand ("Already Applied") without repeating it in the wizard; the acknowledgment never applies the
+benefit, is never presented as mechanically verified, is distinct from Ignore and from Resolve/Apply, and is certified first for ability increases using the existing `system.progression.abilityIncreaseHistory`.
+Concerns found against the existing evidence code (details in the addendum): replace-by-level in the history writers (C1); double-application of scores if Apply follows a manual edit (C2); any history record with a level counts as complete
+regardless of source (C3); a possible latent defect where reconcile-mode ability-increase Apply may record `level: null` or the actor's current level, leaving the slot unresolved and risking a double increase (C4, **unverified - needs a trace or Foundry test**);
+the ability-increase writer exists twice, with only `AbilityScorePlanBuilder` live (C5). Open questions Q1-Q8 are recorded without a guess; droid / Nonheroic counts remain RECON-002 / RECON-003.
