@@ -122,7 +122,8 @@ function summarizeDocument(value) {
  * Returns null (=> no memoization, always recompute) when the actor exposes no modification
  * stamp, so a missing signal can never produce a stale hit.
  */
-const PROGRESSION_ITEM_TYPE_RE = /^(class|feat|talent|maneuver|starshipManeuver)$|force|secret|technique/i;
+// Progression-relevant items plus carried gear (the carried-weight evidence adapter reads gear; an embedded-item edit does not bump the actor stamp).
+const PROGRESSION_ITEM_TYPE_RE = /^(class|feat|talent|maneuver|starshipManeuver|weapon|lightsaber|armor|equipment|gear|weaponUpgrade|poison)$|force|secret|technique/i;
 function memoKeyForActor(actor, options = {}) {
   const actorStamp = actor?._stats?.modifiedTime;
   const actorId = actor?.id || actor?.uuid;

@@ -144,3 +144,46 @@ Adapters now run independently of class establishment (a custom droid may carry 
 Not implemented: component prerequisites / capacity conflicts / droid-specific stat calculations (installation authority audited only by location), droid
 HP/CON rules (covered by the HP work). Droid HP, droid CON=0 and droid Force Point applicability remain as established by their own domains.
 Tests: `tests/reconciliation-phase4-droid.test.mjs`.
+
+## Phase 5 — integration and certification
+
+### Domain-by-domain certification
+Legend: **IMPL** implemented, **OFFLINE** covered by Node-harness tests, **FOUNDRY** runtime-tested (none are), **DEFER** deferred with reason. A domain with no verdict
+still emits nothing (Silent Success). "Evidence-bound" means only independent persisted evidence can produce a finding.
+
+| # | Domain | What reconciliation now does | Status |
+|---|---|---|---|
+| 1 | Species and racial mechanics | Informational note when species-granted items belong to a different grant than the recorded manifest. No confirmed finding possible. | IMPL, OFFLINE, FOUNDRY no; ledger-based verification DEFER (heuristic async ledger, editable values) |
+| 2 | Classes and levels | Class-level reader with conflict reporting (PR #1145). | IMPL, OFFLINE, FOUNDRY no; prestige eligibility DEFER |
+| 3 | Ability scores | Ability-increase entitlements (existing). Mods/totals are prepared values (D-1). | partial; input-vs-record check DEFER (original scores unknowable) |
+| 4 | Hit points | Ledger-based additive accounting; verdict only for unreflected recorded CON / feat / bonus contributions; Resolve disabled (PR #1145). | IMPL, OFFLINE, FOUNDRY no; HP-001 open |
+| 5 | Base Attack Bonus | Class-model expectation vs prepared value, only once the derived calculation is applied; second arithmetic not yet retired. | IMPL (existing), OFFLINE; consolidation DEFER |
+| 6 | Defenses | Class defense bonus vs prepared value, same gating; persisted editable overrides no longer read (D-2). Total defenses not re-derived (D-1). | partial |
+| 7 | Damage threshold, DR, shields | Nothing: threshold is prepared; persisted shield / DR sources not audited. | DEFER |
+| 8 | Feats | Slot/entitlement accounting, house-rule grants (existing). No historical prerequisite re-validation by design. | IMPL (existing); RECON-001/002/005 open |
+| 9 | Talents | Slot/entitlement accounting (existing). | IMPL (existing); RECON-001/005 open |
+| 10 | Skills | Nothing: no canonical trained-skill entitlement authority; totals prepared. | DEFER (RECON-007) |
+| 11 | Force abilities | Class-derived Force choices (existing). Feat-derived entitlement not checked. | partial; DEFER (RECON-006) |
+| 12 | Force Points / resources | Force Point maximum with evidence classification, optional initialization, safe Resolve. Other resources not audited. | IMPL, OFFLINE, FOUNDRY no |
+| 13 | Movement and encumbrance | Carried-weight evidence note (items without a recorded weight). Load category not re-derived. | IMPL, OFFLINE, FOUNDRY no; movement DEFER |
+| 14 | Combat statistics | Nothing: prepared values; contextual rolls excluded. | DEFER |
+| 15 | Equipment and modifications | Nothing: armor effects are a calculation, modification certification is gated by open register entries and is not character correctness. | DEFER |
+| 16 | Droid mechanics | Mode-aware: finalized custom droid missing a required system is a review-only finding; stock and converted droids not applicable. | IMPL, OFFLINE, FOUNDRY no |
+| 17 | Progression integrity | Evidence model, certification, ownership classification, house-rule accounting, targeted routing (PR #1145). | IMPL, OFFLINE, FOUNDRY no |
+
+### Integration properties (Node harness)
+Silent Success across all domains for a legitimate manual build; manual and wizard-shaped builds produce identical findings; simultaneous discrepancies are
+independent (distinct stable ids, independent Ignore, independent Resolve); one failing adapter never hides or corrupts others and never mutates the actor; the
+reconciliation memo now also keys on carried-gear item stamps (an embedded gear edit does not bump the actor stamp); no timers anywhere in adapters or enrichment.
+
+### Performance (measured, Node harness, 10 class levels, 62 items)
+Cold reconcile ~4 ms; memo hit <1 ms. See `tests/reconciliation-phase5-integration.test.mjs` for the (deliberately loose) bounds.
+**Deviation recorded for owner decision:** the command asks that damage / healing / resource spending not cause a full reconciliation. The memo is keyed on the actor
+modification stamp, so an HP value change invalidates it once and the next sheet read recomputes (~4 ms). A field-relevance key would remove that, but an
+exclusion/inclusion list that omits a field the pipeline reads would silently serve stale reports (fail-open), and the existing contract test pins the stamp rule.
+Not changed without approval.
+
+### Not verified at all (requires Foundry V13)
+`prepareDerivedData` timing and the `swseDerivedApplied` event in a live session; sheet `!` / overlay rendering including the new Optional section; GM-only override
+stamping from the resource editor; `ActorEngine.updateActor` guard behavior for `system.progression.lastForcePointRefresh` and `flags.swse.overrides.*`; two-client behavior;
+compendium-backed class data; hook-driven refresh of open sheets.
