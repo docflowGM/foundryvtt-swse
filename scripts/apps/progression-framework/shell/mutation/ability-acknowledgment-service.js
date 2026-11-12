@@ -101,8 +101,25 @@ async function commit(actor, level, deps, plan) {
     const again = contractFor(level, deps);
     if (again.count !== contract.count || again.mode !== contract.mode) fail('ENTITLEMENT_CHANGED', 'The entitlement or the allocation rule changed while this was being prepared; nothing was changed.');
     if (!historiesMatch(readHistory(actor), history)) fail('HISTORY_CHANGED', 'The ability-increase history changed while this was being prepared; review the character and try again. Nothing was changed.');
-    await engine.updateActor(actor, { [ABILITY_HISTORY_KEY]: sortByLevel(built.next) }, { source: `AbilityAcknowledgmentService.${built.operation}`, meta: { guardKey: 'ability-acknowledgment' } });
-    return { status: 'ok', code: 'OK', operation: built.operation, record: built.record, message: built.message };
+    // ACK-01: a call that returned (or threw) is a REQUEST, not proof. The outcome is established by re-reading the canonical history. A potentially
+    // committed write is never retried; an unconfirmed one is reported as indeterminate. No second ledger: the same history is the evidence.
+    const before = history;
+    let engineResult; let engineError = null;
+    try {
+      engineResult = await engine.updateActor(actor, { [ABILITY_HISTORY_KEY]: sortByLevel(built.next) }, { source: `AbilityAcknowledgmentService.${built.operation}`, meta: { guardKey: 'ability-acknowledgment' } });
+    } catch (error) { engineError = error; }
+    const after = readHistory(actor);
+    const persisted = historiesMatch(after, built.next);
+    const unchanged = historiesMatch(after, before);
+    const intended = persisted && built.record && after.some(e => e?.acknowledgmentId === built.record.acknowledgmentId);
+    if (!engineError && engineResult?.prevented !== true && persisted && intended) return { status: 'ok', code: 'OK', operation: built.operation, record: built.record, message: built.message };
+    if (unchanged && engineResult?.prevented === true) return { status: 'refused', code: 'UPDATE_PREVENTED', operation: built.operation, record: null, message: 'The update was prevented by the system; nothing was changed.' };
+    if (unchanged && engineError) return { status: 'refused', code: 'ENGINE_ERROR', operation: built.operation, record: null, message: `The update failed (${engineError.message || 'error'}) and the history appears unchanged. Review Progress before trying again.` };
+    return {
+      status: 'indeterminate', code: 'WRITE_NOT_CONFIRMED', operation: built.operation, record: null,
+      message: unchanged ? 'The update was reported but the saved history does not show it. It was NOT retried; reopen Review Progress to see the current state before trying again.'
+        : 'The saved history is not what was intended (it may have changed, or only partly saved). It was NOT retried; reopen Review Progress to see the current state before trying again.',
+    };
   } catch (error) {
     if (error instanceof AbilityIncreaseError) return refuse(error.code, error.message);
     throw error;

@@ -8112,7 +8112,7 @@ const forcePoints = [];
     const row = review.rows.find(r => r.level === level);
     const cap = wired.deps.getAllocationMode?.() === 'allow_stacked_two' ? 2 : 1;
     const notify = (result) => {
-      const kind = result.status === 'ok' ? 'info' : 'warn';
+      const kind = result.status === 'ok' ? 'info' : 'warn'; // 'indeterminate' is never reported as success
       ui?.notifications?.[kind]?.(result.message);
     };
     if (action === 'withdraw-acknowledgment') {
@@ -8127,10 +8127,11 @@ const forcePoints = [];
       const chosen = await SWSEDialogV2.prompt({
         title: mode === 'acknowledge' ? 'Already Applied' : (mode === 'supersede' ? 'Supersede acknowledgment (GM)' : 'Correct acknowledgment'),
         label: mode === 'acknowledge' ? 'Record statement' : 'Save',
-        content: buildAcknowledgmentDialogContent({ label: row.label, entitledCount: row.entitledCount, remaining: row.remaining, cap, initial: mode === 'acknowledge' ? {} : (entry?.increases || {}), mode }),
+        content: buildAcknowledgmentDialogContent({ label: row.label, entitledCount: row.entitledCount, remaining: row.remaining, cap, initial: mode === 'acknowledge' ? {} : (entry?.increases || {}), mode, gm: wired.user.isGM === true }),
         callback: (html) => readAcknowledgmentDialog(html),
       });
       if (!chosen) return;
+      if (chosen.invalid?.length) { ui?.notifications?.warn?.(`Some entries are not valid whole numbers (${chosen.invalid.map(k => k.toUpperCase()).join(', ')}); nothing was changed. Enter 0 for an ability you did not increase.`); return; }
       if (!chosen.confirmed) { ui?.notifications?.warn?.('Confirmation is required; nothing was changed.'); return; }
       if (mode !== 'acknowledge' && !existing) { ui?.notifications?.warn?.('That acknowledgment is no longer available; nothing was changed.'); return; }
       const args = mode === 'acknowledge' ? { level, increases: chosen.increases, origin: wired.user.isGM === true ? 'gm' : 'player' } : { acknowledgmentId: dataset.acknowledgmentId, increases: chosen.increases };

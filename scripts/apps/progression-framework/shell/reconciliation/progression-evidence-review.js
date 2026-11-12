@@ -55,7 +55,7 @@ function recordRow(entry, { user, actor }) {
   const mayChange = manual && (isGM || (kind === 'player-attested' && author && canEditActor));
   const who = entry.attestedByName || entry.attestedBy || null;
   const sourceText = kind === 'player-attested' ? `Player statement${who ? ` (${who})` : ''}`
-    : kind === 'gm-authorized' ? `GM authorization${who ? ` (${who})` : ''}`
+    : kind === 'gm-authorized' ? `GM-authorized acknowledgment${who ? ` (${who})` : ''} - a recorded statement, not verification`
       : kind === 'system-verified' ? 'Applied and verified by the system'
         : kind === 'system-committed' ? 'Applied by the system (not post-commit verified)'
           : inactive ? `${String(entry.status).charAt(0).toUpperCase()}${String(entry.status).slice(1)}`
@@ -101,7 +101,7 @@ export function buildProgressReview(report, actor, { user = null } = {}) {
       counts: { system: slot.completion?.appliedCount ?? 0, player: slot.completion?.attestedCount ?? 0, gm: slot.completion?.gmAuthorizedCount ?? 0 },
       mixed: slot.completion?.mixed === true,
       rulesDeferred: deferred,
-      summary: deferred ? 'The number of increases for this character is a pending rules question, so nothing here can be acknowledged yet.'
+      summary: deferred ? 'Entitlement count pending rules review. Nothing here can be acknowledged or applied until that rule is decided.'
         : state === EVIDENCE_STATE.SYSTEM_VERIFIED ? 'Applied and verified by the progression system.'
           : state === EVIDENCE_STATE.MANUAL ? 'Acknowledged as already applied. No ability score was changed by the acknowledgment.'
             : state === EVIDENCE_STATE.PARTIAL ? `${slot.filledCount} of ${slot.count} acknowledged; the remainder is not verified.`
@@ -111,7 +111,7 @@ export function buildProgressReview(report, actor, { user = null } = {}) {
       // for the level (the guard blocks additive Apply once any record exists).
       canAcknowledge: !deferred && remaining > 0 && state !== EVIDENCE_STATE.SYSTEM_VERIFIED && !complete,
       canApply: !deferred && !hasAnyRecord && remaining > 0,
-      expectedLabel: `${slot.count} increase${slot.count === 1 ? '' : 's'}`,
+      expectedLabel: deferred ? 'Entitlement count pending rules review' : `${slot.count} increase${slot.count === 1 ? '' : 's'}`,
     };
   });
   return { rows, hasRows: rows.length > 0, isGM: user?.isGM === true };
@@ -123,13 +123,14 @@ const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<'
  * Focused confirmation dialog body. Shows the exact entitlement, lets the player pick any valid (including partial) selection, states plainly that no
  * ability score changes, and requires an explicit confirmation checkbox. `initial` pre-fills a correction.
  */
-export function buildAcknowledgmentDialogContent({ label, entitledCount, remaining, cap = 1, initial = {}, mode = 'acknowledge' } = {}) {
+export function buildAcknowledgmentDialogContent({ label, entitledCount, remaining, cap = 1, initial = {}, mode = 'acknowledge', gm = false } = {}) {
   const inputs = ABILITY_KEYS.map(k => `<label class="swse-ack-ability">${LABEL[k]} <input type="number" name="ability-${k}" min="0" max="${Math.max(1, Number(cap) || 1)}" step="1" value="${Number(initial?.[k]) > 0 ? Number(initial[k]) : 0}"></label>`).join(' ');
   const verb = mode === 'withdraw' ? 'withdraw' : mode === 'correct' ? 'correct' : mode === 'supersede' ? 'supersede' : 'acknowledge';
   return `<form class="swse-ack-form">
     <p><strong>${esc(label)}</strong>: this level grants <strong>${esc(entitledCount)}</strong> ability increase${Number(entitledCount) === 1 ? '' : 's'}${remaining !== undefined && remaining !== null ? `; ${esc(remaining)} not yet accounted for` : ''}.</p>
     <p>Enter the increase${Number(entitledCount) === 1 ? '' : 's'} you already applied by hand. You may enter fewer than the full amount (a partial acknowledgment); the rest stays "not verified".</p>
     <div class="swse-ack-abilities">${inputs}</div>
+    ${gm ? '<p><em>As a GM this is recorded as a <strong>GM-authorized acknowledgment</strong>: your statement that the increase was already applied. It does not prove that any particular change was made.</em></p>' : ''}
     <p><em>This only records your statement. <strong>No ability score, HP, or other statistic will be changed.</strong></em></p>
     <label class="swse-ack-confirm"><input type="checkbox" name="confirm-${verb}" value="1"> I confirm this is accurate and I want to ${verb} it.</label>
   </form>`;
@@ -140,18 +141,27 @@ function rootOf(html) {
   return el && typeof el.querySelector === 'function' ? el : null;
 }
 
-/** Read the dialog result. Returns {confirmed, increases}; an unconfirmed or unreadable dialog is never treated as consent. */
+/**
+ * Read the dialog result, fail closed (UI-01). All six fields must be present and be whole numbers >= 0; an intentional 0 is allowed. Anything else
+ * (blank, missing, unreadable, fractional, negative, non-numeric) is reported in `invalid` and the caller must refuse - a bad field is never dropped
+ * to leave a smaller "valid" selection. Over-cap/over-entitlement amounts are still judged by the service.
+ * @returns {{confirmed:boolean, increases:object, invalid:string[]}}
+ */
 export function readAcknowledgmentDialog(html) {
   const root = rootOf(html);
-  if (!root) return { confirmed: false, increases: {} };
+  if (!root) return { confirmed: false, increases: {}, invalid: ['dialog'] };
   const confirmed = !!root.querySelector('input[type="checkbox"][name^="confirm-"]')?.checked;
-  const increases = {};
+  const increases = {}; const invalid = [];
   for (const k of ABILITY_KEYS) {
-    const raw = root.querySelector(`input[name="ability-${k}"]`)?.value;
-    const n = Number(raw);
-    if (Number.isFinite(n) && n !== 0) increases[k] = n; // not clamped: the service validation rejects an invalid amount
+    const el = root.querySelector(`input[name="ability-${k}"]`);
+    const raw = el?.value;
+    const text = typeof raw === 'string' ? raw.trim() : (typeof raw === 'number' ? String(raw) : '');
+    if (!el || text === '' || !/^\d+$/.test(text)) { invalid.push(k); continue; }
+    const n = Number(text);
+    if (!Number.isSafeInteger(n)) { invalid.push(k); continue; }
+    if (n > 0) increases[k] = n;
   }
-  return { confirmed, increases };
+  return { confirmed, increases, invalid };
 }
 
 export default { EVIDENCE_STATE, evidenceStateFor, buildProgressReview, buildAcknowledgmentDialogContent, readAcknowledgmentDialog };

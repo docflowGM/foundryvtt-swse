@@ -134,9 +134,9 @@ await check('E8. confirmation dialog: states the exact entitlement, allows parti
   assert.match(html, /name="confirm-acknowledge"/); assert.equal((html.match(/name="ability-/g) || []).length, 6);
   assert.match(V.buildAcknowledgmentDialogContent({ label: 'x<script>', entitledCount: 2 }), /x&lt;script&gt;/, 'label escaped');
   const mk = (confirmed, vals) => ({ querySelector: (sel) => sel.includes('confirm-') ? { checked: confirmed } : (sel.match(/ability-(\w+)/) ? { value: String(vals[sel.match(/ability-(\w+)/)[1]] ?? 0) } : null) });
-  assert.deepEqual(V.readAcknowledgmentDialog(mk(true, { con: 1 })), { confirmed: true, increases: { con: 1 } });
+  assert.deepEqual(V.readAcknowledgmentDialog(mk(true, { con: 1 })), { confirmed: true, increases: { con: 1 }, invalid: [] });
   assert.equal(V.readAcknowledgmentDialog(mk(false, { con: 1 })).confirmed, false);
-  assert.deepEqual(V.readAcknowledgmentDialog(null), { confirmed: false, increases: {} });
+  assert.deepEqual(V.readAcknowledgmentDialog(null), { confirmed: false, increases: {}, invalid: ['dialog'] });
   assert.deepEqual(V.readAcknowledgmentDialog([mk(true, { str: 2 })]).increases, { str: 2 }, 'jQuery-style wrapper');
   // invalid amounts are not clamped: the service rejects them
   const a = actorAt(9); const res = await W.runAbilityEvidenceOperation(a, 'acknowledge', { level: 8, increases: V.readAcknowledgmentDialog(mk(true, { str: 5 })).increases }, { user: P1, loaders: loaders() });
