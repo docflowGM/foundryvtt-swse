@@ -110,10 +110,20 @@ function buildHpGainHistory(actor, sessionState = {}) {
     amount,
     method: summary.hpGainMethod || null,
     formula: summary.hpGainFormula || null,
-    hitDie: parsedFormula.hitDie,
-    constitutionModifier: Number.isFinite(parsedFormula.constitutionModifier)
+    constitutionModifier: Number.isFinite(Number(summary.hpGainConMod)) && summary.hpGainConMod !== null
+      ? Number(summary.hpGainConMod)
+      : Number.isFinite(parsedFormula.constitutionModifier)
       ? parsedFormula.constitutionModifier
       : readActorConModifier(actor),
+    // Evidence of how this gain was earned. The rules recorded are those active when the level was gained (captured by the
+    // summary step); they are never recomputed from today's settings. Absent evidence stays null - nothing is fabricated.
+    hitDie: Number.isFinite(Number(summary.hpGainHitDie)) ? Number(summary.hpGainHitDie) : parsedFormula.hitDie,
+    generationMethod: summary.hpGainMethod || null,
+    autoMaximum: summary.hpGainAutoMax === true ? true : (summary.hpGainRules ? false : null),
+    playerChoice: summary.hpGainPlayerChoice === true,
+    rolledResult: Number.isFinite(Number(summary.hpGainRolled)) ? Number(summary.hpGainRolled) : null,
+    houseRules: summary.hpGainRules ? { ...summary.hpGainRules } : null,
+    sessionId: completedSessionId(sessionState) || null,
     timestamp,
     source: 'progression-finalizer',
   };

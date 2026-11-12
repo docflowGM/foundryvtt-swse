@@ -58,6 +58,21 @@ export function readHpLedger(actor) {
   return { conMod, featBonus, bonus, level };
 }
 
+/** Ledger for a freshly generated character: the CON modifier inside the starting HP, no feat / bonus contribution yet. */
+export function buildChargenLedger({ conMod = 0 } = {}) {
+  return { conMod: finite(conMod) ?? 0, featBonus: 0, bonus: 0, level: 1 };
+}
+
+/**
+ * Ledger after a level-up gain. An existing ledger keeps its recorded contributions and only advances `level`; a legacy
+ * actor without one is baselined from its PRE-transaction state (nothing is invented). Null when unreadable.
+ */
+export function buildLevelUpLedger(actor, targetLevel) {
+  const before = readHpLedger(actor) || readHpContributions(actor);
+  if (!before || before.conMod === null || before.featBonus === null || before.bonus === null) return null;
+  return { conMod: before.conMod, featBonus: before.featBonus, bonus: before.bonus, level: Math.max(1, finite(targetLevel) ?? 1) };
+}
+
 export function hasRecordedClassHistory(actor) {
   return Array.from(actor?.items ?? []).some(i => i?.type === 'class')
     || (Array.isArray(actor?.system?.progression?.classLevels) && actor.system.progression.classLevels.length > 0);

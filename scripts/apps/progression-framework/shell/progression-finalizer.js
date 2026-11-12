@@ -73,7 +73,6 @@ import { ForcePlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progress
 import { SkillsLanguagesPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js';
 import { SpeciesBackgroundPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/species-background-plan-builder.js';
 import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
-import { readHpContributions, readHpLedger, HP_LEDGER_PATH } from '/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js';
 import { ProgressionMetadataPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-metadata-plan-builder.js';
 
 /* -------------------------------------------------------------------------- */
@@ -1504,14 +1503,6 @@ export class ProgressionFinalizer {
       if (Number.isFinite(startingHp) && startingHp > 0) {
         set['system.hp.value'] = startingHp;
         set['system.hp.max'] = startingHp;
-        // Ledger of the variable contributions already inside this maximum (only when the maximum is the one this
-        // finalizer computed; an explicit externally supplied startingHp has unknown contents -> no ledger, preserved).
-        if (!Number(summary.startingHp || 0)) {
-          set[HP_LEDGER_PATH] = {
-            conMod: isDroidProgression ? 0 : this._abilityMod(attrValues?.con ?? actor?.system?.abilities?.con?.base ?? actor?.system?.abilities?.con?.value ?? 10),
-            featBonus: 0, bonus: 0, level: 1,
-          };
-        }
       }
 
       const baseStartingCredits = this._computeStartingCredits(clazz, background);
@@ -1581,15 +1572,6 @@ export class ProgressionFinalizer {
         });
         set['system.hp.max'] = nextHpMax;
         set['system.hp.value'] = nextHpValue;
-        // Ledger: the new level's gain is now inside the maximum. An existing ledger only advances its level;
-        // contributions it already recorded are untouched so a later CON / feat change applies as a delta. A legacy
-        // actor with no ledger is baselined from its PRE-transaction state (no history is invented).
-        const priorLedger = readHpLedger(actor);
-        const before = priorLedger || readHpContributions(actor);
-        const ledgerLevel = Number(sessionState.targetLevel || sessionState.progressionSession?.targetLevel || (Number(actor?.system?.level || 1) + 1)) || 1;
-        if (before && before.conMod !== null && before.featBonus !== null && before.bonus !== null) {
-          set[HP_LEDGER_PATH] = { conMod: before.conMod, featBonus: before.featBonus, bonus: before.bonus, level: ledgerLevel };
-        }
         set['system.progression.lastHpGain'] = {
           amount: hpGain,
           method: summary.hpGainMethod || null,

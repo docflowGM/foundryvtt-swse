@@ -143,3 +143,31 @@ Full matrix and defects: `reconciliation-v2-house-rule-coverage.md`. Implemented
 ## House-rule addendum - independent review follow-up (HR-F1..F3)
 
 Details in `reconciliation-v2-house-rule-coverage.md` section 7. HR-F1: inferred (unstamped) house-rule items are now uncertain - they satisfy the grant expectation but also count as unattributed, so an ordinary selection is never reported definitely missing because of them. HR-F2: automatic grant paths use the `activeGM` election; every creation uses a deterministic document id with `keepId` so a concurrent duplicate is rejected by Foundry's primary key; same-client re-entry shares one operation. HR-F3: Armored Defense already works through the owned talent in the real DefenseCalculator (no competing evaluator added; character-only scope and the proficiency requirement noted for the owner). The HP-logging and targeted-routing items from the Phase 6 review were handled in `50a6800` (HP Resolve disabled and the recomputeHP crash intentionally left pinned; focused step routing implemented) - the review of 71483df predates that commit. RECON-005 remains unresolved.
+
+## HP authority (owner decisions: preserve historical HP; house-rule-aware generation)
+
+**Model.** Maximum HP is additive history. `ActorEngine.recomputeHP` no longer reconstructs a maximum; it applies verified deltas
+(CON modifier x recorded levels, HP-feat contribution, `hp.bonus`) against `system.progression.hpLedger`
+(`scripts/engine/HP/hp-accounting.js`). No ledger / no class history / unreadable input => the stored maximum is preserved.
+Recompute never touches current HP; the level-up recovery policy is applied only when a gain is earned.
+
+**Live write path (correction).** Level-up and chargen HP are written by `ProgressionEconomyPlanBuilder`
+(the finalizer's inline HP keys are stripped and replaced by it). The previous commit (`ac6c35b`) wrote the ledger in the
+finalizer's inline block, which the economy builder discards; the ledger is now written by the economy builder.
+
+**Generation.** One precedence rule, `HPGeneratorEngine.resolveMethod`: levels <= `maxHPLevels` are automatic maximum and
+override `hpGeneration`. `SummaryStep._checkHPGainResolution` previously let the average branch win at those levels (verified,
+now fixed and covered by a test that runs the real step). Player-chosen Maximum under Roll / Roll-with-minimum is an existing
+supported UI choice and is preserved and recorded (`playerChoice`).
+
+**History.** Each new grant records level, class/class level, hit die, method used, rolled result, CON modifier, final gain,
+session id, timestamp and the effective `hpGeneration` / `maxHPLevels` / `levelUpHpRecoveryMode` captured when it was earned.
+Missing evidence stays `null`; nothing is migrated or fabricated. Settings changed later never rewrite earlier results.
+
+**Reconciliation.** The HP audit reads the ledger's CON modifier, reports a definite issue only with complete history, and never
+compares a recorded gain with today's settings. HP Resolve remains disabled.
+
+**Observations, not changed.** `ConfirmStep` (steps/confirm-step.js) has no importers and carries a divergent HP check (dead;
+deletion candidate). Chargen starting HP uses `computeStartingHP` (class base HP + CON) and does not consult `maxHPLevels`.
+The finalizer's inline level-up/chargen HP block duplicates the economy builder's (also dead while the builder is applied).
+Rules question HP-001 (level-up + CON change in one transaction) is in the decision register.

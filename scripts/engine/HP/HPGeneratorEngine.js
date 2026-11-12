@@ -8,6 +8,26 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class HPGeneratorEngine {
   /**
+   * The ONE precedence rule for how a level's HP is generated: levels <= maxHPLevels are automatic maximum and
+   * override the selected method; otherwise the selected method applies (unknown => average, as before).
+   * Pure over its inputs so the engine, the level-up summary and reconciliation cannot disagree.
+   * @returns {{method:'maximum'|'average'|'roll'|'average_minimum', autoMax:boolean}}
+   */
+  static resolveMethod({ newLevel, hpGeneration = ProgressionRules.getHPGeneration(), maxHPLevels = ProgressionRules.getMaxHPLevels() } = {}) {
+    if (Number(newLevel) <= Number(maxHPLevels)) return { method: 'maximum', autoMax: true };
+    return { method: ['maximum', 'average', 'roll', 'average_minimum'].includes(hpGeneration) ? hpGeneration : 'average', autoMax: false };
+  }
+
+  /** Effective HP house rules at the moment a level is earned (recorded with the grant as historical evidence). */
+  static snapshotRules() {
+    return {
+      hpGeneration: ProgressionRules.getHPGeneration(),
+      maxHPLevels: ProgressionRules.getMaxHPLevels(),
+      levelUpHpRecoveryMode: ProgressionRules.getLevelUpHpRecoveryMode(),
+    };
+  }
+
+  /**
    * Calculate HP gain for a level-up or character creation.
    * Consolidates logic from chargen-improved.js and levelup-shared.js.
    *
@@ -34,7 +54,8 @@ export class HPGeneratorEngine {
     let hpGain = 0;
 
     // Early levels get maximum HP
-    if (newLevel <= maxHPLevels) {
+    const resolved = this.resolveMethod({ newLevel, hpGeneration, maxHPLevels });
+    if (resolved.autoMax) {
       hpGain = die + conMod;
       SWSELogger.log(
         `[HPGeneratorEngine] Level ${newLevel} (auto-max): ${hpGain} HP ` +

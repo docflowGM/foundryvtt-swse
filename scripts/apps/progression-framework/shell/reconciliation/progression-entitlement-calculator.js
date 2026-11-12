@@ -143,8 +143,12 @@ function buildHpAudit(actor, summaries, heroicLevel) {
     status = 'unverifiable';
   }
 
+  // Historical evidence: a recorded gain stands on the rules that were active when it was earned. It is never compared with
+  // today's hpGeneration / maxHPLevels, so a legitimate roll, average or maximum is never an error because settings changed later.
+  const withRules = records.filter(record => record.houseRules && typeof record.houseRules === 'object').length;
   return {
     accounting: auditHp(actor),
+    historyEvidence: { recorded: records.length, withRules, withoutRules: records.length - withRules },
     status, current, lower, upper, exact, expectedRecords, recordCount: records.length, missing,
     label: exact !== null ? String(exact) : `${lower}${upper === null ? '+' : `-${upper}`} plausible; ${missing} record${missing === 1 ? '' : 's'} missing`,
     issue,

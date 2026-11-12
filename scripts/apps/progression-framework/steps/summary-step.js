@@ -17,6 +17,7 @@ import { ProgressionFinalizer } from '../shell/progression-finalizer.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 import { buildClassSkillKeySet, buildSkillDisplay, normalizeSkillKey } from '../utils/skill-display.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { HPGeneratorEngine } from '/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js';
 import { RollEngine } from '/systems/foundryvtt-swse/scripts/engine/roll-engine.js';
 import { resolveLevelUpHitDie } from '/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js';
 
@@ -958,11 +959,19 @@ export class SummaryStep extends ProgressionStepPlugin {
       const maximumGain = Math.max(1, hitDie + conMod);
       const averageDie = Math.floor(hitDie / 2) + 1;
       const averageGain = Math.max(1, averageDie + conMod);
-      const needsResolution = newLevel > maxHPLevels && (hpGeneration === 'roll' || hpGeneration === 'average_minimum');
+      // Same precedence as HPGeneratorEngine: automatic-maximum levels override the selected method.
+      const resolvedRule = HPGeneratorEngine.resolveMethod({ newLevel, hpGeneration, maxHPLevels });
+      const needsResolution = resolvedRule.method === 'roll' || resolvedRule.method === 'average_minimum';
+      const rules = HPGeneratorEngine.snapshotRules();
 
-      if (needsResolution && this._hpGainState.resolved && Number(this._hpGainState.gain) > 0) {
+      // Keep an earlier player resolution (a roll, or an explicit maximum choice) - never an automatic one produced
+      // under different rules, which would otherwise be recorded as if the player had resolved it under these rules.
+      const priorPlayerResolution = ['rolled', 'rolled-average-minimum'].includes(this._hpGainState.method) || this._hpGainState.playerChoice === true;
+      if (needsResolution && this._hpGainState.resolved && Number(this._hpGainState.gain) > 0 && priorPlayerResolution) {
         this._hpGainState = {
           ...this._hpGainState,
+          autoMax: false,
+          rules,
           needsResolution: true,
           hitDie,
           dieFormula: `1d${hitDie}`,
@@ -978,30 +987,25 @@ export class SummaryStep extends ProgressionStepPlugin {
       let resolved = true;
       let gain = maximumGain;
       let method = 'maximum';
-      let ruleLabel = newLevel <= maxHPLevels ? `GM rule: levels 1-${maxHPLevels} receive maximum HP` : 'GM rule: maximum HP';
+      let ruleLabel = resolvedRule.autoMax ? `GM rule: levels 1-${maxHPLevels} receive maximum HP` : 'GM rule: maximum HP';
 
       if (needsResolution) {
         resolved = false;
         gain = 0;
         method = null;
         ruleLabel = hpGeneration === 'average_minimum' ? 'Roll HP; minimum average applies' : 'Roll HP or take maximum';
-      } else if (hpGeneration === 'average') {
+      } else if (resolvedRule.method === 'average') {
         gain = averageGain;
         method = 'average';
         ruleLabel = 'GM rule: average HP';
-      } else if (hpGeneration === 'maximum' || newLevel <= maxHPLevels) {
-        gain = maximumGain;
-        method = 'maximum';
-      } else {
-        gain = averageGain;
-        method = 'average';
-        ruleLabel = `GM rule: ${hpGeneration || 'average'} HP`; 
       }
 
       this._hpGainState = {
         resolved,
         gain,
         method,
+        autoMax: resolvedRule.autoMax,
+        rules,
         formula: `1d${hitDie} ${conMod >= 0 ? '+' : ''}${conMod}`,
         needsResolution,
         hitDie,
@@ -1065,6 +1069,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       resolved: true,
       gain: maxHPGain,
       method: 'maximum',
+      playerChoice: true,
       ruleLabel: 'Player chose maximum HP',
     };
     this._commitBusinessItems(activeShell);
@@ -1699,6 +1704,13 @@ export class SummaryStep extends ProgressionStepPlugin {
       hpGainResolved: !!this._hpGainState?.resolved,
       hpGainMethod: this._hpGainState?.method || null,
       hpGainFormula: this._hpGainState?.formula || '',
+      // Evidence for the historical HP record (what was rolled, which die / CON modifier, which rules were active)
+      hpGainHitDie: this._hpGainState?.hitDie ?? null,
+      hpGainConMod: Number.isFinite(Number(this._hpGainState?.conMod)) ? Number(this._hpGainState.conMod) : null,
+      hpGainRolled: this._hpGainState?.rollTotal ?? null,
+      hpGainAutoMax: this._hpGainState?.autoMax === true,
+      hpGainPlayerChoice: this._hpGainState?.playerChoice === true,
+      hpGainRules: this._hpGainState?.rules || null,
       creditDelta: this._activeMode === 'levelup' ? Number(this._creditsState?.amount || 0) : 0,
       creditDeltaSources: this._activeMode === 'levelup' ? (this._creditsState?.sources || []) : [],
       finalCredits: this._activeMode === 'levelup' ? Number(this._creditsState?.final || 0) : Number(this._creditsState?.amount || 0),
