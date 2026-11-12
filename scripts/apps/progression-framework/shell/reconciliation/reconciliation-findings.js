@@ -33,6 +33,7 @@ const CODE_FOR_ROW = Object.freeze({
   'reflex-class-defense': 'DEFENSE_MISMATCH',
   'will-class-defense': 'DEFENSE_MISMATCH',
   'hp-max': 'HP_LEDGER_MISMATCH',
+  'force-points-max': 'FORCE_POINT_MAX_MISMATCH',
 });
 
 function openCount(slot) {
@@ -90,9 +91,9 @@ function derivedFinding(row) {
     // A repair is offered only when the system can PROVE it yields the correct result. BAB / defense come from the
     // one canonical recalculation. Max HP stays review + ignore only: history-preserving HP (engine/HP/hp-accounting.js) never
     // reconstructs a maximum, so there is nothing safe to "resolve" to until the owner approves an HP repair flow.
-    resolve: isHp
-      ? { kind: 'none', label: '', reviewOnly: true }
-      : { kind: 'recalc', label: 'Recalculate' },
+    resolve: row.resolve && typeof row.resolve === 'object'
+      ? row.resolve
+      : (isHp ? { kind: 'none', label: '', reviewOnly: true } : { kind: 'recalc', label: 'Recalculate' }),
     ignorable: true,
   };
 }

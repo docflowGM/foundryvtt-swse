@@ -25,6 +25,7 @@ const inFlight = new Set();
  *   findFindings(actor) -> finding[]      fresh findings (all, including ignored)
  *   recalcAll(actor)                      ActorEngine.recalcAll
  *   grantHouseRule(actor, settingKey)     HouseRuleFeatGrants.grantMissing
+ *   setForcePointMax(actor, value)        ActorEngine.updateActor('system.forcePoints.max')
  *   openStep(dataset)                     opens the existing reconcile-mode progression step
  *   confirm(message) -> Promise<boolean>  confirmation dialog
  * @returns {Promise<{status:string, message:string}>}
@@ -54,6 +55,13 @@ export async function resolveFinding({ actor, findingId, deps }) {
         // creates through ActorEngine with house-rule provenance, and never consumes an ordinary selection.
         await deps.grantHouseRule(actor, resolve.dataset?.settingKey);
         return verify(actor, before, deps, 'The house-rule grant was added.', 'The grant could not be added. Check that the rule is still enabled.');
+      }
+      case 'set-force-point-max': {
+        // Writes the value the adapter derived from the canonical formula, through the injected ActorEngine writer. Verified by subject.
+        const value = Number(resolve.dataset?.value);
+        if (!Number.isFinite(value) || value < 0) return { status: 'unsupported', message: 'There is no safe automatic repair for this item.' };
+        await deps.setForcePointMax(actor, value);
+        return verify(actor, before, deps, 'Maximum Force Points was updated.', 'Maximum Force Points did not change. Review your class levels and Force Point feats.');
       }
       default:
         return { status: 'unsupported', message: 'There is no safe automatic repair for this item.' };
