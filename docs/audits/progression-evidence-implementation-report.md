@@ -26,3 +26,23 @@ but two DIFFERENT selections prepared from the same stale read by two clients an
 **Tests.** `tests/ability-increase-entitlement-integrity.test.mjs` (11 groups): normal level-up records the entering level; chargen fabricates no history; the level-9-actor / level-8-entitlement regression through the real
 finalizer compile (and the old builder fails it); fail-closed identity matrix; single-step; apply-once with level 4 record untouched and the reconciler seeing level 8 filled and no level 9 slot; duplicate refusal at the
 boundary and at a fresh compile; same-client concurrency; stale scores; failed mutation records nothing and releases the guard. ActorEngine is a stub applying `plan.set`; real ActorEngine / Foundry behavior is untested.
+
+## Checkpoint B - canonical completion reader - IMPLEMENTED, Node-tested
+`reconciliation/progression-completion-reader.js` is the ONE read-only interpretation of the persisted progression evidence (first domain: ability-score increases from
+`system.progression.abilityIncreaseHistory`). API: `getEntitlementCompletion(actor, entitlementId, ctx)`, `getAbilityIncreaseCompletion`, batch `getAbilityIncreaseCompletions`. The entitlement COUNT and the
+deferred-rules flag are supplied by the caller from the existing authorities (`_abilityIncreaseCountForActor`, RECON-002/003); the reader owns no rules, writes nothing, and never reconstructs history from current scores.
+
+Per entitlement it returns: stable id, type, level, expected count, applied / attested / GM-authorized selections, remaining unknown, classification (`SYSTEM_VERIFIED`, `SYSTEM_COMMITTED_UNVERIFIED`,
+`PLAYER_ATTESTED`, `GM_AUTHORIZED`, `PARTIAL`, `UNVERIFIABLE`; `CONFIRMED_DISCREPANCY` is never produced from history alone), `provenShortfall`, evidence sources, session references, verification state,
+conflicts and preserved legacy records.
+
+Rules implemented from the approved decisions: Q2 - a record with no recognised provenance is preserved and shown but is UNVERIFIABLE, never trusted as system evidence (a recognised writer label only claims a
+source: `SYSTEM_COMMITTED_UNVERIFIED`; `SYSTEM_VERIFIED` requires a recorded `verification.state === 'verified'`, which nothing writes yet - Checkpoint C); Q3 - partial manual evidence leaves the remainder
+unknown (not an open finding) while a short SYSTEM record remains a proven shortfall; Q1/C7 - deferred (droid / Nonheroic) entitlements ignore attestations; C1 - system and manual records for one level are reported as a conflict and the
+system record wins; withdrawn / superseded records do not count; duplicates merge (no double counting); C6 - `lastAbilityIncrease` never overrides the history and is supplementary only for an untracked level.
+
+Reconciler integration: `_buildAbilityIncreaseSlots` now derives status and counts from the reader; its private history parser (`_readAbilityIncreaseHistory` + three helpers) was removed (no competing reader). Behavior change by decision (Q2):
+a history record with no recognised `source` used to fill the slot and now shows as unverifiable. Existing slot ids, labels and the open / unverifiable / filled semantics are otherwise unchanged; slots gain a `completion` block.
+Other domains are NOT migrated to the reader (feats, talents, skills, Force, HP keep their existing readers until proven equivalent).
+
+Tests: `tests/progression-completion-reader.test.mjs` (13 groups); `tests/reconciliation-v2-contract.test.mjs` 14b updated and 14c / 14d added.

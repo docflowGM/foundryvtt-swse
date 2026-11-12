@@ -175,9 +175,23 @@ check('14. no ability-increase history: unverifiable, not missing', () => {
   assert.equal(count(r, 'abilityIncreases', 'unverifiable'), 2);
 });
 
-check('14b. a partial durable record IS a proven shortfall', () => {
-  const r = run(actor({ level: 4, ledger: [row('Soldier', 4)], items: [cls('Soldier', 4)], abilityHist: [{ level: 4, increases: { str: 1 } }] }));
+check('14b. a partial durable SYSTEM record (recognised writer) IS a proven shortfall', () => {
+  const r = run(actor({ level: 4, ledger: [row('Soldier', 4)], items: [cls('Soldier', 4)], abilityHist: [{ level: 4, increases: { str: 1 }, source: 'progression-finalizer' }] }));
   assert.equal(count(r, 'abilityIncreases', 'open'), 1);
+});
+
+check('14c. Q2: a record of unrecognised provenance is preserved and shown but is NOT trusted as system evidence (unverifiable, never open, never filled)', () => {
+  const r = run(actor({ level: 4, ledger: [row('Soldier', 4)], items: [cls('Soldier', 4)], abilityHist: [{ level: 4, increases: { str: 1, dex: 1 } }] }));
+  const slot = r.slots.abilityIncreases[0];
+  assert.equal(slot.status, 'unverifiable'); assert.equal(count(r, 'abilityIncreases', 'open'), 0); assert.equal(count(r, 'abilityIncreases', 'filled'), 0);
+  assert.equal(slot.selections.length, 2, 'the unrecognised record is still shown'); assert.ok(slot.selections.every(sel => /\+1$/.test(sel))); assert.match(slot.unverifiableReason, /provenance/);
+  assert.equal(slot.completion.classification, 'UNVERIFIABLE');
+});
+
+check('14d. a complete record from a recognised writer fills the slot as committed-but-UNVERIFIED (a label is never post-commit verification)', () => {
+  const r = run(actor({ level: 4, ledger: [row('Soldier', 4)], items: [cls('Soldier', 4)], abilityHist: [{ level: 4, increases: { str: 1, dex: 1 }, source: 'progression-finalizer' }] }));
+  const slot = r.slots.abilityIncreases[0];
+  assert.equal(slot.status, 'filled'); assert.equal(slot.completion.classification, 'SYSTEM_COMMITTED_UNVERIFIED'); assert.equal(slot.completion.verification, 'committed-unverified');
 });
 
 check('15. a thrown layer is an engine failure, never ok/empty, and carries no player finding', () => {

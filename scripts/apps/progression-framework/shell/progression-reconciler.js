@@ -38,6 +38,7 @@ import {
 } from '../../../engine/progression/utils/progression-evidence.js';
 import { buildFindings, buildOptionalActions, partitionFindings, readIgnored } from './reconciliation/reconciliation-findings.js';
 import { derivedLifecycle } from './reconciliation/derived-lifecycle.js';
+import { getAbilityIncreaseCompletion, COMPLETION } from './reconciliation/progression-completion-reader.js';
 import { AsyncReconciliationEnrichment } from './reconciliation/async-enrichment.js';
 import { actorHasGrant, enabledGrants, getFeatTalentRulesSignature } from '../../../houserules/house-rule-grant-table.js';
 import {
@@ -282,24 +283,6 @@ function featureQuantity(feature = {}) {
 function normalizeLevel(value) {
   const level = Number(value);
   return Number.isFinite(level) && level > 0 ? Math.floor(level) : 0;
-}
-
-function abilityIncreaseRecordLevel(entry = {}) {
-  return normalizeLevel(entry.level ?? entry.characterLevel ?? entry.acquiredAtLevel ?? entry.sourceLevel);
-}
-
-function normalizeAbilityIncreases(value = {}) {
-  const source = value?.increases || value?.abilityIncreases || value || {};
-  const out = {};
-  for (const key of ABILITY_KEYS) {
-    const delta = Math.max(0, Math.floor(Number(source?.[key] ?? 0) || 0));
-    if (delta > 0) out[key] = delta;
-  }
-  return out;
-}
-
-function abilityIncreaseCount(value = {}) {
-  return Object.values(normalizeAbilityIncreases(value)).reduce((sum, delta) => sum + delta, 0);
 }
 
 function normalizeSourceToken(value) {
@@ -1558,36 +1541,34 @@ export class ProgressionReconciler {
       expectedLevels.push(level);
     }
 
-    const history = this._readAbilityIncreaseHistory(actor);
-    const byLevel = new Map();
-    for (const entry of history) {
-      const level = abilityIncreaseRecordLevel(entry);
-      if (!level) continue;
-      const previous = byLevel.get(level) || { level, count: 0, increases: {} };
-      const increases = normalizeAbilityIncreases(entry);
-      for (const [key, delta] of Object.entries(increases)) {
-        previous.increases[key] = Math.max(previous.increases[key] || 0, delta);
-      }
-      previous.count = Math.max(previous.count || 0, abilityIncreaseCount(entry));
-      byLevel.set(level, previous);
-    }
-
+    // Evidence is interpreted by the ONE canonical completion reader (progression-completion-reader.js); the entitlement COUNT stays with
+    // _abilityIncreaseCountForActor. Q2: records without a recognised provenance are preserved but never satisfy an entitlement as system
+    // evidence; Q3: partial manual evidence leaves the remainder UNKNOWN (unverifiable), while a short SYSTEM record is a proven shortfall.
+    const isDeferred = actor?.type === 'droid' || actor?.system?.isDroid === true || classSummaries.some(summary => summary.isNonheroic === true);
     return expectedLevels.map(level => {
       const expectedCount = this._abilityIncreaseCountForActor(actor, level, classSummaries);
-      const record = byLevel.get(level) || null;
-      const filledCount = Math.min(expectedCount, Number(record?.count || 0) || 0);
-      const shortfall = Math.max(0, expectedCount - filledCount);
-      // A shortfall is only PROVEN when a durable record for this level exists and is partial.
-      // No record at all means the history is absent (older/imported actors), which cannot show
-      // that an increase was skipped, so it is unverifiable rather than missing.
-      const openCount = record ? shortfall : 0;
-      const unverifiableCount = record ? 0 : shortfall;
-      const selections = Object.entries(record?.increases || {})
-        .filter(([, delta]) => Number(delta || 0) > 0)
+      const completion = getAbilityIncreaseCompletion(actor, level, { expectedCount, rulesDeferred: isDeferred });
+      const C = COMPLETION;
+      const satisfied = [C.SYSTEM_VERIFIED, C.SYSTEM_COMMITTED_UNVERIFIED, C.PLAYER_ATTESTED, C.GM_AUTHORIZED].includes(completion.classification);
+      const countOfSel = (sel) => Object.values(sel || {}).reduce((n, d) => n + d, 0);
+      const supported = completion.applied && countOfSel(completion.applied) ? completion.applied
+        : (countOfSel(completion.gmAuthorized) ? completion.gmAuthorized : completion.attested);
+      const knownCount = Math.min(expectedCount, countOfSel(supported));
+      let filledCount = 0; let openCount = 0; let unverifiableCount = 0;
+      if (satisfied) filledCount = expectedCount;
+      else if (completion.classification === C.PARTIAL) {
+        filledCount = knownCount;
+        if (completion.provenShortfall) openCount = Math.max(0, expectedCount - knownCount);
+        else unverifiableCount = Math.max(0, expectedCount - knownCount);
+      } else unverifiableCount = expectedCount;
+      const selections = [
+        ...Object.entries(supported || {}),
+        ...completion.legacy.flatMap(entry => Object.entries(entry.increases || {})),
+      ].filter(([, delta]) => Number(delta || 0) > 0)
         .map(([key, delta]) => `${ABILITY_LABELS[key] || key.toUpperCase()} +${delta}`);
 
       return {
-        id: `ability-increase-level-${level}`,
+        id: completion.entitlementId,
         type: 'ability-increase',
         characterLevel: level,
         levelLabel: `Level ${level}`,
@@ -1596,24 +1577,20 @@ export class ProgressionReconciler {
         openCount,
         status: openCount > 0 ? 'open' : (unverifiableCount > 0 ? 'unverifiable' : 'filled'),
         unverifiableCount,
-        unverifiableReason: unverifiableCount > 0 ? 'No ability-increase history record exists for this level.' : '',
+        unverifiableReason: unverifiableCount > 0
+          ? (completion.legacy.length ? 'A history record exists for this level but its provenance is not recognised, so it is shown but not counted as system evidence.'
+            : (completion.classification === C.PARTIAL ? 'Only part of this entitlement is acknowledged; the rest is not verified.' : 'No ability-increase history record exists for this level.'))
+          : '',
         label: `Level ${level} Ability Increase`,
         source: `Character Level ${level}`,
         selections,
+        completion: {
+          classification: completion.classification, verification: completion.verification, evidenceSources: completion.evidenceSources,
+          rulesDeferred: completion.rulesDeferred, conflicts: completion.conflicts,
+          attestedCount: countOfSel(completion.attested), gmAuthorizedCount: countOfSel(completion.gmAuthorized), appliedCount: countOfSel(completion.applied),
+        },
       };
     });
-  }
-
-  _readAbilityIncreaseHistory(actor) {
-    const progression = actor?.system?.progression || {};
-    const history = Array.isArray(progression.abilityIncreaseHistory) ? [...progression.abilityIncreaseHistory] : [];
-    const legacy = progression.lastAbilityIncrease;
-    if (legacy && typeof legacy === 'object') {
-      const legacyLevel = abilityIncreaseRecordLevel(legacy);
-      const alreadyTracked = legacyLevel && history.some(entry => abilityIncreaseRecordLevel(entry) === legacyLevel);
-      if (!alreadyTracked) history.push(legacy);
-    }
-    return history;
   }
 
   /**
