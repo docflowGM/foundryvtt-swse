@@ -187,3 +187,8 @@ Not changed without approval.
 `prepareDerivedData` timing and the `swseDerivedApplied` event in a live session; sheet `!` / overlay rendering including the new Optional section; GM-only override
 stamping from the resource editor; `ActorEngine.updateActor` guard behavior for `system.progression.lastForcePointRefresh` and `flags.swse.overrides.*`; two-client behavior;
 compendium-backed class data; hook-driven refresh of open sheets.
+
+### Full test sweep at the end of Phase 5 (all `tests/*.test.mjs`, Node harness, 170 s per-test limit)
+Only five files fail: `force-power-final-integration`, `phase3-force-power-corrections`, `phase4-force-modifier-automation`, `phase5-force-healing-mitigation`,
+`phase6-force-direct-damage`. All five also fail at the PR #1145 merge base (`33ce3f7`; missing module `scripts/combat/damage-system.js`), so they are pre-existing and
+unrelated; no force-power code was touched. `rolling-ci-support-check` (~109 s) passes. No newly introduced failures. Validators: partials, data, `system.json` pass.
