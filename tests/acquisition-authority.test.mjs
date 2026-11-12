@@ -63,22 +63,22 @@ await check('1. open general slot: allowed, stamped with the proven slot context
   assert.match(v.acquisition.sourceSession, /^drop:/);
 });
 
-await check('2. no open entitlement (everything certified-satisfied): player refused BEFORE any change, GM gets the override path', () => {
+await check('2. [STRICT mode, opt-in] no open entitlement: player refused BEFORE any change, GM gets the override path', () => {
   noPrereq();
   const actor = soldier1([], { satisfied: true });
-  const player = acq.validateAcquisition({ actor, item: feat(), isGM: false });
+  const player = acq.validateAcquisition({ actor, item: feat(), isGM: false, strict: true });
   assert.equal(player.decision, 'block');
   assert.equal(player.acquisition, null);
   assert.match(player.reasons.join(' '), /no open feat entitlement/);
-  const gm = acq.validateAcquisition({ actor, item: talent(), isGM: true });
+  const gm = acq.validateAcquisition({ actor, item: talent(), isGM: true, strict: true });
   assert.equal(gm.decision, 'needs-gm');
 });
 
 await check('3. unmet prerequisites (proven, no unresolved terms) block a player; unresolved terms never block', () => {
   AbilityEngine.evaluateAcquisition = () => ({ legal: false, missingPrereqs: ['Base Attack Bonus +5'], unresolved: [] });
-  assert.equal(acq.validateAcquisition({ actor: soldier1(), item: feat() }).decision, 'block');
+  assert.equal(acq.validateAcquisition({ actor: soldier1(), item: feat(), strict: true }).decision, 'block');
   AbilityEngine.evaluateAcquisition = () => ({ legal: false, missingPrereqs: ['Something odd'], unresolved: ['unparsed term'] });
-  assert.equal(acq.validateAcquisition({ actor: soldier1(), item: feat() }).decision, 'allow');
+  assert.equal(acq.validateAcquisition({ actor: soldier1(), item: feat(), strict: true }).decision, 'allow');
 });
 
 await check('4. undeterminable entitlement (unattributed history / engine unavailable) is allowed, never certified into a slot', () => {
@@ -150,15 +150,16 @@ await check('10. deleting a progression item invalidates the memoized report (no
   assert.equal(second.slots.classTalents[0].status, 'open');
 });
 
-await check('11. wiring: the live sheet drop handler gates acquisitions before resolving; class drops never silently add a level for players', () => {
+await check('11. wiring: the live sheet drop handler checks before resolving, and by default NEVER blocks or redirects (manual building supported)', () => {
   const src = fs.readFileSync(path.join(ROOT, 'scripts/sheets/v2/character-like-sheet.js'), 'utf8');
   const gate = src.indexOf('await this._gateItemAcquisition(droppedDocument)');
   const resolve = src.indexOf('await DropResolutionEngine.resolve({\n      actor: this.actor,\n      dropData: data,\n      acquisition');
   assert.ok(gate > 0 && resolve > gate);
-  const body = src.slice(src.indexOf('async _gateItemAcquisition(item)'));
-  assert.match(body, /item\.type === 'class'[\s\S]*if \(!isGM\)[\s\S]*stop: true/);
-  assert.match(body, /validateAcquisition\(/);
-  assert.match(body, /GMGrantDialog\.prompt/);
+  const body = src.slice(src.indexOf('async _gateItemAcquisition(item)'), src.indexOf('async _handleBackgroundDrop'));
+  assert.ok(!/item\.type === 'class'/.test(body), 'class drops are no longer intercepted or redirected to Level Up');
+  assert.ok(!/setSurface\('progression'/.test(body));
+  assert.match(body, /getAcquisitionMode\(\) === 'strict'/);
+  assert.match(body, /verdict\.advisories/);
 });
 
 AbilityEngine.evaluateAcquisition = original;

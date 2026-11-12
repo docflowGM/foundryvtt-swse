@@ -1,24 +1,19 @@
 /**
- * Acquisition authority - ONE gate for interactive feat/talent acquisition (drag-and-drop today;
- * any other interactive path can call it). It is deliberately thin and owns no rules:
+ * Acquisition authority - ONE advisory check for interactive feat/talent acquisition (drag-and-drop
+ * today). Product decision (Phase 6): the progression engine is a convenience, not a requirement.
+ * Players may build entirely by hand; reconciliation helps, it does not police.
  *
- *   identity / repeatability   -> DropResolutionEngine (already applied downstream)
- *   prerequisites / legality   -> AbilityEngine.evaluateAcquisition  (the existing single authority)
- *   available entitlement      -> the reconciliation report (ClassModel + verified evidence)
- *   evidence of the result     -> progression-evidence.js certification
+ *   DEFAULT (advisory): every acquisition is ALLOWED. Proven problems (unmet prerequisites, no open
+ *   entitlement) are returned as `advisories` for a non-blocking notice, and the item is stamped as a
+ *   manual acquisition. Missing provenance alone is never a problem.
  *
- * Decision rules (kept conservative so a pending rules question or missing history can never block a
- * legitimate acquisition):
- *   - BLOCK only on a PROVEN problem: prerequisites demonstrably unmet (no unresolved terms), or the
- *     character demonstrably has no open entitlement of that kind (every slot satisfied, nothing
- *     unverifiable/unattributed/deferred, validation engine healthy).
- *   - Anything undeterminable is `unverifiable`: allowed, recorded as an unattributed player
- *     acquisition, never certified into a slot.
- *   - A GM facing a proven problem is offered the existing GMGrantDialog override (recorded as an
- *     explicit GM grant); a player is refused before any actor change.
- *   - A slot context is stamped only when the only open slots are general-kind (any feat / any
- *     heroic talent). Class-kind slots need class-list / tree eligibility, which this gate does not
- *     decide, so the item is allowed unattributed rather than claimed for a class slot.
+ *   STRICT (opt-in extension point for a GM-controlled campaign rule): the previous behavior - a player
+ *   is refused on a PROVEN problem and a GM is offered the explicit GM-grant dialog. Nothing enables it
+ *   by default; `getAcquisitionMode()` is the single seam a future world setting would drive.
+ *
+ * The check owns no rules: prerequisites -> AbilityEngine.evaluateAcquisition; entitlement -> the
+ * reconciliation report; evidence -> progression-evidence.js. A slot context is stamped only when the
+ * only open slots are general-kind (class-list / tree eligibility is not decided here).
  */
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
@@ -79,9 +74,18 @@ export function assessPrerequisites(actor, item) {
 /**
  * @returns {{decision:'allow'|'block'|'needs-gm', reasons:string[], prerequisites:object, entitlement:object, acquisition:object|null}}
  */
-export function validateAcquisition({ actor, item, isGM = false, user = null, now = new Date().toISOString(), reportOverride = null } = {}) {
+/** Single seam for a future GM-controlled strict mode. Advisory unless explicitly enabled. */
+export function getAcquisitionMode() {
+  try {
+    return globalThis.game?.settings?.get?.('foundryvtt-swse', 'strictAcquisition') === true ? 'strict' : 'advisory';
+  } catch (_err) {
+    return 'advisory'; // setting not registered
+  }
+}
+
+export function validateAcquisition({ actor, item, isGM = false, user = null, now = new Date().toISOString(), reportOverride = null, strict = false } = {}) {
   if (!actor || !item || !isGatedAcquisitionType(item.type)) {
-    return { decision: 'allow', reasons: [], prerequisites: { status: 'not-applicable' }, entitlement: { status: 'not-applicable' }, acquisition: null };
+    return { decision: 'allow', reasons: [], advisories: [], prerequisites: { status: 'not-applicable' }, entitlement: { status: 'not-applicable' }, acquisition: null };
   }
   const prerequisites = assessPrerequisites(actor, item);
   let report = reportOverride;
@@ -110,10 +114,11 @@ export function validateAcquisition({ actor, item, isGM = false, user = null, no
     ...(entitlement.slot ? { slotType: entitlement.slot.slotType, slotKey: entitlement.slot.slotId, characterLevel: entitlement.slot.characterLevel } : {}),
   };
 
-  if (reasons.length) {
-    return { decision: isGM ? 'needs-gm' : 'block', reasons, prerequisites, entitlement, acquisition: null };
+  if (reasons.length && strict) {
+    return { decision: isGM ? 'needs-gm' : 'block', reasons, advisories: [], prerequisites, entitlement, acquisition: null };
   }
-  return { decision: 'allow', reasons: [], prerequisites, entitlement, acquisition: stamp };
+  // Advisory (default): always allowed; proven problems are only reported.
+  return { decision: 'allow', reasons: [], advisories: reasons, prerequisites, entitlement, acquisition: stamp };
 }
 
 /**
@@ -154,4 +159,4 @@ export async function resolveGmOverride({ actor, item, prompt, now = new Date().
   };
 }
 
-export default { resolveGmOverride, isGatedAcquisitionType, assessEntitlement, assessPrerequisites, validateAcquisition, recordAcquisitionEvidence };
+export default { getAcquisitionMode, resolveGmOverride, isGatedAcquisitionType, assessEntitlement, assessPrerequisites, validateAcquisition, recordAcquisitionEvidence };

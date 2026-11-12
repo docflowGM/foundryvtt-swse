@@ -76,18 +76,29 @@
           <span>{{vm.error}}</span>
         </div>
       {{else}}
-        {{#each vm.findings as |finding|}}
-          <section class="swse-validation-finding swse-validation-finding--{{finding.severity}}">
-            <h4>{{finding.title}}</h4>
-            {{#each finding.detail as |line|}}<p>{{line}}</p>{{/each}}
-            {{#each finding.slots as |slot|}}
-              <div class="swse-validation-slot">
-                <span>{{slot.label}}{{#if slot.source}} &middot; {{slot.source}}{{/if}}</span>
-                <button type="button" class="swse-btn swse-btn--primary" data-action="resolve-progression-slot" data-step-id="{{slot.stepId}}" data-slot-id="{{slot.id}}" data-slot-type="{{slot.type}}" data-class-id="{{slot.classId}}" data-class-name="{{slot.className}}" data-class-level="{{slot.classLevel}}" data-character-level="{{slot.characterLevel}}">{{slot.actionLabel}}</button>
-              </div>
+        {{#if vm.hasFindings}}
+        <table class="swse-validation-table">
+          <thead>
+            <tr><th>Error</th><th>Explanation</th><th>Resolve</th><th><span class="swse-visually-hidden">Ignore</span></th></tr>
+          </thead>
+          <tbody>
+            {{#each vm.findings as |finding|}}
+            <tr class="swse-validation-row swse-validation-row--{{finding.severity}}" data-finding-id="{{finding.id}}">
+              <td class="swse-validation-cell--error">{{finding.title}}</td>
+              <td class="swse-validation-cell--explanation">{{finding.explanation}}</td>
+              <td class="swse-validation-cell--resolve">
+                {{#if finding.resolve.label}}
+                <button type="button" class="swse-btn swse-btn--primary" data-action="resolve-finding" data-finding-id="{{finding.id}}">{{finding.resolve.label}}</button>
+                {{/if}}
+              </td>
+              <td class="swse-validation-cell--ignore">
+                <button type="button" class="swse-validation-ignore" data-action="ignore-finding" data-finding-id="{{finding.id}}" title="Ignore this warning" aria-label="Ignore this warning">&times;</button>
+              </td>
+            </tr>
             {{/each}}
-          </section>
-        {{/each}}
+          </tbody>
+        </table>
+        {{/if}}
         {{#unless vm.hasFindings}}
           <p class="swse-validation-note">No character issues need attention.</p>
         {{/unless}}
@@ -95,6 +106,21 @@
           <section class="swse-validation-notes">
             <h4>Cannot be verified (informational)</h4>
             {{#each vm.notes as |note|}}<p>{{note.text}}</p>{{/each}}
+          </section>
+        {{/if}}
+        {{#if vm.ignored.length}}
+          <section class="swse-validation-notes">
+            <h4>Ignored warnings ({{vm.ignored.length}})</h4>
+            {{#each vm.ignored as |entry|}}
+            <p>{{entry.title}} &mdash; {{entry.explanation}}
+              <button type="button" class="swse-btn" data-action="restore-finding" data-finding-id="{{entry.id}}" title="Show this warning again">Restore</button></p>
+            {{/each}}
+          </section>
+        {{/if}}
+        {{#if vm.hasStaleIgnored}}
+          <section class="swse-validation-notes">
+            <p>Some ignored warnings no longer apply (resolved or changed).
+              <button type="button" class="swse-btn" data-action="restore-finding" data-finding-id="{{vm.staleIgnoredIds}}" data-prune-stale="true">Clear</button></p>
           </section>
         {{/if}}
         {{#if vm.repairs.length}}

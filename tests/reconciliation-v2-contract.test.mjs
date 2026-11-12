@@ -197,7 +197,7 @@ check('18. a proven missing choice raises exactly one actionable finding with a 
   const r = run(a);
   const sheet = R.toSheetAudit(r);
   assert.equal(r.rollup.playerActionable, true);
-  assert.ok(sheet.validation.findings.some(f => f.severity === 'missing' && f.slots.length && f.slots[0].stepId));
+  assert.ok(sheet.validation.findings.some(f => f.severity === 'missing' && f.resolve.kind === 'open-step' && f.resolve.dataset.stepId && f.id.startsWith('slot:')));
 });
 
 check('19. memo: unchanged actor recomputes nothing; any stamp or progression-item change does', () => {

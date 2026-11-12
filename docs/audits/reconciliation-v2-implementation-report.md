@@ -86,3 +86,27 @@ Certification now requires a real labelled, non-vacuous post-commit audit (else 
 ## Addendum 4 — Final certification-integrity corrections
 
 Transaction-specific materialization evidence (older/planned items do not prove a grant), GM-authorization bypass removed (`resolveGmOverride`), canonical identity continuity enforced. See `reconciliation-v2-progression-authority-audit.md` §8. PR remains draft pending Foundry V13 acceptance: chargen → multiclass level-ups → save/close/reopen → delete a certified grant → `!`; live drag-and-drop; GM override dialog; retained class-ledger hotfix.
+
+## Phase 6 - Advisory reconciliation (owner-directed; supersedes strict acquisition gating)
+
+**Product decision:** the progression engine is a convenience, not a requirement. Manual building is fully supported; reconciliation is an advisory character repair assistant. Certification remains supporting evidence only.
+
+* **Header `!` -> Character Review overlay with four columns: Error | Explanation | Resolve | Ignore (x, tooltip "Ignore this warning").** Findings (`reconciliation-findings.js`) are specific mechanical discrepancies with stable identities: `slot:<slot id>` (missing selection) and `derived:<stat>:<expected>:<actual>` (e.g. `derived:bab:4:2`). Missing provenance/certification never creates a finding.
+* **Resolve (controlled registry, `reconciliation-resolvers.js`):** BAB / defense -> canonical recalculation (`ActorEngine.recalcAll`), never an overwrite of a derived field; HP -> `ActorEngine.recomputeHP` (the sole writer of `system.hp.max`) after confirmation; missing feat / class feat / talent / ability increase -> opens the existing reconcile-mode progression step (no level increment, no mutation by the resolver). Each resolve re-derives the finding from a fresh report first (so a second click is a no-op), is guarded against rapid double clicks, and **verifies by subject** that the discrepancy is actually gone - an unchanged or moved-but-still-wrong value is reported as unchanged. No resolver exists for conflicts or unverifiable data (those stay GM diagnostics).
+* **Ignore:** records `{id, code, expected, actual, ignoredBy, ignoredAt}` in `flags.swse.reconciliationIgnored` via ActorEngine; no statistic or item changes. Ignored findings are removed from the ledger/derived/task projections too (Holopad tasks no longer nag). If the discrepancy changes (e.g. expected BAB 4 -> 5) it is a new id and reappears; the old record is reported stale and can be cleared. Ignored warnings are listed with Restore for anyone who can use the sheet (it only un-hides an advisory; no GM-only gate).
+* **Manual building restored (default advisory):** `validateAcquisition` always allows; proven problems (unmet prerequisites, no identified open entitlement) come back as non-blocking `advisories` shown as an info notice. Class drops are no longer intercepted or redirected to Level Up: they use the existing class-level writer in `DropResolutionEngine` (no second writer). The previous strict behavior is preserved behind `strict: true` / `getAcquisitionMode() === 'strict'` (reads an optional, **unregistered** world setting `strictAcquisition`; nothing enables it by default).
+* **Tests:** `tests/reconciliation-phase6-advisory.test.mjs` (15 checks, unit/mock); strict-mode assertions moved to explicit `strict: true` in `acquisition-authority.test.mjs`.
+
+### Acceptance checklist (Foundry V13, not yet performed)
+1. Character built only by dragging a class + feats + talents (no wizard): no `!` while mechanics are consistent.
+2. Create a BAB discrepancy: `!` appears; Resolve recalculates and the row disappears; clicking Resolve twice does nothing the second time.
+3. Missing talent: Choose opens the matching step; completing it removes the row; character level unchanged.
+4. HP below minimum: Resolve asks for confirmation, recomputes via the canonical HP authority, and reports honestly if still below.
+5. Ignore a row: it disappears, reopening the sheet keeps it hidden, stats unchanged; level up so expected BAB changes: a new row appears; Restore brings ignored rows back.
+6. Header `!` disappears when all findings are resolved or ignored.
+7. Drag a class, feat and talent onto a sheet as a player: never blocked; advisory notice only when a proven problem exists.
+8. Chargen -> multiclass level-ups -> close/reopen: no false findings; delete a certified grant: `!`.
+9. Class-ledger hotfix interplay; GM override dialog under strict mode.
+
+### Known limits
+Class-level conflicts, unverifiable data and engine failures are GM diagnostics with no one-click choose-the-record repair (not in this phase's scope). The HP "Recompute" uses the canonical HP formula, which can differ from the reconciler's history-based minimum; the resolver reports that honestly rather than forcing a value (two HP formulas are a pre-existing duplication worth a rules/engineering decision).

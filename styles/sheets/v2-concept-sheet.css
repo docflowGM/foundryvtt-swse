@@ -5844,6 +5844,43 @@ form.swse-character-sheet-form-root .swse-ability-accent--cha,
   border-color: rgba(255, 112, 112, 0.45);
 }
 
+.swse-validation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+
+.swse-validation-table th,
+.swse-validation-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.swse-validation-row--invalid .swse-validation-cell--error {
+  color: #ffd0d0;
+}
+
+.swse-validation-ignore {
+  background: none;
+  border: 1px solid rgba(255, 112, 112, 0.5);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  line-height: 20px;
+  color: #ff8a8a;
+  cursor: pointer;
+}
+
+.swse-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
 .swse-validation-slot {
   display: flex;
   justify-content: space-between;

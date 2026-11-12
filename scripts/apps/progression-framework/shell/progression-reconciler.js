@@ -35,6 +35,7 @@ import {
   buildEvidenceIndex,
   checkCertificationConsistency,
 } from '../../../engine/progression/utils/progression-evidence.js';
+import { buildFindings, partitionFindings, readIgnored } from './reconciliation/reconciliation-findings.js';
 import {
   getClassLevelProgressionEntry,
   normalizeClassKey,
@@ -413,7 +414,7 @@ export class ProgressionReconciler {
         safeReport = this.sanitizeReconciliationReport(report, { actor, options });
         memoSet(memoKey, safeReport);
       }
-      return output === 'sheet' ? this._safeToSheetAudit(safeReport, options) : safeReport;
+      return output === 'sheet' ? this._safeToSheetAudit(safeReport, { ...options, actor }) : safeReport;
     } catch (err) {
       swseLogger.error('[ProgressionReconciler] Safe reconciliation failed; returning engine-failure report', {
         actorId: actor?.id || null,
@@ -424,7 +425,7 @@ export class ProgressionReconciler {
       // Fail closed: an engine-failure report. Never a previous report presented as current.
       const fallback = this._buildFallbackReport(actor, {}, err, { stage: 'safe-reconcile' });
       const safeFallback = this.sanitizeReconciliationReport(fallback, { actor, options, fallback: true });
-      return output === 'sheet' ? this._safeToSheetAudit(safeFallback, options) : safeFallback;
+      return output === 'sheet' ? this._safeToSheetAudit(safeFallback, { ...options, actor }) : safeFallback;
     }
   }
 
@@ -827,7 +828,12 @@ export class ProgressionReconciler {
     };
   }
 
-  toSheetAudit(report = {}, _options = {}) {
+  toSheetAudit(rawReport = {}, options = {}) {
+    // Findings are derived from the UNFILTERED report; the player's ignored findings are then removed from the
+    // projection (ledgers, tasks, derived rows) so nothing downstream nags about a dismissed warning.
+    const allFindings = buildFindings(rawReport);
+    const partition = partitionFindings(allFindings, readIgnored(options?.actor));
+    const report = this._withoutIgnored(rawReport, partition.ignored);
     const abilitySlots = Array.isArray(report?.slots?.abilityIncreases) ? report.slots.abilityIncreases : [];
     const generalFeatSlots = Array.isArray(report?.slots?.generalFeats) ? report.slots.generalFeats : [];
     const heroicTalentSlots = Array.isArray(report?.slots?.heroicTalents) ? report.slots.heroicTalents : [];
@@ -883,7 +889,7 @@ export class ProgressionReconciler {
       totalHeroicLevel: Number(report?.totalHeroicLevel || 0) || 0,
       warnings: Array.isArray(report?.warnings) ? report.warnings : [],
       rollup: report?.rollup && typeof report.rollup === 'object' ? report.rollup : { playerActionable: false, gmDiagnostic: false, counts: {} },
-      validation: this._buildValidationProjection(report, { trainingLedgers, derivedStats }),
+      validation: this._buildValidationProjection(report, { trainingLedgers, derivedStats, partition, allFindings }),
       diagnostics: report?.diagnostics && typeof report.diagnostics === 'object' ? report.diagnostics : {},
       debugExport: report?.debugExport && typeof report.debugExport === 'object' ? report.debugExport : {},
       repairSuggestions: Array.isArray(report?.repairSuggestions) ? report.repairSuggestions : [],
@@ -939,43 +945,31 @@ export class ProgressionReconciler {
    *  - notes:           unverifiable / deferred / informational; shown inside the overlay only,
    *                     never a reason by itself to show `!`.
    */
-  _buildValidationProjection(report = {}, { trainingLedgers = [], derivedStats = {} } = {}) {
+  _withoutIgnored(report = {}, ignored = []) {
+    if (!ignored.length) return report;
+    const ids = new Set(ignored.map(f => f.id));
+    const slots = { ...(report.slots || {}) };
+    for (const key of ['abilityIncreases', 'generalFeats', 'heroicTalents', 'classFeats', 'classTalents', 'classChoices']) {
+      if (!Array.isArray(slots[key])) continue;
+      slots[key] = slots[key].map(slot => (slot?.status === 'open' && ids.has(`slot:${slot.id}`) ? { ...slot, status: 'ignored', openCount: 0, ignoredByPlayer: true } : slot));
+    }
+    const sourceDerived = report.derivedStats || slots.derivedStats || {};
+    const rows = (Array.isArray(sourceDerived.rows) ? sourceDerived.rows : []).map(row => {
+      const expected = row?.expected ?? row?.expectedValue ?? null;
+      const actual = row?.current ?? row?.currentValue ?? null;
+      return row?.needsAttention === true && ids.has(`derived:${row.id}:${expected}:${actual}`) ? { ...row, needsAttention: false, status: 'ignored', ignoredByPlayer: true } : row;
+    });
+    const issueCount = rows.filter(r => r?.needsAttention === true).length;
+    const derivedStats = { ...sourceDerived, rows, issueCount, hasIssues: issueCount > 0 };
+    slots.derivedStats = derivedStats;
+    return { ...report, slots, derivedStats };
+  }
+
+  _buildValidationProjection(report = {}, { trainingLedgers = [], derivedStats = {}, partition = null, allFindings = [] } = {}) {
     const findings = [];
-    for (const ledger of trainingLedgers) {
-      const open = Number(ledger.open || 0) || 0;
-      if (open <= 0) continue;
-      const firstOpen = (ledger.openSlots || [])[0] || null;
-      findings.push({
-        id: `missing:${ledger.type}`,
-        severity: 'missing',
-        title: `${open} unspent ${ledger.label.toLowerCase()}`,
-        detail: [],
-        action: firstOpen?.primaryAction || firstOpen?.remediation?.primaryAction || null,
-        slots: (ledger.openSlots || []).map(slot => ({
-          id: slot.id || '',
-          label: slot.label || '',
-          source: slot.source || '',
-          type: slot.type || '',
-          classId: slot.classId || '',
-          className: slot.className || '',
-          classLevel: slot.classLevel || 0,
-          characterLevel: slot.characterLevel || 0,
-          stepId: slot.primaryAction?.stepId || '',
-          actionLabel: slot.primaryAction?.label || 'Resolve',
-        })),
-      });
-    }
-    for (const row of Array.isArray(derivedStats?.rows) ? derivedStats.rows : []) {
-      if (row?.needsAttention !== true) continue;
-      findings.push({
-        slots: [],
-        id: `invalid:${row.id}`,
-        severity: 'invalid',
-        title: `${row.label} does not match class progression`,
-        detail: [row.issue].filter(Boolean),
-        action: null,
-      });
-    }
+    // Findings (error / explanation / resolve) are built from the report by reconciliation-findings.js and
+    // already exclude anything the player ignored. Ledger counts are no longer the source of truth here.
+    const visible = partition?.visible || [];
     const notes = [];
     for (const ledger of trainingLedgers) {
       const n = (ledger.slots || []).reduce((sum, slot) => sum + (slot.status === 'unverifiable' ? (Number(slot.unverifiableCount ?? 1) || 1) : 0), 0);
@@ -996,9 +990,11 @@ export class ProgressionReconciler {
     if (unclassified > 0) notes.push({ id: 'unclassified', text: `${unclassified} owned feat/talent record${unclassified === 1 ? ' has' : 's have'} no acquisition provenance.` });
     const engineFindings = (Array.isArray(report?.engineFindings) ? report.engineFindings : []).map(f => ({ code: f.code, message: f.message }));
     return {
-      playerActionable: findings.length > 0,
+      playerActionable: visible.length > 0,
       gmDiagnostic: engineFindings.length > 0,
-      findings,
+      findings: visible,
+      ignored: (partition?.ignored || []).map(f => ({ id: f.id, code: f.code, title: f.title, explanation: f.explanation, expected: f.expected, actual: f.actual, ignoredByName: f.ignoredRecord?.ignoredByName || null, ignoredAt: f.ignoredRecord?.ignoredAt || null })),
+      staleIgnored: (partition?.stale || []).map(r => ({ id: r.id, code: r.code, ignoredAt: r.ignoredAt || null })),
       engineFindings,
       notes,
       repairs: (Array.isArray(report?.repairSuggestions) ? report.repairSuggestions : []).map(r => ({ label: r.label || '', detail: r.detail || '' })),
