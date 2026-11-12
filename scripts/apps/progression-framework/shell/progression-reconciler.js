@@ -32,6 +32,10 @@ import { GENERAL_FEAT_LEVELS } from '../../../engine/progression/data/progressio
 import TalentCadenceEngine from '../../../engine/progression/talents/talent-cadence-engine.js';
 import { ClassesRegistry } from '../../../engine/registries/classes-registry.js';
 import {
+  buildEvidenceIndex,
+  checkCertificationConsistency,
+} from '../../../engine/progression/utils/progression-evidence.js';
+import {
   getClassLevelProgressionEntry,
   normalizeClassKey,
 } from '../../../engine/progression/utils/levelup-event-context.js';
@@ -431,9 +435,14 @@ export class ProgressionReconciler {
     const reportBuilder = new ProgressionReconciliationReportBuilder();
     const layerErrors = [];
 
+    // Verified progression evidence (read-only), indexed once for this reconciliation.
+    this._evidence = buildEvidenceIndex(actor);
+    this._certifiedUnmatched = [];
+
     let entitlementPlan;
     try {
       entitlementPlan = entitlementCalculator.calculate(actor, options);
+      entitlementPlan.evidence = this._evidenceReport(actor, entitlementPlan);
     } catch (err) {
       layerErrors.push(this._layerError('entitlement-calculator', err));
       swseLogger.error('[ProgressionReconciler] Entitlement calculation failed', { actorId: actor?.id || null, message: err?.message || String(err), stack: err?.stack || null });
@@ -975,6 +984,11 @@ export class ProgressionReconciler {
     for (const rule of Array.isArray(report?.deferredRules) ? report.deferredRules : []) {
       notes.push({ id: `deferred:${rule.id}`, text: rule.reason });
     }
+    for (const entry of (Array.isArray(report?.evidence?.inconsistencies) ? report.evidence.inconsistencies : []).filter(e => e.code === 'certified-item-removed')) {
+      notes.push({ id: `removed:${entry.itemId}`, text: `${entry.name || 'An awarded item'} was awarded through progression but is no longer on the character.` });
+    }
+    const uncertified = (Number(report?.evidence?.counts?.stamped) || 0) + (Number(report?.evidence?.counts?.none) || 0);
+    if (uncertified > 0) notes.push({ id: 'uncertified', text: `${uncertified} owned feat/talent record${uncertified === 1 ? ' predates' : 's predate'} verified progression history and cannot be checked against it.` });
     const unclassified = (report?.classification?.unclassifiedFeatCount || 0) + (report?.classification?.unclassifiedTalentCount || 0);
     if (unclassified > 0) notes.push({ id: 'unclassified', text: `${unclassified} owned feat/talent record${unclassified === 1 ? ' has' : 's have'} no acquisition provenance.` });
     const engineFindings = (Array.isArray(report?.engineFindings) ? report.engineFindings : []).map(f => ({ code: f.code, message: f.message }));
@@ -1153,6 +1167,51 @@ export class ProgressionReconciler {
   }
 
 
+  /**
+   * Effective acquisition provenance for an owned item. A TRUSTED progression certification that
+   * lists this exact item instance outranks the item's own flags (which may omit class/level).
+   * Certified items are never labelled "extra" and never fall into the unattributed pool.
+   */
+  _provenance(item = {}) {
+    const evidence = this._evidence?.byItemId?.get(item?.id ?? item?._id) || null;
+    if (evidence?.status === 'certified' && ['general', 'class'].includes(evidence.slotKind)) {
+      return {
+        certified: true,
+        kind: evidence.slotKind,
+        classId: evidence.classId ? normalizeClassKey(evidence.classId) : '',
+        className: evidence.className ? normalizeText(evidence.className).toLowerCase() : '',
+        classLevel: normalizeLevel(evidence.classLevel),
+        characterLevel: normalizeLevel(evidence.characterLevel),
+      };
+    }
+    return {
+      certified: false,
+      kind: null,
+      classId: itemClassId(item),
+      className: itemClassName(item),
+      classLevel: itemClassLevel(item),
+      characterLevel: 0,
+    };
+  }
+
+  _noteCertifiedUnmatched(item) {
+    this._certifiedUnmatched?.push({ itemId: item?.id ?? item?._id ?? null, name: item?.name || '', type: item?.type || '' });
+  }
+
+  _evidenceReport(actor, plan = {}) {
+    const index = this._evidence || buildEvidenceIndex(actor);
+    const classRows = plan?.classAuthority?.status === 'ok'
+      ? (plan.internalClassSummaries || []).map(row => ({ classId: row.classId, className: row.className, level: row.level }))
+      : null;
+    const consistency = checkCertificationConsistency(actor, classRows);
+    return {
+      counts: index.counts,
+      untrustedRecords: index.history.untrusted.map(r => ({ sessionId: r.sessionId || null, outcome: r.outcome || 'malformed', errors: r.audit?.errors || [] })),
+      inconsistencies: consistency.findings,
+      certifiedUnmatched: Array.isArray(this._certifiedUnmatched) ? [...this._certifiedUnmatched] : [],
+    };
+  }
+
   _buildGeneralFeatSlots(actor, heroicLevel) {
     const slots = [];
     const maxLevel = Math.max(0, Number(heroicLevel || 0) || 0);
@@ -1244,13 +1303,8 @@ export class ProgressionReconciler {
 
   _fillLinearSlots(slots = [], pool = []) {
     const consumed = new Set();
-    const candidates = Array.isArray(pool) ? pool : [];
-    let cursor = 0;
-    for (const slot of slots) {
-      if (slot.status === 'filled') continue;
-      const item = candidates[cursor];
-      if (!item) break;
-      cursor += 1;
+    const candidates = (Array.isArray(pool) ? pool : []);
+    const fill = (slot, item) => {
       consumed.add(item);
       slot.status = 'filled';
       slot.filledCount = Number(slot.count || 1) || 1;
@@ -1258,12 +1312,34 @@ export class ProgressionReconciler {
       slot.filledBy = item.id || item._id || null;
       slot.filledByName = item.name || 'Recorded selection';
       slot.selections = [item.name || 'Recorded selection'];
+      slot.evidence = this._provenance(item).certified ? 'certified' : 'recorded';
+    };
+    // Pass 1: a certified grant fills exactly the character-level slot it was awarded for.
+    for (const item of candidates) {
+      const prov = this._provenance(item);
+      if (!prov.certified || !prov.characterLevel) continue;
+      const slot = slots.find(entry => entry.status !== 'filled' && entry.levelLabel !== 'Bonus' && entry.characterLevel === prov.characterLevel);
+      if (slot) fill(slot, item);
+    }
+    // Pass 2: remaining slots are filled by remaining items, certified grants first.
+    const rest = candidates.filter(item => !consumed.has(item))
+      .sort((a, b) => Number(this._provenance(b).certified) - Number(this._provenance(a).certified));
+    let cursor = 0;
+    for (const slot of slots) {
+      if (slot.status === 'filled') continue;
+      const item = rest[cursor];
+      if (!item) break;
+      cursor += 1;
+      fill(slot, item);
     }
     return consumed;
   }
 
   _appendOverfilledSlots(slots = [], pool = [], idPrefix = 'extra', label = 'Extra selection', consumed = new Set()) {
     for (const item of (Array.isArray(pool) ? pool : []).filter(entry => !consumed.has(entry))) {
+      // A certified grant is legal by construction: a matching failure is recorded as evidence to
+      // review, never as an "extra" item.
+      if (this._provenance(item).certified) { this._noteCertifiedUnmatched(item); continue; }
       slots.push({
         id: `${idPrefix}-${item.id || item._id || normalizeNameKey(item.name)}`,
         type: slots[0]?.type || idPrefix,
@@ -1295,6 +1371,8 @@ export class ProgressionReconciler {
     const pools = { general: [], class: [], classUntagged: [], unknown: [] };
     for (const item of readActorItems(actor).filter(entry => entry?.type === type)) {
       if (isAutomaticProgressionItem(item)) continue;
+      const prov = this._provenance(item);
+      if (prov.certified) { (prov.kind === 'class' ? pools.class : pools.general).push(item); continue; }
       const hint = this._getSelectionHintForItem(item, hints);
       const slot = this._slotTypeForItemOrHint(item, hint);
       const source = itemSourceToken(item);
@@ -1514,10 +1592,7 @@ export class ProgressionReconciler {
     };
 
     const consumed = new Set();
-    for (const slot of slots) {
-      const pool = poolsByType[slot.type] || [];
-      const match = pool.find(item => !consumed.has(item) && this._itemMatchesClassSlot(item, slot));
-      if (!match) continue;
+    const fill = (slot, match) => {
       consumed.add(match);
       slot.status = 'filled';
       slot.filledCount = 1;
@@ -1525,12 +1600,33 @@ export class ProgressionReconciler {
       slot.filledBy = match.id || match._id || null;
       slot.filledByName = match.name || 'Recorded selection';
       slot.selections = [match.name || 'Recorded selection'];
+      slot.evidence = this._provenance(match).certified ? 'certified' : 'recorded';
+    };
+    // Pass 1: exact (class, class level) match - certified grants first so they cannot be displaced.
+    for (const certifiedFirst of [true, false]) {
+      for (const slot of slots) {
+        if (slot.status === 'filled') continue;
+        const pool = poolsByType[slot.type] || [];
+        const match = pool.find(item => !consumed.has(item) && this._provenance(item).certified === certifiedFirst && this._itemMatchesClassSlot(item, slot));
+        if (match) fill(slot, match);
+      }
+    }
+    // Pass 2: a certified class grant whose exact level slot does not exist still satisfies an open
+    // slot of the same class; if none exists it is evidence to review, never an "extra" item.
+    for (const slotType of ['class-feat', 'class-talent']) {
+      for (const item of (poolsByType[slotType] || []).filter(entry => !consumed.has(entry))) {
+        const prov = this._provenance(item);
+        if (!prov.certified) continue;
+        const slot = slots.find(entry => entry.type === slotType && entry.status !== 'filled' && (!prov.classId || entry.classId === prov.classId));
+        if (slot) fill(slot, item);
+      }
     }
 
     // Items that DO carry class provenance but fit no slot are informational extras.
     // (Items without class provenance never reach this pool.)
     for (const slotType of ['class-feat', 'class-talent']) {
       for (const item of (poolsByType[slotType] || []).filter(entry => !consumed.has(entry))) {
+        if (this._provenance(item).certified) { this._noteCertifiedUnmatched(item); continue; }
         const assignedClass = this._resolveItemClassForOverfill(item, classSummaries);
         slots.push({
           id: `${slotType}-extra-${item.id || item._id || normalizeNameKey(item.name)}`,
@@ -1564,9 +1660,10 @@ export class ProgressionReconciler {
     const slotClassId = slot.classId || '';
     const slotClassName = normalizeText(slot.className).toLowerCase();
     const slotClassLevel = normalizeLevel(slot.classLevel);
-    const classId = itemClassId(item);
-    const className = itemClassName(item);
-    const classLevel = itemClassLevel(item);
+    const prov = this._provenance(item);
+    const classId = prov.classId;
+    const className = prov.className;
+    const classLevel = prov.classLevel;
     if (!classId && !className) return false;
     if (classLevel && slotClassLevel && classLevel !== slotClassLevel) return false;
     if (classId && slotClassId && classId !== slotClassId) return false;

@@ -43,6 +43,7 @@ export class ProgressionReconciliationReportBuilder {
 
     this._dropFutureSlots(slots, totalLevel);
     const deferredRules = this._applyDeferredRules(slots, actor, entitlementPlan);
+    this._markProvenMissing(slots, entitlementPlan?.evidence?.inconsistencies);
     this._applyUnattributedCrediting(slots, ownership);
     this._attachRemediationActions(slots);
 
@@ -61,6 +62,7 @@ export class ProgressionReconciliationReportBuilder {
       engineFindings,
       deferredRules,
       coverage: { unauditedChoiceTypes: entitlementPlan?.diagnostics?.unauditedChoiceTypes || {} },
+      evidence: entitlementPlan?.evidence || { counts: { certified: 0, stamped: 0, none: 0, untrustedRecords: 0 }, inconsistencies: [], certifiedUnmatched: [], untrustedRecords: [] },
       layers: {
         entitlements: entitlementPlan?.diagnostics || { layer: 'entitlement-calculator' },
         ownership: ownership?.diagnostics || { layer: 'ownership-classifier' },
@@ -101,12 +103,63 @@ export class ProgressionReconciliationReportBuilder {
     for (const gap of Array.isArray(plan?.diagnostics?.progressionGaps) ? plan.diagnostics.progressionGaps : []) {
       findings.push({ code: gap.code, severity: 'engine', message: `${gap.className} level ${gap.classLevel} has no class progression entry.`, detail: gap });
     }
+    // Progression-evidence integrity (GM diagnostics only; never worded as a character error).
+    const evidence = plan?.evidence || {};
+    for (const entry of Array.isArray(evidence.inconsistencies) ? evidence.inconsistencies : []) {
+      if (entry.code === 'certified-item-removed') continue; // surfaces as the resulting missing slot + an overlay note
+      findings.push({ code: entry.code, severity: 'engine', message: `A certified grant (${entry.name || entry.itemId}) no longer matches current class/level state.`, detail: entry });
+    }
+    for (const entry of Array.isArray(evidence.certifiedUnmatched) ? evidence.certifiedUnmatched : []) {
+      findings.push({ code: 'certified-grant-unmatched', severity: 'engine', message: `Certified grant "${entry.name}" has no corresponding current entitlement slot; it is kept as legal and not reported as extra.`, detail: entry });
+    }
+    for (const entry of Array.isArray(evidence.untrustedRecords) ? evidence.untrustedRecords : []) {
+      findings.push({ code: 'progression-record-untrusted', severity: 'engine', message: `Progression session ${entry.sessionId || '(unknown)'} is recorded as ${entry.outcome}; its grants are not treated as certified.`, detail: entry });
+    }
     for (const layer of [plan?.diagnostics, ownership?.diagnostics]) {
       if (layer?.status === 'failed-soft') {
         findings.push({ code: 'layer-failed', severity: 'engine', message: `Reconciliation layer "${layer.layer || 'unknown'}" failed.`, detail: { layer: layer.layer, message: layer.message || '' } });
       }
     }
     return findings;
+  }
+
+  /**
+   * A trusted certification that lists an awarded item which is no longer on the actor PROVES that
+   * entitlement existed (the certified manifest said so) and is now unfilled. That proof does not
+   * depend on any pending cadence ruling, so such a slot is `open` (missing), not deferred.
+   */
+  _provenRemovedKeys(inconsistencies = []) {
+    const keys = new Set();
+    for (const entry of Array.isArray(inconsistencies) ? inconsistencies : []) {
+      if (entry?.code !== 'certified-item-removed') continue;
+      if (entry.slotKind === 'class' && entry.classId) keys.add(`${entry.itemType}:class:${entry.classId}:${entry.classLevel}`);
+      else if (entry.slotKind === 'general') keys.add(`${entry.itemType}:general:${entry.characterLevel}`);
+    }
+    return keys;
+  }
+
+  _slotProvenKey(slot = {}) {
+    const itemType = slot.type === 'class-feat' || slot.type === 'general-feat' ? 'feat' : 'talent';
+    if (slot.type === 'class-feat' || slot.type === 'class-talent') return `${itemType}:class:${slot.classId}:${slot.classLevel}`;
+    return `${itemType}:general:${slot.characterLevel}`;
+  }
+
+  _markProvenMissing(slots = {}, inconsistencies = []) {
+    const proven = this._provenRemovedKeys(inconsistencies);
+    if (!proven.size) return;
+    for (const group of ['generalFeats', 'heroicTalents', 'classFeats', 'classTalents']) {
+      for (const slot of slots[group] || []) {
+        if (slot?.status !== 'unverifiable' || !slot.rulesDeferred) continue;
+        if (!proven.has(this._slotProvenKey(slot))) continue;
+        slot.status = 'open';
+        slot.openCount = Number(slot.unverifiableCount || slot.count || 1) || 1;
+        slot.unverifiableCount = 0;
+        slot.provenBy = 'certified-grant-removed';
+        delete slot.rulesDeferred;
+        slot.unverifiableReason = '';
+      }
+    }
+    this._syncClassChoiceSlots(slots);
   }
 
   /** Pending-ruling slots may not read as "missing". See RULE_DEFERRALS. */
@@ -283,7 +336,7 @@ export class ProgressionReconciliationReportBuilder {
       for (const slot of group) {
         if (!remaining) return;
         const open = Number(slot?.openCount ?? (slot?.status === 'open' ? slot?.count : 0)) || 0;
-        if (slot?.status !== 'open' || open <= 0) continue;
+        if (slot?.status !== 'open' || open <= 0 || slot.provenBy) continue; // proven-missing slots are never absorbed by unattributed items
         const take = Math.min(open, remaining);
         remaining -= take;
         slot.status = 'unverifiable';

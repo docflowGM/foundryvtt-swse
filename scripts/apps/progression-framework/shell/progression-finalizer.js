@@ -45,6 +45,11 @@ import {
   validateLevelUpRequiredSelections,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js';
 import {
+  CERTIFICATION_FLAG_PATH,
+  appendCertification,
+  buildProgressionCertification,
+} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/progression-evidence.js';
+import {
   filterDroidForbiddenItemSpecs,
   getDroidAcquisitionBlockReason,
   isDroidProgressionActor,
@@ -444,9 +449,13 @@ export class ProgressionFinalizer {
         return result;
       }
 
+      let certificationAudit = null;
       if (sessionState.mode === 'levelup' && !this._isReconciliationSession(sessionState)) {
         const postAudit = this._auditLevelUpFinalization(actor, finalMutationPlan, sessionState);
+        certificationAudit = postAudit;
         if (!postAudit.ok) {
+          // Record the failed outcome (untrusted evidence) so reconciliation never treats this transaction as certified.
+          await this._certifyProgressionSession(actor, sessionState, finalMutationPlan, postAudit);
           swseLogger.error('[ProgressionFinalizer] Level-up finalization audit failed', {
             actorId: actor.id,
             actorName: actor.name,
@@ -469,6 +478,9 @@ export class ProgressionFinalizer {
           });
         }
       }
+
+      // Durable, event-specific evidence that this transaction committed and (for level-up) passed its post-apply audit.
+      await this._certifyProgressionSession(actor, sessionState, finalMutationPlan, certificationAudit);
 
       swseLogger.log('[ProgressionFinalizer] Finalization successful', {
         actorId: actor.id,
@@ -3729,6 +3741,41 @@ export class ProgressionFinalizer {
     } catch (error) {
       swseLogger.error('[ProgressionFinalizer] Maneuver-suite re-synchronization failed', error);
       return { success: false, error: error?.message ?? String(error) };
+    }
+  }
+
+  /**
+   * Persist a progression certification (flags.swse.progressionCertifications) after the actor mutation has
+   * been applied. Read by reconciliation as authoritative acquisition evidence; see progression-evidence.js.
+   * Best effort by design: the transaction is already committed, so a failure here must never fail or roll
+   * back finalization - it only means the transaction is not certified (an evidence gap, not an error).
+   * Written through the actor mutation authority; only an audit-ok outcome is ever trusted by readers.
+   */
+  static async _certifyProgressionSession(actor, sessionState, mutationPlan, audit = null) {
+    try {
+      const sessionId = sessionState?.sessionId;
+      const reconcile = this._isReconciliationSession(sessionState);
+      const mode = reconcile ? 'reconcile' : sessionState?.mode;
+      const manifest = mode === 'levelup' ? (mutationPlan?.set?.['flags.swse.levelUpEntitlementManifest'] || null) : null;
+      const classObj = actor?.system?.class;
+      const fallbackClass = manifest ? null : {
+        classId: classObj?.id || classObj?.classId || null,
+        className: classObj?.name || classObj?.className || null,
+        classLevel: mode === 'chargen' ? 1 : 0,
+        characterLevel: mode === 'chargen' ? 1 : 0,
+      };
+      const record = buildProgressionCertification({ actor, sessionId, mode, manifest, audit, fallbackClass });
+      if (!record) return { certified: false, reason: 'no-session-identity' };
+      if (!record.grants.length && record.outcome === 'certified') return { certified: false, reason: 'nothing-to-certify' };
+      const engine = this._resolveActorEngine();
+      if (!engine?.updateActor) return { certified: false, reason: 'actor-engine-unavailable' };
+      await engine.updateActor(actor, {
+        [CERTIFICATION_FLAG_PATH]: appendCertification(actor?.flags?.swse?.progressionCertifications, record),
+      }, { source: 'ProgressionFinalizer.certify', meta: { guardKey: 'progression-certification' } });
+      return { certified: record.outcome === 'certified', outcome: record.outcome, grantCount: record.grants.length };
+    } catch (error) {
+      swseLogger.warn('[ProgressionFinalizer] Progression certification was not recorded (transaction already committed)', error);
+      return { certified: false, reason: 'write-failed', error: error?.message ?? String(error) };
     }
   }
 

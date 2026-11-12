@@ -70,3 +70,7 @@ Rendering of the `!` and overlay; overlay close/resolve flow; hook-driven re-ren
 3. Decide D2 (remove the ledger item-sync writer) after Foundry verification.
 4. Audit `share_talent_choice`.
 5. Run the live export (D3).
+
+## Addendum — Progression Authority (certified evidence)
+
+Implemented after the owner's addendum; see `reconciliation-v2-progression-authority-audit.md`. Summary: the finalizer now appends a durable per-transaction certification (item-instance ids bound to the manifest's class / class level / character level) only after `applyMutationPlan` and the post-apply audit; reconciliation reads it through a thin read-only contract (`progression-evidence.js`), satisfies slots from certified grants first, never labels a certified grant "extra", and treats missing/failed/forged records as evidence gaps with GM-only diagnostics. New test: `tests/progression-evidence-reconciliation.test.mjs` (12 checks, includes the legit-generated-and-leveled regression). Not done: single-step finalization, non-feat/talent grants, in-Foundry verification of the write path.
