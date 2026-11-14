@@ -2819,3 +2819,5 @@ The RECON-001 ruling narrows this question but does not answer it. `talentEveryL
 | Resolution | |
 
 - **Revision 65 (2026-11-14):** appended the RECON-001 project owner ruling (canonical class-based talents; Talent Wiki house rule), a RECON-005 progress note, and TALENT-RD-001.
+
+**RECON-001 — implementing commit:** `e38026aac93d2926fa7bc6c4e0e2eeca5ed02f7d` (ruling above; recorded after the commit existed, per the append-only rule).
