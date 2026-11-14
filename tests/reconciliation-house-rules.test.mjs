@@ -78,7 +78,9 @@ await check('1. RAW, every feat/talent house rule disabled: ordinary entitlement
   assert.ok(ids(a).includes('slot:soldier-1-class-talent-1') && ids(a).includes('slot:general-feat-level-1'), 'ordinary missing selections are identifiable');
 });
 
-await check('2. talentEveryLevel: cadence is read from TalentCadenceEngine; extra-L1 is its own entitlement; later-level interplay is informational only', () => {
+await check('2. talentEveryLevel (under Talent Wiki): cadence is read from TalentCadenceEngine; extra-L1 is its own entitlement; later-level interplay is informational only', () => {
+  // talentEveryLevel modifies the Talent Wiki heroic lane; canonical mode is covered in 2b.
+  setRule('talentWiki', true);
   setRule('talentEveryLevel', true);            // talentEveryLevelExtraL1 defaults true
   let a = actorOf([], 3);
   let r = report(a);
@@ -98,7 +100,19 @@ await check('2. talentEveryLevel: cadence is read from TalentCadenceEngine; extr
   assert.equal(report(actorOf([], 3)).slots.heroicTalents.length, 0, 'extra L1 alone (talentEveryLevel off) is not an entitlement');
 });
 
+await check('2b. talentEveryLevel with Talent Wiki OFF (canonical): no entitlement is derived; an informational note explains why', () => {
+  setRule('talentEveryLevel', true);            // talentEveryLevelExtraL1 defaults true; talentWiki defaults false
+  const a = actorOf([], 3);
+  const r = report(a);
+  assert.equal(r.slots.heroicTalents.length, 0, 'fail closed: no extra-L1 or cadence slot without Talent Wiki');
+  assert.ok(r.houseRule.notes.some(n => n.code === 'house-rule-talent-cadence-requires-talent-wiki'));
+  assert.ok(!r.houseRule.notes.some(n => n.code === 'house-rule-talent-cadence-undetermined'));
+  assert.ok(!ids(a).includes('slot:houserule-talent-extra-l1'));
+  assert.deepEqual(r.slots.classTalents.map(s => s.classLevel).sort(), [1, 3]);
+});
+
 await check('3. extra-L1 talent is satisfied by a heroic-tagged talent and does not consume the ordinary class talent', () => {
+  setRule('talentWiki', true);
   setRule('talentEveryLevel', true);
   const a = actorOf([stamped('talent', 'Heroic Pick', 'S1', 'heroic'), stamped('talent', 'Class Pick', 'S1', 'class', { classId: 'soldier', classLevel: 1 })]);
   const r = report(a);
@@ -314,6 +328,7 @@ await check('13. Resolve missing grant: uses the canonical service, once; second
 });
 
 await check('14. Resolve extra-L1 talent opens the existing step; repeated clicks mutate nothing; level unchanged', async () => {
+  setRule('talentWiki', true);
   setRule('talentEveryLevel', true);
   const a = actorOf();
   const log = [];

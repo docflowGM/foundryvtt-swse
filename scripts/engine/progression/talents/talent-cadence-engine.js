@@ -1,164 +1,151 @@
 /**
- * Talent Cadence Engine - PHASE 2
+ * Talent Cadence Engine
  *
- * SINGLE AUTHORITATIVE SOURCE for talent progression rules.
- * Used by both chargen (slot calculation) and levelup (talent grants).
+ * SINGLE AUTHORITATIVE SOURCE for the talent progression POLICY.
+ * Used by chargen step applicability, the level-up entitlement manifest,
+ * reconciliation and the talent step.
  *
- * Supports:
- * - RAW rule: 1 talent at odd levels (1, 3, 5, 7, ...)
- * - House rule: talentEveryLevel - talents at every level
- * - House rule: talentEveryLevelExtraL1 - extra talent at level 1
+ * Two policies, one engine (selected by the `talentWiki` house rule):
  *
- * CRITICAL: This replaces the scattered talent cadence logic that was
- * previously split between chargen and levelup, causing inconsistent
- * progression calculations.
+ * - CANONICAL (default, `talentWiki` OFF) — Core Rulebook pp. 15, 37-39, 54-55:
+ *   ordinary talents come ONLY from the progression table of the class being
+ *   advanced (`level_progression[].features[].type === 'talent_choice'` in the
+ *   class data, which stays the RAW authority). There is no independent
+ *   heroic/general talent lane. A class-granted talent is chosen from the
+ *   granting class's talent trees (plus Force talent trees for a Force-sensitive
+ *   character, Core p. 100).
+ *
+ * - TALENT WIKI (`talentWiki` ON) — the progression previously implemented here,
+ *   preserved unchanged: class-table talents PLUS a heroic talent at every odd
+ *   character level (every level with `talentEveryLevel`), the heroic talent
+ *   chosen from any tree unlocked by the actor's classes.
+ *
+ * `talentEveryLevel` / `talentEveryLevelExtraL1` modify the heroic lane cadence,
+ * so they are only effective under Talent Wiki. Their composition with canonical
+ * progression is an open rules question (RECON-005); until ruled they fail closed
+ * (no award) while Talent Wiki is off.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
+
+export const TALENT_PROGRESSION_MODES = Object.freeze({
+  CANONICAL: 'canonical',
+  TALENT_WIKI: 'talentWiki',
+});
 
 export class TalentCadenceEngine {
   /**
-   * Get house rule settings for talent progression
-   * CANONICAL: Only place to read talent house rules (PHASE 3A: routed through FeatRulesAdapter)
-   * @returns {Object} {talentEveryLevel: boolean, talentEveryLevelExtraL1: boolean}
+   * Effective talent progression house rules.
+   * CANONICAL: Only place to read talent house rules (routed through FeatRulesAdapter).
+   * `talentEveryLevel` is reported as effective (false unless Talent Wiki is on);
+   * `talentEveryLevelConfigured` is the raw setting, for diagnostics only.
+   * @returns {{talentWiki: boolean, talentEveryLevel: boolean, talentEveryLevelExtraL1: boolean, talentEveryLevelConfigured: boolean}}
    */
   static getHouseRuleSettings() {
+    const talentWiki = FeatRulesAdapter.talentWikiEnabled() === true;
+    const talentEveryLevelConfigured = FeatRulesAdapter.talentEveryLevelEnabled() === true;
     return {
-      talentEveryLevel: FeatRulesAdapter.talentEveryLevelEnabled(),
-      talentEveryLevelExtraL1: FeatRulesAdapter.talentExtraAtLevel1()
+      talentWiki,
+      talentEveryLevel: talentWiki && talentEveryLevelConfigured,
+      talentEveryLevelExtraL1: FeatRulesAdapter.talentExtraAtLevel1(),
+      talentEveryLevelConfigured,
     };
   }
 
+  /** @returns {'canonical'|'talentWiki'} the active talent progression policy */
+  static getProgressionMode() {
+    return this.getHouseRuleSettings().talentWiki
+      ? TALENT_PROGRESSION_MODES.TALENT_WIKI
+      : TALENT_PROGRESSION_MODES.CANONICAL;
+  }
+
+  /** True only under Talent Wiki: the heroic (general) talent lane exists. */
+  static heroicTalentLaneEnabled() {
+    return this.getHouseRuleSettings().talentWiki;
+  }
+
   /**
-   * Calculate if a given absolute character level grants a talent
-   * CANONICAL: Authoritative for all talent progression calculations
+   * Canonical policy: a class-granted talent may also be spent on a Force talent tree
+   * when the character is Force-sensitive (Core p. 100). Under Talent Wiki the class
+   * slot keeps its previous pool and Force-sensitive access flows through the heroic lane.
+   */
+  static classSlotForceTreeAccessForForceSensitive() {
+    return !this.getHouseRuleSettings().talentWiki;
+  }
+
+  /**
+   * Does reaching this absolute character level grant a heroic-lane talent?
    *
-   * RAW: Talents at odd levels (1, 3, 5, 7, ...)
-   * House rule (talentEveryLevel): Talents at every level (1, 2, 3, 4, ...)
+   * Canonical: never (no independent heroic talent lane).
+   * Talent Wiki: odd levels (1, 3, 5, ...), or every level with `talentEveryLevel`.
    *
    * @param {number} level - Absolute level (must be >= 1)
-   * @returns {boolean} true if this level grants a talent
+   * @returns {boolean}
    */
   static grantsHeroicTalent(level) {
-    if (!level || level < 1) {
-      return false;
-    }
-
+    if (!level || level < 1) return false;
     const settings = this.getHouseRuleSettings();
-
-    if (settings.talentEveryLevel) {
-      // House rule: talent every level
-      return true;
-    }
-
-    // RAW: talent at odd levels
+    if (!settings.talentWiki) return false;
+    if (settings.talentEveryLevel) return true;
     return level % 2 === 1;
   }
 
   /**
-   * Calculate number of talents from class progression at a specific class level
-   * CANONICAL: Authoritative for class talent grants
+   * Approximate class talent cadence at a class level, for consumers that do not hold
+   * the class model (suggestion milestones). The class data `talent_choice` rows are
+   * the authority for actual awards; this mirrors the core-class odd-level table.
    *
-   * RAW: 1 talent at odd class levels (1, 3, 5, 7, ...)
-   * House rule (talentEveryLevel): 1 talent at every class level (1, 2, 3, 4, ...)
-   *
-   * NOTE: Nonheroic classes do not grant talents
+   * Odd class levels; every class level with `talentEveryLevel` (Talent Wiki only).
+   * Nonheroic classes do not grant talents.
    *
    * @param {number} classLevel - Class level (must be >= 1)
-   * @param {boolean} isNonheroic - If true, return 0 (nonheroic classes don't grant talents)
+   * @param {boolean} isNonheroic
    * @returns {number} 0 or 1
    */
   static grantsClassTalent(classLevel, isNonheroic = false) {
-    if (isNonheroic || !classLevel || classLevel < 1) {
-      return 0;
-    }
-
-    const settings = this.getHouseRuleSettings();
-
-    if (settings.talentEveryLevel) {
-      // House rule: talent every class level
-      return 1;
-    }
-
-    // RAW: talent at odd class levels
+    if (isNonheroic || !classLevel || classLevel < 1) return 0;
+    if (this.getHouseRuleSettings().talentEveryLevel) return 1;
     return (classLevel % 2 === 1) ? 1 : 0;
   }
 
   /**
-   * Calculate total talent grants at a given heroic level (for dual progression)
-   * Combines heroic progression + class progression
-   *
-   * @param {number} heroicLevel - The character's heroic (total) level
-   * @param {Object} selectedClass - The class being leveled (with system.isNonheroic)
-   * @param {number} classLevel - The level of that specific class (before +1 for new level)
-   * @returns {Object} {heroic: 0|1, class: 0|1, total: 0|1|2}
+   * Total heroic-lane + class-cadence grants at a level (approximation; see grantsClassTalent).
+   * @returns {{heroic: 0|1, class: 0|1, total: number}}
    */
   static calculateTalentGrants(heroicLevel, selectedClass = null, classLevel = 0) {
     const heroic = this.grantsHeroicTalent(heroicLevel) ? 1 : 0;
     const classIsNonheroic = selectedClass?.system?.isNonheroic ?? false;
-    const classLevel_NextLevel = (classLevel || 0) + 1; // +1 for pending level
-    const classTalent = this.grantsClassTalent(classLevel_NextLevel, classIsNonheroic);
-
-    return {
-      heroic,
-      class: classTalent,
-      total: heroic + classTalent
-    };
+    const classTalent = this.grantsClassTalent((classLevel || 0) + 1, classIsNonheroic);
+    return { heroic, class: classTalent, total: heroic + classTalent };
   }
 
   /**
-   * Calculate number of talents for level 1 chargen
-   * Used by TalentSlotCalculator to build initial talent slots
-   *
-   * RAW: 1 class talent (and NO extra at L1)
-   * House rule (talentEveryLevel + talentEveryLevelExtraL1): 2 talents (1 class + 1 heroic)
-   * House rule (talentEveryLevel only): 1 talent (class only, no extra at L1)
-   *
-   * @returns {number} Number of talents for L1 chargen (1 or 2)
+   * Talent count for L1 chargen slot calculation (TalentSlotCalculator).
+   * 1, or 2 under Talent Wiki + `talentEveryLevel` + `talentEveryLevelExtraL1`.
+   * @returns {number}
    */
   static calculateL1TalentCount() {
     const settings = this.getHouseRuleSettings();
-
-    // RAW: always 1 at L1
-    if (!settings.talentEveryLevel) {
-      return 1;
-    }
-
-    // House rule: talentEveryLevel
-    // If talentEveryLevelExtraL1, grant 2 (1 class + 1 heroic)
-    // Otherwise, grant 1 (class only, no extra)
+    if (!settings.talentEveryLevel) return 1;
     return settings.talentEveryLevelExtraL1 ? 2 : 1;
   }
 
-  /**
-   * Calculate talentsRequired flag for chargen (used for display/validation)
-   * This is a simplification for L1-only UI purposes
-   *
-   * NOTE: This should NOT be used for future level calculations.
-   * Use calculateTalentGrants() instead for multiclass scenarios.
-   *
-   * @returns {number} 1 or 2
-   */
+  /** @returns {number} 1 or 2 (L1-only display/validation helper) */
   static calculateChargenTalentsRequired() {
     return this.calculateL1TalentCount();
   }
 
-  /**
-   * Get a human-readable description of talent cadence
-   * @returns {string}
-   */
+  /** @returns {string} human-readable description of the active talent progression */
   static getDescription() {
     const settings = this.getHouseRuleSettings();
-    let desc = 'Talents at odd levels (1, 3, 5, 7, ...)';
-
-    if (settings.talentEveryLevel) {
-      desc = 'Talents at every level (1, 2, 3, 4, ...)';
-      if (settings.talentEveryLevelExtraL1) {
-        desc += ' + extra at level 1';
-      }
+    if (!settings.talentWiki) {
+      return 'Canonical: talents from the advancing class\'s progression table (class levels 1, 3, 5, ... for core classes)';
     }
-
+    let desc = 'Talent Wiki: class talents plus a heroic talent at odd levels (1, 3, 5, 7, ...)';
+    if (settings.talentEveryLevel) {
+      desc = 'Talent Wiki: class talents plus a heroic talent at every level (1, 2, 3, 4, ...)';
+      if (settings.talentEveryLevelExtraL1) desc += ' + extra at level 1';
+    }
     return desc;
   }
 }

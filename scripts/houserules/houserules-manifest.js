@@ -872,10 +872,23 @@ export const HOUSERULE_MANIFEST = [
     config: true
   },
   {
+    key: 'talentWiki',
+    name: 'Talent Wiki',
+    category: 'advancement',
+    description: 'Uses the alternative talent progression system previously implemented in SWSE Foundry, including its existing general talent and class talent acquisition rules and selection permissions. Disable to use canonical Saga Edition class-based talent progression.',
+    type: 'boolean',
+    choices: null,
+    default: false,
+    status: 'wired',
+    tags: ['house-rule', 'automation'],
+    presetVisible: true,
+    config: true
+  },
+  {
     key: 'talentEveryLevel',
     name: 'Talent Every Level',
     category: 'advancement',
-    description: 'Characters gain a talent at every level rather than only at odd levels.',
+    description: 'Characters gain a talent at every level rather than only at odd levels. Modifies the Talent Wiki heroic talent cadence; no effect while Talent Wiki is off.',
     type: 'boolean',
     choices: null,
     default: false,

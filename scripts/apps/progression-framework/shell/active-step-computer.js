@@ -38,6 +38,7 @@ import { buildLevelUpEventContext, countClassFeatureChoicesAtLevel } from '../..
 import { buildLevelUpEntitlementManifest } from '../../../engine/progression/utils/levelup-entitlement-manifest.js';
 import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
 import { ChargenRules } from '../../../engine/chargen/ChargenRules.js';
+import { TalentCadenceEngine } from '../../../engine/progression/talents/talent-cadence-engine.js';
 
 function isDroidActorForProgression(actor, progressionSession = null) {
   return actor?.type === 'droid'
@@ -695,6 +696,10 @@ export class ActiveStepComputer {
    * @private
    */
   _hasTalentChoices(stepNodeId, actor, progressionSession, mode = 'chargen') {
+    // Canonical progression has no heroic/general talent lane: every ordinary talent is a
+    // class-table award (class-talent). The heroic lane exists only under Talent Wiki.
+    if (stepNodeId === 'general-talent' && !TalentCadenceEngine.heroicTalentLaneEnabled()) return false;
+
     const classSelection = progressionSession?.getSelection?.('class') || progressionSession?.draftSelections?.class || null;
     const classModel = resolveClassModel(classSelection);
     if (!classModel) return false;

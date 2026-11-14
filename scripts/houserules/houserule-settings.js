@@ -901,9 +901,18 @@ export function registerHouseruleSettings() {
     default: 'current'
   });
 
+  register('talentWiki', {
+    name: 'Talent Wiki',
+    hint: 'Uses the alternative talent progression system previously implemented in SWSE Foundry, including its existing general talent and class talent acquisition rules and selection permissions. Disable to use canonical Saga Edition class-based talent progression.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   register('talentEveryLevel', {
     name: 'Talent Every Level',
-    hint: 'Characters gain a talent each level rather than odd levels.',
+    hint: 'Characters gain a talent each level rather than odd levels. Modifies the Talent Wiki heroic talent cadence; it has no effect while Talent Wiki is off (canonical class-based progression).',
     scope: 'world',
     config: true,
     type: Boolean,
