@@ -40,6 +40,15 @@ export class FeatRulesAdapter {
    * Talent Cadence Rules — How talents are granted as characters level
    */
 
+  /**
+   * Talent Wiki: the alternative talent progression previously implemented in SWSE Foundry
+   * (a heroic-level talent lane in addition to class-table talents). OFF = canonical
+   * class-based progression (Core Rulebook pp. 37-39, 54-55).
+   */
+  static talentWikiEnabled() {
+    return HouseRuleService.getBoolean('talentWiki', false);
+  }
+
   static talentEveryLevelEnabled() {
     return HouseRuleService.getBoolean('talentEveryLevel', false);
   }

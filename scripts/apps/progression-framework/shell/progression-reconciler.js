@@ -1263,6 +1263,9 @@ export class ProgressionReconciler {
         filledByName: null,
       });
     }
+    if (settings.talentEveryLevelConfigured && !settings.talentWiki) {
+      notes.push({ code: 'house-rule-talent-cadence-requires-talent-wiki', text: 'Talent Every Level is enabled but only modifies the Talent Wiki heroic talent cadence; with Talent Wiki off (canonical class-based talents) it grants nothing. Its canonical composition is an open rules question (RECON-005).' });
+    }
     if (settings.talentEveryLevel) {
       notes.push({ code: 'house-rule-talent-cadence-undetermined', text: 'Talent Every Level is enabled; how it combines with each class table is an open rules question (RECON-005), so levels 2 and above are not audited for talents.' });
     }

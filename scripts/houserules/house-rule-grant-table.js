@@ -34,7 +34,7 @@ export const HOUSE_RULE_GRANTS = Object.freeze([
  */
 export const FEAT_TALENT_RULE_KEYS = Object.freeze([
   ...HOUSE_RULE_GRANTS.map(g => g.setting),
-  'talentEveryLevel', 'talentEveryLevelExtraL1',
+  'talentWiki', 'talentEveryLevel', 'talentEveryLevelExtraL1',
   'multiclassExtraStartingFeats', 'multiclassEnhancedEnabled',
   'talentDoubleLevels', 'multiclassBonusChoice',
   'talentTreeRestriction', 'classTreeOverrides', 'enableDarkSideTreeAccess', 'forceSensitiveJediOnly',

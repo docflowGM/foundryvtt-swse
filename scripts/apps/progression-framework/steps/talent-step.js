@@ -40,6 +40,8 @@ import { compileProgressionSearchQuery, buildProgressionSearchText } from '../ut
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { HouseRuleTalentCombination } from '/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js';
+import { TalentCadenceEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-cadence-engine.js';
+import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 import { PrereqAdapter } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/prereq-adapter.js';
 
 function emitTalentStepTrace(label, payload = {}) {
@@ -203,6 +205,8 @@ export class TalentStep extends ProgressionStepPlugin {
     // Step configuration
     this._slotType = descriptor.slotType || 'heroic';  // 'heroic' or 'class'
     this._classId = descriptor.classId || null;
+    // Granting class of a canonical class-slot entitlement (display only; see _resolveGrantingClassContext)
+    this._grantingClass = null;
 
     // Stage state
     this._stage = 'browser';  // 'browser' or 'graph'
@@ -970,6 +974,64 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Force Sensitivity for talent tree access: actor-owned feat, pending draft feat
+   * selection, or a feat granted by the selected class (e.g. Jedi).
+   */
+  _hasForceSensitivityForTreeAuthority(actor, shell) {
+    const isForceSensitivity = (value) => /force sensitiv(?:e|ity)/i.test(String(value || ''));
+    const actorHasForceSensitivity = (actor?.items?.contents ?? actor?.items ?? [])
+      .some(i => i?.type === 'feat' && isForceSensitivity(i?.name));
+    if (actorHasForceSensitivity) return true;
+
+    const pendingFeats = shell?.progressionSession?.draftSelections?.feats
+      ?? shell?.buildIntent?.getSelection?.('feats')
+      ?? [];
+    if (Array.isArray(pendingFeats) && pendingFeats.some(f => isForceSensitivity(f?.name || f))) return true;
+
+    try {
+      const sel = this._getSelectedClassForTreeAuthority(shell);
+      if (!sel || !actor) return false;
+      const ledger = buildClassGrantLedger(actor, sel, {});
+      return ledger?.forceSensitive === true
+        || Array.from(ledger?.grantedFeats || []).some(g => isForceSensitivity(g?.name));
+    } catch { return false; }
+  }
+
+  /**
+   * Granting class of this talent entitlement, for display. Canonical progression labels a
+   * class-slot talent by the class and class level that grant it ("Soldier Talent — Soldier
+   * Level 3"). Returns null under Talent Wiki (its existing Class/Heroic terminology is kept).
+   */
+  _resolveGrantingClassContext(shell, classModel = null) {
+    if (this._slotType !== 'class' || TalentCadenceEngine.heroicTalentLaneEnabled()) return null;
+    const className = classModel?.name || this._getSelectedClassForTreeAuthority(shell)?.name || null;
+    if (!className) return null;
+    let classLevel = null;
+    try {
+      const context = buildLevelUpEventContext(shell?.actor || null, shell?.progressionSession || null);
+      classLevel = Number(context?.selectedClassNextLevel || 0) || null;
+    } catch { classLevel = null; }
+    return { className, classLevel };
+  }
+
+  /** 'Class' / 'Heroic' (Talent Wiki and heroic slots) or the granting class name (canonical). */
+  _slotTypeLabel() {
+    if (this._slotType === 'class' && this._grantingClass?.className) return this._grantingClass.className;
+    return this._slotType === 'class' ? 'Class' : 'Heroic';
+  }
+
+  /** Remaining-pick / entitlement label, e.g. "Soldier Talent — Soldier Level 3". */
+  _entitlementLabel() {
+    const grant = this._slotType === 'class' ? this._grantingClass : null;
+    if (grant?.className) {
+      return grant.classLevel
+        ? `${grant.className} Talent — ${grant.className} Level ${grant.classLevel}`
+        : `${grant.className} Talent`;
+    }
+    return this._slotType === 'class' ? 'Class Talent' : 'Heroic Talent';
+  }
+
+  /**
    * Get talent trees available in current context
    * HARDENED: Use class-resolution helper to resolve class model first
    */
@@ -1015,34 +1077,21 @@ export class TalentStep extends ProgressionStepPlugin {
       }
     }
 
+    this._grantingClass = this._resolveGrantingClassContext(shell, classModel);
+
+    // Canonical progression (Talent Wiki off): a class-granted talent may be spent on a
+    // Force talent tree by a Force-sensitive character (Core p. 100). Under Talent Wiki the
+    // class slot keeps its previous pool; Force-sensitive access flows through the heroic lane.
+    if (this._slotType === 'class' && classModel
+      && TalentCadenceEngine.classSlotForceTreeAccessForForceSensitive()
+      && this._hasForceSensitivityForTreeAuthority(actor, shell)) {
+      allowedIds = [...new Set([...allowedIds, ...FORCE_TALENT_TREES])];
+    }
+
     if (this._slotType === 'heroic') {
       // RAW: Force Sensitivity grants access to all Force Talent Trees.
-      // Detect it from actor-owned feats OR pending draft selections in the shell.
       // (FORCE_TALENT_TREES is defined above, shared with the class slot block)
-
-      const actorHasForceSensitivity = (actor?.items?.contents ?? actor?.items ?? [])
-        .some(i => i?.type === 'feat' && /force sensitiv(?:e|ity)/i.test(String(i?.name || '')));
-
-      const pendingFeats = shell?.progressionSession?.draftSelections?.feats
-        ?? shell?.buildIntent?.getSelection?.('feats')
-        ?? [];
-      const pendingHasForceSensitivity = Array.isArray(pendingFeats)
-        && pendingFeats.some(f => /force sensitiv(?:e|ity)/i.test(String(f?.name || f || '')));
-
-      // Also check class-granted force sensitivity (e.g. Jedi)
-      const classGrantsForceSensitivity = (() => {
-        try {
-          const sel = this._getSelectedClassForTreeAuthority(shell);
-          if (!sel || !actor) return false;
-          const ledger = buildClassGrantLedger(actor, sel, {});
-          return ledger?.forceSensitive === true
-            || Array.from(ledger?.grantedFeats || []).some(g =>
-              /force sensitiv(?:e|ity)/i.test(String(g?.name || ''))
-            );
-        } catch { return false; }
-      })();
-
-      const hasForceSensitivity = actorHasForceSensitivity || pendingHasForceSensitivity || classGrantsForceSensitivity;
+      const hasForceSensitivity = this._hasForceSensitivityForTreeAuthority(actor, shell);
 
       allowedIds = Array.from(new Set([
         this._collectActorUnlockedTalentTreeKeys(actor),
@@ -3323,7 +3372,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
   getBlockingIssues() {
     if (!this._selectedTalentId) {
-      return [`Select a ${this._slotType === 'class' ? 'Class' : 'Heroic'} Talent`];
+      return [`Select a ${this._slotTypeLabel()} Talent`];
     }
     return [];
   }
@@ -3336,8 +3385,7 @@ export class TalentStep extends ProgressionStepPlugin {
       if (this._stage === 'browser') {
         return 'Choose a talent tree to view available talents';
       } else {
-        const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'Heroic';
-        return `Select a ${slotTypeLabel} Talent to continue`;
+        return `Select a ${this._slotTypeLabel()} Talent to continue`;
       }
     }
     return null;
@@ -3384,7 +3432,7 @@ export class TalentStep extends ProgressionStepPlugin {
   getRemainingPicks() {
     const selected = this._selectedTalentId ? 1 : 0;
     return [{
-      label: this._slotType === 'class' ? 'Class Talent' : 'Heroic Talent',
+      label: this._entitlementLabel(),
       count: Math.max(0, 1 - selected),
       total: 1,
       selected,
@@ -3393,7 +3441,7 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   getFooterConfig() {
-    const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'Heroic';
+    const slotTypeLabel = this._slotTypeLabel();
     const stageName = this._stage === 'browser' ? 'Browsing Trees' : `Viewing: ${this._getTree(this._selectedTreeId)?.name || '...'}`;
 
     let statusText = '';

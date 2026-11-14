@@ -2784,3 +2784,40 @@ No provisional recommendation has been converted into a ruling.
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+## RECON-001 — PROJECT OWNER RULING (appended 2026-11-14; the original question above is preserved unchanged)
+
+| Field | |
+|---|---|
+| Decision | **Option (a), per-class table only, is canonical and the default.** Ordinary talents are awarded by the progression table of the class being advanced (Core Rulebook p. 15 starting talent as a class feature; pp. 37-39 class tables, e.g. Jedi talents at class levels 1, 3, 5 … 19; pp. 54-55 multiclassing distinguishes character level from class level). A character does not gain a talent because the character level becomes odd. A class-granted talent is chosen from the granting class's talent trees; earlier classes do not widen it. Force-sensitive characters may spend a class-granted talent on an eligible Force talent tree (p. 100). Prestige classes use their own tables and tree permissions. Example given by the owner: Jedi 1 / Soldier 1 has two talents, one per granting class. |
+| Previous behavior | Option (c), class-table talents **plus** a heroic talent at every odd character level, is preserved unchanged as the optional house rule **Talent Wiki** (`talentWiki`, default OFF). The owner named the house rule; the SWSE Wiki is not the authority for canonical progression. |
+| Scope | Future progression events only. Existing characters' talents and histories are not rewritten, deleted or re-awarded when the setting changes. |
+| Implementation | `TalentCadenceEngine` (single policy authority) gates the heroic lane on `talentWiki`; `ActiveStepComputer` opens no Heroic Talent step in canonical mode; `TalentStep` adds Force talent trees to a class slot for a Force-sensitive character in canonical mode and labels the entitlement by granting class and class level; reconciliation no longer defers multiclass talent slots under RECON-001 in canonical mode (still deferred under Talent Wiki). Class data `level_progression[].features[].type === 'talent_choice'` remains the RAW authority. |
+| Tests | `tests/talent-progression-policy.test.mjs` (Talent Wiki pinned to the pre-refactor baseline; canonical single-class, multiclass, prestige, pools, labels, toggling, reconciliation); `tests/reconciliation-house-rules.test.mjs` (updated: `talentEveryLevel` scenarios run under Talent Wiki; canonical counterpart added) |
+| Implementing commit | recorded in the next appended line |
+| Status | `MECHANIC_SPECIFIED`, `IMPLEMENTED`, `OFFLINE_TESTED`; not `FOUNDRY_TESTED` |
+
+## RECON-005 — PROGRESS NOTE (appended 2026-11-14; the original entry above is preserved unchanged)
+
+The RECON-001 ruling narrows this question but does not answer it. `talentEveryLevel` and `talentEveryLevelExtraL1` are implemented only as modifiers of the heroic-lane cadence, and that lane now exists only under Talent Wiki. **Open question:** with Talent Wiki OFF (canonical), should `talentEveryLevel` / `talentEveryLevelExtraL1` / `talentDoubleLevels` grant anything, and if so how do they compose with class-table talents? **Interim behavior (fail closed, no ruling made):** with Talent Wiki off they grant nothing; the setting hints say so, and reconciliation shows the informational note `house-rule-talent-cadence-requires-talent-wiki`. With Talent Wiki on, their previous behavior is unchanged. Status remains `DEFERRED_RULES_REVIEW`. Recommended ruling: none.
+
+## TALENT-RD-001 — Which trees are "Force talent trees" for the canonical class-slot substitution
+
+| Field | |
+|---|---|
+| Rules domain | Talent selection / Force talents |
+| Feature | Force talent trees a Force-sensitive character may choose with a class-granted talent |
+| Source | Core Rulebook p. 100 (owner citation, 2026-11-14). Printed tree list not re-verified in this pass. |
+| Evidence | The owner ruling establishes that Force-sensitive characters may select eligible Force talents in place of ordinary class-granted talents. The repository's existing list (`FORCE_TALENT_TREES` in `talent-step.js`: Alter, Control, Dark Side, Sense, Light Side, Guardian Spirit) was already used for the Talent Wiki heroic lane and for Force-using classes' class slots. |
+| Confirmed behavior | Substitution exists, subject to each talent's prerequisites (unchanged prerequisite authority). |
+| Unresolved question | Whether every tree in the existing list (notably Light Side and Guardian Spirit, which are not Core Rulebook trees) qualifies for the canonical substitution, and whether Dark Side access is limited by `enableDarkSideTreeAccess` or other rules here. |
+| Options | (a) the existing project list as is; (b) the Core p. 100 trees only, other books' Force trees per their own text. No preference given. |
+| Recommended ruling | None |
+| Implementation impact | Canonical mode reuses the existing list unchanged (no new tree list was invented). A ruling changes one constant. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+- **Revision 65 (2026-11-14):** appended the RECON-001 project owner ruling (canonical class-based talents; Talent Wiki house rule), a RECON-005 progress note, and TALENT-RD-001.
+
+**RECON-001 — implementing commit:** `e38026aac93d2926fa7bc6c4e0e2eeca5ed02f7d` (ruling above; recorded after the commit existed, per the append-only rule).

@@ -477,6 +477,7 @@ export function exportSettings() {
     'secondWindImproved',
     'secondWindRecovery',
     'secondWindWebEnhancement',
+    'talentWiki',
     'talentEveryLevel',
     'deathSystem',
     'crossClassSkillTraining',

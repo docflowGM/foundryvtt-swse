@@ -6,6 +6,7 @@
  * missing/ambiguous/overfilled, but also what UI action can resolve it.
  */
 import { ProgressionTimelineBuilder } from './progression-timeline-builder.js';
+import { TalentCadenceEngine } from '../../../../engine/progression/talents/talent-cadence-engine.js';
 
 /**
  * Rule deferrals. Each entry corresponds to a DEFERRED_RULES_REVIEW item in
@@ -14,6 +15,9 @@ import { ProgressionTimelineBuilder } from './progression-timeline-builder.js';
  * so a pending rules question can never raise a player-facing alert.
  */
 const RULE_DEFERRALS = Object.freeze({
+  // RECON-001 is ruled for canonical progression (class-table talents only; owner ruling
+  // 2026-11-14). It stays deferred only under the Talent Wiki house rule, whose heroic lane
+  // is not audited against class-table talents.
   'RECON-001': 'Multiclass talent entitlement (class-table choices vs heroic cadence) is pending a rules ruling.',
   'RECON-002': 'Droid ability-increase count is pending a rules ruling.',
   'RECON-003': 'Nonheroic and mixed-actor entitlement level basis is pending a rules ruling.',
@@ -150,8 +154,11 @@ export class ProgressionReconciliationReportBuilder {
     if (!proven.size) return;
     for (const group of ['generalFeats', 'heroicTalents', 'classFeats', 'classTalents']) {
       for (const slot of slots[group] || []) {
-        if (slot?.status !== 'unverifiable' || !slot.rulesDeferred) continue;
         if (!proven.has(this._slotProvenKey(slot))) continue;
+        // An open (non-deferred) slot carries the same proof: stamp it so unattributed crediting
+        // can never absorb it (e.g. canonical multiclass talents, no longer RECON-001 deferred).
+        if (slot?.status === 'open') { slot.provenBy = 'certified-grant-removed'; continue; }
+        if (slot?.status !== 'unverifiable' || !slot.rulesDeferred) continue;
         slot.status = 'open';
         slot.openCount = Number(slot.unverifiableCount || slot.count || 1) || 1;
         slot.unverifiableCount = 0;
@@ -167,11 +174,12 @@ export class ProgressionReconciliationReportBuilder {
   _applyDeferredRules(slots = {}, actor = {}, plan = {}) {
     const isDroid = actor?.type === 'droid' || actor?.system?.isDroid === true;
     const heroicClasses = (Array.isArray(plan?.classSummaries) ? plan.classSummaries : []).filter(row => row.isNonheroic !== true);
+    const multiclassTalentDeferred = heroicClasses.length > 1 && TalentCadenceEngine.heroicTalentLaneEnabled();
     const rulesFor = {
       abilityIncreases: [isDroid ? 'RECON-002' : null, plan?.hasNonheroic ? 'RECON-003' : null],
       generalFeats: [plan?.hasNonheroic ? 'RECON-003' : null],
-      heroicTalents: [plan?.hasNonheroic ? 'RECON-003' : null, heroicClasses.length > 1 ? 'RECON-001' : null],
-      classTalents: [heroicClasses.length > 1 ? 'RECON-001' : null],
+      heroicTalents: [plan?.hasNonheroic ? 'RECON-003' : null, multiclassTalentDeferred ? 'RECON-001' : null],
+      classTalents: [multiclassTalentDeferred ? 'RECON-001' : null],
     };
     const applied = new Set();
     for (const [group, ids] of Object.entries(rulesFor)) {

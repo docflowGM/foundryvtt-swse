@@ -154,6 +154,7 @@ export const SETTINGS_DEFAULTS = {
     // Talents
     groupDeflectBlock: false,
     talentTreeRestriction: 'current',
+    talentWiki: false,
     talentEveryLevel: false,
     talentEveryLevelExtraL1: true,
     talentDoubleLevels: false,

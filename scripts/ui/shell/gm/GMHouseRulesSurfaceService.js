@@ -88,7 +88,7 @@ const HOUSE_RULES_CATEGORIES = {
     'performSurgeryEnabled', 'revivifyEnabled', 'criticalCareEnabled'
   ],
   skills: [
-    'skillFocusVariant', 'skillFocusActivationLevel', 'talentTreeRestriction', 'talentEveryLevel',
+    'skillFocusVariant', 'skillFocusActivationLevel', 'talentTreeRestriction', 'talentWiki', 'talentEveryLevel',
     'talentEveryLevelExtraL1', 'talentDoubleLevels', 'crossClassSkillTraining', 'retrainingEnabled',
     'skillTrainingEnabled', 'trainingPointsPerLevel', 'multiclassBonusChoice', 'abilityIncreaseAllocationMode',
     'grappleEnabled', 'grappleVariant', 'grappleDCBonus', 'flankingEnabled', 'flankingBonus',
@@ -148,6 +148,7 @@ const RULE_NAMES = {
       skillFocusVariant: 'Skill Focus Variant',
       skillFocusActivationLevel: 'Delayed Skill Focus Activation',
       talentTreeRestriction: 'Talent Tree Access Rules',
+      talentWiki: 'Talent Wiki',
       talentEveryLevel: 'Talent Every Level',
       talentEveryLevelExtraL1: 'Extra Talent at Level 1',
       talentDoubleLevels: 'Talent Double Level Option',
