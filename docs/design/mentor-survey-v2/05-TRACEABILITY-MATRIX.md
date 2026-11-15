@@ -1,13 +1,13 @@
 # Traceability Matrix
 
-Status vocabulary: `Planned` · `Implemented` · `Tested (offline)` · `Blocked` · `Deferred` (rules register). **No row is `Foundry tested`**: no live Foundry runtime is available in this environment (see manual procedures in `06`).
+Status vocabulary: `Planned` · `Implemented` · `Tested (offline)` · `Blocked` · `Deferred` (rules register). **No row is `Foundry tested`**: no live Foundry runtime is available in this environment (see the manual acceptance procedure in `06`). "Tested (offline)" means Node tests of the pure logic and file wiring, not a Foundry session.
 Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test title starts with its requirement ID so this table can be machine-checked by `tests/mentor-survey-traceability.test.mjs`.
 
 ## Shared (`SV`)
 
 | ID | Requirement | Source | Implementation | Directive acceptance # | Status |
 |---|---|---|---|---|---|
-| SV-01 | Clean cutover; no migrations/shims/fallbacks/dual schemas | Directive §1; §39.4-C | deleted legacy modules; cutover test | 19 | Planned |
+| SV-01 | Clean cutover; no migrations/shims/fallbacks/dual schemas | Directive §1; §39.4-C | deleted legacy modules; cutover test | 19 | Tested (offline) |
 | SV-02 | Four authority lanes never conflated | v0.9 §13; Q6 handoff §3.4 | `contract.js`, `intent-ledger.js` | 13,15 | Tested (offline, engine level) |
 | SV-03 | Browsing/declining/skipping records no intent or negative inference | v0.9 §13; L1 v0.19 §12.4 | `survey-session.js` | 7,8 | Tested (offline, engine level) |
 | SV-04 | Single module layout, no parallel authority | Directive §3 | `scripts/mentor/mentor-survey/*` | 19 | Planned |
@@ -41,22 +41,22 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 
 | ID | Requirement | Source | Implementation | Acc. | Status |
 |---|---|---|---|---|---|
-| L1-01 | Optional; never restricts legal chargen | v0.19 §1; handoff A | `l1.js` resolver | 7 | Planned |
-| L1-02 | Exactly five questions; no sixth | v0.19 | `l1.js` | 1 | Tested (offline, engine level) |
+| L1-01 | Optional; never restricts legal chargen | v0.19 §1; handoff A | `l1.js` resolver | 7 | Tested (offline) |
+| L1-02 | Exactly five questions; no sixth | v0.19 | `l1.js` | 1 | Tested (offline) |
 | L1-03 | Class→Mentor: Jedi Miraj, Noble J0-N1, Scoundrel Ol' Salty, Scout Lead, Soldier Breach | v0.19 §A | routes JSON | 4 | Tested (offline) |
-| L1-04 | Reads pending session context | handoff §E | `l1.js` | 20 | Planned |
-| L1-05 | Fixed Mentor intros, not generated | v0.10 §1.4 | content | 4 | Planned |
-| L1-06 | Q2: 97 parents, all reachable; IDs validated vs registry | v0.12 §12 | `l1.js` | 8 | Planned |
-| L1-07 | Q2 A/B anchors (20), C/D/E next three, F pages never repeat | v0.12 §12.1–.3 | `l1.js` | 8 | Planned |
-| L1-08 | Browse/F/skip create zero intent | v0.12 §12.3–.4 | session | 7,8 | Planned |
+| L1-04 | Reads pending session context | handoff §E | `l1.js` | 20 | Tested (offline) |
+| L1-05 | Fixed Mentor intros, not generated | v0.10 §1.4 | content | 4 | Tested (offline) |
+| L1-06 | Q2: 97 parents, all reachable; IDs validated vs registry | v0.12 §12 | `l1.js` | 8 | Tested (offline) |
+| L1-07 | Q2 A/B anchors (20), C/D/E next three, F pages never repeat | v0.12 §12.1–.3 | `l1.js` | 8 | Tested (offline) |
+| L1-08 | Browse/F/skip create zero intent | v0.12 §12.3–.4 | session | 7,8 | Tested (offline) |
 | L1-09 | Q2 ranking coefficients | v0.19 §12 | **Deferred** MSV-RD-001 | — | Deferred |
-| L1-10 | Q2 preserves unusual careers | Directive §3 | `l1.js` | 8 | Planned |
-| L1-11 | Q3 keyed by class+Q1 `responseId` (+undecided route) | v0.13 §13 | `l1.js` | 9 | Planned |
-| L1-12 | Q4 keyed only by exact Q2 parent; Q3 never changes Q4 | v0.18 | `l1.js` | 9,10 | Tested (offline, engine level) |
-| L1-13 | Q4 composition 0 / 1–4 / 5 / >5 children, no repeats, species restriction only | v0.18 | `l1.js` | 9 | Planned |
+| L1-10 | Q2 preserves unusual careers | Directive §3 | `l1.js` | 8 | Tested (offline) |
+| L1-11 | Q3 keyed by class+Q1 `responseId` (+undecided route) | v0.13 §13 | `l1.js` | 9 | Tested (offline) |
+| L1-12 | Q4 keyed only by exact Q2 parent; Q3 never changes Q4 | v0.18 | `resolvers/l1.js`, `l1-controller.js` | 9,10 | Tested (offline) |
+| L1-13 | Q4 composition 0 / 1–4 / 5 / >5 children, no repeats, species restriction only | v0.18 | `l1.js` | 9 | Tested (offline) |
 | L1-14 | Q4 personalization by Q3 tags | v0.18 P0 | **Blocked** MSV-RD-002 | — | Blocked |
-| L1-15 | Lifecycle (skip/cancel/back/revisit/invalidate) | handoff G6 | session | 7,10 | Planned |
-| L1-16 | Q5 long-term ambition, 25 answers; no grants | v0.19 | `l1.js` | 1 | Planned |
+| L1-15 | Lifecycle (skip/cancel/back/revisit/invalidate) | handoff G6 | session | 7,10 | Tested (offline) |
+| L1-16 | Q5 long-term ambition, 25 answers; no grants | v0.19 | `l1.js` | 1 | Tested (offline) |
 
 ## Multiclass (`MC`)
 
@@ -91,7 +91,7 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | PR-08 | Multiple prestige acquisitions independent | handoff §8.5 | ledger | 13 | Tested (offline, engine level) |
 | PR-09 | Level-20 / low budget: no implied advancement | handoff §8.6 | resolver | 13 | Planned |
 | PR-10 | Quarantined mechanics never enabled | §39.3 | content gate | 1 | Planned |
-| PR-11 | Prestige Q6 per-class dialogue | handoff (NEXT) | **Blocked** missing artifact | — | Blocked |
+| PR-11 | Prestige Q6 per-class dialogue | handoff (NEXT) | **Blocked**: source package not in Git (owner to supply; never reconstructed) | — | Blocked |
 
 ## Survey influence (addendum; `SV-30`…`SV-42`)
 

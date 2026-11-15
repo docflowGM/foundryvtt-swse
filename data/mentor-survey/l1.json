@@ -7,9 +7,11 @@
     "generatedBy": "tools/mentor-survey/build-l1-content.mjs",
     "note": "Verbatim import of the committed design. Approval flags reflect only explicit owner approvals recorded in the design; everything else is draft_text. Editorial tags and developer routes are intentionally not imported.",
     "counts": {
+      "selectable": 1375,
+      "referenceUniversalQ2": 97,
+      "navigationControls": 2,
       "intros": 25,
       "q1": 30,
-      "q2Universal": 97,
       "q2ClassVariants": 485,
       "q3Scenarios": 30,
       "q3Replies": 150,
@@ -880,7 +882,7 @@
     "parents": {
       "diplomat": {
         "parentId": "diplomat",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.diplomat.universal",
           "text": "I want to broker peace between worlds, finding agreements where others see only enemies.",
           "editorialStatus": "draft_text",
@@ -890,7 +892,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C01 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -957,7 +959,7 @@
       },
       "field_commander": {
         "parentId": "field_commander",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.field_commander.universal",
           "text": "I want to lead people through battle and make the decisions that bring them home.",
           "editorialStatus": "draft_text",
@@ -967,7 +969,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C02 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1034,7 +1036,7 @@
       },
       "spy": {
         "parentId": "spy",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.spy.universal",
           "text": "I want to work undercover, uncovering secrets without anyone realizing I was there.",
           "editorialStatus": "draft_text",
@@ -1044,7 +1046,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C03 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1111,7 +1113,7 @@
       },
       "merchant_prince": {
         "parentId": "merchant_prince",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.merchant_prince.universal",
           "text": "I want to build a trading empire, using negotiation and connections to turn opportunity into influence.",
           "editorialStatus": "draft_text",
@@ -1121,7 +1123,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C04 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1188,7 +1190,7 @@
       },
       "galactic_archaeologist": {
         "parentId": "galactic_archaeologist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.galactic_archaeologist.universal",
           "text": "I want to uncover the histories of forgotten civilizations and bring their secrets back to light.",
           "editorialStatus": "draft_text",
@@ -1198,7 +1200,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C05 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1265,7 +1267,7 @@
       },
       "planetary_governor": {
         "parentId": "planetary_governor",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.planetary_governor.universal",
           "text": "I want to govern a world, balancing competing interests and making life better for its people.",
           "editorialStatus": "draft_text",
@@ -1275,7 +1277,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C06 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1342,7 +1344,7 @@
       },
       "community_leader": {
         "parentId": "community_leader",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.community_leader.universal",
           "text": "I want to become someone my community trusts to organize help and stand up for its needs.",
           "editorialStatus": "draft_text",
@@ -1352,7 +1354,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C07 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1419,7 +1421,7 @@
       },
       "information_broker": {
         "parentId": "information_broker",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.information_broker.universal",
           "text": "I want to learn what powerful people are hiding and make a living knowing who needs that information.",
           "editorialStatus": "draft_text",
@@ -1429,7 +1431,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C08 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1496,7 +1498,7 @@
       },
       "corporate_operator": {
         "parentId": "corporate_operator",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.corporate_operator.universal",
           "text": "I want to rise through the corporate world, mastering its politics and shaping the decisions that matter.",
           "editorialStatus": "draft_text",
@@ -1506,7 +1508,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C09 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1573,7 +1575,7 @@
       },
       "courtier": {
         "parentId": "courtier",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.courtier.universal",
           "text": "I want to move through the halls of power, earning trust and influencing the conversations that decide everything.",
           "editorialStatus": "draft_text",
@@ -1583,7 +1585,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C10 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1650,7 +1652,7 @@
       },
       "aristocrat": {
         "parentId": "aristocrat",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.aristocrat.universal",
           "text": "I want to establish myself among the galaxy's influential families and use that standing to open doors.",
           "editorialStatus": "draft_text",
@@ -1660,7 +1662,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C11 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1727,7 +1729,7 @@
       },
       "bureaucrat": {
         "parentId": "bureaucrat",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.bureaucrat.universal",
           "text": "I want to understand how institutions actually work and use that knowledge to get things done.",
           "editorialStatus": "draft_text",
@@ -1737,7 +1739,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C12 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1804,7 +1806,7 @@
       },
       "investigator": {
         "parentId": "investigator",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.investigator.universal",
           "text": "I want to follow clues others overlook and uncover the truth when no one can agree on what happened.",
           "editorialStatus": "draft_text",
@@ -1814,7 +1816,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C13 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1881,7 +1883,7 @@
       },
       "fixer": {
         "parentId": "fixer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.fixer.universal",
           "text": "I want to connect people with what they need and become the one they call when a problem has no obvious solution.",
           "editorialStatus": "draft_text",
@@ -1891,7 +1893,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C14 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -1958,7 +1960,7 @@
       },
       "resistance_leader": {
         "parentId": "resistance_leader",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.resistance_leader.universal",
           "text": "I want to bring people together to resist oppression and give them the means to fight for a better future.",
           "editorialStatus": "draft_text",
@@ -1968,7 +1970,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C15 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2035,7 +2037,7 @@
       },
       "free_trader": {
         "parentId": "free_trader",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.free_trader.universal",
           "text": "I want to trade freely between worlds, building relationships and turning each voyage into a new opportunity.",
           "editorialStatus": "draft_text",
@@ -2045,7 +2047,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C16 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2112,7 +2114,7 @@
       },
       "ship_captain": {
         "parentId": "ship_captain",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.ship_captain.universal",
           "text": "I want to captain a starship, choose our course, and take responsibility for everyone aboard.",
           "editorialStatus": "draft_text",
@@ -2122,7 +2124,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C17 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2189,7 +2191,7 @@
       },
       "scientist": {
         "parentId": "scientist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.scientist.universal",
           "text": "I want to devote my life to research, asking questions no one has answered and testing what others take for granted.",
           "editorialStatus": "draft_text",
@@ -2199,7 +2201,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C18 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2266,7 +2268,7 @@
       },
       "doctor": {
         "parentId": "doctor",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.doctor.universal",
           "text": "I want to heal people, especially in places where proper medical care is hard to find.",
           "editorialStatus": "draft_text",
@@ -2276,7 +2278,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C19 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2343,7 +2345,7 @@
       },
       "educator": {
         "parentId": "educator",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.educator.universal",
           "text": "I want to teach others, helping them develop knowledge and abilities they can carry throughout their lives.",
           "editorialStatus": "draft_text",
@@ -2353,7 +2355,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C20 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2420,7 +2422,7 @@
       },
       "journalist": {
         "parentId": "journalist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.journalist.universal",
           "text": "I want to uncover important stories and tell the truth to people who deserve to know.",
           "editorialStatus": "draft_text",
@@ -2430,7 +2432,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C21 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2497,7 +2499,7 @@
       },
       "first_contact_specialist": {
         "parentId": "first_contact_specialist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.first_contact_specialist.universal",
           "text": "I want to be among the first to meet unfamiliar peoples, building understanding before fear becomes conflict.",
           "editorialStatus": "draft_text",
@@ -2507,7 +2509,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C22 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2574,7 +2576,7 @@
       },
       "crime_boss": {
         "parentId": "crime_boss",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.crime_boss.universal",
           "text": "I want to build an underworld organization, gathering the right people and resources to make my own rules.",
           "editorialStatus": "draft_text",
@@ -2584,7 +2586,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C23 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2651,7 +2653,7 @@
       },
       "spymaster": {
         "parentId": "spymaster",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.spymaster.universal",
           "text": "I want to coordinate intelligence networks, connecting scattered secrets into a picture others can't see.",
           "editorialStatus": "draft_text",
@@ -2661,7 +2663,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C24 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2728,7 +2730,7 @@
       },
       "spiritual_leader": {
         "parentId": "spiritual_leader",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.spiritual_leader.universal",
           "text": "I want to guide people through uncertainty, offering them purpose and a reason to keep going.",
           "editorialStatus": "draft_text",
@@ -2738,7 +2740,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C25 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2805,7 +2807,7 @@
       },
       "smuggler": {
         "parentId": "smuggler",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.smuggler.universal",
           "text": "I want to carry valuable cargo between worlds, finding a way past inspections and restrictions when the job demands it.",
           "editorialStatus": "draft_text",
@@ -2815,7 +2817,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C26 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2882,7 +2884,7 @@
       },
       "fringer": {
         "parentId": "fringer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.fringer.universal",
           "text": "I want to make a life on the edge of settled space, where resourcefulness matters more than rank or connections.",
           "editorialStatus": "draft_text",
@@ -2892,7 +2894,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C27 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -2959,7 +2961,7 @@
       },
       "pirate": {
         "parentId": "pirate",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.pirate.universal",
           "text": "I want to roam the stars with a crew of my own, taking risks and claiming prizes from those who think they rule the spacelanes.",
           "editorialStatus": "draft_text",
@@ -2969,7 +2971,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C28 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3036,7 +3038,7 @@
       },
       "gambler": {
         "parentId": "gambler",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.gambler.universal",
           "text": "I want to make my fortune at the tables, reading people and knowing when the odds are worth the risk.",
           "editorialStatus": "draft_text",
@@ -3046,7 +3048,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C29 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3113,7 +3115,7 @@
       },
       "con_artist": {
         "parentId": "con_artist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.con_artist.universal",
           "text": "I want to talk my way into opportunities, fool the people who underestimate me, and turn their confidence to my advantage.",
           "editorialStatus": "draft_text",
@@ -3123,7 +3125,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C30 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3190,7 +3192,7 @@
       },
       "gunslinger": {
         "parentId": "gunslinger",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.gunslinger.universal",
           "text": "I want to be known for a quick draw and a steady hand, ending a fight before my opponent can take a second shot.",
           "editorialStatus": "draft_text",
@@ -3200,7 +3202,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C31 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3267,7 +3269,7 @@
       },
       "bounty_hunter": {
         "parentId": "bounty_hunter",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.bounty_hunter.universal",
           "text": "I want to track fugitives across the galaxy and make my living bringing in people who don't want to be found.",
           "editorialStatus": "draft_text",
@@ -3277,7 +3279,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C32 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3344,7 +3346,7 @@
       },
       "frontier_marshal": {
         "parentId": "frontier_marshal",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.frontier_marshal.universal",
           "text": "I want to keep the peace in distant settlements, where help is scarce and someone has to stand up for the locals.",
           "editorialStatus": "draft_text",
@@ -3354,7 +3356,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C33 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3421,7 +3423,7 @@
       },
       "slicer": {
         "parentId": "slicer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.slicer.universal",
           "text": "I want to get inside secured computer systems, uncover what they hide, and find a way through almost any digital lock.",
           "editorialStatus": "draft_text",
@@ -3431,7 +3433,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C34 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3498,7 +3500,7 @@
       },
       "bodyguard": {
         "parentId": "bodyguard",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.bodyguard.universal",
           "text": "I want to stand between danger and the person I'm protecting, making sure they get home even when things turn ugly.",
           "editorialStatus": "draft_text",
@@ -3508,7 +3510,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C35 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3575,7 +3577,7 @@
       },
       "mercenary": {
         "parentId": "mercenary",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.mercenary.universal",
           "text": "I want to hire out my fighting skills, choosing contracts that pay well and missions I can live with.",
           "editorialStatus": "draft_text",
@@ -3585,7 +3587,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C36 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3652,7 +3654,7 @@
       },
       "commando": {
         "parentId": "commando",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.commando.universal",
           "text": "I want to train for dangerous missions behind enemy lines, working with a small team that can get in and out unseen.",
           "editorialStatus": "draft_text",
@@ -3662,7 +3664,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C37 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3729,7 +3731,7 @@
       },
       "naval_officer": {
         "parentId": "naval_officer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.naval_officer.universal",
           "text": "I want to serve aboard a warship, directing its crew and defending the people who depend on us.",
           "editorialStatus": "draft_text",
@@ -3739,7 +3741,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C38 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3806,7 +3808,7 @@
       },
       "quartermaster": {
         "parentId": "quartermaster",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.quartermaster.universal",
           "text": "I want to keep a crew supplied and ready, making sure the right equipment reaches the right people before trouble starts.",
           "editorialStatus": "draft_text",
@@ -3816,7 +3818,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C39 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3883,7 +3885,7 @@
       },
       "pilot": {
         "parentId": "pilot",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.pilot.universal",
           "text": "I want to make my living at the controls, mastering the craft I fly and getting passengers or cargo where they need to go.",
           "editorialStatus": "draft_text",
@@ -3893,7 +3895,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C40 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -3960,7 +3962,7 @@
       },
       "racer": {
         "parentId": "racer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.racer.universal",
           "text": "I want to push engines and my reflexes to their limits, proving I can outrun the best pilots in the galaxy.",
           "editorialStatus": "draft_text",
@@ -3970,7 +3972,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C41 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4037,7 +4039,7 @@
       },
       "mechanic": {
         "parentId": "mechanic",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.mechanic.universal",
           "text": "I want to keep ships and machines running, especially when everyone else has given up on repairing them.",
           "editorialStatus": "draft_text",
@@ -4047,7 +4049,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C42 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4114,7 +4116,7 @@
       },
       "droidsmith": {
         "parentId": "droidsmith",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.droidsmith.universal",
           "text": "I want to build, program, and repair droids, turning spare parts into capable partners with purposes of their own.",
           "editorialStatus": "draft_text",
@@ -4124,7 +4126,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C43 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4191,7 +4193,7 @@
       },
       "inventor": {
         "parentId": "inventor",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.inventor.universal",
           "text": "I want to design devices no one has made before and find practical answers to problems everyone else accepts.",
           "editorialStatus": "draft_text",
@@ -4201,7 +4203,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C44 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4268,7 +4270,7 @@
       },
       "cyberneticist": {
         "parentId": "cyberneticist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.cyberneticist.universal",
           "text": "I want to advance cybernetics, helping living beings recover or extend their abilities through technology.",
           "editorialStatus": "draft_text",
@@ -4278,7 +4280,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C45 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4345,7 +4347,7 @@
       },
       "explorer": {
         "parentId": "explorer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.explorer.universal",
           "text": "I want to travel beyond the known charts and set foot on worlds few people have ever seen.",
           "editorialStatus": "draft_text",
@@ -4355,7 +4357,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C46 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4422,7 +4424,7 @@
       },
       "naturalist": {
         "parentId": "naturalist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.naturalist.universal",
           "text": "I want to study unfamiliar ecosystems and discover how the creatures and environments of each world fit together.",
           "editorialStatus": "draft_text",
@@ -4432,7 +4434,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C47 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4499,7 +4501,7 @@
       },
       "activist": {
         "parentId": "activist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.activist.universal",
           "text": "I want to bring people together around a cause and make powerful institutions listen when they would rather ignore us.",
           "editorialStatus": "draft_text",
@@ -4509,7 +4511,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C48 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4576,7 +4578,7 @@
       },
       "celebrity": {
         "parentId": "celebrity",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.celebrity.universal",
           "text": "I want to become someone the galaxy recognizes and use that reputation to create opportunities for myself and others.",
           "editorialStatus": "draft_text",
@@ -4586,7 +4588,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C49 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4653,7 +4655,7 @@
       },
       "entertainer": {
         "parentId": "entertainer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.entertainer.universal",
           "text": "I want to perform for others, making a living with stories, music, or spectacle wherever an audience will gather.",
           "editorialStatus": "draft_text",
@@ -4663,7 +4665,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C50 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4730,7 +4732,7 @@
       },
       "scavenger": {
         "parentId": "scavenger",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.scavenger.universal",
           "text": "I want to search wrecks and abandoned places, finding useful treasures in what everyone else leaves behind.",
           "editorialStatus": "draft_text",
@@ -4740,7 +4742,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C51 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4807,7 +4809,7 @@
       },
       "courier": {
         "parentId": "courier",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.courier.universal",
           "text": "I want to carry important messages and cargo through dangerous routes, reaching places others cannot.",
           "editorialStatus": "draft_text",
@@ -4817,7 +4819,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C52 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4884,7 +4886,7 @@
       },
       "sector_ranger": {
         "parentId": "sector_ranger",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.sector_ranger.universal",
           "text": "I want to pursue criminals across worlds and sectors, following a trail wherever it leads until justice catches up.",
           "editorialStatus": "draft_text",
@@ -4894,7 +4896,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C53 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -4961,7 +4963,7 @@
       },
       "security_specialist": {
         "parentId": "security_specialist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.security_specialist.universal",
           "text": "I want to anticipate threats and build defenses that keep people and important places safe before trouble begins.",
           "editorialStatus": "draft_text",
@@ -4971,7 +4973,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C54 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5038,7 +5040,7 @@
       },
       "force_hunter": {
         "parentId": "force_hunter",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.force_hunter.universal",
           "text": "I want to track dangerous Force-users and learn how to face abilities most people don't understand.",
           "editorialStatus": "draft_text",
@@ -5048,7 +5050,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C55 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5115,7 +5117,7 @@
       },
       "veteran": {
         "parentId": "veteran",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.veteran.universal",
           "text": "I want to become someone others can rely on after years of hard service, using experience and composure to help the next generation survive.",
           "editorialStatus": "draft_text",
@@ -5125,7 +5127,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C56 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5192,7 +5194,7 @@
       },
       "warrior": {
         "parentId": "warrior",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.warrior.universal",
           "text": "I want to live by a warrior's code, honing my strength and skill until I can meet any challenge without fear.",
           "editorialStatus": "draft_text",
@@ -5202,7 +5204,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C57 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5269,7 +5271,7 @@
       },
       "sniper": {
         "parentId": "sniper",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.sniper.universal",
           "text": "I want to master patience, concealment, and long-range marksmanship, knowing exactly when a single shot will matter.",
           "editorialStatus": "draft_text",
@@ -5279,7 +5281,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C58 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5346,7 +5348,7 @@
       },
       "combat_medic": {
         "parentId": "combat_medic",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.combat_medic.universal",
           "text": "I want to keep people alive under fire, treating the wounded when there's no safe place to stop.",
           "editorialStatus": "draft_text",
@@ -5356,7 +5358,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C59 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5423,7 +5425,7 @@
       },
       "combat_engineer": {
         "parentId": "combat_engineer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.combat_engineer.universal",
           "text": "I want to solve technical problems in the middle of a fight, repairing what breaks and overcoming obstacles others can't pass.",
           "editorialStatus": "draft_text",
@@ -5433,7 +5435,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C60 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5500,7 +5502,7 @@
       },
       "saboteur": {
         "parentId": "saboteur",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.saboteur.universal",
           "text": "I want to disable an enemy's equipment and infrastructure, making their plans unravel before the fighting even starts.",
           "editorialStatus": "draft_text",
@@ -5510,7 +5512,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C61 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5577,7 +5579,7 @@
       },
       "fleet_strategist": {
         "parentId": "fleet_strategist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.fleet_strategist.universal",
           "text": "I want to plan campaigns across the stars, positioning entire fleets so the right battle is won before the first shot is fired.",
           "editorialStatus": "draft_text",
@@ -5587,7 +5589,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C62 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5654,7 +5656,7 @@
       },
       "starship_gunner": {
         "parentId": "starship_gunner",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.starship_gunner.universal",
           "text": "I want to become an expert with starship weapons, protecting my crew by landing the shots that matter in battle.",
           "editorialStatus": "draft_text",
@@ -5664,7 +5666,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C63 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5731,7 +5733,7 @@
       },
       "partisan": {
         "parentId": "partisan",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.partisan.universal",
           "text": "I want to fight for a cause with whatever people and resources we can gather, striking where a stronger enemy least expects us.",
           "editorialStatus": "draft_text",
@@ -5741,7 +5743,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C64 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5808,7 +5810,7 @@
       },
       "astrogator": {
         "parentId": "astrogator",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.astrogator.universal",
           "text": "I want to chart hyperspace routes others wouldn't risk, guiding ships safely through unfamiliar stretches of the galaxy.",
           "editorialStatus": "draft_text",
@@ -5818,7 +5820,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C65 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5885,7 +5887,7 @@
       },
       "outlaw_tech": {
         "parentId": "outlaw_tech",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.outlaw_tech.universal",
           "text": "I want to push machines beyond their intended limits, modifying and repairing equipment when official methods aren't enough.",
           "editorialStatus": "draft_text",
@@ -5895,7 +5897,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C66 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -5962,7 +5964,7 @@
       },
       "armorer": {
         "parentId": "armorer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.armorer.universal",
           "text": "I want to build and maintain weapons and armor that people can trust when their lives depend on them.",
           "editorialStatus": "draft_text",
@@ -5972,7 +5974,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C67 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6039,7 +6041,7 @@
       },
       "electronic_warfare_specialist": {
         "parentId": "electronic_warfare_specialist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.electronic_warfare_specialist.universal",
           "text": "I want to control the flow of a battle through sensors, signals, and computer systems, keeping our side connected while the enemy goes blind.",
           "editorialStatus": "draft_text",
@@ -6049,7 +6051,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C68 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6116,7 +6118,7 @@
       },
       "shipwright": {
         "parentId": "shipwright",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.shipwright.universal",
           "text": "I want to design and construct starships, turning plans and raw materials into vessels capable of crossing the galaxy.",
           "editorialStatus": "draft_text",
@@ -6126,7 +6128,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C69 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6193,7 +6195,7 @@
       },
       "disaster_responder": {
         "parentId": "disaster_responder",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.disaster_responder.universal",
           "text": "I want to reach people when catastrophe strikes, organizing relief and helping communities recover from the worst.",
           "editorialStatus": "draft_text",
@@ -6203,7 +6205,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C70 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6270,7 +6272,7 @@
       },
       "pathfinder": {
         "parentId": "pathfinder",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.pathfinder.universal",
           "text": "I want to find safe routes through hostile and unexplored terrain, guiding others beyond the last familiar trail.",
           "editorialStatus": "draft_text",
@@ -6280,7 +6282,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C71 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6347,7 +6349,7 @@
       },
       "jedi_guardian": {
         "parentId": "jedi_guardian",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.jedi_guardian.universal",
           "text": "I want to walk the path of a Jedi Guardian, standing against danger when others need someone to defend them.",
           "editorialStatus": "draft_text",
@@ -6357,7 +6359,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C72 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6424,7 +6426,7 @@
       },
       "jedi_consular": {
         "parentId": "jedi_consular",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.jedi_consular.universal",
           "text": "I want to follow the path of a Jedi Consular, using insight and the Force to help others find understanding before conflict begins.",
           "editorialStatus": "draft_text",
@@ -6434,7 +6436,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C73 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6501,7 +6503,7 @@
       },
       "jedi_sentinel": {
         "parentId": "jedi_sentinel",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.jedi_sentinel.universal",
           "text": "I want to become a Jedi Sentinel, investigating hidden threats and using both practical skills and the Force to confront them.",
           "editorialStatus": "draft_text",
@@ -6511,7 +6513,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C74 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6578,7 +6580,7 @@
       },
       "sith_warrior": {
         "parentId": "sith_warrior",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.sith_warrior.universal",
           "text": "I want to pursue the path of a Sith Warrior, mastering combat and the Force until I can overcome any rival.",
           "editorialStatus": "draft_text",
@@ -6588,7 +6590,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C75 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6655,7 +6657,7 @@
       },
       "enforcer": {
         "parentId": "enforcer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.enforcer.universal",
           "text": "I want to enforce the rules of the people I work for, finding those who cross them and making sure they answer for it.",
           "editorialStatus": "draft_text",
@@ -6665,7 +6667,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C76 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6732,7 +6734,7 @@
       },
       "cantina_proprietor": {
         "parentId": "cantina_proprietor",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.cantina_proprietor.universal",
           "text": "I want to run a cantina where travelers can find a drink, a listening ear, and the sort of information they can't get anywhere else.",
           "editorialStatus": "draft_text",
@@ -6742,7 +6744,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C77 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6809,7 +6811,7 @@
       },
       "assassin": {
         "parentId": "assassin",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.assassin.universal",
           "text": "I want to take on contracts that demand stealth and precision, reaching a target unseen and finishing the job without a spectacle.",
           "editorialStatus": "draft_text",
@@ -6819,7 +6821,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C78 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6886,7 +6888,7 @@
       },
       "survivalist": {
         "parentId": "survivalist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.survivalist.universal",
           "text": "I want to rely on my own fieldcraft and endurance, surviving whatever the wilds throw at me when there's no one coming to help.",
           "editorialStatus": "draft_text",
@@ -6896,7 +6898,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C79 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -6963,7 +6965,7 @@
       },
       "search_and_rescue_specialist": {
         "parentId": "search_and_rescue_specialist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.search_and_rescue_specialist.universal",
           "text": "I want to find people who are lost or trapped and bring them home, even when the terrain and the odds are against us.",
           "editorialStatus": "draft_text",
@@ -6973,7 +6975,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C80 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7040,7 +7042,7 @@
       },
       "prospector": {
         "parentId": "prospector",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.prospector.universal",
           "text": "I want to search remote worlds for valuable deposits and overlooked resources, risking the unknown for the chance at a discovery.",
           "editorialStatus": "draft_text",
@@ -7050,7 +7052,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C81 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7117,7 +7119,7 @@
       },
       "colony_pioneer": {
         "parentId": "colony_pioneer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.colony_pioneer.universal",
           "text": "I want to help build a new settlement from the ground up, turning an unforgiving frontier into a place people can call home.",
           "editorialStatus": "draft_text",
@@ -7127,7 +7129,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C82 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7194,7 +7196,7 @@
       },
       "beast_hunter": {
         "parentId": "beast_hunter",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.beast_hunter.universal",
           "text": "I want to track dangerous creatures into their own territory and learn how to survive the hunt.",
           "editorialStatus": "draft_text",
@@ -7204,7 +7206,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C83 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7271,7 +7273,7 @@
       },
       "beast_handler": {
         "parentId": "beast_handler",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.beast_handler.universal",
           "text": "I want to understand and care for creatures others fear, earning their trust and learning to work alongside them.",
           "editorialStatus": "draft_text",
@@ -7281,7 +7283,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C84 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7348,7 +7350,7 @@
       },
       "beast_rider": {
         "parentId": "beast_rider",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.beast_rider.universal",
           "text": "I want to form a bond with a mount and learn to travel and fight as though we were one.",
           "editorialStatus": "draft_text",
@@ -7358,7 +7360,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C85 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7425,7 +7427,7 @@
       },
       "propagandist": {
         "parentId": "propagandist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.propagandist.universal",
           "text": "I want to shape the stories people believe, using words and images to rally support for the causes I serve.",
           "editorialStatus": "draft_text",
@@ -7435,7 +7437,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C86 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7502,7 +7504,7 @@
       },
       "revolutionary_statesman": {
         "parentId": "revolutionary_statesman",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.revolutionary_statesman.universal",
           "text": "I want to help overthrow an unjust order, then build a government that won't repeat its mistakes.",
           "editorialStatus": "draft_text",
@@ -7512,7 +7514,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C87 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7579,7 +7581,7 @@
       },
       "warrior_priest": {
         "parentId": "warrior_priest",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.warrior_priest.universal",
           "text": "I want to unite my beliefs with martial discipline, defending what I hold sacred through counsel or force when needed.",
           "editorialStatus": "draft_text",
@@ -7589,7 +7591,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C88 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7656,7 +7658,7 @@
       },
       "sith_assassin": {
         "parentId": "sith_assassin",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.sith_assassin.universal",
           "text": "I want to wield the dark side from the shadows, slipping past defenses and striking before an enemy knows I'm there.",
           "editorialStatus": "draft_text",
@@ -7666,7 +7668,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C89 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7733,7 +7735,7 @@
       },
       "sith_sorcerer": {
         "parentId": "sith_sorcerer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.sith_sorcerer.universal",
           "text": "I want to delve into forbidden Force lore and alchemy, mastering powers that others are too fearful to study.",
           "editorialStatus": "draft_text",
@@ -7743,7 +7745,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C90 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7810,7 +7812,7 @@
       },
       "sith_manipulator": {
         "parentId": "sith_manipulator",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.sith_manipulator.universal",
           "text": "I want to use the dark side to bend hearts and decisions, gaining influence without needing to draw a blade.",
           "editorialStatus": "draft_text",
@@ -7820,7 +7822,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C91 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7887,7 +7889,7 @@
       },
       "dark_side_cultist": {
         "parentId": "dark_side_cultist",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.dark_side_cultist.universal",
           "text": "I want to devote myself to a secret dark-side tradition, learning its rituals and preserving the power it promises.",
           "editorialStatus": "draft_text",
@@ -7897,7 +7899,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C92 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -7964,7 +7966,7 @@
       },
       "force_exile": {
         "parentId": "force_exile",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.force_exile.universal",
           "text": "I want to live beyond the reach of the Jedi and Sith, discovering what the Force means to me on my own terms.",
           "editorialStatus": "draft_text",
@@ -7974,7 +7976,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C93 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -8041,7 +8043,7 @@
       },
       "force_mystic": {
         "parentId": "force_mystic",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.force_mystic.universal",
           "text": "I want to seek a deeper connection with the Force through meditation, tradition, and experiences beyond ordinary understanding.",
           "editorialStatus": "draft_text",
@@ -8051,7 +8053,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C94 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -8118,7 +8120,7 @@
       },
       "force_seer": {
         "parentId": "force_seer",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.force_seer.universal",
           "text": "I want to learn to read visions and warnings in the Force, guiding my choices by what I sense may come.",
           "editorialStatus": "draft_text",
@@ -8128,7 +8130,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C95 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -8195,7 +8197,7 @@
       },
       "force_warrior": {
         "parentId": "force_warrior",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.force_warrior.universal",
           "text": "I want to bring the Force into battle, sharpening my instincts and strength until my fighting becomes an extension of it.",
           "editorialStatus": "draft_text",
@@ -8205,7 +8207,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C96 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {
@@ -8272,7 +8274,7 @@
       },
       "force_witch": {
         "parentId": "force_witch",
-        "universal": {
+        "universalReference": {
           "id": "l1.q2.force_witch.universal",
           "text": "I want to practice the Force through ancient rites and the natural world, learning the mysteries preserved by those who came before me.",
           "editorialStatus": "draft_text",
@@ -8282,7 +8284,7 @@
             "file": "docs/design/l1-adaptive-mentor-survey/SWSE_L1_Adaptive_Mentor_Survey_Rolling_Design_v0.19_2026-11-13.md",
             "anchor": "C97 universal"
           },
-          "kind": "career"
+          "kind": "reference"
         },
         "byClass": {
           "jedi": {

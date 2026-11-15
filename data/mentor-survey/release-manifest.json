@@ -1,0 +1,182 @@
+{
+  "_meta": {
+    "description": "Release gate for the mentor surveys. A scope is playable by players only when released AND every presented record is owner_approved_text. GMs may play withheld scopes only via the default-off editorial preview setting.",
+    "note": "Owner flips releaseState per scope after line approval and sign-off."
+  },
+  "surveys": {
+    "l1": {
+      "jedi": {
+        "releaseState": "withheld",
+        "reason": "Withheld: Q1-Q5 text is draft_text and awaiting owner line-approval; answer-to-tag mappings uncertified (see docs/design/mentor-survey-v2/06)."
+      },
+      "noble": {
+        "releaseState": "withheld",
+        "reason": "Withheld: Q1-Q5 text is draft_text and awaiting owner line-approval; answer-to-tag mappings uncertified (see docs/design/mentor-survey-v2/06)."
+      },
+      "scoundrel": {
+        "releaseState": "withheld",
+        "reason": "Withheld: Q1-Q5 text is draft_text and awaiting owner line-approval; answer-to-tag mappings uncertified (see docs/design/mentor-survey-v2/06)."
+      },
+      "scout": {
+        "releaseState": "withheld",
+        "reason": "Withheld: Q1-Q5 text is draft_text and awaiting owner line-approval; answer-to-tag mappings uncertified (see docs/design/mentor-survey-v2/06)."
+      },
+      "soldier": {
+        "releaseState": "withheld",
+        "reason": "Withheld: Q1-Q5 text is draft_text and awaiting owner line-approval; answer-to-tag mappings uncertified (see docs/design/mentor-survey-v2/06)."
+      }
+    },
+    "multiclass": {
+      "jedi": {
+        "releaseState": "withheld",
+        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+      },
+      "noble": {
+        "releaseState": "withheld",
+        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+      },
+      "scoundrel": {
+        "releaseState": "withheld",
+        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+      },
+      "scout": {
+        "releaseState": "withheld",
+        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+      },
+      "soldier": {
+        "releaseState": "withheld",
+        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+      }
+    },
+    "prestige": {
+      "ace_pilot": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "bounty_hunter": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "crime_lord": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "elite_trooper": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "force_adept": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "force_disciple": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "gunslinger": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "jedi_knight": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "jedi_master": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "officer": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "sith_apprentice": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "sith_lord": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "corporate_agent": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "gladiator": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "melee_duelist": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "enforcer": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "independent_droid": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "infiltrator": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "master_privateer": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "medic": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "saboteur": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "outlaw": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "droid_commander": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "military_engineer": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "vanguard": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "martial_arts_master": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "imperial_knight": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "shaper": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "assassin": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "charlatan": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "improviser": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      },
+      "pathfinder": {
+        "releaseState": "withheld",
+        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+      }
+    }
+  }
+}

@@ -38,7 +38,7 @@ import { SkillsStep } from './steps/skills-step.js';
 import { SpeciesStep } from './steps/species-step.js';
 import { DroidBuilderStep } from './steps/droid-builder-step.js';
 import { ClassStep } from './steps/class-step.js';
-import { L1SurveyStep } from './steps/l1-survey-step.js';
+import { MentorSurveyStep } from './steps/mentor-survey-step.js';
 import { AttributeStep } from './steps/attribute-step.js';
 import { BackgroundStep } from './steps/background-step.js';
 import { LanguageStep } from './steps/language-step.js';
@@ -386,7 +386,7 @@ const CHARGEN_CANONICAL_STEPS = [
     icon: 'fa-comments',
     type: StepType.BUILD,
     isSkippable: true,
-    pluginClass: L1SurveyStep,
+    pluginClass: MentorSurveyStep,
   },
 
   // PHASE 3: Character Development

@@ -7,7 +7,7 @@
  * base class already taken.
  */
 
-import { L1SurveyStep } from './l1-survey-step.js';
+import { LegacyClassSurveyStepBase } from './legacy-class-survey-step-base.js';
 import {
   getBaseClassSurveyDefinition,
   normalizeBaseClassSurveyKey,
@@ -107,7 +107,7 @@ function buildAggregateClassSurveyBias(classSurveys = {}) {
   return out;
 }
 
-export class BaseClassSurveyStep extends L1SurveyStep {
+export class BaseClassSurveyStep extends LegacyClassSurveyStepBase {
   constructor(descriptor) {
     super(descriptor);
     this._targetClassKey = null;

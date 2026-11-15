@@ -1,8 +1,9 @@
 /**
- * L1SurveyStep plugin
+ * LegacyClassSurveyStepBase (RETIRING).
  *
- * Class-centric survey step wired into the mentor survey registry.
- * Questions are derived from archetypes and voiced through the active mentor.
+ * This was the Level 1 survey step. Level 1 now runs on MentorSurveyStep (mentor-survey-v2). This file survives only
+ * because the legacy multiclass BaseClassSurveyStep still extends it; it is deleted with the multiclass cutover (D2).
+ * It is no longer registered for any step id.
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
@@ -147,7 +148,7 @@ function voiceSurveyClarification(mentor, phase, coreText) {
   return `${prefixByVoice[voice] || prefixByVoice.default} ${coreText} ${suffixByVoice[voice] || suffixByVoice.default}`.replace(/\s+/g, ' ').trim();
 }
 
-export class L1SurveyStep extends ProgressionStepPlugin {
+export class LegacyClassSurveyStepBase extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
     this._surveyAnswers = {};
@@ -172,7 +173,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     const didClassChange = this._activeSurveyClassKey && this._activeSurveyClassKey !== currentClassKey;
 
     if (didClassChange) {
-      console.log('[L1SurveyStep] Class changed from', this._activeSurveyClassKey, 'to', currentClassKey, '- resetting survey');
+      console.log('[LegacyClassSurveyStepBase] Class changed from', this._activeSurveyClassKey, 'to', currentClassKey, '- resetting survey');
       this._resetSurveyForClassChange(shell);
     }
 
@@ -186,7 +187,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       this._analysisResult = await BuildAnalysisIntegration.analyzeAndProvideFeedback(shell);
       this._emergentArchetype = this._analysisResult?.emergentArchetype || null;
     } catch (err) {
-      console.warn('[L1SurveyStep] Build analysis failed:', err);
+      console.warn('[LegacyClassSurveyStepBase] Build analysis failed:', err);
     }
 
     if (!restoredDraft) this._surveyPhase = this._resolveInitialPhase();
@@ -214,7 +215,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     // while it does. Its own AbortController (aborted here on every fresh
     // onDataReady call, and on step exit) supersedes a stale in-flight pass.
     void this._renderInlineSurveyTranslation(shell).catch(err => {
-      console.warn('[L1SurveyStep] Inline translation sidecar failed', err);
+      console.warn('[LegacyClassSurveyStepBase] Inline translation sidecar failed', err);
     });
   }
 
@@ -269,11 +270,11 @@ export class L1SurveyStep extends ProgressionStepPlugin {
           });
         } catch (err) {
           // Gracefully degrade if translation fails
-          console.warn('[L1SurveyStep] Translation failed for element, keeping plain text:', err);
+          console.warn('[LegacyClassSurveyStepBase] Translation failed for element, keeping plain text:', err);
         }
       }
     } catch (err) {
-      console.warn('[L1SurveyStep] Inline translation setup failed:', err);
+      console.warn('[LegacyClassSurveyStepBase] Inline translation setup failed:', err);
     }
   }
 
@@ -344,7 +345,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     await this._speakCurrentPhase(shell, true);
     shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_changeCurrentAnswer' });
 
-    console.log('[L1SurveyStep] Changed answer for question', question.id);
+    console.log('[LegacyClassSurveyStepBase] Changed answer for question', question.id);
   }
 
   /**
@@ -365,7 +366,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
         await this._saveSurveyDraft(shell);
         await this._speakCurrentPhase(shell, true);
         shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_goToPreviousQuestion' });
-        console.log('[L1SurveyStep] Moved to previous question at index', i);
+        console.log('[LegacyClassSurveyStepBase] Moved to previous question at index', i);
         return;
       }
     }
@@ -376,7 +377,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
    * Clears all answers and bias, returns to intro or first question
    */
   async _retakeSurvey(shell) {
-    console.log('[L1SurveyStep] Retaking survey for', this._activeSurveyClassKey);
+    console.log('[LegacyClassSurveyStepBase] Retaking survey for', this._activeSurveyClassKey);
 
     // Clear all survey data
     this._surveyAnswers = {};
@@ -416,7 +417,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     await this._speakCurrentPhase(shell, true);
     shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_retakeSurvey' });
 
-    console.log('[L1SurveyStep] Survey retaken - all answers cleared');
+    console.log('[LegacyClassSurveyStepBase] Survey retaken - all answers cleared');
   }
 
   async _goBackWithinSurvey(shell) {
@@ -499,7 +500,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     try {
       await shell.actor.setFlag('foundryvtt-swse', 'l1SurveyDrafts', next);
     } catch (err) {
-      console.warn('[L1SurveyStep] Failed to save survey draft:', err);
+      console.warn('[LegacyClassSurveyStepBase] Failed to save survey draft:', err);
     }
   }
 
@@ -511,7 +512,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     try {
       await shell.actor.setFlag('foundryvtt-swse', 'l1SurveyDrafts', existing);
     } catch (err) {
-      console.warn('[L1SurveyStep] Failed to clear survey draft:', err);
+      console.warn('[LegacyClassSurveyStepBase] Failed to clear survey draft:', err);
     }
   }
 
@@ -558,7 +559,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       delete shell.actor.system.swse.mentorBuildIntentBiases;
     }
 
-    console.log('[L1SurveyStep] Reset survey for class change - cleared', previousCount, 'answers');
+    console.log('[LegacyClassSurveyStepBase] Reset survey for class change - cleared', previousCount, 'answers');
   }
 
   /**
@@ -627,7 +628,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     if (isMovingBackward) {
       // Preserve draft state but do NOT finalize bias/commitment
-      console.log('[L1SurveyStep] Moving backward - preserving survey answers without finalizing');
+      console.log('[LegacyClassSurveyStepBase] Moving backward - preserving survey answers without finalizing');
       return;
     }
 
@@ -637,7 +638,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     const isExplicitlyFinalized = this._surveyFinalized || this._surveyPhase === 'complete';
 
     if (!isComplete || !isExplicitlyFinalized) {
-      console.log('[L1SurveyStep] Survey incomplete - draft saved without injecting mentor bias', {
+      console.log('[LegacyClassSurveyStepBase] Survey incomplete - draft saved without injecting mentor bias', {
         answeredCount,
         totalQuestions: questions.length,
         phase: this._surveyPhase,
@@ -683,7 +684,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     await this._clearSurveyDraft(shell);
 
-    console.log('[L1SurveyStep] Survey finalized for', this._activeSurveyClassKey, 'with', Object.keys(this._surveyAnswers).length, 'answers');
+    console.log('[LegacyClassSurveyStepBase] Survey finalized for', this._activeSurveyClassKey, 'with', Object.keys(this._surveyAnswers).length, 'answers');
   }
 
   async getStepData(context) {

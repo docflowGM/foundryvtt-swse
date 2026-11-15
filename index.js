@@ -26,6 +26,7 @@ import { auditUniversalVehicleRuntime, openUniversalVehicleSampleSheet } from ".
 import { runUniversalVehicleScratchImport } from "./scripts/domain/vehicles/vehicle-phase4d-scratch-import.js";
 import { registerForceTraditionHouseRuleSettings } from "./scripts/settings/force-tradition-house-rules.js";
 import { registerCustomContentApprovalSettings } from "./scripts/settings/custom-content-approval.js";
+import { registerMentorSurveyPreviewSetting } from "./scripts/settings/mentor-survey-preview.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
 import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
 import { initializeSceneControls } from "./scripts/scene-controls/init.js";
@@ -190,6 +191,7 @@ Hooks.once("init", async () => {
   registerSettings();
   registerForceTraditionHouseRuleSettings();
   registerCustomContentApprovalSettings();
+  registerMentorSurveyPreviewSetting();
   await registerSystemSettings();
   registerCP23C4ObservationSetting(); // Unverified audit observations only; no trust or receipt issuer
 

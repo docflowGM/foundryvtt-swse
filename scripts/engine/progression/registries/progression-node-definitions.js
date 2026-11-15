@@ -310,7 +310,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
-    selectionKey: 'survey',
+    selectionKey: 'mentorSurvey',
     optional: false,
     isSkippable: true,
     isFinal: false,

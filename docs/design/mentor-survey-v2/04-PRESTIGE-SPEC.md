@@ -50,7 +50,7 @@ Shared-Mentor pairs (Miraj ×2, Delta ×2) have distinct relationship text per c
 * **Multiple prestige classes** (PR-08): each acquisition is its own finalized event; earlier prestige identity and goals are never erased.
 * **Level 20 / low remaining budget** (PR-09): no implied legal future advancement or obligation to complete the class (apex five-level classes Jedi Master, Sith Lord, Force Disciple per V2 rules).
 * **Quarantine** (PR-10): any answer whose mechanical claim is `unverified_mechanic` is never offered as a mechanics-driven option. Known gates: Charlatan Fortune tree, Jedi Master/Sith Lord general Force trees, Assassin GenoHaradan tree ID, Independent Droid tree ID, Sith Dark Side Score RAW vs house rule, Gunslinger/Outlaw/martial-arts source identity cases (see `06`).
-* **Q6** (PR-11): the 32-class prestige Q6 dialogue package **does not exist** on any branch (handoff: "NEXT"). The shared engine is implemented; per-class Mentor Q6 text is a recorded blocker. Missing text is **not** reconstructed from the handoff.
+* **Q6** (PR-11): the 32-class prestige Q6 dialogue package is **not in Git** on any branch. That is not proof it was never written: the owner's editorial work may have produced it outside the repository, and the handoff in Git still lists Q6 as the next task. The shared engine is implemented. The per-class package is a **source-artifact integration dependency**: it must be brought into the repository by the owner, and it must not be reconstructed, regenerated or paraphrased from the handoff.
 
 ## 5. Release consequence
 

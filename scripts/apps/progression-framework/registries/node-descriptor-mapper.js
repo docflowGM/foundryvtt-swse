@@ -16,7 +16,7 @@ import { IntroStep } from '../steps/intro-step.js';
 import { SpeciesStep } from '../steps/species-step.js';
 import { DroidBuilderStep } from '../steps/droid-builder-step.js';
 import { ClassStep } from '../steps/class-step.js';
-import { L1SurveyStep } from '../steps/l1-survey-step.js';
+import { MentorSurveyStep } from '../steps/mentor-survey-step.js';
 import { PrestigeSurveyStep } from '../steps/prestige-survey-step.js';
 import { BaseClassSurveyStep } from '../steps/base-class-survey-step.js';
 import { AttributeStep } from '../steps/attribute-step.js';
@@ -47,7 +47,7 @@ const NODE_PLUGIN_MAP = {
   species: SpeciesStep,
   'droid-builder': DroidBuilderStep,
   class: ClassStep,
-  'l1-survey': L1SurveyStep,
+  'l1-survey': MentorSurveyStep,
   'base-class-survey': BaseClassSurveyStep,
   'prestige-survey': PrestigeSurveyStep,
   attribute: AttributeStep,

@@ -94,11 +94,11 @@ for (let i = secC; i < secD; i++) {
   for (let j = i + 1; j < secD && !lines[j].startsWith('####'); j++) {
     const m = /^- \*\*(Universal base|Jedi|Noble|Scoundrel|Scout|Soldier):\*\*/.exec(lines[j]);
     if (!m) continue;
-    if (m[1] === 'Universal base') universal = rec(`l1.q2.${id}.universal`, quoted(lines[j]), false, `C${h[1]} universal`, { kind: 'career' });
+    if (m[1] === 'Universal base') universal = rec(`l1.q2.${id}.universal`, quoted(lines[j]), false, `C${h[1]} universal`, { kind: 'reference' });
     else byClass[CLASSES[m[1]]] = rec(`l1.q2.${id}.${CLASSES[m[1]]}`, quoted(lines[j]), false, `C${h[1]} ${m[1]}`, { kind: 'career' });
   }
   if (!universal || Object.keys(byClass).length !== 5) fail(`Q2 ${id}: expected universal + 5 class variants`);
-  parents[id] = { parentId: id, universal, byClass };
+  parents[id] = { parentId: id, universalReference: universal, byClass }; // universalReference is reference data, never offered to a player
 }
 if (Object.keys(parents).length !== 97) fail(`Q2: expected 97 parents, got ${Object.keys(parents).length}`);
 for (const a of arch.filter((x) => x.kind === 'parent')) if (!parents[a.id]) fail(`Q2: canonical parent ${a.id} has no answer`);
@@ -205,7 +205,7 @@ const pack = {
     survey: 'l1', contentVersion: 1, sourceCommit: SOURCE_COMMIT, sourceFile: DOC,
     generatedBy: 'tools/mentor-survey/build-l1-content.mjs',
     note: 'Verbatim import of the committed design. Approval flags reflect only explicit owner approvals recorded in the design; everything else is draft_text. Editorial tags and developer routes are intentionally not imported.',
-    counts: { intros: 25, q1: 30, q2Universal: 97, q2ClassVariants: 485, q3Scenarios: 30, q3Replies: 150, q4Scenarios: 97, q4Children: 200, q4Methods: 485, q5: 25 },
+    counts: { selectable: 1375, referenceUniversalQ2: 97, navigationControls: 2, intros: 25, q1: 30, q2ClassVariants: 485, q3Scenarios: 30, q3Replies: 150, q4Scenarios: 97, q4Children: 200, q4Methods: 485, q5: 25 },
   },
   navigation: {
     q2OtherPossibilities: rec('l1.q2.navigation.more', 'I want to hear about some other possibilities.', false, '12.3 example F utterance', { kind: 'navigation' }),

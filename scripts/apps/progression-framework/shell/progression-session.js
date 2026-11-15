@@ -83,6 +83,7 @@ export class ProgressionSession {
       shareTalentSelections: [],
       starshipManeuvers: [],
       survey: null,
+      mentorSurvey: null,
       prestigeSurvey: null,
       classSurveyDrafts: {},
       classSurveys: {},
@@ -393,6 +394,7 @@ export class ProgressionSession {
       classSurveys: {},
       classSurveyDrafts: {},
       survey: null,
+      mentorSurvey: null,
       prestigeSurvey: null,
       skills: null,
       attributes: null,
@@ -468,6 +470,7 @@ export class ProgressionSession {
       pendingEntitlements: [],
       immediateChoices: [],
       survey: null,
+      mentorSurvey: null,
       prestigeSurvey: null,
       classSurveyDrafts: {},
       classSurveys: {},
@@ -611,6 +614,10 @@ export class ProgressionSession {
       starshipManeuvers: {
         type: 'array',
         description: '[{id, source}, ...]',
+      },
+      mentorSurvey: {
+        type: 'object',
+        description: 'Mentor survey DRAFT state and staged commit records ({drafts, committed}); session-only, written to the actor only by the finalizer',
       },
       survey: {
         type: 'object',

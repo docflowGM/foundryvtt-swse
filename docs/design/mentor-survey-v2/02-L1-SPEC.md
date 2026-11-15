@@ -45,6 +45,10 @@ Mentor fixed stage introductions (25 authored; 5/Mentor) precede each question. 
 
 Optional, skippable at any question, cancelable, back-navigable, revisitable; Q1/class/species change invalidates dependents without silent replacement; deterministic; duplicate-submit safe; commits only through the finalizer ledger.
 
+## 6a. Identifiers and content roles (as built)
+
+Stable ids come from `data/mentor-survey/l1.json` (`l1.<class>.q1.<route>`, `l1.q2.<parent>.<class>`, `l1.<class>.q3.<scenario>.a<N>`, `l1.q4.<parent>.child.<child>` / `.method0N`, `l1.<class>.q5.a<N>`). These V2 ids are the implementation identifiers; the master mapping inventory's proposed ids are reconciled to them in `08-ANSWER-ID-RECONCILIATION.md`. The pack separates 1,375 selectable answers from 97 Q2 reference texts and 2 navigation controls.
+
 ## 7. Content status (see `06`) 
 
-Wording status per family is tracked in the content packs and `06`. Items owner-approved at the time of writing: Jedi Q1 six answers; J0-N1's five intros; first 25 Q2 universal answers ("endorsed examples"); the player-response display contract. Everything else is `draft_text`. **P0 gate:** Q3 150-response certification against the 190-tag ontology is out of scope (tag-mapping boundary).
+Wording status per family is tracked in the content packs and `06`. Items owner-approved at the time of writing: Jedi Q1 six answers; J0-N1's intros (Q3 line flagged for rewrite); the player-response display contract. The first 25 Q2 universal answers were "endorsed examples" and are conservatively kept `draft_text` (endorsement is not line approval). Everything else is `draft_text`. **P0 gate:** Q3 150-response certification against the 190-tag ontology is out of scope (tag-mapping boundary).

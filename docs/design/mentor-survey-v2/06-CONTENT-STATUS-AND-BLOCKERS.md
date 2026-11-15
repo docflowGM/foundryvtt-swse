@@ -39,7 +39,7 @@ Updated per phase. Evidence date 2026-11-15. "Approved" means the upstream docum
 | Q3 scenarios / options | 160 / 800 | Ace Pilot approved; 31 classes draft |
 | Q4 depth intros + 4 shared answers | 32 | shared 4-answer pattern **approved**; Ace Pilot/Mayu approved; 31 draft |
 | Q5 purposes | 224 options, 64 intros, 32 secondary | architecture approved; Ace Pilot's 7 lines accepted; 31 classes draft |
-| **Q6 prestige-specific dialogue** | 0 | **MISSING** (see §3) |
+| **Q6 prestige-specific dialogue** | 0 in Git | **Not in Git** (see §3); owner to supply, never reconstructed |
 
 ## 2. Spec conflicts and their disposition
 
@@ -55,7 +55,7 @@ Updated per phase. Evidence date 2026-11-15. "Approved" means the upstream docum
 
 | Artifact | Needed for | Finding |
 |---|---|---|
-| Prestige Q6 dialogue package (32 Mentors; openings, closings, conditional branches, A–E, NOT/AM text) | PR-11 | Searched every remote branch. Only `SWSE_Prestige_Q6_Fresh_Chat_Handoff_2026-11-15.md` exists, and it assigns Q6 as the *next, undone* task. **Blocker; not reconstructed** |
+| Prestige Q6 dialogue package (32 Mentors; openings, closings, conditional branches, A–E, NOT/AM text) | PR-11 | Searched every remote branch: the package is **not in Git**. Only `SWSE_Prestige_Q6_Fresh_Chat_Handoff_2026-11-15.md` exists, and it lists Q6 as the next task. That shows the package is missing from the repository, not that it was never written. **Source-artifact integration dependency**: the owner must commit it; it is not reconstructed |
 | `SWSE_Q4_250_Scenario_Library_LOCAL.json` | MC Q4 machine-readable catalog | Not committed anywhere. The 250 scenarios exist in the committed markdown (`SWSE_Multiclass_Survey_Rolling_Design.md`, lines 2178–5987); the build tool parses the markdown |
 | `SWSE_L1_Q2_Class_Specific_Career_Responses_Combined_97x5_v0.4….json` | L1 Q2 | Not committed. The markdown companion is committed and parsed |
 | `SWSE_Q6_Archetype_Identity_Index_LOCAL.tsv` | MC Q6 Pass A | Local-only; replaced at runtime by `ArchetypeRegistry` (the cited authority) |
@@ -86,6 +86,30 @@ Printed-rule verification limit: `reference/sourcebooks/*.txt` are OCR exports, 
 
 New pure modules in `scripts/mentor/mentor-survey-v2/` (renamed over the legacy directory at the D-phase cutover): `contract`, `content-store`, `survey-session`, `intent-ledger`, `actor-evidence`, `reflection`, `tag-boundary`. 56 offline tests (`tests/mentor-survey-*.test.mjs`). These prove engine behavior only; none is a Foundry runtime test.
 
-## 7. Phase D/E status
+## 7. Phase D1: Level 1 cutover
 
-*(appended as phases complete)*
+**Code status: wired and offline-tested. Not Foundry-tested. Not player-visible** (every L1 scope is `withheld`, and all L1 text except a few lines is `draft_text`).
+
+Content inventory (corrected labeling): **1,375 selectable answers** (Q1 30, Q2 485, Q3 150, Q4 200 child + 485 method, Q5 25), **97 Q2 universal reference texts** (never offered), **2 navigation controls**, 25 Mentor intros, 30 Q3 and 97 Q4 situations. Validated separately; all 1,375 selectable records pass the first-person and no-leak validators.
+
+Wiring: `MentorSurveyStep` registered for `l1-survey` (chargen shell and node mapper); node `selectionKey` is `mentorSurvey`; `ProgressionSession` carries the single `mentorSurvey` draft key; `ProgressionFinalizer` writes the survey ledger inside its atomic `set` map (`buildSurveyLedgerPatch`), with the transaction id taken from the session and the level from the chargen starting level. Draft and staged-commit records live only in the session. The legacy L1 step, the five `L1_*` definitions and the legacy `injectSurveyBias`/`clearSurveyBias` are removed.
+
+What is **still reachable (legacy)**: the multiclass `BaseClassSurveyStep` (now extending `LegacyClassSurveyStepBase`, the former L1 step file, kept only for it), the legacy prestige step and its definitions, and these legacy readers/writers of retired stores: `system.swse.surveyResponses`, `classSurveyIntentBiases`, `prestigeSurveyResponses`, `mentorBuildIntentBiases` (finalizer legacy blocks; Suggestion Engine readers that default to `{}`). They go with the multiclass and prestige cutovers. Also untouched: the template-build path (`template-adapter`) that pre-fills the overloaded `survey` selection, and `galactic-profile-step`/`summary-step`, which legitimately store `startingLevel` in that same `survey` key.
+
+Deterministic ordering notice (MSV-RD-001/002): where tag-driven ranking is unfinished, Q2 pages use anchor order then canonical ID order, and Q4 uses canonical child ID order then authored method order. This is **neutral presentation, not personalization, relevance or optimization**, and is not described to players as such.
+
+### Manual Foundry v13 acceptance procedure (not yet performed)
+
+1. World setting "Mentor Surveys: Editorial Preview (GM only)" exists, is off by default, and is editable only by a GM.
+2. As a player with it off: create a character through the class step. The survey step shows the "not available / optional" message and Next works. No old questionnaire appears.
+3. As a GM, turn the setting on. Each of the five classes shows five questions with the correct Mentor line and the "EDITORIAL PREVIEW" label; options are first person and show no ids, tags or scores.
+4. Q2: "other possibilities" pages through all 97 careers without repeats; paging alone does not enable Finish.
+5. Skip a question, skip the interview, go Previous, change an earlier answer (dependent answers show the stale notice and are not auto-replaced), double-click an option (one answer only), Start over.
+6. Finish the interview, then **cancel** character creation: confirm the actor has no `flags.foundryvtt-swse.mentorSurvey`.
+7. Finish creation: confirm `flags.foundryvtt-swse.mentorSurvey.events` has one `survey_completed` event (`provenance.preview: true`, `actorLevel: 1`) plus goal events for the selected career, and that suggestions are unchanged.
+8. Repeat with the setting off: with no preview and withheld content no event can be created.
+9. Re-run level-up and a retake path only after multiclass is cut over.
+
+## 8. Phase D2/D3 status
+
+Not started. The multiclass and prestige surveys remain on their legacy implementations and are still reachable.

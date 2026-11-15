@@ -1496,7 +1496,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       languages: 'languages',
       language: 'languages',
       survey: 'survey',
-      'l1-survey': 'survey',
+      'l1-survey': 'mentorSurvey',
       'base-class-survey': 'classSurveys',
       'prestige-survey': 'prestigeSurvey',
       droid: 'droid',
@@ -1635,7 +1635,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const aliases = {
       attribute: 'attributes',
       attributes: 'attributes',
-      'l1-survey': 'survey',
+      'l1-survey': 'mentorSurvey',
       'base-class-survey': 'classSurveys',
       'general-feat': 'feats',
       'class-feat': 'feats',

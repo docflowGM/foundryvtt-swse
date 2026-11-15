@@ -96,7 +96,7 @@ export function certifiedEvidenceByTag(event) {
 
 /** Per-tag contribution of ONE survey event at level L. Provenance is preserved; nothing is merged across events. */
 export function eventContributions(event, L, cfg = SURVEY_INFLUENCE_CONFIG) {
-  const w = eventWeight(event.surveyKind, L, event.actorLevel ?? 1, cfg);
+  const w = eventWeight(event.surveyKind, L, event.actorLevel, cfg);
   const { byTag, rejected } = certifiedEvidenceByTag(event);
   const contributions = [];
   for (const [tag, perQuestion] of [...byTag.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
@@ -105,13 +105,16 @@ export function eventContributions(event, L, cfg = SURVEY_INFLUENCE_CONFIG) {
     const R = reinforcement(n, cfg);
     contributions.push({ tag, E, n, R, C: E * R * w.A * w.D, questionIds: [...perQuestion.keys()].sort() });
   }
-  return { eventId: event.eventId, surveyKind: event.surveyKind, scopeId: event.scopeId, completedAtLevel: event.actorLevel ?? 1, ...w, contributions, rejected };
+  return { eventId: event.eventId, surveyKind: event.surveyKind, scopeId: event.scopeId, completedAtLevel: event.actorLevel, ...w, contributions, rejected };
 }
 
 /** Events that count: completed, non-superseded, non-preview, known survey type. */
 export function activeSurveyEvents(events) {
   const live = new Set(Object.values(reduceLedger(events).latestSurvey).map((e) => e.eventId));
-  return (events || []).filter((e) => e.type === EVENT_TYPES.SURVEY_COMPLETED && live.has(e.eventId) && SURVEY_TYPES.includes(e.surveyKind));
+  // An event whose completion level is missing or invalid has no trustworthy decay clock: it contributes nothing
+  // (never a fabricated level-1 history).
+  return (events || []).filter((e) => e.type === EVENT_TYPES.SURVEY_COMPLETED && live.has(e.eventId) && SURVEY_TYPES.includes(e.surveyKind)
+    && Number.isInteger(e.actorLevel) && e.actorLevel >= 1);
 }
 
 /**

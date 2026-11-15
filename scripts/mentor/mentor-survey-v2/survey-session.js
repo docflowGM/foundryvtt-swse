@@ -46,6 +46,7 @@ export function createDraft(flow, context = {}) {
     browse: {},
     cursor: flow.questions[0],
     trail: [flow.questions[0]],
+    revisit: false, // true while the player is looking at an already-resolved question
     actionSeq: 0,
   };
 }
@@ -89,6 +90,7 @@ export function selectAnswer(flow, draft, qid, optionId, seq, meta = null) {
   if (!flow.questions.includes(qid) || typeof optionId !== 'string' || !optionId) return unchanged(draft);
   const next = deepClone(draft);
   next.actionSeq = seq;
+  next.revisit = false;
   next.answers[qid] = { optionId, revision: questionRevision(flow, next, qid), ...(meta ? { meta: deepClone(meta) } : {}) };
   delete next.invalidated[qid];
   delete next.skipped[qid];
@@ -102,6 +104,7 @@ export function skipQuestion(flow, draft, qid, seq) {
   if (!isOpen(draft) || !fresh(draft, seq) || !flow.questions.includes(qid)) return unchanged(draft);
   const next = deepClone(draft);
   next.actionSeq = seq;
+  next.revisit = false;
   next.skipped[qid] = true;
   delete next.answers[qid]; // skipping after answering clears the answer; the previous option is not retained as intent
   invalidateStale(flow, next);
@@ -116,6 +119,7 @@ export function goBack(flow, draft, seq) {
   next.actionSeq = seq;
   next.trail.pop();
   next.cursor = next.trail[next.trail.length - 1];
+  next.revisit = true;
   return { draft: next, applied: true };
 }
 
@@ -125,6 +129,7 @@ export function goTo(flow, draft, qid, seq) {
   const next = deepClone(draft);
   next.actionSeq = seq;
   next.cursor = qid;
+  next.revisit = true;
   const at = next.trail.lastIndexOf(qid);
   next.trail = at >= 0 ? next.trail.slice(0, at + 1) : [...next.trail, qid];
   return { draft: next, applied: true };

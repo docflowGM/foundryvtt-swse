@@ -85,6 +85,9 @@ export function buildCompletionEvents({ payload, transactionId, actorLevel, comp
   }
   // tagEvidence holds ONLY certified, ontology-validated entries supplied by the (future) certified mapping boundary.
   // It is never derived from text. Empty today: surveys contribute no tag evidence until mappings are certified.
+  // Replaying the same transaction is a no-op: if this transaction's completion event already exists, build nothing.
+  const completionId = eventIdOf({ surveyKind: base.surveyKind, scopeId: base.scopeId, transactionId, type: EVENT_TYPES.SURVEY_COMPLETED, ordinal: 0 });
+  if ((existingEvents || []).some((e) => e.eventId === completionId)) return [];
   const completed = mint(EVENT_TYPES.SURVEY_COMPLETED, { lane: LANES.DECLARED_FUTURE_GOAL, evidenceChannel: 'completed_survey_development_preference', answers, tagEvidence: deepClone(tagEvidence) });
   // A retake of the same survey scope supersedes the previous completion; it never edits it.
   const prior = reduceLedger(existingEvents, { includePreview: preview }).latestSurvey[`${base.surveyKind}:${base.scopeId}`];

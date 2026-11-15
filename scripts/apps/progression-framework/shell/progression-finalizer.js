@@ -14,6 +14,8 @@
  * UI (Confirm) → ProgressionFinalizer → ActorEngine → Persistence
  */
 
+import { buildSurveyLedgerPatch } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/finalization.js';
+import { projectActorEvidence } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/actor-evidence.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionDocumentTargetPolicy } from '../policies/progression-document-target-policy.js';
 // PHASE 3: Species materialization
@@ -1447,6 +1449,19 @@ export class ProgressionFinalizer {
       }
     }
 
+    // Mentor survey events: committed ONLY here, in the same atomic update as the advancement. A canceled or failed
+    // finalization never reaches this point, so no survey evidence can persist from an unfinished transaction.
+    {
+      const surveyLevel = sessionState.mode === 'chargen'
+        ? (Number(summary.startingLevel) || 1)
+        : (projectActorEvidence(actor).characterLevel + 1);
+      Object.assign(set, buildSurveyLedgerPatch({
+        actor, selection: selections.mentorSurvey || null,
+        transactionId: sessionState.progressionSession?.sessionId || null,
+        level: surveyLevel, completedAt: new Date().toISOString(),
+      }));
+    }
+
     // Canonical stored ability path is system.abilities.<key>.base.
     // Chargen writes final assigned scores. Level-up applies +1 deltas under
     // the configured allocation rule and never overwrites the entire ability map.
@@ -2740,11 +2755,6 @@ export class ProgressionFinalizer {
     // Languages (array of language ids)
     if (selections.has('languages')) {
       patches.languages = selections.get('languages');
-    }
-
-    // Survey answers (background flavor)
-    if (selections.has('l1-survey')) {
-      patches.survey = selections.get('l1-survey');
     }
 
     // Droid systems and credits (droid-specific)

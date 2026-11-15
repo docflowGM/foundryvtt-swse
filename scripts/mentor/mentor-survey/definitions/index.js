@@ -1,8 +1,3 @@
-import L1_Jedi_Survey from './L1_Jedi_Survey.js';
-import L1_Noble_Survey from './L1_Noble_Survey.js';
-import L1_Scoundrel_Survey from './L1_Scoundrel_Survey.js';
-import L1_Scout_Survey from './L1_Scout_Survey.js';
-import L1_Soldier_Survey from './L1_Soldier_Survey.js';
 import PrC_Imperial_Knight_Survey from './PrC_Imperial_Knight_Survey.js';
 import PrC_Jedi_Knight_Survey from './PrC_Jedi_Knight_Survey.js';
 import PrC_Jedi_Master_Survey from './PrC_Jedi_Master_Survey.js';
@@ -37,11 +32,6 @@ import PrC_Independent_Droid_Survey from './PrC_Independent_Droid_Survey.js';
 import PrC_Shaper_Survey from './PrC_Shaper_Survey.js';
 
 export const SURVEY_DEFINITIONS = {
-  'jedi': L1_Jedi_Survey,
-  'noble': L1_Noble_Survey,
-  'scoundrel': L1_Scoundrel_Survey,
-  'scout': L1_Scout_Survey,
-  'soldier': L1_Soldier_Survey,
   'imperial_knight': PrC_Imperial_Knight_Survey,
   'jedi_knight': PrC_Jedi_Knight_Survey,
   'jedi_master': PrC_Jedi_Master_Survey,
