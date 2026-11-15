@@ -2821,3 +2821,94 @@ The RECON-001 ruling narrows this question but does not answer it. `talentEveryL
 - **Revision 65 (2026-11-14):** appended the RECON-001 project owner ruling (canonical class-based talents; Talent Wiki house rule), a RECON-005 progress note, and TALENT-RD-001.
 
 **RECON-001 — implementing commit:** `e38026aac93d2926fa7bc6c4e0e2eeca5ed02f7d` (ruling above; recorded after the commit existed, per the append-only rule).
+
+---
+
+## Mentor Survey V2 register (`MSV-RD-###`) — appended 2026-11-15
+
+Independent register for the survey cutover (see `docs/design/mentor-survey-v2/`). Append-only; resolutions are recorded in each entry's *Resolution* field with date and implementing commit. Decision authority: project owner. Recommended ruling: none.
+
+## MSV-RD-001 — Level 1 Q2 career ranking (which careers fill A/B/C/D/E and page order)
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / L1 Q2 ranking |
+| Feature | Level 1 Q2 career ranking (which careers fill A/B/C/D/E and page order) |
+| Source | L1 rolling design v0.19 §12 (branch `docs/l1-adaptive-mentor-survey-q1-q5-20261113`) |
+| Evidence | Approved: A/B come preferentially from the class's four listed anchor careers; C/D/E are the three highest-ranked remaining parents irrespective of class route; F pages the next five never-shown parents. The design states that ranking coefficients, tie-breaks and Q1/species/attribute weighting are not approved. |
+| Confirmed behavior | Layout, anchors, no-repeat paging, zero intent from browsing. |
+| Unresolved question | How candidates are ranked: the relative weight of class, Q1 answer, species, attributes, and which two anchors become A/B. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Implemented ordering uses **no relevance claim**: A/B are the first two anchors in the printed §12.1 table order; C/D/E and all later pages follow ascending canonical parent ID. Replacing the ordering function is a one-function change; page/anchor/no-repeat logic is unchanged. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-002 — Level 1 Q4 child-specialization ranking driven by the Q3 answer's semantic tags
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / L1 Q4 personalization |
+| Feature | Level 1 Q4 child-specialization ranking driven by the Q3 answer's semantic tags |
+| Source | L1 rolling design v0.19, v0.18 checkpoint (P0) |
+| Evidence | Owner-approved: when a parent has more than five applicable children, the Q3 answer and its certified tags are the strongest ranking signal, matched to child primary then supporting tags. Blocking prerequisite P0: all 150 Q3 responses must first be mapped to members of the frozen 190-tag ontology; "Do not enable tag-based Q4 child personalization until this gate passes." |
+| Confirmed behavior | Q4 scenario selection by exact Q2 parent; Q3 never changes it; five-per-page composition; no repeats; no intent from paging. |
+| Unresolved question | How to rank >5 children before the P0 mapping exists. Answer-to-tag mapping is excluded from the current work by owner directive. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Tag-driven Q4 child ranking is **blocked**. Children and method backfill are ordered by canonical ID (no relevance claim). Nine parents have more than five children and are paged. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-003 — Multiclass Q5 (Next Milestone) content and mapping of the five milestone purposes
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q5 |
+| Feature | Multiclass Q5 (Next Milestone) content and mapping of the five milestone purposes |
+| Source | Multiclass rolling design v0.11, Q5 sections (branch `design/multiclass-mentor-survey-q1-q6-v011`) |
+| Evidence | Q5 is recorded as "PROPOSAL, NOT YET OWNER-APPROVED". 500 first-person templates (100 Q1 routes × 5 purposes) were authored as editorial drafts. The `career_continuity` and `prepare_future_route` purposes depend on declared-goal and verified-route facts. |
+| Confirmed behavior | Question purpose (a realistic next step, not a career election); undecided carries no weight; unselected alternatives are not goals. |
+| Unresolved question | Whether the Q5 design and its 500 templates are approved for players. |
+| Options | Approve as written; approve with edits; replace. |
+| Recommended ruling | None |
+| Implementation impact | Q5 content is imported as `draft_text` and is playable only under the editorial-preview setting. The multiclass survey is withheld for players until the owner releases it. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-004 — Which origin class keys the Q1/Q2 banks when a character already holds two or more other foundation classes
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q1 origin keying |
+| Feature | Which origin class keys the Q1/Q2 banks when a character already holds two or more other foundation classes |
+| Source | Multiclass rolling design v0.11 (Q1 origin-variant banks) |
+| Evidence | Q1 answers are authored per directed (origin, destination) pair: 20 transitions. The document states that multiclass with 3+ existing foundation classes must still work but does not say which origin class selects the bank. |
+| Confirmed behavior | 20 directed pairs, destination Mentor narrates. |
+| Unresolved question | Which origin (most recent, highest level, all, a blended set, or none) is used for characters with 2+ other foundation classes. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | The multiclass survey is withheld (skipped, fail-closed) for characters with 2+ other foundation classes. No origin is chosen by the implementation. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-005 — Prestige Q1 initial answer count, rotation, history-aware ordering and weights
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q1 slate policy |
+| Feature | Prestige Q1 initial answer count, rotation, history-aware ordering and weights |
+| Source | Prestige rolling design v0.26 §39.2, §39.4-D, §39.5 |
+| Evidence | Q1 is a class-discovery conversation drawn from per-class banks (1,293 route IDs). The design states: "No answer count, rotation, weighting, archetype target, or tag transformation is approved" and lists the slate/browse policy as requiring owner approval; also that the complete bank is not a mandate to render hundreds of controls. |
+| Confirmed behavior | Class-discovery purpose; neutral and capstone options exist for every class; selection never grants a mechanic or goal. |
+| Unresolved question | The initial number of answers shown, whether/how they rotate, and any ordering by history. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Implemented as a neutral, complete, deterministic browse (five per page in canonical ID order, no repeats, every route reachable) with no ordering claim. Prestige remains withheld for players pending sign-off (§39.5). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
