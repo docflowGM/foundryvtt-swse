@@ -8,23 +8,30 @@
   </div>
 
   <div class="attr-mentor-dialog__cards">
-    {{!-- All candidates show final scores and modifiers. Expanding a build
-          reveals each attribute's full breakdown and its advice below. --}}
     {{#each builds}}
       <section class="attr-mentor-card {{#if recommended}}is-recommended{{/if}}" data-build-card>
         <div class="attr-mentor-card__head">
-          <div class="attr-mentor-card__intro">
+          <div>
             <div class="attr-mentor-card__title-row">
-              <h3>{{title}}</h3>
+              <h3><button type="button"
+                          class="attr-mentor-card__toggle"
+                          data-build-toggle
+                          id="attr-mentor-build-tab-{{@index}}"
+                          aria-controls="attr-mentor-build-panel-{{@index}}"
+                          aria-expanded="false"
+                          aria-label="Expand or minimize {{title}}">
+                    <span>{{title}}</span><i class="fas fa-chevron-down" aria-hidden="true"></i>
+                  </button></h3>
               {{#if recommended}}<span class="attr-mentor-card__recommended">Recommended</span>{{/if}}
             </div>
             <p class="attr-mentor-card__subtitle">{{subtitle}}</p>
+            <p class="attr-mentor-card__summary">{{reasonSummary}}</p>
           </div>
           <div class="attr-mentor-card__actions">
             {{#if pointBuySpent}}
-              <span class="attr-mentor-card__budget">{{pointBuySpent}} / {{../pointBuyPool}} points</span>
+              <div class="attr-mentor-card__budget">{{pointBuySpent}} / {{../pointBuyPool}} points</div>
             {{else}}
-              <span class="attr-mentor-card__budget">{{poolSource}}</span>
+              <div class="attr-mentor-card__budget">{{poolSource}}</div>
             {{/if}}
             <button type="button" class="prog-btn prog-btn--primary" data-build-apply="{{id}}">Apply Build</button>
           </div>
@@ -34,94 +41,80 @@
           {{#each displayRows}}
             <div class="attr-mentor-stat swse-ability-surface swse-ability-surface--{{id}}" data-ability="{{id}}">
               <div class="attr-mentor-stat__label swse-ability-label swse-ability-label--{{id}}" data-ability="{{id}}">{{label}}</div>
-              {{!-- Collapsed: the two numbers players need for a quick comparison. --}}
-              <div class="attr-mentor-stat__compact">
-                <div class="attr-mentor-stat__compact-values">
-                  <span class="attr-mentor-stat__final">{{final}}</span>
-                  <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">({{modifier}})</span>
-                </div>
-                <div class="attr-mentor-stat__compact-labels">
-                  <span>Total</span><span>Mod</span>
-                </div>
+              <div class="attr-mentor-stat__numbers">
+                <span class="attr-mentor-stat__base">{{base}}</span>
+                <span class="attr-mentor-stat__species swse-signed-number {{speciesModClass}}">{{speciesModFormatted}}</span>
+                <span class="attr-mentor-stat__final">{{final}}</span>
+                <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">{{modifier}}</span>
               </div>
-
-              {{!-- Expanded: each caption lives directly below its own number. --}}
-              <div class="attr-mentor-stat__breakdown">
-                <div class="attr-mentor-stat__breakdown-values">
-                  <span class="attr-mentor-stat__base">{{base}}</span>
-                  <span class="attr-mentor-stat__species swse-signed-number {{speciesModClass}}">{{speciesModFormatted}}</span>
-                  <span class="attr-mentor-stat__final">{{final}}</span>
-                  <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">{{modifier}}</span>
-                </div>
-                <div class="attr-mentor-stat__breakdown-labels">
-                  <span>Base</span><span>Species</span><span>Total</span><span>Mod</span>
-                </div>
+              {{!-- Only collapsed builds use this compact Total / Mod readout. --}}
+              <div class="attr-mentor-stat__compact">
+                <span class="attr-mentor-stat__final">{{final}}</span>
+                <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">({{modifier}})</span>
+                <span class="attr-mentor-stat__compact-caption">Total</span>
+                <span class="attr-mentor-stat__compact-caption">Mod</span>
               </div>
             </div>
           {{/each}}
         </div>
 
-        <button type="button"
-                class="attr-mentor-card__toggle"
-                data-build-toggle
-                id="attr-mentor-build-tab-{{@index}}"
-                aria-controls="attr-mentor-build-panel-{{@index}}"
-                aria-expanded="false">
-          <span>Why this build? <span class="attr-mentor-card__toggle-hint">Reasons, cautions &amp; forecast</span></span>
-          <i class="fas fa-chevron-down attr-mentor-card__chevron" aria-hidden="true"></i>
-        </button>
-      </section>
-    {{/each}}
+        <div class="attr-mentor-card__legend">
+          <span>Base</span>
+          <span>Species</span>
+          <span>Final</span>
+          <span>Mod</span>
+        </div>
 
-    {{!-- The explanation appears AFTER all build previews. Opening the first
-          build never pushes the second or third choice out of sight. --}}
-    <div class="attr-mentor-dialog__explanations">
-      {{#each builds}}
-        <div class="attr-mentor-card__body"
+        <div class="attr-mentor-card__details-grid"
              data-build-panel
              id="attr-mentor-build-panel-{{@index}}"
              role="region"
              aria-labelledby="attr-mentor-build-tab-{{@index}}"
              hidden>
-          <div class="attr-mentor-card__explanation-title">
-            Why {{title}}?
+          <div class="attr-mentor-detail-group">
+            <div class="attr-mentor-detail-group__label">Reasons</div>
+            <ul>
+              {{#each reasons}}
+                <li>{{this}}</li>
+              {{/each}}
+            </ul>
           </div>
-          <div class="attr-mentor-card__details-grid">
-            <div class="attr-mentor-detail-group">
-              <div class="attr-mentor-detail-group__label">Reasons</div>
-              <ul>
-                {{#each reasons}}
-                  <li>{{this}}</li>
-                {{else}}
-                  <li>No additional reasons provided.</li>
-                {{/each}}
-              </ul>
-            </div>
 
-            <div class="attr-mentor-detail-group">
-              <div class="attr-mentor-detail-group__label">Cautions</div>
-              <ul>
-                {{#each cautions}}
-                  <li>{{this}}</li>
-                {{else}}
-                  <li>No major caution beyond the normal tradeoff of specializing.</li>
-                {{/each}}
-              </ul>
+          <div class="attr-mentor-detail-group attr-mentor-detail-group--hoverable">
+            <div class="attr-mentor-detail-group__label">Cautions</div>
+            <div class="attr-mentor-hover-anchor">Hover for tradeoffs
+              <div class="attr-mentor-hover-panel">
+                <ul>
+                  {{#if cautions.length}}
+                    {{#each cautions}}
+                      <li>{{this}}</li>
+                    {{/each}}
+                  {{else}}
+                    <li>No major caution beyond the normal tradeoff of specializing.</li>
+                  {{/if}}
+                </ul>
+              </div>
             </div>
+          </div>
 
-            <div class="attr-mentor-detail-group">
-              <div class="attr-mentor-detail-group__label">Forecast</div>
-              <ul>
-                {{#each forecasts}}
-                  <li>{{this}}</li>
-                {{else}}
-                  <li>This build keeps your next few steps flexible without overcommitting.</li>
-                {{/each}}
-              </ul>
+          <div class="attr-mentor-detail-group attr-mentor-detail-group--hoverable">
+            <div class="attr-mentor-detail-group__label">Forecast</div>
+            <div class="attr-mentor-hover-anchor">Hover for downstream value
+              <div class="attr-mentor-hover-panel">
+                <ul>
+                  {{#if forecasts.length}}
+                    {{#each forecasts}}
+                      <li>{{this}}</li>
+                    {{/each}}
+                  {{else}}
+                    <li>This build keeps your next few steps flexible without overcommitting.</li>
+                  {{/if}}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      {{/each}}
-    </div>
+      </section>
+    {{/each}}
   </div>
 </div>
