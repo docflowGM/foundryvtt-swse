@@ -82,6 +82,10 @@ Printed-rule verification limit: `reference/sourcebooks/*.txt` are OCR exports, 
 | Gunslinger / Outlaw / martial-arts source identity (Teräs Käsi, Pistoleer titles, Fringer/Virus) | Design record marks them QUARANTINE (unreliable rule identity) | Content records referencing them are `unverified_mechanic`; never offered as mechanics-driven options |
 | `scripts/engine/mentor/validate-mentor-dialogue.js` | Pre-existing: crashes on a wrong repo-root path and, if fixed, expects a flat per-mentor file layout the repo no longer uses | **Not touched** (stale legacy tool, unrelated to survey authorities) |
 
-## 6. Phase C–E status
+## 6. Phase C: shared infrastructure (landed, not yet wired to the progression shell)
+
+New pure modules in `scripts/mentor/mentor-survey-v2/` (renamed over the legacy directory at the D-phase cutover): `contract`, `content-store`, `survey-session`, `intent-ledger`, `actor-evidence`, `reflection`, `tag-boundary`. 56 offline tests (`tests/mentor-survey-*.test.mjs`). These prove engine behavior only; none is a Foundry runtime test.
+
+## 7. Phase D/E status
 
 *(appended as phases complete)*
