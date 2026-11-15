@@ -94,7 +94,10 @@ export class L1SurveyController {
     const revisiting = this.draft.revisit === true && this.flow.questions.includes(this.draft.cursor);
     if (!revisiting && !unresolved.length && !Object.keys(this.draft.invalidated).length) return { phase: 'ready', seq: this.seq, progress, preview: this.preview };
     const cursorOpen = this.draft.cursor && !this.draft.answers[this.draft.cursor] && !this.draft.skipped[this.draft.cursor];
-    const qid = revisiting || cursorOpen ? this.draft.cursor : unresolved[0];
+    // A question whose answer was invalidated by an upstream change is surfaced first, so the player sees the notice and
+    // the reconfirm option before moving on.
+    const stale = this.flow.questions.find((q) => this.draft.invalidated[q]);
+    const qid = revisiting ? this.draft.cursor : (stale || (cursorOpen ? this.draft.cursor : unresolved[0]));
     const r = this._resolve(qid, this._pageIndex(qid));
     if (!r.available) return { phase: 'unavailable', reason: r.reason };
     const prev = this.draft.invalidated[qid]?.previousOptionId ?? null;
@@ -136,7 +139,8 @@ export class L1SurveyController {
     const v = this.view();
     if (v.phase !== 'question' || v.view.questionId !== qid || !v.reconfirm) return false;
     const r = this._resolve(qid, this._pageIndex(qid));
-    return this._apply(Session.reconfirmInvalidated(this.flow, this.draft, qid, r.view.options.map((o) => o.optionId), seq));
+    const offered = r.records.map((rec) => ({ optionId: rec.id, meta: l1SelectionMeta(this.pack, qid, rec.id, r.records) }));
+    return this._apply(Session.reconfirmInvalidated(this.flow, this.draft, qid, offered, seq));
   }
 
   /** Skip the whole survey: no answers, no commit. */

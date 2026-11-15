@@ -84,10 +84,10 @@ test('SV-13 changed context (class) invalidates dependent answers; an invalidate
   assert.ok(d.invalidated.q1 && d.invalidated.q5);
   assert.equal(d.answers.q1, undefined);
   assert.equal(S.complete(flow, d, next()).applied, false, 'invalidated answers block completion');
-  const no = S.reconfirmInvalidated(flow, d, 'q1', ['q1.other'], next());
+  const no = S.reconfirmInvalidated(flow, d, 'q1', [{ optionId: 'q1.other', meta: null }], next());
   assert.equal(no.applied, false);
-  const yes = S.reconfirmInvalidated(flow, d, 'q1', ['q1.a'], next());
-  assert.equal(yes.applied, true); assert.equal(yes.draft.answers.q1.optionId, 'q1.a'); assert.equal(yes.draft.invalidated.q1, undefined);
+  const yes = S.reconfirmInvalidated(flow, d, 'q1', [{ optionId: 'q1.a', meta: { fresh: true } }], next());
+  assert.equal(yes.applied, true); assert.equal(yes.draft.answers.q1.optionId, 'q1.a'); assert.deepEqual(yes.draft.answers.q1.meta, { fresh: true }, 'meta is the freshly supplied one'); assert.equal(yes.draft.invalidated.q1, undefined);
 });
 
 test('SV-13 unrelated context changes do not invalidate; browse snapshots rebuild on context change', () => {

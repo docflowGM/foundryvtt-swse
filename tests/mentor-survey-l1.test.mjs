@@ -327,3 +327,59 @@ test('SV-01 obsolete L1 execution paths are no longer registered or reachable', 
   assert.ok(!fs.existsSync(path.join(ROOT, 'scripts/apps/progression-framework/steps/l1-survey-step.js')));
   for (const c of ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier']) assert.ok(!fs.existsSync(path.join(ROOT, `scripts/mentor/mentor-survey/definitions/L1_${c}_Survey.js`)));
 });
+
+test('SV-13 reconfirming an invalidated Q4 child answer regenerates its metadata: the exact childId and goal survive a species change', () => {
+  const ctl = start('scoundrel', ['species-human']);
+  ctl.choose('q1', pack.q1.scoundrel.options[0].id, ctl.seq); ctl.choose('q2', 'l1.q2.smuggler.scoundrel', ctl.seq);
+  ctl.choose('q3', ctl.view().view.options[0].optionId, ctl.seq);
+  const child = ctl.view().view.options.find((o) => o.optionId.includes('.child.'));
+  assert.ok(child, 'smuggler offers an unrestricted child');
+  const childId = child.optionId.split('.child.')[1];
+  assert.ok(ctl.choose('q4', child.optionId, ctl.seq));
+  assert.equal(ctl.draft.answers.q4.meta.childId, childId);
+  // species changes: Q4 depends on species, so it is invalidated (not replaced)
+  ctl.sync({ classId: 'scoundrel', speciesKeys: ['species-wookiee'] });
+  assert.equal(ctl.draft.answers.q4, undefined); assert.equal(ctl.draft.invalidated.q4.previousOptionId, child.optionId);
+  assert.equal(ctl.draft.invalidated.q4.meta, undefined, 'the invalidated record carries no stale meta');
+  // the child is still legal for this species, so the player may explicitly reconfirm it
+  assert.equal(ctl.view().view.questionId, 'q4'); assert.ok(ctl.view().reconfirm);
+  assert.ok(ctl.reconfirm('q4', ctl.seq));
+  assert.deepEqual(ctl.draft.answers.q4.meta, { kind: 'child', childId });
+  // and the typed specialization goal is declared from the regenerated meta
+  const goal = R.l1GoalDeclarations(pack, ctl.draft, 'scoundrel').find((g) => g.goalLane === 'l1.specialization');
+  assert.equal(goal.target.id, childId);
+});
+
+test('SV-13 reconfirm refuses an option that is no longer offered and never reuses stale meta', () => {
+  const ctl = start('scoundrel', ['species-human']);
+  ctl.choose('q1', pack.q1.scoundrel.options[0].id, ctl.seq); ctl.choose('q2', 'l1.q2.smuggler.scoundrel', ctl.seq);
+  ctl.choose('q3', ctl.view().view.options[0].optionId, ctl.seq);
+  const child = ctl.view().view.options.find((o) => o.optionId.includes('.child.'));
+  ctl.choose('q4', child.optionId, ctl.seq);
+  ctl.draft.invalidated.q4 = { reason: 'upstream_changed', previousOptionId: 'l1.q4.smuggler.child.not_a_real_child' }; delete ctl.draft.answers.q4;
+  assert.equal(ctl.reconfirm('q4', ctl.seq), false);
+  assert.equal(ctl.draft.answers.q4, undefined);
+});
+
+test('L1-13 an unresolved archetype fails closed: unavailable registry or unknown child is excluded, not treated as unrestricted', () => {
+  const pid = Object.keys(pack.q4).find((id) => pack.q4[id].children.length >= 2);
+  const all = pack.q4[pid].children.map((c) => c.childId);
+  assert.deepEqual(R.applicableChildren(pack, pid, ['species-human'], null), [], 'no registry at all');
+  assert.deepEqual(R.applicableChildren(pack, pid, ['species-human'], () => null), [], 'registry returns nothing');
+  assert.deepEqual(R.unresolvedChildren(pack, pid, () => null).sort(), [...all].sort(), 'exclusions are reported');
+  assert.deepEqual(R.unresolvedChildren(pack, pid, lookup), []);
+  // one unresolved child among resolvable ones is dropped; its siblings are kept
+  const dropped = all[0];
+  const partial = R.applicableChildren(pack, pid, ['species-human'], (id) => (id === dropped ? null : lookup(id)));
+  assert.ok(!partial.some((c) => c.childId === dropped));
+  // with the registry down, Q4 degrades to the five neutral methods and never offers an unchecked child
+  const pg = R.q4Page(pack, pid, ['species-human'], null, 0);
+  assert.ok(pg.records.every((r) => r.kind === 'method')); assert.equal(pg.records.length, 5);
+});
+
+test('L1-13 valid restricted children are still offered for a matching species and withheld otherwise', () => {
+  const restricted = Object.values(pack.q4).flatMap((p) => p.children).find((c) => (lookup(c.childId).mechanics.species.required || []).length);
+  const req = lookup(restricted.childId).mechanics.species.required[0]; const pid = lookup(restricted.childId).parentId;
+  assert.ok(R.applicableChildren(pack, pid, [req], lookup).some((c) => c.childId === restricted.childId));
+  assert.ok(!R.applicableChildren(pack, pid, ['species-human'].filter((x) => x !== req), lookup).some((c) => c.childId === restricted.childId));
+});

@@ -55,15 +55,26 @@ export function q2Page(pack, classId, pageIndex) {
 
 /* ------------------------------ Q4 ordering ------------------------------ */
 
-/** Child applicability: the only certified restriction is mechanics.species.required against the pending species. */
+/**
+ * Child applicability: the only certified restriction is mechanics.species.required against the pending species.
+ * FAIL CLOSED: a child whose canonical archetype record cannot be resolved (registry unavailable, unknown id) is
+ * excluded, never assumed unrestricted. Use unresolvedChildren() to report what was excluded for that reason.
+ */
 export function applicableChildren(pack, parentId, speciesKeys, archetypeLookup) {
   const keys = new Set(speciesKeys || []);
   return pack.q4[parentId].children
     .filter((c) => {
-      const required = archetypeLookup?.(c.childId)?.mechanics?.species?.required || [];
+      const rec = archetypeLookup?.(c.childId);
+      if (!rec) return false;
+      const required = rec.mechanics?.species?.required || [];
       return required.length === 0 || required.some((r) => keys.has(r)); // unknown species fails closed for restricted children
     })
     .sort((a, b) => a.childId.localeCompare(b.childId));
+}
+
+/** Child ids excluded because their canonical archetype record could not be resolved (reported, not hidden). */
+export function unresolvedChildren(pack, parentId, archetypeLookup) {
+  return pack.q4[parentId].children.filter((c) => !archetypeLookup?.(c.childId)).map((c) => c.childId);
 }
 
 export function q4Sequence(pack, parentId, speciesKeys, archetypeLookup) {

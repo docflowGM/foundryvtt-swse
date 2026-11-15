@@ -178,14 +178,17 @@ function invalidateStale(flow, draft) {
 }
 
 /**
- * Re-confirm a previously invalidated answer. Allowed only if the caller states the option is still offered
- * (by stable optionId) in the new context. This is the only way an invalidated answer returns.
+ * Re-confirm a previously invalidated answer. `offered` is the list of options the CURRENT context offers, each as
+ * { optionId, meta } where meta is recomputed by the resolver for this context. The previous option returns only if it is
+ * still offered, and it is restored with that FRESH meta: stale meta from the invalidated draft is never reused (it could
+ * carry an id that is no longer legal, or omit the typed target the answer declares).
  */
-export function reconfirmInvalidated(flow, draft, qid, stillOfferedOptionIds, seq) {
+export function reconfirmInvalidated(flow, draft, qid, offered, seq) {
   if (!isOpen(draft) || !fresh(draft, seq)) return unchanged(draft);
   const prev = draft.invalidated[qid];
-  if (!prev || !(stillOfferedOptionIds || []).includes(prev.previousOptionId)) return unchanged(draft);
-  return selectAnswer(flow, draft, qid, prev.previousOptionId, seq);
+  const match = prev && (offered || []).find((o) => o && o.optionId === prev.previousOptionId);
+  if (!match) return unchanged(draft);
+  return selectAnswer(flow, draft, qid, match.optionId, seq, match.meta ?? null);
 }
 
 export function isComplete(flow, draft) {
