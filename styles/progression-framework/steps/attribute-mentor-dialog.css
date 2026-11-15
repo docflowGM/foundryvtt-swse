@@ -1,4 +1,4 @@
-/* Attribute Mentor — compact always-visible build comparisons.
+/* Attribute Mentor — compact build comparisons with an expanded breakdown.
  * Three previews (title, six attributes, Apply Build) precede the single
  * expandable explanation panel. Only this dialog's build list scrolls. */
 
@@ -165,23 +165,71 @@
   margin-bottom: 3px;
 }
 
-.attr-mentor-stat__numbers {
+/* Default compact preview: final ability score and signed modifier.
+   Each caption sits beneath the number it describes, on every card. */
+.attr-mentor-stat__compact-values,
+.attr-mentor-stat__compact-labels {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
-  font-weight: 700;
-  font-size: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  align-items: center;
+  text-align: center;
 }
 
-.attr-mentor-card__legend {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-  max-width: 500px;
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.attr-mentor-stat__compact-values {
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.attr-mentor-stat__compact-labels,
+.attr-mentor-stat__breakdown-labels {
+  margin-top: 3px;
   color: var(--prog-text-dim, #9cb5c7);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Expanded preview: Base, Species, Total and Mod are paired by column.
+   The expanded state is set by the existing single-open accordion handler. */
+.attr-mentor-stat__breakdown {
+  display: none;
+}
+
+.attr-mentor-stat__breakdown-values,
+.attr-mentor-stat__breakdown-labels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+  align-items: center;
+  text-align: center;
+}
+
+.attr-mentor-stat__breakdown-values {
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.attr-mentor-stat__breakdown-labels {
+  font-size: 8px;
+  letter-spacing: 0;
+}
+
+.attr-mentor-stat__compact-labels span,
+.attr-mentor-stat__breakdown-labels span {
+  min-width: 0;
+}
+
+.attr-mentor-card.is-expanded .attr-mentor-stat__compact {
+  display: none;
+}
+
+.attr-mentor-card.is-expanded .attr-mentor-stat__breakdown {
+  display: block;
 }
 
 /* The explanation toggle does not hide any scores or the Apply button. */
