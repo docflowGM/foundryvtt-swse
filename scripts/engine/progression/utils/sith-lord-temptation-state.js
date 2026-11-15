@@ -49,6 +49,39 @@ export function planTemptationMark({caster,target,combat,checkTotal,willDefense,
 }
 
 /**
+ * Printed duration: until the source Sith Lord next begins a turn.
+ *
+ * Foundry's combat.turn is a POSITION in the current initiative order, not
+ * a stable identifier. A GM may reorder combatants between rounds. Therefore
+ * the original creation position cannot be used to decide expiry.
+ *
+ * For the immediate next round, use the current order and the stored source
+ * COMBATANT ID. If the ordering is absent or inconsistent, fail closed
+ * rather than manufacture a Temptation consequence past its legal window.
+ * The combatTurn cleanup hook is still the authoritative persisted expiry.
+ */
+export function isTemptationWindowOpen(entry, combat) {
+  if (!hasCurrentCombat(combat) || entry?.state !== 'active'
+      || String(entry?.encounterId ?? '') !== String(combat.id)
+      || !Number.isSafeInteger(entry?.createdRound)
+      || !entry?.sourceCombatantId) return false;
+  const round = Number(combat.round);
+  if (round < entry.createdRound || round > entry.createdRound + 1) return false;
+  if (round === entry.createdRound) return true;
+  // On the next round, the benefit ends when its source's turn starts.
+  const currentId = String(combat.combatant?.id ?? '');
+  if (!currentId || currentId === String(entry.sourceCombatantId)) return false;
+  const order = Array.isArray(combat.turns)
+    ? combat.turns : Array.isArray(combat.turns?.contents) ? combat.turns.contents : null;
+  if (!order) return false;
+  const sourceIndex = order.findIndex(c => String(c?.id ?? '') === String(entry.sourceCombatantId));
+  const currentIndex = order.findIndex(c => String(c?.id ?? '') === currentId);
+  if (sourceIndex < 0 || currentIndex < 0
+      || !Number.isSafeInteger(combat.turn) || combat.turn !== currentIndex) return false;
+  return currentIndex < sourceIndex;
+}
+
+/**
  * A confirmed spend event is mandatory. It cannot be inferred from edited
  * pool values. Every event has a unique receipt ID for replay deduplication.
  */
@@ -60,12 +93,7 @@ export function planTemptationSpend({target,combat,event}={}){
     return {eligible:false,reason:'invalid-spend-receipt'};
   const entries=currentTemptations(target).filter(x=>
     x.state==='active'&&x.targetActorId===actorIdentity(target)
-    &&x.encounterId===combat.id
-    // Even if the GM's cleanup hook has not run yet, the pending effect
-    // cannot extend past the source Sith Lord's NEXT turn.
-    && combat.round>=x.createdRound && combat.round<=x.createdRound+1
-    && !(combat.round===x.createdRound+1
-      && combat.turn>=x.createdTurn));
+    && isTemptationWindowOpen(x, combat));
   if(!entries.length)return {eligible:false,reason:'no-active-temptation'};
   const events=currentTemptationEvents(target);
   if(events.some(x=>x.receiptId===event.receiptId))

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {
  actorIdentity,planTemptationMark,planTemptationSpend,currentTemptations,
- expireTemptationEntries,TEMPTATION_PATH,TEMPTATION_EVENTS_PATH
+ expireTemptationEntries,isTemptationWindowOpen,TEMPTATION_PATH,TEMPTATION_EVENTS_PATH
 } from '../scripts/engine/progression/utils/sith-lord-temptation-state.js';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const combat={id:'enc-1',round:2,turn:3,started:true,combatant:{id:'c-sith'}};
@@ -49,6 +49,42 @@ test('successful mark requires true spent Force/Destiny receipt, target and enco
  assert.equal(planTemptationSpend({target:victim,combat:{...combat,id:'other'},event:receipt()}).eligible,false);
  victim.flags.swse.classFeatures.sithLord.temptationEvents=[{receiptId:'receipt-1'}];
  assert.equal(planTemptationSpend({target:victim,combat,event:receipt()}).reason,'duplicate-spend-receipt');
+});
+
+test('Temptation next-turn window tracks source Combatant when initiative order changes',()=>{
+ setup();
+ const mark=planTemptationMark({
+   caster,target:victim,combat,checkTotal:25,willDefense:20,confirmedLineOfSight:true
+ });
+ victim.flags.swse.classFeatures.sithLord.temptation=mark.updates[TEMPTATION_PATH];
+ const order=['c-first','c-second','c-third','c-fourth','c-other','c-sith','c-last']
+   .map(id=>({id}));
+ const round3={...combat,round:3,turn:4,combatant:{id:'c-other'},turns:order};
+ assert.equal(isTemptationWindowOpen(mark.entry,round3),true);
+ assert.equal(planTemptationSpend({target:victim,combat:round3,event:receipt()}).eligible,true);
+ const atSource={...round3,turn:5,combatant:{id:'c-sith'}};
+ assert.equal(isTemptationWindowOpen(mark.entry,atSource),false);
+ assert.equal(planTemptationSpend({target:victim,combat:atSource,event:receipt()}).eligible,false);
+ const after={...round3,turn:6,combatant:{id:'c-last'}};
+ assert.equal(isTemptationWindowOpen(mark.entry,after),false);
+ assert.equal(planTemptationSpend({target:victim,combat:after,event:receipt()}).eligible,false);
+});
+
+test('Temptation next-round temporal gate fails closed without verifiable source order',()=>{
+ setup();
+ const mark=planTemptationMark({
+   caster,target:victim,combat,checkTotal:25,willDefense:20,confirmedLineOfSight:true
+ });
+ const next={...combat,round:3,turn:1,combatant:{id:'c-other'}};
+ assert.equal(isTemptationWindowOpen(mark.entry,next),false);
+ assert.equal(isTemptationWindowOpen(mark.entry,{...next,turns:[{id:'c-other'}]}),false);
+ const inconsistent={...next,turns:[{id:'c-other'},{id:'c-sith'}]};
+ assert.equal(isTemptationWindowOpen(mark.entry,inconsistent),false);
+ assert.equal(isTemptationWindowOpen(mark.entry,{...next,turn:0,
+   turns:[{id:'c-other'},{id:'c-sith'}]}),true);
+ assert.equal(isTemptationWindowOpen(mark.entry,{...next,round:4}),false);
+ assert.equal(isTemptationWindowOpen(mark.entry,{...next,id:'different-encounter'}),false);
+ assert.equal(isTemptationWindowOpen({...mark.entry,state:'expired'},next),false);
 });
 
 test('source next turn expires active Temptation, not any earlier actor turn',()=>{
