@@ -21,7 +21,7 @@
 
 | Survey / question | Rows | Exact editorial IDs | Documented composite IDs | Proposed IDs | Source-authored candidates | Text candidates | Review unmapped | No-tag |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| L1 · Q1 class development | 24 | 0 | 0 | 24 | 0 | 15 | 5 | 4 |
+| L1 · Q1 class development | 30 | 0 | 0 | 30 | 0 | 20 | 5 | 5 |
 | L1 · Q2 career calling | 582 | 0 | 0 | 582 | 582 | 0 | 0 | 0 |
 | L1 · Q3 first situation | 150 | 0 | 0 | 150 | 0 | 55 | 95 | 0 |
 | L1 · Q4 second situation / specialization | 685 | 0 | 0 | 685 | 685 | 0 | 0 | 0 |
@@ -35,7 +35,7 @@
 | Prestige · Q3 responsibility scenario | 800 | 0 | 0 | 800 | 675 | 47 | 78 | 0 |
 | Prestige · Q4 commitment depth | 128 | 0 | 0 | 128 | 0 | 0 | 0 | 128 |
 | Prestige · Q5 future purpose | 224 | 0 | 0 | 224 | 0 | 37 | 27 | 160 |
-| **TOTAL** | **6360** | **977** | **1500** | **3883** | **1967** | **1508** | **2285** | **600** |
+| **TOTAL** | **6366** | **977** | **1500** | **3889** | **1967** | **1513** | **2285** | **601** |
 
 > These counts enumerate records successfully extracted by this script from identified Markdown banks; they are not a claim that every local-only or runtime-generated response has been captured. Each source retains its original authored counts and is cited below.
 
@@ -71,7 +71,7 @@
 
 ## Per-answer candidate mapping catalog
 
-### L1 · Q1 class development (24 records)
+### L1 · Q1 class development (30 records)
 
 | Answer ID | ID status | Player response / purpose | Primary candidate | Supporting candidate | Mapping status | Original source | Notes |
 |---|---|---|---|---|---|---|---|
@@ -99,6 +99,13 @@
 | `l1.q1.soldier.04` | PROPOSED | I want to get in close and win the fight with my own strength, whether I'm armed or not. | — | — | REVIEW_UNMAPPED | [l1q1soldier:L24](https://github.com/docflowGM/foundryvtt-swse/blob/docs/l1-adaptive-mentor-survey-q1-q5-20261113/docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Soldier_Review_Draft_v0.1_2026-11-13.md#L24) | soldier |
 | `l1.q1.soldier.05` | PROPOSED | I want to learn to read the battlefield, keep my squad working together, and bring everyone home. | `tactics` | — | TEXT_CANDIDATE | [l1q1soldier:L25](https://github.com/docflowGM/foundryvtt-swse/blob/docs/l1-adaptive-mentor-survey-q1-q5-20261113/docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Soldier_Review_Draft_v0.1_2026-11-13.md#L25) | soldier |
 | `l1.q1.soldier.06` | PROPOSED | I'm not sure yet. I'd rather see what training suits me before choosing a specialty. | — | — | NO_TAG | [l1q1soldier:L26](https://github.com/docflowGM/foundryvtt-swse/blob/docs/l1-adaptive-mentor-survey-q1-q5-20261113/docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Soldier_Review_Draft_v0.1_2026-11-13.md#L26) | soldier |
+
+| `l1.q1.scoundrel.01` | PROPOSED | I want to master life among the stars—piloting, improvising, and knowing how to get myself and my crew out of trouble. | `pilot`, `space` | — | TEXT_CANDIDATE | [l1q1scoundrel:L41](https://github.com/docflowGM/foundryvtt-swse/blob/docs/l1-adaptive-mentor-survey-q1-q5-20261113/docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Scoundrel_Review_Draft_v0.1_2026-11-13.md#L41) | scoundrel; Original response IDs not provided, proposed stable keys only. |
+| `l1.q1.scoundrel.02` | PROPOSED | I want to outwit my enemies, take calculated risks, and turn bad odds in my favor. | `deception` | — | TEXT_CANDIDATE | [l1q1scoundrel:L42](https://github.com/docflowGM/foundryvtt-swse/blob/docs/l1-adaptive-mentor-survey-q1-q5-20261113/docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Scoundrel_Review_Draft_v0.1_2026-11-13.md#L42) | scoundrel; Original response IDs not provided, proposed stable keys only. |
+| `l1.q1.scoundrel.03` | PROPOSED | I want to become fast and accurate with a blaster, making every shot count when trouble starts. | `ranged`, `precision` | `pistol` | TEXT_CANDIDATE | [l1q1scoundrel:L43](https://github.com/docflowGM/foundryvtt-swse/blob/docs/l1-adaptive-mentor-survey-q1-q5-20261113/docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Scoundrel_Review_Draft_v0.1_2026-11-13.md#L43) | scoundrel; Original response IDs not provided, proposed stable keys only. |
+| `l1.q1.scoundrel.04` | PROPOSED | I want to learn how to read people, talk my way past obstacles, and make the right deal at the right time. | `deception`, `persuasion` | `social` | TEXT_CANDIDATE | [l1q1scoundrel:L44](https://github.com/docflowGM/foundryvtt-swse/blob/docs/l1-adaptive-mentor-survey-q1-q5-20261113/docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Scoundrel_Review_Draft_v0.1_2026-11-13.md#L44) | scoundrel; Original response IDs not provided, proposed stable keys only. |
+| `l1.q1.scoundrel.05` | PROPOSED | I want to master computers and machinery, bypass security, and make complicated systems work for me—or fail for my enemies. | `slicing`, `mechanics` | `use_computer` | TEXT_CANDIDATE | [l1q1scoundrel:L45](https://github.com/docflowGM/foundryvtt-swse/blob/docs/l1-adaptive-mentor-survey-q1-q5-20261113/docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Scoundrel_Review_Draft_v0.1_2026-11-13.md#L45) | scoundrel; Original response IDs not provided, proposed stable keys only. |
+| `l1.q1.scoundrel.06` | PROPOSED | I'm not sure yet. I want to see what I'm capable of before deciding what to specialize in. | — | — | NO_TAG | [l1q1scoundrel:L46](https://github.com/docflowGM/foundryvtt-swse/blob/docs/l1-adaptive-mentor-survey-q1-q5-20261113/docs/design/l1-adaptive-mentor-survey/SWSE_L1_Q1_Scoundrel_Review_Draft_v0.1_2026-11-13.md#L46) | scoundrel; Original response IDs not provided, proposed stable keys only. |
 
 ### L1 · Q2 career calling (582 records)
 
