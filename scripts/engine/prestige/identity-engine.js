@@ -20,6 +20,9 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
+import { computeSurveyInfluence } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/survey-influence.js";
+import { readLedger } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/intent-ledger.js";
+import { projectActorEvidence } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/actor-evidence.js";
 import { buildEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 
 export class IdentityEngine {
@@ -81,9 +84,8 @@ export class IdentityEngine {
             attributeBias: {}
         };
 
-        // Layer 1: SurveyBias (decaying)
-        const surveyBias = this.computeSurveyBias(actor);
-        this.#addBias(totalBias, surveyBias);
+        // Layer 1 (legacy shared-decay SurveyBias) is retired. Survey influence is event-based and tag-scoped:
+        // see surveyTagAffinity below and scripts/mentor/mentor-survey-v2/survey-influence.js.
 
         // Layer 2: ClassChassisBias (Saga mechanics: BAB, HD, defense tier, skill breadth)
         const classChassisBias = this.computeClassChassisBias(actor);
@@ -116,6 +118,9 @@ export class IdentityEngine {
         // Layer 9: ReinforcementBias
         const reinforcementBias = this.computeReinforcement(actor);
         this.#addBias(totalBias, reinforcementBias);
+
+        // Survey channel: bounded, per-event decayed, certified-tag-only affinity (ranking signal; never eligibility).
+        totalBias.surveyTagAffinity = this.computeSurveyTagAffinity(actor);
 
         return totalBias;
     }
@@ -585,46 +590,17 @@ export class IdentityEngine {
     }
 
     /**
-     * Compute SurveyBias with decay
-     * Pure function
-     *
-     * @param {Object} actor - Foundry actor
-     * @returns {Object} SurveyBias
+     * Survey channel for the Suggestion Engine: { [ontologyTag]: weight }.
+     * Computed from the actor's immutable survey event ledger; each completed survey decays on its own half-life.
+     * Returns {} until certified answer-to-tag mappings exist. Replaces the legacy shared-decay computeSurveyBias.
+     * @param {Object} actor
+     * @returns {Record<string, number>}
      */
-    static computeSurveyBias(actor) {
-        const surveyBias = {
-            mechanicalBias: {},
-            roleBias: {},
-            attributeBias: {}
-        };
-
-        // Get survey bias from actor (if stored).
-        // L1 survey bias lives in system.swse.surveyBias.
-        // Completed base-class survey bias lives separately so it layers on top
-        // of, rather than replaces, the original L1 identity signal.
-        const rawSurveyBias = actor.system?.swse?.surveyBias || {};
-        const classSurveyBias = actor.system?.swse?.classSurveyBias || {};
-        if ((!rawSurveyBias || Object.keys(rawSurveyBias).length === 0)
-            && (!classSurveyBias || Object.keys(classSurveyBias).length === 0)) {
-            return surveyBias;
-        }
-
-        this.#addBias(surveyBias, rawSurveyBias);
-        this.#addBias(surveyBias, classSurveyBias);
-
-        // Calculate totalLevel from BASE CLASSES ONLY (exclude prestige)
-        const classes = actor.system?.classes || {};
-        let totalLevel = 0;
-        for (const [className, classData] of Object.entries(classes)) {
-            if (!this.#isPrestigeClass(className)) {
-                totalLevel += classData.level || 0;
-            }
-        }
-        totalLevel = Math.max(1, totalLevel);
-
-        const surveyWeight = Math.max(0.175, 1 - (totalLevel / 20));
-
-        return this.#scaleAllBias(surveyBias, surveyWeight);
+    static computeSurveyTagAffinity(actor) {
+        const events = readLedger(actor);
+        if (!events.length) return {};
+        const level = projectActorEvidence(actor).characterLevel || Number(actor?.system?.level) || 1;
+        return computeSurveyInfluence(events, level).suggestionTags;
     }
 
     /**
@@ -1605,78 +1581,5 @@ export class IdentityEngine {
 
         // Return mapped variation or lowercase normalized form
         return variations[normalized] || normalized;
-    }
-
-    /**
-     * Inject survey bias into an actor's identity layer
-     * This replaces any existing survey bias and triggers recomputation
-     *
-     * Does NOT mutate the actor directly - stores in system.swse.surveyBias
-     * Caller is responsible for persisting changes if needed
-     *
-     * @param {Object} actor - Foundry actor (will have survey bias added to system data)
-     * @param {Object} biasObject - Survey bias object { mechanicalBias, roleBias, attributeBias }
-     * @returns {Object} Updated totalBias after injection
-     */
-    static injectSurveyBias(actor, biasObject = {}) {
-        if (!actor) {
-            SWSELogger.warn('[IdentityEngine.injectSurveyBias] No actor provided');
-            return this.computeTotalBias(actor);
-        }
-
-        if (!actor.system) {
-            actor.system = {};
-        }
-        if (!actor.system.swse) {
-            actor.system.swse = {};
-        }
-
-        // Replace survey bias (not additive)
-        actor.system.swse.surveyBias = {
-            mechanicalBias: biasObject.mechanicalBias || {},
-            roleBias: biasObject.roleBias || {},
-            attributeBias: biasObject.attributeBias || {}
-        };
-
-        SWSELogger.log('[IdentityEngine.injectSurveyBias] Injected survey bias:', actor.system.swse.surveyBias);
-
-        // Return recomputed total bias
-        return this.computeTotalBias(actor);
-    }
-
-    /**
-     * Clear survey bias from an actor's identity layer
-     * This removes all survey influence and triggers recomputation
-     *
-     * Does NOT mutate the actor directly - resets system.swse.surveyBias
-     * Caller is responsible for persisting changes if needed
-     *
-     * @param {Object} actor - Foundry actor
-     * @returns {Object} Updated totalBias after clearing
-     */
-    static clearSurveyBias(actor) {
-        if (!actor) {
-            SWSELogger.warn('[IdentityEngine.clearSurveyBias] No actor provided');
-            return this.computeTotalBias(actor);
-        }
-
-        if (!actor.system) {
-            actor.system = {};
-        }
-        if (!actor.system.swse) {
-            actor.system.swse = {};
-        }
-
-        // Clear survey bias
-        actor.system.swse.surveyBias = {
-            mechanicalBias: {},
-            roleBias: {},
-            attributeBias: {}
-        };
-
-        SWSELogger.log('[IdentityEngine.clearSurveyBias] Cleared survey bias for actor:', actor.id);
-
-        // Return recomputed total bias
-        return this.computeTotalBias(actor);
     }
 }

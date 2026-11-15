@@ -92,3 +92,21 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | PR-09 | Level-20 / low budget: no implied advancement | handoff §8.6 | resolver | 13 | Planned |
 | PR-10 | Quarantined mechanics never enabled | §39.3 | content gate | 1 | Planned |
 | PR-11 | Prestige Q6 per-class dialogue | handoff (NEXT) | **Blocked** missing artifact | — | Blocked |
+
+## Survey influence (addendum; `SV-30`…`SV-42`)
+
+| ID | Requirement | Source | Implementation | Status |
+|---|---|---|---|---|
+| SV-30 | One typed config; initial authority Prestige 1.20 > Multiclass 0.90 > L1 0.65; half-life L1 8 > Multiclass 4 > Prestige 3; provisional | Addendum §2; v0.9 §7 (illustrative A values superseded by owner) | `SURVEY_INFLUENCE_CONFIG` | Tested (offline) |
+| SV-31 | `D=2^-(L-Ls)/H`, `W=A·D`; exactly half at own half-life; age never negative | Addendum §1; v0.9 §7.2 | `survey-influence.js` | Tested (offline) |
+| SV-32 | Each completed survey is an independent clock; a new survey never resets an older one | Addendum §1 | per-event `eventContributions` | Tested (offline) |
+| SV-33 | Different surveys reinforce the same tag with separate provenance | Addendum §3; v0.9 §7.3 | `computeSurveyInfluence` | Tested (offline) |
+| SV-34 | `R(n)=1+0.15·min(n-1,3)` once; duplicate aliases count once per question | Addendum §3 | `certifiedEvidenceByTag` | Tested (offline) |
+| SV-35 | Retake/reopen/cancel/duplicate finalize never multiply influence; preview excluded | Addendum §9 | ledger supersession + `activeSurveyEvents` | Tested (offline) |
+| SV-36 | Uncertified, unmapped, neutral, skipped, typed answers contribute nothing; empty ontology fails closed | Addendum §5 | `registerOntologyTags` gate | Tested (offline) |
+| SV-37 | Survey-channel cap: event count cannot exceed the bound | Addendum §3 | `channel` policy | Tested (offline) |
+| SV-38 | Declared goals do not decay; owned mechanics are never read or decayed by survey math | Addendum §4 | `declaredGoals` | Tested (offline) |
+| SV-39 | Q6 calibration is a separate authority, inferred-only, coefficients unapproved (no-op) | Addendum §7 | `applyCalibration` | Tested (offline) |
+| SV-40 | `F(E)=1-e^{-E/k}` configurable, bounded, never a probability; deterministic at levels 1/2/5/10/12/15/20 | Addendum §8, §9 | `saturate` | Tested (offline) |
+| SV-41 | Integration: legacy shared-decay path removed; golden-build identity bias unchanged without certified evidence; bounded channel reaches `tag-signal-engine`; diagnostic breakdown | Addendum §6, §10 | `IdentityEngine.computeSurveyTagAffinity`, `tag-signal-engine` | Tested (offline) |
+| SV-42 | Completed events freeze original answer text, approval status and evidence channel | Addendum §1 | `buildCompletionEvents` | Tested (offline) |

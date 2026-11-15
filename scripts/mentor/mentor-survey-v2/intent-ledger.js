@@ -57,7 +57,7 @@ export function reduceLedger(events, { includePreview = false } = {}) {
  *   goal declarations the RESOLVER derived from explicit affirmative selections (never from browsing or defaults)
  * @param {object[]} [p.existingEvents]
  */
-export function buildCompletionEvents({ payload, transactionId, actorLevel, completedAt, preview = false, goals = [], existingEvents = [] }) {
+export function buildCompletionEvents({ payload, transactionId, actorLevel, completedAt, preview = false, goals = [], existingEvents = [], answerDetails = {}, tagEvidence = [] }) {
   if (!payload || !transactionId) return [];
   const base = {
     surveyKind: payload.surveyKind,
@@ -77,7 +77,15 @@ export function buildCompletionEvents({ payload, transactionId, actorLevel, comp
     ordinal += 1;
     return e;
   };
-  const completed = mint(EVENT_TYPES.SURVEY_COMPLETED, { lane: LANES.DECLARED_FUTURE_GOAL, answers: deepClone(payload.answers) });
+  // Immutable record of exactly what the player saw and chose. Text and approval status are frozen at completion.
+  const answers = deepClone(payload.answers);
+  for (const [qid, a] of Object.entries(answers)) {
+    const d = answerDetails[qid];
+    if (d) Object.assign(a, { text: d.text, editorialStatus: d.editorialStatus, mechanicsStatus: d.mechanicsStatus });
+  }
+  // tagEvidence holds ONLY certified, ontology-validated entries supplied by the (future) certified mapping boundary.
+  // It is never derived from text. Empty today: surveys contribute no tag evidence until mappings are certified.
+  const completed = mint(EVENT_TYPES.SURVEY_COMPLETED, { lane: LANES.DECLARED_FUTURE_GOAL, evidenceChannel: 'completed_survey_development_preference', answers, tagEvidence: deepClone(tagEvidence) });
   // A retake of the same survey scope supersedes the previous completion; it never edits it.
   const prior = reduceLedger(existingEvents, { includePreview: preview }).latestSurvey[`${base.surveyKind}:${base.scopeId}`];
   if (prior) completed.supersedes = prior.eventId;

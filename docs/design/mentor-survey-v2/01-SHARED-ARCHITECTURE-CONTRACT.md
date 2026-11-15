@@ -32,7 +32,7 @@ Rules: no lane is derived from another. A declared "Jedi Master" does not create
 
 ## 3. Module layout (SV-04)
 
-All under `scripts/mentor/mentor-survey/` (the existing path; legacy files deleted):
+All under `scripts/mentor/mentor-survey-v2/` (legacy `scripts/mentor/mentor-survey/` is deleted at cutover):
 
 | Module | Responsibility |
 |---|---|
@@ -42,6 +42,7 @@ All under `scripts/mentor/mentor-survey/` (the existing path; legacy files delet
 | `actor-evidence.js` | Read-only, provenance-backed projection of finalized actor strengths |
 | `reflection.js` | Shared Q6 reflection/correction engine (Multiclass + Prestige; reusable by Talk to Mentor later) |
 | `intent-ledger.js` | Pure builders/reducers for ledger events, idempotency, supersession; the only writer of the ledger shape |
+| `survey-influence.js` | Event-based decay, bounded reinforcement, channel cap, saturation, diagnostics, Q6 calibration authority |
 | `tag-boundary.js` | Typed future answer-to-intent mapping boundary (inert) |
 | `resolvers/{l1,multiclass,prestige}.js` | Per-survey question selection (pure functions of context + content) |
 | `index.js` | Public surface |
@@ -106,6 +107,10 @@ Mentor for a survey is resolved from the canonical class→Mentor map (`data/dia
 
 Survey navigation is UI-only state: no actor writes, no document updates, no full-sheet render per answer. View-models and option rankings are cached keyed by `contextRevision`; the cache is bounded and has no authority over game state.
 
-## 13. Explicit non-goals
+## 13. Survey influence (addendum; SV-30…SV-42)
+
+One event-based calculator, `survey-influence.js`, replaces the legacy `IdentityEngine.computeSurveyBias` (shared level decay with a 0.175 floor). Each completed survey event decays on its own half-life (`D=2^-(L-Ls)/H`, `W=A·D`); a tag contribution is `C = E · R(n) · A · D` with `R(n)=1+0.15·min(n-1,3)` applied once per distinct question; contributions are summed per tag keeping per-event provenance, bounded by a survey-channel cap, and saturated with `F(E)=1-e^{-E/k}`. All coefficients live in one frozen config (provisional; owner hierarchy: initial influence Prestige > Multiclass > L1, persistence L1 > Multiclass > Prestige). Evidence channels stay separate: acquired mechanics (never read), declared goals (never decay), survey development preferences (decay), inferred identity, Q6 calibration (separate authority, coefficients unapproved). Only certified, ontology-registered tag evidence counts, so with no certified mapping the channel is empty. The result reaches the Suggestion Engine only as `identityBias.surveyTagAffinity` merged by `tag-signal-engine` under a hard ceiling; it is a ranking signal and cannot create eligibility. See `07-SURVEY-INFLUENCE-CALIBRATION.md`.
+
+## 14. Explicit non-goals
 
 Answer→tag mapping, new weights, new ontology tags, archetype-scoring changes, a Talk-to-Mentor redesign, developer analytics, migrations.
