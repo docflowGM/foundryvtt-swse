@@ -9,27 +9,39 @@
 
   <div class="attr-mentor-dialog__cards">
     {{#each builds}}
-      <section class="attr-mentor-card {{#if recommended}}is-recommended{{/if}}">
+      <section class="attr-mentor-card {{#if recommended}}is-recommended{{/if}}" data-build-card>
         <div class="attr-mentor-card__head">
-          <div>
-            <div class="attr-mentor-card__title-row">
-              <h3>{{title}}</h3>
-              {{#if recommended}}<span class="attr-mentor-card__recommended">Recommended</span>{{/if}}
-            </div>
-            <p class="attr-mentor-card__subtitle">{{subtitle}}</p>
-            <p class="attr-mentor-card__summary">{{reasonSummary}}</p>
-          </div>
-          <div class="attr-mentor-card__actions">
-            {{#if pointBuySpent}}
-              <div class="attr-mentor-card__budget">{{pointBuySpent}} / {{../pointBuyPool}} points</div>
-            {{else}}
-              <div class="attr-mentor-card__budget">{{poolSource}}</div>
-            {{/if}}
-            <button type="button" class="prog-btn prog-btn--primary" data-build-apply="{{id}}">Apply Build</button>
-          </div>
+          <button type="button"
+                  class="attr-mentor-card__toggle"
+                  data-build-toggle
+                  id="attr-mentor-build-tab-{{@index}}"
+                  aria-controls="attr-mentor-build-panel-{{@index}}"
+                  aria-expanded="false">
+            <span class="attr-mentor-card__toggle-main">
+              <span class="attr-mentor-card__title-row">
+                <span class="attr-mentor-card__title">{{title}}</span>
+                {{#if recommended}}<span class="attr-mentor-card__recommended">Recommended</span>{{/if}}
+              </span>
+              <span class="attr-mentor-card__subtitle">{{subtitle}}</span>
+              <span class="attr-mentor-card__summary">{{reasonSummary}}</span>
+            </span>
+            <span class="attr-mentor-card__toggle-meta">
+              {{#if pointBuySpent}}
+                <span class="attr-mentor-card__budget">{{pointBuySpent}} / {{../pointBuyPool}} points</span>
+              {{else}}
+                <span class="attr-mentor-card__budget">{{poolSource}}</span>
+              {{/if}}
+              <i class="fas fa-chevron-down attr-mentor-card__chevron" aria-hidden="true"></i>
+            </span>
+          </button>
         </div>
 
-        <div class="attr-mentor-card__stats">
+        <div class="attr-mentor-card__body" data-build-panel id="attr-mentor-build-panel-{{@index}}" role="region" aria-labelledby="attr-mentor-build-tab-{{@index}}" hidden>
+          <div class="attr-mentor-card__actions">
+            <button type="button" class="prog-btn prog-btn--primary" data-build-apply="{{id}}">Apply Build</button>
+          </div>
+
+          <div class="attr-mentor-card__stats">
           {{#each displayRows}}
             <div class="attr-mentor-stat swse-ability-surface swse-ability-surface--{{id}}" data-ability="{{id}}">
               <div class="attr-mentor-stat__label swse-ability-label swse-ability-label--{{id}}" data-ability="{{id}}">{{label}}</div>
@@ -94,6 +106,7 @@
             </div>
           </div>
         </div>
+        </div>{{!-- /.attr-mentor-card__body --}}
       </section>
     {{/each}}
   </div>
