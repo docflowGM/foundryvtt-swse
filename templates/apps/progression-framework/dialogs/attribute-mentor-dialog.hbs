@@ -8,40 +8,29 @@
   </div>
 
   <div class="attr-mentor-dialog__cards">
+    {{!-- All three candidates remain visible: title, six scores, and Apply.
+          Only the explanation panels at the bottom expand/collapse. --}}
     {{#each builds}}
       <section class="attr-mentor-card {{#if recommended}}is-recommended{{/if}}" data-build-card>
         <div class="attr-mentor-card__head">
-          <button type="button"
-                  class="attr-mentor-card__toggle"
-                  data-build-toggle
-                  id="attr-mentor-build-tab-{{@index}}"
-                  aria-controls="attr-mentor-build-panel-{{@index}}"
-                  aria-expanded="false">
-            <span class="attr-mentor-card__toggle-main">
-              <span class="attr-mentor-card__title-row">
-                <span class="attr-mentor-card__title">{{title}}</span>
-                {{#if recommended}}<span class="attr-mentor-card__recommended">Recommended</span>{{/if}}
-              </span>
-              <span class="attr-mentor-card__subtitle">{{subtitle}}</span>
-              <span class="attr-mentor-card__summary">{{reasonSummary}}</span>
-            </span>
-            <span class="attr-mentor-card__toggle-meta">
-              {{#if pointBuySpent}}
-                <span class="attr-mentor-card__budget">{{pointBuySpent}} / {{../pointBuyPool}} points</span>
-              {{else}}
-                <span class="attr-mentor-card__budget">{{poolSource}}</span>
-              {{/if}}
-              <i class="fas fa-chevron-down attr-mentor-card__chevron" aria-hidden="true"></i>
-            </span>
-          </button>
-        </div>
-
-        <div class="attr-mentor-card__body" data-build-panel id="attr-mentor-build-panel-{{@index}}" role="region" aria-labelledby="attr-mentor-build-tab-{{@index}}" hidden>
+          <div class="attr-mentor-card__intro">
+            <div class="attr-mentor-card__title-row">
+              <h3>{{title}}</h3>
+              {{#if recommended}}<span class="attr-mentor-card__recommended">Recommended</span>{{/if}}
+            </div>
+            <p class="attr-mentor-card__subtitle">{{subtitle}}</p>
+          </div>
           <div class="attr-mentor-card__actions">
+            {{#if pointBuySpent}}
+              <span class="attr-mentor-card__budget">{{pointBuySpent}} / {{../pointBuyPool}} points</span>
+            {{else}}
+              <span class="attr-mentor-card__budget">{{poolSource}}</span>
+            {{/if}}
             <button type="button" class="prog-btn prog-btn--primary" data-build-apply="{{id}}">Apply Build</button>
           </div>
+        </div>
 
-          <div class="attr-mentor-card__stats">
+        <div class="attr-mentor-card__stats">
           {{#each displayRows}}
             <div class="attr-mentor-stat swse-ability-surface swse-ability-surface--{{id}}" data-ability="{{id}}">
               <div class="attr-mentor-stat__label swse-ability-label swse-ability-label--{{id}}" data-ability="{{id}}">{{label}}</div>
@@ -62,52 +51,67 @@
           <span>Mod</span>
         </div>
 
-        <div class="attr-mentor-card__details-grid">
-          <div class="attr-mentor-detail-group">
-            <div class="attr-mentor-detail-group__label">Reasons</div>
-            <ul>
-              {{#each reasons}}
-                <li>{{this}}</li>
-              {{/each}}
-            </ul>
-          </div>
+        <button type="button"
+                class="attr-mentor-card__toggle"
+                data-build-toggle
+                id="attr-mentor-build-tab-{{@index}}"
+                aria-controls="attr-mentor-build-panel-{{@index}}"
+                aria-expanded="false">
+          <span>Why this build? <span class="attr-mentor-card__toggle-hint">Reasons, cautions &amp; forecast</span></span>
+          <i class="fas fa-chevron-down attr-mentor-card__chevron" aria-hidden="true"></i>
+        </button>
+      </section>
+    {{/each}}
 
-          <div class="attr-mentor-detail-group attr-mentor-detail-group--hoverable">
-            <div class="attr-mentor-detail-group__label">Cautions</div>
-            <div class="attr-mentor-hover-anchor">Hover for tradeoffs
-              <div class="attr-mentor-hover-panel">
-                <ul>
-                  {{#if cautions.length}}
-                    {{#each cautions}}
-                      <li>{{this}}</li>
-                    {{/each}}
-                  {{else}}
-                    <li>No major caution beyond the normal tradeoff of specializing.</li>
-                  {{/if}}
-                </ul>
-              </div>
+    {{!-- The explanation appears AFTER all build previews. Opening the first
+          build never pushes the second or third choice out of sight. --}}
+    <div class="attr-mentor-dialog__explanations">
+      {{#each builds}}
+        <div class="attr-mentor-card__body"
+             data-build-panel
+             id="attr-mentor-build-panel-{{@index}}"
+             role="region"
+             aria-labelledby="attr-mentor-build-tab-{{@index}}"
+             hidden>
+          <div class="attr-mentor-card__explanation-title">
+            Why {{title}}?
+          </div>
+          <div class="attr-mentor-card__details-grid">
+            <div class="attr-mentor-detail-group">
+              <div class="attr-mentor-detail-group__label">Reasons</div>
+              <ul>
+                {{#each reasons}}
+                  <li>{{this}}</li>
+                {{else}}
+                  <li>No additional reasons provided.</li>
+                {{/each}}
+              </ul>
             </div>
-          </div>
 
-          <div class="attr-mentor-detail-group attr-mentor-detail-group--hoverable">
-            <div class="attr-mentor-detail-group__label">Forecast</div>
-            <div class="attr-mentor-hover-anchor">Hover for downstream value
-              <div class="attr-mentor-hover-panel">
-                <ul>
-                  {{#if forecasts.length}}
-                    {{#each forecasts}}
-                      <li>{{this}}</li>
-                    {{/each}}
-                  {{else}}
-                    <li>This build keeps your next few steps flexible without overcommitting.</li>
-                  {{/if}}
-                </ul>
-              </div>
+            <div class="attr-mentor-detail-group">
+              <div class="attr-mentor-detail-group__label">Cautions</div>
+              <ul>
+                {{#each cautions}}
+                  <li>{{this}}</li>
+                {{else}}
+                  <li>No major caution beyond the normal tradeoff of specializing.</li>
+                {{/each}}
+              </ul>
+            </div>
+
+            <div class="attr-mentor-detail-group">
+              <div class="attr-mentor-detail-group__label">Forecast</div>
+              <ul>
+                {{#each forecasts}}
+                  <li>{{this}}</li>
+                {{else}}
+                  <li>This build keeps your next few steps flexible without overcommitting.</li>
+                {{/each}}
+              </ul>
             </div>
           </div>
         </div>
-        </div>{{!-- /.attr-mentor-card__body --}}
-      </section>
-    {{/each}}
+      {{/each}}
+    </div>
   </div>
 </div>
