@@ -91,13 +91,12 @@ ok('the content chain (window-content/application-content/[data-application-cont
 }
 ok('.attr-mentor-dialog__header is non-scrolling (flex: 0 0 auto, no overflow of its own)');
 
-// ── 6. No nested vertical scrollbars: exactly one rule in this file sets
-// overflow-y to a scrolling value (auto/scroll) -- .attr-mentor-dialog__cards
-// alone. Everything else in the chain is `hidden` (non-scrolling) or unset. ──
+// ── 6. No nested vertical scrollbars: exactly one CSS declaration enables
+// vertical scrolling, on .attr-mentor-dialog__cards alone. ──
 {
   const scrollingOverflowYRules = [...css.matchAll(/overflow(-y)?:\s*(auto|scroll)/g)];
-  assert.equal(scrollingOverflowYRules.length, 2,
-    'expected exactly the y-scroll and (fallback) x-scroll declarations on .attr-mentor-dialog__cards -- a new scrolling overflow rule elsewhere would create a nested/competing scrollbar');
+  assert.equal(scrollingOverflowYRules.length, 1,
+    'expected one vertical-scroll declaration on .attr-mentor-dialog__cards -- a second region would create a competing scrollbar');
 }
 ok('exactly one region (the cards list) declares scrolling overflow -- no nested vertical scrollbar was introduced');
 
