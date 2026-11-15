@@ -47,17 +47,14 @@ function ok(label) { step += 1; console.log(`  [${step}] ${label} OK`); }
 }
 ok('.attr-mentor-dialog__cards owns vertical scroll (overflow-y: auto, min-height: 0, flex: 1 1 auto)');
 
-// ── 2. No forced horizontal clipping on the scroll owner: overflow-x must
-// NOT be `hidden`, since that would clip .attr-mentor-hover-panel (an
-// absolutely-positioned descendant that escapes its own card on hover)
-// the instant it extends past the scroll container's right edge. This is
-// the exact mistake the ticket warned against. ──
+// ── 2. Do not add a competing horizontal scroll/clip rule to the build
+// list. It must remain responsive as the six-stat previews shrink. ──
 {
   const cards = ruleBodyFor('.attr-mentor-dialog__cards {');
   assert.ok(!/overflow-x:\s*hidden/.test(cards),
-    '.attr-mentor-dialog__cards must not force overflow-x: hidden -- it would clip .attr-mentor-hover-panel horizontally');
+    '.attr-mentor-dialog__cards must not force overflow-x: hidden on narrow screens');
 }
-ok('the scroll owner does not force overflow-x: hidden, so .attr-mentor-hover-panel is never horizontally clipped');
+ok('the build list allows responsive horizontal overflow without forced clipping');
 
 // ── 3. The modal/dialog has viewport-aware height containment on the outer
 // application frame -- not a hardcoded desktop pixel height. ──
@@ -133,13 +130,15 @@ ok('every rule in this file stays scoped to .swse-attribute-mentor-dialog/.attr-
 }
 ok('the existing <=860px responsive card layout rules are unchanged');
 
-// ── 9. .attr-mentor-hover-panel itself is untouched (still absolutely
-// positioned, same escape mechanism) -- this fix only changes its
-// ancestor's overflow/height handling, never the panel's own rule. ──
+// ── 9. Expanded cautions/forecasts are full inline text, not tooltip
+// overlays that cannot be discovered on touchscreens. ──
 {
-  const panel = ruleBodyFor('.attr-mentor-hover-panel {');
-  assert.match(panel, /position:\s*absolute/, '.attr-mentor-hover-panel must remain absolutely positioned');
+  const template = read('templates/apps/progression-framework/dialogs/attribute-mentor-dialog.hbs');
+  assert.doesNotMatch(template, /Hover for|attr-mentor-hover-panel|attr-mentor-hover-anchor/);
+  assert.doesNotMatch(css, /\.attr-mentor-hover-panel\s*\{/);
+  assert.match(template, /{{#each cautions}}/);
+  assert.match(template, /{{#each forecasts}}/);
 }
-ok('.attr-mentor-hover-panel itself is unchanged (still position: absolute)');
+ok('expanded cautions and forecasts are always-readable inline content');
 
 console.log('attribute-mentor-dialog-scroll-containment: all assertions passed');
