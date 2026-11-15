@@ -8,8 +8,8 @@
   </div>
 
   <div class="attr-mentor-dialog__cards">
-    {{!-- All three candidates remain visible: title, six scores, and Apply.
-          Only the explanation panels at the bottom expand/collapse. --}}
+    {{!-- All candidates show final scores and modifiers. Expanding a build
+          reveals each attribute's full breakdown and its advice below. --}}
     {{#each builds}}
       <section class="attr-mentor-card {{#if recommended}}is-recommended{{/if}}" data-build-card>
         <div class="attr-mentor-card__head">
@@ -34,21 +34,31 @@
           {{#each displayRows}}
             <div class="attr-mentor-stat swse-ability-surface swse-ability-surface--{{id}}" data-ability="{{id}}">
               <div class="attr-mentor-stat__label swse-ability-label swse-ability-label--{{id}}" data-ability="{{id}}">{{label}}</div>
-              <div class="attr-mentor-stat__numbers">
-                <span class="attr-mentor-stat__base">{{base}}</span>
-                <span class="attr-mentor-stat__species swse-signed-number {{speciesModClass}}">{{speciesModFormatted}}</span>
-                <span class="attr-mentor-stat__final">{{final}}</span>
-                <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">{{modifier}}</span>
+              {{!-- Collapsed: the two numbers players need for a quick comparison. --}}
+              <div class="attr-mentor-stat__compact">
+                <div class="attr-mentor-stat__compact-values">
+                  <span class="attr-mentor-stat__final">{{final}}</span>
+                  <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">({{modifier}})</span>
+                </div>
+                <div class="attr-mentor-stat__compact-labels">
+                  <span>Total</span><span>Mod</span>
+                </div>
+              </div>
+
+              {{!-- Expanded: each caption lives directly below its own number. --}}
+              <div class="attr-mentor-stat__breakdown">
+                <div class="attr-mentor-stat__breakdown-values">
+                  <span class="attr-mentor-stat__base">{{base}}</span>
+                  <span class="attr-mentor-stat__species swse-signed-number {{speciesModClass}}">{{speciesModFormatted}}</span>
+                  <span class="attr-mentor-stat__final">{{final}}</span>
+                  <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">{{modifier}}</span>
+                </div>
+                <div class="attr-mentor-stat__breakdown-labels">
+                  <span>Base</span><span>Species</span><span>Total</span><span>Mod</span>
+                </div>
               </div>
             </div>
           {{/each}}
-        </div>
-
-        <div class="attr-mentor-card__legend">
-          <span>Base</span>
-          <span>Species</span>
-          <span>Final</span>
-          <span>Mod</span>
         </div>
 
         <button type="button"
