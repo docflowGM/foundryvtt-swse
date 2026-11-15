@@ -271,3 +271,118 @@
     align-items: stretch;
   }
 }
+
+
+/* Build comparison accordion. Three compact headers remain in the visible list;
+   expanding one reveals only that build's existing stat/impact detail. */
+.attr-mentor-card {
+  gap: 0;
+  padding: 0 12px;
+}
+
+.attr-mentor-card__head {
+  display: block;
+}
+
+.attr-mentor-card__toggle {
+  appearance: none;
+  display: flex;
+  width: 100%;
+  min-height: 74px;
+  padding: 11px 2px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.attr-mentor-card__toggle-main {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.attr-mentor-card__title {
+  color: var(--prog-text-heading, #f5fbff);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.attr-mentor-card__toggle-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  gap: 12px;
+}
+
+.attr-mentor-card__chevron {
+  color: var(--prog-accent, #4cc8ff);
+  transition: transform 160ms ease;
+}
+
+.attr-mentor-card.is-expanded .attr-mentor-card__chevron {
+  transform: rotate(180deg);
+}
+
+.attr-mentor-card__toggle:hover .attr-mentor-card__title,
+.attr-mentor-card__toggle:focus-visible .attr-mentor-card__title {
+  color: var(--prog-accent, #4cc8ff);
+}
+
+.attr-mentor-card__toggle:focus-visible {
+  outline: 2px solid var(--prog-accent, #4cc8ff);
+  outline-offset: -3px;
+  border-radius: 6px;
+}
+
+.attr-mentor-card__body {
+  display: grid;
+  gap: 12px;
+  padding: 0 0 14px;
+  border-top: 1px solid rgba(122, 215, 255, 0.14);
+}
+
+.attr-mentor-card__body[hidden] {
+  display: none !important;
+}
+
+.attr-mentor-card__body > .attr-mentor-card__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  padding-top: 12px;
+}
+
+.attr-mentor-card.is-expanded {
+  border-color: var(--prog-accent, #4cc8ff);
+}
+
+@media (max-width: 620px) {
+  .attr-mentor-card__toggle {
+    min-height: 72px;
+    gap: 8px;
+  }
+  .attr-mentor-card__toggle-meta {
+    gap: 6px;
+  }
+  .attr-mentor-card__summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attr-mentor-card__chevron {
+    transition: none;
+  }
+}
