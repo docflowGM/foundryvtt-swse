@@ -133,7 +133,7 @@ ok('the existing <=860px responsive card layout rules are unchanged');
 // ── 9. Expanded cautions/forecasts are full inline text, not tooltip
 // overlays that cannot be discovered on touchscreens. ──
 {
-  const template = read('templates/apps/progression-framework/dialogs/attribute-mentor-dialog.hbs');
+  const template = fs.readFileSync(path.join(ROOT, 'templates/apps/progression-framework/dialogs/attribute-mentor-dialog.hbs'), 'utf8');
   assert.doesNotMatch(template, /Hover for|attr-mentor-hover-panel|attr-mentor-hover-anchor/);
   assert.doesNotMatch(css, /\.attr-mentor-hover-panel\s*\{/);
   assert.match(template, /{{#each cautions}}/);
