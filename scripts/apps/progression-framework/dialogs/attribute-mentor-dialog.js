@@ -56,8 +56,8 @@ export class AttributeMentorDialog extends SWSEApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
 
-    // The three options remain visible as tabs. Only one build's detailed
-    // score changes, reasons, cautions and forecasts is expanded at a time.
+    // All build headers, score comparisons and Apply buttons remain visible.
+    // Only one explanation (reasons, cautions, forecast) expands at a time.
     const toggles = [...root.querySelectorAll('[data-build-toggle]')];
     const showBuild = (selected) => {
       for (const toggle of toggles) {
