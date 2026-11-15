@@ -16,6 +16,20 @@ assert.match(template, /data-build-card/);
 assert.match(template, /attr-mentor-card__recommended/);
 assert.match(template, /attr-mentor-card__stats/);
 assert.match(template, /{{#each displayRows}}/);
+assert.match(template, /class="attr-mentor-stat__compact"/);
+assert.match(template, /class="attr-mentor-stat__breakdown"/);
+assert.match(template, /class="attr-mentor-stat__compact-values"/);
+assert.match(template, /class="attr-mentor-stat__breakdown-values"/);
+assert.match(template, /class="attr-mentor-stat__compact-labels"/);
+assert.match(template, /class="attr-mentor-stat__breakdown-labels"/);
+assert.match(template, /\(\{\{modifier\}\}\)/,
+  'Collapsed build previews must show the signed modifier in parentheses');
+assert.match(template, /<span>Base<\/span><span>Species<\/span><span>Total<\/span><span>Mod<\/span>/,
+  'Expanded breakdown must label all four columns directly beneath their values');
+assert.match(template, /<span>Total<\/span><span>Mod<\/span>/,
+  'Compact preview must label the final score and modifier');
+assert.doesNotMatch(template, /attr-mentor-card__legend/,
+  'Global detached legends must not be rendered below the stat grid');
 assert.match(template, /data-build-apply="{{id}}"/);
 assert.match(template, /data-build-toggle/);
 assert.match(template, /aria-expanded="false"/);
@@ -54,6 +68,16 @@ assert.match(js, /await this\.onApply\(build\)/);
 assert.match(css, /\.attr-mentor-dialog__cards\s*{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/s);
 assert.match(css, /\.attr-mentor-card__stats\s*{[^}]*repeat\(6, minmax\(0, 1fr\)\)/s);
 assert.match(css, /\.attr-mentor-card__body\[hidden\]\s*{[^}]*display:\s*none !important/s);
+assert.match(css, /\.attr-mentor-stat__breakdown\s*{[^}]*display:\s*none;/s,
+  'Full breakdown must be hidden by default');
+assert.match(css, /\.attr-mentor-card\.is-expanded \.attr-mentor-stat__compact\s*{[^}]*display:\s*none;/s,
+  'Expanded card must hide its compact preview');
+assert.match(css, /\.attr-mentor-card\.is-expanded \.attr-mentor-stat__breakdown\s*{[^}]*display:\s*block;/s,
+  'Expanded card must display the four-column breakdown');
+assert.match(css, /\.attr-mentor-stat__breakdown-labels\s*{[^}]*grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/s,
+  'Expanded labels must align with all four numbers');
+assert.match(css, /\.attr-mentor-stat__compact-labels\s*{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/s,
+  'Compact labels must align with total and modifier');
 assert.doesNotMatch(css, /\.attr-mentor-hover-(anchor|panel)\b/);
 
 // Preserve the one-scrolling-region and viewport containment contracts.
