@@ -648,7 +648,8 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     // Only a completed, explicitly finalized survey may inject bias and commit results
     const surveyBias = convertSurveyAnswersToBias(this._surveyAnswers);
     const surveyIntentTags = extractSurveyIntentTags(this._surveyAnswers);
-    IdentityEngine.injectSurveyBias(shell.actor, surveyBias);
+    // Legacy shared-decay survey bias was retired (see mentor-survey-v2/survey-influence.js); this legacy step is deleted
+    // at the V2 cutover. Its answers no longer feed IdentityEngine.
 
     if (!shell.actor.system.swse) shell.actor.system.swse = {};
     shell.actor.system.swse.mentorBuildIntentBiases = { ...surveyIntentTags };
