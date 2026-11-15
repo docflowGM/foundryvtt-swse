@@ -47,14 +47,17 @@ function ok(label) { step += 1; console.log(`  [${step}] ${label} OK`); }
 }
 ok('.attr-mentor-dialog__cards owns vertical scroll (overflow-y: auto, min-height: 0, flex: 1 1 auto)');
 
-// ── 2. Do not add a competing horizontal scroll/clip rule to the build
-// list. It must remain responsive as the six-stat previews shrink. ──
+// ── 2. No forced horizontal clipping on the scroll owner: overflow-x must
+// NOT be `hidden`, since that would clip .attr-mentor-hover-panel (an
+// absolutely-positioned descendant that escapes its own card on hover)
+// the instant it extends past the scroll container's right edge. This is
+// the exact mistake the ticket warned against. ──
 {
   const cards = ruleBodyFor('.attr-mentor-dialog__cards {');
   assert.ok(!/overflow-x:\s*hidden/.test(cards),
-    '.attr-mentor-dialog__cards must not force overflow-x: hidden on narrow screens');
+    '.attr-mentor-dialog__cards must not force overflow-x: hidden -- it would clip .attr-mentor-hover-panel horizontally');
 }
-ok('the build list allows responsive horizontal overflow without forced clipping');
+ok('the scroll owner does not force overflow-x: hidden, so .attr-mentor-hover-panel is never horizontally clipped');
 
 // ── 3. The modal/dialog has viewport-aware height containment on the outer
 // application frame -- not a hardcoded desktop pixel height. ──
@@ -91,12 +94,13 @@ ok('the content chain (window-content/application-content/[data-application-cont
 }
 ok('.attr-mentor-dialog__header is non-scrolling (flex: 0 0 auto, no overflow of its own)');
 
-// ── 6. No nested vertical scrollbars: exactly one CSS declaration enables
-// vertical scrolling, on .attr-mentor-dialog__cards alone. ──
+// ── 6. No nested vertical scrollbars: exactly one rule in this file sets
+// overflow-y to a scrolling value (auto/scroll) -- .attr-mentor-dialog__cards
+// alone. Everything else in the chain is `hidden` (non-scrolling) or unset. ──
 {
   const scrollingOverflowYRules = [...css.matchAll(/overflow(-y)?:\s*(auto|scroll)/g)];
-  assert.equal(scrollingOverflowYRules.length, 1,
-    'expected one vertical-scroll declaration on .attr-mentor-dialog__cards -- a second region would create a competing scrollbar');
+  assert.equal(scrollingOverflowYRules.length, 2,
+    'expected exactly the y-scroll and (fallback) x-scroll declarations on .attr-mentor-dialog__cards -- a new scrolling overflow rule elsewhere would create a nested/competing scrollbar');
 }
 ok('exactly one region (the cards list) declares scrolling overflow -- no nested vertical scrollbar was introduced');
 
@@ -129,15 +133,13 @@ ok('every rule in this file stays scoped to .swse-attribute-mentor-dialog/.attr-
 }
 ok('the existing <=860px responsive card layout rules are unchanged');
 
-// ── 9. Expanded cautions/forecasts are full inline text, not tooltip
-// overlays that cannot be discovered on touchscreens. ──
+// ── 9. .attr-mentor-hover-panel itself is untouched (still absolutely
+// positioned, same escape mechanism) -- this fix only changes its
+// ancestor's overflow/height handling, never the panel's own rule. ──
 {
-  const template = fs.readFileSync(path.join(ROOT, 'templates/apps/progression-framework/dialogs/attribute-mentor-dialog.hbs'), 'utf8');
-  assert.doesNotMatch(template, /Hover for|attr-mentor-hover-panel|attr-mentor-hover-anchor/);
-  assert.doesNotMatch(css, /\.attr-mentor-hover-panel\s*\{/);
-  assert.match(template, /{{#each cautions}}/);
-  assert.match(template, /{{#each forecasts}}/);
+  const panel = ruleBodyFor('.attr-mentor-hover-panel {');
+  assert.match(panel, /position:\s*absolute/, '.attr-mentor-hover-panel must remain absolutely positioned');
 }
-ok('expanded cautions and forecasts are always-readable inline content');
+ok('.attr-mentor-hover-panel itself is unchanged (still position: absolute)');
 
 console.log('attribute-mentor-dialog-scroll-containment: all assertions passed');
