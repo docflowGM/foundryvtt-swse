@@ -1,6 +1,17 @@
-/* Attribute Mentor — compact build comparisons with an expanded breakdown.
- * Three previews (title, six attributes, Apply Build) precede the single
- * expandable explanation panel. Only this dialog's build list scrolls. */
+/* ============================================================================
+ * VERTICAL CONTAINMENT
+ *
+ * position.height is 'auto' (attribute-mentor-dialog.js), so the Foundry
+ * window frame grows to fit its content with no viewport check of its own —
+ * with three or more builds the frame (and the un-scrollable page beneath it)
+ * simply extends past the bottom of the screen. Capping the frame's own
+ * height here and making the content chain shrinkable (min-height: 0;
+ * overflow: hidden) hands ownership of the overflow to exactly one place:
+ * .attr-mentor-dialog__cards, below. The header and Close button stay fixed;
+ * only the build list scrolls. 32px matches the safe chrome margin already
+ * used for this repo's other floating (non-shell) ApplicationV2 dialogs of
+ * this kind (styles/apps/theme-picker-immersive.css).
+ * ============================================================================ */
 
 .swse-attribute-mentor-dialog {
   max-height: calc(100vh - 32px);
@@ -40,7 +51,7 @@
 }
 
 .attr-mentor-dialog__header h2 {
-  margin: 0 0 4px;
+  margin: 0 0 4px 0;
   color: var(--prog-text-heading, #f5fbff);
 }
 
@@ -49,64 +60,61 @@
   color: var(--prog-text-dim, #9cb5c7);
 }
 
-/* One scroll owner for all build previews and the selected explanation. */
 .attr-mentor-dialog__cards {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
   align-content: start;
-  gap: 8px;
+  gap: 12px;
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  /* NOT `hidden`: an ancestor with overflow-y: auto becomes a scroll/clip
+     container for its ENTIRE scrollable-overflow region, including
+     .attr-mentor-hover-panel below (absolutely positioned, escapes its
+     card's own box on hover) -- `hidden` here would clip that panel
+     whenever it extends past this container's right edge. `auto` still
+     shows a horizontal scrollbar only if content genuinely overflows,
+     which normal card content (grid columns sized in `1fr`/`fit`) never
+     does; a hover panel opened from a card scrolled near the very bottom
+     edge of this list can still be clipped vertically by the scroll
+     boundary itself -- an accepted, ubiquitous tradeoff of any scrollable
+     list with popover-style overlays, not something a CSS-only fix can
+     remove without portaling the popover outside this container in JS. */
   overflow-x: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
 }
 
 .attr-mentor-card {
+  border: 1px solid var(--prog-border, rgba(115, 196, 255, 0.25));
+  border-radius: 12px;
+  background: rgba(5, 17, 29, 0.92);
+  box-shadow: 0 0 0 1px rgba(122, 215, 255, 0.06), 0 10px 24px rgba(0, 0, 0, 0.28);
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  min-width: 0;
-  padding: 10px 12px;
-  border: 1px solid var(--prog-border, rgba(115, 196, 255, 0.25));
-  border-radius: 10px;
-  background: rgba(5, 17, 29, 0.92);
-  box-shadow: 0 0 0 1px rgba(122, 215, 255, 0.06), 0 4px 14px rgba(0, 0, 0, 0.20);
+  gap: 12px;
 }
 
 .attr-mentor-card.is-recommended {
-  border-color: rgba(76, 200, 255, 0.65);
-  box-shadow: 0 0 0 1px rgba(76, 200, 255, 0.25), 0 0 14px rgba(76, 200, 255, 0.12);
-}
-
-.attr-mentor-card.is-expanded {
   border-color: var(--prog-accent, #4cc8ff);
+  box-shadow: 0 0 0 1px rgba(76, 200, 255, 0.35), 0 0 22px rgba(76, 200, 255, 0.14);
 }
 
 .attr-mentor-card__head {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.attr-mentor-card__intro {
-  min-width: 0;
+  gap: 16px;
 }
 
 .attr-mentor-card__title-row {
   display: flex;
   gap: 8px;
   align-items: center;
-  flex-wrap: wrap;
 }
 
 .attr-mentor-card__title-row h3 {
   margin: 0;
   color: var(--prog-text-heading, #f5fbff);
-  font-size: 17px;
 }
 
 .attr-mentor-card__recommended {
@@ -121,196 +129,82 @@
   letter-spacing: 0.06em;
 }
 
+.attr-mentor-card__subtitle,
+.attr-mentor-card__summary {
+  margin: 4px 0 0 0;
+}
+
 .attr-mentor-card__subtitle {
-  margin: 3px 0 0;
   color: var(--prog-text-dim, #9cb5c7);
   font-size: 12px;
 }
 
-.attr-mentor-card__actions {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 10px;
+.attr-mentor-card__summary {
+  color: var(--prog-text, #dbe8f5);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
-.attr-mentor-card__actions .prog-btn {
-  white-space: nowrap;
+.attr-mentor-card__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 160px;
 }
 
 .attr-mentor-card__budget {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--prog-text-dim, #9cb5c7);
-  white-space: nowrap;
 }
 
 .attr-mentor-card__stats {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 6px;
-  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
 }
 
 .attr-mentor-stat {
-  min-width: 0;
-  padding: 6px;
-  border: 1px solid rgba(122, 215, 255, 0.15);
-  border-radius: 7px;
+  border: 1px solid rgba(122, 215, 255, 0.08);
+  border-radius: 10px;
+  padding: 8px;
   background: rgba(255, 255, 255, 0.03);
 }
 
 .attr-mentor-stat__label {
   font-size: 12px;
   color: var(--prog-text-dim, #9cb5c7);
-  margin-bottom: 3px;
+  margin-bottom: 6px;
 }
 
-/* Default compact preview: final ability score and signed modifier.
-   Each caption sits beneath the number it describes, on every card. */
-.attr-mentor-stat__compact-values,
-.attr-mentor-stat__compact-labels {
+.attr-mentor-stat__numbers {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 3px;
-  align-items: center;
-  text-align: center;
-}
-
-.attr-mentor-stat__compact-values {
-  font-size: 15px;
-  line-height: 1.35;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
   font-weight: 700;
 }
 
-.attr-mentor-stat__compact-labels,
-.attr-mentor-stat__breakdown-labels {
-  margin-top: 3px;
-  color: var(--prog-text-dim, #9cb5c7);
-  font-size: 9px;
-  font-weight: 500;
-  line-height: 1.2;
+.attr-mentor-card__legend {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-/* Expanded preview: Base, Species, Total and Mod are paired by column.
-   The expanded state is set by the existing single-open accordion handler. */
-.attr-mentor-stat__breakdown {
-  display: none;
-}
-
-.attr-mentor-stat__breakdown-values,
-.attr-mentor-stat__breakdown-labels {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 2px;
-  align-items: center;
-  text-align: center;
-}
-
-.attr-mentor-stat__breakdown-values {
-  font-size: 12px;
-  line-height: 1.35;
-  font-weight: 700;
-}
-
-.attr-mentor-stat__breakdown-labels {
-  font-size: 8px;
-  letter-spacing: 0;
-}
-
-.attr-mentor-stat__compact-labels span,
-.attr-mentor-stat__breakdown-labels span {
-  min-width: 0;
-}
-
-.attr-mentor-card.is-expanded .attr-mentor-stat__compact {
-  display: none;
-}
-
-.attr-mentor-card.is-expanded .attr-mentor-stat__breakdown {
-  display: block;
-}
-
-/* The explanation toggle does not hide any scores or the Apply button. */
-.attr-mentor-card__toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  min-height: 27px;
-  padding: 4px 8px;
-  border: 1px solid rgba(76, 200, 255, 0.22);
-  border-radius: 5px;
-  background: rgba(76, 200, 255, 0.05);
-  color: var(--prog-accent, #4cc8ff);
-  text-align: left;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.attr-mentor-card__toggle-hint {
-  margin-left: 6px;
+  letter-spacing: 0.06em;
   color: var(--prog-text-dim, #9cb5c7);
-  font-weight: 400;
-}
-
-.attr-mentor-card__toggle:hover {
-  background: rgba(76, 200, 255, 0.13);
-  border-color: rgba(76, 200, 255, 0.55);
-}
-
-.attr-mentor-card__toggle:focus-visible {
-  outline: 2px solid var(--prog-accent, #4cc8ff);
-  outline-offset: 2px;
-}
-
-.attr-mentor-card__chevron {
-  flex: 0 0 auto;
-  margin-left: 8px;
-  transition: transform 160ms ease;
-}
-
-.attr-mentor-card.is-expanded .attr-mentor-card__chevron {
-  transform: rotate(180deg);
-}
-
-/* All three summaries are above this single detail area. */
-.attr-mentor-dialog__explanations {
-  min-width: 0;
-}
-
-.attr-mentor-card__body {
-  min-width: 0;
-  display: grid;
-  gap: 10px;
-  padding: 12px;
-  border: 1px solid var(--prog-accent, #4cc8ff);
-  border-radius: 10px;
-  background: rgba(5, 17, 29, 0.93);
-}
-
-.attr-mentor-card__body[hidden] {
-  display: none !important;
-}
-
-.attr-mentor-card__explanation-title {
-  color: var(--prog-text-heading, #f5fbff);
-  font-size: 14px;
-  font-weight: 700;
+  max-width: 520px;
 }
 
 .attr-mentor-card__details-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 10px;
 }
 
 .attr-mentor-detail-group {
-  min-width: 0;
-  border: 1px solid rgba(122, 215, 255, 0.12);
-  border-radius: 8px;
+  position: relative;
+  border: 1px solid rgba(122, 215, 255, 0.08);
+  border-radius: 10px;
   padding: 10px;
   background: rgba(255, 255, 255, 0.03);
 }
@@ -329,41 +223,137 @@
 }
 
 .attr-mentor-detail-group li {
-  margin: 0 0 6px;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
+  margin: 0 0 6px 0;
+  line-height: 1.35;
+}
+
+.attr-mentor-hover-anchor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--prog-accent, #4cc8ff);
+  cursor: default;
+}
+
+.attr-mentor-hover-panel {
+  position: absolute;
+  inset: calc(100% + 8px) auto auto 0;
+  width: 260px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(76, 200, 255, 0.45);
+  background: rgba(5, 17, 29, 0.98);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+  z-index: 10;
+}
+
+.attr-mentor-hover-anchor:hover .attr-mentor-hover-panel,
+.attr-mentor-hover-anchor:focus-within .attr-mentor-hover-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 @media (max-width: 860px) {
+  .attr-mentor-card__head,
   .attr-mentor-dialog__header,
-  .attr-mentor-card__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
   .attr-mentor-card__details-grid {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .attr-mentor-card__actions {
+    align-items: stretch;
   }
 }
 
-@media (max-width: 650px) {
-  .attr-mentor-card__stats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .attr-mentor-card__head {
-    gap: 6px;
-  }
-  .attr-mentor-card__actions {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .attr-mentor-card__toggle-hint {
-    display: none;
-  }
+
+/* ============================================================================
+ * ATTRIBUTE MENTOR — COLLAPSED PREVIEW ONLY
+ *
+ * Preserve the original expanded card layout and visual treatment unchanged:
+ * four ability values, detached Base/Species/Final/Mod legend, and the
+ * original Reasons/Cautions/Forecast cards/hover treatment.
+ *
+ * When a card is minimized, show only final score and signed modifier,
+ * with their labels immediately below. Exactly one card may be expanded.
+ * ========================================================================== */
+
+/* Use the original h3 typography; only add a discoverable title toggle. */
+.attr-mentor-card__toggle {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  line-height: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.attr-mentor-card__toggle i {
+  color: var(--prog-accent, #4cc8ff);
+  font-size: 11px;
+  transition: transform 160ms ease;
+}
+
+.attr-mentor-card.is-expanded .attr-mentor-card__toggle i {
+  transform: rotate(180deg);
+}
+
+.attr-mentor-card__toggle:focus-visible {
+  outline: 2px solid var(--prog-accent, #4cc8ff);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.attr-mentor-stat__compact {
+  display: none;
+}
+
+/* No rules below restyle the expanded four-column score display. */
+.attr-mentor-card:not(.is-expanded) .attr-mentor-stat__numbers,
+.attr-mentor-card:not(.is-expanded) .attr-mentor-card__legend,
+.attr-mentor-card:not(.is-expanded) .attr-mentor-card__details-grid {
+  display: none;
+}
+
+.attr-mentor-card:not(.is-expanded) .attr-mentor-stat__compact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 4px;
+  row-gap: 2px;
+  align-items: center;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.attr-mentor-stat__compact-caption {
+  color: var(--prog-text-dim, #9cb5c7);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.attr-mentor-card__details-grid[hidden] {
+  display: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .attr-mentor-card__chevron {
+  .attr-mentor-card__toggle i {
     transition: none;
   }
 }
