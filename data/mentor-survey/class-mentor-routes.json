@@ -1,0 +1,228 @@
+{
+  "_meta": {
+    "description": "Class to Mentor routing for the mentor surveys. Validated in tests against data/dialogue/mentor_registry.json and MENTOR_PERSONALITIES. Unknown classes fail closed (no substitute Mentor).",
+    "source": "Owner roster: prestige Q6 handoff 2026-11-15 section 6; L1 v0.19 section A",
+    "sourceCommit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7"
+  },
+  "foundation": {
+    "jedi": {
+      "classId": "jedi",
+      "className": "Jedi",
+      "mentorRegistryKey": "miraj"
+    },
+    "noble": {
+      "classId": "noble",
+      "className": "Noble",
+      "mentorRegistryKey": "j0_n1"
+    },
+    "scoundrel": {
+      "classId": "scoundrel",
+      "className": "Scoundrel",
+      "mentorRegistryKey": "ol_salty"
+    },
+    "scout": {
+      "classId": "scout",
+      "className": "Scout",
+      "mentorRegistryKey": "lead"
+    },
+    "soldier": {
+      "classId": "soldier",
+      "className": "Soldier",
+      "mentorRegistryKey": "breach"
+    }
+  },
+  "prestige": {
+    "ace_pilot": {
+      "classId": "ace_pilot",
+      "className": "Ace Pilot",
+      "mentorRegistryKey": "mayu",
+      "order": 1
+    },
+    "bounty_hunter": {
+      "classId": "bounty_hunter",
+      "className": "Bounty Hunter",
+      "mentorRegistryKey": "kex_varon",
+      "order": 2
+    },
+    "crime_lord": {
+      "classId": "crime_lord",
+      "className": "Crime Lord",
+      "mentorRegistryKey": "tio_the_hutt",
+      "order": 3
+    },
+    "elite_trooper": {
+      "classId": "elite_trooper",
+      "className": "Elite Trooper",
+      "mentorRegistryKey": "breach",
+      "order": 4
+    },
+    "force_adept": {
+      "classId": "force_adept",
+      "className": "Force Adept",
+      "mentorRegistryKey": "venn",
+      "order": 5
+    },
+    "force_disciple": {
+      "classId": "force_disciple",
+      "className": "Force Disciple",
+      "mentorRegistryKey": "anchorite",
+      "order": 6
+    },
+    "gunslinger": {
+      "classId": "gunslinger",
+      "className": "Gunslinger",
+      "mentorRegistryKey": "rajma",
+      "order": 7
+    },
+    "jedi_knight": {
+      "classId": "jedi_knight",
+      "className": "Jedi Knight",
+      "mentorRegistryKey": "miraj",
+      "order": 8
+    },
+    "jedi_master": {
+      "classId": "jedi_master",
+      "className": "Jedi Master",
+      "mentorRegistryKey": "miraj",
+      "order": 9
+    },
+    "officer": {
+      "classId": "officer",
+      "className": "Officer",
+      "mentorRegistryKey": "korr",
+      "order": 10
+    },
+    "sith_apprentice": {
+      "classId": "sith_apprentice",
+      "className": "Sith Apprentice",
+      "mentorRegistryKey": "darth_malbada",
+      "order": 11
+    },
+    "sith_lord": {
+      "classId": "sith_lord",
+      "className": "Sith Lord",
+      "mentorRegistryKey": "darth_miedo",
+      "order": 12
+    },
+    "corporate_agent": {
+      "classId": "corporate_agent",
+      "className": "Corporate Agent",
+      "mentorRegistryKey": "skindar",
+      "order": 13
+    },
+    "gladiator": {
+      "classId": "gladiator",
+      "className": "Gladiator",
+      "mentorRegistryKey": "pegar",
+      "order": 14
+    },
+    "melee_duelist": {
+      "classId": "melee_duelist",
+      "className": "Melee Duelist",
+      "mentorRegistryKey": "kharjo",
+      "order": 15
+    },
+    "enforcer": {
+      "classId": "enforcer",
+      "className": "Enforcer",
+      "mentorRegistryKey": "krag",
+      "order": 16
+    },
+    "independent_droid": {
+      "classId": "independent_droid",
+      "className": "Independent Droid",
+      "mentorRegistryKey": "seraphim",
+      "order": 17
+    },
+    "infiltrator": {
+      "classId": "infiltrator",
+      "className": "Infiltrator",
+      "mentorRegistryKey": "delta",
+      "order": 18
+    },
+    "master_privateer": {
+      "classId": "master_privateer",
+      "className": "Master Privateer",
+      "mentorRegistryKey": "captain",
+      "order": 19
+    },
+    "medic": {
+      "classId": "medic",
+      "className": "Medic",
+      "mentorRegistryKey": "kyber",
+      "order": 20
+    },
+    "saboteur": {
+      "classId": "saboteur",
+      "className": "Saboteur",
+      "mentorRegistryKey": "spark",
+      "order": 21
+    },
+    "outlaw": {
+      "classId": "outlaw",
+      "className": "Outlaw",
+      "mentorRegistryKey": "rogue",
+      "order": 22
+    },
+    "droid_commander": {
+      "classId": "droid_commander",
+      "className": "Droid Commander",
+      "mentorRegistryKey": "axiom",
+      "order": 23
+    },
+    "military_engineer": {
+      "classId": "military_engineer",
+      "className": "Military Engineer",
+      "mentorRegistryKey": "rax",
+      "order": 24
+    },
+    "vanguard": {
+      "classId": "vanguard",
+      "className": "Vanguard",
+      "mentorRegistryKey": "theron",
+      "order": 25
+    },
+    "martial_arts_master": {
+      "classId": "martial_arts_master",
+      "className": "Martial Arts Master",
+      "mentorRegistryKey": "zhen",
+      "order": 26
+    },
+    "imperial_knight": {
+      "classId": "imperial_knight",
+      "className": "Imperial Knight",
+      "mentorRegistryKey": "dezmin",
+      "order": 27
+    },
+    "shaper": {
+      "classId": "shaper",
+      "className": "Shaper",
+      "mentorRegistryKey": "urza",
+      "order": 28
+    },
+    "assassin": {
+      "classId": "assassin",
+      "className": "Assassin",
+      "mentorRegistryKey": "delta",
+      "order": 29
+    },
+    "charlatan": {
+      "classId": "charlatan",
+      "className": "Charlatan",
+      "mentorRegistryKey": "sela",
+      "order": 30
+    },
+    "improviser": {
+      "classId": "improviser",
+      "className": "Improviser",
+      "mentorRegistryKey": "jack",
+      "order": 31
+    },
+    "pathfinder": {
+      "classId": "pathfinder",
+      "className": "Pathfinder",
+      "mentorRegistryKey": "lead",
+      "order": 32
+    }
+  }
+}

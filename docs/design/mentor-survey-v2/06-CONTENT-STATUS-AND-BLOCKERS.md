@@ -65,6 +65,23 @@ Updated per phase. Evidence date 2026-11-15. "Approved" means the upstream docum
 
 Registered in `docs/audits/swse-rules-decisions-pending.md` under `MSV-RD-###`.
 
-## 5. Phase B certification results and Phase D/E status
+## 5. Phase B: canonical mechanical and Mentor certification (verified against `main` @ `8efa6808a`)
+
+Printed-rule verification limit: `reference/sourcebooks/*.txt` are OCR exports, and the README makes the PDFs the final authority. The PDFs are not in the repository and the OCR for the relevant Charlatan page is unreadable, so printed tree access **could not be independently confirmed here**. Unverified mechanics fail closed.
+
+| Review target | Finding on current `main` | Disposition |
+|---|---|---|
+| Kharjo missing from Mentor registry | **Confirmed.** `data/dialogue/mentor_registry.json` had 31 entries (ids `m01`…`m30`, `m32`; `m31` unused). `data/dialogue/mentors/kharjo/` exists | **Fixed**: `kharjo` / `m31` / "Blade Master Kharjo" added. Test: `mentor-survey-canonical-authority` |
+| All 37 classes → Mentor | `MENTOR_PERSONALITIES[class].key` agrees with the owner roster for all 5 foundation + 32 prestige classes | **Verified**; routing table `data/mentor-survey/class-mentor-routes.json` is test-locked against registry and personalities. Lead (Scout, Pathfinder), Miraj (Jedi, Knight, Master), Delta (Infiltrator, Assassin), Breach (Soldier, Elite Trooper) are shared Mentors |
+| Assassin GenoHaradan | **Confirmed defect.** `talent_trees` holds the display text `GenoHaradan`; `talentTreeSourceIds` holds the correct id `da7b731a3e434a7a` | **Not edited**: `packs/classes.db` is a frozen protected baseline (`tests/class-pack-protected-guard.test.mjs`, 37 records). Surveys read `talentTreeSourceIds` only. Owner of fix: protected-baseline process |
+| Infiltrator Bothan SpyNet | **Confirmed defect.** Raw `Bothan SpyNet`; correct id `d20682671d035cef` | Same as above |
+| Independent Droid tree identity | **Confirmed defect.** `talentTreeUuids[0]` uses a dashed uuid (`…9fe73a37-03fa-45fc-a628-fd43cae6bf7f`) that does not equal the tree `_id` (`9fe73a3703fa45fca628fd43cae6bf7f`, the only 32-hex tree id). Also: the pack lists three trees (Autonomy, Specialized Droid, Elite Droid) while `data/fixes/class-talent-tree-bindings.json` lists two | Id defect: same as above. Tree-set disagreement: **`MSV-RD-006`** (needs printed verification) |
+| Charlatan Fortune-tree access | Pack and bindings list Disgrace + Trickery only; the `Fortune` tree exists (`cee9b9398682b7d0`) | Printed access unverifiable here: **`MSV-RD-006`**. Fortune-based Charlatan answers stay `unverified_mechanic` |
+| Jedi Master / Sith Lord general Force trees | Pack/bindings list Duelist / Sith only | **`MSV-RD-006`**; general-Force-tree answers quarantined |
+| Sith Dark Side Score | Already ruled by the project owner: house rule "Dark Side Score at least 1" (`docs/audits/class-phase-6f2-piracy-sith-adjudication.md`); ongoing class-feature suspension is open finding 6B-010 | Not re-decided. Surveys never narrate Sith eligibility or DSS thresholds |
+| Gunslinger / Outlaw / martial-arts source identity (Teräs Käsi, Pistoleer titles, Fringer/Virus) | Design record marks them QUARANTINE (unreliable rule identity) | Content records referencing them are `unverified_mechanic`; never offered as mechanics-driven options |
+| `scripts/engine/mentor/validate-mentor-dialogue.js` | Pre-existing: crashes on a wrong repo-root path and, if fixed, expects a flat per-mentor file layout the repo no longer uses | **Not touched** (stale legacy tool, unrelated to survey authorities) |
+
+## 6. Phase C–E status
 
 *(appended as phases complete)*

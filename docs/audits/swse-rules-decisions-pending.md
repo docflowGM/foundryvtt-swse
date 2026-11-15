@@ -2912,3 +2912,20 @@ Independent register for the survey cutover (see `docs/design/mentor-survey-v2/`
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+## MSV-RD-006 — Class talent-tree access for Charlatan, Jedi Master, Sith Lord and Independent Droid
+
+| Field | |
+|---|---|
+| Rules domain | Prestige class / talent tree access |
+| Feature | Which talent trees each class may select class talents from |
+| Source | Scum and Villainy (Charlatan, printed pp. 30-31); Core Rulebook pp. 219-220 (Jedi Master) and 223-224 (Sith Lord); The Force Unleashed Campaign Guide pp. 46-47 (Independent Droid) |
+| Evidence | The prestige design record states that printed Charlatan access includes the Fortune tree while the repository lists Disgrace and Trickery only; that Jedi Master and Sith Lord may select from an eligible general Force talent tree under their class text while the repository lists Duelist and Sith only; and the repository's class pack lists three Independent Droid trees (Autonomy, Specialized Droid, Elite Droid) while the class-tree bindings file lists two. The sourcebook OCR for these pages is unreadable in this environment and the PDFs are not in the repository, so these statements could not be re-verified against print. |
+| Confirmed behavior | The repository's class pack, bindings file and generated registry are internally recorded as listed above. `packs/classes.db` is a frozen protected baseline. |
+| Unresolved question | What the printed tree list is for each class, and which repository authority (class pack, bindings file, registry) is to be corrected. |
+| Options | Source-supported options depend on the printed pages; none can be stated here. |
+| Recommended ruling | None |
+| Implementation impact | Survey answer records that depend on a Fortune-tree, general-Force-tree or Elite Droid talent are `unverified_mechanic` and are never offered as mechanics-driven options. No pack edit was made. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

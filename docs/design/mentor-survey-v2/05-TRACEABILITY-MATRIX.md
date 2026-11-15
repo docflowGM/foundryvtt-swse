@@ -34,7 +34,7 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | SV-25 | Retakes supersede; never multiply bias or erase goals | Directive §C | `intent-ledger.js` reducer | 17 | Planned |
 | SV-26 | A–E text first person; no percentages/labels | Q6 handoff §3.2 | content validator | 5,6 | Planned |
 | SV-27 | Goal fulfillment only when typed goal equals finalized class state | Q6 handoff §3.1 | `reflection.js` | 13,14 | Planned |
-| SV-28 | Mentor routing from canonical registry; fail closed | Directive §B | `resolvers/*`, registry | 4 | Planned |
+| SV-28 | Mentor routing from canonical registry; fail closed | Directive §B | `data/mentor-survey/class-mentor-routes.json`, registry (Kharjo added) | 4 | Tested (offline) — `mentor-survey-canonical-authority.test.mjs` |
 | SV-29 | Navigation is UI-only; bounded caches keyed by contextRevision | Prefs "Performance" | `survey-session.js` | 20 | Planned |
 
 ## Level 1 (`L1`)
@@ -43,7 +43,7 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 |---|---|---|---|---|---|
 | L1-01 | Optional; never restricts legal chargen | v0.19 §1; handoff A | `l1.js` resolver | 7 | Planned |
 | L1-02 | Exactly five questions; no sixth | v0.19 | `l1.js` | 1 | Planned |
-| L1-03 | Class→Mentor: Jedi Miraj, Noble J0-N1, Scoundrel Ol' Salty, Scout Lead, Soldier Breach | v0.19 §A | `l1.js` | 4 | Planned |
+| L1-03 | Class→Mentor: Jedi Miraj, Noble J0-N1, Scoundrel Ol' Salty, Scout Lead, Soldier Breach | v0.19 §A | routes JSON | 4 | Tested (offline) |
 | L1-04 | Reads pending session context | handoff §E | `l1.js` | 20 | Planned |
 | L1-05 | Fixed Mentor intros, not generated | v0.10 §1.4 | content | 4 | Planned |
 | L1-06 | Q2: 97 parents, all reachable; IDs validated vs registry | v0.12 §12 | `l1.js` | 8 | Planned |
@@ -63,7 +63,7 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | ID | Requirement | Source | Implementation | Acc. | Status |
 |---|---|---|---|---|---|
 | MC-01 | Trigger on first acquisition of a new foundation class only | v0.9/v0.11 | `multiclass.js` trigger | 2 | Planned |
-| MC-02 | Destination Mentor narrates | v0.11 | resolver | 4 | Planned |
+| MC-02 | Destination Mentor narrates | v0.11 | routes JSON + resolver | 4 | Tested (offline, routing only) |
 | MC-03 | 20 directed transitions route correctly | v0.11 | resolver | 2 | Planned |
 | MC-04 | Origin keying with ≥2 prior foundation classes | — | **Deferred** MSV-RD-004 (fail closed) | 2 | Deferred |
 | MC-05 | Fixed intros, not generated | v0.11 | content | 4 | Planned |
@@ -82,7 +82,7 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | ID | Requirement | Source | Implementation | Acc. | Status |
 |---|---|---|---|---|---|
 | PR-01 | Prestige is an earned milestone; no forced next goal | Q6 handoff §2 | resolver | 13 | Planned |
-| PR-02 | 32 classes resolve to exact Mentors; fail closed | handoff §6 | resolver | 3,4 | Planned |
+| PR-02 | 32 classes resolve to exact Mentors; fail closed | handoff §6 | routes JSON | 3,4 | Tested (offline) |
 | PR-03 | Pending vs finalized tense | handoff §8.1 | resolver | 16 | Planned |
 | PR-04 | Evidence only from finalized state | handoff §8.7 | evidence | 14 | Planned |
 | PR-05 | Q1 stores answer + snapshot pointer; no grants/goals | §39.4-D | resolver | 18 | Planned |
