@@ -1,17 +1,6 @@
-/* ============================================================================
- * VERTICAL CONTAINMENT
- *
- * position.height is 'auto' (attribute-mentor-dialog.js), so the Foundry
- * window frame grows to fit its content with no viewport check of its own —
- * with three or more builds the frame (and the un-scrollable page beneath it)
- * simply extends past the bottom of the screen. Capping the frame's own
- * height here and making the content chain shrinkable (min-height: 0;
- * overflow: hidden) hands ownership of the overflow to exactly one place:
- * .attr-mentor-dialog__cards, below. The header and Close button stay fixed;
- * only the build list scrolls. 32px matches the safe chrome margin already
- * used for this repo's other floating (non-shell) ApplicationV2 dialogs of
- * this kind (styles/apps/theme-picker-immersive.css).
- * ============================================================================ */
+/* Attribute Mentor — compact always-visible build comparisons.
+ * Three previews (title, six attributes, Apply Build) precede the single
+ * expandable explanation panel. Only this dialog's build list scrolls. */
 
 .swse-attribute-mentor-dialog {
   max-height: calc(100vh - 32px);
@@ -51,7 +40,7 @@
 }
 
 .attr-mentor-dialog__header h2 {
-  margin: 0 0 4px 0;
+  margin: 0 0 4px;
   color: var(--prog-text-heading, #f5fbff);
 }
 
@@ -60,61 +49,64 @@
   color: var(--prog-text-dim, #9cb5c7);
 }
 
+/* One scroll owner for all build previews and the selected explanation. */
 .attr-mentor-dialog__cards {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
-  gap: 12px;
+  gap: 8px;
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  /* NOT `hidden`: an ancestor with overflow-y: auto becomes a scroll/clip
-     container for its ENTIRE scrollable-overflow region, including
-     .attr-mentor-hover-panel below (absolutely positioned, escapes its
-     card's own box on hover) -- `hidden` here would clip that panel
-     whenever it extends past this container's right edge. `auto` still
-     shows a horizontal scrollbar only if content genuinely overflows,
-     which normal card content (grid columns sized in `1fr`/`fit`) never
-     does; a hover panel opened from a card scrolled near the very bottom
-     edge of this list can still be clipped vertically by the scroll
-     boundary itself -- an accepted, ubiquitous tradeoff of any scrollable
-     list with popover-style overlays, not something a CSS-only fix can
-     remove without portaling the popover outside this container in JS. */
   overflow-x: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
 }
 
 .attr-mentor-card {
-  border: 1px solid var(--prog-border, rgba(115, 196, 255, 0.25));
-  border-radius: 12px;
-  background: rgba(5, 17, 29, 0.92);
-  box-shadow: 0 0 0 1px rgba(122, 215, 255, 0.06), 0 10px 24px rgba(0, 0, 0, 0.28);
-  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 7px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--prog-border, rgba(115, 196, 255, 0.25));
+  border-radius: 10px;
+  background: rgba(5, 17, 29, 0.92);
+  box-shadow: 0 0 0 1px rgba(122, 215, 255, 0.06), 0 4px 14px rgba(0, 0, 0, 0.20);
 }
 
 .attr-mentor-card.is-recommended {
+  border-color: rgba(76, 200, 255, 0.65);
+  box-shadow: 0 0 0 1px rgba(76, 200, 255, 0.25), 0 0 14px rgba(76, 200, 255, 0.12);
+}
+
+.attr-mentor-card.is-expanded {
   border-color: var(--prog-accent, #4cc8ff);
-  box-shadow: 0 0 0 1px rgba(76, 200, 255, 0.35), 0 0 22px rgba(76, 200, 255, 0.14);
 }
 
 .attr-mentor-card__head {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.attr-mentor-card__intro {
+  min-width: 0;
 }
 
 .attr-mentor-card__title-row {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .attr-mentor-card__title-row h3 {
   margin: 0;
   color: var(--prog-text-heading, #f5fbff);
+  font-size: 17px;
 }
 
 .attr-mentor-card__recommended {
@@ -129,82 +121,148 @@
   letter-spacing: 0.06em;
 }
 
-.attr-mentor-card__subtitle,
-.attr-mentor-card__summary {
-  margin: 4px 0 0 0;
-}
-
 .attr-mentor-card__subtitle {
+  margin: 3px 0 0;
   color: var(--prog-text-dim, #9cb5c7);
   font-size: 12px;
-}
-
-.attr-mentor-card__summary {
-  color: var(--prog-text, #dbe8f5);
-  font-size: 13px;
-  line-height: 1.45;
 }
 
 .attr-mentor-card__actions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  min-width: 160px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.attr-mentor-card__actions .prog-btn {
+  white-space: nowrap;
 }
 
 .attr-mentor-card__budget {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--prog-text-dim, #9cb5c7);
+  white-space: nowrap;
 }
 
 .attr-mentor-card__stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+  min-width: 0;
 }
 
 .attr-mentor-stat {
-  border: 1px solid rgba(122, 215, 255, 0.08);
-  border-radius: 10px;
-  padding: 8px;
+  min-width: 0;
+  padding: 6px;
+  border: 1px solid rgba(122, 215, 255, 0.15);
+  border-radius: 7px;
   background: rgba(255, 255, 255, 0.03);
 }
 
 .attr-mentor-stat__label {
   font-size: 12px;
   color: var(--prog-text-dim, #9cb5c7);
-  margin-bottom: 6px;
+  margin-bottom: 3px;
 }
 
 .attr-mentor-stat__numbers {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 4px;
   font-weight: 700;
+  font-size: 12px;
 }
 
 .attr-mentor-card__legend {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
-  font-size: 10px;
+  max-width: 500px;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--prog-text-dim, #9cb5c7);
-  max-width: 520px;
+}
+
+/* The explanation toggle does not hide any scores or the Apply button. */
+.attr-mentor-card__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 27px;
+  padding: 4px 8px;
+  border: 1px solid rgba(76, 200, 255, 0.22);
+  border-radius: 5px;
+  background: rgba(76, 200, 255, 0.05);
+  color: var(--prog-accent, #4cc8ff);
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.attr-mentor-card__toggle-hint {
+  margin-left: 6px;
+  color: var(--prog-text-dim, #9cb5c7);
+  font-weight: 400;
+}
+
+.attr-mentor-card__toggle:hover {
+  background: rgba(76, 200, 255, 0.13);
+  border-color: rgba(76, 200, 255, 0.55);
+}
+
+.attr-mentor-card__toggle:focus-visible {
+  outline: 2px solid var(--prog-accent, #4cc8ff);
+  outline-offset: 2px;
+}
+
+.attr-mentor-card__chevron {
+  flex: 0 0 auto;
+  margin-left: 8px;
+  transition: transform 160ms ease;
+}
+
+.attr-mentor-card.is-expanded .attr-mentor-card__chevron {
+  transform: rotate(180deg);
+}
+
+/* All three summaries are above this single detail area. */
+.attr-mentor-dialog__explanations {
+  min-width: 0;
+}
+
+.attr-mentor-card__body {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--prog-accent, #4cc8ff);
+  border-radius: 10px;
+  background: rgba(5, 17, 29, 0.93);
+}
+
+.attr-mentor-card__body[hidden] {
+  display: none !important;
+}
+
+.attr-mentor-card__explanation-title {
+  color: var(--prog-text-heading, #f5fbff);
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .attr-mentor-card__details-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
 }
 
 .attr-mentor-detail-group {
-  position: relative;
-  border: 1px solid rgba(122, 215, 255, 0.08);
-  border-radius: 10px;
+  min-width: 0;
+  border: 1px solid rgba(122, 215, 255, 0.12);
+  border-radius: 8px;
   padding: 10px;
   background: rgba(255, 255, 255, 0.03);
 }
@@ -223,206 +281,35 @@
 }
 
 .attr-mentor-detail-group li {
-  margin: 0 0 6px 0;
-  line-height: 1.35;
-}
-
-.attr-mentor-hover-anchor {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  color: var(--prog-accent, #4cc8ff);
-  cursor: default;
-}
-
-.attr-mentor-hover-panel {
-  position: absolute;
-  inset: calc(100% + 8px) auto auto 0;
-  width: 260px;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(76, 200, 255, 0.45);
-  background: rgba(5, 17, 29, 0.98);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(4px);
-  transition: opacity 120ms ease, transform 120ms ease;
-  z-index: 10;
-}
-
-.attr-mentor-hover-anchor:hover .attr-mentor-hover-panel,
-.attr-mentor-hover-anchor:focus-within .attr-mentor-hover-panel {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
+  margin: 0 0 6px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 860px) {
-  .attr-mentor-card__head,
   .attr-mentor-dialog__header,
+  .attr-mentor-card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
   .attr-mentor-card__details-grid {
-    grid-template-columns: 1fr;
-    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
+}
 
+@media (max-width: 650px) {
+  .attr-mentor-card__stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .attr-mentor-card__head {
+    gap: 6px;
+  }
   .attr-mentor-card__actions {
-    align-items: stretch;
+    width: 100%;
+    justify-content: space-between;
   }
-}
-
-
-/* Three always-visible build tabs with one expanded comparison panel.
-   Keep all options in sight even when the expanded build has long reasoning. */
-.attr-mentor-dialog__cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  align-content: start;
-}
-
-/* Flatten the grouping only for CSS layout. Each section remains the single
-   semantic owner of its tab and associated details panel. */
-.attr-mentor-card {
-  display: contents;
-}
-
-.attr-mentor-card__head {
-  display: block;
-  min-width: 0;
-  grid-row: 1;
-  border: 1px solid var(--prog-border, rgba(115, 196, 255, 0.25));
-  border-radius: 10px;
-  background: rgba(5, 17, 29, 0.92);
-}
-
-.attr-mentor-card:nth-child(1) > .attr-mentor-card__head { grid-column: 1; }
-.attr-mentor-card:nth-child(2) > .attr-mentor-card__head { grid-column: 2; }
-.attr-mentor-card:nth-child(3) > .attr-mentor-card__head { grid-column: 3; }
-
-.attr-mentor-card.is-recommended > .attr-mentor-card__head {
-  border-color: rgba(76, 200, 255, 0.58);
-}
-
-.attr-mentor-card.is-expanded > .attr-mentor-card__head {
-  border-color: var(--prog-accent, #4cc8ff);
-  box-shadow: 0 0 0 1px rgba(76, 200, 255, 0.28), 0 0 18px rgba(76, 200, 255, 0.13);
-}
-
-.attr-mentor-card__toggle {
-  appearance: none;
-  display: flex;
-  width: 100%;
-  min-height: 100px;
-  padding: 12px;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.attr-mentor-card__toggle-main {
-  min-width: 0;
-  display: grid;
-  gap: 4px;
-}
-
-.attr-mentor-card__title-row {
-  flex-wrap: wrap;
-}
-
-.attr-mentor-card__title {
-  color: var(--prog-text-heading, #f5fbff);
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.attr-mentor-card__toggle-meta {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex: 0 0 auto;
-  gap: 7px;
-}
-
-.attr-mentor-card__toggle-meta .attr-mentor-card__budget {
-  display: none;
-}
-
-.attr-mentor-card__summary {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.attr-mentor-card__chevron {
-  color: var(--prog-accent, #4cc8ff);
-  transition: transform 160ms ease;
-}
-
-.attr-mentor-card.is-expanded .attr-mentor-card__chevron {
-  transform: rotate(180deg);
-}
-
-.attr-mentor-card__toggle:hover .attr-mentor-card__title,
-.attr-mentor-card__toggle:focus-visible .attr-mentor-card__title {
-  color: var(--prog-accent, #4cc8ff);
-}
-
-.attr-mentor-card__toggle:focus-visible {
-  outline: 2px solid var(--prog-accent, #4cc8ff);
-  outline-offset: -3px;
-  border-radius: 8px;
-}
-
-.attr-mentor-card__body {
-  grid-row: 2;
-  grid-column: 1 / -1;
-  display: grid;
-  gap: 12px;
-  min-width: 0;
-  padding: 14px;
-  border: 1px solid var(--prog-accent, #4cc8ff);
-  border-radius: 10px;
-  background: rgba(5, 17, 29, 0.92);
-  box-shadow: 0 0 20px rgba(76, 200, 255, 0.09);
-}
-
-.attr-mentor-card__body[hidden] {
-  display: none !important;
-}
-
-.attr-mentor-card__body > .attr-mentor-card__actions {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 0;
-}
-
-@media (max-width: 620px) {
-  .attr-mentor-card__toggle {
-    min-height: 70px;
-    padding: 8px;
-  }
-
-  .attr-mentor-card__title {
-    font-size: 12px;
-  }
-
-  .attr-mentor-card__subtitle {
-    font-size: 11px;
-  }
-
-  .attr-mentor-card__summary,
-  .attr-mentor-card__recommended {
+  .attr-mentor-card__toggle-hint {
     display: none;
   }
 }
