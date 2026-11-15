@@ -15,12 +15,13 @@ import {
   currentTemptations,currentTemptationEvents,
   planTemptationMark,planTemptationSpend,expireTemptationEntries,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/sith-lord-temptation-state.js';
+import { createTemptationActorSerializer } from
+  '/systems/foundryvtt-swse/scripts/engine/progression/utils/temptation-actor-serializer.js';
 
-const locks=new Set();
+const serializeActor = createTemptationActorSerializer();
 function key(actor){return actorIdentity(actor);}
 async function locked(actor,action){
- const id=key(actor);if(!id||locks.has(id))throw new Error('Temptation action already running');
- locks.add(id);try{return await action();}finally{locks.delete(id);}
+  return serializeActor(key(actor),action);
 }
 function permission(target){
  return globalThis.game?.user?.isGM===true
