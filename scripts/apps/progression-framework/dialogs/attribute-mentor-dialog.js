@@ -56,6 +56,27 @@ export class AttributeMentorDialog extends SWSEApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
 
+    // The three options remain visible as tabs. Only one build's detailed
+    // score changes, reasons, cautions and forecasts is expanded at a time.
+    const toggles = [...root.querySelectorAll('[data-build-toggle]')];
+    const showBuild = (selected) => {
+      for (const toggle of toggles) {
+        const open = toggle === selected;
+        const panel = root.querySelector('#' + toggle.getAttribute('aria-controls'));
+        toggle.setAttribute('aria-expanded', String(open));
+        if (panel) panel.hidden = !open;
+        toggle.closest('[data-build-card]')?.classList.toggle('is-expanded', open);
+      }
+    };
+
+    toggles.forEach(toggle => {
+      toggle.addEventListener('click', () => showBuild(toggle));
+    });
+
+    // Prefer the recommended build but do not rely on its position.
+    const recommended = root.querySelector('[data-build-card].is-recommended [data-build-toggle]');
+    if (toggles.length) showBuild(recommended || toggles[0]);
+
     root.querySelectorAll('[data-build-apply]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
