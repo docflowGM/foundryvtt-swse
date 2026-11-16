@@ -31,6 +31,7 @@ import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { ProgressionRenderScheduler, INDEPENDENT_REGIONS } from './progression-render-scheduler.js';
 import { resolveCardGesture } from './card-gesture-resolver.js';
 import { MentorRecommendationController, buildMentorContext } from './mentor-recommendation-controller.js';
+import { consumeSplashMentorGuidance } from './chargen-splash-preloader.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
 import { ProgressionSession } from './progression-session.js';
 import { ActiveStepComputer } from './active-step-computer.js';
@@ -2125,7 +2126,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // recommendation so its signature cannot suppress the new one, then ask
       // exactly once. This is not awaited — navigation never waits on advice.
       this.mentorRecommendations?.reset?.();
-      this.requestMentorRecommendation(`step-enter:${descriptor.stepId}`);
 
       if (!this.progressionSession.visitedStepIds.includes(descriptor.stepId)) {
         this.progressionSession.visitedStepIds.push(descriptor.stepId);
@@ -2133,6 +2133,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       this._syncMentorForStep(descriptor);
       this._presentStepPluginGuidance(plugin, descriptor?.stepId);
+      // The introduction is committed before asynchronous advice is evaluated.
+      // A background recommendation must never get the first word on entry.
+      this.requestMentorRecommendation(`step-enter:${descriptor.stepId}`);
       this._syncAskMentorState(plugin, descriptor);
       this.utilityBar.setConfig(plugin.getUtilityBarConfig());
       this._activeStepEnterContext = null;
@@ -3016,7 +3019,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
   _presentStepPluginGuidance(plugin, stepId = null) {
     let text = '';
     try {
-      text = plugin?.getMentorContext?.(this) ?? '';
+      // The splash may have prepared the exact opening line against the same
+      // canonical draft. Consume it once; otherwise use the plugin authority.
+      text = (this.mode === 'chargen'
+        ? consumeSplashMentorGuidance(this, stepId)
+        : null) || plugin?.getMentorContext?.(this) || '';
     } catch (err) {
       swseLogger.debug('[ProgressionShell] plugin guidance lookup failed', { stepId, error: err?.message });
       return false;
