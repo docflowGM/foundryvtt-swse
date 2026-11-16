@@ -32898,18 +32898,20 @@
       "sourceLine": 7194
     }
   },
-  "q5GoalPhrase": {
-    "id": "mc.q5.goalphrase",
-    "text": "the goal I have already declared",
+  "q5GoalReference": {
+    "id": "mc.q5.goalref",
+    "text": "I want to see how this new training could support my earlier goal ({goal_label}).",
     "editorialStatus": "draft_text",
     "mechanicsStatus": "none",
     "sourceRef": {
       "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
       "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
-      "anchor": "implementation choice for the {declared_goal} slot (MSV-RD-015)"
+      "anchor": "owner hardening 2026-11-16 (MSV-RD-009 implementation text)"
     },
-    "kind": "goal_slot_phrase",
-    "implementationChoice": true
+    "kind": "career_continuity",
+    "implementationChoice": true,
+    "hasSlots": true,
+    "needsGoalSlot": true
   },
   "q4Neutral": {
     "noble": {

@@ -187,7 +187,7 @@ test('MC-15 Q2 and Q6 are blocked at the source and are skipped, never invented'
 test('SV-07/SV-08 every selectable multiclass record is first person and leak free (the 100 goal-slot templates are never offered)', () => {
   const bad = [...M.buildRecordIndex(pack).values()].filter((r) => !r.needsGoalSlot).flatMap((r) => S.validateResponseRecord(r));
   assert.deepEqual(bad, []);
-  assert.equal([...M.buildRecordIndex(pack).values()].length, 120 + 4 + 1250 + 250 + 500 + 1 + 25 + 5 + 105 + 5);
+  assert.equal([...M.buildRecordIndex(pack).values()].length, 120 + 4 + 1250 + 250 + 500 + 1 + 25 + 5 + 1 + 5);
 });
 
 test('SV-09 release gate: with no preview every multiclass scope is unavailable; draft content never reaches players', () => {

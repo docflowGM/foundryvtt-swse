@@ -27,11 +27,16 @@ export function topObservedKeys(observedMechanicalBias, canonicalKeys, max = 4, 
     .slice(0, max).map(([k]) => k);
 }
 
-/** Exact actor provenance for a key: names of owned items and/or trained-skill contribution. Attribute-only keys have none. */
+/**
+ * Exact actor provenance for a key, from the engine's fail-closed provenance accessor: owned items (id, type, canonical id, rule
+ * primitive) and explicitly mapped trained skills. Ability-only keys, conditional rules and generic-default mappings give none.
+ * The snapshot reference travels with the answer so the ledger can show exactly what authorized the statement.
+ */
 export function keyProvenance(provenance, key) {
-  const items = provenance?.items?.[key] || [];
-  const skills = provenance?.skills?.[key] === true;
-  return items.length || skills ? { items: items.slice(0, 3), skills } : null;
+  const items = (provenance?.items?.[key] || []).map((i) => ({ itemId: i.itemId, type: i.type, name: i.name, canonicalId: i.canonicalId, certified: i.certified === true, ruleType: i.ruleType }));
+  const skills = (provenance?.skills?.[key] || []).map((k) => ({ skillKey: k.skillKey, canonicalId: k.canonicalId, trained: k.trained === true, skillFocus: k.skillFocus === true }));
+  if (!items.length && !skills.length) return null;
+  return { items: items.slice(0, 3), skills: skills.slice(0, 3), snapshot: provenance.snapshot ?? null };
 }
 
 export const q2Available = (pack) => Boolean(pack?.q2Content?.destinations);

@@ -174,6 +174,15 @@ export class SurveyController {
     return this._apply(Session.recordBrowse(this.flow, this.draft, qid, { seenIds: seen, pageIndex: next }, seq));
   }
 
+  /** Browse back to the previous page of a paged question. Navigation only; records no answer and no intent. */
+  previous(qid, seq) {
+    if (!this.flow || !this.adapter.pagedQuestions.includes(qid)) return false;
+    const prev = this._pageIndex(qid) - 1;
+    if (prev < 0 || !this._resolve(qid, prev).available) return false;
+    const seen = this.adapter.browseSeen(this.pack, this.draft, qid, prev, this.ctx, this.lookup);
+    return this._apply(Session.recordBrowse(this.flow, this.draft, qid, { seenIds: seen, pageIndex: prev }, seq));
+  }
+
   skipQuestion(qid, seq) { return this.flow ? this._apply(Session.skipQuestion(this.flow, this.draft, qid, seq)) : false; }
 
   /** Revisit an earlier question (e.g. from the review screen). Cursor only; no answer changes. */
@@ -215,6 +224,10 @@ export class SurveyController {
         continue;
       }
       const rec = this.index.get(a.optionId);
+      if (!rec && typeof a.meta?.shownText === 'string') { // an answer whose text was composed from the player's own recorded goal: freeze exactly what was shown
+        answerDetails[qid] = { text: a.meta.shownText, editorialStatus: 'draft_text', mechanicsStatus: 'none' };
+        continue;
+      }
       if (!rec) continue;
       answerDetails[qid] = { text: rec.text, editorialStatus: rec.editorialStatus, mechanicsStatus: rec.mechanicsStatus };
       // Certified mapping boundary: inert today, so this adds nothing. Only an explicit "mapped" result can add evidence.

@@ -61,6 +61,11 @@
         </button>
         {{/each}}
         {{/if}}
+        {{#if view.page.hasPrevious}}
+        <button type="button" class="prog-l1-survey-stage__choice" data-action="msurvey-previous" data-question-id="{{view.questionId}}" data-seq="{{seq}}">
+          <span class="prog-l1-survey-stage__choice-copy"><span class="prog-l1-survey-stage__choice-label">{{view.page.previousText}}</span></span>
+        </button>
+        {{/if}}
         {{#if view.page.hasMore}}
         <button type="button" class="prog-l1-survey-stage__choice" data-action="msurvey-more" data-question-id="{{view.questionId}}" data-seq="{{seq}}">
           <span class="prog-l1-survey-stage__choice-copy"><span class="prog-l1-survey-stage__choice-label">{{view.page.moreText}}</span></span>

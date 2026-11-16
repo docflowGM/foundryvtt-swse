@@ -20,7 +20,9 @@ const manifest = json('data/mentor-survey/release-manifest.json');
 const shipped = { ...json('data/mentor-survey/multiclass.json'), q2Content: q2c };
 const withFocus = shipped; // the shipped pack now carries the 100 drafted q1_focus phrases, the neutral focus and answers E and F
 const actorFixture = { items: [{ type: 'class', name: 'Soldier', id: 's', system: { level: 3 } }], system: { skills: {} } };
-const prov = (keys, kind = 'items') => ({ items: kind === 'items' ? Object.fromEntries(keys.map((k) => [k, ['Owned Feat']])) : {}, skills: kind === 'skills' ? Object.fromEntries(keys.map((k) => [k, true])) : {}, attributes: {} });
+const ITEM = (k) => ({ itemId: 'i-' + k, type: 'feat', name: 'Owned Talent', canonicalId: 'c-' + k, certified: true, ruleType: 'skillModifier' });
+const SKILL = () => ({ skillKey: 'stealth', canonicalId: 'skill:stealth', trained: true, skillFocus: false });
+const prov = (keys, kind = 'items') => ({ items: kind === 'items' ? Object.fromEntries(keys.map((k) => [k, [ITEM(k)]])) : {}, skills: kind === 'skills' ? Object.fromEntries(keys.map((k) => [k, [SKILL()]])) : {}, attributes: {}, snapshot: 'snap-1' });
 const start = (pack, observedBias, over = {}, provenance = null) => new M.MulticlassSurveyController({ pack, manifest, preview: true, archetypeLookup: () => null, ...over })
   .sync({ selectedClassId: 'noble', classLevels: { soldier: 3 }, seed: 's', evidence: E.projectActorEvidence(actorFixture), events: [], observedBias, observedProvenance: provenance ?? prov(Object.keys(observedBias)), canonicalBiasKeys: canon });
 
@@ -84,13 +86,14 @@ test('MC-12 sparse evidence: fewer strengths give fewer A-D answers; zero eviden
 
 test('MC-12 provenance gate: a score from ability scores alone is a tendency, not past training, so no autobiographical answer is offered for it', () => {
   const k = canon[0];
-  const attrOnly = start(withFocus, { [k]: 9 }, {}, { items: {}, skills: {}, attributes: { [k]: true } }); attrOnly.choose('q1', 'mc.noble.q1.soldier.01', attrOnly.seq);
+  const attrOnly = start(withFocus, { [k]: 9 }, {}, { items: {}, skills: {}, attributes: { [k]: true }, snapshot: 'x' }); attrOnly.choose('q1', 'mc.noble.q1.soldier.01', attrOnly.seq);
   assert.deepEqual(attrOnly.view().view.options.map((o) => o.optionId), ['mc.q2.alt', 'mc.q2.undecided']);
   const noProv = start(withFocus, { [k]: 9 }, {}, null); noProv.runtime.observedProvenance = null; noProv.choose('q1', 'mc.noble.q1.soldier.01', noProv.seq);
   assert.deepEqual(Q2.resolveQ2({ pack: withFocus, draft: noProv.draft, ctx: noProv.ctx, runtime: { ...noProv.runtime, observedProvenance: null }, preview: true }).records.map((r) => r.id), ['mc.q2.alt', 'mc.q2.undecided'], 'unknown provenance fails closed');
   const skill = start(withFocus, { [k]: 9 }, {}, prov([k], 'skills')); skill.choose('q1', 'mc.noble.q1.soldier.01', skill.seq);
   assert.equal(skill.view().view.options.length, 3);
-  assert.deepEqual(Q2.keyProvenance({ items: { [k]: ['A', 'B', 'C', 'D'] }, skills: {} }, k), { items: ['A', 'B', 'C'], skills: false });
+  const four = Q2.keyProvenance({ items: { [k]: [ITEM('a'), ITEM('b'), ITEM('c'), ITEM('d')] }, skills: {}, snapshot: 's' }, k);
+  assert.equal(four.items.length, 3); assert.equal(four.snapshot, 's'); assert.deepEqual(Object.keys(four.items[0]).sort(), ['canonicalId', 'certified', 'itemId', 'name', 'ruleType', 'type']);
 });
 
 test('MC-12 an undecided Q1 uses the approved neutral focus and infers no specialization; E and F are always present', () => {
@@ -104,7 +107,7 @@ test('MC-12 choosing a Q2 answer records only the typed connection and its evide
   const sceneWith = (pickIndex) => { const c = start(withFocus, { [canon[0]]: 5, [canon[1]]: 4 }); c.choose('q1', 'mc.noble.q1.soldier.02', c.seq); c.choose('q2', c.view().view.options[pickIndex].optionId, c.seq); c.choose('q3', 'mc.q3.dip', c.seq); return [c.view().view.situation, c]; };
   const [s0, c0] = sceneWith(0); const [s1] = sceneWith(1); const [sE, cE] = sceneWith(2);
   assert.equal(s0, s1, 'Q4 depends on the exact Q1 answer only'); assert.equal(s0, sE);
-  assert.equal(c0.draft.answers.q2.meta.biasKey, canon[0]); assert.deepEqual(c0.draft.answers.q2.meta.evidence, { items: ['Owned Feat'], skills: false });
+  assert.equal(c0.draft.answers.q2.meta.biasKey, canon[0]); assert.equal(c0.draft.answers.q2.meta.evidence.items[0].canonicalId, 'c-' + canon[0]); assert.equal(c0.draft.answers.q2.meta.evidence.snapshot, 'snap-1');
   assert.deepEqual(c0.adapter.goals(withFocus, c0.draft, c0.ctx), []);
   assert.equal(M.MULTICLASS_ADAPTER.typed(withFocus, c0.draft, c0.ctx).q2BiasKey, canon[0]);
   assert.deepEqual(cE.draft.answers.q2.meta, { kind: 'alternative' }); assert.equal(M.MULTICLASS_ADAPTER.typed(withFocus, cE.draft, cE.ctx).q2BiasKey, null);
@@ -137,7 +140,7 @@ test('MC-12 the real accessor degrades safely: without initialized primitive reg
 test('MC-12 the provenance accessor is a read-only sibling of the observed accessor: same engine, no new scorer, empty without registries', async () => {
   const { IdentityEngine } = await import(u('scripts/engine/prestige/identity-engine.js'));
   assert.equal(typeof IdentityEngine.computeObservedBehaviorBiasProvenance, 'function');
-  assert.deepEqual(IdentityEngine.computeObservedBehaviorBiasProvenance(actorFixture), { items: {}, skills: {}, attributes: {} });
+  const e = IdentityEngine.computeObservedBehaviorBiasProvenance(actorFixture); assert.deepEqual([e.items, e.skills, e.attributes], [{}, {}, {}]);
   const src = fs.readFileSync(path.join(ROOT, 'scripts/engine/prestige/identity-engine.js'), 'utf8');
   const body = src.slice(src.indexOf('static computeObservedBehaviorBiasProvenance'), src.indexOf('static #getAbilityScore'));
   assert.ok(!/\* 0\.|weight|Math\.(pow|exp)/.test(body), 'no new arithmetic');

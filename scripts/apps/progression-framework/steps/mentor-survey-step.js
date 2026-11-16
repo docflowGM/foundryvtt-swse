@@ -139,6 +139,7 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
         target?.classList?.toggle?.('is-selected'); return true;
       }
       case 'msurvey-more': changed = ctl.more(ds.questionId, seq); break;
+      case 'msurvey-previous': changed = ctl.previous(ds.questionId, seq); break;
       case 'msurvey-skip-question': changed = ctl.skipQuestion(ds.questionId, seq); break;
       case 'msurvey-back': changed = ctl.back(seq); break;
       case 'msurvey-goto': changed = ctl.goTo(ds.questionId, seq); break;

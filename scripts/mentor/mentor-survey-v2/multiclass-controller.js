@@ -18,11 +18,7 @@ export function buildRecordIndex(pack) {
   add(pack.q5Undecided);
   Object.values(pack.q5Fallback || {}).forEach((bank) => bank.forEach(add));
   Object.values(pack.q5NoGoal || {}).forEach(add);
-  // goal-slot variants are shown filled with the reviewed pointer phrase: index the exact text the player saw
-  if (pack.q5GoalPhrase) {
-    const withGoal = (r) => idx.set(`${r.id}.withgoal`, { ...r, id: `${r.id}.withgoal`, text: r.text.replace('{declared_goal}', pack.q5GoalPhrase.text), needsGoalSlot: false, goalSlotFilled: true });
-    [...Object.values(pack.q5).flatMap((o) => Object.values(o)).flatMap((r) => Object.values(r)).flat(), ...Object.values(pack.q5Fallback || {}).flat()].filter((r) => r.needsGoalSlot).forEach(withGoal);
-  }
+  if (pack.q5GoalReference) add({ ...pack.q5GoalReference, id: 'mc.q5.goalref.template' }); // the shown text is frozen per answer in meta.shownText
   return idx;
 }
 

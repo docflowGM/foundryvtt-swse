@@ -1639,6 +1639,15 @@
       }
     }
   },
+  "lens": {
+    "id": "pr.q2.lens",
+    "text": "Earlier you told me: {q1_quote}",
+    "editorialStatus": "draft_text",
+    "mechanicsStatus": "none",
+    "sourceRef": {
+      "origin": "owner hardening 2026-11-16 (Q1 context lens for Q2); wording is a draft frame around the player's own words"
+    }
+  },
   "classes": {
     "ace_pilot": {
       "intro": {
@@ -1727,7 +1736,7 @@
       },
       "connective": {
         "id": "pr.bounty_hunter.q2.connective",
-        "text": "I want to carry that into the way I work a contract as the Bounty Hunter I am becoming.",
+        "text": "I want to carry that into the way I approach a hunt as the Bounty Hunter I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -1787,7 +1796,7 @@
       },
       "connective": {
         "id": "pr.crime_lord.q2.connective",
-        "text": "I want to carry that into the way I build my influence as the Crime Lord I am becoming.",
+        "text": "I want to carry that into the way I approach influence as the Crime Lord I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2087,7 +2096,7 @@
       },
       "connective": {
         "id": "pr.jedi_knight.q2.connective",
-        "text": "I want to carry that into the way I serve as the Jedi Knight I am becoming.",
+        "text": "I want to carry that into the way I approach service as the Jedi Knight I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2147,7 +2156,7 @@
       },
       "connective": {
         "id": "pr.jedi_master.q2.connective",
-        "text": "I want to carry that into the way I guide others as the Jedi Master I am becoming.",
+        "text": "I want to carry that into the way I approach teaching and counsel as the Jedi Master I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2207,7 +2216,7 @@
       },
       "connective": {
         "id": "pr.officer.q2.connective",
-        "text": "I want to carry that into the way I lead as the Officer I am becoming.",
+        "text": "I want to carry that into the way I approach leadership as the Officer I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2267,7 +2276,7 @@
       },
       "connective": {
         "id": "pr.sith_apprentice.q2.connective",
-        "text": "I want to carry that into the way I train as the Sith Apprentice I am becoming.",
+        "text": "I want to carry that into the way I approach training as the Sith Apprentice I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2327,7 +2336,7 @@
       },
       "connective": {
         "id": "pr.sith_lord.q2.connective",
-        "text": "I want to carry that into the way I use authority as the Sith Lord I am becoming.",
+        "text": "I want to carry that into the way I approach power and command as the Sith Lord I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2387,7 +2396,7 @@
       },
       "connective": {
         "id": "pr.corporate_agent.q2.connective",
-        "text": "I want to carry that into the way I use my position as the Corporate Agent I am becoming.",
+        "text": "I want to carry that into the way I work in corporate and business settings as the Corporate Agent I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2447,7 +2456,7 @@
       },
       "connective": {
         "id": "pr.gladiator.q2.connective",
-        "text": "I want to carry that into the way I fight in the arena as the Gladiator I am becoming.",
+        "text": "I want to carry that into the way I face combat before an audience as the Gladiator I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2567,7 +2576,7 @@
       },
       "connective": {
         "id": "pr.enforcer.q2.connective",
-        "text": "I want to carry that into the way I uphold the law as the Enforcer I am becoming.",
+        "text": "I want to carry that into the way I handle enforcement work as the Enforcer I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2627,7 +2636,7 @@
       },
       "connective": {
         "id": "pr.independent_droid.q2.connective",
-        "text": "I want to carry that into the way I direct my own existence as the Independent Droid I am becoming.",
+        "text": "I want to carry that into the way I make my own choices as the Independent Droid I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2687,7 +2696,7 @@
       },
       "connective": {
         "id": "pr.infiltrator.q2.connective",
-        "text": "I want to carry that into the way I operate unseen as the Infiltrator I am becoming.",
+        "text": "I want to carry that into the way I approach covert work as the Infiltrator I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2747,7 +2756,7 @@
       },
       "connective": {
         "id": "pr.master_privateer.q2.connective",
-        "text": "I want to carry that into the way I command as the Master Privateer I am becoming.",
+        "text": "I want to carry that into the way I approach raiding and ship command as the Master Privateer I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2807,7 +2816,7 @@
       },
       "connective": {
         "id": "pr.medic.q2.connective",
-        "text": "I want to carry that into the way I care for others as the Medic I am becoming.",
+        "text": "I want to carry that into the way I approach caring for others as the Medic I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2867,7 +2876,7 @@
       },
       "connective": {
         "id": "pr.saboteur.q2.connective",
-        "text": "I want to carry that into the way I disrupt my targets as the Saboteur I am becoming.",
+        "text": "I want to carry that into the way I approach sabotage as the Saboteur I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2927,7 +2936,7 @@
       },
       "connective": {
         "id": "pr.outlaw.q2.connective",
-        "text": "I want to carry that into the way I stay free as the Outlaw I am becoming.",
+        "text": "I want to carry that into the way I approach staying free as the Outlaw I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -2987,7 +2996,7 @@
       },
       "connective": {
         "id": "pr.droid_commander.q2.connective",
-        "text": "I want to carry that into the way I command my units as the Droid Commander I am becoming.",
+        "text": "I want to carry that into the way I coordinate droids and teams as the Droid Commander I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -3107,7 +3116,7 @@
       },
       "connective": {
         "id": "pr.vanguard.q2.connective",
-        "text": "I want to carry that into the way I move ahead of my allies as the Vanguard I am becoming.",
+        "text": "I want to carry that into the way I scout ahead as the Vanguard I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -3167,7 +3176,7 @@
       },
       "connective": {
         "id": "pr.martial_arts_master.q2.connective",
-        "text": "I want to carry that into the way I practice my art as the Martial Arts Master I am becoming.",
+        "text": "I want to carry that into the way I approach martial discipline as the Martial Arts Master I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -3227,7 +3236,7 @@
       },
       "connective": {
         "id": "pr.imperial_knight.q2.connective",
-        "text": "I want to carry that into the way I uphold my duty as the Imperial Knight I am becoming.",
+        "text": "I want to carry that into the way I approach duty as the Imperial Knight I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -3347,7 +3356,7 @@
       },
       "connective": {
         "id": "pr.assassin.q2.connective",
-        "text": "I want to carry that into the way I approach a target as the Assassin I am becoming.",
+        "text": "I want to carry that into the way I approach precise, deliberate work as the Assassin I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -3407,7 +3416,7 @@
       },
       "connective": {
         "id": "pr.charlatan.q2.connective",
-        "text": "I want to carry that into the way I work a crowd as the Charlatan I am becoming.",
+        "text": "I want to carry that into the way I approach persuasion and illusion as the Charlatan I am becoming.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {

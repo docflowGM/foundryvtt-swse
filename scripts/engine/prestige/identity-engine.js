@@ -22,7 +22,8 @@ import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/arche
 import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
 import { computeSurveyInfluence } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/survey-influence.js";
 import { readLedger } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/intent-ledger.js";
-import { projectActorEvidence } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/actor-evidence.js";
+import { projectActorEvidence, canonicalIdOf } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/actor-evidence.js";
+import { revisionOf } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/contract.js";
 import { buildEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 
 export class IdentityEngine {
@@ -651,33 +652,79 @@ export class IdentityEngine {
     }
 
     /**
-     * READ-ONLY provenance for the observed mechanical bias (Mentor survey Q2). Same helpers and arithmetic as
-     * computeObservedBehaviorBias, split by evidence layer, with the OWNED ITEM NAMES behind each key from the rules
-     * primitives layer. It does not score anything new and mutates nothing.
+     * READ-ONLY provenance for the observed mechanical bias (Mentor survey Q2). It reuses this engine's own helpers and
+     * registries and adds no scoring. Ranking (computeObservedBehaviorBias) chooses among candidate strengths; this method
+     * only says which ACTOR FACTS may authorize a player-facing statement about a key. It fails closed:
      *
-     *   items:      { key: [itemName, ...] }  owned feats/talents/features whose rules primitives contribute to the key
-     *   skills:     { key: true }             trained-skill / Skill Focus contribution
-     *   attributes: { key: true }             ability-score tendency only (NOT evidence of past activity)
+     *  - a rule counts only if its owning item is not disabled (`system.disabled`), the rule is always active
+     *    (a conditional or situational rule is listed under `excluded.conditional`), and the primitive maps through a
+     *    SPECIFIC registry entry (a target or type mapping), never the generic `default` fallback;
+     *  - `featGrant` recursion is not followed (the granted feat is its own owned item);
+     *  - a trained skill counts only through an EXPLICIT skill-bias registry entry, never the generic default, so an
+     *    unrelated trained skill is not proof of a specific capability;
+     *  - ability-score contributions are tendencies only (`attributes`), never evidence of past training.
+     *
+     * Shapes (exact source identifiers retained):
+     *   items:      { key: [{ itemId, type, name, canonicalId, certified, ruleType, specificity }] }
+     *   skills:     { key: [{ skillKey, canonicalId: 'skill:<key>', trained: true, skillFocus }] }
+     *   attributes: { key: true }
+     *   excluded:   { conditional: n, defaultMapping: n, disabled: n }
+     *   snapshot:   revision hash of the above (changes whenever the evidence does)
      *
      * @param {Object} actor
-     * @returns {{items:Object, skills:Object, attributes:Object}}
      */
     static computeObservedBehaviorBiasProvenance(actor) {
-        const out = { items: {}, skills: {}, attributes: {} };
-        if (!this.#primitiveMapping) return out;
-        const processedFeats = new Set();
+        const out = { items: {}, skills: {}, attributes: {}, excluded: { conditional: 0, defaultMapping: 0, disabled: 0 }, snapshot: null };
+        if (!this.#primitiveMapping) { out.snapshot = revisionOf(out); return out; }
+        const seen = new Set();
         for (const item of actor?.items || []) {
-            if (!item.system?.rules) continue;
-            const rules = Array.isArray(item.system.rules) ? item.system.rules : [];
-            const one = { mechanicalBias: {}, roleBias: {}, attributeBias: {} };
-            for (const rule of rules) this.#addBias(one, this.#processPrimitive(rule, actor, processedFeats));
-            for (const [k, v] of Object.entries(one.mechanicalBias)) {
-                if (Number(v) > 0) (out.items[k] ||= []).push(item.name);
+            const rules = Array.isArray(item?.system?.rules) ? item.system.rules : [];
+            if (!rules.length) continue;
+            if (item.system?.disabled === true) { out.excluded.disabled += 1; continue; }
+            const ids = canonicalIdOf(item);
+            for (const rule of rules) {
+                if (!rule?.type || rule.type === 'featGrant') continue;
+                const contributed = this.#processPrimitive(rule, actor, new Set()).mechanicalBias || {};
+                if (!this.#isAlwaysActive(rule)) { if (Object.keys(contributed).length) out.excluded.conditional += 1; continue; }
+                const specificity = this.#primitiveSpecificity(rule.type, rule);
+                for (const [key, value] of Object.entries(contributed)) {
+                    if (!(Number(value) > 0)) continue;
+                    if (specificity === 'default') { out.excluded.defaultMapping += 1; continue; }
+                    const dedupe = `${item.id ?? item._id ?? item.name}|${key}|${rule.type}`;
+                    if (seen.has(dedupe)) continue; // duplicated primitives on one item count once
+                    seen.add(dedupe);
+                    (out.items[key] ||= []).push({ itemId: item.id ?? item._id ?? null, type: item.type, name: item.name, canonicalId: ids.canonicalId, certified: ids.certified, ruleType: rule.type, specificity });
+                }
             }
         }
         for (const [k, v] of Object.entries(this.#computeAttributeBias(actor).mechanicalBias || {})) if (Number(v) > 0) out.attributes[k] = true;
-        for (const [k, v] of Object.entries(this.#computeSkillBias(actor).mechanicalBias || {})) if (Number(v) > 0) out.skills[k] = true;
+        if (this.#skillBiasMapping) {
+            const focus = new Set();
+            for (const item of actor?.items || []) {
+                if (item?.type === 'feat' && /skill focus/i.test(item.name || '') && item.system?.disabled !== true) { const m = /\(([^)]+)\)/.exec(item.name); if (m) focus.add(m[1].toLowerCase()); }
+            }
+            for (const [skillKey, data] of Object.entries(actor?.system?.skills || {})) {
+                if (!data?.trained) continue;
+                const reg = this.#normalizeSkillKey(skillKey);
+                const specific = this.#skillBiasMapping[reg];
+                if (!specific) { out.excluded.defaultMapping += 1; continue; } // generic fallback only: not proof of a capability
+                for (const [key, value] of Object.entries(specific.mechanicalBias || {})) {
+                    if (typeof value === 'number' && value > 0) (out.skills[key] ||= []).push({ skillKey, canonicalId: `skill:${skillKey}`, trained: true, skillFocus: focus.has(reg) });
+                }
+            }
+        }
+        out.snapshot = revisionOf({ items: out.items, skills: out.skills, attributes: out.attributes });
         return out;
+    }
+
+    /** How specifically a primitive maps: 'target' (a rule.target entry), 'type' (a type-level mapping) or 'default' (generic fallback for an unmapped skill/target). Mirrors #getPrimitiveMapping's branches; no arithmetic. */
+    static #primitiveSpecificity(ruleType, rule) {
+        const typeMapping = this.#primitiveMapping?.[ruleType];
+        const map = typeMapping?.mapping;
+        if (!map || typeof map !== 'object') return 'default';
+        if (rule.skillId && map.default) return 'default'; // any skill maps to the same generic entry
+        if (rule.target) return map[rule.target] ? 'target' : 'default';
+        return 'type';
     }
 
     /**
@@ -953,7 +1000,7 @@ export class IdentityEngine {
      * @returns {Object} Mapped bias: { mechanicalBias, roleBias, attributeBias }
      */
     static #processPrimitive(rule, actor, processedFeats = new Set()) {
-        const bias = {
+        let bias = {
             mechanicalBias: {},
             roleBias: {},
             attributeBias: {}

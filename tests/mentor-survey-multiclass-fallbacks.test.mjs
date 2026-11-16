@@ -25,23 +25,53 @@ test('MC-18 imports the 25 Q1-undecided Q5 responses and the 5 no-goal replaceme
   assert.equal(pack.q5NoGoal.jedi.text, 'I want to explore where Jedi training might lead me without deciding on a lifelong calling today.');
 });
 
-test('MC-18 a declared goal fills the slot with the reviewed pointer phrase, never the goal text; no goal selects the authored replacement', () => {
-  const withGoal = toQ5(mk(goalEvents()), 'mc.scout.q1.soldier.01');
-  const t = withGoal.view.options[3].text;
-  assert.match(t, /the goal I have already declared/); assert.ok(!/declared_goal|\{|I want to lead people/.test(t));
-  assert.ok(withGoal.view.options[3].optionId.endsWith('.withgoal'));
-  const without = toQ5(mk(), 'mc.scout.q1.soldier.01');
-  assert.equal(without.view.options[3].text, pack.q5NoGoal.scout.text);
-  const ctl = mk(goalEvents()); toQ5(ctl, 'mc.scout.q1.soldier.01');
-  assert.ok(ctl.choose('q5', ctl.view().view.options[3].optionId, ctl.seq));
+const A = json('data/archetypes.json').archetypes;
+const mkWith = (events = [], preview = true) => new M.MulticlassSurveyController({ pack, manifest, preview, archetypeLookup: (id) => A[id] || null }).sync({ selectedClassId: 'scout', classLevels: { soldier: 3 }, seed: 's', events });
+const goal = (over = {}) => ({ goalLane: 'l1.long_term_ambition', target: { type: 'response_only', id: null }, questionId: 'q5', optionId: 'o', quote: 'I want to lead people.', ...over });
+const ev = (goals, existing = [], tx = 'c1') => L.buildCompletionEvents({ payload: { surveyKind: 'l1', scopeId: 'soldier', definitionVersion: 1, contextRevision: 'x', answers: {} }, transactionId: tx, actorLevel: 1, completedAt: 'x', goals, existingEvents: existing });
+const shownCC = (events, preview = true) => toQ5(mkWith(events, preview), 'mc.scout.q1.soldier.01').view.options[3];
+
+test('MC-18 no active goal selects the authored replacement; no placeholder ever reaches a player', () => {
+  const o = shownCC([]); assert.equal(o.text, pack.q5NoGoal.scout.text); assert.ok(!/\{|\}/.test(o.text));
 });
 
-test('MC-18 the filled goal answer is recorded with the exact text the player saw, and declares no goal change', () => {
-  const ctl = mk(goalEvents()); toQ5(ctl, 'mc.scout.q1.soldier.01');
-  ctl.choose('q5', ctl.view().view.options[3].optionId, ctl.seq);
+test('MC-18 a free-text declared goal appears as the player\'s exact words in a separate labeled phrase, never inflected into a sentence', () => {
+  const o = shownCC(ev([goal()]));
+  assert.equal(o.text, 'I want to see how this new training could support my earlier goal (\u201cI want to lead people.\u201d).');
+});
+
+test('MC-18 a typed goal that resolves exactly in the archetype registry shows its canonical label; unresolved ids fall back to the exact words, else to the no-goal replacement', () => {
+  const canon = Object.values(A).find((a) => a.kind === 'parent');
+  assert.equal(shownCC(ev([goal({ target: { type: 'archetype_parent', id: canon.id } })])).text, `I want to see how this new training could support my earlier goal (${canon.name}).`);
+  assert.match(shownCC(ev([goal({ target: { type: 'archetype_parent', id: 'no_such_archetype' } })])).text, /\(\u201cI want to lead people\.\u201d\)/, 'unresolved id: the exact words');
+  assert.equal(shownCC(ev([goal({ target: { type: 'archetype_parent', id: 'no_such_archetype' }, quote: undefined })])).text, pack.q5NoGoal.scout.text, 'unresolved id and no words: nothing is displayed');
+  const spec = Object.values(A).find((a) => a.kind === 'specialization');
+  assert.match(shownCC(ev([goal({ target: { type: 'archetype_parent', id: spec.id } })])).text, /\u201c/, 'a kind mismatch is not an exact resolution');
+});
+
+test('MC-18 several active goals: the fixed lane priority decides (the long-term ambition outranks the career aspiration)', () => {
+  const events = ev([goal({ goalLane: 'l1.career', quote: 'I want a quiet life.' }), goal({ goalLane: 'l1.long_term_ambition', quote: 'I want to lead people.' })]);
+  assert.match(shownCC(events).text, /lead people/); assert.ok(!/quiet life/.test(shownCC(events).text));
+});
+
+test('MC-18 a superseded goal is gone: a revision replaces it, a retake supersedes the earlier answer, and preview events never count outside preview', () => {
+  const first = ev([goal({ quote: 'I want to lead people.' })], [], 'c1');
+  const revised = ev([goal({ quote: 'I want to protect people.' })], first, 'c2');
+  const all = [...first, ...revised];
+  assert.match(shownCC(all).text, /protect people/); assert.ok(!/lead people/.test(shownCC(all).text));
+  const previewOnly = ev([goal()]).map((e) => ({ ...e, provenance: { ...e.provenance, preview: true } }));
+  assert.equal(shownCC(previewOnly).text, pack.q5NoGoal.scout.text);
+});
+
+test('MC-18 the goal answer is recorded with the exact text shown and declares no goal change; an undecided Q1 uses the same reviewed alternative', () => {
+  const ctl = mkWith(ev([goal()])); toQ5(ctl, 'mc.scout.q1.soldier.01');
+  assert.ok(ctl.choose('q5', ctl.view().view.options[3].optionId, ctl.seq));
+  assert.deepEqual(ctl.draft.answers.q5.meta.goalSource, 'quote');
   const done = ctl.finish(ctl.seq);
-  assert.match(done.answerDetails.q5.text, /the goal I have already declared/); assert.ok(!/\{declared_goal\}/.test(done.answerDetails.q5.text));
+  assert.equal(done.answerDetails.q5.text, 'I want to see how this new training could support my earlier goal (\u201cI want to lead people.\u201d).');
   assert.deepEqual(done.goals, [], 'career continuity continues a goal; it never creates or replaces one');
+  const n = mkWith(ev([goal()])); n.choose('q1', 'mc.scout.q1.soldier.06', n.seq); n.choose('q3', 'mc.q3.dip', n.seq); n.choose('q4', n.view().view.options[0].optionId, n.seq);
+  assert.match(n.view().view.options[3].text, /my earlier goal \(\u201cI want to lead people\.\u201d\)/);
 });
 
 test('MC-16 neutral Q4 mapping: five curated families, recorded with rationale; each scenario is a general situation', () => {

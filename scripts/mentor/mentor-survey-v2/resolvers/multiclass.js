@@ -10,6 +10,7 @@ import { evaluateScopeRelease, isRecordPlayable, toViewOption } from '../content
 import { resolveQ6, q6Reflection, q6SelectionMetaMany } from './multiclass-q6.js';
 import { resolveQ2, q2SelectionMeta } from './multiclass-q2.js';
 import { reduceLedger } from '../intent-ledger.js';
+import { pickActiveGoal, goalDisplay } from '../reflection.js';
 
 export const FOUNDATION_CLASSES = Object.freeze(['jedi', 'noble', 'scoundrel', 'scout', 'soldier']);
 export const MC_QUESTIONS = Object.freeze(['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q6n', 'q6a']); // q6n/q6a are Q6's NOT and AM stages (inner stages of question 6)
@@ -78,20 +79,22 @@ export function q4Scenario(pack, ctx, q1Answer) {
 }
 
 /**
- * Q5 career continuity: with a declared goal the slot is filled with the reviewed pointer phrase (never the goal text itself);
- * without one the authored no-goal replacement is used. Nothing is invented and no goal is created or replaced.
+ * Q5 career continuity. The original templates put a goal inside a sentence ("toward {declared_goal}"), which cannot be filled
+ * without grammatical inflection, so with an ACTIVE, affirmed, displayable goal the option becomes ONE reviewed alternative whose
+ * goal appears as a separate labeled phrase: a canonical label when the typed target resolves, else the player's exact words
+ * in quotes. With no such goal the authored no-goal replacement is used. Preview events never count; superseded goals are
+ * gone from the ledger reduction. Nothing is generated, no goal event is created or replaced.
  */
-export function q5Records({ pack, dest, bank, runtime, preview }) {
-  const goals = reduceLedger(runtime?.events || [], { includePreview: preview }).goals || {};
-  const declared = Object.keys(goals).length > 0;
-  const phrase = pack.q5GoalPhrase;
+export function q5Records({ pack, dest, bank, runtime, archetypeLookup }) {
+  const goal = pickActiveGoal(reduceLedger(runtime?.events || []).goals || {});
+  const shown = goalDisplay(goal, archetypeLookup);
+  const alt = pack.q5GoalReference;
   const extra = [];
   const records = bank.map((r) => {
     if (!r.needsGoalSlot) return r;
-    if (!declared) return pack.q5NoGoal?.[dest] ?? null;
-    if (!phrase) return null;
-    extra.push(phrase);
-    return { ...r, id: `${r.id}.withgoal`, text: r.text.replace('{declared_goal}', phrase.text), needsGoalSlot: false, goalSlotFilled: true };
+    if (!shown || !alt) return pack.q5NoGoal?.[dest] ?? null;
+    extra.push(alt);
+    return { ...alt, id: `mc.q5.${dest}.goalref`, text: alt.text.replace('{goal_label}', shown.text), goalSlotFilled: true, goalDisplaySource: shown.source, goalEventId: shown.eventId };
   }).filter(Boolean);
   return { records, extra };
 }
@@ -126,7 +129,7 @@ export function resolveMulticlassQuestion({ pack, draft, qid, ctx, preview = fal
     intro = mentor.intros.q5;
     const bank = a.kind === 'neutral' ? pack.q5Fallback?.[dest] : pack.q5[dest]?.[origin]?.[String(a.position).padStart(2, '0')];
     if (!bank) return unavailable('needs_q1_route');
-    const built = q5Records({ pack, dest, bank, runtime, preview });
+    const built = q5Records({ pack, dest, bank, runtime, archetypeLookup });
     extraShown = built.extra;
     records = [...built.records, pack.q5Undecided];
   } else return unavailable('unknown_question');
@@ -149,7 +152,7 @@ export function multiclassSelectionMeta(pack, qid, optionId, records) {
   if (qid === 'q2') return q2SelectionMeta(records, optionId);
   if (qid === 'q3') return { kind: 'depth', depth: r.depth };
   if (qid === 'q4') return { kind: r.kind };
-  if (qid === 'q5') return { kind: r.kind };
+  if (qid === 'q5') return r.goalSlotFilled ? { kind: r.kind, goalSource: r.goalDisplaySource, goalEventId: r.goalEventId, shownText: r.text } : { kind: r.kind };
   if (qid === 'q6') return { kind: 'calibration', calibration: r.calibration };
   return null;
 }

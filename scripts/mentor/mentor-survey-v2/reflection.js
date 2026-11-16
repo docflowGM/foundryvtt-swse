@@ -35,6 +35,30 @@ const deepFreeze = (o) => {
   return o;
 };
 
+/** The single goal a survey shows or quotes when several are active: fixed lane priority, then lane name. Superseded goals are already gone from `goals`. */
+export function pickActiveGoal(goals) {
+  const active = Object.values(goals || {}).sort((a, b) => (GOAL_LANE_PRIORITY.indexOf(a.goalLane) + 1 || 99) - (GOAL_LANE_PRIORITY.indexOf(b.goalLane) + 1 || 99) || a.goalLane.localeCompare(b.goalLane));
+  return active.length ? active[0] : null;
+}
+
+/**
+ * Typed, provenance-backed display of an ACTIVE declared goal: a canonical label when the typed target resolves exactly in the
+ * authoritative registry, else the player's exact affirmed words (quoted), else null. Never inflected, never generated, never
+ * written back as a goal. `source` says which it was so tests and the ledger can see.
+ */
+export function goalDisplay(goal, archetypeLookup) {
+  if (!goal) return null;
+  const t = goal.target || {};
+  if ((t.type === GOAL_TARGET_TYPES.ARCHETYPE_PARENT || t.type === GOAL_TARGET_TYPES.ARCHETYPE_SPECIALIZATION) && t.id) {
+    const rec = archetypeLookup?.(t.id);
+    const kind = t.type === GOAL_TARGET_TYPES.ARCHETYPE_PARENT ? 'parent' : 'specialization';
+    if (rec && rec.kind === kind && typeof rec.name === 'string' && rec.name.trim()) return { source: 'canonical', text: rec.name.trim(), eventId: goal.eventId, goalLane: goal.goalLane };
+  }
+  const quote = typeof goal.quote === 'string' ? goal.quote.trim() : '';
+  if (quote) return { source: 'quote', text: `\u201c${quote}\u201d`, eventId: goal.eventId, goalLane: goal.goalLane };
+  return null; // an unresolvable identity with no affirmed words is not displayed
+}
+
 /* ---------------------------------------------------------------------------------------------- */
 /* Goal fulfillment                                                                                */
 /* ---------------------------------------------------------------------------------------------- */
@@ -81,8 +105,7 @@ export function createReading({ surveyKind, scopeId, projection, events = [], cl
   const evidence = selectObservations(projection, { max: MAX_OBSERVATIONS });
   const { goals } = reduceLedger(events);
   // Deterministic goal choice: fixed lane priority, then lane name. The goal is quoted separately, never merged with identity.
-  const activeGoals = Object.values(goals).sort((a, b) => (GOAL_LANE_PRIORITY.indexOf(a.goalLane) + 1 || 99) - (GOAL_LANE_PRIORITY.indexOf(b.goalLane) + 1 || 99) || a.goalLane.localeCompare(b.goalLane));
-  const goal = activeGoals.length ? activeGoals[0] : null;
+  const goal = pickActiveGoal(goals);
   const fulfillment = goal ? verifyGoalFulfillment(goal, projection.classLevels) : { fulfilled: false, reason: 'no_declared_goal' };
 
   const am = [];

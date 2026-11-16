@@ -16,6 +16,7 @@ import { topObservedKeys, keyProvenance } from './multiclass-q2.js';
 export const PRESTIGE_QUESTIONS = Object.freeze(['q1', 'q2', 'q3', 'q4', 'q5', 'q5b', 'q6']);
 const BLOCKED = ['q6']; // Q2 needs its companion pack (pack.q2Content); without it Q2 is blocked_source, never improvised
 export const Q1_PAGE_SIZE = 6; // owner ruling MSV-RD-013: six substantive answers per page; the neutral answer is always offered separately
+const UI_PREVIOUS = 'Show earlier answers'; // interface control label
 const UI_MORE = 'Show more answers'; // interface control label, not Mentor dialogue; the browse order is the source order and claims no relevance
 
 /** Trigger: a prestige class not yet held (finalized levels). Each acquisition is its own scope; earlier ones are untouched. */
@@ -30,7 +31,7 @@ export function createPrestigeFlow(classId) {
   return {
     surveyKind: 'prestige', scopeId: classId, definitionVersion: 1, questions: [...PRESTIGE_QUESTIONS],
     deps: {
-      q1: { inputs: ['destinationClassId'] }, q2: { inputs: ['destinationClassId', 'observedRevision'] }, q3: { inputs: ['destinationClassId'], after: ['q1'] },
+      q1: { inputs: ['destinationClassId'] }, q2: { inputs: ['destinationClassId', 'observedRevision'], after: ['q1'] }, q3: { inputs: ['destinationClassId'], after: ['q1'] },
       q4: { inputs: ['destinationClassId'] }, // depth in this class is independent of the other questions
       q5: { inputs: ['destinationClassId'] },
       q5b: { inputs: ['destinationClassId'], after: ['q5'] },
@@ -58,10 +59,16 @@ export function resolvePrestigeQuestion({ pack, draft, qid, ctx, preview = false
     const strengths = keys.map((k) => ({ id: `pr.${id}.q2.${k.toLowerCase()}`, biasKey: k, kind: 'integration', text: composeQ2Text(pack, id, k), evidence: keyProvenance(runtime.observedProvenance, k), editorialStatus: 'draft_text', mechanicsStatus: 'none', sourceRef: pack.q2Content.stems[k].sourceRef }));
     records = [...strengths, c.alternative, c.undecided];
     intro = c.intro; prompt = c.question;
+    // Q1 context lens: the player's own Q1 words, quoted. It shapes the presentation only; it never proves an owned ability and never adds an answer.
+    const q1Row = draft?.answers?.q1?.meta?.sourceId ? (pack.q1q3?.classes?.[id]?.q1.answers || []).find((a) => a.sourceId === draft.answers.q1.meta.sourceId) : null;
+    const lensOn = Boolean(q1Row && q1Row.kind !== 'neutral' && pack.q2Content.lens);
+    if (lensOn) situation = pack.q2Content.lens.text.replace('{q1_quote}', `\u201c${q1Row.text}\u201d`);
+    const lensShown = lensOn ? [pack.q2Content.lens, q1Row] : [];
+    for (const r of strengths) r.q1SourceId = lensOn ? q1Row.sourceId : null;
     const needConnective = strengths.length ? [c.connective, ...keys.map((k) => pack.q2Content.stems[k])] : [];
-    if (![intro, prompt, ...needConnective, ...records].every((r) => r.editorialStatus === EDITORIAL_STATUS.APPROVED || preview)) return unavailable('unapproved_content');
+    if (![intro, prompt, ...needConnective, ...lensShown, ...records].every((r) => r.editorialStatus === EDITORIAL_STATUS.APPROVED || preview)) return unavailable('unapproved_content');
     if (!records.every((r) => isRecordPlayable(r, { preview }))) return unavailable('unplayable_record');
-    return { available: true, reason: 'ok', records, preview, view: { surveyKind: 'prestige', questionId: 'q2', mentorIntro: intro.text, prompt: prompt.text, situation: null, options: records.map((r) => toViewOption(r)), page: null, canSkip: true, canGoBack: true } };
+    return { available: true, reason: 'ok', records, preview, view: { surveyKind: 'prestige', questionId: 'q2', mentorIntro: intro.text, prompt: prompt.text, situation, options: records.map((r) => toViewOption(r)), page: null, canSkip: true, canGoBack: true } };
   }
   if (qid === 'q1') {
     if (!pack.q1q3?.classes?.[id]) return unavailable('blocked_source');
@@ -73,7 +80,8 @@ export function resolvePrestigeQuestion({ pack, draft, qid, ctx, preview = false
     if (pg.empty) return unavailable('unknown_page');
     records = pg.ids;
     intro = pseudo(`pr.${id}.q1.intro`, i?.text, i); prompt = pseudo(`pr.${id}.q1.question`, q.text, q);
-    page = { index: Math.max(0, Number(pageIndex) || 0), hasMore: pg.hasMore, moreText: pg.hasMore ? UI_MORE : null };
+    const idx = Math.max(0, Number(pageIndex) || 0);
+    page = { index: idx, hasMore: pg.hasMore, moreText: pg.hasMore ? UI_MORE : null, hasPrevious: idx > 0, previousText: idx > 0 ? UI_PREVIOUS : null };
   } else if (qid === 'q3') {
     if (!pack.q1q3?.classes?.[id]) return unavailable('blocked_source');
     const q1 = draft?.answers?.q1;
@@ -150,7 +158,7 @@ const pseudo = (id, text, src) => (text ? { id, text, editorialStatus: src?.edit
 export function prestigeSelectionMeta(pack, qid, optionId, records) {
   const r = records.find((x) => x.id === optionId);
   if (!r) return null;
-  if (qid === 'q2') return r.kind === 'alternative' || r.kind === 'undecided' ? { kind: r.kind } : { kind: 'integration', biasKey: r.biasKey, evidence: r.evidence ?? null };
+  if (qid === 'q2') return r.kind === 'alternative' || r.kind === 'undecided' ? { kind: r.kind } : { kind: 'integration', biasKey: r.biasKey, evidence: r.evidence ?? null, q1SourceId: r.q1SourceId ?? null };
   if (qid === 'q1') return { kind: 'class_discovery', sourceId: r.sourceId, q3SceneId: r.q3SceneId ?? null };
   if (qid === 'q3') return { kind: 'responsibility', sceneId: r.sceneId ?? null, letter: r.letter };
   if (qid === 'q4') return { kind: 'depth', depth: r.depth };

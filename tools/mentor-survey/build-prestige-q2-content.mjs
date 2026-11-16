@@ -47,7 +47,8 @@ lines.forEach((L, i) => {
 const missing = classes.filter((c) => !found[c.classId].intro || !found[c.classId].question).map((c) => c.classId);
 if (missing.length) fail(`intro or question not extracted for: ${missing.join(', ')}`);
 
-const pack = { _meta: { survey: 'prestige-q2', contentVersion: 1, sourceCommit: COMMIT, generatedBy: 'tools/mentor-survey/build-prestige-q2-content.mjs', counts: { classes: 32, stems: 125 }, note: 'All text is draft_text. Stems are the shared multiclass first sentences; connectives, E and F are owner-authorized drafts (MSV-RD-014).' }, keys: mc.keys, stems, classes: {} };
+const lens = { id: 'pr.q2.lens', text: 'Earlier you told me: {q1_quote}', editorialStatus: 'draft_text', mechanicsStatus: 'none', sourceRef: { origin: 'owner hardening 2026-11-16 (Q1 context lens for Q2); wording is a draft frame around the player\'s own words' } };
+const pack = { _meta: { survey: 'prestige-q2', contentVersion: 1, sourceCommit: COMMIT, generatedBy: 'tools/mentor-survey/build-prestige-q2-content.mjs', counts: { classes: 32, stems: 125 }, note: 'All text is draft_text. Stems are the shared multiclass first sentences; connectives, E and F are owner-authorized drafts (MSV-RD-014).' }, keys: mc.keys, stems, lens, classes: {} };
 for (const c of classes) {
   const F = found[c.classId];
   pack.classes[c.classId] = {

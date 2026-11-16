@@ -187,8 +187,8 @@ for (let j = ngStart + 1; j < ngStart + 14; j++) {
   if (m) q5NoGoal[CLS[m[1]]] = rec(`mc.q5.${CLS[m[1]]}.nogoal.career_continuity`, quoted(m[2]), false, `Q5 missing-goal replacement ${m[1]}`, { kind: 'career_continuity', noGoalReplacement: true, sourceLine: j + 1 });
 }
 if (Object.keys(q5NoGoal).length !== 5) fail('Q5 missing-goal replacements: expected 5');
-/* Declared-goal slot phrase: an implementation choice (MSV-RD-015), draft. It points at the player's own recorded goal without naming or paraphrasing it. */
-const goalPhrase = rec('mc.q5.goalphrase', 'the goal I have already declared', false, 'implementation choice for the {declared_goal} slot (MSV-RD-015)', { kind: 'goal_slot_phrase', implementationChoice: true });
+/* Q5 career continuity with an active declared goal (owner hardening 2026-11-16): ONE reviewed first-person alternative whose goal appears as a separate labeled phrase ({goal_label}), so no goal is ever inflected into the original sentence. Draft. */
+const goalReference = rec('mc.q5.goalref', 'I want to see how this new training could support my earlier goal ({goal_label}).', false, 'owner hardening 2026-11-16 (MSV-RD-009 implementation text)', { kind: 'career_continuity', implementationChoice: true, hasSlots: true, needsGoalSlot: true });
 /* Q4 for an undecided Q1 (owner ruling MSV-RD-008): a curated low-assumption scenario family per destination. Rationale recorded; pending editorial review. */
 const Q4_NEUTRAL = {
   noble: ['leadership', 'Everyday coordination dilemmas (an evacuation, a search, a blackout); no title, rank or skill is assumed.'],
@@ -218,7 +218,7 @@ const pack = {
   _meta: { survey: 'multiclass', contentVersion: 1, sourceCommit: SOURCE_COMMIT, sourceFile: DOC, generatedBy: 'tools/mentor-survey/build-multiclass-content.mjs', counts,
     note: 'Verbatim import. Only the Q3 depth answers are owner-approved. NOT imported because not authored in the committed design: Q2 (q1_focus phrases, answers E/F), Q5 undecided-Q1 fallback banks, Q6 libraries.' },
   mentors: Object.fromEntries(Object.values(CLS).map((c) => [c, { mentorRegistryKey: MENTOR[c], q1Intros: q1Intros[c], intros: fixedIntros[c] }])),
-  q1, q3, q4Routes: routeMap, q4ByFamily: byFamily, q4, q5, q5Fallback, q5NoGoal, q5GoalPhrase: goalPhrase, q4Neutral, origin,
+  q1, q3, q4Routes: routeMap, q4ByFamily: byFamily, q4, q5, q5Fallback, q5NoGoal, q5GoalReference: goalReference, q4Neutral, origin,
   q5Undecided: rec('mc.q5.undecided', 'I am not sure what I want to accomplish first. I would rather see what this training makes possible.', false, 'Q5 milestone table undecided', { kind: 'neutral' }),
   blocked: {
     q2: 'Requires a certified q1_focus noun phrase per Q1 answer, authored Q2 answers E/F, and a verified top-four scores accessor; none exists in the committed design.',
