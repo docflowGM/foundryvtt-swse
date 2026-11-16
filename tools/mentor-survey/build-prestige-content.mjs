@@ -8,7 +8,7 @@
  * Q5 pending/finalized intros, the Q5 question, the seven first-person purpose statements, the optional-second-purpose
  * prompt and the decline line. The shared Q4 depth answers are owner-approved. Ace Pilot's Q4 wording and Q5 seven
  * statements are owner-approved; everything else is draft_text.
- * NOT imported: Q1 class-discovery banks (varied formats; slate policy unapproved, MSV-RD-005), Q2 actor-synthesis
+ * NOT imported here: Q1 and Q3 (see build-prestige-q1q3-content.mjs), Q2 actor-synthesis
  * templates, Q3 scenes (keyed to Q1 routes), Q6 dialogue (package not in Git).
  */
 import fs from 'node:fs';
@@ -89,12 +89,10 @@ const classes = Object.fromEntries(Object.values(routes).sort((a, b) => a.order 
 const counts = { classes: 32, q4Depth: 4, q4Intros: 64, q4Rails: 128, q5Intros: 64, q5Purposes: 224, q5SecondPrompts: 32, q5Declines: 32, approvedClasses: { q4: Object.values(q4).filter((c) => c.pendingIntro.editorialStatus === 'owner_approved_text').length, q5Purposes: Object.values(q5).filter((c) => c.options[0].editorialStatus === 'owner_approved_text').length } };
 writeJson(path.join(ROOT, 'data/mentor-survey/prestige.json'), {
   _meta: { survey: 'prestige', contentVersion: 1, sourceCommit: SOURCE_COMMIT, generatedBy: 'tools/mentor-survey/build-prestige-content.mjs', counts,
-    note: 'Verbatim import of Q4 and Q5 only. Not imported: Q1 (slate policy unapproved, MSV-RD-005), Q2 (actor synthesis), Q3 (keyed to Q1 routes), Q6 (package not in Git).' },
+    note: 'Verbatim import of Q4 and Q5. Q1 and Q3 live in the prestige-q1q3 companion pack. Not imported: Q2 (actor synthesis) and Q6 (package not in Git).' },
   classes, q4Depth: depth, q4, q5, purposes: PURPOSES,
   blocked: {
-    q1: 'Class-discovery banks are not imported (varied source formats) and the slate policy is unapproved (MSV-RD-005).',
     q2: 'Q2 is an actor-evidence synthesis whose templates are not imported; it needs the verified evidence projection plus approved wording.',
-    q3: 'Q3 scenes are keyed to Q1 route ids and cannot be selected without Q1.',
     q6: 'The 32-class Q6 dialogue package is not in Git (owner to supply; never reconstructed).',
   },
 });

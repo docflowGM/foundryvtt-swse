@@ -221,16 +221,34 @@ export class SurveyController {
       const m = mapResponseToIntent(rec, { surveyKind: this.adapter.kind, questionId: qid });
       if (m.status === MAPPING_STATUS.MAPPED) for (const e of m.intent?.tagEvidence || []) tagEvidence.push({ ...e, questionId: qid });
     }
+    const coverage = this._coverage(payload);
     const draftContent = Object.values(answerDetails).some((d) => d.editorialStatus !== EDITORIAL_STATUS.APPROVED);
     this.committed = {
       surveyKind: this.adapter.kind, scopeId: this.draft.scopeId, scopeKey: this.scopeKey, classId: this.ctx.classId ?? this.ctx.destinationClassId ?? null,
-      payload, answerDetails, tagEvidence,
+      payload, answerDetails, tagEvidence, coverage,
       goals: this.adapter.goals(this.pack, this.draft, this.ctx),
       typed: this.adapter.typed(this.pack, this.draft, this.ctx),
       reflection: this.adapter.reflection?.({ pack: this.pack, draft: this.draft, ctx: this.ctx, runtime: this.runtime, archetypeLookup: this.lookup }) ?? null,
       preview: this.preview || draftContent, // any unapproved content makes the event a preview event
     };
     return this.committed;
+  }
+
+  /**
+   * Honest completeness: a question skipped by the SYSTEM because its source is missing or unapproved is not "answered".
+   * `not_applicable` is a designed branch (e.g. no second purpose for an undecided primary) and does not make a survey incomplete.
+   */
+  _coverage(payload) {
+    const questions = {}; const unavailable = [];
+    for (const qid of this.flow.questions) {
+      if (payload.answers[qid]) { questions[qid] = 'answered'; continue; }
+      const r = this._resolve(qid, 0);
+      if (!r.available && this.adapter.autoSkipReasons.includes(r.reason)) {
+        questions[qid] = `unavailable:${r.reason}`;
+        if (r.reason !== 'not_applicable') unavailable.push({ questionId: qid, reason: r.reason });
+      } else questions[qid] = 'skipped_by_player';
+    }
+    return { complete: unavailable.length === 0, questions, unavailable };
   }
 
   /** Change answers after finishing: reopens the draft and withdraws the staged commit. */

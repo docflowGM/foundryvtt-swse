@@ -1,0 +1,1192 @@
+{
+  "summary": {
+    "structural": {
+      "scenes": 160,
+      "answers": 800,
+      "routes": 1293
+    },
+    "joinedRouteAssignments": 1293,
+    "documentedRouteAssignments": 1293,
+    "rosterCheck": [
+      {
+        "classId": "ace_pilot",
+        "className": "Ace Pilot",
+        "documented": 33,
+        "joined": 33,
+        "q1Rows": 33,
+        "ok": true
+      },
+      {
+        "classId": "bounty_hunter",
+        "className": "Bounty Hunter",
+        "documented": 43,
+        "joined": 43,
+        "q1Rows": 43,
+        "ok": true
+      },
+      {
+        "classId": "crime_lord",
+        "className": "Crime Lord",
+        "documented": 34,
+        "joined": 34,
+        "q1Rows": 34,
+        "ok": true
+      },
+      {
+        "classId": "elite_trooper",
+        "className": "Elite Trooper",
+        "documented": 62,
+        "joined": 62,
+        "q1Rows": 62,
+        "ok": true
+      },
+      {
+        "classId": "force_adept",
+        "className": "Force Adept",
+        "documented": 40,
+        "joined": 40,
+        "q1Rows": 40,
+        "ok": true
+      },
+      {
+        "classId": "force_disciple",
+        "className": "Force Disciple",
+        "documented": 52,
+        "joined": 52,
+        "q1Rows": 52,
+        "ok": true
+      },
+      {
+        "classId": "gunslinger",
+        "className": "Gunslinger",
+        "documented": 55,
+        "joined": 55,
+        "q1Rows": 55,
+        "ok": true
+      },
+      {
+        "classId": "jedi_knight",
+        "className": "Jedi Knight",
+        "documented": 98,
+        "joined": 98,
+        "q1Rows": 98,
+        "ok": true
+      },
+      {
+        "classId": "jedi_master",
+        "className": "Jedi Master",
+        "documented": 77,
+        "joined": 77,
+        "q1Rows": 77,
+        "ok": true
+      },
+      {
+        "classId": "officer",
+        "className": "Officer",
+        "documented": 62,
+        "joined": 62,
+        "q1Rows": 62,
+        "ok": true
+      },
+      {
+        "classId": "sith_apprentice",
+        "className": "Sith Apprentice",
+        "documented": 58,
+        "joined": 58,
+        "q1Rows": 58,
+        "ok": true
+      },
+      {
+        "classId": "sith_lord",
+        "className": "Sith Lord",
+        "documented": 89,
+        "joined": 89,
+        "q1Rows": 89,
+        "ok": true
+      },
+      {
+        "classId": "corporate_agent",
+        "className": "Corporate Agent",
+        "documented": 29,
+        "joined": 29,
+        "q1Rows": 29,
+        "ok": true
+      },
+      {
+        "classId": "gladiator",
+        "className": "Gladiator",
+        "documented": 26,
+        "joined": 26,
+        "q1Rows": 26,
+        "ok": true
+      },
+      {
+        "classId": "melee_duelist",
+        "className": "Melee Duelist",
+        "documented": 44,
+        "joined": 44,
+        "q1Rows": 44,
+        "ok": true
+      },
+      {
+        "classId": "enforcer",
+        "className": "Enforcer",
+        "documented": 16,
+        "joined": 16,
+        "q1Rows": 16,
+        "ok": true
+      },
+      {
+        "classId": "independent_droid",
+        "className": "Independent Droid",
+        "documented": 23,
+        "joined": 23,
+        "q1Rows": 23,
+        "ok": true
+      },
+      {
+        "classId": "infiltrator",
+        "className": "Infiltrator",
+        "documented": 32,
+        "joined": 32,
+        "q1Rows": 32,
+        "ok": true
+      },
+      {
+        "classId": "master_privateer",
+        "className": "Master Privateer",
+        "documented": 39,
+        "joined": 39,
+        "q1Rows": 39,
+        "ok": true
+      },
+      {
+        "classId": "medic",
+        "className": "Medic",
+        "documented": 22,
+        "joined": 22,
+        "q1Rows": 22,
+        "ok": true
+      },
+      {
+        "classId": "saboteur",
+        "className": "Saboteur",
+        "documented": 43,
+        "joined": 43,
+        "q1Rows": 43,
+        "ok": true
+      },
+      {
+        "classId": "outlaw",
+        "className": "Outlaw",
+        "documented": 32,
+        "joined": 32,
+        "q1Rows": 32,
+        "ok": true
+      },
+      {
+        "classId": "droid_commander",
+        "className": "Droid Commander",
+        "documented": 30,
+        "joined": 30,
+        "q1Rows": 30,
+        "ok": true
+      },
+      {
+        "classId": "military_engineer",
+        "className": "Military Engineer",
+        "documented": 18,
+        "joined": 18,
+        "q1Rows": 18,
+        "ok": true
+      },
+      {
+        "classId": "vanguard",
+        "className": "Vanguard",
+        "documented": 24,
+        "joined": 24,
+        "q1Rows": 24,
+        "ok": true
+      },
+      {
+        "classId": "martial_arts_master",
+        "className": "Martial Arts Master",
+        "documented": 27,
+        "joined": 27,
+        "q1Rows": 27,
+        "ok": true
+      },
+      {
+        "classId": "imperial_knight",
+        "className": "Imperial Knight",
+        "documented": 48,
+        "joined": 48,
+        "q1Rows": 48,
+        "ok": true
+      },
+      {
+        "classId": "shaper",
+        "className": "Shaper",
+        "documented": 23,
+        "joined": 23,
+        "q1Rows": 23,
+        "ok": true
+      },
+      {
+        "classId": "assassin",
+        "className": "Assassin",
+        "documented": 39,
+        "joined": 39,
+        "q1Rows": 39,
+        "ok": true
+      },
+      {
+        "classId": "charlatan",
+        "className": "Charlatan",
+        "documented": 30,
+        "joined": 30,
+        "q1Rows": 30,
+        "ok": true
+      },
+      {
+        "classId": "improviser",
+        "className": "Improviser",
+        "documented": 19,
+        "joined": 19,
+        "q1Rows": 19,
+        "ok": true
+      },
+      {
+        "classId": "pathfinder",
+        "className": "Pathfinder",
+        "documented": 26,
+        "joined": 26,
+        "q1Rows": 26,
+        "ok": true
+      }
+    ],
+    "counts": {
+      "ace_pilot": {
+        "q1Answers": 33,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 33,
+        "introCandidates": 2,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 33
+      },
+      "bounty_hunter": {
+        "q1Answers": 43,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 43,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 43
+      },
+      "crime_lord": {
+        "q1Answers": 34,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 34,
+        "introCandidates": 3,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 34
+      },
+      "elite_trooper": {
+        "q1Answers": 62,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 62,
+        "introCandidates": 3,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 62
+      },
+      "force_adept": {
+        "q1Answers": 40,
+        "q1Quarantined": 4,
+        "q1RoutedToScene": 40,
+        "introCandidates": 2,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 40
+      },
+      "force_disciple": {
+        "q1Answers": 52,
+        "q1Quarantined": 3,
+        "q1RoutedToScene": 52,
+        "introCandidates": 2,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 52
+      },
+      "gunslinger": {
+        "q1Answers": 55,
+        "q1Quarantined": 4,
+        "q1RoutedToScene": 55,
+        "introCandidates": 3,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 55
+      },
+      "jedi_knight": {
+        "q1Answers": 98,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 98,
+        "introCandidates": 2,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 98
+      },
+      "jedi_master": {
+        "q1Answers": 77,
+        "q1Quarantined": 3,
+        "q1RoutedToScene": 77,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 77
+      },
+      "officer": {
+        "q1Answers": 62,
+        "q1Quarantined": 1,
+        "q1RoutedToScene": 62,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 62
+      },
+      "sith_apprentice": {
+        "q1Answers": 58,
+        "q1Quarantined": 1,
+        "q1RoutedToScene": 58,
+        "introCandidates": 2,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 58
+      },
+      "sith_lord": {
+        "q1Answers": 89,
+        "q1Quarantined": 13,
+        "q1RoutedToScene": 89,
+        "introCandidates": 2,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 89
+      },
+      "corporate_agent": {
+        "q1Answers": 29,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 29,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 29
+      },
+      "gladiator": {
+        "q1Answers": 26,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 26,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 26
+      },
+      "melee_duelist": {
+        "q1Answers": 44,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 44,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 44
+      },
+      "enforcer": {
+        "q1Answers": 16,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 16,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 16
+      },
+      "independent_droid": {
+        "q1Answers": 23,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 23,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 23
+      },
+      "infiltrator": {
+        "q1Answers": 32,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 32,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 32
+      },
+      "master_privateer": {
+        "q1Answers": 39,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 39,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 39
+      },
+      "medic": {
+        "q1Answers": 22,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 22,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 22
+      },
+      "saboteur": {
+        "q1Answers": 43,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 43,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 43
+      },
+      "outlaw": {
+        "q1Answers": 32,
+        "q1Quarantined": 6,
+        "q1RoutedToScene": 32,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 32
+      },
+      "droid_commander": {
+        "q1Answers": 30,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 30,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 30
+      },
+      "military_engineer": {
+        "q1Answers": 18,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 18,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 18
+      },
+      "vanguard": {
+        "q1Answers": 24,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 24,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 24
+      },
+      "martial_arts_master": {
+        "q1Answers": 27,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 27,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 27
+      },
+      "imperial_knight": {
+        "q1Answers": 48,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 48,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 48
+      },
+      "shaper": {
+        "q1Answers": 23,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 23,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 23
+      },
+      "assassin": {
+        "q1Answers": 39,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 39,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 39
+      },
+      "charlatan": {
+        "q1Answers": 30,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 30,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 30
+      },
+      "improviser": {
+        "q1Answers": 19,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 19,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 19
+      },
+      "pathfinder": {
+        "q1Answers": 26,
+        "q1Quarantined": 0,
+        "q1RoutedToScene": 26,
+        "introCandidates": 1,
+        "questionCandidates": 1,
+        "q3Scenes": 5,
+        "q3Answers": 25,
+        "q3RouteAssignments": 26
+      }
+    },
+    "exceptionCounts": {
+      "unmatchedRoutes": 0,
+      "duplicateRows": 0,
+      "conflictingRows": 0,
+      "orphanQ1Rows": 0,
+      "duplicateRoutes": 0,
+      "routeCountMismatch": 0,
+      "quarantinedRows": 35,
+      "crossClassIdReuse": 23,
+      "q3Structure": 0,
+      "editorialIssues": 0,
+      "missingOpeningOrQuestion": 0
+    }
+  },
+  "exceptions": {
+    "unmatchedRoutes": [],
+    "duplicateRows": [],
+    "conflictingRows": [],
+    "orphanQ1Rows": [],
+    "duplicateRoutes": [],
+    "routeCountMismatch": [],
+    "quarantinedRows": [
+      {
+        "classId": "force_adept",
+        "sourceId": "FA-II01",
+        "marker": "RESTRICTED",
+        "line": 1440
+      },
+      {
+        "classId": "force_adept",
+        "sourceId": "FA-II02",
+        "marker": "RESTRICTED",
+        "line": 1441
+      },
+      {
+        "classId": "force_adept",
+        "sourceId": "FA-II03",
+        "marker": "RESTRICTED",
+        "line": 1442
+      },
+      {
+        "classId": "force_adept",
+        "sourceId": "FA-II04",
+        "marker": "RESTRICTED",
+        "line": 1443
+      },
+      {
+        "classId": "force_disciple",
+        "sourceId": "FD-FS15",
+        "marker": "RESTRICTED",
+        "line": 1581
+      },
+      {
+        "classId": "force_disciple",
+        "sourceId": "FD-GS01",
+        "marker": "restricted",
+        "line": 1643
+      },
+      {
+        "classId": "force_disciple",
+        "sourceId": "FD-TR02",
+        "marker": "restricted",
+        "line": 1652
+      },
+      {
+        "classId": "gunslinger",
+        "sourceId": "GL-PTQ01",
+        "marker": "unverified",
+        "line": 1812
+      },
+      {
+        "classId": "gunslinger",
+        "sourceId": "GL-PTQ02",
+        "marker": "unverified",
+        "line": 1813
+      },
+      {
+        "classId": "gunslinger",
+        "sourceId": "GL-PTQ03",
+        "marker": "unverified",
+        "line": 1814
+      },
+      {
+        "classId": "gunslinger",
+        "sourceId": "GL-PTQ04",
+        "marker": "unverified",
+        "line": 1815
+      },
+      {
+        "classId": "jedi_master",
+        "sourceId": "JM-FS09",
+        "marker": "RESTRICTED",
+        "line": 2184
+      },
+      {
+        "classId": "jedi_master",
+        "sourceId": "JM-FS12",
+        "marker": "RESTRICTED",
+        "line": 2187
+      },
+      {
+        "classId": "jedi_master",
+        "sourceId": "JM-DS04",
+        "marker": "restricted",
+        "line": 2268
+      },
+      {
+        "classId": "officer",
+        "sourceId": "OF-MT16",
+        "marker": "QUARANTINED",
+        "line": 2433
+      },
+      {
+        "classId": "sith_apprentice",
+        "sourceId": "SA-SI12",
+        "marker": "QUARANTINE",
+        "line": 2600
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI01",
+        "marker": "quarantined",
+        "line": 2693
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI02",
+        "marker": "quarantined",
+        "line": 2694
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI03",
+        "marker": "quarantined",
+        "line": 2695
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI04",
+        "marker": "quarantined",
+        "line": 2696
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI05",
+        "marker": "quarantined",
+        "line": 2697
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI06",
+        "marker": "quarantined",
+        "line": 2698
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI07",
+        "marker": "quarantined",
+        "line": 2699
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI08",
+        "marker": "quarantined",
+        "line": 2700
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI09",
+        "marker": "quarantined",
+        "line": 2701
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI10",
+        "marker": "quarantined",
+        "line": 2702
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI11",
+        "marker": "quarantined",
+        "line": 2703
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-SI12",
+        "marker": "unverified",
+        "line": 2704
+      },
+      {
+        "classId": "sith_lord",
+        "sourceId": "SL-FS12",
+        "marker": "QUARANTINE",
+        "line": 2722
+      },
+      {
+        "classId": "outlaw",
+        "sourceId": "OL-FR05",
+        "marker": "QUARANTINE",
+        "line": 3663
+      },
+      {
+        "classId": "outlaw",
+        "sourceId": "OL-FR06",
+        "marker": "QUARANTINE",
+        "line": 3664
+      },
+      {
+        "classId": "outlaw",
+        "sourceId": "OL-FR07",
+        "marker": "QUARANTINE",
+        "line": 3665
+      },
+      {
+        "classId": "outlaw",
+        "sourceId": "OL-FR08",
+        "marker": "QUARANTINE",
+        "line": 3666
+      },
+      {
+        "classId": "outlaw",
+        "sourceId": "OL-FR09",
+        "marker": "QUARANTINE",
+        "line": 3667
+      },
+      {
+        "classId": "outlaw",
+        "sourceId": "OL-SL07",
+        "marker": "QUARANTINE",
+        "line": 3688
+      }
+    ],
+    "crossClassIdReuse": [
+      {
+        "id": "AW01",
+        "classes": [
+          "bounty_hunter",
+          "gladiator"
+        ],
+        "identicalText": false,
+        "lines": [
+          919,
+          3010
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "AW02",
+        "classes": [
+          "bounty_hunter",
+          "gladiator"
+        ],
+        "identicalText": false,
+        "lines": [
+          920,
+          3011
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "AW03",
+        "classes": [
+          "bounty_hunter",
+          "gladiator"
+        ],
+        "identicalText": false,
+        "lines": [
+          921,
+          3012
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "AW04",
+        "classes": [
+          "bounty_hunter",
+          "gladiator"
+        ],
+        "identicalText": false,
+        "lines": [
+          922,
+          3013
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "AW05",
+        "classes": [
+          "bounty_hunter",
+          "gladiator"
+        ],
+        "identicalText": false,
+        "lines": [
+          923,
+          3014
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "AW06",
+        "classes": [
+          "bounty_hunter",
+          "gladiator"
+        ],
+        "identicalText": false,
+        "lines": [
+          924,
+          3015
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "MF01",
+        "classes": [
+          "bounty_hunter",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          957,
+          3527
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "MF02",
+        "classes": [
+          "bounty_hunter",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          958,
+          3528
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "MF03",
+        "classes": [
+          "bounty_hunter",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          959,
+          3529
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "MF04",
+        "classes": [
+          "bounty_hunter",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          960,
+          3530
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "MF05",
+        "classes": [
+          "bounty_hunter",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          961,
+          3531
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "MF06",
+        "classes": [
+          "bounty_hunter",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          962,
+          3532
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "CF01",
+        "classes": [
+          "corporate_agent",
+          "gladiator",
+          "melee_duelist",
+          "enforcer",
+          "independent_droid",
+          "infiltrator",
+          "master_privateer",
+          "medic",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          2974,
+          3036,
+          3116,
+          3186,
+          3254,
+          3336,
+          3424,
+          3484,
+          3579
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "ID01",
+        "classes": [
+          "corporate_agent",
+          "gladiator",
+          "melee_duelist",
+          "enforcer",
+          "independent_droid",
+          "infiltrator",
+          "master_privateer",
+          "medic",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          2980,
+          3042,
+          3122,
+          3192,
+          3260,
+          3342,
+          3430,
+          3495,
+          3587
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "ID02",
+        "classes": [
+          "corporate_agent",
+          "gladiator",
+          "melee_duelist",
+          "enforcer",
+          "independent_droid",
+          "infiltrator",
+          "master_privateer",
+          "medic",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          2981,
+          3043,
+          3123,
+          3193,
+          3261,
+          3343,
+          3431,
+          3496,
+          3588
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "NEUTRAL",
+        "classes": [
+          "corporate_agent",
+          "gladiator",
+          "melee_duelist",
+          "enforcer",
+          "independent_droid",
+          "infiltrator",
+          "master_privateer",
+          "medic",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          2982,
+          3044,
+          3124,
+          3194,
+          3262,
+          3344,
+          3432,
+          3497,
+          3589
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "SV01",
+        "classes": [
+          "enforcer",
+          "medic"
+        ],
+        "identicalText": false,
+        "lines": [
+          3167,
+          3464
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "SV02",
+        "classes": [
+          "enforcer",
+          "medic"
+        ],
+        "identicalText": true,
+        "lines": [
+          3168,
+          3465
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "SV03",
+        "classes": [
+          "enforcer",
+          "medic"
+        ],
+        "identicalText": false,
+        "lines": [
+          3169,
+          3466
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "SV04",
+        "classes": [
+          "enforcer",
+          "medic"
+        ],
+        "identicalText": false,
+        "lines": [
+          3170,
+          3467
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "CF02",
+        "classes": [
+          "enforcer",
+          "independent_droid",
+          "infiltrator",
+          "master_privateer",
+          "medic",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          3187,
+          3255,
+          3337,
+          3425,
+          3485,
+          3580
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "CF03",
+        "classes": [
+          "medic",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          3486,
+          3581
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      },
+      {
+        "id": "CF04",
+        "classes": [
+          "medic",
+          "saboteur"
+        ],
+        "identicalText": false,
+        "lines": [
+          3487,
+          3582
+        ],
+        "resolution": "class-scoped runtime ids; each class joins only its own row"
+      }
+    ],
+    "q3Structure": [],
+    "editorialIssues": [],
+    "missingOpeningOrQuestion": []
+  }
+}

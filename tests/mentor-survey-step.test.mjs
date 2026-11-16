@@ -112,12 +112,20 @@ test('SV-01/MC-13 multiclass cutover: legacy step/definitions are deleted, node 
   }
 });
 
-test('PR-03 PrestigeSurveyStep runs a real Ace Pilot acquisition: pending intro, depth, purposes, commit staged in the session only', async () => {
+test('PR-03 PrestigeSurveyStep runs a real Ace Pilot acquisition: Q1 browse, routed Q3, depth, purposes; commit staged in the session only', async () => {
   const shell = fakeShell({ cls: 'Ace Pilot', actorClasses: { Scout: 6 } });
   const step = new PrestigeSurveyStep({ stepId: 'prestige-survey' });
   await step.onStepEnter(shell);
   let d = await step.getStepData({ shell });
-  assert.equal(d.phase, 'question'); assert.equal(d.view.questionId, 'q4'); assert.equal(d.title, 'What does this achievement mean to you?');
+  assert.equal(d.phase, 'question'); assert.equal(d.view.questionId, 'q1'); assert.equal(d.questionNumber, 1);
+  assert.equal(d.view.options.length, 8, 'Q1 browse page of eight, source order, no ranking claim'); assert.equal(d.view.page.hasMore, true);
+  await click(step, shell, 'msurvey-more', { questionId: 'q1', seq: String(d.seq) });
+  d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q1'); assert.equal(d.view.page.index, 1);
+  await click(step, shell, 'msurvey-choose', { questionId: 'q1', optionId: d.view.options[0].optionId, seq: String(d.seq) });
+  d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q3'); assert.equal(d.view.options.length, 5); assert.ok(d.view.situation);
+  await click(step, shell, 'msurvey-choose', { questionId: 'q3', optionId: d.view.options[1].optionId, seq: String(d.seq) });
+  d = await step.getStepData({ shell });
+  assert.equal(d.view.questionId, 'q4'); assert.equal(d.title, 'What does this achievement mean to you?');
   assert.equal(d.questionNumber, 4); assert.equal(d.totalQuestions, 6, 'Q5 second purpose is an inner stage, not a seventh question');
   await click(step, shell, 'msurvey-choose', { questionId: 'q4', optionId: 'pr.q4.swim', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q5'); assert.equal(d.view.options.length, 7);
@@ -127,7 +135,11 @@ test('PR-03 PrestigeSurveyStep runs a real Ace Pilot acquisition: pending intro,
   d = await step.getStepData({ shell }); assert.equal(d.phase, 'ready');
   await click(step, shell, 'msurvey-finish', { seq: String(d.seq) });
   const ev = buildSurveyLedgerPatch({ actor: shell.actor, selection: shell.progressionSession.store.mentorSurvey, transactionId: 'levelup-ap', level: 9, completedAt: 'now' })['flags.foundryvtt-swse.mentorSurvey.events'];
-  assert.deepEqual(ev[0].typed, { prestigeClassId: 'ace_pilot', declaredPrestigeDepth: 'swim', primaryPurpose: 'calling', secondaryPurpose: null });
+  const done = ev.find((e) => e.type === 'survey_completed');
+  assert.match(done.typed.classDiscoverySourceId, /^AP-Q1-/); assert.match(done.typed.responsibilityScene, /^AP-Q3-S0[1-5]$/); assert.match(done.typed.responsibilityLetter, /^[A-E]$/);
+  assert.equal(done.typed.declaredPrestigeDepth, 'swim'); assert.equal(done.typed.primaryPurpose, 'calling');
+  assert.equal(done.coverage.complete, false, 'Q2 and Q6 have no usable source: skipped, and the survey is reported incomplete');
+  assert.deepEqual(done.coverage.unavailable.map((u) => u.questionId).sort(), ['q2', 'q6']);
   assert.equal(shell.actor.flags['foundryvtt-swse'], undefined);
 });
 

@@ -28,7 +28,7 @@ export function buildSurveyLedgerPatch({ actor, selection, transactionId, level,
     if (!rec?.payload || rec.payload.surveyKind !== rec.surveyKind) continue;
     const events = buildCompletionEvents({
       payload: rec.payload, transactionId, actorLevel: lvl, completedAt, preview: rec.preview === true,
-      goals: rec.goals || [], existingEvents: ledger, answerDetails: rec.answerDetails || {}, tagEvidence: rec.tagEvidence || [], typed: rec.typed || {},
+      goals: rec.goals || [], existingEvents: ledger, answerDetails: rec.answerDetails || {}, tagEvidence: rec.tagEvidence || [], typed: rec.typed || {}, coverage: rec.coverage || null,
     });
     ledger = mergeEvents(ledger, events).events;
     created.push(...events);

@@ -18,7 +18,7 @@
         "q5Purposes": 1
       }
     },
-    "note": "Verbatim import of Q4 and Q5 only. Not imported: Q1 (slate policy unapproved, MSV-RD-005), Q2 (actor synthesis), Q3 (keyed to Q1 routes), Q6 (package not in Git)."
+    "note": "Verbatim import of Q4 and Q5. Q1 and Q3 live in the prestige-q1q3 companion pack. Not imported: Q2 (actor synthesis) and Q6 (package not in Git)."
   },
   "classes": {
     "ace_pilot": {
@@ -8058,9 +8058,7 @@
     "undecided"
   ],
   "blocked": {
-    "q1": "Class-discovery banks are not imported (varied source formats) and the slate policy is unapproved (MSV-RD-005).",
     "q2": "Q2 is an actor-evidence synthesis whose templates are not imported; it needs the verified evidence projection plus approved wording.",
-    "q3": "Q3 scenes are keyed to Q1 route ids and cannot be selected without Q1.",
     "q6": "The 32-class Q6 dialogue package is not in Git (owner to supply; never reconstructed)."
   }
 }

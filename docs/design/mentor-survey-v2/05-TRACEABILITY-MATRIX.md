@@ -90,7 +90,7 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | PR-07 | Q5 purposes; secondary has no weight; goal only on affirm | Q5 editorial | `resolvers/prestige.js`; goal conversation deferred (MSV-RD-010) | 13 | Tested (offline): purposes and optional second purpose only; the goal-affirmation conversation is deferred (MSV-RD-010) |
 | PR-08 | Multiple prestige acquisitions independent | handoff §8.5 | ledger | 13 | Tested (offline) |
 | PR-09 | Level-20 / low budget: no implied advancement | handoff §8.6 | resolver | 13 | Tested (offline) |
-| PR-10 | Quarantined mechanics never enabled | §39.3 | content gate | 1 | Not exercised: Q4/Q5 carry no mechanics claims; quarantine applies when Q1 is imported |
+| PR-10 | Quarantined mechanics never enabled | §39.3 | content gate; `q1Offerable` | 1 | Tested (offline): 35 marker-flagged Q1 rows are never offered, even in preview; per-route flags beyond the markers live in an uncommitted JSON (see 10 report) |
 | PR-11 | Prestige Q6 per-class dialogue | handoff (NEXT) | **Blocked**: source package not in Git (owner to supply; never reconstructed) | — | Blocked |
 
 ## Survey influence (addendum; `SV-30`…`SV-42`)
@@ -123,4 +123,8 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 
 | ID | Requirement | Source | Implementation | Status |
 |---|---|---|---|---|
-| PR-12 | Q1, Q2, Q3, Q6 are source-blocked and skipped; Q6 package is not in Git and is never reconstructed | 06; `MSV-RD-005` | `resolvePrestigeQuestion` | Tested (offline) |
+| PR-12 | Q2 and Q6 are source-blocked and skipped; Q6 package is not in Git and is never reconstructed; Q1 browses in source order (no slate, no ranking) and Q3 follows the exact Q1 route | 06; `MSV-RD-005` | `resolvePrestigeQuestion` | Tested (offline) |
+| PR-13 | Prestige Q1 (32 banks, 1,293 answers) and Q3 (160 scenes, 800 answers) imported; all 1,293 route assignments validated class-scoped | Rolling design v0.26; Q3 library v0.1 | `build-prestige-q1q3-content.mjs`, `prestige-q1q3.json`, `10-*` reports | Tested (offline) |
+| PR-14 | Authoritative source ids preserved; runtime ids class-namespaced; 23 cross-class id reuses scoped | same | importer | Tested (offline) |
+| PR-15 | Q3 keeps the class Mentor voice; no tag, bias key or developer note imported | Q3 library; directive tag exclusion | importer, tests | Tested (offline) |
+| PR-16 | Release gate and honest coverage: draft text only in preview; incomplete survey (Q2/Q6 unavailable) recorded as incomplete | directive release gate | `survey-controller._coverage`, ledger | Tested (offline) |

@@ -107,7 +107,7 @@ test('PR-07 Q5 offers seven class-specific first-person purposes with no titles;
   assert.ok(!second.view.options.some((o) => o.optionId.endsWith('.refinement')) && !second.view.options.some((o) => o.optionId.endsWith('.undecided')));
   assert.equal(second.view.options.at(-1).optionId, 'pr.ace_pilot.q5b.decline');
   c.choose('q5b', 'pr.ace_pilot.q5.contribution', c.seq);
-  assert.deepEqual(R.prestigeTyped(pack, c.draft, c.ctx), { prestigeClassId: 'ace_pilot', declaredPrestigeDepth: 'dive', primaryPurpose: 'refinement', secondaryPurpose: 'contribution' });
+  assert.deepEqual(R.prestigeTyped(pack, c.draft, c.ctx), { prestigeClassId: 'ace_pilot', classDiscoverySourceId: null, responsibilityScene: null, responsibilityLetter: null, declaredPrestigeDepth: 'dive', primaryPurpose: 'refinement', secondaryPurpose: 'contribution' });
 });
 
 test('PR-07/PR-09 declining the second purpose and choosing "undecided" are valid and force nothing: no goal, no next class', () => {
@@ -121,9 +121,9 @@ test('PR-07/PR-09 declining the second purpose and choosing "undecided" are vali
   assert.deepEqual(c.adapter.goals(pack, c.draft, c.ctx), [], '"another career" records a purpose only; a goal needs an explicit affirmation (MSV-RD-010)');
 });
 
-test('PR-12/PR-10 Q1, Q2, Q3 and Q6 are source-blocked and skipped; nothing is reconstructed', () => {
+test('PR-12/PR-10 without the Q1/Q3 companion pack, and always for Q2 and Q6, questions are source-blocked and skipped; nothing is reconstructed', () => {
   for (const q of ['q1', 'q2', 'q3', 'q6']) assert.equal(R.resolvePrestigeQuestion({ pack, draft: { answers: {} }, qid: q, ctx: { destinationClassId: 'ace_pilot' }, preview: true }).reason, 'blocked_source');
-  assert.deepEqual(Object.keys(pack.blocked).sort(), ['q1', 'q2', 'q3', 'q6']);
+  assert.deepEqual(Object.keys(pack.blocked).sort(), ['q2', 'q6']);
   assert.match(pack.blocked.q6, /not in Git/);
   const c = start('gladiator'); c.choose('q4', 'pr.q4.dip', c.seq); c.choose('q5', 'pr.gladiator.q5.exploration', c.seq); c.choose('q5b', 'pr.gladiator.q5b.decline', c.seq);
   assert.equal(c.view().phase, 'ready'); assert.ok(c.draft.skipped.q1 && c.draft.skipped.q2 && c.draft.skipped.q3 && c.draft.skipped.q6);
