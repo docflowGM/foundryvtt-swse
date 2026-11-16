@@ -9,7 +9,7 @@
       "q1Banks": 20,
       "q1Answers": 120,
       "q1Intros": 20,
-      "fixedIntros": 15,
+      "fixedIntros": 20,
       "q3Depths": 4,
       "q4Scenarios": 250,
       "q4Methods": 1250,
@@ -73,6 +73,18 @@
         }
       },
       "intros": {
+        "q2": {
+          "id": "mc.jedi.intro.q2",
+          "text": "You haven't come here empty-handed. Everything you've learned before still has its place, and these lessons may give you new ways to use it. How do you hope they'll fit together?",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+            "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+            "anchor": "Q2 fixed intro Miraj"
+          },
+          "speaker": "mentor"
+        },
         "q3": {
           "id": "mc.jedi.intro.q3",
           "text": "Some students come looking for a few useful lessons. Others discover they want to keep learning for years. You don't need to decide forever, but how far would you like to pursue this?",
@@ -164,6 +176,18 @@
         }
       },
       "intros": {
+        "q2": {
+          "id": "mc.noble.intro.q2",
+          "text": "Assessment: Your previous training is an asset, Master, not something to be discarded. We can add the skills to coordinate people, resources, and information around what you already do well. How would you like these capabilities to work together?",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+            "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+            "anchor": "Q2 fixed intro J0-N1"
+          },
+          "speaker": "mentor"
+        },
         "q3": {
           "id": "mc.noble.intro.q3",
           "text": "Planning Inquiry: A brief course of study may serve one purpose; sustained training may serve another. Neither is inherently superior, Master. How much of your time would you like to devote to this discipline?",
@@ -255,6 +279,18 @@
         }
       },
       "intros": {
+        "q2": {
+          "id": "mc.scoundrel.intro.q2",
+          "text": "Ye've already got a few tricks aboard, matey. I'm not here to toss 'em overboard. What would ye like to add to yer kit, and how'll ye use it alongside what ye know?",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+            "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+            "anchor": "Q2 fixed intro Ol' Salty"
+          },
+          "speaker": "mentor"
+        },
         "q3": {
           "id": "mc.scoundrel.intro.q3",
           "text": "Some folk learn one good trick and sail on. Others stay till they know every rope aboard. Maybe ye haven't decided yet. How deep are ye plannin' to go, matey?",
@@ -346,6 +382,18 @@
         }
       },
       "intros": {
+        "q2": {
+          "id": "mc.scout.intro.q2",
+          "text": "You've already got experience, so we're not starting from scratch. Think about what you do well and what you'd like to do differently. Where do you want this training to help?",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+            "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+            "anchor": "Q2 fixed intro Lead"
+          },
+          "speaker": "mentor"
+        },
         "q3": {
           "id": "mc.scout.intro.q3",
           "text": "I can teach you a few useful things, or we can put some real time into this. Maybe you don't know yet. How much are you planning to commit to your training?",
@@ -437,6 +485,18 @@
         }
       },
       "intros": {
+        "q2": {
+          "id": "mc.soldier.intro.q2",
+          "text": "You've got some experience already. Good! We can build on that, patch up what isn't working, or try something new. What sounds useful to you?",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+            "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+            "anchor": "Q2 fixed intro Breach"
+          },
+          "speaker": "mentor"
+        },
         "q3": {
           "id": "mc.soldier.intro.q3",
           "text": "Nothing wrong with learning a little, and nothing wrong with wanting to learn everything! You don't have to make up your mind today, either. How far do you think you'll take this?",
@@ -32390,6 +32450,6 @@
   },
   "blocked": {
     "q2": "Requires a certified q1_focus noun phrase per Q1 answer, authored Q2 answers E/F, and a verified top-four scores accessor; none exists in the committed design.",
-    "q6": "Requires the Q6 Mentor opening/closing, A-E answer text and Pass A/B libraries to be imported and a verified identity-claim source; not yet imported."
+    "q6": "The Q6 libraries are imported into multiclass-q6.json and attached by the content loader (pack.q6Content); Q6 is blocked only if that companion pack is absent. No verified runtime source joins an actor to the 297 canonical identities, so readings use the design's unresolved form."
   }
 }

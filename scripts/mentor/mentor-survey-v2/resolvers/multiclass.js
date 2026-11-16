@@ -6,9 +6,11 @@
  */
 import { hashString, EDITORIAL_STATUS, DEPTH_IDS } from '../contract.js';
 import { evaluateScopeRelease, isRecordPlayable, toViewOption } from '../content-store.js';
+import { resolveQ6, q6Reflection, q6SelectionMetaMany } from './multiclass-q6.js';
+import { resolveQ2, q2SelectionMeta } from './multiclass-q2.js';
 
 export const FOUNDATION_CLASSES = Object.freeze(['jedi', 'noble', 'scoundrel', 'scout', 'soldier']);
-export const MC_QUESTIONS = Object.freeze(['q1', 'q2', 'q3', 'q4', 'q5', 'q6']);
+export const MC_QUESTIONS = Object.freeze(['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q6n', 'q6a']); // q6n/q6a are Q6's NOT and AM stages (inner stages of question 6)
 
 /**
  * Trigger: the survey applies on the FIRST acquisition of a new foundation class, never when an already-held foundation
@@ -31,11 +33,13 @@ export function createMulticlassFlow(dest) {
     surveyKind: 'multiclass', scopeId: dest, definitionVersion: 1, questions: [...MC_QUESTIONS],
     deps: {
       q1: { inputs: ['destinationClassId', 'originClassId'] },
-      q2: { inputs: ['destinationClassId', 'originClassId'], after: ['q1'] },
+      q2: { inputs: ['destinationClassId', 'originClassId', 'observedRevision'], after: ['q1'] },
       q3: { inputs: ['destinationClassId'] }, // depth is independent of Q1/Q2 by design
       q4: { inputs: ['destinationClassId', 'originClassId', 'seed'], after: ['q1'] }, // Q3 never changes the scene
       q5: { inputs: ['destinationClassId', 'originClassId'], after: ['q1'] },
-      q6: { inputs: ['destinationClassId'], after: ['q1', 'q3', 'q4', 'q5'] },
+      q6: { inputs: ['destinationClassId', 'evidenceRevision', 'goalRevision'], after: ['q1'] },
+      q6n: { inputs: ['destinationClassId', 'evidenceRevision', 'goalRevision'], after: ['q6'] },
+      q6a: { inputs: ['destinationClassId', 'evidenceRevision', 'goalRevision'], after: ['q6', 'q6n'] },
     },
   };
 }
@@ -60,11 +64,12 @@ export function q4Scenario(pack, ctx, q1Answer) {
   return pack.q4[pick];
 }
 
-export function resolveMulticlassQuestion({ pack, draft, qid, ctx, preview = false }) {
+export function resolveMulticlassQuestion({ pack, draft, qid, ctx, preview = false, runtime = null, archetypeLookup = null }) {
   const dest = ctx.destinationClassId; const origin = ctx.originClassId;
   const mentor = pack.mentors[dest];
   let intro = null; let situation = null; let prompt = null; let records = [];
-  if (qid === 'q2' || qid === 'q6') return unavailable('blocked_source');
+  if (qid === 'q2') return resolveQ2({ pack, draft, ctx, runtime, preview });
+  if (qid === 'q6' || qid === 'q6n' || qid === 'q6a') return resolveQ6({ pack, draft, qid, ctx, runtime, archetypeLookup, preview });
   if (qid === 'q1') {
     intro = mentor.q1Intros[origin]; records = pack.q1[dest][origin];
   } else if (qid === 'q3') {
@@ -97,17 +102,22 @@ export function multiclassSelectionMeta(pack, qid, optionId, records) {
   const r = records.find((x) => x.id === optionId);
   if (!r) return null;
   if (qid === 'q1') return { kind: r.kind, origin: r.origin, position: r.position };
+  if (qid === 'q2') return q2SelectionMeta(records, optionId);
   if (qid === 'q3') return { kind: 'depth', depth: r.depth };
   if (qid === 'q4') return { kind: r.kind };
   if (qid === 'q5') return { kind: r.kind };
+  if (qid === 'q6') return { kind: 'calibration', calibration: r.calibration };
   return null;
 }
 
 /** Depth is a typed self-report, not a goal. `undecided` records no depth. Bridge is never a depth. */
+export { q6Reflection, q6SelectionMetaMany };
+
 export function multiclassTyped(pack, draft, ctx) {
   const d = draft.answers.q3?.meta?.depth;
   return {
     destinationClassId: ctx.destinationClassId, originClassId: ctx.originClassId,
     declaredClassInvestmentDepth: DEPTH_IDS.includes(d) && d !== 'undecided' ? d : null,
+    q2BiasKey: draft.answers.q2?.meta?.biasKey ?? null, // the player's own connection of a strength to their Q1 interest; carries no weight
   };
 }

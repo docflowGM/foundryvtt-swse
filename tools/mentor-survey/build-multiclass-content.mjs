@@ -4,7 +4,7 @@
  *
  *   node tools/mentor-survey/build-multiclass-content.mjs --source <dir containing SWSE_Multiclass_Survey_Rolling_Design.md>
  *
- * Imports VERBATIM: transition intros (Q1), fixed Q3-Q5 intros, Q1 banks (20 origin->destination x 6), the four approved
+ * Imports VERBATIM: transition intros (Q1), fixed Q2-Q5 intros, Q1 banks (20 origin->destination x 6), the four approved
  * Q3 depth answers, 250 Q4 scenarios with the Q1-route->family map, and 500 Q5 milestone templates.
  * NOT imported (not authored in the committed design): Q2 q1_focus phrases and Q2 answers E/F, Q5 undecided-Q1 fallback
  * banks, Q6 libraries. Approval flags: only the Q3 depth answers are owner-approved; everything else is draft_text.
@@ -68,7 +68,7 @@ for (const d of Object.values(CLS)) if (ORIGINS(d).some((o) => !q1Intros[d]?.[o]
 const fixedIntros = {};
 const put = (dest, q, text, anchor) => { (fixedIntros[dest] ||= {})[q] = rec(`mc.${dest}.intro.${q}`, text, false, anchor, { speaker: 'mentor' }); };
 for (let i = secQ26; i < secCont; i++) {
-  const q = /^### (Q[345]) — /.exec(lines[i]);
+  const q = /^### (Q[2345]) — /.exec(lines[i]);
   if (!q) continue;
   for (let j = i + 1; j < secCont && !/^### /.test(lines[j]); j++) {
     const m = /^\*\*(Miraj|Lead|Breach) — proposed fixed introduction\*\*$/.exec(lines[j]);
@@ -76,14 +76,14 @@ for (let i = secQ26; i < secCont; i++) {
   }
 }
 for (let i = secCont; i < secNobleQ1; i++) {
-  const q = /^### (Q[345]) — .*\(fixed/.exec(lines[i]);
+  const q = /^### (Q[2345]) — .*\(fixed/.exec(lines[i]);
   if (!q) continue;
   for (let j = i + 1; j < secNobleQ1 && !/^### /.test(lines[j]); j++) {
     const m = /^\*\*(J0-N1|Ol' Salty):\*\* /.exec(lines[j]);
     if (m) put(MENTOR_LABEL[m[1]], q[1].toLowerCase(), quoted(lines[j]), `${q[1]} fixed intro ${m[1]}`);
   }
 }
-for (const d of Object.values(CLS)) for (const q of ['q3', 'q4', 'q5']) if (!fixedIntros[d]?.[q]) fail(`fixed intro missing: ${d} ${q}`);
+for (const d of Object.values(CLS)) for (const q of ['q2', 'q3', 'q4', 'q5']) if (!fixedIntros[d]?.[q]) fail(`fixed intro missing: ${d} ${q}`);
 
 /* ---------- Q1 banks ---------- */
 const q1 = {};
@@ -170,7 +170,7 @@ const q5undecidedLine = lines.find((l) => /I am not sure what I want to accompli
 if (!q5undecidedLine) fail('Q5 undecided text not found');
 
 const counts = {
-  q1Banks: 20, q1Answers: 120, q1Intros: 20, fixedIntros: 15, q3Depths: 4, q4Scenarios: 250, q4Methods: 1250, q4Neutral: 250, q5Templates: 500,
+  q1Banks: 20, q1Answers: 120, q1Intros: 20, fixedIntros: 20, q3Depths: 4, q4Scenarios: 250, q4Methods: 1250, q4Neutral: 250, q5Templates: 500,
   q5TemplatesWithGoalSlot: Object.values(q5).flatMap((o) => Object.values(o)).flatMap((r) => Object.values(r)).flat().filter((x) => x.needsGoalSlot).length,
 };
 const pack = {
@@ -181,7 +181,7 @@ const pack = {
   q5Undecided: rec('mc.q5.undecided', 'I am not sure what I want to accomplish first. I would rather see what this training makes possible.', false, 'Q5 milestone table undecided', { kind: 'neutral' }),
   blocked: {
     q2: 'Requires a certified q1_focus noun phrase per Q1 answer, authored Q2 answers E/F, and a verified top-four scores accessor; none exists in the committed design.',
-    q6: 'Requires the Q6 Mentor opening/closing, A-E answer text and Pass A/B libraries to be imported and a verified identity-claim source; not yet imported.',
+    q6: 'The Q6 libraries are imported into multiclass-q6.json and attached by the content loader (pack.q6Content); Q6 is blocked only if that companion pack is absent. No verified runtime source joins an actor to the 297 canonical identities, so readings use the design\'s unresolved form.',
   },
 };
 writeJson(path.join(ROOT, 'data/mentor-survey/multiclass.json'), pack);

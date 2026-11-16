@@ -41,17 +41,26 @@
       <div class="prog-l1-survey-stage__question-block">
         <div class="prog-l1-survey-stage__question-kicker">Question {{questionNumber}} of {{totalQuestions}}</div>
         {{#if view.mentorIntro}}<div class="prog-l1-survey-stage__dialogue-text" data-l1-survey-dialogue-text>{{view.mentorIntro}}</div>{{/if}}
-        {{#if view.situation}}<div class="prog-l1-survey-stage__dialogue-text" data-l1-survey-dialogue-text>{{view.situation}}</div>{{/if}}
+        {{#if view.situation}}<div class="prog-l1-survey-stage__dialogue-text" style="white-space: pre-line" data-l1-survey-dialogue-text>{{view.situation}}</div>{{/if}}
         {{#if view.prompt}}<div class="prog-l1-survey-stage__dialogue-text" data-l1-survey-dialogue-text>{{view.prompt}}</div>{{/if}}
         {{#if staleNotice}}<div class="prog-l1-survey-stage__subtitle">{{staleNotice}}</div>{{/if}}
       </div>
       <div class="prog-l1-survey-stage__choices">
+        {{#if multiSelect}}
+        {{#each view.options}}
+        <button type="button" class="prog-l1-survey-stage__choice" data-multi-option data-action="msurvey-toggle" data-option-id="{{this.optionId}}">
+          <span class="prog-l1-survey-stage__choice-copy"><span class="prog-l1-survey-stage__choice-label">{{this.text}}</span></span>
+        </button>
+        {{/each}}
+        <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="msurvey-submit-many" data-question-id="{{view.questionId}}" data-seq="{{seq}}">Continue</button>
+        {{else}}
         {{#each view.options}}
         <button type="button" class="prog-l1-survey-stage__choice {{#if (eq this.optionId ../selectedOptionId)}}is-selected{{/if}}"
                 data-action="msurvey-choose" data-question-id="{{../view.questionId}}" data-option-id="{{this.optionId}}" data-seq="{{../seq}}">
           <span class="prog-l1-survey-stage__choice-copy"><span class="prog-l1-survey-stage__choice-label">{{this.text}}</span></span>
         </button>
         {{/each}}
+        {{/if}}
         {{#if view.page.hasMore}}
         <button type="button" class="prog-l1-survey-stage__choice" data-action="msurvey-more" data-question-id="{{view.questionId}}" data-seq="{{seq}}">
           <span class="prog-l1-survey-stage__choice-copy"><span class="prog-l1-survey-stage__choice-label">{{view.page.moreText}}</span></span>

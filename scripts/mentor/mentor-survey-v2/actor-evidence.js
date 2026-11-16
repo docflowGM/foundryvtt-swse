@@ -20,6 +20,15 @@ export function canonicalIdOf(item) {
   return id ? { canonicalId: String(id), certified: true } : { canonicalId: `name:${slug(item?.name)}`, certified: false };
 }
 
+const SMALL = new Set(['the', 'of', 'a', 'an', 'in', 'and']);
+/** Display name for a skill key: the document's own label when present, else the key split and title-cased ("useTheForce" -> "Use the Force"). */
+export function skillLabel(key, skill) {
+  const own = skill?.label ?? skill?.name;
+  if (typeof own === 'string' && own.trim()) return own.trim();
+  const words = String(key).replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ').trim().split(/\s+/);
+  return words.map((w, i) => { const lw = w.toLowerCase(); return i > 0 && SMALL.has(lw) ? lw : lw.charAt(0).toUpperCase() + lw.slice(1); }).join(' ');
+}
+
 const items = (actor) => Array.from(actor?.items?.contents ?? actor?.items ?? []);
 
 /**
@@ -43,7 +52,7 @@ export function projectActorEvidence(actor) {
   }
   const skills = actor?.system?.skills || {};
   for (const [key, skill] of Object.entries(skills)) {
-    if (skill?.trained === true) facts.push({ kind: 'trained_skill', canonicalId: `skill:${key}`, certified: true, label: key, source: { path: `system.skills.${key}.trained` } });
+    if (skill?.trained === true) facts.push({ kind: 'trained_skill', canonicalId: `skill:${key}`, certified: true, label: skillLabel(key, skill), source: { path: `system.skills.${key}.trained` } });
   }
   facts.sort((a, b) => (KIND_ORDER[a.kind] - KIND_ORDER[b.kind]) || a.label.localeCompare(b.label) || a.canonicalId.localeCompare(b.canonicalId));
   facts.forEach((f, i) => { f.factId = `fact.${i}.${f.kind}.${slug(f.canonicalId)}`; });

@@ -17,15 +17,18 @@ import { CALIBRATION_IDS, EVENT_TYPES, LANES, hashString, revisionOf, stableStri
 import { selectObservations, allFactsGrounded } from './actor-evidence.js';
 import { GOAL_TARGET_TYPES, reduceLedger, eventIdOf } from './intent-ledger.js';
 
+/** The ten inference claim kinds of the Pass B correction library (the only things a player may reject). */
 export const CLAIM_KINDS = Object.freeze([
-  'identity_parent', 'identity_specialization', 'role_inference', 'method_inference', 'mechanical_theme',
-  'trend', 'goal_relationship', 'motivation_inference', 'overconfidence',
+  'archetype_parent', 'archetype_specialization', 'role_inference', 'method_preference', 'mechanical_theme_identity',
+  'past_to_present_trend', 'goal_relationship', 'motivation_inference', 'unresolved_reading_disagreement', 'overconfidence',
 ]);
 
 /** Max interpretations SHOWN in the NOT stage per calibration answer (design: B 1-2, C 1-3, D 3-5, E 5-7). Caps only. */
 export const NOT_CAPS = Object.freeze({ A: 0, B: 2, C: 3, D: 5, E: 7 });
 export const REQUIRES_AM = Object.freeze({ A: false, B: false, C: false, D: true, E: true });
 export const MAX_OBSERVATIONS = 3;
+/** Which declared goal a reading quotes when several are active (the long-term ambition outranks the career aspiration). */
+export const GOAL_LANE_PRIORITY = Object.freeze(['prestige.goal', 'l1.long_term_ambition', 'l1.career', 'l1.specialization']);
 
 const deepFreeze = (o) => {
   if (o && typeof o === 'object' && !Object.isFrozen(o)) { Object.freeze(o); Object.values(o).forEach(deepFreeze); }
@@ -73,16 +76,18 @@ export function createReading({ surveyKind, scopeId, projection, events = [], cl
     if (c.groundedBy && !allFactsGrounded(projection, c.groundedBy)) { problems.push(`${c.claimId}: cites a fact the actor does not have`); continue; }
     accepted.push({ claimId: c.claimId, claimKind: c.claimKind, inference: true, ...(c.canonicalRef ? { canonicalRef: { ...c.canonicalRef } } : {}), groundedBy: [...(c.groundedBy || [])] });
   }
-  const identity = accepted.find((c) => c.claimKind === 'identity_specialization') || accepted.find((c) => c.claimKind === 'identity_parent') || null;
+  const identity = accepted.find((c) => c.claimKind === 'archetype_specialization') || accepted.find((c) => c.claimKind === 'archetype_parent') || null;
 
   const evidence = selectObservations(projection, { max: MAX_OBSERVATIONS });
   const { goals } = reduceLedger(events);
-  const activeGoals = Object.values(goals);
-  const goal = activeGoals.length ? activeGoals[0] : null; // quoted separately, never merged with identity
+  // Deterministic goal choice: fixed lane priority, then lane name. The goal is quoted separately, never merged with identity.
+  const activeGoals = Object.values(goals).sort((a, b) => (GOAL_LANE_PRIORITY.indexOf(a.goalLane) + 1 || 99) - (GOAL_LANE_PRIORITY.indexOf(b.goalLane) + 1 || 99) || a.goalLane.localeCompare(b.goalLane));
+  const goal = activeGoals.length ? activeGoals[0] : null;
   const fulfillment = goal ? verifyGoalFulfillment(goal, projection.classLevels) : { fulfilled: false, reason: 'no_declared_goal' };
 
   const am = [];
   for (const a of amCandidates) {
+    if (a.free === true && !a.canonicalRef) { am.push({ candidateId: a.candidateId, free: true }); continue; } // plain-language self-description, no archetype claimed
     const rec = archetypeLookup?.(a.canonicalRef?.id);
     if (rec && rec.kind === a.canonicalRef.kind) am.push({ candidateId: a.candidateId, canonicalRef: { ...a.canonicalRef } });
     else problems.push(`${a.candidateId}: AM candidate does not resolve exactly`);
@@ -139,6 +144,10 @@ export function selectAm(reading, state, candidateIds) {
   if (state.readingId !== reading.readingId || state.stage !== 'am') return bad(state, 'wrong_stage');
   const picked = [...new Set(candidateIds || [])];
   if (!picked.every((id) => state.amShown.includes(id))) return bad(state, 'not_a_shown_candidate');
+  // The same canonical interpretation may not be rejected and affirmed in one pass without explicit reconciliation.
+  const rejectedRefs = new Set(inferenceClaims(reading).filter((c) => state.notSelected.includes(c.claimId) && c.canonicalRef).map((c) => c.canonicalRef.id));
+  const affirmedRefs = reading.amCandidates.filter((a) => picked.includes(a.candidateId) && a.canonicalRef).map((a) => a.canonicalRef.id);
+  if (affirmedRefs.some((id) => rejectedRefs.has(id))) return bad(state, 'contradiction_needs_reconciliation');
   return { ...state, ok: true, amSelected: picked, stage: 'done' };
 }
 

@@ -4,6 +4,7 @@
  * If the finalization fails or the session is discarded, this is never called, so nothing is persisted.
  */
 import { buildCompletionEvents, buildLedgerSetPatch, readLedger, mergeEvents } from './intent-ledger.js';
+import { buildReflectionEvents } from './reflection.js';
 import { SESSION_SELECTION_KEY } from './contract.js';
 
 /**
@@ -31,6 +32,13 @@ export function buildSurveyLedgerPatch({ actor, selection, transactionId, level,
     });
     ledger = mergeEvents(ledger, events).events;
     created.push(...events);
+    // Shared Q6 reflection: a snapshot of exactly what was shown plus (only if the player rejected or affirmed something) a
+    // correction. Inferred-identity lane only; it never touches goals, acquisitions or eligibility.
+    if (rec.reflection?.reading && rec.reflection?.result?.ok && events.length) {
+      const refl = buildReflectionEvents({ reading: rec.reflection.reading, result: rec.reflection.result, transactionId, actorLevel: lvl, completedAt, preview: rec.preview === true, existingEvents: ledger });
+      ledger = mergeEvents(ledger, refl).events;
+      created.push(...refl);
+    }
   }
   return buildLedgerSetPatch(actor, created);
 }

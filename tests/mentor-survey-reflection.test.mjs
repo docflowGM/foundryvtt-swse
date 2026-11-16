@@ -21,9 +21,9 @@ const thin = actor([item('class', 'Noble', { system: { level: 1 } })]);
 const ARCH = { diplomat: { id: 'diplomat', kind: 'parent' }, envoy: { id: 'envoy', kind: 'specialization', parentId: 'diplomat' }, spy: { id: 'spy', kind: 'parent' } };
 const lookup = (id) => ARCH[id] || null;
 const claims = [
-  { claimId: 'c.parent', claimKind: 'identity_parent', canonicalRef: { id: 'diplomat', kind: 'parent' } },
-  { claimId: 'c.role', claimKind: 'role_inference' }, { claimId: 'c.method', claimKind: 'method_inference' },
-  { claimId: 'c.theme', claimKind: 'mechanical_theme' }, { claimId: 'c.trend', claimKind: 'trend' },
+  { claimId: 'c.parent', claimKind: 'archetype_parent', canonicalRef: { id: 'diplomat', kind: 'parent' } },
+  { claimId: 'c.role', claimKind: 'role_inference' }, { claimId: 'c.method', claimKind: 'method_preference' },
+  { claimId: 'c.theme', claimKind: 'mechanical_theme_identity' }, { claimId: 'c.trend', claimKind: 'past_to_present_trend' },
   { claimId: 'c.motive', claimKind: 'motivation_inference' }, { claimId: 'c.over', claimKind: 'overconfidence' },
   { claimId: 'c.goalrel', claimKind: 'goal_relationship' },
 ];
@@ -70,19 +70,19 @@ test('SV-18 reading is frozen, deterministic and validates canonical refs exactl
   assert.equal(r1.readingId, r2.readingId);
   assert.ok(Object.isFrozen(r1) && Object.isFrozen(r1.claims));
   assert.deepEqual(r1.identity.canonicalRef, { id: 'diplomat', kind: 'parent' });
-  const wrongKind = read(rich, { claims: [{ claimId: 'x', claimKind: 'identity_specialization', canonicalRef: { id: 'diplomat', kind: 'specialization', parentId: 'diplomat' } }] });
+  const wrongKind = read(rich, { claims: [{ claimId: 'x', claimKind: 'archetype_specialization', canonicalRef: { id: 'diplomat', kind: 'specialization', parentId: 'diplomat' } }] });
   assert.equal(wrongKind.identity.status, 'unresolved'); assert.equal(wrongKind.rejected.length, 1);
-  const badParent = read(rich, { claims: [{ claimId: 'x', claimKind: 'identity_specialization', canonicalRef: { id: 'envoy', kind: 'specialization', parentId: 'spy' } }] });
+  const badParent = read(rich, { claims: [{ claimId: 'x', claimKind: 'archetype_specialization', canonicalRef: { id: 'envoy', kind: 'specialization', parentId: 'spy' } }] });
   assert.equal(badParent.identity.status, 'unresolved');
-  const ok = read(rich, { claims: [{ claimId: 'x', claimKind: 'identity_specialization', canonicalRef: { id: 'envoy', kind: 'specialization', parentId: 'diplomat' } }] });
+  const ok = read(rich, { claims: [{ claimId: 'x', claimKind: 'archetype_specialization', canonicalRef: { id: 'envoy', kind: 'specialization', parentId: 'diplomat' } }] });
   assert.equal(ok.identity.canonicalRef.id, 'envoy');
 });
 
 test('SV-14 claims may not cite facts the actor lacks', () => {
-  const r = read(rich, { claims: [{ claimId: 'g', claimKind: 'method_inference', groundedBy: ['fact.999.feat.invented'] }] });
+  const r = read(rich, { claims: [{ claimId: 'g', claimKind: 'method_preference', groundedBy: ['fact.999.feat.invented'] }] });
   assert.equal(r.claims.length, 0); assert.equal(r.rejected.length, 1);
   const real = E.projectActorEvidence(rich).facts[0].factId;
-  assert.equal(read(rich, { claims: [{ claimId: 'g', claimKind: 'method_inference', groundedBy: [real] }] }).claims.length, 1);
+  assert.equal(read(rich, { claims: [{ claimId: 'g', claimKind: 'method_preference', groundedBy: [real] }] }).claims.length, 1);
   assert.equal(read(thin, { claims: [] }).identity.status, 'unresolved', 'no identity is invented for thin evidence');
 });
 

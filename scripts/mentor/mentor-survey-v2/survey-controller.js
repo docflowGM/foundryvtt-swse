@@ -45,6 +45,7 @@ export class SurveyController {
     this.draft = null;
     this.committed = null;
     this.ctx = null;
+    this.runtime = null; // live, non-persisted inputs (e.g. finalized evidence); only their revisions enter the draft context
     this.flow = null;
     this.availability = { available: false, reason: 'not_synced' };
   }
@@ -54,6 +55,7 @@ export class SurveyController {
     const n = this.adapter.normalize(rawCtx);
     if (!n) { this.flow = null; this.ctx = rawCtx; this.availability = { available: false, reason: 'not_applicable' }; return this; }
     const { ctx, scopeKey, scopeId } = n;
+    this.runtime = n.runtime ?? null;
     this.scopeKey = scopeKey;
     this.availability = this.adapter.availability({ pack: this.pack, manifest: this.manifest, ctx, preview: this.preview });
     this.ctx = ctx;
@@ -75,7 +77,7 @@ export class SurveyController {
   get seq() { return (this.draft?.actionSeq ?? 0) + 1; }
 
   _resolve(qid, pageIndex) {
-    return this.adapter.resolveQuestion({ pack: this.pack, draft: this.draft, qid, ctx: this.ctx, archetypeLookup: this.lookup, preview: this.preview, pageIndex });
+    return this.adapter.resolveQuestion({ pack: this.pack, draft: this.draft, qid, ctx: this.ctx, archetypeLookup: this.lookup, preview: this.preview, pageIndex, runtime: this.runtime });
   }
 
   _pageIndex(qid) { return Session.getBrowse(this.flow, this.draft, qid)?.pageIndex ?? 0; }
@@ -148,6 +150,20 @@ export class SurveyController {
     return this._apply(Session.selectAnswer(this.flow, this.draft, qid, optionId, seq, this.adapter.selectionMeta(this.pack, qid, optionId, r.records)));
   }
 
+  /**
+   * Multi-select stages (e.g. Q6 NOT/AM): choose zero or more of the OFFERED options. The adapter re-validates the whole
+   * selection (including the shared reflection engine's caps and contradiction rules) and supplies trusted meta.
+   */
+  chooseMany(qid, ids, seq) {
+    if (!this.flow || this.draft.status !== Session.DRAFT_STATUS.IN_PROGRESS || !this.adapter.multiSelectQuestions?.includes(qid)) return false;
+    const r = this._resolve(qid, 0);
+    if (!r.available || !Array.isArray(ids)) return false;
+    const picked = [...new Set(ids)].sort();
+    const meta = this.adapter.selectionMetaMany({ pack: this.pack, draft: this.draft, qid, ids: picked, records: r.records, ctx: this.ctx, runtime: this.runtime, archetypeLookup: this.lookup });
+    if (!meta) return false;
+    return this._apply(Session.selectAnswer(this.flow, this.draft, qid, `multi:${picked.join('|') || 'none'}`, seq, meta));
+  }
+
   /** "Other possibilities / other approaches": navigation only. Records no answer and no intent. */
   more(qid, seq) {
     if (!this.flow || !this.adapter.pagedQuestions.includes(qid)) return false;
@@ -194,6 +210,10 @@ export class SurveyController {
     const payload = Session.toCommitPayload(this.flow, this.draft);
     const answerDetails = {}; const tagEvidence = [];
     for (const [qid, a] of Object.entries(payload.answers)) {
+      if (String(a.optionId).startsWith('multi:')) { // multi-select stage: freeze the exact statements the player saw and chose
+        answerDetails[qid] = { text: (a.meta?.texts || []).join(' | '), texts: a.meta?.texts || [], editorialStatus: 'draft_text', mechanicsStatus: 'none' };
+        continue;
+      }
       const rec = this.index.get(a.optionId);
       if (!rec) continue;
       answerDetails[qid] = { text: rec.text, editorialStatus: rec.editorialStatus, mechanicsStatus: rec.mechanicsStatus };
@@ -207,6 +227,7 @@ export class SurveyController {
       payload, answerDetails, tagEvidence,
       goals: this.adapter.goals(this.pack, this.draft, this.ctx),
       typed: this.adapter.typed(this.pack, this.draft, this.ctx),
+      reflection: this.adapter.reflection?.({ pack: this.pack, draft: this.draft, ctx: this.ctx, runtime: this.runtime, archetypeLookup: this.lookup }) ?? null,
       preview: this.preview || draftContent, // any unapproved content makes the event a preview event
     };
     return this.committed;

@@ -17,9 +17,14 @@ export function primeManifest() {
 /** Synchronous view of the manifest, or null if it has not loaded (callers must treat null as "not released"). */
 export function getManifestSync() { return manifest; }
 
+/** Companion packs attached to a survey's pack under the given key (kept separate on disk to keep each file reviewable). */
+const COMPANIONS = { multiclass: [['multiclass-q6', 'q6Content'], ['multiclass-q2', 'q2Content']] };
+
 export async function loadSurveyContent(kind) {
   if (!packs.has(kind)) {
-    packs.set(kind, fetch(`${DATA}/${kind}.json`).then((r) => r.json()).catch((err) => { packs.delete(kind); throw err; }));
+    const main = fetch(`${DATA}/${kind}.json`).then((r) => r.json());
+    const extra = (COMPANIONS[kind] || []).map(([file, key]) => fetch(`${DATA}/${file}.json`).then((r) => r.json()).then((j) => [key, j]));
+    packs.set(kind, Promise.all([main, ...extra]).then(([pack, ...pairs]) => ({ ...pack, ...Object.fromEntries(pairs) })).catch((err) => { packs.delete(kind); throw err; }));
   }
   const [pack, m] = await Promise.all([packs.get(kind), primeManifest()]);
   return { pack, manifest: m };

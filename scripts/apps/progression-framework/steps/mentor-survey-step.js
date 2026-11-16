@@ -22,6 +22,8 @@ import { PrestigeSurveyController } from '/systems/foundryvtt-swse/scripts/mento
 import { MulticlassSurveyController } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/multiclass-controller.js';
 import { mergeIntoSessionValue } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/survey-controller.js';
 import { projectActorEvidence } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/actor-evidence.js';
+import { readLedger } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/intent-ledger.js';
+import { IdentityEngine } from '/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js';
 import { loadSurveyContent } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/content-loader.js';
 import { SESSION_SELECTION_KEY } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/contract.js';
 import { canUseEditorialPreview } from '/systems/foundryvtt-swse/scripts/settings/mentor-survey-preview.js';
@@ -129,6 +131,13 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
     let changed = false;
     switch (action) {
       case 'msurvey-choose': changed = ctl.choose(ds.questionId, ds.optionId, seq); break;
+      case 'msurvey-submit-many': { // multi-select stage: the toggled options are read from the DOM; the controller re-validates them
+        const picked = [...(shell?.element?.querySelectorAll?.('[data-multi-option].is-selected') ?? [])].map((el) => el.dataset.optionId);
+        changed = ctl.chooseMany(ds.questionId, picked, seq); break;
+      }
+      case 'msurvey-toggle': { // UI-only: no survey state changes until the selection is submitted
+        target?.classList?.toggle?.('is-selected'); return true;
+      }
       case 'msurvey-more': changed = ctl.more(ds.questionId, seq); break;
       case 'msurvey-skip-question': changed = ctl.skipQuestion(ds.questionId, seq); break;
       case 'msurvey-back': changed = ctl.back(seq); break;
@@ -158,7 +167,7 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
       mentorName: mentor?.name || null, mentorTitle: mentor?.title || mentor?.class || null,
       mentorPortraitMarkup: portraitMarkup(mentorPortrait, mentor?.name),
       phase: v.phase, seq: v.seq ?? 0, preview: v.preview === true,
-      view: v.view || null, questionNumber: v.questionNumber ?? null, totalQuestions: total,
+      view: v.view || null, multiSelect: v.view?.multiSelect === true, questionNumber: v.questionNumber ?? null, totalQuestions: total,
       reconfirm: v.reconfirm || null, staleNotice: v.staleNotice || null, selectedOptionId: v.selectedOptionId || null,
       canGoBack: v.canGoBack === true, progress: v.progress || { answered: 0, resolved: 0, total },
       progressDots: numbers.map((n) => ({ index: n, isDone: Boolean(this._ctl?.draft) && resolvedNum(n), isActive: n === v.questionNumber })),
@@ -202,6 +211,13 @@ export class MulticlassSurveyStep extends MentorSurveyStep {
       selectedClassId: resolveClassId(shell),
       classLevels: projectActorEvidence(shell?.actor).classLevels,
       seed: shell?.progressionSession?.sessionId || 'session',
+      // Q6 reads FINALIZED actor state and the committed ledger only (never pending selections or draft answers).
+      evidence: projectActorEvidence(shell?.actor),
+      events: readLedger(shell?.actor),
+      // Q2 reads the EXISTING observed-only accessor (finalized owned items, ability scores, trained skills). No new scorer;
+      // if the primitive registries are not initialized it returns {} and Q2 is simply not offered.
+      observedBias: (() => { try { return IdentityEngine.computeObservedBehaviorBias(shell?.actor)?.mechanicalBias || {}; } catch (_e) { return {}; } })(),
+      canonicalBiasKeys: this._ctl?.pack?.q2Content?.keys || [],
     };
   }
 }

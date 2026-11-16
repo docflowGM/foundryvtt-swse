@@ -64,6 +64,9 @@ test('MC-03 MulticlassSurveyStep runs a real Noble->Jedi session: render data, a
   await click(step, shell, 'msurvey-choose', { questionId: 'q4', optionId: d.view.options[0].optionId, seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q5');
   await click(step, shell, 'msurvey-choose', { questionId: 'q5', optionId: d.view.options[0].optionId, seq: String(d.seq) });
+  d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q6'); assert.equal(d.questionNumber, 6); assert.equal(d.totalQuestions, 6, 'Q2 is skipped but still counts; NOT/AM are inner stages of Q6');
+  assert.ok(d.view.situation.length > 40, 'Q6 shows the composed Mentor reading');
+  await click(step, shell, 'msurvey-choose', { questionId: 'q6', optionId: 'mc.q6.choice.a', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.phase, 'ready');
   assert.equal(shell.actor.flags['foundryvtt-swse'], undefined, 'nothing is written to the actor by the step');
   assert.deepEqual(step.getSelection(), { selected: [], count: 0, isComplete: false });
@@ -71,7 +74,7 @@ test('MC-03 MulticlassSurveyStep runs a real Noble->Jedi session: render data, a
   assert.equal(step.getSelection().isComplete, true);
   const patch = buildSurveyLedgerPatch({ actor: shell.actor, selection: shell.progressionSession.store.mentorSurvey, transactionId: shell.progressionSession.sessionId, level: 4, completedAt: 'now' });
   const ev = patch['flags.foundryvtt-swse.mentorSurvey.events'];
-  assert.equal(ev[0].typed.declaredClassInvestmentDepth, 'swim'); assert.equal(ev[0].scopeId, 'jedi');
+  assert.equal(ev[0].typed.declaredClassInvestmentDepth, 'swim'); assert.equal(ev[0].scopeId, 'jedi'); assert.deepEqual(ev.map((e) => e.type), ['survey_completed', 'reflection_snapshot']);
   assert.ok(shell.renders.length > 0);
 });
 

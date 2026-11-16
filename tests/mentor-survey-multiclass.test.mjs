@@ -184,7 +184,7 @@ const completeFlow = (ctl) => {
 test('MC-13 commit happens only through the finalizer: typed depth and class context ride the event; canceled/skipped persist nothing', () => {
   const ctl = start('soldier', 'noble'); const rec = completeFlow(ctl);
   assert.ok(rec); assert.equal(rec.scopeKey, 'multiclass:noble'); assert.deepEqual(rec.goals, []);
-  assert.deepEqual(rec.typed, { destinationClassId: 'noble', originClassId: 'soldier', declaredClassInvestmentDepth: 'dive' });
+  assert.deepEqual(rec.typed, { destinationClassId: 'noble', originClassId: 'soldier', declaredClassInvestmentDepth: 'dive', q2BiasKey: null });
   const patch = F.buildSurveyLedgerPatch({ actor: actor(), selection: ctl.serialize(), transactionId: 'levelup-3', level: 4, completedAt: 'now' });
   const ev = patch['flags.foundryvtt-swse.mentorSurvey.events'];
   assert.equal(ev.length, 1); assert.equal(ev[0].surveyKind, 'multiclass'); assert.equal(ev[0].scopeId, 'noble'); assert.equal(ev[0].actorLevel, 4);
