@@ -235,6 +235,9 @@ export class PrestigeSurveyStep extends MentorSurveyStep {
   _liveContext(shell) {
     return {
       selectedClassId: resolveClassId(shell), classLevels: projectActorEvidence(shell?.actor).classLevels,
+      // Q6 (the shared Mentor's Reflection) reads FINALIZED actor state and the committed ledger only, exactly as in the multiclass survey.
+      evidence: projectActorEvidence(shell?.actor),
+      events: readLedger(shell?.actor),
       // Q2 reads the existing observed-only accessor and its read-only provenance (finalized owned items, trained skills); no new scorer.
       observedBias: (() => { try { return IdentityEngine.computeObservedBehaviorBias(shell?.actor)?.mechanicalBias || {}; } catch (_e) { return {}; } })(),
       observedProvenance: (() => { try { return IdentityEngine.computeObservedBehaviorBiasProvenance(shell?.actor) || null; } catch (_e) { return null; } })(),

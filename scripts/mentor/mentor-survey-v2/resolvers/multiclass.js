@@ -7,7 +7,7 @@
  */
 import { hashString, EDITORIAL_STATUS, DEPTH_IDS } from '../contract.js';
 import { evaluateScopeRelease, isRecordPlayable, toViewOption } from '../content-store.js';
-import { resolveQ6, q6Reflection, q6SelectionMetaMany } from './multiclass-q6.js';
+import { resolveQ6, q6Reflection, q6SelectionMetaMany } from './reflection-q6.js';
 import { resolveQ2, q2SelectionMeta } from './multiclass-q2.js';
 import { reduceLedger } from '../intent-ledger.js';
 import { pickActiveGoal, goalDisplay } from '../reflection.js';
@@ -114,7 +114,7 @@ export function resolveMulticlassQuestion({ pack, draft, qid, ctx, preview = fal
   }
   if (!origin && ctx.originClassIds?.length > 1 && qid !== 'q3' && !qid.startsWith('q6')) return unavailable('needs_origin');
   if (qid === 'q2') return resolveQ2({ pack, draft, ctx, runtime, preview });
-  if (qid === 'q6' || qid === 'q6n' || qid === 'q6a') return resolveQ6({ pack, draft, qid, ctx, runtime, archetypeLookup, preview });
+  if (qid === 'q6' || qid === 'q6n' || qid === 'q6a') return resolveQ6({ surveyKind: 'multiclass', pack, draft, qid, ctx, runtime, archetypeLookup, preview });
   if (qid === 'q1') {
     intro = mentor.q1Intros[origin]; records = pack.q1[dest][origin];
   } else if (qid === 'q3') {

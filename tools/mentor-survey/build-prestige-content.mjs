@@ -89,11 +89,11 @@ const classes = Object.fromEntries(Object.values(routes).sort((a, b) => a.order 
 const counts = { classes: 32, q4Depth: 4, q4Intros: 64, q4Rails: 128, q5Intros: 64, q5Purposes: 224, q5SecondPrompts: 32, q5Declines: 32, approvedClasses: { q4: Object.values(q4).filter((c) => c.pendingIntro.editorialStatus === 'owner_approved_text').length, q5Purposes: Object.values(q5).filter((c) => c.options[0].editorialStatus === 'owner_approved_text').length } };
 writeJson(path.join(ROOT, 'data/mentor-survey/prestige.json'), {
   _meta: { survey: 'prestige', contentVersion: 1, sourceCommit: SOURCE_COMMIT, generatedBy: 'tools/mentor-survey/build-prestige-content.mjs', counts,
-    note: 'Verbatim import of Q4 and Q5. Q1 and Q3 live in the prestige-q1q3 companion pack. Not imported: Q2 (actor synthesis) and Q6 (package not in Git).' },
+    note: 'Verbatim import of Q4 and Q5. Q1 and Q3 live in the prestige-q1q3 companion pack. Q2 and Q6 are companion packs (prestige-q2.json, reflection-q6.json). The class-specific Prestige Q6 Mentor dialogue is not in Git.' },
   classes, q4Depth: depth, q4, q5, purposes: PURPOSES,
   blocked: {
     q2: 'Q2 is an actor-evidence synthesis whose templates are not imported; it needs the verified evidence projection plus approved wording.',
-    q6: 'The 32-class Q6 dialogue package is not in Git (owner to supply; never reconstructed).',
+    q6: 'Q6 is the ONE shared Mentor\'s Reflection (reflection-q6.json, attached by the loader); it is blocked only if that companion pack is absent. The authored 32-class Prestige Mentor dialogue is not in Git and is an optional editorial enhancement (never reconstructed); until it is imported a neutral, unattributed frame is used.',
   },
 });
 console.log('wrote data/mentor-survey/prestige.json', JSON.stringify(counts));

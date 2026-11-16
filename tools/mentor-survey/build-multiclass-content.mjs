@@ -228,7 +228,7 @@ const pack = {
   q5Undecided: rec('mc.q5.undecided', 'I am not sure what I want to accomplish first. I would rather see what this training makes possible.', false, 'Q5 milestone table undecided', { kind: 'neutral' }),
   blocked: {
     q2: 'Requires a certified q1_focus noun phrase per Q1 answer, authored Q2 answers E/F, and a verified top-four scores accessor; none exists in the committed design.',
-    q6: 'The Q6 libraries are imported into multiclass-q6.json and attached by the content loader (pack.q6Content); Q6 is blocked only if that companion pack is absent. No verified runtime source joins an actor to the 297 canonical identities, so readings use the design\'s unresolved form.',
+    q6: 'The Q6 libraries are imported into reflection-q6.json and attached by the content loader (pack.q6Content); Q6 is blocked only if that companion pack is absent. No verified runtime source joins an actor to the 297 canonical identities, so readings use the design\'s unresolved form.',
   },
 };
 writeJson(path.join(ROOT, 'data/mentor-survey/multiclass.json'), pack);

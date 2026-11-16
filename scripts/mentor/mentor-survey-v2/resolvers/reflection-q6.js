@@ -1,5 +1,9 @@
 /**
- * Multiclass Q6: the Mentor's Reflection. Pure. Composes the Pass A reading, then drives the SHARED reflection engine
+ * The Mentor's Reflection (Q6), ONE shared component for the Multiclass and Prestige surveys. Pure.
+ * Only the context differs: `surveyKind`, `classId`, the delivering Mentor (`mentorId`) and the milestone line. The reading, the
+ * A-E response contract, the B/C targeted corrections, the D/E NOT then AM stages, the 297-archetype authority and the
+ * correction persistence are the same code and the same libraries for both surveys (and for any later on-demand reassessment).
+ * Original (multiclass): Composes the Pass A reading, then drives the SHARED reflection engine
  * (reflection.js) for the A-E calibration and the NOT / AM stages, using the Pass B libraries for the player-facing text.
  *
  * What the reading may say (design rules, Pass A):
@@ -21,7 +25,30 @@ const FACT_SENTENCE = {
   feat: (f) => `You have taken the ${f.label} feat.`,
   trained_skill: (f) => `You are trained in ${f.label}.`,
 };
-export const q6Available = (pack) => Boolean(pack?.q6Content?.mentors);
+export const q6Available = (pack, surveyKind = 'multiclass') => Boolean(surveyKind === 'prestige' ? pack?.q6Content?.neutral : pack?.q6Content?.mentors);
+const ID_PREFIX = { multiclass: 'mc', prestige: 'pr' };
+
+/**
+ * The survey-specific context of the one Q6: which class, which Mentor, which frame and clause set deliver it.
+ * Prestige uses a class-specific Mentor script only when one has been imported (`q6Content.prestigeMentors[classId]`, the future
+ * dialogue package); until then it uses the clearly identified NEUTRAL frame, which is attributed to no established Mentor.
+ */
+export function q6Profile({ surveyKind, pack, ctx, draft }) {
+  const classId = ctx.destinationClassId;
+  const q6 = pack.q6Content;
+  if (surveyKind === 'prestige') {
+    const specific = q6.prestigeMentors?.[classId] ?? null;
+    const className = pack.classes?.[classId]?.className ?? classId;
+    const sid = draft?.answers?.q1?.meta?.sourceId;
+    const row = sid ? (pack.q1q3?.classes?.[classId]?.q1.answers || []).find((a) => a.sourceId === sid) : null;
+    return { surveyKind, classId, mentorId: pack.classes?.[classId]?.mentorRegistryKey ?? null, idPrefix: 'pr', frame: specific?.frame ?? q6.neutral.frame, clauses: specific?.clauses ?? q6.neutral.clauses, neutralFrame: !specific,
+      milestone: fill(q6.neutral.milestone.text, { class_name: className }), q1Text: row && row.kind !== 'neutral' ? row.text : null };
+  }
+  const origin = ctx.originClassId ?? draft?.answers?.q0?.meta?.originClassId;
+  const m = draft?.answers?.q1?.meta;
+  const q1Text = m?.kind === 'direction' && origin ? pack.q1[classId][origin].find((r) => r.id === draft.answers.q1.optionId)?.text ?? null : null;
+  return { surveyKind, classId, mentorId: pack.mentors?.[classId]?.mentorRegistryKey ?? null, idPrefix: 'mc', frame: q6.mentors[classId], clauses: q6.clauses[classId], neutralFrame: false, milestone: null, q1Text };
+}
 const quote = (t) => `“${String(t).replace(/^[“"]|[”"]$/g, '')}”`;
 
 /** Claims the reading actually displays (so they are the only things the player can later reject). */
@@ -42,10 +69,11 @@ export function amCandidatesFor(q6, reading) {
 }
 
 /** Pass A composition: identity -> evidence -> goal -> exact Q1 quote -> relation. Missing parts are omitted, never padded. */
-export function composeParagraphs({ pack, ctx, reading, q1Text }) {
-  const c = pack.q6Content.clauses[ctx.destinationClassId];
-  const seed = `${reading.readingId}|${ctx.destinationClassId}`;
+export function composeParagraphs({ profile, reading }) {
+  const c = profile.clauses; const q1Text = profile.q1Text;
+  const seed = `${reading.readingId}|${profile.classId}`;
   const paras = [];
+  if (profile.milestone) paras.push(profile.milestone); // prestige: the earned or pending milestone, with no owned ability claimed
   paras.push(pick(c.unresolved.all, `${seed}|unresolved`).text); // no verified identity source: the unresolved reading
   const facts = reading.evidence.filter((f) => FACT_SENTENCE[f.kind]).slice(0, 3);
   if (facts.length) {
@@ -60,25 +88,15 @@ export function composeParagraphs({ pack, ctx, reading, q1Text }) {
   return paras;
 }
 
-const mentorFrame = (pack, d) => pack.q6Content.mentors[d];
-
-function q1Direction(draft, pack, ctx) {
-  const m = draft?.answers?.q1;
-  if (!m?.meta || m.meta.kind !== 'direction') return null;
-  const origin = ctx.originClassId ?? draft?.answers?.q0?.meta?.originClassId;
-  return (origin && pack.q1[ctx.destinationClassId][origin].find((r) => r.id === m.optionId)?.text) ?? null;
-}
-
 /** Everything the three Q6 questions need, computed once from the same inputs (so it is stable across renders). */
-export function q6Context({ pack, draft, ctx, runtime, archetypeLookup }) {
+export function q6Context({ surveyKind = 'multiclass', pack, draft, ctx, runtime, archetypeLookup }) {
+  const profile = q6Profile({ surveyKind, pack, ctx, draft });
   const claims = readingClaims(false);
-  const cands = amCandidatesFor(pack.q6Content, createReading({ surveyKind: 'multiclass', scopeId: ctx.destinationClassId, projection: runtime.evidence, events: runtime.events, claims: [], archetypeLookup, actorRevision: ctx.evidenceRevision }));
-  const reading = createReading({
-    surveyKind: 'multiclass', scopeId: ctx.destinationClassId, projection: runtime.evidence, events: runtime.events, claims,
-    amCandidates: cands.map(({ candidateId, canonicalRef, free }) => ({ candidateId, canonicalRef, free })), archetypeLookup, actorRevision: ctx.evidenceRevision,
-  });
-  const paragraphs = composeParagraphs({ pack, ctx, reading, q1Text: q1Direction(draft, pack, ctx) });
-  return { reading, paragraphs, candidates: cands };
+  const base = { surveyKind, scopeId: profile.classId, projection: runtime.evidence, events: runtime.events, archetypeLookup, actorRevision: ctx.evidenceRevision };
+  const cands = amCandidatesFor(pack.q6Content, createReading({ ...base, claims: [] }));
+  const reading = createReading({ ...base, claims, amCandidates: cands.map(({ candidateId, canonicalRef, free }) => ({ candidateId, canonicalRef, free })) });
+  const paragraphs = composeParagraphs({ profile, reading });
+  return { reading, paragraphs, candidates: cands, profile };
 }
 
 const unavailable = (reason) => ({ available: false, reason, view: null, records: [] });
@@ -91,16 +109,17 @@ const gate = (shown, records, preview) => {
   return null;
 };
 
-export function resolveQ6({ pack, draft, qid, ctx, runtime, archetypeLookup, preview }) {
-  if (!q6Available(pack) || !runtime?.evidence) return unavailable('blocked_source');
-  const frame = mentorFrame(pack, ctx.destinationClassId);
-  const q6 = q6Context({ pack, draft, ctx, runtime, archetypeLookup });
+export function resolveQ6({ surveyKind = 'multiclass', pack, draft, qid, ctx, runtime, archetypeLookup, preview }) {
+  if (!q6Available(pack, surveyKind) || !runtime?.evidence) return unavailable('blocked_source');
+  const q6 = q6Context({ surveyKind, pack, draft, ctx, runtime, archetypeLookup });
+  const frame = q6.profile.frame; const pfx = q6.profile.idPrefix;
+  const meta = { surveyKind, mentorId: q6.profile.mentorId, neutralFrame: q6.profile.neutralFrame };
   const choice = draft?.answers?.q6?.meta?.calibration;
 
   if (qid === 'q6') {
     const records = pack.q6Content.playerChoices;
     const why = gate([frame.opening, frame.closing, ...records], records, preview); if (why) return unavailable(why);
-    return { available: true, reason: 'ok', records, preview, view: { surveyKind: 'multiclass', questionId: 'q6', mentorIntro: frame.opening.text, situation: q6.paragraphs.join('\n\n'), prompt: frame.closing.text, options: records.map((r) => toViewOption(r)), page: null, canSkip: true, canGoBack: true } };
+    return { available: true, reason: 'ok', records, preview, view: { surveyKind, ...meta, questionId: 'q6', mentorIntro: frame.opening.text, situation: q6.paragraphs.join('\n\n'), prompt: frame.closing.text, options: records.map((r) => toViewOption(r)), page: null, canSkip: true, canGoBack: true } };
   }
   if (!choice || choice === 'A') return unavailable('not_applicable');
   let state = chooseCalibration(q6.reading, beginCalibration(q6.reading), choice);
@@ -109,11 +128,11 @@ export function resolveQ6({ pack, draft, qid, ctx, runtime, archetypeLookup, pre
     const records = state.notShown.map((claimId) => {
       const claim = q6.reading.claims.find((c) => c.claimId === claimId);
       const src = pick(pack.q6Content.negatives[claim.claimKind], `${q6.reading.readingId}|${claimId}`);
-      return { ...src, id: `mc.q6n.${claimId}`, claimId, kind: 'negative' };
+      return { ...src, id: `${pfx}.q6n.${claimId}`, claimId, kind: 'negative' };
     });
     const intro = frame.reactions[choice === 'D' ? 'D1' : choice === 'E' ? 'E1' : choice];
     const why = gate([intro, ...records], records, preview); if (why) return unavailable(why);
-    return { available: true, reason: 'ok', records, preview, view: { surveyKind: 'multiclass', questionId: 'q6n', mentorIntro: intro.text, situation: null, prompt: null, options: records.map((r) => toViewOption(r)), multiSelect: true, page: null, canSkip: true, canGoBack: true } };
+    return { available: true, reason: 'ok', records, preview, view: { surveyKind, ...meta, questionId: 'q6n', mentorIntro: intro.text, situation: null, prompt: null, options: records.map((r) => toViewOption(r)), multiSelect: true, page: null, canSkip: true, canGoBack: true } };
   }
   if (qid === 'q6a') {
     if (!REQUIRES_AM[choice]) return unavailable('not_applicable');
@@ -122,16 +141,16 @@ export function resolveQ6({ pack, draft, qid, ctx, runtime, archetypeLookup, pre
     const records = q6.candidates.map((c) => ({ ...c.text, id: c.candidateId, kind: 'affirmative' }));
     const intro = frame.reactions[`${choice}2`];
     const why = gate([intro, ...records], records, preview); if (why) return unavailable(why);
-    return { available: true, reason: 'ok', records, preview, view: { surveyKind: 'multiclass', questionId: 'q6a', mentorIntro: intro.text, situation: null, prompt: null, options: records.map((r) => toViewOption(r)), multiSelect: true, page: null, canSkip: true, canGoBack: true } };
+    return { available: true, reason: 'ok', records, preview, view: { surveyKind, ...meta, questionId: 'q6a', mentorIntro: intro.text, situation: null, prompt: null, options: records.map((r) => toViewOption(r)), multiSelect: true, page: null, canSkip: true, canGoBack: true } };
   }
   return unavailable('unknown_question');
 }
 
 /** Run the engine over the stored answers; returns { reading, result } or null when Q6 was not answered. */
-export function q6Reflection({ pack, draft, ctx, runtime, archetypeLookup }) {
+export function q6Reflection({ surveyKind = 'multiclass', pack, draft, ctx, runtime, archetypeLookup }) {
   const a = draft.answers.q6;
-  if (!a?.meta?.calibration || !q6Available(pack) || !runtime?.evidence) return null;
-  const { reading } = q6Context({ pack, draft, ctx, runtime, archetypeLookup });
+  if (!a?.meta?.calibration || !q6Available(pack, surveyKind) || !runtime?.evidence) return null;
+  const { reading } = q6Context({ surveyKind, pack, draft, ctx, runtime, archetypeLookup });
   let st = chooseCalibration(reading, beginCalibration(reading), a.meta.calibration);
   if (st.stage === 'not') st = selectNot(reading, st, draft.answers.q6n?.meta?.ids ?? []);
   if (st.stage === 'am') st = selectAm(reading, st, draft.answers.q6a?.meta?.ids ?? []);
@@ -140,15 +159,15 @@ export function q6Reflection({ pack, draft, ctx, runtime, archetypeLookup }) {
 }
 
 /** Meta recorded for a multi-select answer. Returns null when any id is not currently offered or the engine refuses it. */
-export function q6SelectionMetaMany({ pack, draft, qid, ids, records, ctx, runtime, archetypeLookup }) {
+export function q6SelectionMetaMany({ surveyKind = 'multiclass', pack, draft, qid, ids, records, ctx, runtime, archetypeLookup }) {
   const offered = new Set(records.map((r) => r.id));
   if (!ids.every((id) => offered.has(id))) return null;
-  const { reading } = q6Context({ pack, draft, ctx, runtime, archetypeLookup });
+  const { reading, profile } = q6Context({ surveyKind, pack, draft, ctx, runtime, archetypeLookup });
   const choice = draft.answers.q6.meta.calibration;
   let st = chooseCalibration(reading, beginCalibration(reading), choice);
   const texts = ids.map((id) => records.find((r) => r.id === id).text);
   if (qid === 'q6n') {
-    const claimIds = ids.map((id) => id.replace(/^mc\.q6n\./, ''));
+    const claimIds = ids.map((id) => id.replace(`${profile.idPrefix}.q6n.`, ''));
     st = selectNot(reading, st, claimIds); if (!st.ok) return null;
     return { kind: 'not', ids: claimIds, texts };
   }

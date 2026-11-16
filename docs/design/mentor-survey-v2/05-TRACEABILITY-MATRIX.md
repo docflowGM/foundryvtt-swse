@@ -91,7 +91,8 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | PR-08 | Multiple prestige acquisitions independent | handoff §8.5 | ledger | 13 | Tested (offline) |
 | PR-09 | Level-20 / low budget: no implied advancement | handoff §8.6 | resolver | 13 | Tested (offline) |
 | PR-10 | Quarantined mechanics never enabled | §39.3 | content gate; `q1Offerable` | 1 | Tested (offline): 35 marker-flagged Q1 rows are never offered, even in preview; per-route flags beyond the markers live in an uncommitted JSON (see 10 report) |
-| PR-11 | Prestige Q6 per-class dialogue | handoff (NEXT) | **Blocked**: source package not in Git (owner to supply; never reconstructed) | — | Blocked |
+| PR-11 | Prestige Q6 per-class Mentor dialogue | handoff (NEXT) | Editorial enhancement: source package not in Git (never reconstructed); the shared reflection runs with a neutral frame meanwhile | — | Deferred (editorial dependency) |
+| SV-18 | ONE Mentor's Reflection for Multiclass and Prestige: same engine, A-E, B/C, NOT/AM, authority, ledger; identical evidence gives identical assessment | owner direction 2026-11-16 | `reflection-q6.js`, `reflection-q6.json` | 14,15 | Tested (offline) |
 
 ## Survey influence (addendum; `SV-30`…`SV-42`)
 

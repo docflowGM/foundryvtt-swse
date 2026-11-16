@@ -18,7 +18,7 @@
         "q5Purposes": 1
       }
     },
-    "note": "Verbatim import of Q4 and Q5. Q1 and Q3 live in the prestige-q1q3 companion pack. Not imported: Q2 (actor synthesis) and Q6 (package not in Git)."
+    "note": "Verbatim import of Q4 and Q5. Q1 and Q3 live in the prestige-q1q3 companion pack. Q2 and Q6 are companion packs (prestige-q2.json, reflection-q6.json). The class-specific Prestige Q6 Mentor dialogue is not in Git."
   },
   "classes": {
     "ace_pilot": {
@@ -8059,6 +8059,6 @@
   ],
   "blocked": {
     "q2": "Q2 is an actor-evidence synthesis whose templates are not imported; it needs the verified evidence projection plus approved wording.",
-    "q6": "The 32-class Q6 dialogue package is not in Git (owner to supply; never reconstructed)."
+    "q6": "Q6 is the ONE shared Mentor's Reflection (reflection-q6.json, attached by the loader); it is blocked only if that companion pack is absent. The authored 32-class Prestige Mentor dialogue is not in Git and is an optional editorial enhancement (never reconstructed); until it is imported a neutral, unattributed frame is used."
   }
 }

@@ -140,14 +140,17 @@ test('PR-03 PrestigeSurveyStep runs a real Ace Pilot acquisition: Q1 browse, rou
   await click(step, shell, 'msurvey-choose', { questionId: 'q5', optionId: 'pr.ace_pilot.q5.calling', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q5b'); assert.equal(d.questionNumber, 5);
   await click(step, shell, 'msurvey-choose', { questionId: 'q5b', optionId: 'pr.ace_pilot.q5b.decline', seq: String(d.seq) });
+  d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q6'); assert.equal(d.questionNumber, 6);
+  assert.ok(d.view.neutralFrame === true && d.view.surveyKind === 'prestige', 'the shared reflection with the neutral, unattributed frame');
+  await click(step, shell, 'msurvey-choose', { questionId: 'q6', optionId: 'mc.q6.choice.a', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.phase, 'ready');
   await click(step, shell, 'msurvey-finish', { seq: String(d.seq) });
   const ev = buildSurveyLedgerPatch({ actor: shell.actor, selection: shell.progressionSession.store.mentorSurvey, transactionId: 'levelup-ap', level: 9, completedAt: 'now' })['flags.foundryvtt-swse.mentorSurvey.events'];
   const done = ev.find((e) => e.type === 'survey_completed');
   assert.match(done.typed.classDiscoverySourceId, /^AP-Q1-/); assert.match(done.typed.responsibilityScene, /^AP-Q3-S0[1-5]$/); assert.match(done.typed.responsibilityLetter, /^[A-E]$/);
   assert.equal(done.typed.declaredPrestigeDepth, 'swim'); assert.equal(done.typed.primaryPurpose, 'calling');
-  assert.equal(done.coverage.complete, false, 'Q6 has no source package: skipped, and the survey is reported incomplete');
-  assert.deepEqual(done.coverage.unavailable.map((u) => u.questionId).sort(), ['q6']);
+  assert.equal(done.coverage.complete, true, 'all six questions were asked and answered through the shared components');
+  assert.deepEqual(done.coverage.unavailable, []);
   assert.equal(shell.actor.flags['foundryvtt-swse'], undefined);
 });
 

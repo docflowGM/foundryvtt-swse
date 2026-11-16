@@ -16,7 +16,7 @@ const Rf = await import(u(`${dir}/reflection.js`));
 
 const json = (rel) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
 const basePack = json('data/mentor-survey/multiclass.json');
-const q6 = json('data/mentor-survey/multiclass-q6.json');
+const q6 = json('data/mentor-survey/reflection-q6.json');
 const pack = { ...basePack, q6Content: q6 };
 const manifest = json('data/mentor-survey/release-manifest.json');
 const archetypes = json('data/archetypes.json').archetypes;

@@ -12,9 +12,10 @@
 import { DEPTH_IDS, EDITORIAL_STATUS } from '../contract.js';
 import { evaluateScopeRelease, isRecordPlayable, toViewOption } from '../content-store.js';
 import { topObservedKeys, keyProvenance } from './multiclass-q2.js';
+import { resolveQ6 } from './reflection-q6.js';
 
-export const PRESTIGE_QUESTIONS = Object.freeze(['q1', 'q2', 'q3', 'q4', 'q5', 'q5b', 'q6']);
-const BLOCKED = ['q6']; // Q2 needs its companion pack (pack.q2Content); without it Q2 is blocked_source, never improvised
+export const PRESTIGE_QUESTIONS = Object.freeze(['q1', 'q2', 'q3', 'q4', 'q5', 'q5b', 'q6', 'q6n', 'q6a']); // q6n/q6a are the shared reflection's NOT and AM stages
+const BLOCKED = []; // Q2 and Q6 need their companion packs; without them each is blocked_source, never improvised
 export const Q1_PAGE_SIZE = 6; // owner ruling MSV-RD-013: six substantive answers per page; the neutral answer is always offered separately
 const UI_PREVIOUS = 'Show earlier answers'; // interface control label
 const UI_MORE = 'Show more answers'; // interface control label, not Mentor dialogue; the browse order is the source order and claims no relevance
@@ -35,7 +36,9 @@ export function createPrestigeFlow(classId) {
       q4: { inputs: ['destinationClassId'] }, // depth in this class is independent of the other questions
       q5: { inputs: ['destinationClassId'] },
       q5b: { inputs: ['destinationClassId'], after: ['q5'] },
-      q6: { inputs: ['destinationClassId'], after: ['q4', 'q5'] },
+      q6: { inputs: ['destinationClassId', 'evidenceRevision', 'goalRevision'], after: ['q4', 'q5'] },
+      q6n: { inputs: ['destinationClassId', 'evidenceRevision', 'goalRevision'], after: ['q6'] },
+      q6a: { inputs: ['destinationClassId', 'evidenceRevision', 'goalRevision'], after: ['q6', 'q6n'] },
     },
   };
 }
@@ -48,8 +51,9 @@ export function prestigeAvailability({ pack, manifest, ctx, preview = false }) {
 
 const unavailable = (reason) => ({ available: false, reason, view: null, records: [] });
 
-export function resolvePrestigeQuestion({ pack, draft, qid, ctx, preview = false, pageIndex = 0, runtime = null }) {
+export function resolvePrestigeQuestion({ pack, draft, qid, ctx, preview = false, pageIndex = 0, runtime = null, archetypeLookup = null }) {
   const id = ctx.destinationClassId;
+  if (qid === 'q6' || qid === 'q6n' || qid === 'q6a') return resolveQ6({ surveyKind: 'prestige', pack, draft, qid, ctx, runtime, archetypeLookup, preview }); // the ONE shared Mentor's Reflection
   if (BLOCKED.includes(qid)) return unavailable('blocked_source');
   let intro = null; let prompt = null; let records = []; let page = null; let situation = null;
   if (qid === 'q2') {
@@ -158,6 +162,7 @@ const pseudo = (id, text, src) => (text ? { id, text, editorialStatus: src?.edit
 export function prestigeSelectionMeta(pack, qid, optionId, records) {
   const r = records.find((x) => x.id === optionId);
   if (!r) return null;
+  if (qid === 'q6') return { kind: 'calibration', calibration: r.calibration };
   if (qid === 'q2') return r.kind === 'alternative' || r.kind === 'undecided' ? { kind: r.kind } : { kind: 'integration', biasKey: r.biasKey, evidence: r.evidence ?? null, q1SourceId: r.q1SourceId ?? null };
   if (qid === 'q1') return { kind: 'class_discovery', sourceId: r.sourceId, q3SceneId: r.q3SceneId ?? null };
   if (qid === 'q3') return { kind: 'responsibility', sceneId: r.sceneId ?? null, letter: r.letter };

@@ -1,6 +1,8 @@
 /** Prestige adapter for the generic SurveyController. Question selection lives in resolvers/prestige.js. */
 import { SurveyController } from './survey-controller.js';
 import { revisionOf } from './contract.js';
+import { reduceLedger } from './intent-ledger.js';
+import { q6Reflection, q6SelectionMetaMany } from './resolvers/reflection-q6.js';
 import { createPrestigeFlow, prestigeAvailability, resolvePrestigeQuestion, prestigeSelectionMeta, prestigeTyped, prestigeTrigger, q1Split, Q1_PAGE_SIZE, composeQ2Text } from './resolvers/prestige.js';
 
 export function buildRecordIndex(pack) {
@@ -23,14 +25,18 @@ export function createPrestigeAdapter(knownClassIds) {
     autoSkipReasons: ['blocked_source', 'not_applicable'],
     buildRecordIndex,
     /** rawCtx: { selectedClassId, classLevels (finalized) }. Null when it is not a newly acquired prestige class. */
-    normalize({ selectedClassId, classLevels, observedBias = {}, observedProvenance = null, canonicalBiasKeys = [] }) {
+    normalize({ selectedClassId, classLevels, observedBias = {}, observedProvenance = null, canonicalBiasKeys = [], evidence = null, events = [] }) {
       const t = prestigeTrigger({ selectedClassId, classLevels, knownClassIds });
       if (!t.applicable) return null;
-      return { ctx: { destinationClassId: t.destinationClassId, tense: 'pending', observedRevision: revisionOf(Object.entries(observedBias || {}).filter(([k, v]) => v > 0 && (!canonicalBiasKeys.length || canonicalBiasKeys.includes(k))).sort().concat(Object.entries(observedProvenance?.items || {}).sort(), Object.keys(observedProvenance?.skills || {}).sort())) }, runtime: { observedBias, observedProvenance }, scopeKey: `prestige:${t.destinationClassId}`, scopeId: t.destinationClassId };
+      const goals = Object.values(reduceLedger(events).goals).map((g) => [g.goalLane, g.target, g.quote ?? null]);
+      return { ctx: { destinationClassId: t.destinationClassId, tense: 'pending', evidenceRevision: revisionOf(evidence?.facts?.map((f) => f.factId + f.canonicalId) ?? []), goalRevision: revisionOf(goals), observedRevision: revisionOf(Object.entries(observedBias || {}).filter(([k, v]) => v > 0 && (!canonicalBiasKeys.length || canonicalBiasKeys.includes(k))).sort().concat(Object.entries(observedProvenance?.items || {}).sort(), Object.keys(observedProvenance?.skills || {}).sort())) }, runtime: { observedBias, observedProvenance, evidence, events }, scopeKey: `prestige:${t.destinationClassId}`, scopeId: t.destinationClassId };
     },
     createFlow: (ctx) => createPrestigeFlow(ctx.destinationClassId),
     availability: prestigeAvailability,
-    resolveQuestion: ({ pack, draft, qid, ctx, preview, pageIndex, runtime }) => resolvePrestigeQuestion({ pack, draft, qid, ctx, preview, pageIndex, runtime }),
+    resolveQuestion: ({ pack, draft, qid, ctx, preview, pageIndex, runtime, archetypeLookup }) => resolvePrestigeQuestion({ pack, draft, qid, ctx, preview, pageIndex, runtime, archetypeLookup }),
+    selectionMetaMany: ({ pack, draft, qid, ids, records, ctx, runtime, archetypeLookup }) => q6SelectionMetaMany({ surveyKind: 'prestige', pack, draft, qid, ids, records, ctx, runtime, archetypeLookup }),
+    multiSelectQuestions: ['q6n', 'q6a'],
+    reflection: ({ pack, draft, ctx, runtime, archetypeLookup }) => q6Reflection({ surveyKind: 'prestige', pack, draft, ctx, runtime, archetypeLookup }),
     selectionMeta: prestigeSelectionMeta,
     browseSeen: (pack, draft, qid, nextPage, ctx) => q1Split(pack, ctx.destinationClassId).substantive.slice(0, (nextPage + 1) * Q1_PAGE_SIZE).map((a) => a.id),
     goals: () => [], // no prestige answer declares a goal; a goal needs the explicit Discover/Explore/Affirm confirmation (MSV-RD-010)

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "survey": "multiclass-q6",
+    "survey": "reflection-q6",
     "contentVersion": 1,
     "sourceCommits": {
       "multiclass": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
@@ -12679,5 +12679,238 @@
       "kind": "affirmative",
       "freeId": "remain_open"
     }
-  ]
+  ],
+  "neutral": {
+    "milestone": {
+      "id": "reflection.neutral.milestone",
+      "text": "You are at the threshold of the {class_name} path.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+        "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+      },
+      "speaker": "neutral"
+    },
+    "frame": {
+      "opening": {
+        "id": "reflection.neutral.opening",
+        "text": "Let me tell you how I read your path so far, and you tell me where I have it right.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+          "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+        },
+        "speaker": "neutral"
+      },
+      "closing": {
+        "id": "reflection.neutral.closing",
+        "text": "Does that sound like you?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+          "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+        },
+        "speaker": "neutral"
+      },
+      "reactions": {
+        "A": {
+          "id": "reflection.neutral.react.A",
+          "text": "Good. Then we understand each other.",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+            "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+          },
+          "speaker": "neutral"
+        },
+        "B": {
+          "id": "reflection.neutral.react.B",
+          "text": "Then tell me which detail needs correcting.",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+            "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+          },
+          "speaker": "neutral"
+        },
+        "C": {
+          "id": "reflection.neutral.react.C",
+          "text": "Then tell me which part I have wrong.",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+            "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+          },
+          "speaker": "neutral"
+        },
+        "D1": {
+          "id": "reflection.neutral.react.D1",
+          "text": "Then tell me which part of that reading does not fit.",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+            "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+          },
+          "speaker": "neutral"
+        },
+        "D2": {
+          "id": "reflection.neutral.react.D2",
+          "text": "Then tell me who you are instead.",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+            "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+          },
+          "speaker": "neutral"
+        },
+        "E1": {
+          "id": "reflection.neutral.react.E1",
+          "text": "Then tell me which part of that reading does not fit.",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+            "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+          },
+          "speaker": "neutral"
+        },
+        "E2": {
+          "id": "reflection.neutral.react.E2",
+          "text": "Then tell me who you are instead.",
+          "editorialStatus": "draft_text",
+          "mechanicsStatus": "none",
+          "sourceRef": {
+            "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+            "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+          },
+          "speaker": "neutral"
+        }
+      }
+    },
+    "clauses": {
+      "unresolved": {
+        "all": [
+          {
+            "id": "reflection.neutral.unresolved.1",
+            "text": "I cannot name one identity for you with certainty yet, so I will not guess.",
+            "editorialStatus": "draft_text",
+            "mechanicsStatus": "none",
+            "sourceRef": {
+              "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+              "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+            },
+            "speaker": "neutral"
+          }
+        ]
+      },
+      "evidence": {
+        "one": [
+          {
+            "id": "reflection.neutral.evidence.one.1",
+            "text": "Here is what I can see in your record: {evidence_text} One observation is not a complete picture.",
+            "editorialStatus": "draft_text",
+            "mechanicsStatus": "none",
+            "sourceRef": {
+              "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+              "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+            },
+            "speaker": "neutral"
+          }
+        ],
+        "two": [
+          {
+            "id": "reflection.neutral.evidence.two.1",
+            "text": "Here is what I can see in your record: {evidence_text}",
+            "editorialStatus": "draft_text",
+            "mechanicsStatus": "none",
+            "sourceRef": {
+              "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+              "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+            },
+            "speaker": "neutral"
+          }
+        ],
+        "three": [
+          {
+            "id": "reflection.neutral.evidence.three.1",
+            "text": "Here is what I can see in your record: {evidence_text}",
+            "editorialStatus": "draft_text",
+            "mechanicsStatus": "none",
+            "sourceRef": {
+              "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+              "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+            },
+            "speaker": "neutral"
+          }
+        ]
+      },
+      "goal": {
+        "declared": [
+          {
+            "id": "reflection.neutral.goal.declared.1",
+            "text": "You have also told me what you want ahead: {quoted_goal} I keep that separate from what you have already done.",
+            "editorialStatus": "draft_text",
+            "mechanicsStatus": "none",
+            "sourceRef": {
+              "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+              "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+            },
+            "speaker": "neutral"
+          }
+        ],
+        "unrecorded": [
+          {
+            "id": "reflection.neutral.goal.unrecorded.1",
+            "text": "You have not told me a long-term goal yet, and I will not assume one.",
+            "editorialStatus": "draft_text",
+            "mechanicsStatus": "none",
+            "sourceRef": {
+              "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+              "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+            },
+            "speaker": "neutral"
+          }
+        ]
+      },
+      "relation": {
+        "unknown": [
+          {
+            "id": "reflection.neutral.relation.unknown.1",
+            "text": "I do not claim to know how that goal relates to who you are now.",
+            "editorialStatus": "draft_text",
+            "mechanicsStatus": "none",
+            "sourceRef": {
+              "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+              "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+            },
+            "speaker": "neutral"
+          }
+        ]
+      },
+      "q1quote": {
+        "all": [
+          {
+            "id": "reflection.neutral.q1quote.1",
+            "text": "You also told me what you want from this path: {quoted_q1} That is an intention, not proof of ability.",
+            "editorialStatus": "draft_text",
+            "mechanicsStatus": "none",
+            "sourceRef": {
+              "origin": "owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed",
+              "file": "tools/mentor-survey/q6-neutral-frame.mjs"
+            },
+            "speaker": "neutral"
+          }
+        ]
+      }
+    }
+  },
+  "prestigeMentors": {}
 }

@@ -3111,3 +3111,28 @@ These are engineering or drafting choices the rulings delegated. None sets a gam
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+
+## MSV-RD-015 / 016 — PROGRESS NOTES (appended 2026-11-16; originals preserved)
+
+- **MSV-RD-015(c), six curated neutral Q1 ids: CLOSED** by the owner after checking the source rows (FD-UN00, JK-ID03, JM-ID03, OF-ID03, SA-ID03, SL-ID03). Classification only; the line wording stays draft.
+- **MSV-RD-015(a), Q5 goal slot: superseded.** The pointer phrase was replaced by a typed goal display (canonical label or the player's exact words) inside one reviewed alternative; the alternative's wording is draft and pending approval.
+- **MSV-RD-015(b), neutral Q4 families:** kept for GM preview; a presumption scan excluded three scenes (`q4.soldier.tactics.seed01`, `q4.scoundrel.opportunist.seed01`, `q4.scoundrel.opportunist.seed07`); the remaining scene text is not yet owner-reviewed.
+- **MSV-RD-015(e), Prestige Q2 connectives:** revised after review (no units, position, employer, arena or crew assumed).
+
+## MSV-RD-016 — Prestige Q6 delivered by the shared reflection with a neutral frame
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q6 |
+| Feature | The neutral, non-character-specific reflection frame used until the authored 32-class Prestige Mentor dialogue is committed |
+| Source | Owner direction 2026-11-16: Multiclass and Prestige Q6 are one shared component; missing dialogue is an editorial dependency, not a blocker |
+| Evidence | The reflection engine, A-E contract, B/C corrections, D/E NOT then AM stages, 297-archetype authority and ledger persistence are shared; only milestone, class and Mentor presentation differ. |
+| Confirmed behavior | No dialogue is invented for or attributed to an established Mentor; the original package is preserved as a future asset. |
+| Unresolved question | Approval of the neutral frame wording (draft) and of each class Mentor script once imported. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Prestige Q6 runs in GM preview with the neutral frame; players see nothing until the draft text is approved. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

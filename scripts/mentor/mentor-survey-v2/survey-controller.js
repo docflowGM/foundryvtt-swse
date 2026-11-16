@@ -258,7 +258,7 @@ export class SurveyController {
       const r = this._resolve(qid, 0);
       if (!r.available && this.adapter.autoSkipReasons.includes(r.reason)) {
         questions[qid] = `unavailable:${r.reason}`;
-        if (r.reason !== 'not_applicable') unavailable.push({ questionId: qid, reason: r.reason });
+        if (r.reason !== 'not_applicable' && !unavailable.some((u) => u.questionId.match(/\d/)[0] === qid.match(/\d/)[0])) unavailable.push({ questionId: qid, reason: r.reason }); // inner stages (q6n, q6a) report under their question
       } else questions[qid] = 'skipped_by_player';
     }
     return { complete: unavailable.length === 0, questions, unavailable };

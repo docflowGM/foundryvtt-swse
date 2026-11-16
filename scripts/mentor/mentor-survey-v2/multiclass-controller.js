@@ -43,10 +43,10 @@ export const MULTICLASS_ADAPTER = Object.freeze({
   resolveQuestion: ({ pack, draft, qid, ctx, preview, runtime, archetypeLookup }) => resolveMulticlassQuestion({ pack, draft, qid, ctx, preview, runtime, archetypeLookup }),
   selectionMeta: multiclassSelectionMeta,
   /** Multi-select stages (Q6 NOT / AM). Returns null when the selection is not currently legal. */
-  selectionMetaMany: ({ pack, draft, qid, ids, records, ctx, runtime, archetypeLookup }) => q6SelectionMetaMany({ pack, draft, qid, ids, records, ctx, runtime, archetypeLookup }),
+  selectionMetaMany: ({ pack, draft, qid, ids, records, ctx, runtime, archetypeLookup }) => q6SelectionMetaMany({ surveyKind: 'multiclass', pack, draft, qid, ids, records, ctx, runtime, archetypeLookup }),
   multiSelectQuestions: ['q6n', 'q6a'],
   /** The Q6 reflection result the finalizer turns into snapshot/correction events. */
-  reflection: ({ pack, draft, ctx, runtime, archetypeLookup }) => q6Reflection({ pack, draft, ctx, runtime, archetypeLookup }),
+  reflection: ({ pack, draft, ctx, runtime, archetypeLookup }) => q6Reflection({ surveyKind: 'multiclass', pack, draft, ctx, runtime, archetypeLookup }),
   browseSeen: () => [],
   goals: () => [], // no multiclass answer declares a career goal; a change of direction needs its own explicit confirmation
   typed: multiclassTyped,

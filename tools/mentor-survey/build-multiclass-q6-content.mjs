@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Build data/mentor-survey/multiclass-q6.json: the Q6 Mentor Reflection content for the five foundation-class Mentors.
+ * Build data/mentor-survey/reflection-q6.json: the Q6 Mentor Reflection content for the five foundation-class Mentors.
  *
  *   node tools/mentor-survey/build-multiclass-q6-content.mjs --mc <dir with SWSE_Multiclass_Survey_Rolling_Design.md> --shared <dir with SWSE_Multiclass_Prestige_Survey_Rolling_Design.md>
  *
@@ -14,6 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { quoted, readLines, find, writeJson, fail } from './lib.mjs';
+import { NEUTRAL } from './q6-neutral-frame.mjs';
 import { isFirstPerson } from '../../scripts/mentor/mentor-survey-v2/content-store.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -128,9 +129,20 @@ delete ruledB.editorialIssue;
 
 const issues = player.filter((p) => p.editorialIssue).map((p) => p.id);
 const counts = { editorialIssues: issues, mentors: 5, frames: 5 * 9, clauseVariants: clauseCount, negativeKinds: 10, negativeWordings: 20, identityRows: 297, freeStanding: 18, playerChoices: 5 };
-writeJson(path.join(ROOT, 'data/mentor-survey/multiclass-q6.json'), {
-  _meta: { survey: 'multiclass-q6', contentVersion: 1, sourceCommits: { multiclass: MC_COMMIT, shared: SH_COMMIT }, generatedBy: 'tools/mentor-survey/build-multiclass-q6-content.mjs', counts,
+/* ---------- neutral frame for the Prestige reflection (owner direction 2026-11-16): attributed to no established Mentor ---------- */
+const nrec = (id, text) => ({ id: `reflection.neutral.${id}`, text, editorialStatus: 'draft_text', mechanicsStatus: 'none', sourceRef: { origin: 'owner direction 2026-11-16: neutral reflection interface until the Prestige Q6 dialogue package is committed', file: 'tools/mentor-survey/q6-neutral-frame.mjs' }, speaker: 'neutral' });
+const list = (key, arr) => arr.map((t, i) => nrec(`${key}.${i + 1}`, t));
+const neutral = {
+  milestone: nrec('milestone', NEUTRAL.milestone),
+  frame: { opening: nrec('opening', NEUTRAL.opening), closing: nrec('closing', NEUTRAL.closing), reactions: Object.fromEntries(Object.entries(NEUTRAL.reactions).map(([k, t]) => [k, nrec(`react.${k}`, t)])) },
+  clauses: { unresolved: { all: list('unresolved', NEUTRAL.clauses.unresolved) }, evidence: { one: list('evidence.one', NEUTRAL.clauses.evidenceOne), two: list('evidence.two', NEUTRAL.clauses.evidenceTwo), three: list('evidence.three', NEUTRAL.clauses.evidenceThree) },
+    goal: { declared: list('goal.declared', NEUTRAL.clauses.goalDeclared), unrecorded: list('goal.unrecorded', NEUTRAL.clauses.goalUnrecorded) }, relation: { unknown: list('relation.unknown', NEUTRAL.clauses.relationUnknown) }, q1quote: { all: list('q1quote', NEUTRAL.clauses.q1quote) } },
+};
+for (const t of [neutral.milestone.text, ...Object.values(NEUTRAL.reactions), NEUTRAL.opening, NEUTRAL.closing, ...Object.values(NEUTRAL.clauses).flat()]) if (/[\u2014\u2013]/.test(t)) fail('neutral frame text must avoid dashes');
+writeJson(path.join(ROOT, 'data/mentor-survey/reflection-q6.json'), {
+  _meta: { survey: 'reflection-q6', contentVersion: 1, sourceCommits: { multiclass: MC_COMMIT, shared: SH_COMMIT }, generatedBy: 'tools/mentor-survey/build-multiclass-q6-content.mjs', counts,
     note: 'Verbatim import; all draft_text. The identity table is validated against the canonical registry. Runtime identity inference for the 297 identities is not certified, so readings use the unresolved form (design rule).' },
   playerChoices: player, mentors: frames, clauses, negatives, identityChoices, freeStanding,
+  neutral, prestigeMentors: {}, // prestigeMentors[classId] = { frame, clauses }: reserved for the authored 32-class Prestige Q6 dialogue (not yet in Git; never reconstructed)
 });
-console.log('wrote data/mentor-survey/multiclass-q6.json', JSON.stringify(counts));
+console.log('wrote data/mentor-survey/reflection-q6.json', JSON.stringify(counts));
