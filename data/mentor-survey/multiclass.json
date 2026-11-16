@@ -15,6 +15,9 @@
       "q4Methods": 1250,
       "q4Neutral": 250,
       "q5Templates": 500,
+      "q5UndecidedFallback": 25,
+      "q5NoGoalReplacements": 5,
+      "q4NeutralFamilies": 5,
       "q5TemplatesWithGoalSlot": 100
     },
     "note": "Verbatim import. Only the Q3 depth answers are owner-approved. NOT imported because not authored in the committed design: Q2 (q1_focus phrases, answers E/F), Q5 undecided-Q1 fallback banks, Q6 libraries."
@@ -32433,6 +32436,637 @@
             "needsGoalSlot": false
           }
         ]
+      }
+    }
+  },
+  "q5Fallback": {
+    "jedi": [
+      {
+        "id": "mc.q5.jedi.undecided.develop_core",
+        "text": "I want to understand the foundations of Jedi training before deciding which techniques to pursue.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Jedi (Q1 undecided) develop_core"
+        },
+        "kind": "develop_core",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7148
+      },
+      {
+        "id": "mc.q5.jedi.undecided.field_application",
+        "text": "I want to approach our next difficult problem with greater care and see where new instruction might help.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Jedi (Q1 undecided) field_application"
+        },
+        "kind": "field_application",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7149
+      },
+      {
+        "id": "mc.q5.jedi.undecided.benefit_others",
+        "text": "I want to learn how to be a steadier source of help when someone faces danger.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Jedi (Q1 undecided) benefit_others"
+        },
+        "kind": "benefit_others",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7150
+      },
+      {
+        "id": "mc.q5.jedi.undecided.career_continuity",
+        "text": "I want to discover whether Jedi training offers a responsible next step toward {declared_goal}.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Jedi (Q1 undecided) career_continuity"
+        },
+        "kind": "career_continuity",
+        "needsGoalSlot": true,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7151
+      },
+      {
+        "id": "mc.q5.jedi.undecided.prepare_future_route",
+        "text": "I want to clarify which Jedi abilities would require additional training before committing to them.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Jedi (Q1 undecided) prepare_future_route"
+        },
+        "kind": "prepare_future_route",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7152
+      }
+    ],
+    "noble": [
+      {
+        "id": "mc.q5.noble.undecided.develop_core",
+        "text": "I want to learn how Noble training could help me contribute to a group before specializing.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Noble (Q1 undecided) develop_core"
+        },
+        "kind": "develop_core",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7156
+      },
+      {
+        "id": "mc.q5.noble.undecided.field_application",
+        "text": "I want to take responsibility for one small part of our next group assignment and learn from it.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Noble (Q1 undecided) field_application"
+        },
+        "kind": "field_application",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7157
+      },
+      {
+        "id": "mc.q5.noble.undecided.benefit_others",
+        "text": "I want to find a practical way to make the people around me better prepared.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Noble (Q1 undecided) benefit_others"
+        },
+        "kind": "benefit_others",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7158
+      },
+      {
+        "id": "mc.q5.noble.undecided.career_continuity",
+        "text": "I want to examine how this new training might support {declared_goal} before choosing a specialty.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Noble (Q1 undecided) career_continuity"
+        },
+        "kind": "career_continuity",
+        "needsGoalSlot": true,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7159
+      },
+      {
+        "id": "mc.q5.noble.undecided.prepare_future_route",
+        "text": "I want to explore the available leadership, influence, and knowledge paths before choosing more training.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Noble (Q1 undecided) prepare_future_route"
+        },
+        "kind": "prepare_future_route",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7160
+      }
+    ],
+    "scout": [
+      {
+        "id": "mc.q5.scout.undecided.develop_core",
+        "text": "I want to practice basic field awareness before deciding on a specific Scout specialty.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scout (Q1 undecided) develop_core"
+        },
+        "kind": "develop_core",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7164
+      },
+      {
+        "id": "mc.q5.scout.undecided.field_application",
+        "text": "I want to investigate a new route or location and learn what the field actually demands.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scout (Q1 undecided) field_application"
+        },
+        "kind": "field_application",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7165
+      },
+      {
+        "id": "mc.q5.scout.undecided.benefit_others",
+        "text": "I want to help the group avoid one preventable hazard on our next journey.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scout (Q1 undecided) benefit_others"
+        },
+        "kind": "benefit_others",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7166
+      },
+      {
+        "id": "mc.q5.scout.undecided.career_continuity",
+        "text": "I want to see how practical field training could advance {declared_goal}.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scout (Q1 undecided) career_continuity"
+        },
+        "kind": "career_continuity",
+        "needsGoalSlot": true,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7167
+      },
+      {
+        "id": "mc.q5.scout.undecided.prepare_future_route",
+        "text": "I want to explore tracking, mobility, and survival training before settling on a long-term focus.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scout (Q1 undecided) prepare_future_route"
+        },
+        "kind": "prepare_future_route",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7168
+      }
+    ],
+    "soldier": [
+      {
+        "id": "mc.q5.soldier.undecided.develop_core",
+        "text": "I want to learn the foundations of disciplined combat training before choosing a particular technique.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Soldier (Q1 undecided) develop_core"
+        },
+        "kind": "develop_core",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7172
+      },
+      {
+        "id": "mc.q5.soldier.undecided.field_application",
+        "text": "I want to take part in a controlled exercise that reveals which skills I most need to improve.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Soldier (Q1 undecided) field_application"
+        },
+        "kind": "field_application",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7173
+      },
+      {
+        "id": "mc.q5.soldier.undecided.benefit_others",
+        "text": "I want to be more dependable when a companion needs protection.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Soldier (Q1 undecided) benefit_others"
+        },
+        "kind": "benefit_others",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7174
+      },
+      {
+        "id": "mc.q5.soldier.undecided.career_continuity",
+        "text": "I want to see whether Soldier training can help me meet the demands of {declared_goal}.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Soldier (Q1 undecided) career_continuity"
+        },
+        "kind": "career_continuity",
+        "needsGoalSlot": true,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7175
+      },
+      {
+        "id": "mc.q5.soldier.undecided.prepare_future_route",
+        "text": "I want to compare the available defensive, weapon, and tactical training before investing further.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Soldier (Q1 undecided) prepare_future_route"
+        },
+        "kind": "prepare_future_route",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7176
+      }
+    ],
+    "scoundrel": [
+      {
+        "id": "mc.q5.scoundrel.undecided.develop_core",
+        "text": "I want to learn the range of practical Scoundrel methods before picking one to refine.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scoundrel (Q1 undecided) develop_core"
+        },
+        "kind": "develop_core",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7180
+      },
+      {
+        "id": "mc.q5.scoundrel.undecided.field_application",
+        "text": "I want to handle one unexpected complication with a new approach and see what works.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scoundrel (Q1 undecided) field_application"
+        },
+        "kind": "field_application",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7181
+      },
+      {
+        "id": "mc.q5.scoundrel.undecided.benefit_others",
+        "text": "I want to give our companions an alternative when the obvious solution stops working.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scoundrel (Q1 undecided) benefit_others"
+        },
+        "kind": "benefit_others",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7182
+      },
+      {
+        "id": "mc.q5.scoundrel.undecided.career_continuity",
+        "text": "I want to explore whether this flexible training could help me pursue {declared_goal}.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scoundrel (Q1 undecided) career_continuity"
+        },
+        "kind": "career_continuity",
+        "needsGoalSlot": true,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7183
+      },
+      {
+        "id": "mc.q5.scoundrel.undecided.prepare_future_route",
+        "text": "I want to investigate technical, social, and mobile methods before choosing a specialty.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "Q5 Scoundrel (Q1 undecided) prepare_future_route"
+        },
+        "kind": "prepare_future_route",
+        "needsGoalSlot": false,
+        "fromUndecidedQ1": true,
+        "sourceLine": 7184
+      }
+    ]
+  },
+  "q5NoGoal": {
+    "noble": {
+      "id": "mc.q5.noble.nogoal.career_continuity",
+      "text": "I want to discover what kind of work could make good use of these new Noble skills before choosing a career direction.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q5 missing-goal replacement Noble"
+      },
+      "kind": "career_continuity",
+      "noGoalReplacement": true,
+      "sourceLine": 7190
+    },
+    "jedi": {
+      "id": "mc.q5.jedi.nogoal.career_continuity",
+      "text": "I want to explore where Jedi training might lead me without deciding on a lifelong calling today.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q5 missing-goal replacement Jedi"
+      },
+      "kind": "career_continuity",
+      "noGoalReplacement": true,
+      "sourceLine": 7191
+    },
+    "scout": {
+      "id": "mc.q5.scout.nogoal.career_continuity",
+      "text": "I want to find out which journeys or field responsibilities might suit me before committing to a career.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q5 missing-goal replacement Scout"
+      },
+      "kind": "career_continuity",
+      "noGoalReplacement": true,
+      "sourceLine": 7192
+    },
+    "soldier": {
+      "id": "mc.q5.soldier.nogoal.career_continuity",
+      "text": "I want to explore what responsibilities disciplined Soldier training could open to me without choosing a permanent role yet.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q5 missing-goal replacement Soldier"
+      },
+      "kind": "career_continuity",
+      "noGoalReplacement": true,
+      "sourceLine": 7193
+    },
+    "scoundrel": {
+      "id": "mc.q5.scoundrel.nogoal.career_continuity",
+      "text": "I want to see what kind of work these new practical methods could support before claiming a particular livelihood.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q5 missing-goal replacement Scoundrel"
+      },
+      "kind": "career_continuity",
+      "noGoalReplacement": true,
+      "sourceLine": 7194
+    }
+  },
+  "q5GoalPhrase": {
+    "id": "mc.q5.goalphrase",
+    "text": "the goal I have already declared",
+    "editorialStatus": "draft_text",
+    "mechanicsStatus": "none",
+    "sourceRef": {
+      "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+      "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+      "anchor": "implementation choice for the {declared_goal} slot (MSV-RD-015)"
+    },
+    "kind": "goal_slot_phrase",
+    "implementationChoice": true
+  },
+  "q4Neutral": {
+    "noble": {
+      "family": "leadership",
+      "scenarioIds": [
+        "q4.noble.leadership.seed01",
+        "q4.noble.leadership.seed02",
+        "q4.noble.leadership.seed03",
+        "q4.noble.leadership.seed04",
+        "q4.noble.leadership.seed05",
+        "q4.noble.leadership.seed06",
+        "q4.noble.leadership.seed07"
+      ],
+      "rationale": "Everyday coordination dilemmas (an evacuation, a search, a blackout); no title, rank or skill is assumed.",
+      "status": "curated_pending_editorial_review"
+    },
+    "jedi": {
+      "family": "consular",
+      "scenarioIds": [
+        "q4.jedi.consular.seed01",
+        "q4.jedi.consular.seed02",
+        "q4.jedi.consular.seed03",
+        "q4.jedi.consular.seed04",
+        "q4.jedi.consular.seed05",
+        "q4.jedi.consular.seed06",
+        "q4.jedi.consular.seed07"
+      ],
+      "rationale": "Ordinary conversations about trust and mediation; no Force technique or lightsaber skill is assumed.",
+      "status": "curated_pending_editorial_review"
+    },
+    "scout": {
+      "family": "recon",
+      "scenarioIds": [
+        "q4.scout.recon.seed01",
+        "q4.scout.recon.seed02",
+        "q4.scout.recon.seed03",
+        "q4.scout.recon.seed04",
+        "q4.scout.recon.seed05",
+        "q4.scout.recon.seed06",
+        "q4.scout.recon.seed07"
+      ],
+      "rationale": "Observation and reporting problems; no tracking, stealth or vehicle training is assumed.",
+      "status": "curated_pending_editorial_review"
+    },
+    "soldier": {
+      "family": "tactics",
+      "scenarioIds": [
+        "q4.soldier.tactics.seed01",
+        "q4.soldier.tactics.seed02",
+        "q4.soldier.tactics.seed03",
+        "q4.soldier.tactics.seed04",
+        "q4.soldier.tactics.seed05",
+        "q4.soldier.tactics.seed06",
+        "q4.soldier.tactics.seed07"
+      ],
+      "rationale": "Plan and call decisions for a mixed squad; no weapon, armor or unarmed specialty is assumed.",
+      "status": "curated_pending_editorial_review"
+    },
+    "scoundrel": {
+      "family": "opportunist",
+      "scenarioIds": [
+        "q4.scoundrel.opportunist.seed01",
+        "q4.scoundrel.opportunist.seed02",
+        "q4.scoundrel.opportunist.seed03",
+        "q4.scoundrel.opportunist.seed04",
+        "q4.scoundrel.opportunist.seed05",
+        "q4.scoundrel.opportunist.seed06",
+        "q4.scoundrel.opportunist.seed07"
+      ],
+      "rationale": "Surprise complications in public places; no disguise, slicing or ship skill is assumed.",
+      "status": "curated_pending_editorial_review"
+    }
+  },
+  "origin": {
+    "prompt": {
+      "id": "mc.origin.prompt",
+      "text": "Which of your earlier paths do you want to compare this new training with?",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "owner ruling MSV-RD-004 (implementation text)"
+      },
+      "kind": "origin_prompt",
+      "implementationChoice": true
+    },
+    "options": {
+      "jedi": {
+        "id": "mc.origin.jedi",
+        "text": "I want to compare this new training with my Jedi training.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "owner ruling MSV-RD-004 (implementation text)"
+        },
+        "kind": "origin",
+        "originClassId": "jedi",
+        "implementationChoice": true
+      },
+      "noble": {
+        "id": "mc.origin.noble",
+        "text": "I want to compare this new training with my Noble training.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "owner ruling MSV-RD-004 (implementation text)"
+        },
+        "kind": "origin",
+        "originClassId": "noble",
+        "implementationChoice": true
+      },
+      "scoundrel": {
+        "id": "mc.origin.scoundrel",
+        "text": "I want to compare this new training with my Scoundrel training.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "owner ruling MSV-RD-004 (implementation text)"
+        },
+        "kind": "origin",
+        "originClassId": "scoundrel",
+        "implementationChoice": true
+      },
+      "scout": {
+        "id": "mc.origin.scout",
+        "text": "I want to compare this new training with my Scout training.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "owner ruling MSV-RD-004 (implementation text)"
+        },
+        "kind": "origin",
+        "originClassId": "scout",
+        "implementationChoice": true
+      },
+      "soldier": {
+        "id": "mc.origin.soldier",
+        "text": "I want to compare this new training with my Soldier training.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+          "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+          "anchor": "owner ruling MSV-RD-004 (implementation text)"
+        },
+        "kind": "origin",
+        "originClassId": "soldier",
+        "implementationChoice": true
       }
     }
   },

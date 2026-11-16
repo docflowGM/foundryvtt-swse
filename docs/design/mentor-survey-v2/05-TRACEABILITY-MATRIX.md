@@ -65,7 +65,7 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | MC-01 | Trigger on first acquisition of a new foundation class only | v0.9/v0.11 | `multiclass.js` trigger | 2 | Tested (offline) |
 | MC-02 | Destination Mentor narrates | v0.11 | routes JSON + resolver | 4 | Tested (offline, routing only) |
 | MC-03 | 20 directed transitions route correctly | v0.11 | resolver | 2 | Tested (offline) |
-| MC-04 | Origin keying with ≥2 prior foundation classes | — | **Deferred** MSV-RD-004: withheld, no origin chosen (fail-closed behavior is tested) | 2 | Deferred (fail-closed, tested) |
+| MC-04 | Two or more prior foundation classes: the player chooses the origin lens (q0) among owned classes; destination Mentor narrates; others stay in Q2/Q6 evidence | owner ruling MSV-RD-004 | `effectiveOrigin`, q0 | 4 | Tested (offline) |
 | MC-05 | Fixed intros, not generated | v0.11 | content | 4 | Tested (offline) |
 | MC-06 | Q3 four fixed answers, same everywhere | v0.11 Q3 | resolver | 11 | Tested (offline) |
 | MC-07 | Depth never a level lock; undecided infers nothing | v0.11 Q3 §4,§1 | ledger | 11 | Tested (offline) |
@@ -73,7 +73,7 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | MC-09 | Dive/Swim never demote/erase/prune | v0.11 Q3 §5 | ledger | 17 | Tested (offline) |
 | MC-10 | Q4 scene by exact Q1 id → family; Q3/Q2 never change scene | v0.11 Q4 | resolver | 9 | Tested (offline) |
 | MC-11 | Q5 career change → `exploring_change` only | v0.11 Q5 §9 | no authored answer declares a change; career-continuity template withheld (MSV-RD-009) | 13 | Deferred |
-| MC-12 | Observations only from finalized evidence; new class pending | v0.11 | Q2 library (625 templates) and observed-only accessor implemented; owner `q1_focus` phrases and E/F not authored, so Q2 is still skipped | 14 | Implemented, Tested (offline); runtime blocked on approval pending |
+| MC-12 | Q2: A-D only for strengths with actor provenance (owned item or trained skill); E and F always; neutral focus; no new scorer | v0.11; owner ruling MSV-RD-007 | `resolveQ2`, `computeObservedBehaviorBiasProvenance` | 14 | Tested (offline); phrases are draft (approval pending) |
 | MC-13 | Commit only on finalizer success | Directive §C | finalizer | 16 | Tested (offline) |
 | MC-14 | Q6 via shared engine | v0.11 | Pass A (170 clauses) and Pass B imported; five Mentor frames; mandatory NOT/AM; answer B withheld (MSV-RD-011) | 14 | Implemented, Tested (offline); calibration offer blocked on approval pending |
 
@@ -116,8 +116,9 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | ID | Requirement | Source | Implementation | Status |
 |---|---|---|---|---|
 | MC-15 | Q2 and Q6 are blocked at the source (no `q1_focus` phrases, no Q2 E/F, no Q6 import); skipped, never invented | `MSV-RD-007`; 06 | `resolveMulticlassQuestion` | Tested (offline) |
-| MC-16 | Undecided Q1 selects no Q4/Q5 route (no low-assumption scenario is marked in the source) | `MSV-RD-008` | resolver | Tested (offline) |
-| MC-17 | Q5 career-continuity template withheld; no `{declared_goal}` placeholder reaches a player | `MSV-RD-009` | resolver | Tested (offline) |
+| MC-16 | Undecided Q1 selects no specialization: Q4 uses a curated low-assumption family; Q5 uses the authored undecided banks | owner ruling MSV-RD-008; v0.11 Q4/Q5 | resolver, `q4Neutral`, `q5Fallback` | Tested (offline) |
+| MC-17 | Q5 career continuity: declared goal fills the slot with a reviewed pointer phrase, no goal uses the authored replacement; no placeholder reaches a player | owner ruling MSV-RD-009 | `q5Records` | Tested (offline) |
+| MC-18 | 25 undecided-Q1 Q5 responses and 5 no-goal replacements imported with source lines; filled answers recorded as seen | v0.11 lines 7142-7194 | builder, pack | Tested (offline) |
 
 ## Prestige additions
 

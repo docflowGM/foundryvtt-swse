@@ -39,7 +39,7 @@
 
       {{#if (eq phase "question")}}
       <div class="prog-l1-survey-stage__question-block">
-        <div class="prog-l1-survey-stage__question-kicker">Question {{questionNumber}} of {{totalQuestions}}</div>
+        <div class="prog-l1-survey-stage__question-kicker">{{#if questionNumber}}Question {{questionNumber}} of {{totalQuestions}}{{else}}Before we begin{{/if}}</div>
         {{#if view.mentorIntro}}<div class="prog-l1-survey-stage__dialogue-text" data-l1-survey-dialogue-text>{{view.mentorIntro}}</div>{{/if}}
         {{#if view.situation}}<div class="prog-l1-survey-stage__dialogue-text" style="white-space: pre-line" data-l1-survey-dialogue-text>{{view.situation}}</div>{{/if}}
         {{#if view.prompt}}<div class="prog-l1-survey-stage__dialogue-text" data-l1-survey-dialogue-text>{{view.prompt}}</div>{{/if}}

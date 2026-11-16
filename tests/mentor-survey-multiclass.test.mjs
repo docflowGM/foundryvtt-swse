@@ -60,14 +60,31 @@ test('MC-02/PR-02 the DESTINATION class Mentor narrates (Miraj, J0-N1, Ol\' Salt
   for (const [o, d] of TRANSITIONS) assert.ok(pack.mentors[d].q1Intros[o].id.startsWith(`mc.${d}.`), 'intro id is destination-owned');
 });
 
-test('MC-04 two or more prior foundation classes: survey withheld (MSV-RD-004); no origin is chosen, even in preview', () => {
+test('MC-04 two or more prior foundation classes: the player chooses the origin lens first (MSV-RD-004); only owned classes are offered; nothing else changes', () => {
   const t = R.multiclassTrigger({ selectedClassId: 'jedi', classLevels: { noble: 2, scout: 1 } });
-  assert.equal(t.applicable, true); assert.equal(t.originClassId, null); assert.deepEqual(t.originClassIds.sort(), ['noble', 'scout']); assert.equal(t.reason, 'multiple_origin_unruled');
-  for (const preview of [false, true]) {
-    const ctl = mk({ preview }).sync({ selectedClassId: 'jedi', classLevels: { noble: 2, scout: 1, soldier: 1 } });
-    assert.equal(ctl.availability.available, false); assert.equal(ctl.availability.reason, 'multiple_origin_unruled');
-    assert.equal(ctl.view().phase, 'unavailable'); assert.equal(ctl.finish(1), null);
-  }
+  assert.equal(t.applicable, true); assert.equal(t.originClassId, null); assert.deepEqual(t.originClassIds.sort(), ['noble', 'scout']); assert.equal(t.reason, 'multiple_origin_choose');
+  const ctl = mk({ preview: true }).sync({ selectedClassId: 'jedi', classLevels: { noble: 2, scout: 1, soldier: 1 } });
+  assert.equal(ctl.availability.available, true);
+  const v = ctl.view(); assert.equal(v.view.questionId, 'q0'); assert.equal(v.questionNumber, null, 'the origin lens is not a numbered question');
+  assert.deepEqual(v.view.options.map((o) => o.optionId), ['mc.origin.noble', 'mc.origin.scout', 'mc.origin.soldier'].sort((a, b) => ctl.view().view.options.findIndex((o) => o.optionId === a) - ctl.view().view.options.findIndex((o) => o.optionId === b)));
+  assert.ok(v.view.options.every((o) => /^I want to compare this new training with my \w+ training\.$/.test(o.text)));
+  assert.ok(ctl.choose('q0', 'mc.origin.scout', ctl.seq));
+  const q1 = ctl.view(); assert.equal(q1.view.questionId, 'q1');
+  assert.deepEqual(q1.view.options.map((o) => o.optionId), pack.q1.jedi.scout.map((r) => r.id), 'the authored scout to jedi bank, narrated by the destination Mentor');
+  assert.equal(q1.view.mentorIntro, pack.mentors.jedi.q1Intros.scout.text);
+  assert.equal(ctl.view().view.options.length, 6);
+  for (const preview of [false]) { const c2 = mk({ preview }).sync({ selectedClassId: 'jedi', classLevels: { noble: 2, scout: 1 } }); assert.equal(c2.view().phase, 'unavailable', 'draft text and a withheld manifest: players see nothing'); }
+});
+test('MC-04 changing the origin lens invalidates Q1 and everything keyed to it without silent replacement; skipping it skips only origin-keyed questions', () => {
+  const ctl = mk({ preview: true }).sync({ selectedClassId: 'jedi', classLevels: { noble: 2, scout: 1 } });
+  ctl.choose('q0', 'mc.origin.noble', ctl.seq); ctl.choose('q1', 'mc.jedi.q1.noble.02', ctl.seq);
+  assert.equal(ctl.draft.answers.q1.optionId, 'mc.jedi.q1.noble.02');
+  ctl.goTo('q0', ctl.seq); ctl.choose('q0', 'mc.origin.scout', ctl.seq);
+  assert.equal(ctl.draft.answers.q1, undefined); assert.ok(ctl.draft.invalidated.q1, 'the old Q1 answer is invalidated, not carried to the other bank');
+  const sk = mk({ preview: true }).sync({ selectedClassId: 'jedi', classLevels: { noble: 2, scout: 1 } });
+  assert.ok(sk.skipQuestion('q0', sk.seq));
+  assert.equal(sk.view().view.questionId, 'q3', 'no origin chosen: Q1, Q2, Q4, Q5 cannot be asked; depth is origin independent');
+  assert.equal(M.MULTICLASS_ADAPTER.typed(pack, sk.draft, sk.ctx).originClassId, null);
 });
 
 test('MC-05 fixed Q3-Q5 Mentor intros come from content, never generated, one per destination', () => {
@@ -132,23 +149,30 @@ test('MC-10 changing Q1 invalidates the dependent Q4 answer without silently rep
   assert.equal(ctl.draft.answers.q4, undefined); assert.ok(ctl.draft.invalidated.q4); assert.equal(ctl.draft.answers.q3.optionId, 'mc.q3.dip', 'Q3 does not depend on Q1');
 });
 
-test('MC-16 an undecided Q1 invents no route: Q4 and Q5 are skipped (MSV-RD-008), Q3 depth still works', () => {
+test('MC-16 an undecided Q1 selects no specialization: Q4 uses the curated low-assumption family and Q5 the authored undecided bank (MSV-RD-008)', () => {
   const ctl = start('noble', 'jedi');
   assert.ok(ctl.choose('q1', 'mc.jedi.q1.noble.06', ctl.seq));
   assert.equal(ctl.view().view.questionId, 'q3'); ctl.choose('q3', 'mc.q3.dive', ctl.seq);
-  assert.equal(ctl.view().phase, 'ready'); assert.ok(ctl.draft.skipped.q4 && ctl.draft.skipped.q5 && ctl.draft.skipped.q2 && ctl.draft.skipped.q6);
+  const q4 = ctl.view(); assert.equal(q4.view.questionId, 'q4');
+  assert.ok(pack.q4Neutral.jedi.scenarioIds.some((id) => pack.q4[id].situation.text === q4.view.situation), 'scene comes from the curated neutral family');
+  assert.equal(pack.q4Neutral.jedi.family, 'consular'); assert.ok(pack.q4Neutral.jedi.rationale);
+  assert.ok(ctl.choose('q4', q4.view.options[0].optionId, ctl.seq));
+  const q5 = ctl.view(); assert.equal(q5.view.questionId, 'q5'); assert.equal(q5.view.options.length, 6, 'five milestones (career continuity = authored no-goal replacement) + undecided');
+  assert.ok(pack.q5Fallback.jedi.some((r) => r.text === q5.view.options[0].text), 'authored Q1-undecided Jedi fallback');
+  assert.ok(ctl.choose('q5', q5.view.options[0].optionId, ctl.seq));
+  assert.ok(ctl.draft.skipped.q2 && ctl.draft.skipped.q6);
   assert.ok(ctl.finish(ctl.seq));
 });
-
-test('MC-17 Q5: the career-continuity template (needs an unavailable goal phrase) is withheld; no placeholder ever reaches a player', () => {
+test('MC-17 Q5 career continuity: no declared goal uses the authored no-goal replacement; no placeholder ever reaches a player', () => {
   const withSlot = Object.values(pack.q5).flatMap((o) => Object.values(o)).flatMap((r) => Object.values(r)).flat().filter((x) => x.needsGoalSlot);
   assert.equal(withSlot.length, 100); assert.ok(withSlot.every((x) => x.kind === 'career_continuity' && /\{declared_goal\}/.test(x.text)));
+  assert.equal(Object.keys(pack.q5Fallback).length, 5); assert.equal(Object.values(pack.q5Fallback).flat().length, 25); assert.equal(Object.keys(pack.q5NoGoal).length, 5);
   const ctl = start('jedi', 'noble'); ctl.choose('q1', 'mc.noble.q1.jedi.01', ctl.seq); ctl.choose('q3', 'mc.q3.dip', ctl.seq);
   const q4 = ctl.view().view; ctl.choose('q4', q4.options[0].optionId, ctl.seq);
   const q5 = ctl.view();
-  assert.equal(q5.view.questionId, 'q5'); assert.equal(q5.view.options.length, 5, 'four milestones + undecided');
+  assert.equal(q5.view.questionId, 'q5'); assert.equal(q5.view.options.length, 6, 'five milestones + undecided');
   assert.ok(q5.view.options.every((o) => !/\{|\}|declared_goal/.test(o.text)));
-  assert.ok(!q5.view.options.some((o) => o.optionId.includes('career_continuity')));
+  assert.equal(q5.view.options[3].text, pack.q5NoGoal.noble.text);
   assert.equal(q5.view.options.at(-1).optionId, 'mc.q5.undecided');
   assert.deepEqual(S.scanViewForLeaks(q5.view), []);
 });
@@ -163,7 +187,7 @@ test('MC-15 Q2 and Q6 are blocked at the source and are skipped, never invented'
 test('SV-07/SV-08 every selectable multiclass record is first person and leak free (the 100 goal-slot templates are never offered)', () => {
   const bad = [...M.buildRecordIndex(pack).values()].filter((r) => !r.needsGoalSlot).flatMap((r) => S.validateResponseRecord(r));
   assert.deepEqual(bad, []);
-  assert.equal([...M.buildRecordIndex(pack).values()].length, 120 + 4 + 1250 + 250 + 500 + 1);
+  assert.equal([...M.buildRecordIndex(pack).values()].length, 120 + 4 + 1250 + 250 + 500 + 1 + 25 + 5 + 105 + 5);
 });
 
 test('SV-09 release gate: with no preview every multiclass scope is unavailable; draft content never reaches players', () => {

@@ -160,7 +160,7 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
     const v = this._ctl ? this._ctl.view() : { phase: 'unavailable', reason: this._loadError ? 'content_unavailable' : 'not_ready' };
     // Inner stages (Q5's optional second purpose) belong to their question: count distinct question numbers.
     const qs = this._ctl?.flow?.questions ?? ['q1', 'q2', 'q3', 'q4', 'q5'];
-    const numbers = [...new Set(qs.map((q) => Number(String(q).match(/\d/)[0])))];
+    const numbers = [...new Set(qs.map((q) => Number(String(q).match(/\d/)[0])).filter((n) => n > 0))];
     const total = numbers.length;
     const resolvedNum = (n) => qs.filter((q) => Number(String(q).match(/\d/)[0]) === n).every((q) => this._ctl?.draft?.answers?.[q] || this._ctl?.draft?.skipped?.[q]);
     return {
@@ -217,6 +217,7 @@ export class MulticlassSurveyStep extends MentorSurveyStep {
       // Q2 reads the EXISTING observed-only accessor (finalized owned items, ability scores, trained skills). No new scorer;
       // if the primitive registries are not initialized it returns {} and Q2 is simply not offered.
       observedBias: (() => { try { return IdentityEngine.computeObservedBehaviorBias(shell?.actor)?.mechanicalBias || {}; } catch (_e) { return {}; } })(),
+      observedProvenance: (() => { try { return IdentityEngine.computeObservedBehaviorBiasProvenance(shell?.actor) || null; } catch (_e) { return null; } })(),
       canonicalBiasKeys: this._ctl?.pack?.q2Content?.keys || [],
     };
   }

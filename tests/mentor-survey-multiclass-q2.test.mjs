@@ -18,12 +18,11 @@ const q2c = json('data/mentor-survey/multiclass-q2.json');
 const canon = Object.keys(json('data/bias-keys-canonical.json').mechanicalBias);
 const manifest = json('data/mentor-survey/release-manifest.json');
 const shipped = { ...json('data/mentor-survey/multiclass.json'), q2Content: q2c };
-// TEST-ONLY fixture: a q1_focus phrase for every Q1 answer. NO such phrases ship (the design authors none); this only proves the mechanism.
-const FOCUS = Object.fromEntries(Object.values(shipped.q1).flatMap((o) => Object.values(o)).flat().filter((r) => r.kind === 'direction').map((r) => [r.id, 'better coordination of my allies']));
-const withFocus = { ...shipped, q2Content: { ...q2c, q1Focus: FOCUS } };
+const withFocus = shipped; // the shipped pack now carries the 100 drafted q1_focus phrases, the neutral focus and answers E and F
 const actorFixture = { items: [{ type: 'class', name: 'Soldier', id: 's', system: { level: 3 } }], system: { skills: {} } };
-const start = (pack, observedBias, over = {}) => new M.MulticlassSurveyController({ pack, manifest, preview: true, archetypeLookup: () => null, ...over })
-  .sync({ selectedClassId: 'noble', classLevels: { soldier: 3 }, seed: 's', evidence: E.projectActorEvidence(actorFixture), events: [], observedBias, canonicalBiasKeys: canon });
+const prov = (keys, kind = 'items') => ({ items: kind === 'items' ? Object.fromEntries(keys.map((k) => [k, ['Owned Feat']])) : {}, skills: kind === 'skills' ? Object.fromEntries(keys.map((k) => [k, true])) : {}, attributes: {} });
+const start = (pack, observedBias, over = {}, provenance = null) => new M.MulticlassSurveyController({ pack, manifest, preview: true, archetypeLookup: () => null, ...over })
+  .sync({ selectedClassId: 'noble', classLevels: { soldier: 3 }, seed: 's', evidence: E.projectActorEvidence(actorFixture), events: [], observedBias, observedProvenance: provenance ?? prov(Object.keys(observedBias)), canonicalBiasKeys: canon });
 
 test('MC-12 Q2 import: 625 templates, exactly the canonical 125 keys for each of the five destinations, every one slot-bearing', () => {
   assert.deepEqual(q2c._meta.counts, { templates: 625, destinations: 5, keys: 125, templatesWithQ1FocusSlot: 625 });
@@ -41,12 +40,18 @@ test('MC-12 accessor audit is recorded: public, pure, observed-only; four emitte
   assert.deepEqual(Q2.topObservedKeys({ mobility: 9, perception: 9, techControl: 9, forceConnection: 9 }, canon), []);
 });
 
-test('MC-12/SV-15 as shipped there is NO q1_focus phrase, so Q2 is skipped with the precise reason, never improvised', () => {
-  assert.deepEqual(q2c.q1Focus, {});
-  const ctl = start(shipped, { accuracy: 3, evasion: 2 });
-  ctl.choose('q1', 'mc.noble.q1.soldier.01', ctl.seq);
-  assert.equal(Q2.resolveQ2({ pack: shipped, draft: ctl.draft, ctx: ctl.ctx, runtime: ctl.runtime, preview: true }).reason, 'needs_q1_focus');
-  assert.ok(ctl.view().view.questionId !== 'q2'); assert.ok(ctl.draft.skipped.q2);
+test('MC-12/SV-15 the q1_focus catalog covers exactly the 100 substantive Q1 answers as drafts; the neutral focus and E/F are owner-approved', () => {
+  const direct = Object.values(shipped.q1).flatMap((o) => Object.values(o)).flat().filter((r) => r.kind === 'direction').map((r) => r.id);
+  assert.equal(direct.length, 100); assert.deepEqual(Object.keys(q2c.q1Focus).sort(), [...direct].sort());
+  assert.ok(Object.values(q2c.q1Focus).every((f) => f.editorialStatus === 'draft_text' && f.text.length > 8 && !/[.!?]$/.test(f.text)));
+  assert.equal(q2c.q1FocusNeutral.text, 'what this new training could offer'); assert.equal(q2c.q1FocusNeutral.editorialStatus, 'owner_approved_text');
+  assert.equal(q2c.alternatives.alternative.text, 'I want to explore a different way my previous training could connect with this new path.');
+  assert.equal(q2c.alternatives.undecided.text, "I'm not sure yet which part of my experience I want to build on.");
+  assert.ok(Object.values(q2c.alternatives).every((r) => r.editorialStatus === 'owner_approved_text' && S.isFirstPerson(r.text)));
+  const bad = Object.entries(q2c.q1Focus).flatMap(([id, f]) => S.validateResponseRecord({ ...Object.values(q2c.destinations.noble)[0], id: f.id, text: `I want to grow while pursuing ${f.text}.`, editorialStatus: 'draft_text' }));
+  assert.deepEqual(bad, [], 'each phrase reads grammatically after "while pursuing" and leaks nothing');
+  const ctl = start(shipped, { accuracy: 3 }); ctl.choose('q1', 'mc.noble.q1.soldier.01', ctl.seq);
+  assert.equal(Q2.resolveQ2({ pack: shipped, draft: ctl.draft, ctx: ctl.ctx, runtime: ctl.runtime, preview: false }).reason, 'unapproved_content', 'draft phrases never reach players');
 });
 
 test('MC-12 top four distinct OBSERVED canonical strengths: score descending, ties by key, non-canonical and zero scores ignored, no padding', () => {
@@ -56,43 +61,59 @@ test('MC-12 top four distinct OBSERVED canonical strengths: score descending, ti
   assert.deepEqual(Q2.topObservedKeys({}, canon), []); assert.deepEqual(Q2.topObservedKeys({ [canon[0]]: -1, [canon[1]]: 0 }, canon), []);
 });
 
-test('MC-12 with a certified phrase supplied: Q2 offers authored answers for the observed strengths, slot filled, first person, no keys or scores shown', () => {
+test('MC-12 Q2 offers A-D for evidence-backed strengths plus E and F; slot filled, first person, no keys or scores shown', () => {
   const [k1, k2, k3, k4, k5] = canon;
   const ctl = start(withFocus, { [k1]: 5, [k2]: 4, [k3]: 3, [k4]: 2, [k5]: 1 });
   ctl.choose('q1', 'mc.noble.q1.soldier.01', ctl.seq);
   const v = ctl.view();
-  assert.equal(v.view.questionId, 'q2'); assert.equal(v.questionNumber, 2); assert.equal(v.view.options.length, 4);
-  assert.deepEqual(v.view.options.map((o) => o.optionId), [k1, k2, k3, k4].map((k) => `mc.q2.noble.${k.toLowerCase()}`));
-  assert.ok(v.view.options.every((o) => o.text.includes('better coordination of my allies') && !/\{\{|\}\}/.test(o.text) && S.isFirstPerson(o.text)));
+  assert.equal(v.view.questionId, 'q2'); assert.equal(v.questionNumber, 2); assert.equal(v.view.options.length, 6);
+  assert.deepEqual(v.view.options.map((o) => o.optionId), [...[k1, k2, k3, k4].map((k) => `mc.q2.noble.${k.toLowerCase()}`), 'mc.q2.alt', 'mc.q2.undecided']);
+  const focus = q2c.q1Focus['mc.noble.q1.soldier.01'].text;
+  assert.ok(v.view.options.slice(0, 4).every((o) => o.text.includes(focus) && !/\{\{|\}\}/.test(o.text) && S.isFirstPerson(o.text)));
   assert.deepEqual(S.scanViewForLeaks(v.view), []);
-  assert.ok(!v.view.options.some((o) => canon.some((k) => k.length > 5 && o.text.includes(`${k}:`))));
-  assert.equal(v.view.mentorIntro, withFocus.mentors.noble.intros.q2.text, 'the destination Mentor\'s fixed Q2 introduction');
+  assert.equal(v.view.mentorIntro, withFocus.mentors.noble.intros.q2.text, "the destination Mentor's fixed Q2 introduction");
 });
 
-test('MC-12 fewer than four observed strengths gives fewer answers; none skips Q2 (insufficient evidence, no fabricated strengths)', () => {
+test('MC-12 sparse evidence: fewer strengths give fewer A-D answers; zero evidence-backed strengths still offers E and F; nothing is padded', () => {
   const two = start(withFocus, { [canon[0]]: 2, [canon[1]]: 1 }); two.choose('q1', 'mc.noble.q1.soldier.01', two.seq);
-  assert.equal(two.view().view.options.length, 2);
+  assert.equal(two.view().view.options.length, 4);
   const none = start(withFocus, {}); none.choose('q1', 'mc.noble.q1.soldier.01', none.seq);
-  assert.equal(Q2.resolveQ2({ pack: withFocus, draft: none.draft, ctx: none.ctx, runtime: none.runtime, preview: true }).reason, 'insufficient_observed_evidence');
-  assert.ok(none.view().view.questionId !== 'q2');
+  const v = none.view(); assert.equal(v.view.questionId, 'q2');
+  assert.deepEqual(v.view.options.map((o) => o.optionId), ['mc.q2.alt', 'mc.q2.undecided']);
 });
 
-test('MC-12 an undecided Q1 supplies no focus to join, so Q2 is skipped', () => {
+test('MC-12 provenance gate: a score from ability scores alone is a tendency, not past training, so no autobiographical answer is offered for it', () => {
+  const k = canon[0];
+  const attrOnly = start(withFocus, { [k]: 9 }, {}, { items: {}, skills: {}, attributes: { [k]: true } }); attrOnly.choose('q1', 'mc.noble.q1.soldier.01', attrOnly.seq);
+  assert.deepEqual(attrOnly.view().view.options.map((o) => o.optionId), ['mc.q2.alt', 'mc.q2.undecided']);
+  const noProv = start(withFocus, { [k]: 9 }, {}, null); noProv.runtime.observedProvenance = null; noProv.choose('q1', 'mc.noble.q1.soldier.01', noProv.seq);
+  assert.deepEqual(Q2.resolveQ2({ pack: withFocus, draft: noProv.draft, ctx: noProv.ctx, runtime: { ...noProv.runtime, observedProvenance: null }, preview: true }).records.map((r) => r.id), ['mc.q2.alt', 'mc.q2.undecided'], 'unknown provenance fails closed');
+  const skill = start(withFocus, { [k]: 9 }, {}, prov([k], 'skills')); skill.choose('q1', 'mc.noble.q1.soldier.01', skill.seq);
+  assert.equal(skill.view().view.options.length, 3);
+  assert.deepEqual(Q2.keyProvenance({ items: { [k]: ['A', 'B', 'C', 'D'] }, skills: {} }, k), { items: ['A', 'B', 'C'], skills: false });
+});
+
+test('MC-12 an undecided Q1 uses the approved neutral focus and infers no specialization; E and F are always present', () => {
   const ctl = start(withFocus, { [canon[0]]: 3 }); ctl.choose('q1', 'mc.noble.q1.soldier.06', ctl.seq);
-  assert.equal(Q2.resolveQ2({ pack: withFocus, draft: ctl.draft, ctx: ctl.ctx, runtime: ctl.runtime, preview: true }).reason, 'needs_q1_focus');
+  const v = ctl.view(); assert.equal(v.view.questionId, 'q2');
+  assert.match(v.view.options[0].text, /while pursuing what this new training could offer\.$/);
+  assert.deepEqual(v.view.options.slice(-2).map((o) => o.optionId), ['mc.q2.alt', 'mc.q2.undecided']);
 });
 
-test('MC-12 choosing a Q2 answer records only the typed connection (no weight, no goal); it never changes the Q4 scene', () => {
+test('MC-12 choosing a Q2 answer records only the typed connection and its evidence (no weight, no goal); E records exploration only; Q4 is unchanged', () => {
   const sceneWith = (pickIndex) => { const c = start(withFocus, { [canon[0]]: 5, [canon[1]]: 4 }); c.choose('q1', 'mc.noble.q1.soldier.02', c.seq); c.choose('q2', c.view().view.options[pickIndex].optionId, c.seq); c.choose('q3', 'mc.q3.dip', c.seq); return [c.view().view.situation, c]; };
-  const [s0, c0] = sceneWith(0); const [s1] = sceneWith(1);
-  assert.equal(s0, s1, 'Q4 depends on the exact Q1 answer only');
-  assert.equal(c0.draft.answers.q2.meta.biasKey, canon[0]); assert.deepEqual(c0.adapter.goals(withFocus, c0.draft, c0.ctx), []);
+  const [s0, c0] = sceneWith(0); const [s1] = sceneWith(1); const [sE, cE] = sceneWith(2);
+  assert.equal(s0, s1, 'Q4 depends on the exact Q1 answer only'); assert.equal(s0, sE);
+  assert.equal(c0.draft.answers.q2.meta.biasKey, canon[0]); assert.deepEqual(c0.draft.answers.q2.meta.evidence, { items: ['Owned Feat'], skills: false });
+  assert.deepEqual(c0.adapter.goals(withFocus, c0.draft, c0.ctx), []);
   assert.equal(M.MULTICLASS_ADAPTER.typed(withFocus, c0.draft, c0.ctx).q2BiasKey, canon[0]);
+  assert.deepEqual(cE.draft.answers.q2.meta, { kind: 'alternative' }); assert.equal(M.MULTICLASS_ADAPTER.typed(withFocus, cE.draft, cE.ctx).q2BiasKey, null);
+  assert.deepEqual(cE.adapter.goals(withFocus, cE.draft, cE.ctx), [], 'E explores; it declares no goal');
 });
 
 test('SV-13 a change in the observed strengths invalidates the Q2 answer without replacing it; the player must re-answer', () => {
   const ctl = start(withFocus, { [canon[0]]: 5, [canon[1]]: 4 }); ctl.choose('q1', 'mc.noble.q1.soldier.01', ctl.seq); ctl.choose('q2', ctl.view().view.options[0].optionId, ctl.seq);
-  ctl.sync({ selectedClassId: 'noble', classLevels: { soldier: 3 }, seed: 's', evidence: E.projectActorEvidence(actorFixture), events: [], observedBias: { [canon[2]]: 9 }, canonicalBiasKeys: canon });
+  ctl.sync({ selectedClassId: 'noble', classLevels: { soldier: 3 }, seed: 's', evidence: E.projectActorEvidence(actorFixture), events: [], observedBias: { [canon[2]]: 9 }, observedProvenance: prov([canon[2]]), canonicalBiasKeys: canon });
   assert.equal(ctl.draft.answers.q2, undefined); assert.ok(ctl.draft.invalidated.q2);
   assert.equal(ctl.draft.answers.q1.optionId, 'mc.noble.q1.soldier.01');
 });
@@ -111,4 +132,13 @@ test('MC-12 the real accessor degrades safely: without initialized primitive reg
   const out = IdentityEngine.computeObservedBehaviorBias(actorFixture);
   assert.deepEqual(Object.keys(out).sort(), ['attributeBias', 'mechanicalBias', 'roleBias']);
   assert.deepEqual(Q2.topObservedKeys(out.mechanicalBias, canon), []);
+});
+
+test('MC-12 the provenance accessor is a read-only sibling of the observed accessor: same engine, no new scorer, empty without registries', async () => {
+  const { IdentityEngine } = await import(u('scripts/engine/prestige/identity-engine.js'));
+  assert.equal(typeof IdentityEngine.computeObservedBehaviorBiasProvenance, 'function');
+  assert.deepEqual(IdentityEngine.computeObservedBehaviorBiasProvenance(actorFixture), { items: {}, skills: {}, attributes: {} });
+  const src = fs.readFileSync(path.join(ROOT, 'scripts/engine/prestige/identity-engine.js'), 'utf8');
+  const body = src.slice(src.indexOf('static computeObservedBehaviorBiasProvenance'), src.indexOf('static #getAbilityScore'));
+  assert.ok(!/\* 0\.|weight|Math\.(pow|exp)/.test(body), 'no new arithmetic');
 });

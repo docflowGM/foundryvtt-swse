@@ -6,8 +6,7 @@
  *
  * Imports VERBATIM: transition intros (Q1), fixed Q2-Q5 intros, Q1 banks (20 origin->destination x 6), the four approved
  * Q3 depth answers, 250 Q4 scenarios with the Q1-route->family map, and 500 Q5 milestone templates.
- * NOT imported (not authored in the committed design): Q2 q1_focus phrases and Q2 answers E/F, Q5 undecided-Q1 fallback
- * banks, Q6 libraries. Approval flags: only the Q3 depth answers are owner-approved; everything else is draft_text.
+ * NOT imported (not authored in the committed design): Q2 q1_focus phrases and Q2 answers E/F, Q6 libraries (separate pack). Approval flags: only the Q3 depth answers are owner-approved; everything else is draft_text.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -166,18 +165,60 @@ for (let i = secQ5lib; i < secQ6; i++) {
 }
 const q5Count = Object.values(q5).flatMap((o) => Object.values(o)).flatMap((r) => Object.values(r)).reduce((a, r) => a + r.length, 0);
 if (q5Count !== 500) fail(`Q5: expected 500 templates, got ${q5Count}`);
+/* ---------- Q5 undecided-Q1 fallback banks (25) and missing-goal replacements (5): lines ~7142-7194 of the design ---------- */
+const q5Fallback = {};
+for (let i = secQ5lib; i < secQ6; i++) {
+  const h = /^#### (Jedi|Noble|Scoundrel|Scout|Soldier) \(Q1 undecided\)$/.exec(lines[i]);
+  if (!h) continue;
+  const dest = CLS[h[1]]; const opts = [];
+  for (let j = i + 1; j < secQ6 && !/^#### |^### |^## /.test(lines[j]); j++) {
+    const o = /^\d\. \*\*(develop_core|field_application|benefit_others|career_continuity|prepare_future_route):\*\* (.+)$/.exec(lines[j]);
+    if (o) opts.push(rec(`mc.q5.${dest}.undecided.${o[1]}`, quoted(o[2]), false, `Q5 ${h[1]} (Q1 undecided) ${o[1]}`, { kind: o[1], needsGoalSlot: /\{declared_goal\}/.test(o[2]), fromUndecidedQ1: true, sourceLine: j + 1 }));
+  }
+  if (opts.map((x) => x.kind).join() !== KINDS.join()) fail(`Q5 undecided fallback ${dest}: expected the five milestone kinds in order`);
+  q5Fallback[dest] = opts;
+}
+if (Object.keys(q5Fallback).length !== 5) fail('Q5 undecided fallback banks: expected 5 destinations');
+const q5NoGoal = {};
+const ngStart = find(lines, /^### Missing-goal replacements for career-continuity option/);
+if (ngStart < 0) fail('missing-goal replacements not found');
+for (let j = ngStart + 1; j < ngStart + 14; j++) {
+  const m = /^- \*\*(Noble|Jedi|Scout|Soldier|Scoundrel):\*\* (.+)$/.exec(lines[j]);
+  if (m) q5NoGoal[CLS[m[1]]] = rec(`mc.q5.${CLS[m[1]]}.nogoal.career_continuity`, quoted(m[2]), false, `Q5 missing-goal replacement ${m[1]}`, { kind: 'career_continuity', noGoalReplacement: true, sourceLine: j + 1 });
+}
+if (Object.keys(q5NoGoal).length !== 5) fail('Q5 missing-goal replacements: expected 5');
+/* Declared-goal slot phrase: an implementation choice (MSV-RD-015), draft. It points at the player's own recorded goal without naming or paraphrasing it. */
+const goalPhrase = rec('mc.q5.goalphrase', 'the goal I have already declared', false, 'implementation choice for the {declared_goal} slot (MSV-RD-015)', { kind: 'goal_slot_phrase', implementationChoice: true });
+/* Q4 for an undecided Q1 (owner ruling MSV-RD-008): a curated low-assumption scenario family per destination. Rationale recorded; pending editorial review. */
+const Q4_NEUTRAL = {
+  noble: ['leadership', 'Everyday coordination dilemmas (an evacuation, a search, a blackout); no title, rank or skill is assumed.'],
+  jedi: ['consular', 'Ordinary conversations about trust and mediation; no Force technique or lightsaber skill is assumed.'],
+  scout: ['recon', 'Observation and reporting problems; no tracking, stealth or vehicle training is assumed.'],
+  soldier: ['tactics', 'Plan and call decisions for a mixed squad; no weapon, armor or unarmed specialty is assumed.'],
+  scoundrel: ['opportunist', 'Surprise complications in public places; no disguise, slicing or ship skill is assumed.'],
+};
+const q4Neutral = Object.fromEntries(Object.entries(Q4_NEUTRAL).map(([d, [family, rationale]]) => {
+  if (!byFamily[d]?.[family]?.length) fail(`neutral Q4 family missing: ${d} ${family}`);
+  return [d, { family, scenarioIds: byFamily[d][family], rationale, status: 'curated_pending_editorial_review' }];
+}));
+/* Origin lens (owner ruling MSV-RD-004): a survey-framing choice shown only when two or more foundation classes are owned. Drafts. */
+const CLASS_LABEL = { jedi: 'Jedi', noble: 'Noble', scoundrel: 'Scoundrel', scout: 'Scout', soldier: 'Soldier' };
+const origin = {
+  prompt: rec('mc.origin.prompt', 'Which of your earlier paths do you want to compare this new training with?', false, 'owner ruling MSV-RD-004 (implementation text)', { kind: 'origin_prompt', implementationChoice: true }),
+  options: Object.fromEntries(Object.entries(CLASS_LABEL).map(([c, label]) => [c, rec(`mc.origin.${c}`, `I want to compare this new training with my ${label} training.`, false, 'owner ruling MSV-RD-004 (implementation text)', { kind: 'origin', originClassId: c, implementationChoice: true })])),
+};
 const q5undecidedLine = lines.find((l) => /I am not sure what I want to accomplish first\. I would rather see what this training makes possible\./.test(l));
 if (!q5undecidedLine) fail('Q5 undecided text not found');
 
 const counts = {
-  q1Banks: 20, q1Answers: 120, q1Intros: 20, fixedIntros: 20, q3Depths: 4, q4Scenarios: 250, q4Methods: 1250, q4Neutral: 250, q5Templates: 500,
+  q1Banks: 20, q1Answers: 120, q1Intros: 20, fixedIntros: 20, q3Depths: 4, q4Scenarios: 250, q4Methods: 1250, q4Neutral: 250, q5Templates: 500, q5UndecidedFallback: 25, q5NoGoalReplacements: 5, q4NeutralFamilies: 5,
   q5TemplatesWithGoalSlot: Object.values(q5).flatMap((o) => Object.values(o)).flatMap((r) => Object.values(r)).flat().filter((x) => x.needsGoalSlot).length,
 };
 const pack = {
   _meta: { survey: 'multiclass', contentVersion: 1, sourceCommit: SOURCE_COMMIT, sourceFile: DOC, generatedBy: 'tools/mentor-survey/build-multiclass-content.mjs', counts,
     note: 'Verbatim import. Only the Q3 depth answers are owner-approved. NOT imported because not authored in the committed design: Q2 (q1_focus phrases, answers E/F), Q5 undecided-Q1 fallback banks, Q6 libraries.' },
   mentors: Object.fromEntries(Object.values(CLS).map((c) => [c, { mentorRegistryKey: MENTOR[c], q1Intros: q1Intros[c], intros: fixedIntros[c] }])),
-  q1, q3, q4Routes: routeMap, q4ByFamily: byFamily, q4, q5,
+  q1, q3, q4Routes: routeMap, q4ByFamily: byFamily, q4, q5, q5Fallback, q5NoGoal, q5GoalPhrase: goalPhrase, q4Neutral, origin,
   q5Undecided: rec('mc.q5.undecided', 'I am not sure what I want to accomplish first. I would rather see what this training makes possible.', false, 'Q5 milestone table undecided', { kind: 'neutral' }),
   blocked: {
     q2: 'Requires a certified q1_focus noun phrase per Q1 answer, authored Q2 answers E/F, and a verified top-four scores accessor; none exists in the committed design.',

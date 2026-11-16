@@ -12,6 +12,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { Q1_FOCUS, NEUTRAL_FOCUS, Q2_E, Q2_F } from './q1-focus-phrases.mjs';
 import { quoted, readLines, find, writeJson, fail } from './lib.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -36,12 +37,27 @@ for (let i = start; i < end; i++) {
   destinations[d] = rows;
 }
 if (Object.keys(destinations).length !== 5) fail('Q2: expected 5 destinations');
+/* ---------- q1_focus catalog (owner-authorized drafts), neutral focus and E/F (owner-approved) ---------- */
+const mcPack = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/mentor-survey/multiclass.json'), 'utf8'));
+const directionIds = Object.entries(mcPack.q1).flatMap(([d, o]) => Object.entries(o).flatMap(([org, bank]) => bank.filter((a) => a.kind === 'direction').map((a) => a.id)));
+const q1Focus = {};
+for (const id of directionIds) {
+  const key = id.replace(/^mc\./, '').replace('.q1.', '.');
+  if (!Q1_FOCUS[key]) fail(`q1_focus phrase missing for ${id}`);
+  q1Focus[id] = { id: `mc.q1focus.${key}`, text: Q1_FOCUS[key], editorialStatus: 'draft_text', basis: 'drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)' };
+}
+if (Object.keys(q1Focus).length !== 100 || Object.keys(Q1_FOCUS).length !== 100) fail('q1_focus catalog must cover exactly 100 substantive Q1 answers');
+const q1FocusNeutral = { id: 'mc.q1focus.neutral', text: NEUTRAL_FOCUS, editorialStatus: 'owner_approved_text', basis: 'owner ruling 2026-11-16: factual generic focus for an undecided Q1; no specialization inferred' };
+const alternatives = {
+  alternative: { id: 'mc.q2.alt', kind: 'alternative', text: Q2_E, editorialStatus: 'owner_approved_text', mechanicsStatus: 'none', ownerRuling: 'MSV-RD-007', note: 'records exploration only' },
+  undecided: { id: 'mc.q2.undecided', kind: 'undecided', text: Q2_F, editorialStatus: 'owner_approved_text', mechanicsStatus: 'none', ownerRuling: 'MSV-RD-007', note: 'records no scored preference' },
+};
 const slotted = Object.values(destinations).flatMap((r) => Object.values(r)).filter((r) => r.needsQ1Focus).length;
 writeJson(path.join(ROOT, 'data/mentor-survey/multiclass-q2.json'), {
   _meta: { survey: 'multiclass-q2', contentVersion: 1, sourceCommit: COMMIT, generatedBy: 'tools/mentor-survey/build-multiclass-q2-content.mjs', counts: { templates: 625, destinations: 5, keys: 125, templatesWithQ1FocusSlot: slotted },
     accessorAudit: { accessor: 'IdentityEngine.computeObservedBehaviorBias(actor).mechanicalBias', public: true, pure: true, observedOnly: true, inputs: 'owned item rules primitives, ability scores, skill training', requires: 'primitive registries initialized (returns {} with a warning otherwise)', emittedMechanicalKeys: 43, inCanonical125: 39, notCanonical: ['mobility', 'perception', 'techControl', 'forceConnection'], rule: 'keys outside the canonical 125 are ignored; ties break by key; no padding below four' },
-    note: 'Verbatim import. q1Focus is intentionally empty: the design requires certified noun phrases per Q1 answer and none is authored. Answers E (alternate direction) and F (not sure) exist only as illustrative prototypes, not as a generic authored pair.' },
+    note: 'Verbatim import of the 625 templates. q1Focus (100 drafted noun phrases), the neutral focus and answers E and F were added under the owner rulings of 2026-11-16 (MSV-RD-007); draft phrases are preview only until reviewed.' },
   keys: canon, destinations,
-  q1Focus: {},
+  q1Focus, q1FocusNeutral, alternatives,
 });
 console.log('wrote data/mentor-survey/multiclass-q2.json', slotted);

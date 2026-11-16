@@ -54,6 +54,9 @@ test('MC-03 MulticlassSurveyStep runs a real Noble->Jedi session: render data, a
   assert.equal(d.title, 'What do you want from this new training?');
   assert.deepEqual(Object.keys(shell.progressionSession.store.mentorSurvey.drafts), ['multiclass:jedi']);
   await click(step, shell, 'msurvey-choose', { questionId: 'q1', optionId: d.view.options[0].optionId, seq: String(d.seq) });
+  d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q2');
+  assert.deepEqual(d.view.options.map((o) => o.optionId), ['mc.q2.alt', 'mc.q2.undecided'], 'no evidence-backed strength in this fixture: only E and F');
+  await click(step, shell, 'msurvey-choose', { questionId: 'q2', optionId: 'mc.q2.undecided', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q3');
   // a duplicate click with the same token changes nothing
   const before = JSON.stringify(shell.progressionSession.store.mentorSurvey);
@@ -64,7 +67,7 @@ test('MC-03 MulticlassSurveyStep runs a real Noble->Jedi session: render data, a
   await click(step, shell, 'msurvey-choose', { questionId: 'q4', optionId: d.view.options[0].optionId, seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q5');
   await click(step, shell, 'msurvey-choose', { questionId: 'q5', optionId: d.view.options[0].optionId, seq: String(d.seq) });
-  d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q6'); assert.equal(d.questionNumber, 6); assert.equal(d.totalQuestions, 6, 'Q2 is skipped but still counts; NOT/AM are inner stages of Q6');
+  d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q6'); assert.equal(d.questionNumber, 6); assert.equal(d.totalQuestions, 6, 'Q2 counts; NOT/AM are inner stages of Q6');
   assert.ok(d.view.situation.length > 40, 'Q6 shows the composed Mentor reading');
   await click(step, shell, 'msurvey-choose', { questionId: 'q6', optionId: 'mc.q6.choice.a', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.phase, 'ready');
@@ -78,11 +81,13 @@ test('MC-03 MulticlassSurveyStep runs a real Noble->Jedi session: render data, a
   assert.ok(shell.renders.length > 0);
 });
 
-test('MC-04/SV-09 step shows the unavailable state (and records nothing) for two prior foundation classes and for non-preview GMs-off', async () => {
+test('MC-04/SV-09 step offers the origin lens for two prior foundation classes, and shows nothing for a further level in a held class', async () => {
   const many = fakeShell({ cls: 'Jedi', actorClasses: { Noble: 2, Scout: 2 } });
   const s1 = new MulticlassSurveyStep({ stepId: 'base-class-survey' }); await s1.onStepEnter(many);
-  assert.equal((await s1.getStepData({ shell: many })).phase, 'unavailable');
-  assert.equal(many.progressionSession.store.mentorSurvey, undefined, 'no draft is created when the survey does not apply');
+  const dm = await s1.getStepData({ shell: many });
+  assert.equal(dm.phase, 'question'); assert.equal(dm.view.questionId, 'q0'); assert.equal(dm.questionNumber, null); assert.equal(dm.totalQuestions, 6, 'the origin lens is not counted');
+  await click(s1, many, 'msurvey-choose', { questionId: 'q0', optionId: 'mc.origin.noble', seq: String(dm.seq) });
+  assert.equal((await s1.getStepData({ shell: many })).view.questionId, 'q1');
   const further = fakeShell({ cls: 'Noble', actorClasses: { Noble: 2, Soldier: 1 } });
   const s2 = new MulticlassSurveyStep({ stepId: 'base-class-survey' }); await s2.onStepEnter(further);
   assert.equal((await s2.getStepData({ shell: further })).phase, 'unavailable', 'a further level in a held class is not a new class');

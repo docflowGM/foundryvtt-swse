@@ -27,7 +27,7 @@
       ],
       "rule": "keys outside the canonical 125 are ignored; ties break by key; no padding below four"
     },
-    "note": "Verbatim import. q1Focus is intentionally empty: the design requires certified noun phrases per Q1 answer and none is authored. Answers E (alternate direction) and F (not sure) exist only as illustrative prototypes, not as a generic authored pair."
+    "note": "Verbatim import of the 625 templates. q1Focus (100 drafted noun phrases), the neutral focus and answers E and F were added under the owner rulings of 2026-11-16 (MSV-RD-007); draft phrases are preview only until reviewed."
   },
   "keys": [
     "forceSecret",
@@ -8918,5 +8918,632 @@
       }
     }
   },
-  "q1Focus": {}
+  "q1Focus": {
+    "mc.noble.q1.jedi.01": {
+      "id": "mc.q1focus.noble.jedi.01",
+      "text": "understanding-based persuasion and dispute resolution",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.jedi.02": {
+      "id": "mc.q1focus.noble.jedi.02",
+      "text": "organizing people around a shared purpose",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.jedi.03": {
+      "id": "mc.q1focus.noble.jedi.03",
+      "text": "helping others keep their courage under pressure",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.jedi.04": {
+      "id": "mc.q1focus.noble.jedi.04",
+      "text": "a deeper understanding of governments, cultures, and institutions",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.jedi.05": {
+      "id": "mc.q1focus.noble.jedi.05",
+      "text": "connections and resources for the causes I choose to support",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scoundrel.01": {
+      "id": "mc.q1focus.noble.scoundrel.01",
+      "text": "more convincing persuasion when the stakes are high",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scoundrel.02": {
+      "id": "mc.q1focus.noble.scoundrel.02",
+      "text": "coordinating a whole group instead of only myself",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scoundrel.03": {
+      "id": "mc.q1focus.noble.scoundrel.03",
+      "text": "useful contacts and resources I can rely on",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scoundrel.04": {
+      "id": "mc.q1focus.noble.scoundrel.04",
+      "text": "a better understanding of organizations and information networks",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scoundrel.05": {
+      "id": "mc.q1focus.noble.scoundrel.05",
+      "text": "encouraging and supporting my companions",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scout.01": {
+      "id": "mc.q1focus.noble.scout.01",
+      "text": "turning what I discover into plans a whole team can follow",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scout.02": {
+      "id": "mc.q1focus.noble.scout.02",
+      "text": "questioning and negotiating for information that observation cannot uncover",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scout.03": {
+      "id": "mc.q1focus.noble.scout.03",
+      "text": "steadying my companions through dangerous expeditions",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scout.04": {
+      "id": "mc.q1focus.noble.scout.04",
+      "text": "contacts and support before we enter unfamiliar territory",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.scout.05": {
+      "id": "mc.q1focus.noble.scout.05",
+      "text": "broad knowledge and practical expertise for unfamiliar problems",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.soldier.01": {
+      "id": "mc.q1focus.noble.soldier.01",
+      "text": "directing and coordinating allies in a fight",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.soldier.02": {
+      "id": "mc.q1focus.noble.soldier.02",
+      "text": "keeping a team confident and organized when things go badly",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.soldier.03": {
+      "id": "mc.q1focus.noble.soldier.03",
+      "text": "negotiation that can end a confrontation before it becomes a battle",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.soldier.04": {
+      "id": "mc.q1focus.noble.soldier.04",
+      "text": "the contacts and resources to keep my companions equipped",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.noble.q1.soldier.05": {
+      "id": "mc.q1focus.noble.soldier.05",
+      "text": "refined fighting technique built on feints and precise timing",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.noble.01": {
+      "id": "mc.q1focus.jedi.noble.01",
+      "text": "using the Force to reach people and resolve conflicts",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.noble.02": {
+      "id": "mc.q1focus.jedi.noble.02",
+      "text": "protecting others with a lightsaber",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.noble.03": {
+      "id": "mc.q1focus.jedi.noble.03",
+      "text": "strengthening and guiding my companions through the Force",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.noble.04": {
+      "id": "mc.q1focus.jedi.noble.04",
+      "text": "sensing dangers and hidden intentions",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.noble.05": {
+      "id": "mc.q1focus.jedi.noble.05",
+      "text": "discovering what else the Force can do",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scoundrel.01": {
+      "id": "mc.q1focus.jedi.scoundrel.01",
+      "text": "concealing myself and my companions through the Force",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scoundrel.02": {
+      "id": "mc.q1focus.jedi.scoundrel.02",
+      "text": "a quick, precise lightsaber style",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scoundrel.03": {
+      "id": "mc.q1focus.jedi.scoundrel.03",
+      "text": "using the Force to influence a confrontation without trickery or threats",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scoundrel.04": {
+      "id": "mc.q1focus.jedi.scoundrel.04",
+      "text": "sharper reactions that sense an attack before it lands",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scoundrel.05": {
+      "id": "mc.q1focus.jedi.scoundrel.05",
+      "text": "using the Force in unexpected ways",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scout.01": {
+      "id": "mc.q1focus.jedi.scout.01",
+      "text": "sensing threats and disturbances that careful observation might miss",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scout.02": {
+      "id": "mc.q1focus.jedi.scout.02",
+      "text": "using the Force to cross dangerous terrain and overcome barriers",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scout.03": {
+      "id": "mc.q1focus.jedi.scout.03",
+      "text": "protecting my traveling companions with Jedi defenses",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scout.04": {
+      "id": "mc.q1focus.jedi.scout.04",
+      "text": "helping a team act with greater coordination",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.scout.05": {
+      "id": "mc.q1focus.jedi.scout.05",
+      "text": "staying unseen and shielding my companions from detection",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.soldier.01": {
+      "id": "mc.q1focus.jedi.soldier.01",
+      "text": "lightsaber techniques for close combat",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.soldier.02": {
+      "id": "mc.q1focus.jedi.soldier.02",
+      "text": "turning aside attacks and holding my ground to protect others",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.soldier.03": {
+      "id": "mc.q1focus.jedi.soldier.03",
+      "text": "using the Force to help my allies fight and work together",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.soldier.04": {
+      "id": "mc.q1focus.jedi.soldier.04",
+      "text": "moving or restraining threats through the Force",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.jedi.q1.soldier.05": {
+      "id": "mc.q1focus.jedi.soldier.05",
+      "text": "the judgment and techniques to end a confrontation without fighting",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.jedi.01": {
+      "id": "mc.q1focus.scout.jedi.01",
+      "text": "noticing tracks, hidden dangers, and ordinary clues",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.jedi.02": {
+      "id": "mc.q1focus.scout.jedi.02",
+      "text": "moving quietly and keeping our approach concealed",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.jedi.03": {
+      "id": "mc.q1focus.scout.jedi.03",
+      "text": "crossing hazardous ground and surviving difficult conditions",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.jedi.04": {
+      "id": "mc.q1focus.scout.jedi.04",
+      "text": "navigating unfamiliar routes and handling vehicles",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.jedi.05": {
+      "id": "mc.q1focus.scout.jedi.05",
+      "text": "scouting ahead and turning what I find into useful warnings",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.noble.01": {
+      "id": "mc.q1focus.scout.noble.01",
+      "text": "gathering information firsthand by recognizing clues and following trails",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.noble.02": {
+      "id": "mc.q1focus.scout.noble.02",
+      "text": "moving discreetly and investigating where a public approach would attract attention",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.noble.03": {
+      "id": "mc.q1focus.scout.noble.03",
+      "text": "surviving and moving on in difficult environments by myself",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.noble.04": {
+      "id": "mc.q1focus.scout.noble.04",
+      "text": "planning and undertaking journeys through unfamiliar territory",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.noble.05": {
+      "id": "mc.q1focus.scout.noble.05",
+      "text": "bringing back the right intelligence at the right moment",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.scoundrel.01": {
+      "id": "mc.q1focus.scout.scoundrel.01",
+      "text": "spotting hidden watchers and following a trail",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.scoundrel.02": {
+      "id": "mc.q1focus.scout.scoundrel.02",
+      "text": "slipping through watched areas unnoticed",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.scoundrel.03": {
+      "id": "mc.q1focus.scout.scoundrel.03",
+      "text": "keeping my footing and getting out alive during a quick escape",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.scoundrel.04": {
+      "id": "mc.q1focus.scout.scoundrel.04",
+      "text": "navigating unfamiliar space and approaching in a vehicle without giving away our position",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.scoundrel.05": {
+      "id": "mc.q1focus.scout.scoundrel.05",
+      "text": "studying a target and sharing what I learn so my companions can act at the right moment",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.soldier.01": {
+      "id": "mc.q1focus.scout.soldier.01",
+      "text": "spotting approaching enemies early enough to avoid an ambush",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.soldier.02": {
+      "id": "mc.q1focus.scout.soldier.02",
+      "text": "approaching a dangerous position without being seen",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.soldier.03": {
+      "id": "mc.q1focus.scout.soldier.03",
+      "text": "moving across hazardous ground and surviving area attacks",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.soldier.04": {
+      "id": "mc.q1focus.scout.soldier.04",
+      "text": "practical repairs that keep essential equipment working far from support",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scout.q1.soldier.05": {
+      "id": "mc.q1focus.scout.soldier.05",
+      "text": "gathering battlefield intelligence that helps my allies coordinate",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.jedi.01": {
+      "id": "mc.q1focus.soldier.jedi.01",
+      "text": "ordinary weapons and ranged tactics",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.jedi.02": {
+      "id": "mc.q1focus.soldier.jedi.02",
+      "text": "fighting in armor and enduring a sustained attack",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.jedi.03": {
+      "id": "mc.q1focus.soldier.jedi.03",
+      "text": "close-quarters grappling and fighting",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.jedi.04": {
+      "id": "mc.q1focus.soldier.jedi.04",
+      "text": "covering my companions and drawing danger away from them",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.jedi.05": {
+      "id": "mc.q1focus.soldier.jedi.05",
+      "text": "reading a battlefield and coordinating people under pressure",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.noble.01": {
+      "id": "mc.q1focus.soldier.noble.01",
+      "text": "defending myself and others with weapons",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.noble.02": {
+      "id": "mc.q1focus.soldier.noble.02",
+      "text": "staying on my feet under fire with armor and endurance",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.noble.03": {
+      "id": "mc.q1focus.soldier.noble.03",
+      "text": "accuracy and discipline with a chosen weapon",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.noble.04": {
+      "id": "mc.q1focus.soldier.noble.04",
+      "text": "turning organization into effective battlefield teamwork",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.noble.05": {
+      "id": "mc.q1focus.soldier.noble.05",
+      "text": "stepping between danger and someone vulnerable",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scoundrel.01": {
+      "id": "mc.q1focus.soldier.scoundrel.01",
+      "text": "being a reliable shot in a straight fight",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scoundrel.02": {
+      "id": "mc.q1focus.soldier.scoundrel.02",
+      "text": "handling myself in a close fight",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scoundrel.03": {
+      "id": "mc.q1focus.soldier.scoundrel.03",
+      "text": "armor and disciplined training that keep me in the fight",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scoundrel.04": {
+      "id": "mc.q1focus.soldier.scoundrel.04",
+      "text": "pinning enemies down and covering my companions",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scoundrel.05": {
+      "id": "mc.q1focus.soldier.scoundrel.05",
+      "text": "handling explosives and breaking through obstacles",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scout.01": {
+      "id": "mc.q1focus.soldier.scout.01",
+      "text": "marksmanship that can stop a threat once it is identified",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scout.02": {
+      "id": "mc.q1focus.soldier.scout.02",
+      "text": "setting up an effective ambush",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scout.03": {
+      "id": "mc.q1focus.soldier.scout.03",
+      "text": "providing covering fire and helping my team move together",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scout.04": {
+      "id": "mc.q1focus.soldier.scout.04",
+      "text": "surviving an exchange I cannot evade with armor and endurance",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.soldier.q1.scout.05": {
+      "id": "mc.q1focus.soldier.scout.05",
+      "text": "caring for wounded companions during a fight",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.jedi.01": {
+      "id": "mc.q1focus.scoundrel.jedi.01",
+      "text": "passing unnoticed and misdirecting attention",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.jedi.02": {
+      "id": "mc.q1focus.scoundrel.jedi.02",
+      "text": "understanding computers and electronic security",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.jedi.03": {
+      "id": "mc.q1focus.scoundrel.jedi.03",
+      "text": "moving unpredictably and taking advantage of an opening",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.jedi.04": {
+      "id": "mc.q1focus.scoundrel.jedi.04",
+      "text": "becoming more capable aboard a ship",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.jedi.05": {
+      "id": "mc.q1focus.scoundrel.jedi.05",
+      "text": "making the most of uncertain situations and finding a second chance",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.noble.01": {
+      "id": "mc.q1focus.scoundrel.noble.01",
+      "text": "blending in and maintaining a convincing cover",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.noble.02": {
+      "id": "mc.q1focus.scoundrel.noble.02",
+      "text": "bypassing digital obstacles and uncovering information myself",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.noble.03": {
+      "id": "mc.q1focus.scoundrel.noble.03",
+      "text": "staying mobile and exploiting openings in a fight",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.noble.04": {
+      "id": "mc.q1focus.scoundrel.noble.04",
+      "text": "finding information, contacts, and workable deals outside the usual channels",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.noble.05": {
+      "id": "mc.q1focus.scoundrel.noble.05",
+      "text": "navigating ships and getting a crew through trouble",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.scout.01": {
+      "id": "mc.q1focus.scoundrel.scout.01",
+      "text": "talking my way past suspicion with a convincing story",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.scout.02": {
+      "id": "mc.q1focus.scoundrel.scout.02",
+      "text": "defeating computer locks and electronic security",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.scout.03": {
+      "id": "mc.q1focus.scoundrel.scout.03",
+      "text": "turning movement and positioning into a tactical advantage",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.scout.04": {
+      "id": "mc.q1focus.scoundrel.scout.04",
+      "text": "operating aboard starships in unfamiliar conditions",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.scout.05": {
+      "id": "mc.q1focus.scoundrel.scout.05",
+      "text": "adapting when a plan fails and finding another chance to succeed",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.soldier.01": {
+      "id": "mc.q1focus.scoundrel.soldier.01",
+      "text": "unsettling an opponent and exploiting a mistake",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.soldier.02": {
+      "id": "mc.q1focus.scoundrel.soldier.02",
+      "text": "staying quick and difficult to pin down",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.soldier.03": {
+      "id": "mc.q1focus.scoundrel.soldier.03",
+      "text": "understanding computers and security systems",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.soldier.04": {
+      "id": "mc.q1focus.scoundrel.soldier.04",
+      "text": "bluffing, bargaining, and changing someone’s mind",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    },
+    "mc.scoundrel.q1.soldier.05": {
+      "id": "mc.q1focus.scoundrel.soldier.05",
+      "text": "broader abilities aboard ships",
+      "editorialStatus": "draft_text",
+      "basis": "drafted from the authored Q1 answer text (owner-authorized editorial draft, MSV-RD-007)"
+    }
+  },
+  "q1FocusNeutral": {
+    "id": "mc.q1focus.neutral",
+    "text": "what this new training could offer",
+    "editorialStatus": "owner_approved_text",
+    "basis": "owner ruling 2026-11-16: factual generic focus for an undecided Q1; no specialization inferred"
+  },
+  "alternatives": {
+    "alternative": {
+      "id": "mc.q2.alt",
+      "kind": "alternative",
+      "text": "I want to explore a different way my previous training could connect with this new path.",
+      "editorialStatus": "owner_approved_text",
+      "mechanicsStatus": "none",
+      "ownerRuling": "MSV-RD-007",
+      "note": "records exploration only"
+    },
+    "undecided": {
+      "id": "mc.q2.undecided",
+      "kind": "undecided",
+      "text": "I'm not sure yet which part of my experience I want to build on.",
+      "editorialStatus": "owner_approved_text",
+      "mechanicsStatus": "none",
+      "ownerRuling": "MSV-RD-007",
+      "note": "records no scored preference"
+    }
+  }
 }

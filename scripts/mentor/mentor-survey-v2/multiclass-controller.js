@@ -7,33 +7,42 @@ import { revisionOf } from './contract.js';
 export function buildRecordIndex(pack) {
   const idx = new Map();
   const add = (r) => idx.set(r.id, r);
+  Object.values(pack.origin?.options || {}).forEach(add);
   Object.values(pack.q1).forEach((o) => Object.values(o).forEach((bank) => bank.forEach(add)));
   pack.q3.forEach(add);
   (pack.q6Content?.playerChoices || []).forEach(add);
   Object.values(pack.q2Content?.destinations || {}).forEach((rows) => Object.values(rows).forEach(add));
+  Object.values(pack.q2Content?.alternatives || {}).forEach(add);
   Object.values(pack.q4).forEach((s) => { s.methods.forEach(add); add(s.neutral); });
   Object.values(pack.q5).forEach((o) => Object.values(o).forEach((r) => Object.values(r).forEach((bank) => bank.forEach(add))));
   add(pack.q5Undecided);
+  Object.values(pack.q5Fallback || {}).forEach((bank) => bank.forEach(add));
+  Object.values(pack.q5NoGoal || {}).forEach(add);
+  // goal-slot variants are shown filled with the reviewed pointer phrase: index the exact text the player saw
+  if (pack.q5GoalPhrase) {
+    const withGoal = (r) => idx.set(`${r.id}.withgoal`, { ...r, id: `${r.id}.withgoal`, text: r.text.replace('{declared_goal}', pack.q5GoalPhrase.text), needsGoalSlot: false, goalSlotFilled: true });
+    [...Object.values(pack.q5).flatMap((o) => Object.values(o)).flatMap((r) => Object.values(r)).flat(), ...Object.values(pack.q5Fallback || {}).flat()].filter((r) => r.needsGoalSlot).forEach(withGoal);
+  }
   return idx;
 }
 
 export const MULTICLASS_ADAPTER = Object.freeze({
   kind: 'multiclass',
   pagedQuestions: [],
-  autoSkipReasons: ['blocked_source', 'needs_q1_route', 'needs_q1_focus', 'insufficient_observed_evidence', 'not_applicable'],
+  autoSkipReasons: ['blocked_source', 'needs_origin', 'needs_q1_route', 'needs_q1_focus', 'insufficient_observed_evidence', 'not_applicable'],
   buildRecordIndex,
   /** rawCtx: { selectedClassId, classLevels (finalized), seed } -> trigger decides everything; null when it does not apply. */
-  normalize({ selectedClassId, classLevels, seed = 'seed', evidence = null, events = [], observedBias = {}, canonicalBiasKeys = [] }) {
+  normalize({ selectedClassId, classLevels, seed = 'seed', evidence = null, events = [], observedBias = {}, observedProvenance = null, canonicalBiasKeys = [] }) {
     const t = multiclassTrigger({ selectedClassId, classLevels });
     if (!t.applicable) return null;
     // Heavy live inputs (finalized evidence, committed ledger) travel in `runtime`; only their revisions enter the draft context.
     const goals = Object.values(reduceLedger(events).goals).map((g) => [g.goalLane, g.target, g.quote ?? null]);
     return {
-      ctx: { destinationClassId: t.destinationClassId, originClassId: t.originClassId, originReason: t.reason, seed: String(seed), evidenceRevision: revisionOf(evidence?.facts?.map((f) => f.factId + f.canonicalId) ?? []), goalRevision: revisionOf(goals), observedRevision: revisionOf(Object.entries(observedBias || {}).filter(([k, v]) => v > 0 && (!canonicalBiasKeys.length || canonicalBiasKeys.includes(k))).sort()) },
-      runtime: { evidence, events, observedBias }, scopeKey: `multiclass:${t.destinationClassId}`, scopeId: t.destinationClassId,
+      ctx: { destinationClassId: t.destinationClassId, originClassId: t.originClassId, originClassIds: t.originClassIds, originReason: t.reason, seed: String(seed), evidenceRevision: revisionOf(evidence?.facts?.map((f) => f.factId + f.canonicalId) ?? []), goalRevision: revisionOf(goals), observedRevision: revisionOf(Object.entries(observedBias || {}).filter(([k, v]) => v > 0 && (!canonicalBiasKeys.length || canonicalBiasKeys.includes(k))).sort().concat(Object.entries(observedProvenance?.items || {}).sort(), Object.keys(observedProvenance?.skills || {}).sort())) },
+      runtime: { evidence, events, observedBias, observedProvenance }, scopeKey: `multiclass:${t.destinationClassId}`, scopeId: t.destinationClassId,
     };
   },
-  createFlow: (ctx) => createMulticlassFlow(ctx.destinationClassId),
+  createFlow: (ctx) => createMulticlassFlow(ctx.destinationClassId, !ctx.originClassId && ctx.originClassIds?.length > 1),
   availability: multiclassAvailability,
   resolveQuestion: ({ pack, draft, qid, ctx, preview, runtime, archetypeLookup }) => resolveMulticlassQuestion({ pack, draft, qid, ctx, preview, runtime, archetypeLookup }),
   selectionMeta: multiclassSelectionMeta,

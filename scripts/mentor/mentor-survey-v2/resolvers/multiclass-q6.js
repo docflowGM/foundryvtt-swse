@@ -65,7 +65,8 @@ const mentorFrame = (pack, d) => pack.q6Content.mentors[d];
 function q1Direction(draft, pack, ctx) {
   const m = draft?.answers?.q1;
   if (!m?.meta || m.meta.kind !== 'direction') return null;
-  return pack.q1[ctx.destinationClassId][ctx.originClassId].find((r) => r.id === m.optionId)?.text ?? null;
+  const origin = ctx.originClassId ?? draft?.answers?.q0?.meta?.originClassId;
+  return (origin && pack.q1[ctx.destinationClassId][origin].find((r) => r.id === m.optionId)?.text) ?? null;
 }
 
 /** Everything the three Q6 questions need, computed once from the same inputs (so it is stable across renders). */

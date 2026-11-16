@@ -651,6 +651,36 @@ export class IdentityEngine {
     }
 
     /**
+     * READ-ONLY provenance for the observed mechanical bias (Mentor survey Q2). Same helpers and arithmetic as
+     * computeObservedBehaviorBias, split by evidence layer, with the OWNED ITEM NAMES behind each key from the rules
+     * primitives layer. It does not score anything new and mutates nothing.
+     *
+     *   items:      { key: [itemName, ...] }  owned feats/talents/features whose rules primitives contribute to the key
+     *   skills:     { key: true }             trained-skill / Skill Focus contribution
+     *   attributes: { key: true }             ability-score tendency only (NOT evidence of past activity)
+     *
+     * @param {Object} actor
+     * @returns {{items:Object, skills:Object, attributes:Object}}
+     */
+    static computeObservedBehaviorBiasProvenance(actor) {
+        const out = { items: {}, skills: {}, attributes: {} };
+        if (!this.#primitiveMapping) return out;
+        const processedFeats = new Set();
+        for (const item of actor?.items || []) {
+            if (!item.system?.rules) continue;
+            const rules = Array.isArray(item.system.rules) ? item.system.rules : [];
+            const one = { mechanicalBias: {}, roleBias: {}, attributeBias: {} };
+            for (const rule of rules) this.#addBias(one, this.#processPrimitive(rule, actor, processedFeats));
+            for (const [k, v] of Object.entries(one.mechanicalBias)) {
+                if (Number(v) > 0) (out.items[k] ||= []).push(item.name);
+            }
+        }
+        for (const [k, v] of Object.entries(this.#computeAttributeBias(actor).mechanicalBias || {})) if (Number(v) > 0) out.attributes[k] = true;
+        for (const [k, v] of Object.entries(this.#computeSkillBias(actor).mechanicalBias || {})) if (Number(v) > 0) out.skills[k] = true;
+        return out;
+    }
+
+    /**
      * Compute bias from ability scores using bell curve model
      * Pure function
      *

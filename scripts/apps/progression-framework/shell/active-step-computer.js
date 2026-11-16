@@ -568,15 +568,14 @@ export class ActiveStepComputer {
 
   /**
    * Multiclass survey: active only for the FIRST acquisition of a new foundation class (finalized class levels decide),
-   * with exactly one prior foundation class (MSV-RD-004: with several the design names no origin, so the survey is
-   * withheld), and only when the release manifest releases that destination or a GM has editorial preview on.
+   * with one prior foundation class, or several (the player then chooses the origin lens, MSV-RD-004), and only when the release manifest releases that destination or a GM has editorial preview on.
    * The manifest is primed at world ready; if it is not loaded this fails closed (no empty step is shown).
    */
   _hasBaseClassSurveyWork(actor, progressionSession) {
     const context = buildLevelUpEventContext(actor, progressionSession);
     if (!context?.isNewBaseClass) return false;
     const trigger = multiclassTrigger({ selectedClassId: context.selectedClassId, classLevels: projectActorEvidence(actor).classLevels });
-    if (!trigger.applicable || !trigger.originClassId) return false;
+    if (!trigger.applicable || !(trigger.originClassId || trigger.originClassIds?.length > 1)) return false;
     const manifest = getManifestSync();
     if (!manifest) return false;
     return evaluateScopeRelease(manifest, 'multiclass', trigger.destinationClassId, { preview: canUseEditorialPreview() }).playable;

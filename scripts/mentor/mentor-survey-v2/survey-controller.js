@@ -134,7 +134,7 @@ export class SurveyController {
     if (!r.available) return { phase: 'unavailable', reason: r.reason };
     const prev = this.draft.invalidated[qid]?.previousOptionId ?? null;
     return {
-      phase: 'question', seq: this.seq, progress, preview: this.preview, questionNumber: Number(String(qid).match(/\d/)[0]),
+      phase: 'question', seq: this.seq, progress, preview: this.preview, questionNumber: Number(String(qid).match(/\d/)[0]) || null, // q0 (the optional origin lens) carries no number
       view: r.view, canGoBack: this.draft.trail.length > 1, selectedOptionId: this.draft.answers[qid]?.optionId ?? null,
       reconfirm: prev && r.view.options.some((o) => o.optionId === prev) ? { optionId: prev } : null,
       staleNotice: prev ? 'An earlier choice changed, so this question needs a fresh answer.' : null,
