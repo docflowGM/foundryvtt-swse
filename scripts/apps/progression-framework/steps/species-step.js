@@ -175,12 +175,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // Enable Ask Mentor for this step
     shell.mentor.askMentorEnabled = true;
 
-    // Trigger initial mentor greeting on Species entry
-    // This ensures Ol' Salty appears and speaks when entering Species
-    const initialDialogue = "Species selection, eh? Choose wisely — your ancestry shapes everything ahead. Browse the options and pick what calls to you.";
-    if (shell.mentorRail) {
-      shell.mentorRecommendations?.presentStepGuidance({ text: initialDialogue, mood: 'neutral', stepId: 'species' });
-    }
+    // The shell owns exactly one step introduction (prewarmed during splash).
+    // Never present another greeting here: it competes with the shell's
+    // prepared line and causes the mentor to change sentences on entry.
   }
 
   async onDataReady(shell) {
