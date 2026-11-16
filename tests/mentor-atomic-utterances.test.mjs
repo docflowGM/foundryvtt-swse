@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 
@@ -107,5 +110,18 @@ function createShell(stepId = 'species') {
   assert.equal(controller.presentStepGuidance(payload), PRESENTATION.REJECTED_DUPLICATE);
   assert.equal(written.length, 1);
 }
+
+// The shell must put the introduction into the rail before starting an
+// asynchronous recommendation for that newly entered step.
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const shellSource = fs.readFileSync(
+  path.join(ROOT, 'scripts/apps/progression-framework/shell/progression-shell.js'), 'utf8');
+const activation = shellSource.slice(
+  shellSource.indexOf('async _activateStep(stepIndex, options = {})'),
+  shellSource.indexOf('async _initializeSteps()'));
+const introPos = activation.indexOf('this._presentStepPluginGuidance(plugin, descriptor?.stepId)');
+const requestPos = activation.indexOf('this.requestMentorRecommendation(`step-enter:');
+assert.ok(introPos >= 0 && requestPos > introPos,
+  'Step entry must display its committed introduction before asynchronous advice');
 
 console.log('mentor-atomic-utterances: all assertions passed');
