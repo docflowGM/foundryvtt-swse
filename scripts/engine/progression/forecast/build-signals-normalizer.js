@@ -80,9 +80,7 @@ export class BuildSignalsNormalizer {
       if (sessionSurvey?.completed === true) {
         this._extractExplicitFromSurvey(sessionSurvey, signals.explicit);
       }
-      for (const survey of Object.values(context.actor?.system?.swse?.surveyResponses || {})) {
-        if (survey?.completed === true) this._extractExplicitFromSurvey(survey, signals.explicit);
-      }
+
 
       // Extract inferred signals from projection
       if (context.projectedCharacter) {

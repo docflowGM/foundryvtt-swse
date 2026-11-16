@@ -56,10 +56,7 @@ export class SuggestionContextBuilder {
       ? characterData.forceSecrets
       : actor.items?.filter(i => i.type === 'force-secret').map(i => ({ id: i._id, name: i.name })) || [];
 
-    const mentorBiases = this._mergeMentorBiases(
-      actor?.system?.swse?.mentorBuildIntentBiases || {},
-      characterData?.mentorBiases || {}
-    );
+    const mentorBiases = this._mergeMentorBiases(characterData?.mentorBiases || {});
 
     const selectedSpecies = this._resolveSelectedSpecies(actor, characterData);
     const selectedSpeciesName = selectedSpecies?.name || this._resolveFallbackSpeciesName(actor, characterData) || null;

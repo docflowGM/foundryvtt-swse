@@ -1,5 +1,7 @@
 # Mentor Survey V2: Total Cutover Report
 
+> **Superseded in part (2026-11-16).** The source-recovery milestone recovered Multiclass Q2/Q6 and Prestige Q1/Q3 and corrected the "source-blocked" labels below. Current counts, statuses and blockers: `13-SOURCE-RECOVERY-COMPLETION-REPORT.md` and `06-CONTENT-STATUS-AND-BLOCKERS.md` section 11. Sections 1 and 5 below describe the state at the first cutover.
+
 **Branch:** `refactor/mentor-surveys-v2-cutover` (never merged to `main`; merge needs owner approval)
 **Report date:** 2026-11-16
 **Scope:** Level 1 (Q1-Q5), Foundation-Class Multiclass (Q1-Q6), Prestige (Q1-Q6), shared infrastructure, survey influence, legacy removal.

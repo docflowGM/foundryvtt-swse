@@ -17,7 +17,7 @@ export const LEVEL1_SKILL_TIERS = {
 };
 
 function getMentorBiases(actor, pendingData = {}) {
-  return pendingData?.mentorBiases || actor?.system?.swse?.mentorBuildIntentBiases || {};
+  return pendingData?.mentorBiases || {};
 }
 
 function normalizeTag(tag) {
@@ -35,9 +35,6 @@ function extractIntentTags(pendingData = {}, mentorBiases = {}) {
   const tags = new Set();
   for (const source of [
     pendingData?.intentTags,
-    pendingData?.survey?.intentTags,
-    pendingData?.surveyBias?.intentTags,
-    mentorBiases?.intentTags,
     pendingData?.archetype ? [pendingData.archetype] : [],
     pendingData?.declaredTargets,
     pendingData?.selectedSpeciesTags

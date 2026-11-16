@@ -165,8 +165,35 @@ Removed: the legacy `scripts/mentor/mentor-survey/` directory (engine, registry,
 4. Finish, cancel the level-up: no `mentorSurvey` flag on the actor. Finish the level-up: one `survey_completed` event with `scopeId` = the class, `typed` depth and purposes, `provenance.preview: true`, and no goal events.
 5. Acquire a second prestige class later: a separate event; the first is untouched. With preview off, no step appears.
 
-## 10. Remaining legacy reads and follow-ups
+## 10. Legacy reads (resolved) and the inert channel that remains
 
-- Inert readers of the retired `system.swse.mentorBuildIntentBiases` field remain in the suggestion engines (`SuggestionEngine`, `ClassSuggestionEngine`, `ClassDomainReasonEngine`, `ForceOptionSuggestionEngine`, `BackgroundSuggestionEngine`, `Level1SkillSuggestionEngine`, `attribute-planner`, `force-choice-context`, `suggestion-context-builder`). Nothing writes the field any more, so they read `{}`. They are dead reads to delete in a focused follow-up that retests each engine; they were left rather than risk a broad suggestion-engine edit inside the survey cutover.
-- The template-build path (`template-adapter`) still pre-fills the overloaded `survey` selection with intent tags that `Level1SkillSuggestionEngine` and the forecast normalizer read for template-created characters. That is a separate legacy intent path to retire together with the template adapter work.
-- `MentorSurfaceService` has its own unrelated chat-surface survey (`mentorSurveyCompleted`); it was not part of these surveys and was not touched.
+Resolved in the source-recovery milestone (details and tests: `12-CLEAN-BREAK-CONSUMER-REPORT.md`): every read of the retired `system.swse.mentorBuildIntentBiases` field, of `actor.system.swse.surveyResponses`, and of the legacy `survey.intentTags` / `mergedBias` / `prestigeClassTarget` shapes is deleted; the survey-driven prestige branch and its private helper in `ForceOptionSuggestionEngine` are gone.
+
+Still present and classified (not removed here): a **producer-less** input channel, `characterData.mentorBiases` / `pendingData.mentorBiases` / `buildIntent.mentorBiases`, consumed by `attribute-planner`, `BackgroundSuggestionEngine`, `Level1SkillSuggestionEngine`, `AttributeIncreaseScorer`, `tag-signal-engine.getBiasTagsFromMentor`, `prestige-path-signals`, `SuggestionEngine` and the suggestion-context builder. Nothing writes it any more, so it is always empty. Deleting it edits scoring modules (including a 1.1 tag multiplier), so it needs its own focused, separately tested suggestion-engine change. The `survey` draft key itself stays: it carries the character name and starting level (galactic profile and summary steps) and template advisory signals.
+
+`MentorSurfaceService` has its own unrelated chat-surface survey (`mentorSurveyCompleted`); it was not part of these surveys and was not touched.
+
+## 11. Blocker ledger by category (updated 2026-11-16, source-recovery milestone)
+
+Five categories: **MS** missing source (not in Git) · **SI** source exists but not imported · **AP** approval pending · **MC** mechanical certification pending · **RI** runtime integration pending.
+
+| Item | Category | Precise evidence |
+|---|---|---|
+| Prestige Q6 (32 classes) | **MS** | `SWSE_Prestige_Q6_Fresh_Chat_Handoff_2026-11-15.md` is a handoff only; the per-class dialogue package is not in any committed file. Never reconstructed. Shared engine is ready. |
+| Prestige Q1/Q3 per-route quarantine flags | **MS** | The Q3 library says flagged routes are "preserved in the JSON" (Ace Pilot companion JSON); that JSON is not in Git. 35 rows are detected from in-row markers only. |
+| Q3 explicit answer ids and the two unscored controls | **MS** (low impact) | Committed Q3 text has no per-answer ids (derived `<sceneId>-<letter>`); "I am not sure yet"/"Try another situation" are described, not authored per scene. |
+| Multiclass Q2 `q1_focus` phrases (125 answers x 20 routes) and E/F text | **MS** | `q1Focus` is empty in `multiclass-q2.json`; no committed file authors these. |
+| Multiclass Q4/Q5 fallback banks for an undecided Q1 | **MS** | Only in an uncommitted JSON (`MSV-RD-008`). |
+| Prestige Q2 per-class answers and E/F | **SI** (editorial) | Contract, introductions, questions, route inventories and 110 hypothetical six-answer fixtures exist (`11-PRESTIGE-Q2-AUDIT.md`); no key-by-class answer set for an arbitrary actor. Not importable as player text. |
+| Prestige Q1 openings and questions (32) | **SI imported, AP** | All candidates imported (44 openings, 35 question lines); choice is `MSV-RD-012`. |
+| Prestige Q1 slate | **AP** | `MSV-RD-005` / `MSV-RD-013`. |
+| All L1, multiclass and prestige dialogue | **AP** | Line approval; every scope `withheld`. |
+| Multiclass Q6 answer B wording | **AP** | `MSV-RD-011`. |
+| Multiclass with 2+ prior foundation classes; career continuity; another-career conversation | **AP** | `MSV-RD-004`, `-009`, `-010`. |
+| Prestige Q2 authoring path and sign-off | **AP** | `MSV-RD-014`. |
+| Gunslinger Pistoleer, Outlaw Fringer/Slicer, Teras Kasi, Stolen Form, Officer prerequisite collisions, Charlatan Fortune, JM/SL/Force Disciple tree alternatives | **MC** | `MSV-RD-006` and the independent tree audit; marker-flagged rows are never offered. |
+| Answer-to-tag mappings and influence coefficients | **MC** | Tag boundary inert; coefficients provisional (`07`). |
+| Observed-strength accessor for 4 non-canonical keys | **MC** | `mobility`, `perception`, `techControl`, `forceConnection` are ignored (not in the 125). |
+| Live Foundry rendering, real finalizer transaction, settings UI, template compilation | **RI** | No Foundry runtime available; manual procedures in sections 7-9. |
+| Real Suggestion Engine ranking with certified tags | **RI** | Channel is empty until tags are certified. |
+| Producer-less `mentorBiases` channel deletion | **RI** (cleanup) | Section 10. |

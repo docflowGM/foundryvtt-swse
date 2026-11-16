@@ -73,9 +73,9 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | MC-09 | Dive/Swim never demote/erase/prune | v0.11 Q3 §5 | ledger | 17 | Tested (offline) |
 | MC-10 | Q4 scene by exact Q1 id → family; Q3/Q2 never change scene | v0.11 Q4 | resolver | 9 | Tested (offline) |
 | MC-11 | Q5 career change → `exploring_change` only | v0.11 Q5 §9 | no authored answer declares a change; career-continuity template withheld (MSV-RD-009) | 13 | Deferred |
-| MC-12 | Observations only from finalized evidence; new class pending | v0.11 | Q2 blocked at source; trigger reads finalized class levels only | 14 | Blocked (Q2) |
+| MC-12 | Observations only from finalized evidence; new class pending | v0.11 | Q2 library (625 templates) and observed-only accessor implemented; owner `q1_focus` phrases and E/F not authored, so Q2 is still skipped | 14 | Implemented, Tested (offline); runtime blocked on approval pending |
 | MC-13 | Commit only on finalizer success | Directive §C | finalizer | 16 | Tested (offline) |
-| MC-14 | Q6 via shared engine | v0.11 | engine exists; Q6 text/identity source not imported | 14 | Blocked |
+| MC-14 | Q6 via shared engine | v0.11 | Pass A (170 clauses) and Pass B imported; five Mentor frames; mandatory NOT/AM; answer B withheld (MSV-RD-011) | 14 | Implemented, Tested (offline); calibration offer blocked on approval pending |
 
 ## Prestige (`PR`)
 

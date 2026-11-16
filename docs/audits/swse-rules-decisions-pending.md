@@ -3003,3 +3003,75 @@ An independent primary-source audit was ingested: branch `audit/prestige-cross-c
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+
+## MSV-RD-011 — Multiclass Q6 calibration answer B is not first person
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / shared Q6 reflection, calibration answers A-E |
+| Feature | Q6 answer B, the second calibration statement of the five-answer set |
+| Source | Shared design v0.9, Q6 section 9.3 (answer table); imported verbatim as `mc.q6.choice.b` |
+| Evidence | The authored sentence "Much of what you see is true, though some of it is not quite right." addresses the Mentor in second person; every other player answer is first person. |
+| Confirmed behavior | The A-E stages and their targeted B/C corrections are owner-confirmed; the answer text is design draft. |
+| Unresolved question | The owner-approved first-person wording of answer B. |
+| Options | None derivable from the sources (rewriting it would be an editorial decision). |
+| Recommended ruling | None |
+| Implementation impact | The record is flagged `editorialIssue: not_first_person` and withheld: the calibration question cannot be offered until the wording is supplied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-012 — Prestige Q1 openings and questions: which authored candidate is the player-facing text
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q1 (class discovery) |
+| Feature | The fixed Mentor opening and the Q1 question for each of the 32 prestige classes |
+| Source | Prestige rolling design v0.26, the per-class Q1 sections (for example section 13.2 Bounty Hunter, 15.2 Elite Trooper, 18.2 Gunslinger); commit `228a7dc01` |
+| Evidence | Each class section authors one "preferred" or "proposed" opening, often alternatives labeled A/B or "shorter", and a question; the design marks all of it DRAFT and states that no Mentor-specific Q1 wording is approved. |
+| Confirmed behavior | Every candidate is preserved with its source line (44 openings, 35 question lines across 32 classes). |
+| Unresolved question | Which candidate is shown to players, per class. |
+| Options | Only the candidates the sources themselves list. |
+| Recommended ruling | None |
+| Implementation impact | No candidate is chosen. Players get no Q1 until a candidate carries `selection: owner_selected`. The GM-only editorial preview shows the first candidate in source order purely so a GM can review the flow; that preview convenience is an engineering default and never reaches a player. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-013 — Prestige Q1 slate presentation and per-route quarantine flags (extends MSV-RD-005)
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q1 and Q3 |
+| Feature | How many Q1 answers are shown, which, and which routes are mechanically quarantined |
+| Source | Prestige rolling design sections 12 (slate proposal, not approved) and the Q3 library statement "specific flagged routes are preserved in the JSON" |
+| Evidence | The rolling design proposes a 6 substantive plus 1 neutral first render for one class only and marks it a proposal. The Q3 library says 24 routes in one batch carry explicit restriction or quarantine notes in a companion JSON that is not committed. |
+| Confirmed behavior | All 1,293 Q1 answers and 160 Q3 scenes are imported and their routes validate exactly. 35 rows carry quarantine or restriction markers in their own text and are never offered. |
+| Unresolved question | (a) The approved slate policy. (b) The per-route flags that exist only in the uncommitted JSON. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Q1 browses every offerable answer in source order, eight per page, with no relevance claim. Routes flagged only in the missing JSON cannot be detected and stay `unverified_mechanic`; every prestige scope stays `withheld`. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-014 — Prestige Q2 answer authoring path
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q2 (The Achievement) |
+| Feature | Per-class evidence-gated answer text for all 32 prestige classes |
+| Source | `SWSE_Prestige_Survey_Q2_Character_Synthesis.md` (v0.8), sections 3, 5, 60 |
+| Evidence | The source supplies the contract, Mentor introductions, questions, route inventories and hypothetical six-answer fixtures. It states it is not 1,293 personalized answer sets and that production readiness cannot be declared. Q2 also replaces an older Q2 design and needs owner sign-off. |
+| Confirmed behavior | A-D come only from verified observed strengths, E is an alternative emphasis, F is undecided, nothing is padded or inferred. |
+| Unresolved question | Whether to author per-class key stems, or reuse the 125 shared stems with a per-class connective line, and the approved wording; plus sign-off on replacing the older Q2. |
+| Options | The two authoring paths named in the source audit only. |
+| Recommended ruling | None |
+| Implementation impact | Prestige Q2 stays `blocked_source` and is skipped. The observed-strength accessor and the evidence projection already exist. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
