@@ -78,4 +78,24 @@ assert.match(specific.reasonSummary, /Acrobatics and Survival/);
 assert.equal(specific.bullets.length, 1, 'Only exact summary duplication is eliminated');
 assert.match(specific.bullets[0].text, /Wisdom modifier/);
 assert.equal(specific.rank, 3);
+// More evidence is not automatically better. The picker should render as many
+// independently useful observations as exist, up to four, with no padding.
+for (const count of [0, 1, 2, 3, 4, 5]) {
+  const supplied = Array.from({ length: count }, (_, index) =>
+    `Provides class-skill access to verified skill ${index + 1}.`);
+  const result = new Dialog({
+    suggestions: [{ name: 'Variable Evidence', suggestion: { reasons: supplied } }],
+  })._prepareContext().suggestions[0];
+  assert.equal(result.bullets.length, Math.min(count, 4),
+    `Expected exactly ${Math.min(count, 4)} evidence bullets for ${count} supplied`);
+  assert.deepEqual(Array.from(result.bullets, bullet => bullet.text), supplied.slice(0, 4),
+    'No placeholder or generic reason should be appended');
+}
+
+// The template omits the reasons section when the list is empty.
+const template = fs.readFileSync(
+  path.join(ROOT, 'templates/apps/mentor-suggestion-picker-dialog.hbs'), 'utf8');
+assert.match(template, /{{#if bullets.length}}/);
+assert.match(template, /{{#each bullets}}/);
+
 console.log('mentor-suggestion-picker-reasons: all assertions passed');
