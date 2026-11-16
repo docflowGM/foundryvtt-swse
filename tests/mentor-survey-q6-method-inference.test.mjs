@@ -36,7 +36,7 @@ test('SV-19 a method claim needs two independent verified sources; one source, o
   assert.equal(claimsOf(a, { items: { [K1]: [entry(A, K1)] } }, { [K1]: 5 }).length, 0, 'one item');
   assert.equal(claimsOf(a, { items: { [K1]: [entry(A, K1), { ...entry(A, K1), ruleType: 'damageBonus' }] } }, { [K1]: 5 }).length, 0, 'two primitives on ONE item are one source');
   const two = claimsOf(a, { items: { [K1]: [entry(A, K1), entry(B, K1)] } }, { [K1]: 5 });
-  assert.equal(two.length, 1); assert.equal(two[0].claimKind, 'method_preference'); assert.equal(two[0].groundedBy.length, 2); assert.equal(two[0].slots.method_phrase, 'precise, accurate attacks');
+  assert.equal(two.length, 1); assert.equal(two[0].claimKind, 'method_preference'); assert.equal(two[0].groundedBy.length, 2); assert.equal(two[0].slots.method_phrase, 'making precise attacks');
 });
 
 test('SV-19 a trained skill and the Skill Focus feat that names it are ONE source; an item plus a different skill are two; class features and unverified items do not count', () => {
@@ -65,13 +65,13 @@ const PROV = { items: { [K1]: [entry(A, K1), entry(B, K1)] } };
 
 test('SV-19 the approved wording is displayed with frozen slots, exact supporting fact ids and a stable claim id; both surveys show the same assessment', () => {
   const mc = toQ6(shown('mc', mcPack, grounded, PROV, { [K1]: 5 })); const pr = toQ6(shown('pr', prPack, grounded, PROV, { [K1]: 5 }));
-  const line = "Your current training supports precise, accurate attacks. I wonder whether that reflects how you prefer to approach problems, or simply what you've prepared for.";
+  const line = "Your current training supports making precise attacks. I wonder whether that reflects how you prefer to approach problems, or simply what you've prepared for.";
   assert.ok(mc.view.situation.includes(line)); assert.ok(pr.view.situation.includes(line));
   assert.equal(q6c.assessment.method.editorialStatus, 'owner_approved_text'); assert.equal(q6c.assessment.theme.editorialStatus, 'owner_approved_text');
   const reading = (ctl, kind) => Q6.q6Context({ surveyKind: kind, pack: kind === 'mc' ? mcPack : prPack, draft: ctl.draft, ctx: ctl.ctx, runtime: ctl.runtime, archetypeLookup: () => null }).reading;
   const rm = reading(shown('mc', mcPack, grounded, PROV, { [K1]: 5 }), 'multiclass'); const rp = reading(shown('pr', prPack, grounded, PROV, { [K1]: 5 }), 'prestige');
   const mclaim = rm.claims.find((c) => c.claimKind === 'method_preference');
-  assert.equal(mclaim.claimId, `claim.method.${K1}`); assert.equal(mclaim.groundedBy.length, 2); assert.deepEqual(mclaim.slots, { method_phrase: 'precise, accurate attacks', method_key: K1 }); assert.deepEqual(mclaim.sourceKeys, ['item:c.Alpha', 'item:c.Beta'], 'stable source identities are persisted in the frozen reading');
+  assert.equal(mclaim.claimId, `claim.method.${K1}`); assert.equal(mclaim.groundedBy.length, 2); assert.deepEqual(mclaim.slots, { method_phrase: 'making precise attacks', method_key: K1 }); assert.deepEqual(mclaim.sourceKeys, ['item:c.Alpha', 'item:c.Beta'], 'stable source identities are persisted in the frozen reading');
   assert.deepEqual(rm.claims, rp.claims, 'identical evidence: identical claims in both surveys');
   assert.deepEqual(rm.claims.map((c) => c.claimKind), ['method_preference', 'unresolved_reading_disagreement'], 'the unresolved identity reading is preserved');
 });
@@ -92,7 +92,7 @@ test('SV-19 corrections target only displayed claims: NOT shows the method claim
   const v = ctl.view().view; assert.equal(v.questionId, 'q6n');
   const ids = v.options.map((o) => o.optionId); assert.ok(ids.includes(`pr.q6n.claim.method.${K1}`) && ids.includes('pr.q6n.claim.unresolved_reading'));
   assert.ok(v.options.every((o) => !/\{|\}/.test(o.text)), 'slots are filled');
-  assert.equal(v.options.find((o) => o.optionId === `pr.q6n.claim.method.${K1}`).detail, 'About: precise, accurate attacks', 'the claim is identified by its reviewed phrase, not a raw key in the sentence');
+  assert.equal(v.options.find((o) => o.optionId === `pr.q6n.claim.method.${K1}`).detail, 'About: making precise attacks', 'the claim is identified by its reviewed phrase, not a raw key in the sentence');
   assert.ok(ctl.chooseMany('q6n', [`pr.q6n.claim.method.${K1}`], ctl.seq));
   assert.ok(ctl.chooseMany('q6a', [ctl.view().view.options[0].optionId], ctl.seq));
   const done = ctl.finish(ctl.seq); assert.deepEqual(done.reflection.result.rejectedClaimIds, [`claim.method.${K1}`]); assert.deepEqual(done.goals, []);

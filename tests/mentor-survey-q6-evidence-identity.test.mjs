@@ -69,11 +69,13 @@ test('SV-19 evidence certification: an item known only by name is not verified e
 test('SV-19 editorial ledger: all 125 canonical keys are classified once; only methods carry a phrase; excluded categories can never produce a claim', () => {
   const canon = Object.keys(json('data/bias-keys-canonical.json').mechanicalBias); const L = q6c.assessment.ledger;
   assert.deepEqual(Object.keys(L).sort(), [...canon].sort());
-  const cats = new Set(Object.values(L).map((x) => x.category)); assert.deepEqual([...cats].sort(), ['affiliation', 'capability', 'method', 'role', 'unresolved']);
+  const cats = new Set(Object.values(L).map((x) => x.category)); assert.deepEqual([...cats].sort(), ['affiliation', 'capability', 'method', 'role', 'technique', 'unresolved']);
   for (const [k, v] of Object.entries(L)) { assert.equal(Boolean(v.phrase), v.category === 'method', k); assert.equal(Boolean(q6c.assessment.methodKeys[k]), v.category === 'method', k); if (v.category !== 'method') assert.ok(v.excludedBecause, `${k} states why`); }
   for (const k of ['critRange', 'critDamage', 'silentKill', 'illegalTrade', 'imperialDuty', 'lawEnforcement', 'smugglingExpertise', 'outlawSkills', 'deadlyPrecision', 'commandAuthority', 'arenaExpertise', 'skillUtility']) assert.ok(!q6c.assessment.methodKeys[k], `${k} is excluded`);
-  assert.equal(q6c.assessment.methodKeys.forceDC.text, 'making Force powers harder to resist'); assert.equal(q6c.assessment.methodKeys.unarmeddMastery.text, 'unarmed fighting techniques'); assert.equal(q6c.assessment.methodKeys.tacticalVerse.text, 'tactical versatility');
+  assert.equal(q6c.assessment.methodKeys.forceDC.text, 'making Force powers harder to resist'); assert.equal(q6c.assessment.methodKeys.unarmeddMastery.text, 'unarmed fighting techniques'); assert.equal(q6c.assessment.methodKeys.tacticalVerse.text, 'using varied tactical approaches');
   assert.equal(Object.keys(q6c.assessment.methodKeys).length, 77);
+  const counts = {}; for (const v of Object.values(L)) counts[v.category] = (counts[v.category] || 0) + 1;
+  assert.deepEqual(counts, { method: 77, capability: 11, technique: 22, role: 8, affiliation: 4, unresolved: 3 });
   for (const m of Object.values(q6c.assessment.methodKeys)) assert.ok(!/\b(kill|illegal|imperial|criminal|outlaw|smuggl|sabotage|law|DC)\b/i.test(m.text) && !/[A-Z]{2}/.test(m.text), `${m.key} phrase avoids mechanics shorthand and implied acts`);
   const evid = { items: {}, skills: {} };
   for (const k of ['silentKill', 'critRange', 'imperialDuty']) assert.deepEqual(MI.methodClaims({ projection: E.projectActorEvidence(actor([A, B])), observedBias: { [k]: 9 }, provenance: { ...evid, items: { [k]: [entry(A), entry(B)] } }, methodKeys: q6c.assessment.methodKeys }), [], `${k} never makes a claim even with perfect provenance`);
@@ -85,4 +87,15 @@ test('SV-19 correction grammar: the method correction is source-neutral (same st
   assert.equal(neg.hasSlots, false); assert.equal(neg.editorialStatus, 'draft_text'); assert.match(neg.originalText, /\{method_phrase\}/);
   assert.deepEqual(S.validateResponseRecord(neg), []); assert.ok(S.isFirstPerson(neg.text));
   assert.ok(Object.values(q6c.negatives).flat().filter((r) => /method_phrase/.test(r.text)).length === 0, 'no correction concatenates a raw phrase into a sentence');
+});
+
+test('SV-19 owner-reviewed phrases and accurate exclusion categories: twelve specified phrasings; techniques are not mislabeled affiliations; exclusion never activates a key', () => {
+  const m = q6c.assessment.methodKeys; const L = q6c.assessment.ledger;
+  const want = { burstDamage: 'delivering damage in a powerful burst', conditionTrack: 'hindering opponents through debilitating effects', accuracy: 'making precise attacks', pilotMastery: 'operating vehicles with greater control', knowledgeMastery: 'applying specialized knowledge', biotechMastery: 'working with biotechnology', surgicalMastery: 'using advanced surgical techniques', wildernessLore: 'applying knowledge of wilderness conditions', weaponMastery: 'using specialized weapon techniques', medicalKnowledge: 'applying medical knowledge', technicalMastery: 'applying technical expertise', tacticalVerse: 'using varied tactical approaches' };
+  for (const [k, t] of Object.entries(want)) assert.equal(m[k].text, t, k);
+  assert.ok(Object.values(m).every((x) => x.editorialStatus === 'draft_text'), 'no phrase is approved');
+  assert.deepEqual(Object.entries(L).filter(([, v]) => v.category === 'affiliation').map(([k]) => k).sort(), ['forceBond', 'imperialDuty', 'networkInfluence', 'sithAlchemy']);
+  for (const k of ['sabotageExpertise', 'commandoTactics', 'ritualMastery', 'itemEnchantment', 'businessAcumen']) { assert.equal(L[k].category, 'technique', k); assert.match(L[k].excludedBecause, /^a legitimate (technique|tactical technique|area of (knowledge|expertise))/, `${k} reason does not call the concept invalid`); assert.ok(!m[k], `${k} stays excluded`); }
+  const report = fs.readFileSync(path.join(ROOT, 'docs/design/mentor-survey-v2/19-Q6-METHOD-REVIEW-REPORT.md'), 'utf8');
+  assert.match(report, /## 3\. Remaining grammatical or source-authority uncertainty/); assert.match(report, /`brutalForce`/); assert.match(report, /Rendered examples/);
 });

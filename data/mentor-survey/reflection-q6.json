@@ -12873,7 +12873,7 @@
       "burstDamage": {
         "id": "reflection.assessment.phrase.burstDamage",
         "key": "burstDamage",
-        "text": "ending a threat with a burst of damage",
+        "text": "delivering damage in a powerful burst",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -12925,7 +12925,7 @@
       "conditionTrack": {
         "id": "reflection.assessment.phrase.conditionTrack",
         "key": "conditionTrack",
-        "text": "wearing enemies down with negative conditions",
+        "text": "hindering opponents through debilitating effects",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13003,7 +13003,7 @@
       "accuracy": {
         "id": "reflection.assessment.phrase.accuracy",
         "key": "accuracy",
-        "text": "precise, accurate attacks",
+        "text": "making precise attacks",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13055,7 +13055,7 @@
       "pilotMastery": {
         "id": "reflection.assessment.phrase.pilotMastery",
         "key": "pilotMastery",
-        "text": "skilled vehicle operation",
+        "text": "operating vehicles with greater control",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13211,7 +13211,7 @@
       "knowledgeMastery": {
         "id": "reflection.assessment.phrase.knowledgeMastery",
         "key": "knowledgeMastery",
-        "text": "relying on deep knowledge",
+        "text": "applying specialized knowledge",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13328,7 +13328,7 @@
       "biotechMastery": {
         "id": "reflection.assessment.phrase.biotechMastery",
         "key": "biotechMastery",
-        "text": "biotechnology",
+        "text": "working with biotechnology",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13341,7 +13341,7 @@
       "surgicalMastery": {
         "id": "reflection.assessment.phrase.surgicalMastery",
         "key": "surgicalMastery",
-        "text": "advanced surgical technique",
+        "text": "using advanced surgical techniques",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13523,7 +13523,7 @@
       "wildernessLore": {
         "id": "reflection.assessment.phrase.wildernessLore",
         "key": "wildernessLore",
-        "text": "knowledge of the wilderness",
+        "text": "applying knowledge of wilderness conditions",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13627,7 +13627,7 @@
       "tacticalVerse": {
         "id": "reflection.assessment.phrase.tacticalVerse",
         "key": "tacticalVerse",
-        "text": "tactical versatility",
+        "text": "using varied tactical approaches",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13718,7 +13718,7 @@
       "weaponMastery": {
         "id": "reflection.assessment.phrase.weaponMastery",
         "key": "weaponMastery",
-        "text": "mastery of individual weapons",
+        "text": "using specialized weapon techniques",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13783,7 +13783,7 @@
       "medicalKnowledge": {
         "id": "reflection.assessment.phrase.medicalKnowledge",
         "key": "medicalKnowledge",
-        "text": "medical knowledge",
+        "text": "applying medical knowledge",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13822,7 +13822,7 @@
       "technicalMastery": {
         "id": "reflection.assessment.phrase.technicalMastery",
         "key": "technicalMastery",
-        "text": "technical mastery",
+        "text": "applying technical expertise",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13851,7 +13851,7 @@
       },
       "burstDamage": {
         "category": "method",
-        "phrase": "ending a threat with a burst of damage",
+        "phrase": "delivering damage in a powerful burst",
         "excludedBecause": null
       },
       "singleTargetDamage": {
@@ -13871,7 +13871,7 @@
       },
       "conditionTrack": {
         "category": "method",
-        "phrase": "wearing enemies down with negative conditions",
+        "phrase": "hindering opponents through debilitating effects",
         "excludedBecause": null
       },
       "counterAttack": {
@@ -13901,7 +13901,7 @@
       },
       "accuracy": {
         "category": "method",
-        "phrase": "precise, accurate attacks",
+        "phrase": "making precise attacks",
         "excludedBecause": null
       },
       "critRange": {
@@ -13927,7 +13927,7 @@
       "sithAlchemy": {
         "category": "affiliation",
         "phrase": null,
-        "excludedBecause": "names a Sith tradition; ownership of a rule is not membership or practice"
+        "excludedBecause": "names a Sith tradition; owning a rule is not membership in, or practice of, that tradition"
       },
       "darkSideAffinity": {
         "category": "role",
@@ -13956,7 +13956,7 @@
       },
       "pilotMastery": {
         "category": "method",
-        "phrase": "skilled vehicle operation",
+        "phrase": "operating vehicles with greater control",
         "excludedBecause": null
       },
       "vehicularDamage": {
@@ -14036,7 +14036,7 @@
       },
       "knowledgeMastery": {
         "category": "method",
-        "phrase": "relying on deep knowledge",
+        "phrase": "applying specialized knowledge",
         "excludedBecause": null
       },
       "skillUtility": {
@@ -14057,7 +14057,7 @@
       "networkInfluence": {
         "category": "affiliation",
         "phrase": null,
-        "excludedBecause": "implies contacts or a network the actor may not have"
+        "excludedBecause": "a relationship claim: it implies contacts or a network the actor may not have"
       },
       "predatoryInstinct": {
         "category": "role",
@@ -14080,14 +14080,14 @@
         "excludedBecause": null
       },
       "ritualMastery": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies a ritual tradition or practice"
+        "excludedBecause": "a legitimate technique (performing rituals); excluded for now because ritual practice is tradition-linked and no neutral phrase has been reviewed"
       },
       "itemEnchantment": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies a magical or Force tradition practice"
+        "excludedBecause": "a legitimate technique (enchanting and activating items); excluded for now because it is tradition-linked and no neutral phrase has been reviewed"
       },
       "forceArtistry": {
         "category": "method",
@@ -14105,9 +14105,9 @@
         "excludedBecause": null
       },
       "sabotageExpertise": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "a hostile act; a rule is not evidence of sabotage"
+        "excludedBecause": "a legitimate technique (destroying systems and equipment); excluded for now because a method question about it would suggest a hostile act the character may never have performed"
       },
       "explosiveMastery": {
         "category": "method",
@@ -14116,7 +14116,7 @@
       },
       "biotechMastery": {
         "category": "method",
-        "phrase": "biotechnology",
+        "phrase": "working with biotechnology",
         "excludedBecause": null
       },
       "geneticEngineering": {
@@ -14125,9 +14125,9 @@
         "excludedBecause": "a specialist capability, not an approach"
       },
       "livingWeaponCrafting": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies creating weapons from living things"
+        "excludedBecause": "a legitimate technique; excluded for now because it would suggest creating weapons from living things"
       },
       "biologicalControl": {
         "category": "unresolved",
@@ -14136,7 +14136,7 @@
       },
       "surgicalMastery": {
         "category": "method",
-        "phrase": "advanced surgical technique",
+        "phrase": "using advanced surgical techniques",
         "excludedBecause": null
       },
       "healingMastery": {
@@ -14195,24 +14195,24 @@
         "excludedBecause": null
       },
       "smugglingExpertise": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies criminal activity"
+        "excludedBecause": "a legitimate area of expertise; excluded for now because it would suggest unlawful activity"
       },
       "illegalTrade": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies criminal activity; a mechanical association is not evidence of it"
+        "excludedBecause": "a legitimate area of expertise; excluded for now because it would suggest unlawful activity, which a mechanical association does not show"
       },
       "evasionTactics": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "defined as evading pursuit and authority: implies fugitive status"
+        "excludedBecause": "a legitimate technique (evading pursuit and authority); excluded for now because it would suggest fugitive status"
       },
       "outlawSkills": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies operating outside the law"
+        "excludedBecause": "a legitimate set of skills; excluded for now because it would suggest operating outside the law"
       },
       "survivalism": {
         "category": "method",
@@ -14220,14 +14220,14 @@
         "excludedBecause": null
       },
       "criminalExpertise": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies criminal activity"
+        "excludedBecause": "a legitimate area of expertise; excluded for now because it would suggest criminal activity"
       },
       "freedomPursuit": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "defined as escaping confinement: implies a past event"
+        "excludedBecause": "a legitimate technique (escaping confinement); excluded for now because it would suggest a past confinement"
       },
       "explorationMastery": {
         "category": "method",
@@ -14236,7 +14236,7 @@
       },
       "wildernessLore": {
         "category": "method",
-        "phrase": "knowledge of the wilderness",
+        "phrase": "applying knowledge of wilderness conditions",
         "excludedBecause": null
       },
       "survivalSkills": {
@@ -14250,14 +14250,14 @@
         "excludedBecause": null
       },
       "infiltrationMastery": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "defined as deep infiltration operations: implies professional operations"
+        "excludedBecause": "a legitimate technique (deep infiltration operations); excluded for now because it would suggest professional operations"
       },
       "identityShift": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "shifting identities implies deception of others the actor may not have performed"
+        "excludedBecause": "a legitimate technique (shifting identities); excluded for now because it would suggest deceiving others"
       },
       "stealthMastery": {
         "category": "method",
@@ -14265,24 +14265,24 @@
         "excludedBecause": null
       },
       "deadlyPrecision": {
-        "category": "capability",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "defined as lethal attacks: implies killing"
+        "excludedBecause": "a legitimate technique (lethal accurate attacks); excluded for now because the definition itself denotes killing"
       },
       "silentKill": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "defined as killing without detection: implies an act the character may never have performed"
+        "excludedBecause": "a legitimate technique; excluded for now because the definition denotes killing, an act the character may never have performed"
       },
       "businessAcumen": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies a business profession"
+        "excludedBecause": "a legitimate area of knowledge (understanding business); excluded for now because a method question would suggest a business career"
       },
       "corporateInfluence": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies corporate standing"
+        "excludedBecause": "a legitimate technique (influencing corporate entities); excluded for now because it would suggest corporate standing"
       },
       "socialManipulation": {
         "category": "unresolved",
@@ -14295,9 +14295,9 @@
         "excludedBecause": null
       },
       "conArtistry": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies confidence schemes"
+        "excludedBecause": "a legitimate technique; excluded for now because it would suggest confidence schemes"
       },
       "intimidation": {
         "category": "method",
@@ -14315,9 +14315,9 @@
         "excludedBecause": null
       },
       "lawEnforcement": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies a law-enforcement profession or lawful employment"
+        "excludedBecause": "a legitimate area of expertise; excluded for now because it would suggest lawful employment, and the class can represent other forms of enforcement"
       },
       "unitCoordination": {
         "category": "role",
@@ -14325,14 +14325,14 @@
         "excludedBecause": "assumes military units the actor may not command"
       },
       "specialOps": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies a special-operations profession"
+        "excludedBecause": "a legitimate area of expertise; excluded for now because the name denotes a professional specialty and no neutral phrase has been reviewed"
       },
       "commandoTactics": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies a commando profession"
+        "excludedBecause": "a legitimate tactical technique; excluded for now because the name denotes a military role and no neutral phrase has been reviewed"
       },
       "rapidResponse": {
         "category": "method",
@@ -14341,7 +14341,7 @@
       },
       "tacticalVerse": {
         "category": "method",
-        "phrase": "tactical versatility",
+        "phrase": "using varied tactical approaches",
         "excludedBecause": null
       },
       "dualistTechnique": {
@@ -14376,13 +14376,13 @@
       },
       "weaponMastery": {
         "category": "method",
-        "phrase": "mastery of individual weapons",
+        "phrase": "using specialized weapon techniques",
         "excludedBecause": null
       },
       "arenaExpertise": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies arena experience"
+        "excludedBecause": "a legitimate technique (arena combat); excluded for now because it would suggest arena experience"
       },
       "heavyWeaponMastery": {
         "category": "method",
@@ -14407,12 +14407,12 @@
       "forceBond": {
         "category": "affiliation",
         "phrase": null,
-        "excludedBecause": "implies a bond with a person or tradition"
+        "excludedBecause": "a relationship claim: it implies a bond with a person or tradition"
       },
       "imperialDuty": {
         "category": "affiliation",
         "phrase": null,
-        "excludedBecause": "implies an Imperial obligation or allegiance"
+        "excludedBecause": "an allegiance claim: it implies an Imperial obligation"
       },
       "enforceAuthority": {
         "category": "role",
@@ -14425,13 +14425,13 @@
         "excludedBecause": "defined as control over others: not an approach the Mentor should assume"
       },
       "mysticalInfluence": {
-        "category": "affiliation",
+        "category": "technique",
         "phrase": null,
-        "excludedBecause": "implies a mystical tradition"
+        "excludedBecause": "a legitimate technique; excluded for now because it is tradition-linked and its meaning (influence on whom) is not established"
       },
       "medicalKnowledge": {
         "category": "method",
-        "phrase": "medical knowledge",
+        "phrase": "applying medical knowledge",
         "excludedBecause": null
       },
       "treatmentExpertise": {
@@ -14451,7 +14451,7 @@
       },
       "technicalMastery": {
         "category": "method",
-        "phrase": "technical mastery",
+        "phrase": "applying technical expertise",
         "excludedBecause": null
       },
       "adaptiveAI": {

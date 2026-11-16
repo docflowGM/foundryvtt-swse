@@ -3172,3 +3172,11 @@ These are engineering or drafting choices the rulings delegated. None sets a gam
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+
+## MSV-RD-018 — OWNER DECISION (appended 2026-11-16; original entry preserved)
+
+- The 48 currently excluded keys are **accepted as a conservative runtime boundary** for Q6 method inference. This is not a permanent prohibition, and the concepts may be used elsewhere.
+- Twelve phrases were replaced by owner direction (`burstDamage`, `conditionTrack`, `accuracy`, `pilotMastery`, `knowledgeMastery`, `biotechMastery`, `surgicalMastery`, `wildernessLore`, `weaponMastery`, `medicalKnowledge`, `technicalMastery`, `tacticalVerse`).
+- Exclusion categories were corrected: legitimate techniques and areas of expertise are now `technique` (22), not `affiliation`; `affiliation` is limited to an actual tradition, allegiance or relationship (4).
+- The 77 method phrases remain `draft_text`; additional wording exceptions are reported in `19-Q6-METHOD-REVIEW-REPORT.md` section 3 (not applied). Status: phrase approval `DEFERRED_RULES_REVIEW`.
