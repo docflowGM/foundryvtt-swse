@@ -12680,6 +12680,1661 @@
       "freeId": "remain_open"
     }
   ],
+  "assessment": {
+    "keys": [
+      "forceSecret",
+      "forceDC",
+      "forceRecovery",
+      "burstDamage",
+      "singleTargetDamage",
+      "areaDamage",
+      "areaControl",
+      "conditionTrack",
+      "counterAttack",
+      "reactionDefense",
+      "damageReduction",
+      "damageMitigationAura",
+      "evasion",
+      "accuracy",
+      "critRange",
+      "critDamage",
+      "initiative",
+      "dualWield",
+      "sithAlchemy",
+      "darkSideAffinity",
+      "lightSideAffinity",
+      "formMastery",
+      "meleeDamage",
+      "firepower",
+      "pilotMastery",
+      "vehicularDamage",
+      "unarmeddMastery",
+      "strikeForce",
+      "flowState",
+      "combatFlow",
+      "combatStamina",
+      "commandAuthority",
+      "formation",
+      "allySupport",
+      "moraleBonus",
+      "moraleImpact",
+      "stealth",
+      "infiltration",
+      "trackingMastery",
+      "deceptionMastery",
+      "knowledgeMastery",
+      "skillUtility",
+      "resourceControl",
+      "informationControl",
+      "networkInfluence",
+      "predatoryInstinct",
+      "tacticalAwareness",
+      "armorMastery",
+      "grappling",
+      "ritualMastery",
+      "itemEnchantment",
+      "forceArtistry",
+      "droidControl",
+      "hackingSkills",
+      "sabotageExpertise",
+      "explosiveMastery",
+      "biotechMastery",
+      "geneticEngineering",
+      "livingWeaponCrafting",
+      "biologicalControl",
+      "surgicalMastery",
+      "healingMastery",
+      "treatingInjury",
+      "engineeringMastery",
+      "tacticalSupport",
+      "fortifications",
+      "weaponEngineering",
+      "improvisation",
+      "mechanicalMastery",
+      "technicalInnovation",
+      "resourcefulness",
+      "spacefarerMastery",
+      "smugglingExpertise",
+      "illegalTrade",
+      "evasionTactics",
+      "outlawSkills",
+      "survivalism",
+      "criminalExpertise",
+      "freedomPursuit",
+      "explorationMastery",
+      "wildernessLore",
+      "survivalSkills",
+      "adaptability",
+      "infiltrationMastery",
+      "identityShift",
+      "stealthMastery",
+      "deadlyPrecision",
+      "silentKill",
+      "businessAcumen",
+      "corporateInfluence",
+      "socialManipulation",
+      "persuasionMastery",
+      "conArtistry",
+      "intimidation",
+      "authorityPresence",
+      "brutalForce",
+      "lawEnforcement",
+      "unitCoordination",
+      "specialOps",
+      "commandoTactics",
+      "rapidResponse",
+      "tacticalVerse",
+      "dualistTechnique",
+      "defensiveSwordsmanship",
+      "counterMastery",
+      "combatAdaptability",
+      "dualistMastery",
+      "weaponVersatility",
+      "weaponMastery",
+      "arenaExpertise",
+      "heavyWeaponMastery",
+      "quickDraw",
+      "precisePistolry",
+      "triggerDiscipline",
+      "forceBond",
+      "imperialDuty",
+      "enforceAuthority",
+      "forcedControl",
+      "mysticalInfluence",
+      "medicalKnowledge",
+      "treatmentExpertise",
+      "selfProgram",
+      "independence",
+      "technicalMastery",
+      "adaptiveAI"
+    ],
+    "method": {
+      "id": "reflection.assessment.method",
+      "text": "Your current training supports {method_phrase}. I wonder whether that reflects how you prefer to approach problems, or simply what you've prepared for.",
+      "editorialStatus": "owner_approved_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "origin": "owner decision 2026-11-16 (Q6 method/theme wording)"
+      },
+      "speaker": "neutral"
+    },
+    "theme": {
+      "id": "reflection.assessment.theme",
+      "text": "Several parts of your training seem to point toward {theme_phrase}. I see a possible pattern there, but that doesn't necessarily define who you are.",
+      "editorialStatus": "owner_approved_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "origin": "owner decision 2026-11-16 (Q6 method/theme wording)"
+      },
+      "speaker": "neutral"
+    },
+    "methodPhrases": {
+      "forceSecret": {
+        "id": "reflection.assessment.phrase.forceSecret",
+        "key": "forceSecret",
+        "text": "force secret",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "forceSecret",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "forceDC": {
+        "id": "reflection.assessment.phrase.forceDC",
+        "key": "forceDC",
+        "text": "force DC",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "forceDC",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "forceRecovery": {
+        "id": "reflection.assessment.phrase.forceRecovery",
+        "key": "forceRecovery",
+        "text": "force recovery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "forceRecovery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "burstDamage": {
+        "id": "reflection.assessment.phrase.burstDamage",
+        "key": "burstDamage",
+        "text": "burst damage",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "burstDamage",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "singleTargetDamage": {
+        "id": "reflection.assessment.phrase.singleTargetDamage",
+        "key": "singleTargetDamage",
+        "text": "single target damage",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "singleTargetDamage",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "areaDamage": {
+        "id": "reflection.assessment.phrase.areaDamage",
+        "key": "areaDamage",
+        "text": "area damage",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "areaDamage",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "areaControl": {
+        "id": "reflection.assessment.phrase.areaControl",
+        "key": "areaControl",
+        "text": "area control",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "areaControl",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "conditionTrack": {
+        "id": "reflection.assessment.phrase.conditionTrack",
+        "key": "conditionTrack",
+        "text": "condition track",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "conditionTrack",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "counterAttack": {
+        "id": "reflection.assessment.phrase.counterAttack",
+        "key": "counterAttack",
+        "text": "counter attack",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "counterAttack",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "reactionDefense": {
+        "id": "reflection.assessment.phrase.reactionDefense",
+        "key": "reactionDefense",
+        "text": "reaction defense",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "reactionDefense",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "damageReduction": {
+        "id": "reflection.assessment.phrase.damageReduction",
+        "key": "damageReduction",
+        "text": "damage reduction",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "damageReduction",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "damageMitigationAura": {
+        "id": "reflection.assessment.phrase.damageMitigationAura",
+        "key": "damageMitigationAura",
+        "text": "damage mitigation aura",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "damageMitigationAura",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "evasion": {
+        "id": "reflection.assessment.phrase.evasion",
+        "key": "evasion",
+        "text": "evasion",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "evasion",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "accuracy": {
+        "id": "reflection.assessment.phrase.accuracy",
+        "key": "accuracy",
+        "text": "accuracy",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "accuracy",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "critRange": {
+        "id": "reflection.assessment.phrase.critRange",
+        "key": "critRange",
+        "text": "crit range",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "critRange",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "critDamage": {
+        "id": "reflection.assessment.phrase.critDamage",
+        "key": "critDamage",
+        "text": "crit damage",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "critDamage",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "initiative": {
+        "id": "reflection.assessment.phrase.initiative",
+        "key": "initiative",
+        "text": "initiative",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "initiative",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "dualWield": {
+        "id": "reflection.assessment.phrase.dualWield",
+        "key": "dualWield",
+        "text": "dual wield",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "dualWield",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "sithAlchemy": {
+        "id": "reflection.assessment.phrase.sithAlchemy",
+        "key": "sithAlchemy",
+        "text": "sith alchemy",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "sithAlchemy",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "darkSideAffinity": {
+        "id": "reflection.assessment.phrase.darkSideAffinity",
+        "key": "darkSideAffinity",
+        "text": "dark side affinity",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "darkSideAffinity",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "lightSideAffinity": {
+        "id": "reflection.assessment.phrase.lightSideAffinity",
+        "key": "lightSideAffinity",
+        "text": "light side affinity",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "lightSideAffinity",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "formMastery": {
+        "id": "reflection.assessment.phrase.formMastery",
+        "key": "formMastery",
+        "text": "form mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "formMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "meleeDamage": {
+        "id": "reflection.assessment.phrase.meleeDamage",
+        "key": "meleeDamage",
+        "text": "melee damage",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "meleeDamage",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "firepower": {
+        "id": "reflection.assessment.phrase.firepower",
+        "key": "firepower",
+        "text": "firepower",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "firepower",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "pilotMastery": {
+        "id": "reflection.assessment.phrase.pilotMastery",
+        "key": "pilotMastery",
+        "text": "pilot mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "pilotMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "vehicularDamage": {
+        "id": "reflection.assessment.phrase.vehicularDamage",
+        "key": "vehicularDamage",
+        "text": "vehicular damage",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "vehicularDamage",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "unarmeddMastery": {
+        "id": "reflection.assessment.phrase.unarmeddMastery",
+        "key": "unarmeddMastery",
+        "text": "unarmed mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "unarmeddMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "strikeForce": {
+        "id": "reflection.assessment.phrase.strikeForce",
+        "key": "strikeForce",
+        "text": "strike force",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "strikeForce",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "flowState": {
+        "id": "reflection.assessment.phrase.flowState",
+        "key": "flowState",
+        "text": "flow state",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "flowState",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "combatFlow": {
+        "id": "reflection.assessment.phrase.combatFlow",
+        "key": "combatFlow",
+        "text": "combat flow",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "combatFlow",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "combatStamina": {
+        "id": "reflection.assessment.phrase.combatStamina",
+        "key": "combatStamina",
+        "text": "combat stamina",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "combatStamina",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "commandAuthority": {
+        "id": "reflection.assessment.phrase.commandAuthority",
+        "key": "commandAuthority",
+        "text": "command authority",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "commandAuthority",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "formation": {
+        "id": "reflection.assessment.phrase.formation",
+        "key": "formation",
+        "text": "formation",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "formation",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "allySupport": {
+        "id": "reflection.assessment.phrase.allySupport",
+        "key": "allySupport",
+        "text": "ally support",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "allySupport",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "moraleBonus": {
+        "id": "reflection.assessment.phrase.moraleBonus",
+        "key": "moraleBonus",
+        "text": "morale bonus",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "moraleBonus",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "moraleImpact": {
+        "id": "reflection.assessment.phrase.moraleImpact",
+        "key": "moraleImpact",
+        "text": "morale impact",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "moraleImpact",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "stealth": {
+        "id": "reflection.assessment.phrase.stealth",
+        "key": "stealth",
+        "text": "stealth",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "stealth",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "infiltration": {
+        "id": "reflection.assessment.phrase.infiltration",
+        "key": "infiltration",
+        "text": "infiltration",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "infiltration",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "trackingMastery": {
+        "id": "reflection.assessment.phrase.trackingMastery",
+        "key": "trackingMastery",
+        "text": "tracking mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "trackingMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "deceptionMastery": {
+        "id": "reflection.assessment.phrase.deceptionMastery",
+        "key": "deceptionMastery",
+        "text": "deception mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "deceptionMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "knowledgeMastery": {
+        "id": "reflection.assessment.phrase.knowledgeMastery",
+        "key": "knowledgeMastery",
+        "text": "knowledge mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "knowledgeMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "skillUtility": {
+        "id": "reflection.assessment.phrase.skillUtility",
+        "key": "skillUtility",
+        "text": "skill utility",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "skillUtility",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "resourceControl": {
+        "id": "reflection.assessment.phrase.resourceControl",
+        "key": "resourceControl",
+        "text": "resource control",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "resourceControl",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "informationControl": {
+        "id": "reflection.assessment.phrase.informationControl",
+        "key": "informationControl",
+        "text": "information control",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "informationControl",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "networkInfluence": {
+        "id": "reflection.assessment.phrase.networkInfluence",
+        "key": "networkInfluence",
+        "text": "network influence",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "networkInfluence",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "predatoryInstinct": {
+        "id": "reflection.assessment.phrase.predatoryInstinct",
+        "key": "predatoryInstinct",
+        "text": "predatory instinct",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "predatoryInstinct",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "tacticalAwareness": {
+        "id": "reflection.assessment.phrase.tacticalAwareness",
+        "key": "tacticalAwareness",
+        "text": "tactical awareness",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "tacticalAwareness",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "armorMastery": {
+        "id": "reflection.assessment.phrase.armorMastery",
+        "key": "armorMastery",
+        "text": "armor mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "armorMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "grappling": {
+        "id": "reflection.assessment.phrase.grappling",
+        "key": "grappling",
+        "text": "grappling",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "grappling",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "ritualMastery": {
+        "id": "reflection.assessment.phrase.ritualMastery",
+        "key": "ritualMastery",
+        "text": "ritual mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "ritualMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "itemEnchantment": {
+        "id": "reflection.assessment.phrase.itemEnchantment",
+        "key": "itemEnchantment",
+        "text": "item enchantment",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "itemEnchantment",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "forceArtistry": {
+        "id": "reflection.assessment.phrase.forceArtistry",
+        "key": "forceArtistry",
+        "text": "force artistry",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "forceArtistry",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "droidControl": {
+        "id": "reflection.assessment.phrase.droidControl",
+        "key": "droidControl",
+        "text": "droid control",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "droidControl",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "hackingSkills": {
+        "id": "reflection.assessment.phrase.hackingSkills",
+        "key": "hackingSkills",
+        "text": "hacking skills",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "hackingSkills",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "sabotageExpertise": {
+        "id": "reflection.assessment.phrase.sabotageExpertise",
+        "key": "sabotageExpertise",
+        "text": "sabotage expertise",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "sabotageExpertise",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "explosiveMastery": {
+        "id": "reflection.assessment.phrase.explosiveMastery",
+        "key": "explosiveMastery",
+        "text": "explosive mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "explosiveMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "biotechMastery": {
+        "id": "reflection.assessment.phrase.biotechMastery",
+        "key": "biotechMastery",
+        "text": "biotech mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "biotechMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "geneticEngineering": {
+        "id": "reflection.assessment.phrase.geneticEngineering",
+        "key": "geneticEngineering",
+        "text": "genetic engineering",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "geneticEngineering",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "livingWeaponCrafting": {
+        "id": "reflection.assessment.phrase.livingWeaponCrafting",
+        "key": "livingWeaponCrafting",
+        "text": "living weapon crafting",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "livingWeaponCrafting",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "biologicalControl": {
+        "id": "reflection.assessment.phrase.biologicalControl",
+        "key": "biologicalControl",
+        "text": "biological control",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "biologicalControl",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "surgicalMastery": {
+        "id": "reflection.assessment.phrase.surgicalMastery",
+        "key": "surgicalMastery",
+        "text": "surgical mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "surgicalMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "healingMastery": {
+        "id": "reflection.assessment.phrase.healingMastery",
+        "key": "healingMastery",
+        "text": "healing mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "healingMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "treatingInjury": {
+        "id": "reflection.assessment.phrase.treatingInjury",
+        "key": "treatingInjury",
+        "text": "treating injury",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "treatingInjury",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "engineeringMastery": {
+        "id": "reflection.assessment.phrase.engineeringMastery",
+        "key": "engineeringMastery",
+        "text": "engineering mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "engineeringMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "tacticalSupport": {
+        "id": "reflection.assessment.phrase.tacticalSupport",
+        "key": "tacticalSupport",
+        "text": "tactical support",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "tacticalSupport",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "fortifications": {
+        "id": "reflection.assessment.phrase.fortifications",
+        "key": "fortifications",
+        "text": "fortifications",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "fortifications",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "weaponEngineering": {
+        "id": "reflection.assessment.phrase.weaponEngineering",
+        "key": "weaponEngineering",
+        "text": "weapon engineering",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "weaponEngineering",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "improvisation": {
+        "id": "reflection.assessment.phrase.improvisation",
+        "key": "improvisation",
+        "text": "improvisation",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "improvisation",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "mechanicalMastery": {
+        "id": "reflection.assessment.phrase.mechanicalMastery",
+        "key": "mechanicalMastery",
+        "text": "mechanical mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "mechanicalMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "technicalInnovation": {
+        "id": "reflection.assessment.phrase.technicalInnovation",
+        "key": "technicalInnovation",
+        "text": "technical innovation",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "technicalInnovation",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "resourcefulness": {
+        "id": "reflection.assessment.phrase.resourcefulness",
+        "key": "resourcefulness",
+        "text": "resourcefulness",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "resourcefulness",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "spacefarerMastery": {
+        "id": "reflection.assessment.phrase.spacefarerMastery",
+        "key": "spacefarerMastery",
+        "text": "spacefarer mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "spacefarerMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "smugglingExpertise": {
+        "id": "reflection.assessment.phrase.smugglingExpertise",
+        "key": "smugglingExpertise",
+        "text": "smuggling expertise",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "smugglingExpertise",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "illegalTrade": {
+        "id": "reflection.assessment.phrase.illegalTrade",
+        "key": "illegalTrade",
+        "text": "illegal trade",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "illegalTrade",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "evasionTactics": {
+        "id": "reflection.assessment.phrase.evasionTactics",
+        "key": "evasionTactics",
+        "text": "evasion tactics",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "evasionTactics",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "outlawSkills": {
+        "id": "reflection.assessment.phrase.outlawSkills",
+        "key": "outlawSkills",
+        "text": "outlaw skills",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "outlawSkills",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "survivalism": {
+        "id": "reflection.assessment.phrase.survivalism",
+        "key": "survivalism",
+        "text": "survivalism",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "survivalism",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "criminalExpertise": {
+        "id": "reflection.assessment.phrase.criminalExpertise",
+        "key": "criminalExpertise",
+        "text": "criminal expertise",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "criminalExpertise",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "freedomPursuit": {
+        "id": "reflection.assessment.phrase.freedomPursuit",
+        "key": "freedomPursuit",
+        "text": "freedom pursuit",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "freedomPursuit",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "explorationMastery": {
+        "id": "reflection.assessment.phrase.explorationMastery",
+        "key": "explorationMastery",
+        "text": "exploration mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "explorationMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "wildernessLore": {
+        "id": "reflection.assessment.phrase.wildernessLore",
+        "key": "wildernessLore",
+        "text": "wilderness lore",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "wildernessLore",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "survivalSkills": {
+        "id": "reflection.assessment.phrase.survivalSkills",
+        "key": "survivalSkills",
+        "text": "survival skills",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "survivalSkills",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "adaptability": {
+        "id": "reflection.assessment.phrase.adaptability",
+        "key": "adaptability",
+        "text": "adaptability",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "adaptability",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "infiltrationMastery": {
+        "id": "reflection.assessment.phrase.infiltrationMastery",
+        "key": "infiltrationMastery",
+        "text": "infiltration mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "infiltrationMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "identityShift": {
+        "id": "reflection.assessment.phrase.identityShift",
+        "key": "identityShift",
+        "text": "identity shift",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "identityShift",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "stealthMastery": {
+        "id": "reflection.assessment.phrase.stealthMastery",
+        "key": "stealthMastery",
+        "text": "stealth mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "stealthMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "deadlyPrecision": {
+        "id": "reflection.assessment.phrase.deadlyPrecision",
+        "key": "deadlyPrecision",
+        "text": "deadly precision",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "deadlyPrecision",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "silentKill": {
+        "id": "reflection.assessment.phrase.silentKill",
+        "key": "silentKill",
+        "text": "silent kill",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "silentKill",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "businessAcumen": {
+        "id": "reflection.assessment.phrase.businessAcumen",
+        "key": "businessAcumen",
+        "text": "business acumen",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "businessAcumen",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "corporateInfluence": {
+        "id": "reflection.assessment.phrase.corporateInfluence",
+        "key": "corporateInfluence",
+        "text": "corporate influence",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "corporateInfluence",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "socialManipulation": {
+        "id": "reflection.assessment.phrase.socialManipulation",
+        "key": "socialManipulation",
+        "text": "social manipulation",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "socialManipulation",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "persuasionMastery": {
+        "id": "reflection.assessment.phrase.persuasionMastery",
+        "key": "persuasionMastery",
+        "text": "persuasion mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "persuasionMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "conArtistry": {
+        "id": "reflection.assessment.phrase.conArtistry",
+        "key": "conArtistry",
+        "text": "con artistry",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "conArtistry",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "intimidation": {
+        "id": "reflection.assessment.phrase.intimidation",
+        "key": "intimidation",
+        "text": "intimidation",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "intimidation",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "authorityPresence": {
+        "id": "reflection.assessment.phrase.authorityPresence",
+        "key": "authorityPresence",
+        "text": "authority presence",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "authorityPresence",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "brutalForce": {
+        "id": "reflection.assessment.phrase.brutalForce",
+        "key": "brutalForce",
+        "text": "brutal force",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "brutalForce",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "lawEnforcement": {
+        "id": "reflection.assessment.phrase.lawEnforcement",
+        "key": "lawEnforcement",
+        "text": "law enforcement",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "lawEnforcement",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "unitCoordination": {
+        "id": "reflection.assessment.phrase.unitCoordination",
+        "key": "unitCoordination",
+        "text": "unit coordination",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "unitCoordination",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "specialOps": {
+        "id": "reflection.assessment.phrase.specialOps",
+        "key": "specialOps",
+        "text": "special ops",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "specialOps",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "commandoTactics": {
+        "id": "reflection.assessment.phrase.commandoTactics",
+        "key": "commandoTactics",
+        "text": "commando tactics",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "commandoTactics",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "rapidResponse": {
+        "id": "reflection.assessment.phrase.rapidResponse",
+        "key": "rapidResponse",
+        "text": "rapid response",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "rapidResponse",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "tacticalVerse": {
+        "id": "reflection.assessment.phrase.tacticalVerse",
+        "key": "tacticalVerse",
+        "text": "tactical verse",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "tacticalVerse",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "dualistTechnique": {
+        "id": "reflection.assessment.phrase.dualistTechnique",
+        "key": "dualistTechnique",
+        "text": "dualist technique",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "dualistTechnique",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "defensiveSwordsmanship": {
+        "id": "reflection.assessment.phrase.defensiveSwordsmanship",
+        "key": "defensiveSwordsmanship",
+        "text": "defensive swordsmanship",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "defensiveSwordsmanship",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "counterMastery": {
+        "id": "reflection.assessment.phrase.counterMastery",
+        "key": "counterMastery",
+        "text": "counter mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "counterMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "combatAdaptability": {
+        "id": "reflection.assessment.phrase.combatAdaptability",
+        "key": "combatAdaptability",
+        "text": "combat adaptability",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "combatAdaptability",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "dualistMastery": {
+        "id": "reflection.assessment.phrase.dualistMastery",
+        "key": "dualistMastery",
+        "text": "dualist mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "dualistMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "weaponVersatility": {
+        "id": "reflection.assessment.phrase.weaponVersatility",
+        "key": "weaponVersatility",
+        "text": "weapon versatility",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "weaponVersatility",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "weaponMastery": {
+        "id": "reflection.assessment.phrase.weaponMastery",
+        "key": "weaponMastery",
+        "text": "weapon mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "weaponMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "arenaExpertise": {
+        "id": "reflection.assessment.phrase.arenaExpertise",
+        "key": "arenaExpertise",
+        "text": "arena expertise",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "arenaExpertise",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "heavyWeaponMastery": {
+        "id": "reflection.assessment.phrase.heavyWeaponMastery",
+        "key": "heavyWeaponMastery",
+        "text": "heavy weapon mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "heavyWeaponMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "quickDraw": {
+        "id": "reflection.assessment.phrase.quickDraw",
+        "key": "quickDraw",
+        "text": "quick draw",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "quickDraw",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "precisePistolry": {
+        "id": "reflection.assessment.phrase.precisePistolry",
+        "key": "precisePistolry",
+        "text": "precise pistolry",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "precisePistolry",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "triggerDiscipline": {
+        "id": "reflection.assessment.phrase.triggerDiscipline",
+        "key": "triggerDiscipline",
+        "text": "trigger discipline",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "triggerDiscipline",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "forceBond": {
+        "id": "reflection.assessment.phrase.forceBond",
+        "key": "forceBond",
+        "text": "force bond",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "forceBond",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "imperialDuty": {
+        "id": "reflection.assessment.phrase.imperialDuty",
+        "key": "imperialDuty",
+        "text": "imperial duty",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "imperialDuty",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "enforceAuthority": {
+        "id": "reflection.assessment.phrase.enforceAuthority",
+        "key": "enforceAuthority",
+        "text": "enforce authority",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "enforceAuthority",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "forcedControl": {
+        "id": "reflection.assessment.phrase.forcedControl",
+        "key": "forcedControl",
+        "text": "forced control",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "forcedControl",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "mysticalInfluence": {
+        "id": "reflection.assessment.phrase.mysticalInfluence",
+        "key": "mysticalInfluence",
+        "text": "mystical influence",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "mysticalInfluence",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "medicalKnowledge": {
+        "id": "reflection.assessment.phrase.medicalKnowledge",
+        "key": "medicalKnowledge",
+        "text": "medical knowledge",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "medicalKnowledge",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "treatmentExpertise": {
+        "id": "reflection.assessment.phrase.treatmentExpertise",
+        "key": "treatmentExpertise",
+        "text": "treatment expertise",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "treatmentExpertise",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "selfProgram": {
+        "id": "reflection.assessment.phrase.selfProgram",
+        "key": "selfProgram",
+        "text": "self program",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "selfProgram",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "independence": {
+        "id": "reflection.assessment.phrase.independence",
+        "key": "independence",
+        "text": "independence",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "independence",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "technicalMastery": {
+        "id": "reflection.assessment.phrase.technicalMastery",
+        "key": "technicalMastery",
+        "text": "technical mastery",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "technicalMastery",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      },
+      "adaptiveAI": {
+        "id": "reflection.assessment.phrase.adaptiveAI",
+        "key": "adaptiveAI",
+        "text": "adaptive AI",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "file": "data/bias-keys-canonical.json",
+          "key": "adaptiveAI",
+          "basis": "camelCase split of the canonical identifier"
+        }
+      }
+    },
+    "themeResolution": {
+      "available": false,
+      "reason": "canonical SSOT has no mechanical-bias field and its mechanics sections are audited draft; no theme claim is produced"
+    }
+  },
   "neutral": {
     "milestone": {
       "id": "reflection.neutral.milestone",

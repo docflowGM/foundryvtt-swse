@@ -17,6 +17,7 @@
 import { hashString, EDITORIAL_STATUS } from '../contract.js';
 import { createReading, beginCalibration, chooseCalibration, selectNot, selectAm, finishCalibration, inferenceClaims, NOT_CAPS, REQUIRES_AM } from '../reflection.js';
 import { isRecordPlayable, toViewOption } from '../content-store.js';
+import { methodClaims } from '../method-inference.js';
 
 const pick = (arr, seed) => arr[Number.parseInt(hashString(seed), 16) % arr.length];
 const fill = (text, slots) => text.replace(/\{(\w+)\}/g, (_m, k) => (k in slots ? slots[k] : `{${k}}`));
@@ -41,19 +42,19 @@ export function q6Profile({ surveyKind, pack, ctx, draft }) {
     const className = pack.classes?.[classId]?.className ?? classId;
     const sid = draft?.answers?.q1?.meta?.sourceId;
     const row = sid ? (pack.q1q3?.classes?.[classId]?.q1.answers || []).find((a) => a.sourceId === sid) : null;
-    return { surveyKind, classId, mentorId: pack.classes?.[classId]?.mentorRegistryKey ?? null, idPrefix: 'pr', frame: specific?.frame ?? q6.neutral.frame, clauses: specific?.clauses ?? q6.neutral.clauses, neutralFrame: !specific,
+    return { surveyKind, assessment: q6.assessment, classId, mentorId: pack.classes?.[classId]?.mentorRegistryKey ?? null, idPrefix: 'pr', frame: specific?.frame ?? q6.neutral.frame, clauses: specific?.clauses ?? q6.neutral.clauses, neutralFrame: !specific,
       milestone: { ...q6.neutral.milestone, text: fill(q6.neutral.milestone.text, { class_name: className }) }, q1Text: row && row.kind !== 'neutral' ? row.text : null };
   }
   const origin = ctx.originClassId ?? draft?.answers?.q0?.meta?.originClassId;
   const m = draft?.answers?.q1?.meta;
   const q1Text = m?.kind === 'direction' && origin ? pack.q1[classId][origin].find((r) => r.id === draft.answers.q1.optionId)?.text ?? null : null;
-  return { surveyKind, classId, mentorId: pack.mentors?.[classId]?.mentorRegistryKey ?? null, idPrefix: 'mc', frame: q6.mentors[classId], clauses: q6.clauses[classId], neutralFrame: false, milestone: null, q1Text };
+  return { surveyKind, assessment: q6.assessment, classId, mentorId: pack.mentors?.[classId]?.mentorRegistryKey ?? null, idPrefix: 'mc', frame: q6.mentors[classId], clauses: q6.clauses[classId], neutralFrame: false, milestone: null, q1Text };
 }
 const quote = (t) => `“${String(t).replace(/^[“"]|[”"]$/g, '')}”`;
 
 /** Claims the reading actually displays (so they are the only things the player can later reject). */
-export function readingClaims(identityResolved) {
-  return identityResolved ? [] : [{ claimId: 'claim.unresolved_reading', claimKind: 'unresolved_reading_disagreement' }];
+export function readingClaims(identityResolved, extra = []) {
+  return [...extra, ...(identityResolved ? [] : [{ claimId: 'claim.unresolved_reading', claimKind: 'unresolved_reading_disagreement' }])];
 }
 
 /** Candidate AM statements, in a fixed order: identities the player declared in their own goals, then the free-standing set. */
@@ -87,6 +88,10 @@ export function composeReading({ profile, reading }) {
     const key = ['one', 'two', 'three'][facts.length - 1];
     paras.push(fill(take(c.evidence[key], `evidence${key}`).text, { evidence_text: facts.map((f) => FACT_SENTENCE[f.kind](f)).join(' ') }));
   }
+  // Grounded method inferences: owner-approved shared wording, frozen slots, each phrase record gated like any other shown text
+  for (const claim of reading.claims.filter((x) => x.claimKind === 'method_preference')) {
+    paras.push(fill(profile.assessment.method.text, claim.slots)); used.push(profile.assessment.method, profile.assessment.methodPhrases[claim.slots.method_key]);
+  }
   const goalQuote = reading.goal?.quote ?? null;
   if (reading.goalDeclared && goalQuote) paras.push(fill(take(c.goal.declared, 'goal').text, { quoted_goal: quote(goalQuote) }));
   else if (!reading.goalDeclared) paras.push(take(c.goal.unrecorded, 'nogoal').text);
@@ -98,7 +103,9 @@ export function composeReading({ profile, reading }) {
 /** Everything the three Q6 questions need, computed once from the same inputs (so it is stable across renders). */
 export function q6Context({ surveyKind = 'multiclass', pack, draft, ctx, runtime, archetypeLookup }) {
   const profile = q6Profile({ surveyKind, pack, ctx, draft });
-  const claims = readingClaims(false);
+  const q6 = { assessment: pack.q6Content.assessment };
+  const inferred = q6.assessment ? methodClaims({ projection: runtime.evidence, observedBias: runtime.observedBias, provenance: runtime.observedProvenance, canonicalKeys: pack.q6Content.assessment.keys, events: runtime.events }) : [];
+  const claims = readingClaims(false, inferred);
   const base = { surveyKind, scopeId: profile.classId, projection: runtime.evidence, events: runtime.events, archetypeLookup, actorRevision: ctx.evidenceRevision };
   const cands = amCandidatesFor(pack.q6Content, createReading({ ...base, claims: [] }));
   const reading = createReading({ ...base, claims, amCandidates: cands.map(({ candidateId, canonicalRef, free }) => ({ candidateId, canonicalRef, free })) });
@@ -136,7 +143,7 @@ export function resolveQ6({ surveyKind = 'multiclass', pack, draft, qid, ctx, ru
     const records = state.notShown.map((claimId) => {
       const claim = q6.reading.claims.find((c) => c.claimId === claimId);
       const src = pick(pack.q6Content.negatives[claim.claimKind], `${q6.reading.readingId}|${claimId}`);
-      return { ...src, id: `${pfx}.q6n.${claimId}`, claimId, kind: 'negative' };
+      return { ...src, text: fill(src.text, claim.slots || {}), id: `${pfx}.q6n.${claimId}`, claimId, kind: 'negative' }; // the same frozen slots the reading showed
     });
     const intro = frame.reactions[choice === 'D' ? 'D1' : choice === 'E' ? 'E1' : choice];
     const why = gate([intro, ...records], records, preview); if (why) return unavailable(why);

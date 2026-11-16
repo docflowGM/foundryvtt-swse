@@ -3136,3 +3136,21 @@ These are engineering or drafting choices the rulings delegated. None sets a gam
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+
+## MSV-RD-017 — Q6 method and theme inference (resolutions appended 2026-11-16; MSV-RD-016 original preserved)
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / shared Q6 identity inference |
+| Feature | Method-preference and mechanical-theme assessment clauses; legacy class-archetypes crosswalk; `past_to_present_trend` |
+| Source | `docs/design/mentor-survey-v2/17-Q6-IDENTITY-INFERENCE-AUDIT-AND-PROPOSAL.md`; owner decisions 2026-11-16 |
+| Evidence | The canonical 297 SSOT has no mechanical-bias field and audits its mechanics sections `draft`; `ArchetypeRegistry.get()` is the legacy 141-entry map and `getArchetype()` is the SSOT. |
+| Confirmed behavior | Approved shared wording for the method and theme clauses; method claims need two independent verified sources; the legacy crosswalk is **rejected**; trend claims stay deferred. |
+| Unresolved question | Review of the 125 draft method phrases; a certified source for theme claims. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Method claims are produced (draft phrases, preview only); theme claims are not produced; the unresolved identity reading is preserved. |
+| Status | Crosswalk and clause wording: RESOLVED. Phrase review and theme source: `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | Clause wording approved; legacy crosswalk rejected; trend deferred (2026-11-16). |

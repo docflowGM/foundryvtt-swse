@@ -24,6 +24,7 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | SV-15 | No inferred ownership from responses/pending/eligibility/recommendations | Directive §C | `actor-evidence.js` | 14 | Tested (offline) |
 | SV-16 | Typed inert tag boundary | Directive §7 | `tag-boundary.js` | 18 | Tested (offline) |
 | SV-17 | All surveys finish/skip/revisit with zero mechanical signal | Directive §7 | tests | 18 | Tested (offline) |
+| SV-19 | Q6 grounded method inference: two independent verified sources, frozen slots and fact ids, approved question-form wording, corrections only on displayed claims, rejected claims not repeated on unchanged evidence; theme claims not produced | owner decisions 2026-11-16 | `method-inference.js`, `reflection-q6.js` | 14,15 | Tested (offline); phrases draft |
 | SV-18 | Shared reflection engine (Multiclass + Prestige, reusable) | Directive §C | `reflection.js` | 14 | Tested (offline) |
 | SV-19 | ≤3 real observations; honest thin evidence | Q6 handoff §3.1 | `reflection.js` | 14 | Tested (offline) |
 | SV-20 | Declared ambition quoted separately; honest absence | Q6 handoff §3.1 | `reflection.js` | 13 | Tested (offline) |

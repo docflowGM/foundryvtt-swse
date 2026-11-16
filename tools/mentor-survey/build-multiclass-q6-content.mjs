@@ -15,6 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { quoted, readLines, find, writeJson, fail } from './lib.mjs';
 import { NEUTRAL } from './q6-neutral-frame.mjs';
+import { methodPhraseOf } from '../../scripts/mentor/mentor-survey-v2/method-inference.js';
 import { isFirstPerson } from '../../scripts/mentor/mentor-survey-v2/content-store.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -139,10 +140,21 @@ const neutral = {
     goal: { declared: list('goal.declared', NEUTRAL.clauses.goalDeclared), unrecorded: list('goal.unrecorded', NEUTRAL.clauses.goalUnrecorded) }, relation: { unknown: list('relation.unknown', NEUTRAL.clauses.relationUnknown) }, q1quote: { all: list('q1quote', NEUTRAL.clauses.q1quote) } },
 };
 for (const t of [neutral.milestone.text, ...Object.values(NEUTRAL.reactions), NEUTRAL.opening, NEUTRAL.closing, ...Object.values(NEUTRAL.clauses).flat()]) if (/[\u2014\u2013]/.test(t)) fail('neutral frame text must avoid dashes');
+/* ---------- grounded assessment clauses (owner ruling 2026-11-16, shared by both surveys) ---------- */
+import fsx from 'node:fs';
+const canonKeys = Object.keys(JSON.parse(fsx.readFileSync(path.join(ROOT, 'data/bias-keys-canonical.json'), 'utf8')).mechanicalBias);
+const arec = (id, text, approved) => ({ id: `reflection.assessment.${id}`, text, editorialStatus: approved ? 'owner_approved_text' : 'draft_text', mechanicsStatus: 'none', sourceRef: { origin: 'owner decision 2026-11-16 (Q6 method/theme wording)' }, speaker: 'neutral' });
+const assessment = {
+  keys: canonKeys,
+  method: arec('method', 'Your current training supports {method_phrase}. I wonder whether that reflects how you prefer to approach problems, or simply what you\'ve prepared for.', true),
+  theme: arec('theme', 'Several parts of your training seem to point toward {theme_phrase}. I see a possible pattern there, but that doesn\'t necessarily define who you are.', true),
+  methodPhrases: Object.fromEntries(canonKeys.map((k) => [k, { id: `reflection.assessment.phrase.${k}`, key: k, text: methodPhraseOf(k), editorialStatus: 'draft_text', mechanicsStatus: 'none', sourceRef: { file: 'data/bias-keys-canonical.json', key: k, basis: 'camelCase split of the canonical identifier' } }])),
+  themeResolution: { available: false, reason: 'canonical SSOT has no mechanical-bias field and its mechanics sections are audited draft; no theme claim is produced' },
+};
 writeJson(path.join(ROOT, 'data/mentor-survey/reflection-q6.json'), {
   _meta: { survey: 'reflection-q6', contentVersion: 1, sourceCommits: { multiclass: MC_COMMIT, shared: SH_COMMIT }, generatedBy: 'tools/mentor-survey/build-multiclass-q6-content.mjs', counts,
     note: 'Verbatim import; all draft_text. The identity table is validated against the canonical registry. Runtime identity inference for the 297 identities is not certified, so readings use the unresolved form (design rule).' },
   playerChoices: player, mentors: frames, clauses, negatives, identityChoices, freeStanding,
-  neutral, prestigeMentors: {}, // prestigeMentors[classId] = { frame, clauses }: reserved for the authored 32-class Prestige Q6 dialogue (not yet in Git; never reconstructed)
+  assessment, neutral, prestigeMentors: {}, // prestigeMentors[classId] = { frame, clauses }: reserved for the authored 32-class Prestige Q6 dialogue (not yet in Git; never reconstructed)
 });
 console.log('wrote data/mentor-survey/reflection-q6.json', JSON.stringify(counts));

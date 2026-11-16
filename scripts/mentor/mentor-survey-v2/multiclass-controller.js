@@ -34,7 +34,7 @@ export const MULTICLASS_ADAPTER = Object.freeze({
     // Heavy live inputs (finalized evidence, committed ledger) travel in `runtime`; only their revisions enter the draft context.
     const goals = Object.values(reduceLedger(events).goals).map((g) => [g.goalLane, g.target, g.quote ?? null]);
     return {
-      ctx: { destinationClassId: t.destinationClassId, originClassId: t.originClassId, originClassIds: t.originClassIds, originReason: t.reason, seed: String(seed), evidenceRevision: revisionOf(evidence?.facts?.map((f) => f.factId + f.canonicalId) ?? []), goalRevision: revisionOf(goals), observedRevision: revisionOf(Object.entries(observedBias || {}).filter(([k, v]) => v > 0 && (!canonicalBiasKeys.length || canonicalBiasKeys.includes(k))).sort().concat(Object.entries(observedProvenance?.items || {}).sort(), Object.keys(observedProvenance?.skills || {}).sort())) },
+      ctx: { destinationClassId: t.destinationClassId, originClassId: t.originClassId, originClassIds: t.originClassIds, originReason: t.reason, seed: String(seed), evidenceRevision: revisionOf([evidence?.facts?.map((f) => f.factId + f.canonicalId) ?? [], observedProvenance?.snapshot ?? null, Object.entries(observedBias || {}).filter(([, v]) => v > 0).sort()]), goalRevision: revisionOf(goals), observedRevision: revisionOf(Object.entries(observedBias || {}).filter(([k, v]) => v > 0 && (!canonicalBiasKeys.length || canonicalBiasKeys.includes(k))).sort().concat(Object.entries(observedProvenance?.items || {}).sort(), Object.keys(observedProvenance?.skills || {}).sort())) },
       runtime: { evidence, events, observedBias, observedProvenance }, scopeKey: `multiclass:${t.destinationClassId}`, scopeId: t.destinationClassId,
     };
   },
