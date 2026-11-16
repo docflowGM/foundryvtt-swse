@@ -21,7 +21,7 @@ const canon = q6c.assessment.keys;
 const mcPack = { ...json('data/mentor-survey/multiclass.json'), q6Content: q6c };
 const prPack = { ...json('data/mentor-survey/prestige.json'), q1q3: json('data/mentor-survey/prestige-q1q3.json'), q6Content: q6c };
 const manifest = json('data/mentor-survey/release-manifest.json');
-const [K1, K2, K3] = ['accuracy', 'evasion', 'tacticalAwareness'];
+const [K1, K2, K3] = ['accuracy', 'evasion', 'tacticalAwareness']; // all three are ledger methods
 
 const it = (type, name, extra = {}) => ({ type, name, id: `${type}-${name}`, system: {}, flags: { swse: { canonicalTalent: { canonicalId: `c.${name}` } } }, ...extra });
 const actor = (items, skills = {}) => ({ items: [it('class', 'Soldier', { system: { level: 3 } }), ...items], system: { skills } });
@@ -29,14 +29,14 @@ const entry = (item, key) => ({ itemId: item.id, type: item.type, name: item.nam
 const skillEntry = (k) => ({ skillKey: k, canonicalId: `skill:${k}`, trained: true, skillFocus: false });
 const A = it('talent', 'Alpha'); const B = it('feat', 'Beta'); const C = it('talent', 'Gamma'); const SF = it('feat', 'Skill Focus (Stealth)');
 const base = (a, prov, bias) => ({ evidence: E.projectActorEvidence(a), events: [], observedBias: bias, observedProvenance: { items: {}, skills: {}, attributes: {}, snapshot: 's1', ...prov } });
-const claimsOf = (a, prov, bias, events = []) => MI.methodClaims({ projection: E.projectActorEvidence(a), observedBias: bias, provenance: { items: {}, skills: {}, ...prov }, canonicalKeys: canon, events });
+const claimsOf = (a, prov, bias, events = []) => MI.methodClaims({ projection: E.projectActorEvidence(a), observedBias: bias, provenance: { items: {}, skills: {}, ...prov }, methodKeys: q6c.assessment.methodKeys, events });
 
 test('SV-19 a method claim needs two independent verified sources; one source, or one source repeated, makes none', () => {
   const a = actor([A, B, C]);
   assert.equal(claimsOf(a, { items: { [K1]: [entry(A, K1)] } }, { [K1]: 5 }).length, 0, 'one item');
   assert.equal(claimsOf(a, { items: { [K1]: [entry(A, K1), { ...entry(A, K1), ruleType: 'damageBonus' }] } }, { [K1]: 5 }).length, 0, 'two primitives on ONE item are one source');
   const two = claimsOf(a, { items: { [K1]: [entry(A, K1), entry(B, K1)] } }, { [K1]: 5 });
-  assert.equal(two.length, 1); assert.equal(two[0].claimKind, 'method_preference'); assert.equal(two[0].groundedBy.length, 2); assert.equal(two[0].slots.method_phrase, 'accuracy');
+  assert.equal(two.length, 1); assert.equal(two[0].claimKind, 'method_preference'); assert.equal(two[0].groundedBy.length, 2); assert.equal(two[0].slots.method_phrase, 'precise, accurate attacks');
 });
 
 test('SV-19 a trained skill and the Skill Focus feat that names it are ONE source; an item plus a different skill are two; class features and unverified items do not count', () => {
@@ -65,13 +65,13 @@ const PROV = { items: { [K1]: [entry(A, K1), entry(B, K1)] } };
 
 test('SV-19 the approved wording is displayed with frozen slots, exact supporting fact ids and a stable claim id; both surveys show the same assessment', () => {
   const mc = toQ6(shown('mc', mcPack, grounded, PROV, { [K1]: 5 })); const pr = toQ6(shown('pr', prPack, grounded, PROV, { [K1]: 5 }));
-  const line = "Your current training supports accuracy. I wonder whether that reflects how you prefer to approach problems, or simply what you've prepared for.";
+  const line = "Your current training supports precise, accurate attacks. I wonder whether that reflects how you prefer to approach problems, or simply what you've prepared for.";
   assert.ok(mc.view.situation.includes(line)); assert.ok(pr.view.situation.includes(line));
   assert.equal(q6c.assessment.method.editorialStatus, 'owner_approved_text'); assert.equal(q6c.assessment.theme.editorialStatus, 'owner_approved_text');
   const reading = (ctl, kind) => Q6.q6Context({ surveyKind: kind, pack: kind === 'mc' ? mcPack : prPack, draft: ctl.draft, ctx: ctl.ctx, runtime: ctl.runtime, archetypeLookup: () => null }).reading;
   const rm = reading(shown('mc', mcPack, grounded, PROV, { [K1]: 5 }), 'multiclass'); const rp = reading(shown('pr', prPack, grounded, PROV, { [K1]: 5 }), 'prestige');
   const mclaim = rm.claims.find((c) => c.claimKind === 'method_preference');
-  assert.equal(mclaim.claimId, `claim.method.${K1}`); assert.equal(mclaim.groundedBy.length, 2); assert.deepEqual(mclaim.slots, { method_phrase: 'accuracy', method_key: K1 });
+  assert.equal(mclaim.claimId, `claim.method.${K1}`); assert.equal(mclaim.groundedBy.length, 2); assert.deepEqual(mclaim.slots, { method_phrase: 'precise, accurate attacks', method_key: K1 }); assert.deepEqual(mclaim.sourceKeys, ['item:c.Alpha', 'item:c.Beta'], 'stable source identities are persisted in the frozen reading');
   assert.deepEqual(rm.claims, rp.claims, 'identical evidence: identical claims in both surveys');
   assert.deepEqual(rm.claims.map((c) => c.claimKind), ['method_preference', 'unresolved_reading_disagreement'], 'the unresolved identity reading is preserved');
 });
@@ -82,8 +82,8 @@ test('SV-19 the release gate covers the assessment clause and every phrase recor
   assert.ok(used.some((r) => r.id === 'reflection.assessment.method') && used.some((r) => r.id === `reflection.assessment.phrase.${K1}`));
   const run = (pack, preview) => Q6.resolveQ6({ surveyKind: 'multiclass', pack, draft: { answers: {} }, qid: 'q6', ctx: ctl.ctx, runtime: ctl.runtime, archetypeLookup: () => null, preview });
   assert.equal(run(mcPack, false).reason, 'unapproved_content'); assert.equal(run(mcPack, true).available, true);
-  assert.ok(Object.values(q6c.assessment.methodPhrases).every((p) => p.editorialStatus === 'draft_text' && /^[a-z][a-zA-Z ]+$/.test(p.text) && !/\{|\}/.test(p.text)));
-  assert.equal(Object.keys(q6c.assessment.methodPhrases).length, 125);
+  assert.ok(Object.values(q6c.assessment.methodKeys).every((p) => p.editorialStatus === 'draft_text' && p.category === 'method' && !/\{|\}/.test(p.text)));
+  assert.equal(Object.keys(q6c.assessment.methodKeys).length, 77); assert.equal(Object.keys(q6c.assessment.ledger).length, 125);
 });
 
 test('SV-19 corrections target only displayed claims: NOT shows the method claim with its filled correction wording; rejecting it touches no owned fact or goal', () => {
@@ -92,6 +92,7 @@ test('SV-19 corrections target only displayed claims: NOT shows the method claim
   const v = ctl.view().view; assert.equal(v.questionId, 'q6n');
   const ids = v.options.map((o) => o.optionId); assert.ok(ids.includes(`pr.q6n.claim.method.${K1}`) && ids.includes('pr.q6n.claim.unresolved_reading'));
   assert.ok(v.options.every((o) => !/\{|\}/.test(o.text)), 'slots are filled');
+  assert.equal(v.options.find((o) => o.optionId === `pr.q6n.claim.method.${K1}`).detail, 'About: precise, accurate attacks', 'the claim is identified by its reviewed phrase, not a raw key in the sentence');
   assert.ok(ctl.chooseMany('q6n', [`pr.q6n.claim.method.${K1}`], ctl.seq));
   assert.ok(ctl.chooseMany('q6a', [ctl.view().view.options[0].optionId], ctl.seq));
   const done = ctl.finish(ctl.seq); assert.deepEqual(done.reflection.result.rejectedClaimIds, [`claim.method.${K1}`]); assert.deepEqual(done.goals, []);

@@ -51,7 +51,7 @@ test('SV-07/SV-26 every player-selectable Q6 text is first person and leak free;
   assert.deepEqual(player.filter((r) => r.editorialIssue), []);
   const filled = (r) => ({ ...r, text: r.text.replace(/\{\w+\}/g, 'something') }); // slot templates are validated as they will read once filled
   assert.deepEqual(player.map(filled).flatMap((r) => S.validateResponseRecord(r)), []);
-  assert.ok(Object.values(q6.negatives).flat().filter((r) => r.hasSlots).length === 10, 'slot-bearing templates are flagged');
+  assert.ok(Object.values(q6.negatives).flat().filter((r) => r.hasSlots).length === 9, 'slot-bearing templates are flagged (the method-preference correction became source-neutral)');
   assert.ok(player.every((r) => r.editorialStatus === (r.id === 'mc.q6.choice.b' ? 'owner_approved_text' : 'draft_text')));
   assert.ok(q6.playerChoices.every((p) => !/%|0\.\d|band/i.test(p.text)), 'no percentages or band language in the A-E answers');
 });

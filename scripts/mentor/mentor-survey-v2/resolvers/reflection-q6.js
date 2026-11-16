@@ -90,7 +90,7 @@ export function composeReading({ profile, reading }) {
   }
   // Grounded method inferences: owner-approved shared wording, frozen slots, each phrase record gated like any other shown text
   for (const claim of reading.claims.filter((x) => x.claimKind === 'method_preference')) {
-    paras.push(fill(profile.assessment.method.text, claim.slots)); used.push(profile.assessment.method, profile.assessment.methodPhrases[claim.slots.method_key]);
+    paras.push(fill(profile.assessment.method.text, claim.slots)); used.push(profile.assessment.method, profile.assessment.methodKeys[claim.slots.method_key]);
   }
   const goalQuote = reading.goal?.quote ?? null;
   if (reading.goalDeclared && goalQuote) paras.push(fill(take(c.goal.declared, 'goal').text, { quoted_goal: quote(goalQuote) }));
@@ -104,7 +104,7 @@ export function composeReading({ profile, reading }) {
 export function q6Context({ surveyKind = 'multiclass', pack, draft, ctx, runtime, archetypeLookup }) {
   const profile = q6Profile({ surveyKind, pack, ctx, draft });
   const q6 = { assessment: pack.q6Content.assessment };
-  const inferred = q6.assessment ? methodClaims({ projection: runtime.evidence, observedBias: runtime.observedBias, provenance: runtime.observedProvenance, canonicalKeys: pack.q6Content.assessment.keys, events: runtime.events }) : [];
+  const inferred = q6.assessment ? methodClaims({ projection: runtime.evidence, observedBias: runtime.observedBias, provenance: runtime.observedProvenance, methodKeys: pack.q6Content.assessment.methodKeys, events: runtime.events }) : [];
   const claims = readingClaims(false, inferred);
   const base = { surveyKind, scopeId: profile.classId, projection: runtime.evidence, events: runtime.events, archetypeLookup, actorRevision: ctx.evidenceRevision };
   const cands = amCandidatesFor(pack.q6Content, createReading({ ...base, claims: [] }));
@@ -143,7 +143,8 @@ export function resolveQ6({ surveyKind = 'multiclass', pack, draft, qid, ctx, ru
     const records = state.notShown.map((claimId) => {
       const claim = q6.reading.claims.find((c) => c.claimId === claimId);
       const src = pick(pack.q6Content.negatives[claim.claimKind], `${q6.reading.readingId}|${claimId}`);
-      return { ...src, text: fill(src.text, claim.slots || {}), id: `${pfx}.q6n.${claimId}`, claimId, kind: 'negative' }; // the same frozen slots the reading showed
+      // a method claim is told apart in the list by its reviewed phrase (shown as detail), not by a raw key in the sentence
+      return { ...src, text: fill(src.text, claim.slots || {}), ...(claim.claimKind === 'method_preference' ? { detail: `About: ${claim.slots.method_phrase}` } : {}), id: `${pfx}.q6n.${claimId}`, claimId, kind: 'negative' }; // the same frozen slots the reading showed
     });
     const intro = frame.reactions[choice === 'D' ? 'D1' : choice === 'E' ? 'E1' : choice];
     const why = gate([intro, ...records], records, preview); if (why) return unavailable(why);

@@ -98,7 +98,7 @@ export function createReading({ surveyKind, scopeId, projection, events = [], cl
       if (!kindOk || !parentOk) { problems.push(`${c.claimId}: canonicalRef does not resolve exactly`); continue; }
     }
     if (c.groundedBy && !allFactsGrounded(projection, c.groundedBy)) { problems.push(`${c.claimId}: cites a fact the actor does not have`); continue; }
-    accepted.push({ claimId: c.claimId, claimKind: c.claimKind, inference: true, ...(c.canonicalRef ? { canonicalRef: { ...c.canonicalRef } } : {}), groundedBy: [...(c.groundedBy || [])], ...(c.slots ? { slots: { ...c.slots } } : {}) }); // slots freeze the exact wording inputs (part of the reading id)
+    accepted.push({ claimId: c.claimId, claimKind: c.claimKind, inference: true, ...(c.canonicalRef ? { canonicalRef: { ...c.canonicalRef } } : {}), groundedBy: [...(c.groundedBy || [])], ...(c.slots ? { slots: { ...c.slots } } : {}), ...(c.sourceKeys ? { sourceKeys: [...c.sourceKeys] } : {}) }); // slots freeze the exact wording inputs (part of the reading id)
   }
   const identity = accepted.find((c) => c.claimKind === 'archetype_specialization') || accepted.find((c) => c.claimKind === 'archetype_parent') || null;
 

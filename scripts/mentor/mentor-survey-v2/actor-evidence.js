@@ -20,6 +20,14 @@ export function canonicalIdOf(item) {
   return id ? { canonicalId: String(id), certified: true } : { canonicalId: `name:${slug(item?.name)}`, certified: false };
 }
 
+/** ONE normalization for skill identity: lowercase letters and digits only, so `useTheForce`, "Use the Force" and `Knowledge (Tactics)` / `knowledgeTactics` compare equal. */
+export const canonicalSkillKey = (name) => String(name ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+/** The skill named by a "Skill Focus (X)" feat; X may itself contain parentheses ("Skill Focus (Knowledge (Tactics))"). */
+export function skillFocusTarget(featName) {
+  const m = /^skill focus\s*\((.+)\)\s*$/i.exec(String(featName ?? '').trim());
+  return m ? m[1].trim() : null;
+}
+
 const SMALL = new Set(['the', 'of', 'a', 'an', 'in', 'and']);
 /** Display name for a skill key: the document's own label when present, else the key split and title-cased ("useTheForce" -> "Use the Force"). */
 export function skillLabel(key, skill) {

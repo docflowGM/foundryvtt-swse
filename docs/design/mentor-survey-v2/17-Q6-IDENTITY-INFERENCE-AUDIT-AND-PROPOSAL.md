@@ -41,17 +41,17 @@ The shared Mentor's Reflection builds an **unresolved identity** reading (`readi
 |---|---|
 | Ranking | the existing `computeObservedBehaviorBias` score (no new scorer); at most 2 claims, score descending then key |
 | Authorization | the fail-closed `computeObservedBehaviorBiasProvenance` (always-active, specific, non-default, non-disabled; owned items and mapped trained skills) |
-| Independence | at least 2 independent sources: distinct owned talent/feat items or trained skills; repeated primitives on one item are one source; `Skill Focus (X)` and trained X are one source; class features and any source without a fact in the frozen projection do not count |
+| Independence | at least 2 independent sources with STABLE identities (`item:<certified canonical id>`, `skill:<canonical skill key>`, never positional fact ids): owned talents/feats with a certified canonical id, or trained skills; repeated primitives on one item are one source; `Skill Focus (X)` and trained X are one source through one skill-key authority (`canonicalSkillKey`, nested names such as `Knowledge (Tactics)` included); class features, items known only by name, and any source without a matching fact in the frozen projection do not count |
 | Grounding | each claim cites the exact fact ids (`groundedBy`) and a stable id `claim.method.<key>`; slots are frozen into the reading (and its id) |
-| Wording | the approved question-form clause, never a statement of habit, frequency or motive; the phrase is derived from the canonical key identifier (draft, with four explicit forms: `forceDC`, `unarmeddMastery` (the canonical key is itself misspelled), `adaptiveAI`, `conditionTrack`) |
+| Wording | the approved question-form clause, never a statement of habit, frequency or motive; the phrase comes from the editorial ledger (`18-Q6-METHOD-KEY-LEDGER.md`): 77 of the 125 canonical keys are proposed as methods with a reviewed phrase, 48 are excluded (capability, role, affiliation, unresolved) and can never produce a claim; the canonical identifier is never renamed (the canonical key `unarmeddMastery` is itself misspelled and is only spoken as "unarmed fighting techniques") |
 | Gate | the clause and each phrase record go through the same approval gate; draft phrases keep the question out of players' hands |
 | Corrections | NOT shows only displayed claims; the correction statement is filled with the same frozen slots; a rejection is feedback only (`mutatesMechanics/Goals/Eligibility` all false) |
-| Later readings | a rejected claim is not shown again while its exact supporting facts are unchanged; changed evidence may bring it back; preview corrections never suppress |
+| Later readings | a rejected claim is not shown again while its persisted stable source keys are unchanged (an unrelated new feat that renumbers positional fact ids does not reopen it); added, removed or changed sources may reopen it; preview corrections never suppress |
 | Invalidation | the Q6 context revision now includes the provenance snapshot and the positive observed keys, so changed actor state invalidates the Q6 answer without replacing it |
 | Fallback | no provenance, ability-only, thin or duplicate evidence: no method claim, and the unresolved identity reading is preserved |
 
 ## 6. Still needed
 
-- Owner review of the 125 draft method phrases (grammar after "supports" and in the correction line "I may use {method_phrase}").
+- Owner review of the method-key ledger (`18-*`): the 77 proposed phrases and the 48 exclusions. The positive clause is approved; the method correction was replaced by a source-neutral draft line ("I recognize that training, but I don’t think it necessarily describes how I prefer to approach problems."), with each claim identified by an "About: <phrase>" detail line.
 - A certified source for theme or archetype claims (a reviewed relationship between the 125 keys or the 190 tags and the 297 records, with the SSOT mechanics sections audited beyond `draft`).
 - Role-bias provenance, if `role_inference` is wanted.

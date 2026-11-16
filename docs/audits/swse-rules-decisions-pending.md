@@ -3154,3 +3154,21 @@ These are engineering or drafting choices the rulings delegated. None sets a gam
 | Status | Crosswalk and clause wording: RESOLVED. Phrase review and theme source: `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | Clause wording approved; legacy crosswalk rejected; trend deferred (2026-11-16). |
+
+
+## MSV-RD-018 — Q6 method-key ledger review (progress note, 2026-11-16; MSV-RD-017 preserved)
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / shared Q6 method inference |
+| Feature | Which of the 125 canonical mechanical-bias keys may be spoken as a `method_preference`, and in what words |
+| Source | `docs/design/mentor-survey-v2/18-Q6-METHOD-KEY-LEDGER.md`; owner review 2026-11-16 |
+| Evidence | Automatic camelCase phrases exposed mechanics shorthand and implied acts or affiliations; 48 of the 125 keys describe capabilities, roles, affiliations or unresolved concepts rather than approaches. |
+| Confirmed behavior | Only genuine, grounded method concepts may produce a claim; canonical identifiers are never renamed; the method correction is source-neutral (draft). |
+| Unresolved question | Owner approval of the 77 proposed method phrases and the 48 exclusions (notably `forceDC`, `tacticalVerse`, `unarmeddMastery` wording; `socialManipulation`, `biologicalControl`, `skillUtility` unresolved). |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Method claims are made only for ledger methods, with draft phrases, in GM preview only. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

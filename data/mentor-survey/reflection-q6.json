@@ -3037,7 +3037,7 @@
     "method_preference": [
       {
         "id": "mc.q6.not.method_preference.1",
-        "text": "I may use {method_phrase}, but I don't think it is the way I prefer to handle every problem.",
+        "text": "I recognize that training, but I don’t think it necessarily describes how I prefer to approach problems.",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
@@ -3047,7 +3047,9 @@
         },
         "kind": "negative",
         "claimKind": "method_preference",
-        "hasSlots": true
+        "hasSlots": false,
+        "originalText": "I may use {method_phrase}, but I don't think it is the way I prefer to handle every problem.",
+        "replacedBy": "owner review 2026-11-16 (grammar)"
       },
       {
         "id": "mc.q6.not.method_preference.2",
@@ -12828,1506 +12830,1634 @@
       },
       "speaker": "neutral"
     },
-    "methodPhrases": {
+    "methodKeys": {
       "forceSecret": {
         "id": "reflection.assessment.phrase.forceSecret",
         "key": "forceSecret",
-        "text": "force secret",
+        "text": "Force techniques refined through secrets",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "forceSecret",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "forceDC": {
         "id": "reflection.assessment.phrase.forceDC",
         "key": "forceDC",
-        "text": "force DC",
+        "text": "making Force powers harder to resist",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "forceDC",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "forceRecovery": {
         "id": "reflection.assessment.phrase.forceRecovery",
         "key": "forceRecovery",
-        "text": "force recovery",
+        "text": "sustaining your Force reserves",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "forceRecovery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "burstDamage": {
         "id": "reflection.assessment.phrase.burstDamage",
         "key": "burstDamage",
-        "text": "burst damage",
+        "text": "ending a threat with a burst of damage",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "burstDamage",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "singleTargetDamage": {
         "id": "reflection.assessment.phrase.singleTargetDamage",
         "key": "singleTargetDamage",
-        "text": "single target damage",
+        "text": "focusing damage on a single target",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "singleTargetDamage",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "areaDamage": {
         "id": "reflection.assessment.phrase.areaDamage",
         "key": "areaDamage",
-        "text": "area damage",
+        "text": "striking several targets at once",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "areaDamage",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "areaControl": {
         "id": "reflection.assessment.phrase.areaControl",
         "key": "areaControl",
-        "text": "area control",
+        "text": "controlling territory and movement",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "areaControl",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "conditionTrack": {
         "id": "reflection.assessment.phrase.conditionTrack",
         "key": "conditionTrack",
-        "text": "condition track",
+        "text": "wearing enemies down with negative conditions",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "conditionTrack",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "counterAttack": {
         "id": "reflection.assessment.phrase.counterAttack",
         "key": "counterAttack",
-        "text": "counter attack",
+        "text": "answering an enemy action with a counterattack",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "counterAttack",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "reactionDefense": {
         "id": "reflection.assessment.phrase.reactionDefense",
         "key": "reactionDefense",
-        "text": "reaction defense",
+        "text": "quick defensive reactions",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "reactionDefense",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "damageReduction": {
         "id": "reflection.assessment.phrase.damageReduction",
         "key": "damageReduction",
-        "text": "damage reduction",
+        "text": "withstanding incoming damage",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "damageReduction",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "damageMitigationAura": {
         "id": "reflection.assessment.phrase.damageMitigationAura",
         "key": "damageMitigationAura",
-        "text": "damage mitigation aura",
+        "text": "shielding allies from damage",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "damageMitigationAura",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "evasion": {
         "id": "reflection.assessment.phrase.evasion",
         "key": "evasion",
-        "text": "evasion",
+        "text": "avoiding attacks through movement",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "evasion",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "accuracy": {
         "id": "reflection.assessment.phrase.accuracy",
         "key": "accuracy",
-        "text": "accuracy",
+        "text": "precise, accurate attacks",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "accuracy",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "critRange": {
-        "id": "reflection.assessment.phrase.critRange",
-        "key": "critRange",
-        "text": "crit range",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "critRange",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "critDamage": {
-        "id": "reflection.assessment.phrase.critDamage",
-        "key": "critDamage",
-        "text": "crit damage",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "critDamage",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "initiative": {
         "id": "reflection.assessment.phrase.initiative",
         "key": "initiative",
-        "text": "initiative",
+        "text": "seizing the first move",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "initiative",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "dualWield": {
         "id": "reflection.assessment.phrase.dualWield",
         "key": "dualWield",
-        "text": "dual wield",
+        "text": "fighting with more than one weapon",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "dualWield",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "sithAlchemy": {
-        "id": "reflection.assessment.phrase.sithAlchemy",
-        "key": "sithAlchemy",
-        "text": "sith alchemy",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "sithAlchemy",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "darkSideAffinity": {
-        "id": "reflection.assessment.phrase.darkSideAffinity",
-        "key": "darkSideAffinity",
-        "text": "dark side affinity",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "darkSideAffinity",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "lightSideAffinity": {
-        "id": "reflection.assessment.phrase.lightSideAffinity",
-        "key": "lightSideAffinity",
-        "text": "light side affinity",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "lightSideAffinity",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "formMastery": {
         "id": "reflection.assessment.phrase.formMastery",
         "key": "formMastery",
-        "text": "form mastery",
+        "text": "lightsaber forms and technique",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "formMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "meleeDamage": {
-        "id": "reflection.assessment.phrase.meleeDamage",
-        "key": "meleeDamage",
-        "text": "melee damage",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "meleeDamage",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "firepower": {
-        "id": "reflection.assessment.phrase.firepower",
-        "key": "firepower",
-        "text": "firepower",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "firepower",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "pilotMastery": {
         "id": "reflection.assessment.phrase.pilotMastery",
         "key": "pilotMastery",
-        "text": "pilot mastery",
+        "text": "skilled vehicle operation",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "pilotMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "vehicularDamage": {
-        "id": "reflection.assessment.phrase.vehicularDamage",
-        "key": "vehicularDamage",
-        "text": "vehicular damage",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "vehicularDamage",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "unarmeddMastery": {
         "id": "reflection.assessment.phrase.unarmeddMastery",
         "key": "unarmeddMastery",
-        "text": "unarmed mastery",
+        "text": "unarmed fighting techniques",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "unarmeddMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "strikeForce": {
-        "id": "reflection.assessment.phrase.strikeForce",
-        "key": "strikeForce",
-        "text": "strike force",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "strikeForce",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "flowState": {
         "id": "reflection.assessment.phrase.flowState",
         "key": "flowState",
-        "text": "flow state",
+        "text": "fighting with timing and flow",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "flowState",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "combatFlow": {
         "id": "reflection.assessment.phrase.combatFlow",
         "key": "combatFlow",
-        "text": "combat flow",
+        "text": "controlling the pace of combat",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "combatFlow",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "combatStamina": {
-        "id": "reflection.assessment.phrase.combatStamina",
-        "key": "combatStamina",
-        "text": "combat stamina",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "combatStamina",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "commandAuthority": {
-        "id": "reflection.assessment.phrase.commandAuthority",
-        "key": "commandAuthority",
-        "text": "command authority",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "commandAuthority",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "formation": {
         "id": "reflection.assessment.phrase.formation",
         "key": "formation",
-        "text": "formation",
+        "text": "fighting in formation",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "formation",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "allySupport": {
         "id": "reflection.assessment.phrase.allySupport",
         "key": "allySupport",
-        "text": "ally support",
+        "text": "supporting and strengthening allies",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "allySupport",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "moraleBonus": {
         "id": "reflection.assessment.phrase.moraleBonus",
         "key": "moraleBonus",
-        "text": "morale bonus",
+        "text": "inspiring confidence in allies",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "moraleBonus",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "moraleImpact": {
         "id": "reflection.assessment.phrase.moraleImpact",
         "key": "moraleImpact",
-        "text": "morale impact",
+        "text": "shaking an enemy’s nerve",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "moraleImpact",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "stealth": {
         "id": "reflection.assessment.phrase.stealth",
         "key": "stealth",
-        "text": "stealth",
+        "text": "hiding and moving unseen",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "stealth",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "infiltration": {
         "id": "reflection.assessment.phrase.infiltration",
         "key": "infiltration",
-        "text": "infiltration",
+        "text": "quietly getting into position",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "infiltration",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "trackingMastery": {
         "id": "reflection.assessment.phrase.trackingMastery",
         "key": "trackingMastery",
-        "text": "tracking mastery",
+        "text": "finding and following a trail",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "trackingMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "deceptionMastery": {
         "id": "reflection.assessment.phrase.deceptionMastery",
         "key": "deceptionMastery",
-        "text": "deception mastery",
+        "text": "deception and disguise",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "deceptionMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "knowledgeMastery": {
         "id": "reflection.assessment.phrase.knowledgeMastery",
         "key": "knowledgeMastery",
-        "text": "knowledge mastery",
+        "text": "relying on deep knowledge",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "knowledgeMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "skillUtility": {
-        "id": "reflection.assessment.phrase.skillUtility",
-        "key": "skillUtility",
-        "text": "skill utility",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "skillUtility",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "resourceControl": {
         "id": "reflection.assessment.phrase.resourceControl",
         "key": "resourceControl",
-        "text": "resource control",
+        "text": "managing supplies and equipment",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "resourceControl",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "informationControl": {
         "id": "reflection.assessment.phrase.informationControl",
         "key": "informationControl",
-        "text": "information control",
+        "text": "gathering and controlling information",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "informationControl",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "networkInfluence": {
-        "id": "reflection.assessment.phrase.networkInfluence",
-        "key": "networkInfluence",
-        "text": "network influence",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "networkInfluence",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "predatoryInstinct": {
-        "id": "reflection.assessment.phrase.predatoryInstinct",
-        "key": "predatoryInstinct",
-        "text": "predatory instinct",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "predatoryInstinct",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "tacticalAwareness": {
         "id": "reflection.assessment.phrase.tacticalAwareness",
         "key": "tacticalAwareness",
-        "text": "tactical awareness",
+        "text": "reading a tactical situation",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "tacticalAwareness",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "armorMastery": {
         "id": "reflection.assessment.phrase.armorMastery",
         "key": "armorMastery",
-        "text": "armor mastery",
+        "text": "fighting in armor",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "armorMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "grappling": {
         "id": "reflection.assessment.phrase.grappling",
         "key": "grappling",
-        "text": "grappling",
+        "text": "grappling and control techniques",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "grappling",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "ritualMastery": {
-        "id": "reflection.assessment.phrase.ritualMastery",
-        "key": "ritualMastery",
-        "text": "ritual mastery",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "ritualMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "itemEnchantment": {
-        "id": "reflection.assessment.phrase.itemEnchantment",
-        "key": "itemEnchantment",
-        "text": "item enchantment",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "itemEnchantment",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "forceArtistry": {
         "id": "reflection.assessment.phrase.forceArtistry",
         "key": "forceArtistry",
-        "text": "force artistry",
+        "text": "expressive use of the Force",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "forceArtistry",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "droidControl": {
-        "id": "reflection.assessment.phrase.droidControl",
-        "key": "droidControl",
-        "text": "droid control",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "droidControl",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "hackingSkills": {
         "id": "reflection.assessment.phrase.hackingSkills",
         "key": "hackingSkills",
-        "text": "hacking skills",
+        "text": "working with computers and security systems",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "hackingSkills",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "sabotageExpertise": {
-        "id": "reflection.assessment.phrase.sabotageExpertise",
-        "key": "sabotageExpertise",
-        "text": "sabotage expertise",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "sabotageExpertise",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "explosiveMastery": {
         "id": "reflection.assessment.phrase.explosiveMastery",
         "key": "explosiveMastery",
-        "text": "explosive mastery",
+        "text": "using explosives and blast effects",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "explosiveMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "biotechMastery": {
         "id": "reflection.assessment.phrase.biotechMastery",
         "key": "biotechMastery",
-        "text": "biotech mastery",
+        "text": "biotechnology",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "biotechMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "geneticEngineering": {
-        "id": "reflection.assessment.phrase.geneticEngineering",
-        "key": "geneticEngineering",
-        "text": "genetic engineering",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "geneticEngineering",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "livingWeaponCrafting": {
-        "id": "reflection.assessment.phrase.livingWeaponCrafting",
-        "key": "livingWeaponCrafting",
-        "text": "living weapon crafting",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "livingWeaponCrafting",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "biologicalControl": {
-        "id": "reflection.assessment.phrase.biologicalControl",
-        "key": "biologicalControl",
-        "text": "biological control",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "biologicalControl",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "surgicalMastery": {
         "id": "reflection.assessment.phrase.surgicalMastery",
         "key": "surgicalMastery",
-        "text": "surgical mastery",
+        "text": "advanced surgical technique",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "surgicalMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "healingMastery": {
         "id": "reflection.assessment.phrase.healingMastery",
         "key": "healingMastery",
-        "text": "healing mastery",
+        "text": "healing wounds and injuries",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "healingMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "treatingInjury": {
         "id": "reflection.assessment.phrase.treatingInjury",
         "key": "treatingInjury",
-        "text": "treating injury",
+        "text": "treating injuries",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "treatingInjury",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "engineeringMastery": {
         "id": "reflection.assessment.phrase.engineeringMastery",
         "key": "engineeringMastery",
-        "text": "engineering mastery",
+        "text": "engineering and building structures",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "engineeringMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "tacticalSupport": {
         "id": "reflection.assessment.phrase.tacticalSupport",
         "key": "tacticalSupport",
-        "text": "tactical support",
+        "text": "supporting tactics through engineering",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "tacticalSupport",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "fortifications": {
         "id": "reflection.assessment.phrase.fortifications",
         "key": "fortifications",
-        "text": "fortifications",
+        "text": "building defensive positions",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "fortifications",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "weaponEngineering": {
         "id": "reflection.assessment.phrase.weaponEngineering",
         "key": "weaponEngineering",
-        "text": "weapon engineering",
+        "text": "designing and improving weapons",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "weaponEngineering",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "improvisation": {
         "id": "reflection.assessment.phrase.improvisation",
         "key": "improvisation",
-        "text": "improvisation",
+        "text": "improvising solutions on the spot",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "improvisation",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "mechanicalMastery": {
         "id": "reflection.assessment.phrase.mechanicalMastery",
         "key": "mechanicalMastery",
-        "text": "mechanical mastery",
+        "text": "working with mechanical systems",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "mechanicalMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "technicalInnovation": {
         "id": "reflection.assessment.phrase.technicalInnovation",
         "key": "technicalInnovation",
-        "text": "technical innovation",
+        "text": "innovating technical solutions",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "technicalInnovation",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "resourcefulness": {
         "id": "reflection.assessment.phrase.resourcefulness",
         "key": "resourcefulness",
-        "text": "resourcefulness",
+        "text": "solving problems with what is at hand",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "resourcefulness",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "spacefarerMastery": {
         "id": "reflection.assessment.phrase.spacefarerMastery",
         "key": "spacefarerMastery",
-        "text": "spacefarer mastery",
+        "text": "starship navigation and operation",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "spacefarerMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "smugglingExpertise": {
-        "id": "reflection.assessment.phrase.smugglingExpertise",
-        "key": "smugglingExpertise",
-        "text": "smuggling expertise",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "smugglingExpertise",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "illegalTrade": {
-        "id": "reflection.assessment.phrase.illegalTrade",
-        "key": "illegalTrade",
-        "text": "illegal trade",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "illegalTrade",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "evasionTactics": {
-        "id": "reflection.assessment.phrase.evasionTactics",
-        "key": "evasionTactics",
-        "text": "evasion tactics",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "evasionTactics",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "outlawSkills": {
-        "id": "reflection.assessment.phrase.outlawSkills",
-        "key": "outlawSkills",
-        "text": "outlaw skills",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "outlawSkills",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "survivalism": {
         "id": "reflection.assessment.phrase.survivalism",
         "key": "survivalism",
-        "text": "survivalism",
+        "text": "surviving in harsh conditions",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "survivalism",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "criminalExpertise": {
-        "id": "reflection.assessment.phrase.criminalExpertise",
-        "key": "criminalExpertise",
-        "text": "criminal expertise",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "criminalExpertise",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "freedomPursuit": {
-        "id": "reflection.assessment.phrase.freedomPursuit",
-        "key": "freedomPursuit",
-        "text": "freedom pursuit",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "freedomPursuit",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "explorationMastery": {
         "id": "reflection.assessment.phrase.explorationMastery",
         "key": "explorationMastery",
-        "text": "exploration mastery",
+        "text": "exploration and discovery",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "explorationMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "wildernessLore": {
         "id": "reflection.assessment.phrase.wildernessLore",
         "key": "wildernessLore",
-        "text": "wilderness lore",
+        "text": "knowledge of the wilderness",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "wildernessLore",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "survivalSkills": {
         "id": "reflection.assessment.phrase.survivalSkills",
         "key": "survivalSkills",
-        "text": "survival skills",
+        "text": "wilderness survival",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "survivalSkills",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "adaptability": {
         "id": "reflection.assessment.phrase.adaptability",
         "key": "adaptability",
-        "text": "adaptability",
+        "text": "adapting to the situation",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "adaptability",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "infiltrationMastery": {
-        "id": "reflection.assessment.phrase.infiltrationMastery",
-        "key": "infiltrationMastery",
-        "text": "infiltration mastery",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "infiltrationMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "identityShift": {
-        "id": "reflection.assessment.phrase.identityShift",
-        "key": "identityShift",
-        "text": "identity shift",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "identityShift",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "stealthMastery": {
         "id": "reflection.assessment.phrase.stealthMastery",
         "key": "stealthMastery",
-        "text": "stealth mastery",
+        "text": "advanced stealth technique",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "stealthMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "deadlyPrecision": {
-        "id": "reflection.assessment.phrase.deadlyPrecision",
-        "key": "deadlyPrecision",
-        "text": "deadly precision",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "deadlyPrecision",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "silentKill": {
-        "id": "reflection.assessment.phrase.silentKill",
-        "key": "silentKill",
-        "text": "silent kill",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "silentKill",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "businessAcumen": {
-        "id": "reflection.assessment.phrase.businessAcumen",
-        "key": "businessAcumen",
-        "text": "business acumen",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "businessAcumen",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "corporateInfluence": {
-        "id": "reflection.assessment.phrase.corporateInfluence",
-        "key": "corporateInfluence",
-        "text": "corporate influence",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "corporateInfluence",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "socialManipulation": {
-        "id": "reflection.assessment.phrase.socialManipulation",
-        "key": "socialManipulation",
-        "text": "social manipulation",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "socialManipulation",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "persuasionMastery": {
         "id": "reflection.assessment.phrase.persuasionMastery",
         "key": "persuasionMastery",
-        "text": "persuasion mastery",
+        "text": "persuading others",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "persuasionMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "conArtistry": {
-        "id": "reflection.assessment.phrase.conArtistry",
-        "key": "conArtistry",
-        "text": "con artistry",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "conArtistry",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "intimidation": {
         "id": "reflection.assessment.phrase.intimidation",
         "key": "intimidation",
-        "text": "intimidation",
+        "text": "using intimidation",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "intimidation",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "authorityPresence": {
-        "id": "reflection.assessment.phrase.authorityPresence",
-        "key": "authorityPresence",
-        "text": "authority presence",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "authorityPresence",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "brutalForce": {
         "id": "reflection.assessment.phrase.brutalForce",
         "key": "brutalForce",
-        "text": "brutal force",
+        "text": "relying on overwhelming force",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "brutalForce",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "lawEnforcement": {
-        "id": "reflection.assessment.phrase.lawEnforcement",
-        "key": "lawEnforcement",
-        "text": "law enforcement",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "lawEnforcement",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "unitCoordination": {
-        "id": "reflection.assessment.phrase.unitCoordination",
-        "key": "unitCoordination",
-        "text": "unit coordination",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "unitCoordination",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "specialOps": {
-        "id": "reflection.assessment.phrase.specialOps",
-        "key": "specialOps",
-        "text": "special ops",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "specialOps",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "commandoTactics": {
-        "id": "reflection.assessment.phrase.commandoTactics",
-        "key": "commandoTactics",
-        "text": "commando tactics",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "commandoTactics",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "rapidResponse": {
         "id": "reflection.assessment.phrase.rapidResponse",
         "key": "rapidResponse",
-        "text": "rapid response",
+        "text": "responding quickly",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "rapidResponse",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "tacticalVerse": {
         "id": "reflection.assessment.phrase.tacticalVerse",
         "key": "tacticalVerse",
-        "text": "tactical verse",
+        "text": "tactical versatility",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "tacticalVerse",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "dualistTechnique": {
         "id": "reflection.assessment.phrase.dualistTechnique",
         "key": "dualistTechnique",
-        "text": "dualist technique",
+        "text": "dueling technique",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "dualistTechnique",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "defensiveSwordsmanship": {
         "id": "reflection.assessment.phrase.defensiveSwordsmanship",
         "key": "defensiveSwordsmanship",
         "text": "defensive swordsmanship",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "defensiveSwordsmanship",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "counterMastery": {
         "id": "reflection.assessment.phrase.counterMastery",
         "key": "counterMastery",
-        "text": "counter mastery",
+        "text": "countering attacks",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "counterMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "combatAdaptability": {
         "id": "reflection.assessment.phrase.combatAdaptability",
         "key": "combatAdaptability",
-        "text": "combat adaptability",
+        "text": "adapting to the style of a fight",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "combatAdaptability",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "dualistMastery": {
         "id": "reflection.assessment.phrase.dualistMastery",
         "key": "dualistMastery",
-        "text": "dualist mastery",
+        "text": "dueling",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "dualistMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "weaponVersatility": {
         "id": "reflection.assessment.phrase.weaponVersatility",
         "key": "weaponVersatility",
-        "text": "weapon versatility",
+        "text": "using a range of weapons",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "weaponVersatility",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "weaponMastery": {
         "id": "reflection.assessment.phrase.weaponMastery",
         "key": "weaponMastery",
-        "text": "weapon mastery",
+        "text": "mastery of individual weapons",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "weaponMastery",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "arenaExpertise": {
-        "id": "reflection.assessment.phrase.arenaExpertise",
-        "key": "arenaExpertise",
-        "text": "arena expertise",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "arenaExpertise",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "heavyWeaponMastery": {
         "id": "reflection.assessment.phrase.heavyWeaponMastery",
         "key": "heavyWeaponMastery",
-        "text": "heavy weapon mastery",
+        "text": "using heavy weapons",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "heavyWeaponMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "quickDraw": {
         "id": "reflection.assessment.phrase.quickDraw",
         "key": "quickDraw",
-        "text": "quick draw",
+        "text": "drawing a weapon quickly",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "quickDraw",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "precisePistolry": {
         "id": "reflection.assessment.phrase.precisePistolry",
         "key": "precisePistolry",
-        "text": "precise pistolry",
+        "text": "precise pistol shooting",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "precisePistolry",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "triggerDiscipline": {
         "id": "reflection.assessment.phrase.triggerDiscipline",
         "key": "triggerDiscipline",
-        "text": "trigger discipline",
+        "text": "disciplined trigger control",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "triggerDiscipline",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "forceBond": {
-        "id": "reflection.assessment.phrase.forceBond",
-        "key": "forceBond",
-        "text": "force bond",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "forceBond",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "imperialDuty": {
-        "id": "reflection.assessment.phrase.imperialDuty",
-        "key": "imperialDuty",
-        "text": "imperial duty",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "imperialDuty",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "enforceAuthority": {
-        "id": "reflection.assessment.phrase.enforceAuthority",
-        "key": "enforceAuthority",
-        "text": "enforce authority",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "enforceAuthority",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "forcedControl": {
-        "id": "reflection.assessment.phrase.forcedControl",
-        "key": "forcedControl",
-        "text": "forced control",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "forcedControl",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "mysticalInfluence": {
-        "id": "reflection.assessment.phrase.mysticalInfluence",
-        "key": "mysticalInfluence",
-        "text": "mystical influence",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "mysticalInfluence",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "medicalKnowledge": {
         "id": "reflection.assessment.phrase.medicalKnowledge",
         "key": "medicalKnowledge",
         "text": "medical knowledge",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "medicalKnowledge",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "treatmentExpertise": {
         "id": "reflection.assessment.phrase.treatmentExpertise",
         "key": "treatmentExpertise",
-        "text": "treatment expertise",
+        "text": "medical treatment",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "treatmentExpertise",
-          "basis": "camelCase split of the canonical identifier"
-        }
-      },
-      "selfProgram": {
-        "id": "reflection.assessment.phrase.selfProgram",
-        "key": "selfProgram",
-        "text": "self program",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "selfProgram",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "independence": {
         "id": "reflection.assessment.phrase.independence",
         "key": "independence",
-        "text": "independence",
+        "text": "working independently",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "independence",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
       },
       "technicalMastery": {
         "id": "reflection.assessment.phrase.technicalMastery",
         "key": "technicalMastery",
         "text": "technical mastery",
+        "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
         "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
+          "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "technicalMastery",
-          "basis": "camelCase split of the canonical identifier"
+          "basis": "editorial ledger proposal; canonical identifier unchanged"
         }
+      }
+    },
+    "ledger": {
+      "forceSecret": {
+        "category": "method",
+        "phrase": "Force techniques refined through secrets",
+        "excludedBecause": null
+      },
+      "forceDC": {
+        "category": "method",
+        "phrase": "making Force powers harder to resist",
+        "excludedBecause": null
+      },
+      "forceRecovery": {
+        "category": "method",
+        "phrase": "sustaining your Force reserves",
+        "excludedBecause": null
+      },
+      "burstDamage": {
+        "category": "method",
+        "phrase": "ending a threat with a burst of damage",
+        "excludedBecause": null
+      },
+      "singleTargetDamage": {
+        "category": "method",
+        "phrase": "focusing damage on a single target",
+        "excludedBecause": null
+      },
+      "areaDamage": {
+        "category": "method",
+        "phrase": "striking several targets at once",
+        "excludedBecause": null
+      },
+      "areaControl": {
+        "category": "method",
+        "phrase": "controlling territory and movement",
+        "excludedBecause": null
+      },
+      "conditionTrack": {
+        "category": "method",
+        "phrase": "wearing enemies down with negative conditions",
+        "excludedBecause": null
+      },
+      "counterAttack": {
+        "category": "method",
+        "phrase": "answering an enemy action with a counterattack",
+        "excludedBecause": null
+      },
+      "reactionDefense": {
+        "category": "method",
+        "phrase": "quick defensive reactions",
+        "excludedBecause": null
+      },
+      "damageReduction": {
+        "category": "method",
+        "phrase": "withstanding incoming damage",
+        "excludedBecause": null
+      },
+      "damageMitigationAura": {
+        "category": "method",
+        "phrase": "shielding allies from damage",
+        "excludedBecause": null
+      },
+      "evasion": {
+        "category": "method",
+        "phrase": "avoiding attacks through movement",
+        "excludedBecause": null
+      },
+      "accuracy": {
+        "category": "method",
+        "phrase": "precise, accurate attacks",
+        "excludedBecause": null
+      },
+      "critRange": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "game-mechanic shorthand (critical threat range), not an approach"
+      },
+      "critDamage": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "game-mechanic shorthand (critical damage), not an approach"
+      },
+      "initiative": {
+        "category": "method",
+        "phrase": "seizing the first move",
+        "excludedBecause": null
+      },
+      "dualWield": {
+        "category": "method",
+        "phrase": "fighting with more than one weapon",
+        "excludedBecause": null
+      },
+      "sithAlchemy": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "names a Sith tradition; ownership of a rule is not membership or practice"
+      },
+      "darkSideAffinity": {
+        "category": "role",
+        "phrase": null,
+        "excludedBecause": "an alignment-like identity; belongs to the Dark Side rules, not to an approach"
+      },
+      "lightSideAffinity": {
+        "category": "role",
+        "phrase": null,
+        "excludedBecause": "an alignment-like identity; belongs to the Force alignment rules, not to an approach"
+      },
+      "formMastery": {
+        "category": "method",
+        "phrase": "lightsaber forms and technique",
+        "excludedBecause": null
+      },
+      "meleeDamage": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "damage output, not an approach"
+      },
+      "firepower": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "damage output, not an approach"
+      },
+      "pilotMastery": {
+        "category": "method",
+        "phrase": "skilled vehicle operation",
+        "excludedBecause": null
+      },
+      "vehicularDamage": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "damage output, not an approach"
+      },
+      "unarmeddMastery": {
+        "category": "method",
+        "phrase": "unarmed fighting techniques",
+        "excludedBecause": null
+      },
+      "strikeForce": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "damage output, not an approach"
+      },
+      "flowState": {
+        "category": "method",
+        "phrase": "fighting with timing and flow",
+        "excludedBecause": null
+      },
+      "combatFlow": {
+        "category": "method",
+        "phrase": "controlling the pace of combat",
+        "excludedBecause": null
+      },
+      "combatStamina": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "endurance, not an approach"
+      },
+      "commandAuthority": {
+        "category": "role",
+        "phrase": null,
+        "excludedBecause": "implies command or authority the actor may not hold"
+      },
+      "formation": {
+        "category": "method",
+        "phrase": "fighting in formation",
+        "excludedBecause": null
+      },
+      "allySupport": {
+        "category": "method",
+        "phrase": "supporting and strengthening allies",
+        "excludedBecause": null
+      },
+      "moraleBonus": {
+        "category": "method",
+        "phrase": "inspiring confidence in allies",
+        "excludedBecause": null
+      },
+      "moraleImpact": {
+        "category": "method",
+        "phrase": "shaking an enemy’s nerve",
+        "excludedBecause": null
+      },
+      "stealth": {
+        "category": "method",
+        "phrase": "hiding and moving unseen",
+        "excludedBecause": null
+      },
+      "infiltration": {
+        "category": "method",
+        "phrase": "quietly getting into position",
+        "excludedBecause": null
+      },
+      "trackingMastery": {
+        "category": "method",
+        "phrase": "finding and following a trail",
+        "excludedBecause": null
+      },
+      "deceptionMastery": {
+        "category": "method",
+        "phrase": "deception and disguise",
+        "excludedBecause": null
+      },
+      "knowledgeMastery": {
+        "category": "method",
+        "phrase": "relying on deep knowledge",
+        "excludedBecause": null
+      },
+      "skillUtility": {
+        "category": "unresolved",
+        "phrase": null,
+        "excludedBecause": "the generic fallback key for any skill: it proves no particular capability"
+      },
+      "resourceControl": {
+        "category": "method",
+        "phrase": "managing supplies and equipment",
+        "excludedBecause": null
+      },
+      "informationControl": {
+        "category": "method",
+        "phrase": "gathering and controlling information",
+        "excludedBecause": null
+      },
+      "networkInfluence": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies contacts or a network the actor may not have"
+      },
+      "predatoryInstinct": {
+        "category": "role",
+        "phrase": null,
+        "excludedBecause": "a temperament claim, not a trained approach"
+      },
+      "tacticalAwareness": {
+        "category": "method",
+        "phrase": "reading a tactical situation",
+        "excludedBecause": null
+      },
+      "armorMastery": {
+        "category": "method",
+        "phrase": "fighting in armor",
+        "excludedBecause": null
+      },
+      "grappling": {
+        "category": "method",
+        "phrase": "grappling and control techniques",
+        "excludedBecause": null
+      },
+      "ritualMastery": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies a ritual tradition or practice"
+      },
+      "itemEnchantment": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies a magical or Force tradition practice"
+      },
+      "forceArtistry": {
+        "category": "method",
+        "phrase": "expressive use of the Force",
+        "excludedBecause": null
+      },
+      "droidControl": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "assumes droids the actor may not have"
+      },
+      "hackingSkills": {
+        "category": "method",
+        "phrase": "working with computers and security systems",
+        "excludedBecause": null
+      },
+      "sabotageExpertise": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "a hostile act; a rule is not evidence of sabotage"
+      },
+      "explosiveMastery": {
+        "category": "method",
+        "phrase": "using explosives and blast effects",
+        "excludedBecause": null
+      },
+      "biotechMastery": {
+        "category": "method",
+        "phrase": "biotechnology",
+        "excludedBecause": null
+      },
+      "geneticEngineering": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "a specialist capability, not an approach"
+      },
+      "livingWeaponCrafting": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies creating weapons from living things"
+      },
+      "biologicalControl": {
+        "category": "unresolved",
+        "phrase": null,
+        "excludedBecause": "meaning of controlling biological entities is not established"
+      },
+      "surgicalMastery": {
+        "category": "method",
+        "phrase": "advanced surgical technique",
+        "excludedBecause": null
+      },
+      "healingMastery": {
+        "category": "method",
+        "phrase": "healing wounds and injuries",
+        "excludedBecause": null
+      },
+      "treatingInjury": {
+        "category": "method",
+        "phrase": "treating injuries",
+        "excludedBecause": null
+      },
+      "engineeringMastery": {
+        "category": "method",
+        "phrase": "engineering and building structures",
+        "excludedBecause": null
+      },
+      "tacticalSupport": {
+        "category": "method",
+        "phrase": "supporting tactics through engineering",
+        "excludedBecause": null
+      },
+      "fortifications": {
+        "category": "method",
+        "phrase": "building defensive positions",
+        "excludedBecause": null
+      },
+      "weaponEngineering": {
+        "category": "method",
+        "phrase": "designing and improving weapons",
+        "excludedBecause": null
+      },
+      "improvisation": {
+        "category": "method",
+        "phrase": "improvising solutions on the spot",
+        "excludedBecause": null
+      },
+      "mechanicalMastery": {
+        "category": "method",
+        "phrase": "working with mechanical systems",
+        "excludedBecause": null
+      },
+      "technicalInnovation": {
+        "category": "method",
+        "phrase": "innovating technical solutions",
+        "excludedBecause": null
+      },
+      "resourcefulness": {
+        "category": "method",
+        "phrase": "solving problems with what is at hand",
+        "excludedBecause": null
+      },
+      "spacefarerMastery": {
+        "category": "method",
+        "phrase": "starship navigation and operation",
+        "excludedBecause": null
+      },
+      "smugglingExpertise": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies criminal activity"
+      },
+      "illegalTrade": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies criminal activity; a mechanical association is not evidence of it"
+      },
+      "evasionTactics": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "defined as evading pursuit and authority: implies fugitive status"
+      },
+      "outlawSkills": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies operating outside the law"
+      },
+      "survivalism": {
+        "category": "method",
+        "phrase": "surviving in harsh conditions",
+        "excludedBecause": null
+      },
+      "criminalExpertise": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies criminal activity"
+      },
+      "freedomPursuit": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "defined as escaping confinement: implies a past event"
+      },
+      "explorationMastery": {
+        "category": "method",
+        "phrase": "exploration and discovery",
+        "excludedBecause": null
+      },
+      "wildernessLore": {
+        "category": "method",
+        "phrase": "knowledge of the wilderness",
+        "excludedBecause": null
+      },
+      "survivalSkills": {
+        "category": "method",
+        "phrase": "wilderness survival",
+        "excludedBecause": null
+      },
+      "adaptability": {
+        "category": "method",
+        "phrase": "adapting to the situation",
+        "excludedBecause": null
+      },
+      "infiltrationMastery": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "defined as deep infiltration operations: implies professional operations"
+      },
+      "identityShift": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "shifting identities implies deception of others the actor may not have performed"
+      },
+      "stealthMastery": {
+        "category": "method",
+        "phrase": "advanced stealth technique",
+        "excludedBecause": null
+      },
+      "deadlyPrecision": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "defined as lethal attacks: implies killing"
+      },
+      "silentKill": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "defined as killing without detection: implies an act the character may never have performed"
+      },
+      "businessAcumen": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies a business profession"
+      },
+      "corporateInfluence": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies corporate standing"
+      },
+      "socialManipulation": {
+        "category": "unresolved",
+        "phrase": null,
+        "excludedBecause": "manipulation can mean a wide range of acts; wording needs owner direction"
+      },
+      "persuasionMastery": {
+        "category": "method",
+        "phrase": "persuading others",
+        "excludedBecause": null
+      },
+      "conArtistry": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies confidence schemes"
+      },
+      "intimidation": {
+        "category": "method",
+        "phrase": "using intimidation",
+        "excludedBecause": null
+      },
+      "authorityPresence": {
+        "category": "role",
+        "phrase": null,
+        "excludedBecause": "implies authority or position"
+      },
+      "brutalForce": {
+        "category": "method",
+        "phrase": "relying on overwhelming force",
+        "excludedBecause": null
+      },
+      "lawEnforcement": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies a law-enforcement profession or lawful employment"
+      },
+      "unitCoordination": {
+        "category": "role",
+        "phrase": null,
+        "excludedBecause": "assumes military units the actor may not command"
+      },
+      "specialOps": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies a special-operations profession"
+      },
+      "commandoTactics": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies a commando profession"
+      },
+      "rapidResponse": {
+        "category": "method",
+        "phrase": "responding quickly",
+        "excludedBecause": null
+      },
+      "tacticalVerse": {
+        "category": "method",
+        "phrase": "tactical versatility",
+        "excludedBecause": null
+      },
+      "dualistTechnique": {
+        "category": "method",
+        "phrase": "dueling technique",
+        "excludedBecause": null
+      },
+      "defensiveSwordsmanship": {
+        "category": "method",
+        "phrase": "defensive swordsmanship",
+        "excludedBecause": null
+      },
+      "counterMastery": {
+        "category": "method",
+        "phrase": "countering attacks",
+        "excludedBecause": null
+      },
+      "combatAdaptability": {
+        "category": "method",
+        "phrase": "adapting to the style of a fight",
+        "excludedBecause": null
+      },
+      "dualistMastery": {
+        "category": "method",
+        "phrase": "dueling",
+        "excludedBecause": null
+      },
+      "weaponVersatility": {
+        "category": "method",
+        "phrase": "using a range of weapons",
+        "excludedBecause": null
+      },
+      "weaponMastery": {
+        "category": "method",
+        "phrase": "mastery of individual weapons",
+        "excludedBecause": null
+      },
+      "arenaExpertise": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies arena experience"
+      },
+      "heavyWeaponMastery": {
+        "category": "method",
+        "phrase": "using heavy weapons",
+        "excludedBecause": null
+      },
+      "quickDraw": {
+        "category": "method",
+        "phrase": "drawing a weapon quickly",
+        "excludedBecause": null
+      },
+      "precisePistolry": {
+        "category": "method",
+        "phrase": "precise pistol shooting",
+        "excludedBecause": null
+      },
+      "triggerDiscipline": {
+        "category": "method",
+        "phrase": "disciplined trigger control",
+        "excludedBecause": null
+      },
+      "forceBond": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies a bond with a person or tradition"
+      },
+      "imperialDuty": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies an Imperial obligation or allegiance"
+      },
+      "enforceAuthority": {
+        "category": "role",
+        "phrase": null,
+        "excludedBecause": "implies enforcing an authority the actor may not serve"
+      },
+      "forcedControl": {
+        "category": "role",
+        "phrase": null,
+        "excludedBecause": "defined as control over others: not an approach the Mentor should assume"
+      },
+      "mysticalInfluence": {
+        "category": "affiliation",
+        "phrase": null,
+        "excludedBecause": "implies a mystical tradition"
+      },
+      "medicalKnowledge": {
+        "category": "method",
+        "phrase": "medical knowledge",
+        "excludedBecause": null
+      },
+      "treatmentExpertise": {
+        "category": "method",
+        "phrase": "medical treatment",
+        "excludedBecause": null
+      },
+      "selfProgram": {
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "droid-specific self-modification, not a general approach"
+      },
+      "independence": {
+        "category": "method",
+        "phrase": "working independently",
+        "excludedBecause": null
+      },
+      "technicalMastery": {
+        "category": "method",
+        "phrase": "technical mastery",
+        "excludedBecause": null
       },
       "adaptiveAI": {
-        "id": "reflection.assessment.phrase.adaptiveAI",
-        "key": "adaptiveAI",
-        "text": "adaptive AI",
-        "editorialStatus": "draft_text",
-        "mechanicsStatus": "none",
-        "sourceRef": {
-          "file": "data/bias-keys-canonical.json",
-          "key": "adaptiveAI",
-          "basis": "camelCase split of the canonical identifier"
-        }
+        "category": "capability",
+        "phrase": null,
+        "excludedBecause": "droid-specific capability, not a general approach"
       }
     },
     "themeResolution": {
