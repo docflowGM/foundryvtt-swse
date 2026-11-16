@@ -58,7 +58,6 @@ export class SuggestionContextBuilder {
 
     const mentorBiases = this._mergeMentorBiases(
       actor?.system?.swse?.mentorBuildIntentBiases || {},
-      actor?.system?.swse?.classSurveyIntentBiases || {},
       characterData?.mentorBiases || {}
     );
 
@@ -84,7 +83,6 @@ export class SuggestionContextBuilder {
       background: characterData.background ?? actor.system?.background ?? null,
       survey: characterData.survey ?? actor.system?.survey ?? null,
       mentorBiases,
-      classSurveyResponses: actor?.system?.swse?.classSurveyResponses || {},
       species: selectedSpecies ?? characterData.species ?? null
     };
   }

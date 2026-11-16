@@ -57,7 +57,7 @@ export function reduceLedger(events, { includePreview = false } = {}) {
  *   goal declarations the RESOLVER derived from explicit affirmative selections (never from browsing or defaults)
  * @param {object[]} [p.existingEvents]
  */
-export function buildCompletionEvents({ payload, transactionId, actorLevel, completedAt, preview = false, goals = [], existingEvents = [], answerDetails = {}, tagEvidence = [] }) {
+export function buildCompletionEvents({ payload, transactionId, actorLevel, completedAt, preview = false, goals = [], existingEvents = [], answerDetails = {}, tagEvidence = [], typed = {} }) {
   if (!payload || !transactionId) return [];
   const base = {
     surveyKind: payload.surveyKind,
@@ -88,7 +88,7 @@ export function buildCompletionEvents({ payload, transactionId, actorLevel, comp
   // Replaying the same transaction is a no-op: if this transaction's completion event already exists, build nothing.
   const completionId = eventIdOf({ surveyKind: base.surveyKind, scopeId: base.scopeId, transactionId, type: EVENT_TYPES.SURVEY_COMPLETED, ordinal: 0 });
   if ((existingEvents || []).some((e) => e.eventId === completionId)) return [];
-  const completed = mint(EVENT_TYPES.SURVEY_COMPLETED, { lane: LANES.DECLARED_FUTURE_GOAL, evidenceChannel: 'completed_survey_development_preference', answers, tagEvidence: deepClone(tagEvidence) });
+  const completed = mint(EVENT_TYPES.SURVEY_COMPLETED, { lane: LANES.DECLARED_FUTURE_GOAL, evidenceChannel: 'completed_survey_development_preference', answers, tagEvidence: deepClone(tagEvidence), typed: deepClone(typed) });
   // A retake of the same survey scope supersedes the previous completion; it never edits it.
   const prior = reduceLedger(existingEvents, { includePreview: preview }).latestSurvey[`${base.surveyKind}:${base.scopeId}`];
   if (prior) completed.supersedes = prior.eventId;

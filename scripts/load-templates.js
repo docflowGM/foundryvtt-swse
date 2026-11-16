@@ -283,7 +283,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/force-power-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/force-secret-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/force-technique-work-surface.hbs',
-  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/l1-survey-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/mentor-survey-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/mentor-survey-details.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/language-work-surface.hbs',

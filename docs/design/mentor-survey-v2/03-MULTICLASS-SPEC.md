@@ -33,3 +33,7 @@ Mentor fixed introductions precede Q1–Q6 and are never generated (MC-05).
 ## 4. Content status
 
 Owner-approved text: Q3 four answers and detail rails. Owner-approved architecture: Q1 discovery framing, Q2 top-four contract, Q4 scenario architecture. Everything else (intros, Q1 variants, 625 Q2, 250 Q4, Q5, Q6 libraries) is `draft_text` (see `06`). Q5 design itself is a *proposal*, not owner-approved (MSV-RD-003).
+
+## 5. As built (D2)
+
+Q1, Q3, Q4, Q5 are implemented; Q2 and Q6 are source-blocked (`MSV-RD-007`, Q6 import pending) and are skipped. Q4 scene choice within a family is a stable seeded pick (design: "stable, reproducible order using survey-instance seed"). Q4/Q5 are skipped for an undecided Q1 (`MSV-RD-008`); the Q5 career-continuity template is withheld (`MSV-RD-009`). Q3 depth is recorded as a typed field `typed.declaredClassInvestmentDepth` (`undecided` records null); no multiclass answer declares a goal. Details and the manual acceptance procedure: `06-CONTENT-STATUS-AND-BLOCKERS.md` §8.

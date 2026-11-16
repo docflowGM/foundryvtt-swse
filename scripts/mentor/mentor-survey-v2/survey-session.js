@@ -112,6 +112,16 @@ export function skipQuestion(flow, draft, qid, seq) {
   return { draft: next, applied: true };
 }
 
+/**
+ * System bookkeeping: mark a question that CANNOT be asked as skipped. Unlike a player's skip it never moves the cursor,
+ * clears revisit state or advances the action counter, so rendering a view can never disturb navigation or invalidate a
+ * player's pending action token.
+ */
+export function markUnaskable(draft, qid) {
+  if (!isOpen(draft) || draft.answers[qid] || draft.skipped[qid]) return draft;
+  return { ...draft, skipped: { ...draft.skipped, [qid]: true } };
+}
+
 /** Back navigation: moves the cursor only. Never alters answers. */
 export function goBack(flow, draft, seq) {
   if (!isOpen(draft) || !fresh(draft, seq) || draft.trail.length < 2) return unchanged(draft);

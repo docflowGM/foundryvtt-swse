@@ -55,3 +55,7 @@ Shared-Mentor pairs (Miraj ×2, Delta ×2) have distinct relationship text per c
 ## 5. Release consequence
 
 Prestige Q6 text is absent and only Ace Pilot Q3/Q4/Q5 wording is owner-approved; §39.5 requires explicit owner sign-off, an approved Q1 slate policy, and resolution of the mapping gates before player-facing enablement. Therefore every prestige scope is `withheld` in the release manifest at this commit; the legacy four-question survey is deleted and there is no fallback.
+
+## 6. As built (D3)
+
+Q4 and Q5 are implemented for all 32 classes; Q1, Q2, Q3 and Q6 are source-blocked and skipped (Q6: package not in Git). The survey uses the pending-acquisition Mentor introductions. Q4 records `typed.declaredPrestigeDepth` (undecided records null). Q5 records `typed.primaryPurpose` and an optional `typed.secondaryPurpose` (no weight); the second purpose is an inner stage `q5b` (skipped for an undecided primary). No prestige answer declares a goal (`MSV-RD-010`). Independent tree-access audit ingested as a progress note on `MSV-RD-006`. Details and the manual acceptance procedure: `06-CONTENT-STATUS-AND-BLOCKERS.md` §9.

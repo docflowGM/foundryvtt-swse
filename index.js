@@ -27,6 +27,7 @@ import { runUniversalVehicleScratchImport } from "./scripts/domain/vehicles/vehi
 import { registerForceTraditionHouseRuleSettings } from "./scripts/settings/force-tradition-house-rules.js";
 import { registerCustomContentApprovalSettings } from "./scripts/settings/custom-content-approval.js";
 import { registerMentorSurveyPreviewSetting } from "./scripts/settings/mentor-survey-preview.js";
+import { primeManifest as primeMentorSurveyManifest } from "./scripts/mentor/mentor-survey-v2/content-loader.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
 import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
 import { initializeSceneControls } from "./scripts/scene-controls/init.js";
@@ -261,6 +262,8 @@ Hooks.once("init", async () => {
 // READY HOOK
 // ============================================
 Hooks.once("ready", async () => {
+  // Prime the mentor-survey release manifest so synchronous step activation can consult it (fails closed if it cannot load).
+  primeMentorSurveyManifest().catch((err) => console.warn("SWSE | mentor survey manifest unavailable; surveys stay hidden", err));
   console.log("SWSE | System ready. May the Force be with you.");
 
   MutationInterceptor.initialize();

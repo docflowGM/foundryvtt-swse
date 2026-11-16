@@ -82,6 +82,10 @@ Printed-rule verification limit: `reference/sourcebooks/*.txt` are OCR exports, 
 | Gunslinger / Outlaw / martial-arts source identity (Teräs Käsi, Pistoleer titles, Fringer/Virus) | Design record marks them QUARANTINE (unreliable rule identity) | Content records referencing them are `unverified_mechanic`; never offered as mechanics-driven options |
 | `scripts/engine/mentor/validate-mentor-dialogue.js` | Pre-existing: crashes on a wrong repo-root path and, if fixed, expects a flat per-mentor file layout the repo no longer uses | **Not touched** (stale legacy tool, unrelated to survey authorities) |
 
+### Independent tree-access audit (ingested 2026-11-16)
+
+Branch `audit/prestige-cross-class-tree-access-20261115` @ `76962662b` verifies the three tree-access findings above against the printed books (Charlatan Fortune omission; Jedi Master/Sith Lord/Force Disciple Force-tree alternatives; Independent Droid Elite Droid and positional id misalignment; Assassin/Infiltrator raw strings). Recorded as a progress note on `MSV-RD-006`. It is documentation for the protected class-pack owner; nothing here edits `packs/classes.db`, and prestige content that depends on those trees stays `unverified_mechanic`. Note for the class authority: the survey reads class trees through no field at all, so the Independent Droid positional misalignment cannot affect it.
+
 ## 6. Phase C: shared infrastructure (landed, not yet wired to the progression shell)
 
 New pure modules in `scripts/mentor/mentor-survey-v2/` (renamed over the legacy directory at the D-phase cutover): `contract`, `content-store`, `survey-session`, `intent-ledger`, `actor-evidence`, `reflection`, `tag-boundary`. 56 offline tests (`tests/mentor-survey-*.test.mjs`). These prove engine behavior only; none is a Foundry runtime test.
@@ -110,6 +114,59 @@ Deterministic ordering notice (MSV-RD-001/002): where tag-driven ranking is unfi
 8. Repeat with the setting off: with no preview and withheld content no event can be created.
 9. Re-run level-up and a retake path only after multiclass is cut over.
 
-## 8. Phase D2/D3 status
+## 8. Phase D2: Multiclass cutover
 
-Not started. The multiclass and prestige surveys remain on their legacy implementations and are still reachable.
+**Code status: wired and offline-tested; legacy removed. Not Foundry-tested. Not player-visible** (all five destinations are `withheld`; all text except the four Q3 depth answers is `draft_text`).
+
+Built: one generic `SurveyController` with per-survey adapters (L1 and multiclass), `resolvers/multiclass.js` (trigger, 20 directed transitions, Q1/Q3/Q4/Q5), `MulticlassSurveyStep` registered for `base-class-survey`, activation in `ActiveStepComputer` driven by the same trigger (finalized class levels, first acquisition only, exactly one prior foundation class, released-or-GM-preview), and one session key (`mentorSurvey`). Content imported verbatim: 20 Q1 banks (120 answers), 20 Q1 transition intros, 15 fixed Q3-Q5 intros, 4 approved Q3 depth answers with detail rails, 250 Q4 scenarios (1,250 methods + 250 neutral) with the 100-route family map, 500 Q5 templates (each cross-checked against its Q1 answer).
+
+**Blocked at the source (skipped, never invented):**
+- **Q2** (`MSV-RD-007`): no certified `q1_focus` phrases, no authored E/F answers, unverified top-four scores accessor.
+- **Q6**: the Q6 libraries are not imported and no verified identity-claim source exists. The shared reflection engine is built and tested but not connected.
+- **Q4/Q5 for an undecided Q1** (`MSV-RD-008`).
+- **Q5 career-continuity template** (`MSV-RD-009`).
+- **Two or more prior foundation classes** (`MSV-RD-004`): withheld.
+So the V2 multiclass survey currently offers Q1, Q3, Q4 and Q5 only; it is **not** the full six-question design and must not be released until Q2/Q6 are supplied.
+
+Removed: `BaseClassSurveyStep`, `LegacyClassSurveyStepBase` (the former L1 step), `base-class-survey-definitions.js`, the `classSurveys`/`classSurveyDrafts` session keys, the finalizer's `classSurveyResponses`/`classSurveyBias`/`classSurveyIntentBiases` writes, and their readers in the suggestion context builder, forecast adapter and signals normalizer.
+
+### Manual Foundry v13 acceptance procedure for multiclass (not yet performed)
+
+1. As a GM with the preview setting on, level a Noble to a first Soldier level: the "New Class Survey" step appears; Breach narrates (not J0-N1); Q1 shows six first-person answers keyed to Noble -> Soldier.
+2. Repeat for several of the 20 transitions. Q2 and Q6 never appear.
+3. Q3 shows exactly four depth answers. Choose each and confirm nothing about class levels changes.
+4. Q4 shows a scene for the chosen Q1 route; go back, change Q1, and confirm the Q4 answer is flagged stale rather than replaced.
+5. Choose "I'm not sure yet" in Q1: Q4 and Q5 are skipped.
+6. Take a further level in an already held class: no survey step appears. With two other foundation classes held: no step appears.
+7. Finish, then cancel the level-up: no `mentorSurvey` flag on the actor. Finish the level-up: one `survey_completed` event with `scopeId` = destination, `typed.declaredClassInvestmentDepth`, `actorLevel` = the new level, `provenance.preview: true`.
+8. With preview off: no step appears for any transition.
+
+## 9. Phase D3: Prestige cutover
+
+**Code status: wired and offline-tested; legacy removed. Not Foundry-tested. Not player-visible** (all 32 prestige scopes are `withheld`; all text is `draft_text` except the shared Q4 depth answers, Ace Pilot's Q4 wording and Ace Pilot's seven Q5 purpose statements).
+
+Built: `resolvers/prestige.js` (trigger: newly acquired prestige class; Q4 depth; Q5 primary purpose and optional second purpose as an inner stage `q5b`), `prestige-controller.js`, `PrestigeSurveyStep` registered for `prestige-survey`, activation in `ActiveStepComputer`, the shared single `mentorSurvey` session key and finalizer path. Content imported verbatim for all 32 classes: 4 shared Q4 depth answers, 32 x (pending and finalized Q4 intro, question, four rails), 32 x (pending and finalized Q5 intro, question, seven purposes, second-purpose prompt, decline line). The level-up survey uses the PENDING introductions (the class is not yet finalized); finalized ones are kept for a later reflection.
+
+**Blocked at the source (skipped, never invented):**
+- **Q1** class discovery: banks not imported (varied source formats; the slate policy is unapproved, `MSV-RD-005`).
+- **Q2** synthesis: actor-evidence templates not imported; needs approved wording.
+- **Q3** scenes: keyed to Q1 route ids, so unavailable without Q1.
+- **Q6**: the 32-class Q6 package is **not in Git**; owner to supply, never reconstructed. The shared reflection engine is built and tested but not connected.
+- **Another career** (`MSV-RD-010`): records a purpose only; no prestige answer declares a goal.
+So the V2 prestige survey currently offers Q4 and Q5 only; it is **not** the six-question design and must not be released until Q1, Q2, Q3 and Q6 are supplied, the slate policy is approved and the owner signs off (rolling design 39.5).
+
+Removed: the legacy `scripts/mentor/mentor-survey/` directory (engine, registry, definition builder, prestige profiles, 38 `PrC_*` definitions, index), the two re-export shims, `PrestigeSurveyStep` (legacy), the legacy L1 work-surface and details templates, the `prestigeSurvey` session key and alias, the finalizer's `prestigeSurveyResponses`/`mentorBuildIntentBiases` writes, and their forecast readers. The weighted-pruning arithmetic (`mergePrestigeBias`, `pruneWeight`, `prestigeWeight`, `oldIdentityRetention`) no longer exists anywhere under `scripts/` (asserted by a test).
+
+### Manual Foundry v13 acceptance procedure for prestige (not yet performed)
+
+1. As a GM with preview on, level a character into Ace Pilot: the "Prestige Survey" step appears; Mayu narrates with the pending-acquisition wording.
+2. Q4 shows four first-person depth answers with the class rails; no level quota is mentioned. Q5 shows seven first-person statements with no category titles; after choosing one, an optional second-purpose step appears (not for "undecided"), and declining is offered.
+3. Q1, Q2, Q3 and Q6 never appear.
+4. Finish, cancel the level-up: no `mentorSurvey` flag on the actor. Finish the level-up: one `survey_completed` event with `scopeId` = the class, `typed` depth and purposes, `provenance.preview: true`, and no goal events.
+5. Acquire a second prestige class later: a separate event; the first is untouched. With preview off, no step appears.
+
+## 10. Remaining legacy reads and follow-ups
+
+- Inert readers of the retired `system.swse.mentorBuildIntentBiases` field remain in the suggestion engines (`SuggestionEngine`, `ClassSuggestionEngine`, `ClassDomainReasonEngine`, `ForceOptionSuggestionEngine`, `BackgroundSuggestionEngine`, `Level1SkillSuggestionEngine`, `attribute-planner`, `force-choice-context`, `suggestion-context-builder`). Nothing writes the field any more, so they read `{}`. They are dead reads to delete in a focused follow-up that retests each engine; they were left rather than risk a broad suggestion-engine edit inside the survey cutover.
+- The template-build path (`template-adapter`) still pre-fills the overloaded `survey` selection with intent tags that `Level1SkillSuggestionEngine` and the forecast normalizer read for template-created characters. That is a separate legacy intent path to retire together with the template adapter work.
+- `MentorSurfaceService` has its own unrelated chat-surface survey (`mentorSurveyCompleted`); it was not part of these surveys and was not touched.

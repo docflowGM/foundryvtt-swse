@@ -2929,3 +2929,77 @@ Independent register for the survey cutover (see `docs/design/mentor-survey-v2/`
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+## MSV-RD-007 — Multiclass Q2 (Build Integration) inputs
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q2 |
+| Feature | Multiclass Q2 (Build Integration) inputs |
+| Source | Multiclass rolling design v0.11 (Q2 contract, 625-answer library) |
+| Evidence | Q2 is specified as: four answers each joining a current-build strength (read from the existing Suggestion Engine's top four scores) with a certified `q1_focus` noun phrase for the player's Q1 answer, plus an E (alternate direction) and an F (not sure) answer. The committed design contains the 625 sentence templates with a `{{q1_focus}}` slot, but no `q1_focus` phrase for any of the 100 Q1 answers, only illustrative E/F text, and it states that a ready-made top-four accessor was not verified. |
+| Confirmed behavior | Q2 purpose and structure; answers must be grounded in verified current-build evidence; the neutral answer adds no evidence. |
+| Unresolved question | The certified `q1_focus` phrases, the Q2 E and F answer text, and which existing Suggestion Engine surface supplies the top four scored strengths. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Q2 is skipped (source-blocked) in the V2 multiclass survey. Nothing is invented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-008 — Q4/Q5 routing when the player chooses "I'm not sure yet" in Q1
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q4 and Q5 for an undecided Q1 |
+| Feature | Q4/Q5 routing when the player chooses "I'm not sure yet" in Q1 |
+| Source | Multiclass rolling design v0.11 (Q4 route table note; Q5 library) |
+| Evidence | The design says an undecided Q1 should receive a "low-assumption scenario in the same destination class" for Q4 and "five extra destination-class fallback banks" for Q5, but no scenario is marked low-assumption and the Q5 fallback banks are not in the committed document (only in an uncommitted JSON). |
+| Confirmed behavior | Q4 and Q5 for the 100 substantive Q1 routes are fully routed. |
+| Unresolved question | Which authored Q4 scenario counts as low-assumption for each destination, and the content of the Q5 fallback banks. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Q4 and Q5 are skipped for an undecided Q1; Q3 depth still works. No route is guessed. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-009 — Q5 `career_continuity` milestone and its `{declared_goal}` slot
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q5 career continuity |
+| Feature | Q5 `career_continuity` milestone and its `{declared_goal}` slot |
+| Source | Multiclass rolling design v0.11 (Q5 library) |
+| Evidence | 100 of the 500 Q5 templates contain a `{declared_goal}` slot that requires a grammatically suitable phrase for the player's declared goal, and the design says that when no goal exists a truthful exploration alternative should replace it. Neither a certified goal-phrase source nor the alternative text is authored. |
+| Confirmed behavior | The other four milestone kinds and the neutral answer need no goal. |
+| Unresolved question | How a declared goal becomes a grammatical phrase, and what text replaces the slot when there is no declared goal. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | The career-continuity option is withheld; players see four milestone options plus the neutral one. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-006 — PROGRESS NOTE (appended 2026-11-16; the original entry above is preserved unchanged)
+
+An independent primary-source audit was ingested: branch `audit/prestige-cross-class-tree-access-20261115` @ `76962662be0962a7b5424e57f7a6207e31b9287b`, file `docs/audits/prestige-cross-class-talent-tree-access-source-audit-2026-11-15.md`. It reports, against the printed books, that: Charlatan may select Trickery, Disgrace or Fortune (Scum and Villainy p.31) and the repository omits Fortune; Jedi Master (Core p.220), Sith Lord (Core pp.224-225) and Force Disciple (Core p.215) may take their named tree OR any eligible Force talent tree, and the repository lists only the named tree (Lightsaber Forms is not granted to Jedi Master by that sentence); Independent Droid's Elite Droid tree is printed expansion content (Scavenger's Guide to Droids pp.28-29), not spurious, and its `talentTreeIds` and `talentTreeSourceIds` arrays are positionally misaligned; Assassin and Infiltrator each hold one raw display-name string in `talent_trees`. This note changes no entry status: the correction belongs to the protected class-pack baseline owner and the project owner's ruling, and no pack was edited by the survey work. Survey content that depends on these trees remains `unverified_mechanic` until the class authority is corrected. The audit also lists open items it does not assert (additional Jedi Knight/Sith Apprentice expansion trees, Martial Arts Master and Elite Trooper supplemental trees, the Teras Kasi encoding identity), and it preserves the Sith Dark Side Score house rule as a separate owner decision.
+
+
+## MSV-RD-010 — Prestige Q5 "another career" conversation and goal declaration
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q5 and declared future goals |
+| Feature | The Discover -> Explore -> Affirm conversation that follows the "another career" purpose, and what it may declare |
+| Source | Prestige Q5 rolling editorial (conditional future career exploration authored as a proposal for Ace Pilot only); shared design v0.9 section 13 |
+| Evidence | The design says browsing another career is not a declaration and that a typed goal is declared only on an explicit affirmative choice (with separate confirmation to replace an earlier goal). The conditional branch dialogue is authored for one class (Ace Pilot) as a proposal, and no career picker content or typed target resolver is specified for the other 31 classes. |
+| Confirmed behavior | Browsing, exploring and declining declare nothing; a declared goal is never inferred; replacement needs separate confirmation. |
+| Unresolved question | How the conversation is presented for every class, which typed targets may be affirmed, and the approved wording. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Choosing the "another career" purpose records that purpose only. No prestige answer declares a goal. The goal-declaration lane exists in the ledger and is ready for the approved conversation. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

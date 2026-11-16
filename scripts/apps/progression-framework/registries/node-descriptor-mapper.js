@@ -16,9 +16,7 @@ import { IntroStep } from '../steps/intro-step.js';
 import { SpeciesStep } from '../steps/species-step.js';
 import { DroidBuilderStep } from '../steps/droid-builder-step.js';
 import { ClassStep } from '../steps/class-step.js';
-import { MentorSurveyStep } from '../steps/mentor-survey-step.js';
-import { PrestigeSurveyStep } from '../steps/prestige-survey-step.js';
-import { BaseClassSurveyStep } from '../steps/base-class-survey-step.js';
+import { MentorSurveyStep, MulticlassSurveyStep, PrestigeSurveyStep } from '../steps/mentor-survey-step.js';
 import { AttributeStep } from '../steps/attribute-step.js';
 import { BackgroundStep } from '../steps/background-step.js';
 import { SkillsStep } from '../steps/skills-step.js';
@@ -48,7 +46,7 @@ const NODE_PLUGIN_MAP = {
   'droid-builder': DroidBuilderStep,
   class: ClassStep,
   'l1-survey': MentorSurveyStep,
-  'base-class-survey': BaseClassSurveyStep,
+  'base-class-survey': MulticlassSurveyStep,
   'prestige-survey': PrestigeSurveyStep,
   attribute: AttributeStep,
   background: BackgroundStep,

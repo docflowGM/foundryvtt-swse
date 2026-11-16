@@ -196,17 +196,6 @@ export class SuggestionContextAdapter {
     for (const [key, survey] of Object.entries(shell.actor?.system?.swse?.surveyResponses || {})) {
       addCompletedSurvey(`l1-${key}`, survey);
     }
-    for (const [key, survey] of Object.entries(shell.progressionSession?.draftSelections?.classSurveys || {})) {
-      addCompletedSurvey(`class-${key}`, survey);
-    }
-    for (const [key, survey] of Object.entries(shell.actor?.system?.swse?.classSurveyResponses || {})) {
-      addCompletedSurvey(`class-${key}`, survey);
-    }
-    const prestigeSession = shell.progressionSession?.draftSelections?.prestigeSurvey;
-    addCompletedSurvey(`prestige-${prestigeSession?.classId || 'current'}`, prestigeSession);
-    for (const [key, survey] of Object.entries(shell.actor?.system?.swse?.prestigeSurveyResponses || {})) {
-      addCompletedSurvey(`prestige-${key}`, survey);
-    }
 
     return { surveyAnswers, declaredArchetypes, declaredTargets };
   }

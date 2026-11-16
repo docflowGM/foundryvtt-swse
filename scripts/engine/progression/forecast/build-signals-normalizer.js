@@ -83,12 +83,6 @@ export class BuildSignalsNormalizer {
       for (const survey of Object.values(context.actor?.system?.swse?.surveyResponses || {})) {
         if (survey?.completed === true) this._extractExplicitFromSurvey(survey, signals.explicit);
       }
-      for (const survey of Object.values(context.actor?.system?.swse?.classSurveyResponses || {})) {
-        if (survey?.completed === true) this._extractExplicitFromSurvey(survey, signals.explicit);
-      }
-      for (const survey of Object.values(context.actor?.system?.swse?.prestigeSurveyResponses || {})) {
-        if (survey?.completed === true) this._extractExplicitFromSurvey(survey, signals.explicit);
-      }
 
       // Extract inferred signals from projection
       if (context.projectedCharacter) {

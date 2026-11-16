@@ -84,9 +84,6 @@ export class ProgressionSession {
       starshipManeuvers: [],
       survey: null,
       mentorSurvey: null,
-      prestigeSurvey: null,
-      classSurveyDrafts: {},
-      classSurveys: {},
       droid: null,
       pendingSpeciesContext: null,
       pendingBackgroundContext: null,
@@ -195,7 +192,6 @@ export class ProgressionSession {
       'share-talent': 'shareTalentSelections',
       'starship-maneuver': 'starshipManeuvers',
       'starship-maneuvers': 'starshipManeuvers',
-      'prestige-survey': 'prestigeSurvey',
     };
     selectionKey = selectionAliases[selectionKey] || selectionKey;
     if (!this._schema[selectionKey]) {
@@ -391,11 +387,8 @@ export class ProgressionSession {
       starshipManeuvers: [],
       pendingEntitlements: [],
       immediateChoices: [],
-      classSurveys: {},
-      classSurveyDrafts: {},
       survey: null,
       mentorSurvey: null,
-      prestigeSurvey: null,
       skills: null,
       attributes: null,
     };
@@ -471,9 +464,6 @@ export class ProgressionSession {
       immediateChoices: [],
       survey: null,
       mentorSurvey: null,
-      prestigeSurvey: null,
-      classSurveyDrafts: {},
-      classSurveys: {},
       droid: null,
     };
     this.visitedStepIds = [];
@@ -509,10 +499,6 @@ export class ProgressionSession {
       medicalSecrets: this.draftSelections.medicalSecrets || [],
       shareTalentSelections: this.draftSelections.shareTalentSelections || [],
       survey: this.draftSelections.survey?.completed === true ? this.draftSelections.survey : null,
-      prestigeSurvey: this.draftSelections.prestigeSurvey?.completed === true ? this.draftSelections.prestigeSurvey : null,
-      classSurveys: Object.fromEntries(
-        Object.entries(this.draftSelections.classSurveys || {}).filter(([, survey]) => survey?.completed === true)
-      ),
     };
   }
 
@@ -603,14 +589,6 @@ export class ProgressionSession {
         type: 'array',
         description: 'Officer immutable share selection: [{officerLevel, talentId, talentName, treeId, treeName}]',
       },
-      classSurveyDrafts: {
-        type: 'object',
-        description: 'Draft-only base-class survey answers keyed by class id; never consumed by suggestion bias',
-      },
-      classSurveys: {
-        type: 'object',
-        description: 'Completed-only base-class survey responses keyed by class id',
-      },
       starshipManeuvers: {
         type: 'array',
         description: '[{id, source}, ...]',
@@ -622,10 +600,6 @@ export class ProgressionSession {
       survey: {
         type: 'object',
         description: '{archetypeSignals, mentorSignals, preferences}',
-      },
-      prestigeSurvey: {
-        type: 'object',
-        description: '{classId, commitment, specialization, profileReading, metadata}',
       },
       droid: {
         type: 'object',

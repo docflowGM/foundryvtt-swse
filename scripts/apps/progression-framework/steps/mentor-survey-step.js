@@ -1,5 +1,6 @@
 /**
- * MentorSurveyStep: the single progression step for the Mentor surveys (V2).
+ * MentorSurveyStep: the progression step for the Mentor surveys (V2). One base class; Level 1 and Multiclass differ only
+ * in which controller they build and which live context they bind (see the subclass hooks below).
  *
  * Thin by design. All lifecycle logic lives in scripts/mentor/mentor-survey-v2 (pure, tested offline). This step only
  *  - loads content and binds the live chargen context (class, species) from the progression session,
@@ -9,7 +10,7 @@
  * The survey reaches the actor only through ProgressionFinalizer (buildSurveyLedgerPatch), in the same atomic update as
  * the advancement. Canceling or abandoning the session therefore persists nothing.
  *
- * Level 1 is wired here. Multiclass and prestige use their own controllers when they are cut over.
+ * Level 1 (this class) and Multiclass (MulticlassSurveyStep) are wired. Prestige uses its own controller when cut over.
  */
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { getStepMentorObject } from './mentor-step-integration.js';
@@ -17,19 +18,13 @@ import { resolveMentorPortraitPath } from '/systems/foundryvtt-swse/scripts/engi
 import { MentorTranslationIntegration } from '/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js';
 import { ArchetypeRegistry } from '/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js';
 import { L1SurveyController } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/l1-controller.js';
+import { PrestigeSurveyController } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/prestige-controller.js';
+import { MulticlassSurveyController } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/multiclass-controller.js';
+import { mergeIntoSessionValue } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/survey-controller.js';
+import { projectActorEvidence } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/actor-evidence.js';
+import { loadSurveyContent } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/content-loader.js';
 import { SESSION_SELECTION_KEY } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/contract.js';
 import { canUseEditorialPreview } from '/systems/foundryvtt-swse/scripts/settings/mentor-survey-preview.js';
-
-const DATA = 'systems/foundryvtt-swse/data/mentor-survey';
-let contentPromise = null;
-/** Content packs are static data: load once per page load. They are not game state and have no invalidation. */
-function loadContent() {
-  contentPromise ||= Promise.all([
-    fetch(`${DATA}/l1.json`).then((r) => r.json()),
-    fetch(`${DATA}/release-manifest.json`).then((r) => r.json()),
-  ]).then(([pack, manifest]) => ({ pack, manifest })).catch((err) => { contentPromise = null; throw err; });
-  return contentPromise;
-}
 
 const slug = (s) => String(s ?? '').toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 const esc = (v) => String(v ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -62,23 +57,31 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
     this._lastTranslationKey = null;
   }
 
-  /** Persist the DRAFT into the progression session (session only; never an actor write). */
+  // ---- subclass hooks ----
+  get _packKind() { return 'l1'; }
+  get _title() { return 'Where do you want your path to lead?'; }
+  _createController(deps, stored) { return new L1SurveyController(deps, stored); }
+  _liveContext(shell) { return { classId: resolveClassId(shell), speciesKeys: resolveSpeciesKeys(shell) }; }
+
+  /** Persist the DRAFT into the progression session (session only; never an actor write). Merges, so other surveys' entries survive. */
   _persist(shell) {
-    const value = this._ctl?.serialize();
-    if (value) shell?.progressionSession?.commitSelection?.(this.descriptor?.stepId || 'l1-survey', SESSION_SELECTION_KEY, value);
+    const entry = this._ctl?.entry();
+    if (!entry) return;
+    const current = shell?.progressionSession?.getSelection?.(SESSION_SELECTION_KEY) ?? null;
+    shell?.progressionSession?.commitSelection?.(this.descriptor?.stepId || 'l1-survey', SESSION_SELECTION_KEY, mergeIntoSessionValue(current, entry));
   }
 
   async onStepEnter(shell) {
     this._loadError = null;
     try {
-      const { pack, manifest } = await loadContent();
+      const { pack, manifest } = await loadSurveyContent(this._packKind);
       try { await ArchetypeRegistry.initialize?.(); } catch (_e) { /* lookup below fails closed for restricted children */ }
       const stored = shell?.progressionSession?.getSelection?.(SESSION_SELECTION_KEY) ?? null;
-      this._ctl = new L1SurveyController({
+      this._ctl = this._createController({
         pack, manifest, preview: canUseEditorialPreview(),
         archetypeLookup: (id) => ArchetypeRegistry.getArchetype?.(id) ?? null,
       }, stored);
-      this._ctl.sync({ classId: resolveClassId(shell), speciesKeys: resolveSpeciesKeys(shell) });
+      this._ctl.sync(this._liveContext(shell));
       this._persist(shell);
     } catch (err) {
       console.warn('[MentorSurveyStep] content unavailable; survey skipped (no fallback questionnaire):', err);
@@ -110,7 +113,7 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
       element._translationApplied = true;
       try {
         // mentor-sidecar-await-ok: runs inside the fire-and-forgotten sidecar started by onDataReady().
-        await MentorTranslationIntegration.render({ text, container: element, mentor: this._ctl?.ctx?.classId || 'default', topic: 'l1-survey', force: true, signal });
+        await MentorTranslationIntegration.render({ text, container: element, mentor: this._ctl?.ctx?.classId || this._ctl?.ctx?.destinationClassId || 'default', topic: 'l1-survey', force: true, signal });
       } catch (err) { console.warn('[MentorSurveyStep] translation failed, keeping plain text', err); }
     }
   }
@@ -146,7 +149,11 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
     const mentor = getStepMentorObject(shell?.actor ?? null, shell);
     const mentorPortrait = resolveMentorPortraitPath(mentor?.portrait || null);
     const v = this._ctl ? this._ctl.view() : { phase: 'unavailable', reason: this._loadError ? 'content_unavailable' : 'not_ready' };
-    const total = this._ctl?.flow?.questions?.length ?? 5;
+    // Inner stages (Q5's optional second purpose) belong to their question: count distinct question numbers.
+    const qs = this._ctl?.flow?.questions ?? ['q1', 'q2', 'q3', 'q4', 'q5'];
+    const numbers = [...new Set(qs.map((q) => Number(String(q).match(/\d/)[0])))];
+    const total = numbers.length;
+    const resolvedNum = (n) => qs.filter((q) => Number(String(q).match(/\d/)[0]) === n).every((q) => this._ctl?.draft?.answers?.[q] || this._ctl?.draft?.skipped?.[q]);
     return {
       mentorName: mentor?.name || null, mentorTitle: mentor?.title || mentor?.class || null,
       mentorPortraitMarkup: portraitMarkup(mentorPortrait, mentor?.name),
@@ -154,14 +161,15 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
       view: v.view || null, questionNumber: v.questionNumber ?? null, totalQuestions: total,
       reconfirm: v.reconfirm || null, staleNotice: v.staleNotice || null, selectedOptionId: v.selectedOptionId || null,
       canGoBack: v.canGoBack === true, progress: v.progress || { answered: 0, resolved: 0, total },
-      progressDots: Array.from({ length: total }, (_, i) => ({ index: i + 1, isDone: i < (v.progress?.resolved ?? 0), isActive: i + 1 === v.questionNumber })),
+      progressDots: numbers.map((n) => ({ index: n, isDone: Boolean(this._ctl?.draft) && resolvedNum(n), isActive: n === v.questionNumber })),
+      title: this._title,
       unavailableText: 'The Mentor interview is not available for this character right now. It is optional; continue when you are ready.',
     };
   }
 
   getSelection() {
     const c = this._ctl?.committed;
-    return { selected: c ? ['l1'] : [], count: c ? 1 : 0, isComplete: Boolean(c) };
+    return { selected: c ? [this._packKind] : [], count: c ? 1 : 0, isComplete: Boolean(c) };
   }
 
   renderWorkSurface(stepData) {
@@ -178,4 +186,35 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
   /** The survey is optional: it never blocks progression. */
   validate() { return { isValid: true, errors: [], warnings: [] }; }
   getBlockingIssues() { return []; }
+}
+
+/**
+ * Multiclass: shown only when a foundation class is acquired for the FIRST time (the trigger lives in
+ * resolvers/multiclass.js and is also the activation rule in ActiveStepComputer). The origin class comes from FINALIZED
+ * actor class levels, never from pending selections.
+ */
+export class MulticlassSurveyStep extends MentorSurveyStep {
+  get _packKind() { return 'multiclass'; }
+  get _title() { return 'What do you want from this new training?'; }
+  _createController(deps, stored) { return new MulticlassSurveyController(deps, stored); }
+  _liveContext(shell) {
+    return {
+      selectedClassId: resolveClassId(shell),
+      classLevels: projectActorEvidence(shell?.actor).classLevels,
+      seed: shell?.progressionSession?.sessionId || 'session',
+    };
+  }
+}
+
+/**
+ * Prestige: shown when a prestige class is newly acquired (a milestone, not a ladder). The survey is optional and never
+ * forces a further class goal. The class comes from the session selection; finalized class levels decide "newly".
+ */
+export class PrestigeSurveyStep extends MentorSurveyStep {
+  get _packKind() { return 'prestige'; }
+  get _title() { return 'What does this achievement mean to you?'; }
+  _createController(deps, stored) { return new PrestigeSurveyController(deps, stored); }
+  _liveContext(shell) {
+    return { selectedClassId: resolveClassId(shell), classLevels: projectActorEvidence(shell?.actor).classLevels };
+  }
 }
