@@ -86,10 +86,13 @@ for (const count of [0, 1, 2, 3, 4, 5]) {
   const result = new Dialog({
     suggestions: [{ name: 'Variable Evidence', suggestion: { reasons: supplied } }],
   })._prepareContext().suggestions[0];
-  assert.equal(result.bullets.length, Math.min(count, 4),
-    `Expected exactly ${Math.min(count, 4)} evidence bullets for ${count} supplied`);
-  assert.deepEqual(Array.from(result.bullets, bullet => bullet.text), supplied.slice(0, 4),
-    'No placeholder or generic reason should be appended');
+  const expected = Math.min(count, 4);
+  assert.equal(result.reasonSummary, count ? supplied[0] : null,
+    'First concrete observation becomes the summary, never a placeholder');
+  assert.equal(result.bullets.length, Math.max(0, expected - 1),
+    `Expected ${Math.max(0, expected - 1)} bullets after the summary for ${count} supplied`);
+  assert.deepEqual(Array.from(result.bullets, bullet => bullet.text), supplied.slice(1, 4),
+    'Summary must not be duplicated, and no padding or generic text should be appended');
 }
 
 // The template omits the reasons section when the list is empty.
