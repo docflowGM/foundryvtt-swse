@@ -76,7 +76,20 @@ test('MC-18 the goal answer is recorded with the exact text shown and declares n
 
 test('MC-16 neutral Q4 mapping: five curated families, recorded with rationale; each scenario is a general situation', () => {
   assert.deepEqual(Object.keys(pack.q4Neutral).sort(), ['jedi', 'noble', 'scoundrel', 'scout', 'soldier']);
-  for (const [d, m] of Object.entries(pack.q4Neutral)) { assert.ok(m.rationale && m.scenarioIds.length >= 6 && m.status === 'curated_pending_editorial_review'); assert.ok(m.scenarioIds.every((id) => pack.q4[id].destination === d && pack.q4[id].family === m.family)); }
+  for (const [d, m] of Object.entries(pack.q4Neutral)) { assert.ok(m.rationale && m.scenarioIds.length >= 5 && m.status === 'curated_pending_editorial_review'); assert.ok(m.scenarioIds.every((id) => pack.q4[id].destination === d && pack.q4[id].family === m.family)); }
   const a = mk(); a.choose('q1', 'mc.scout.q1.soldier.06', a.seq); a.choose('q3', 'mc.q3.dip', a.seq); const b = mk(); b.choose('q1', 'mc.scout.q1.soldier.06', b.seq); b.choose('q3', 'mc.q3.dip', b.seq);
   assert.equal(a.view().view.situation, b.view().view.situation, 'deterministic for the same seed');
+});
+
+test('MC-16 neutral scenes presume no skill, feat, talent, authority, position or past experience; excluded scenes are listed; an undecided Q1 contributes no specialization', () => {
+  const PRESUME = /\b(you(?:'re| are) (?:holding|commanding|leading|piloting|guarding|in command|in charge|the (?:leader|commander|captain))|your (?:squad|crew|patrol|team|unit|troops|soldiers|ship|command|group|companions?|allies)|you command|you lead|lightsaber|blaster|slic(?:e|ing)|disguise|demolition)/i;
+  for (const [d, m] of Object.entries(pack.q4Neutral)) {
+    assert.ok(m.scenarioIds.length >= 5, d);
+    for (const id of m.scenarioIds) assert.ok(!PRESUME.test(pack.q4[id].situation.text), `${id} presumes`);
+    for (const x of m.excludedScenarioIds) assert.ok(x.reason.startsWith('presumes:'));
+  }
+  assert.deepEqual(pack.q4Neutral.soldier.excludedScenarioIds.map((x) => x.id), ['q4.soldier.tactics.seed01']);
+  const ctl = mk(); ctl.choose('q1', 'mc.scout.q1.soldier.06', ctl.seq); ctl.choose('q3', 'mc.q3.dip', ctl.seq); ctl.choose('q4', ctl.view().view.options[0].optionId, ctl.seq);
+  assert.deepEqual(ctl.draft.answers.q1.meta.kind, 'neutral'); assert.ok(!('family' in (ctl.draft.answers.q4.meta || {})));
+  const done = ctl.finish(ctl.seq) || {}; assert.deepEqual(done.goals ?? [], []); assert.deepEqual(done.tagEvidence ?? [], []);
 });

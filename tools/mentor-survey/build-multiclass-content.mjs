@@ -199,7 +199,13 @@ const Q4_NEUTRAL = {
 };
 const q4Neutral = Object.fromEntries(Object.entries(Q4_NEUTRAL).map(([d, [family, rationale]]) => {
   if (!byFamily[d]?.[family]?.length) fail(`neutral Q4 family missing: ${d} ${family}`);
-  return [d, { family, scenarioIds: byFamily[d][family], rationale, status: 'curated_pending_editorial_review' }];
+  // Presumption scan (owner hardening 2026-11-16): a neutral scenario may not presume a skill, feat, talent, authority, position or past
+  // experience. "Master" is the droid Mentor's form of address, not an authority claim. Flagged scenes are excluded and listed.
+  const PRESUME = /\b(you(?:'re| are) (?:holding|commanding|leading|piloting|guarding|in command|in charge|the (?:leader|commander|captain))|your (?:squad|crew|patrol|team|unit|troops|soldiers|ship|command|group|companions?|allies)|you command|you lead|you have (?:a|an|the) (?:squad|crew|ship|post|authority)|you(?:'re| are) (?:a|an|the) (?:scout|soldier|noble|jedi|scoundrel)|\b(?:the )?Force\b|lightsaber|blaster|slic(?:e|ing)|disguise|demolition)/i;
+  const excluded = byFamily[d][family].map((id) => ({ id, hit: PRESUME.exec(q4[id].situation.text)?.[0] })).filter((x) => x.hit);
+  const pool = byFamily[d][family].filter((id) => !excluded.some((x) => x.id === id));
+  if (pool.length < 5) fail(`neutral Q4 pool for ${d} too small after the presumption scan`);
+  return [d, { family, scenarioIds: pool, excludedScenarioIds: excluded.map((x) => ({ id: x.id, reason: `presumes: "${x.hit}"` })), rationale, status: 'curated_pending_editorial_review' }];
 }));
 /* Origin lens (owner ruling MSV-RD-004): a survey-framing choice shown only when two or more foundation classes are owned. Drafts. */
 const CLASS_LABEL = { jedi: 'Jedi', noble: 'Noble', scoundrel: 'Scoundrel', scout: 'Scout', soldier: 'Soldier' };

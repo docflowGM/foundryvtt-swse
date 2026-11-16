@@ -119,7 +119,7 @@ test('PR-13 capstone and fulfillment answers are ordinary choices that declare n
   while (!c.view().view.options.some((o) => o.optionId === id.id)) assert.ok(c.more('q1', c.seq));
   assert.ok(c.choose('q1', id.id, c.seq));
   for (const [cls, sid] of Object.entries({ force_disciple: 'FD-UN00', jedi_knight: 'JK-ID03', jedi_master: 'JM-ID03', officer: 'OF-ID03', sith_apprentice: 'SA-ID03', sith_lord: 'SL-ID03' })) {
-    const n = q1q3.classes[cls].q1.answers.find((a) => a.kind === 'neutral'); assert.equal(n.sourceId, sid); assert.equal(n.neutralBasis, 'curated_from_source_heading');
+    const n = q1q3.classes[cls].q1.answers.find((a) => a.kind === 'neutral'); assert.equal(n.sourceId, sid); assert.equal(n.neutralBasis, 'owner_approved_neutral_2026_11_16'); assert.equal(n.editorialStatus, 'draft_text', 'only the classification is approved, not the line');
   }
 });
 

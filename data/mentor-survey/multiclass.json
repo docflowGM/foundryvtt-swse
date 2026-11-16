@@ -32925,6 +32925,7 @@
         "q4.noble.leadership.seed06",
         "q4.noble.leadership.seed07"
       ],
+      "excludedScenarioIds": [],
       "rationale": "Everyday coordination dilemmas (an evacuation, a search, a blackout); no title, rank or skill is assumed.",
       "status": "curated_pending_editorial_review"
     },
@@ -32939,6 +32940,7 @@
         "q4.jedi.consular.seed06",
         "q4.jedi.consular.seed07"
       ],
+      "excludedScenarioIds": [],
       "rationale": "Ordinary conversations about trust and mediation; no Force technique or lightsaber skill is assumed.",
       "status": "curated_pending_editorial_review"
     },
@@ -32953,13 +32955,13 @@
         "q4.scout.recon.seed06",
         "q4.scout.recon.seed07"
       ],
+      "excludedScenarioIds": [],
       "rationale": "Observation and reporting problems; no tracking, stealth or vehicle training is assumed.",
       "status": "curated_pending_editorial_review"
     },
     "soldier": {
       "family": "tactics",
       "scenarioIds": [
-        "q4.soldier.tactics.seed01",
         "q4.soldier.tactics.seed02",
         "q4.soldier.tactics.seed03",
         "q4.soldier.tactics.seed04",
@@ -32967,19 +32969,33 @@
         "q4.soldier.tactics.seed06",
         "q4.soldier.tactics.seed07"
       ],
+      "excludedScenarioIds": [
+        {
+          "id": "q4.soldier.tactics.seed01",
+          "reason": "presumes: \"You're holding\""
+        }
+      ],
       "rationale": "Plan and call decisions for a mixed squad; no weapon, armor or unarmed specialty is assumed.",
       "status": "curated_pending_editorial_review"
     },
     "scoundrel": {
       "family": "opportunist",
       "scenarioIds": [
-        "q4.scoundrel.opportunist.seed01",
         "q4.scoundrel.opportunist.seed02",
         "q4.scoundrel.opportunist.seed03",
         "q4.scoundrel.opportunist.seed04",
         "q4.scoundrel.opportunist.seed05",
-        "q4.scoundrel.opportunist.seed06",
-        "q4.scoundrel.opportunist.seed07"
+        "q4.scoundrel.opportunist.seed06"
+      ],
+      "excludedScenarioIds": [
+        {
+          "id": "q4.scoundrel.opportunist.seed01",
+          "reason": "presumes: \"blaster\""
+        },
+        {
+          "id": "q4.scoundrel.opportunist.seed07",
+          "reason": "presumes: \"your group\""
+        }
       ],
       "rationale": "Surprise complications in public places; no disguise, slicing or ship skill is assumed.",
       "status": "curated_pending_editorial_review"
