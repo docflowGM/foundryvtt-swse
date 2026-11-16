@@ -7,9 +7,10 @@
 
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
-// Reasons are evidence, not slots that must be filled. Render up to four
-// distinct, specific observations; zero through three are equally valid.
-const MAX_MENTOR_REASON_BULLETS = 4;
+// Reasons are evidence, not slots that must be filled. The summary is one
+// of the four possible observations and is removed from repeated bullets.
+// Zero through three observations are equally valid.
+const MAX_MENTOR_EVIDENCE_ITEMS = 4;
 
 const GENERIC_REASON_PATTERNS = [
   /fits your current (build|direction)/i,
@@ -134,7 +135,7 @@ function normalizeReasons(entry = {}) {
   ]);
   const fallbackBullets = uniqTexts(flattenReasonValues(entry.reasonBullets || entry.reasons || entry.reasonText || entry.reason || []))
     .filter(text => !isGenericReason(text));
-  const bullets = (preferredBullets.length ? preferredBullets : fallbackBullets).slice(0, MAX_MENTOR_REASON_BULLETS).map(decorateText);
+  const bullets = (preferredBullets.length ? preferredBullets : fallbackBullets).slice(0, MAX_MENTOR_EVIDENCE_ITEMS).map(decorateText);
 
   const cautions = collectReasons(entry, ['suggestion.cautions', 'cautionReasons', 'cautions'])
     .slice(0, 3).map(decorateText);
