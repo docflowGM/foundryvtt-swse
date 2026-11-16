@@ -75,6 +75,9 @@ for (const [id, set] of Object.entries(classesById)) {
 }
 
 /* ---------- join (exact id, class scope) ---------- */
+/* Neutral / undecided Q1 answer per class. Source ids containing NEUTRAL are neutral by name; six classes author theirs under another id (source heading
+ * "... and neutral"; text is an explicit "not decided / understand before choosing" statement). Curated and source-backed; reported for owner verification. */
+const CURATED_NEUTRAL = { force_disciple: 'FD-UN00', jedi_knight: 'JK-ID03', jedi_master: 'JM-ID03', officer: 'OF-ID03', sith_apprentice: 'SA-ID03', sith_lord: 'SL-ID03' };
 const QUAR = /quarantine[ds]?|not source certified|unverified|\brestricted\b|do not offer/i;
 const used = {};
 const q3ByClass = {};
@@ -103,19 +106,37 @@ const splitMentor = (l) => { const m = /^\*\*(.+?):\*\*\s*(.*)$/.exec(l || ''); 
 /* ---------- pack ---------- */
 const pack = { _meta: { survey: 'prestige', companion: 'q1q3', contentVersion: 1, sourceCommit: COMMIT, generatedBy: 'tools/mentor-survey/build-prestige-q1q3-content.mjs', note: 'Draft text only. Q3 answer ids are derived (<sceneId>-<letter>). No tag data, bias keys or ontology topics are imported.' }, classes: {} };
 const counts = {};
+const selectionReview = [];
 for (const c of classes) {
   const rows = P.rows.filter((r) => r.classByHeading === c.classId);
   const scenes = q3ByClass[c.classId] || [];
   const cand = P.candidates.filter((x) => x.classId === c.classId);
   const intro = cand.filter((x) => x.kind === 'intro'); const question = cand.filter((x) => x.kind === 'question');
+  /* MSV-RD-012 ruling: provisional editorial default = the opening labeled "preferred"; else the first primary "proposed"/unlabeled opening; its question = the one in the same section, else the class's first. Alternatives are kept. */
+  const notAlt = (x) => !/alternative|shorter|concise|warmer|capstone|voice|more |Candidate A/i.test(x.label || '');
+  const preferred = intro.filter((x) => /preferred/i.test(x.label || ''));
+  const proposed = intro.filter((x) => /proposed|fixed/i.test(x.label || x.heading || '') && notAlt(x));
+  const primary = intro.filter(notAlt);
+  const chosenIntro = preferred[0] || proposed[0] || primary[0] || null;
+  const sameSection = chosenIntro ? question.filter((q) => q.heading === chosenIntro.heading) : [];
+  const chosenQ = sameSection[0] || question[0] || null;
+  const flags = [];
+  if (preferred.length > 1) flags.push('multiple_preferred_openings');
+  if (!preferred.length && primary.length > 1) flags.push('no_preferred_label_several_primary');
+  if (question.length > 1) flags.push('multiple_question_candidates');
+  if (chosenIntro && chosenQ && chosenIntro.heading !== chosenQ.heading) flags.push('question_from_different_section');
+  selectionReview.push({ classId: c.classId, className: c.className, mentorRegistryKey: c.mentorRegistryKey, opening: chosenIntro && { id: `pr.${c.classId}.q1.intro.${chosenIntro.line}`, label: chosenIntro.label, line: chosenIntro.line, text: chosenIntro.text, basis: preferred[0] ? 'preferred_label' : proposed[0] ? 'proposed_primary' : 'first_primary' }, question: chosenQ && { id: `pr.${c.classId}.q1.question.${chosenQ.line}`, label: chosenQ.label, line: chosenQ.line, text: chosenQ.text }, alternativeOpenings: intro.length - 1, questionCandidates: question.length, flags, editorialApproval: 'provisional_default_not_approved' });
+  const mark = (list, chosen) => list.map((x) => ({ label: x.label, text: x.text, editorialStatus: 'draft_text', selection: x === chosen ? 'provisional_default' : 'alternative', sourceRef: ref(RD, x.line, x.heading) }));
   if (!intro.length || !question.length) ex.missingOpeningOrQuestion.push({ classId: c.classId, intro: intro.length, question: question.length });
   const answers = rows.map((r) => {
     const qm = QUAR.exec(r.rest || '') || QUAR.exec(r.heading || '');
     const sceneId = used[`${c.classId}:${r.id}`] || null;
+    const isNeutral = /NEUTRAL/.test(r.id) || CURATED_NEUTRAL[c.classId] === r.id;
     const rec = {
       id: `pr.${c.classId}.q1.${r.id.toLowerCase()}`, sourceId: r.id, text: r.text, editorialStatus: 'draft_text',
       mechanicsStatus: 'unverified_mechanic', q3SceneId: sceneId, sourceRef: ref(RD, r.line, r.heading),
     };
+    if (isNeutral) { rec.kind = 'neutral'; rec.neutralBasis = CURATED_NEUTRAL[c.classId] === r.id ? 'curated_from_source_heading' : 'source_id_name'; }
     if (qm) { rec.presentsMechanic = true; rec.quarantine = { marker: qm[0], note: 'marker detected in the source row or its heading; per-route flags live in an uncommitted JSON' }; ex.quarantinedRows.push({ classId: c.classId, sourceId: r.id, marker: qm[0], line: r.line }); }
     if (!isFirstPerson(r.text)) { rec.editorialIssue = 'not_first_person'; ex.editorialIssues.push({ kind: 'q1_not_first_person', classId: c.classId, sourceId: r.id, line: r.line }); }
     return rec;
@@ -131,8 +152,8 @@ for (const c of classes) {
   }));
   pack.classes[c.classId] = {
     q1: {
-      introCandidates: intro.map((x) => ({ label: x.label, text: x.text, editorialStatus: 'draft_text', selection: 'owner_choice_pending', sourceRef: ref(RD, x.line, x.heading) })),
-      questionCandidates: question.map((x) => ({ label: x.label, text: x.text, editorialStatus: 'draft_text', selection: 'owner_choice_pending', sourceRef: ref(RD, x.line, x.heading) })),
+      introCandidates: mark(intro, chosenIntro),
+      questionCandidates: mark(question, chosenQ),
       answers,
     },
     q3: { scenes: q3 },
@@ -142,6 +163,25 @@ for (const c of classes) {
 const total = (k) => Object.values(counts).reduce((a, c) => a + c[k], 0);
 pack._meta.counts = { classes: classes.length, q1Answers: total('q1Answers'), q1Quarantined: total('q1Quarantined'), q3Scenes: total('q3Scenes'), q3Answers: total('q3Answers'), q3RouteAssignments: total('q3RouteAssignments') };
 
+for (const c of classes) { const n = pack.classes[c.classId].q1.answers.filter((a) => a.kind === 'neutral'); if (n.length !== 1) ex.q3Structure.push({ kind: 'neutral_count', classId: c.classId, count: n.length }); }
+writeJson(path.join(ROOT, 'docs/design/mentor-survey-v2/14-prestige-q1-opening-selection.json'), selectionReview);
+const clip = (t) => String(t || '').slice(0, 70).replace(/\|/g, '/');
+const selRows = selectionReview.map((r) => ['', r.className, r.mentorRegistryKey, 'L' + r.opening?.line + ' ' + r.opening?.basis + ': "' + clip(r.opening?.text) + '..."', 'L' + r.question?.line + ': "' + clip(r.question?.text) + '..."', r.alternativeOpenings, r.questionCandidates, r.flags.join(', ') || 'none', r.editorialApproval, ''].join(' | ').trim());
+const selDoc = [
+  '# Prestige Q1 Opening and Question Selection (provisional defaults)',
+  '',
+  'Owner ruling MSV-RD-012 (2026-11-16): per class use the opening labeled preferred; else the first primary proposed opening; its question is the one in the same section. These are **provisional editorial defaults, not release approval**; alternatives are preserved. Generated by `build-prestige-q1q3-content.mjs`.',
+  '',
+  'Flagged rows need an individual look. Neutral answers: one per class; six classes author theirs under a non-NEUTRAL id (`curated_from_source_heading`: ' + Object.values(CURATED_NEUTRAL).join(', ') + ').',
+  '',
+  '| Class | Mentor | Opening (source line, basis) | Question (source line) | Alt. openings | Question cands. | Flags | Approval |',
+  '|---|---|---|---|---:|---:|---|---|',
+  ...selRows,
+  '',
+  'Question candidate count: **' + selectionReview.reduce((a, r) => a + r.questionCandidates, 0) + '** (one authored question per class). An earlier intermediate count of 35 in the first report was stale and is corrected here; a line-by-line scan of every class section found no uncaptured question variant.',
+  '',
+].join('\n');
+fs.writeFileSync(path.join(ROOT, 'docs/design/mentor-survey-v2/14-PRESTIGE-Q1-OPENING-SELECTION-REVIEW.md'), selDoc);
 /* ---------- roster check (Q3 doc's own table) ---------- */
 const roster = {};
 q3Lines.slice(26, 64).forEach((L) => { const m = /^\|\s*\d+\s*\|\s*([^|]+?)\s*\|[^|]*\|[^|]*\|\s*(\d+)\s*\|/.exec(L); if (m) roster[m[1]] = Number(m[2]); });
@@ -195,6 +235,13 @@ ${list(ex.crossClassIdReuse, (x) => `- \`${x.id}\` in ${x.classes.join(', ')} (s
 ${list(ex.quarantinedRows, (x) => `- ${x.classId} \`${x.sourceId}\` marker "${x.marker}" (line ${x.line})`)}
 
 > The quarantine here is detected from markers inside the source row or its heading. The source documents say per-route restriction flags are "preserved in the JSON", and that JSON is **not in Git**. Anything flagged only there is not detectable, so every Q1/Q3 record stays \`draft_text\` and \`unverified_mechanic\`, withheld from players, until that JSON or an owner ruling supplies the flags.
+
+### Quarantine reconciliation (source-backed; unknown flags stay unresolved)
+Grouped by class and source section. Evidence used: the marker in the authored row or its heading, and the independent tree audit and register entry MSV-RD-006 for tree-access questions. A missing companion JSON is not treated as proof the printed-rule question is unanswerable: each group below lists what would settle it. Nothing is guessed; every unlisted route stays \`unverified_mechanic\` and withheld.
+
+| Class | Source section | Rows (marker) | What would settle it | State |
+|---|---|---|---|---|
+${[...new Map(ex.quarantinedRows.map((x) => [x.classId + '|' + (P.rows.find((r) => r.line === x.line)?.heading || ''), []])).keys()].map((k) => { const [cid, h] = k.split('|'); const rows = ex.quarantinedRows.filter((x) => x.classId === cid && (P.rows.find((r) => r.line === x.line)?.heading || '') === h); return '| ' + cid + ' | ' + h.replace(/\|/g, '/') + ' | ' + rows.map((r) => r.sourceId + ' (' + r.marker + ')').join(', ') + ' | printed talent identity and tree membership in the canonical tree registry (see talent-phase-1d audits and MSV-RD-006) | unresolved |'; }).join('\n')}
 
 ### Source-recovery exceptions (unparseable records)
 ${list([...ex.q3Structure, ...ex.routeCountMismatch, ...ex.missingOpeningOrQuestion, ...ex.editorialIssues], (x) => `- ${JSON.stringify(x)}`)}

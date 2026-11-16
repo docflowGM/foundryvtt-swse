@@ -43,15 +43,16 @@ test('MC-14 Q6 import: five Mentor frames, 170 Pass A variants, 10 claim kinds x
 
 test('SV-07/SV-26 every player-selectable Q6 text is first person and leak free; all of it is draft until approved', () => {
   const player = [...q6.playerChoices, ...Object.values(q6.negatives).flat(), ...q6.freeStanding, ...q6.identityChoices.flatMap((r) => [r.not, r.am])];
-  // The design's own example for answer B is second person ("Much of what you see is true..."). It is imported verbatim and
-  // FLAGGED by the importer, not rewritten (MSV-RD-011); everything else must pass the first-person validator.
-  const flagged = player.filter((r) => r.editorialIssue);
-  assert.deepEqual(flagged.map((r) => r.id), ['mc.q6.choice.b']);
+  // Answer B: the design example was second person; the owner ruled replacement wording (MSV-RD-011). Id, meaning and provenance are kept.
+  const B = q6.playerChoices.find((p) => p.calibration === 'B');
+  assert.equal(B.id, 'mc.q6.choice.b'); assert.equal(B.text, "I recognize much of what you've described, but I want to correct one or two details.");
+  assert.equal(B.editorialStatus, 'owner_approved_text'); assert.equal(B.ownerRuling, 'MSV-RD-011'); assert.match(B.originalText, /^Much of what you see is true/); assert.ok(B.sourceRef);
+  assert.ok(S.isFirstPerson(B.text)); assert.ok(!B.editorialIssue);
+  assert.deepEqual(player.filter((r) => r.editorialIssue), []);
   const filled = (r) => ({ ...r, text: r.text.replace(/\{\w+\}/g, 'something') }); // slot templates are validated as they will read once filled
-  assert.deepEqual(player.filter((r) => !r.editorialIssue).map(filled).flatMap((r) => S.validateResponseRecord(r)), []);
+  assert.deepEqual(player.map(filled).flatMap((r) => S.validateResponseRecord(r)), []);
   assert.ok(Object.values(q6.negatives).flat().filter((r) => r.hasSlots).length === 10, 'slot-bearing templates are flagged');
-  assert.deepEqual(S.validateResponseRecord(flagged[0]).map((p) => /first person/.test(p)), [false, true].slice(1), 'the validator itself reports the flaw');
-  assert.ok(player.every((r) => r.editorialStatus === 'draft_text'));
+  assert.ok(player.every((r) => r.editorialStatus === (r.id === 'mc.q6.choice.b' ? 'owner_approved_text' : 'draft_text')));
   assert.ok(q6.playerChoices.every((p) => !/%|0\.\d|band/i.test(p.text)), 'no percentages or band language in the A-E answers');
 });
 

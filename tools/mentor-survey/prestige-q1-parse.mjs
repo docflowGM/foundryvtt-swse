@@ -30,11 +30,11 @@ export function parseQ1(lines, classNames, firstLine = 700) {
     if (curClass && introArmed) {
       let label = null; let text = null;
       const bq = /^>\s*(?:\*\*([^*]+?):\*\*\s*)?(\S.*)$/.exec(L);
-      const bl = /^\*\*([^*]+?):\*\*\s*(\S.*)$/.exec(L);
+      const bl = /^(?:-\s+)?\*\*([^*]+?):\*\*\s*(\S.*)$/.exec(L);
       if (bq) { label = bq[1] || (lastLabel && /alternative|preferred|candidate/i.test(lastLabel) ? lastLabel : null); text = bq[2]; } else if (bl) { label = bl[1]; text = bl[2]; lastLabel = label; }
       else if (/^\*\*[^*]+:\*\*\s*$/.test(L)) lastLabel = L.replace(/^\*\*|:\*\*\s*$/g, '');
-      const okLabel = label === null || /question|prompt|^Q1\b|intro|opening|alternative|preferred|line|player-facing|candidate/i.test(label);
-      if (text && okLabel && !/guardrail|speech|source|do not|note|status|tone/i.test(label || '')) {
+      const okLabel = !!bq || label === null || /question|prompt|^Q1\b|intro|opening|alternative|preferred|line|player-facing|candidate|concise|shorter|warmer|capstone|voice|more /i.test(label);
+      if (text && okLabel && !/guardrail|speech|source|do not|note|status|\btone\b|constraint|rule|check/i.test(label || '')) {
         const clean = text.replace(/^[“"]|[”"]$/g, '').trim();
         const isQ = /question|prompt|^Q1\b|player-facing/i.test(label || '') || (/\?$/.test(clean) && /^(As an? |Now that )/.test(clean));
         if (/^[“"A-Za-z<]/.test(clean) && clean.length > 20) cand.push({ classId: curClass, kind: isQ ? 'question' : 'intro', label: label || null, line: i + 1, heading: headingText, text: clean });

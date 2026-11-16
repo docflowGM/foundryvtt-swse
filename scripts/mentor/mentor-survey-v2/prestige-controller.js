@@ -1,6 +1,6 @@
 /** Prestige adapter for the generic SurveyController. Question selection lives in resolvers/prestige.js. */
 import { SurveyController } from './survey-controller.js';
-import { createPrestigeFlow, prestigeAvailability, resolvePrestigeQuestion, prestigeSelectionMeta, prestigeTyped, prestigeTrigger, q1Offerable, Q1_PAGE_SIZE } from './resolvers/prestige.js';
+import { createPrestigeFlow, prestigeAvailability, resolvePrestigeQuestion, prestigeSelectionMeta, prestigeTyped, prestigeTrigger, q1Split, Q1_PAGE_SIZE } from './resolvers/prestige.js';
 
 export function buildRecordIndex(pack) {
   const idx = new Map();
@@ -27,7 +27,7 @@ export function createPrestigeAdapter(knownClassIds) {
     availability: prestigeAvailability,
     resolveQuestion: ({ pack, draft, qid, ctx, preview, pageIndex }) => resolvePrestigeQuestion({ pack, draft, qid, ctx, preview, pageIndex }),
     selectionMeta: prestigeSelectionMeta,
-    browseSeen: (pack, draft, qid, nextPage, ctx) => q1Offerable(pack, ctx.destinationClassId).slice(0, (nextPage + 1) * Q1_PAGE_SIZE).map((a) => a.id),
+    browseSeen: (pack, draft, qid, nextPage, ctx) => q1Split(pack, ctx.destinationClassId).substantive.slice(0, (nextPage + 1) * Q1_PAGE_SIZE).map((a) => a.id),
     goals: () => [], // no prestige answer declares a goal; a goal needs the explicit Discover/Explore/Affirm confirmation (MSV-RD-010)
     typed: prestigeTyped,
   });

@@ -8,9 +8,7 @@
     },
     "generatedBy": "tools/mentor-survey/build-multiclass-q6-content.mjs",
     "counts": {
-      "editorialIssues": [
-        "mc.q6.choice.b"
-      ],
+      "editorialIssues": [],
       "mentors": 5,
       "frames": 45,
       "clauseVariants": 170,
@@ -38,8 +36,8 @@
     },
     {
       "id": "mc.q6.choice.b",
-      "text": "Much of what you see is true, though some of it is not quite right.",
-      "editorialStatus": "draft_text",
+      "text": "I recognize much of what you've described, but I want to correct one or two details.",
+      "editorialStatus": "owner_approved_text",
       "mechanicsStatus": "none",
       "sourceRef": {
         "commit": "1d56ae4279c53fa2f1a7ead2c312b4ef73ec7e79",
@@ -48,7 +46,8 @@
       },
       "kind": "calibration",
       "calibration": "B",
-      "editorialIssue": "not_first_person"
+      "originalText": "Much of what you see is true, though some of it is not quite right.",
+      "ownerRuling": "MSV-RD-011"
     },
     {
       "id": "mc.q6.choice.c",

@@ -80,7 +80,10 @@ test('PR-15 no tag, bias key, ontology topic or developer note is imported; ever
   for (const id of IDS) {
     const k = q1q3.classes[id];
     for (const r of [...k.q1.answers, ...k.q3.scenes.flatMap((s) => s.answers), ...k.q1.introCandidates, ...k.q1.questionCandidates]) { assert.equal(r.editorialStatus, 'draft_text'); assert.notEqual(r.mechanicsStatus, 'certified_mechanic'); }
-    for (const c of [...k.q1.introCandidates, ...k.q1.questionCandidates]) assert.equal(c.selection, 'owner_choice_pending');
+    for (const c of [...k.q1.introCandidates, ...k.q1.questionCandidates]) assert.ok(['provisional_default', 'alternative'].includes(c.selection));
+    assert.equal(k.q1.introCandidates.filter((c) => c.selection === 'provisional_default').length, 1, `${id} one provisional opening`);
+    assert.equal(k.q1.questionCandidates.filter((c) => c.selection === 'provisional_default').length, 1, `${id} one provisional question`);
+    assert.equal(k.q1.answers.filter((a) => a.kind === 'neutral').length, 1, `${id} exactly one neutral answer`);
   }
   for (const r of S.validateResponseRecord ? [...P.buildRecordIndex(pack).values()].filter((x) => /\.q[13]\./.test(x.id)).flatMap((x) => S.validateResponseRecord(x)) : []) assert.fail(String(r));
 });
@@ -97,14 +100,27 @@ test('PR-10/PR-15 quarantined mechanics (35 marker-flagged rows) are never offer
   assert.equal(R.q1Offerable(pack, 'sith_lord').length, 89 - 13);
 });
 
-test('PR-12 Q1 browses in deterministic source order, eight per page, with no ranking and no selection from the actor', () => {
+test('PR-12/PR-13 Q1 shows six substantive answers per page in stable source order plus the neutral answer on every page; nothing is truncated or ranked', () => {
   const a = start('gladiator'); const b = start('gladiator');
   const va = a.view().view; const vb = b.view().view;
-  assert.deepEqual(va.options, vb.options); assert.equal(va.questionId, 'q1'); assert.equal(va.options.length, 8);
-  assert.deepEqual(va.options.map((o) => o.optionId), q1q3.classes.gladiator.q1.answers.slice(0, 8).map((x) => x.id));
-  assert.deepEqual(Object.keys(va.options[0]).sort(), ['optionId', 'text']);
-  let pages = 1; while (a.view().view.page?.hasMore) { assert.ok(a.more('q1', a.seq)); pages += 1; }
-  assert.equal(pages, Math.ceil(R.q1Offerable(pack, 'gladiator').length / 8));
+  assert.deepEqual(va.options, vb.options); assert.equal(va.questionId, 'q1'); assert.equal(va.options.length, 7);
+  const bank = q1q3.classes.gladiator.q1.answers; const neutral = bank.find((x) => x.kind === 'neutral');
+  assert.deepEqual(va.options.map((o) => o.optionId), [...bank.filter((x) => x.kind !== 'neutral').slice(0, 6).map((x) => x.id), neutral.id]);
+  assert.equal(va.options.at(-1).kind, 'neutral'); assert.deepEqual(Object.keys(va.options[0]).sort(), ['optionId', 'text']);
+  const seen = new Set(); let pages = 1;
+  for (;;) { a.view().view.options.forEach((o) => seen.add(o.optionId)); if (!a.view().view.page?.hasMore) break; assert.ok(a.more('q1', a.seq)); pages += 1; assert.equal(a.view().view.options.at(-1).optionId, neutral.id, 'neutral stays reachable on every page'); }
+  assert.equal(seen.size, R.q1Offerable(pack, 'gladiator').length, 'every offerable route is reachable');
+  assert.equal(pages, Math.ceil((R.q1Offerable(pack, 'gladiator').length - 1) / 6));
+});
+
+test('PR-13 capstone and fulfillment answers are ordinary choices that declare no goal; the six classes with non-NEUTRAL ids still expose one neutral', () => {
+  const c = start('jedi_knight');
+  const id = q1q3.classes.jedi_knight.q1.answers.find((a) => a.sourceId === 'JK-ID02');
+  while (!c.view().view.options.some((o) => o.optionId === id.id)) assert.ok(c.more('q1', c.seq));
+  assert.ok(c.choose('q1', id.id, c.seq));
+  for (const [cls, sid] of Object.entries({ force_disciple: 'FD-UN00', jedi_knight: 'JK-ID03', jedi_master: 'JM-ID03', officer: 'OF-ID03', sith_apprentice: 'SA-ID03', sith_lord: 'SL-ID03' })) {
+    const n = q1q3.classes[cls].q1.answers.find((a) => a.kind === 'neutral'); assert.equal(n.sourceId, sid); assert.equal(n.neutralBasis, 'curated_from_source_heading');
+  }
 });
 
 test('PR-12 Q3 is the scene whose exact route list contains the chosen Q1 answer; changing Q1 invalidates Q3 without silent replacement', () => {
@@ -128,12 +144,13 @@ test('PR-12 skipping Q1 leaves Q3 unaskable (nothing is guessed), and a skipped 
   assert.equal(R.resolvePrestigeQuestion({ pack, draft: { answers: {} }, qid: 'q3', ctx: { destinationClassId: 'officer' }, preview: true }).reason, 'not_applicable');
 });
 
-test('SV-09/PR-16 players never see Q1/Q3: draft text and an unselected opening are unavailable outside the GM editorial preview', () => {
-  for (const qid of ['q1']) assert.equal(R.resolvePrestigeQuestion({ pack, draft: { answers: {} }, qid, ctx: { destinationClassId: 'ace_pilot' }, preview: false }).reason, 'needs_owner_selection');
+test('SV-09/PR-16 players never see Q1/Q3: provisional draft text is unavailable outside the GM editorial preview', () => {
+  for (const qid of ['q1']) assert.equal(R.resolvePrestigeQuestion({ pack, draft: { answers: {} }, qid, ctx: { destinationClassId: 'ace_pilot' }, preview: false }).reason, 'unapproved_content');
   const noPreview = start('ace_pilot', { preview: false });
   assert.equal(noPreview.view().phase, 'unavailable', 'every prestige scope is withheld in the release manifest');
-  assert.equal(R.pickCandidate([{ selection: 'owner_choice_pending', text: 'a' }, { selection: 'owner_selected', text: 'b' }], false).text, 'b');
-  assert.equal(R.pickCandidate([{ selection: 'owner_choice_pending', text: 'a' }], false), null);
+  assert.equal(R.pickCandidate([{ selection: 'provisional_default', text: 'a' }, { selection: 'owner_selected', text: 'b' }]).text, 'b');
+  assert.equal(R.pickCandidate([{ selection: 'alternative', text: 'a' }, { selection: 'provisional_default', text: 'p' }]).text, 'p');
+  assert.equal(R.pickCandidate([{ selection: 'alternative', text: 'a' }]), null);
 });
 
 test('PR-16 a full Q1 to Q5 run commits as a preview, incomplete survey: Q2 and Q6 unavailable are recorded, never silently complete', () => {

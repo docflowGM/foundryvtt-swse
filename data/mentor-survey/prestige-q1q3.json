@@ -23,7 +23,7 @@
             "label": "Candidate A (preserve previous draft)",
             "text": "Look at you. You've done the work to qualify as an ace. Not bad. Just remember, the title won't take the controls for you. So what kind of ace do you want to be?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -35,7 +35,7 @@
             "label": "Candidate B (preferred editorial revision)",
             "text": "Well, look at that. You've earned your shot at being an ace. Doesn't mean there's only one way to fly, though. So tell me - what do you want to be known for?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -49,7 +49,7 @@
             "label": "Q1 (draft)",
             "text": "Now that you've reached the threshold of Ace Pilot, what part of the role do you want to make your own?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -519,7 +519,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 803,
               "heading": "11.8 Optional character-identity answers (NOT separate class talent trees)"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -1013,11 +1015,35 @@
             "label": null,
             "text": "You’ve met the requirements. That tells me you have the training. It doesn’t tell me how you intend to use it. A successful hunt is decided long before the first shot. So tell me—what part of the work do you intend to master?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 901,
+              "heading": "13.2 Kex Varon — fixed Q1 Mentor opening (DRAFT)"
+            }
+          },
+          {
+            "label": "More concise",
+            "text": "Qualifications are one thing. A method is another. Good hunters know how they intend to finish the job. Which part of the work will you master?",
+            "editorialStatus": "draft_text",
+            "selection": "alternative",
+            "sourceRef": {
+              "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+              "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
+              "line": 906,
+              "heading": "13.2 Kex Varon — fixed Q1 Mentor opening (DRAFT)"
+            }
+          },
+          {
+            "label": "More capstone-oriented",
+            "text": "You have earned the right to call this your profession. Whether it becomes the work of a lifetime is your decision. What kind of hunter will you be?",
+            "editorialStatus": "draft_text",
+            "selection": "alternative",
+            "sourceRef": {
+              "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+              "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
+              "line": 907,
               "heading": "13.2 Kex Varon — fixed Q1 Mentor opening (DRAFT)"
             }
           }
@@ -1027,7 +1053,7 @@
             "label": "Player question (DRAFT)",
             "text": "As you take on the role of Bounty Hunter, what kind of expertise do you want to develop?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -1637,7 +1663,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 994,
               "heading": "13.3 Player-selectable Q1 response bank — ALL DRAFT"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -2141,7 +2169,7 @@
             "label": "Preferred Tío fixed introduction — PROPOSED",
             "text": "Ahh, now we're getting somewhere. You've earned a seat at the table, my friend. But power comes in different currencies—fear, favors, loyal people, a well-timed word. So tell Tío: which one do you intend to make yours?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -2153,7 +2181,7 @@
             "label": "Alternative A — warmer, more amused",
             "text": "Heh. Look who's ready to stop taking orders and start making the deals. A title doesn't make an empire, kid. Knowing how to use people, promises, and opportunities? That's worth something. Which part appeals to you?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -2165,7 +2193,7 @@
             "label": "Alternative B — sparer, slower authority",
             "text": "You've earned the opportunity. Good. Some bosses rule by reputation, some by persuasion, and some by having the right people in the right places. There's profit in all three. Which interests you?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -2179,7 +2207,7 @@
             "label": "Shared Q1 player-facing question — PROPOSED",
             "text": "Now that you've reached the Crime Lord's threshold, what kind of influence do you want to cultivate?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -2663,7 +2691,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 1131,
               "heading": "14.3 Complete candidate answer library"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -3158,7 +3188,7 @@
             "label": "Preferred introduction (DRAFT)",
             "text": "Well, you made it this far. Good. Elite training gives you a few ways to get the job done: hit harder, stay standing, work smarter, or keep somebody else alive. Which one's worth your time?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -3170,7 +3200,7 @@
             "label": "Alternative A (warmer, understated teasing)",
             "text": "All right. You've earned a shot at the tough stuff. I'd say I'm impressed, but you'll get a big head. Now, what do you actually want to get better at?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -3182,7 +3212,7 @@
             "label": "Alternative B (professional and concise)",
             "text": "You've reached the standard for elite training. That matters. The real question is what kind of fighter you choose to become. What's your priority?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -3196,7 +3226,7 @@
             "label": "Player-facing Q1 text (DRAFT)",
             "text": "As an Elite Trooper, what kind of combat expertise do you want to make your own?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -4072,7 +4102,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 1341,
               "heading": "15.3 Player answers - 59 talent-focused candidates + 3 cross-tree identity and neutral responses"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -4595,7 +4627,7 @@
             "label": null,
             "text": "There are many ways to listen to the Force, and you have come far enough to walk one of them more deeply. Some seek understanding, others protection, and some choose paths I would not choose myself. None of that tells me what *you* hope to learn. Which part of this calling draws you?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -4607,7 +4639,7 @@
             "label": "Alternative, shorter Vera line",
             "text": "You have reached a place few find by following another person's map. The Force offers more than one way forward, and it need not lead you into another order. Tell me, what calls to you now?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -4621,7 +4653,7 @@
             "label": "Proposed player-facing question",
             "text": "As a Force Adept, what part of your connection to the Force do you want to deepen?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -5209,7 +5241,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 1482,
               "heading": "16.4 Class-feature and identity choices (four additional answers)"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -5710,7 +5744,7 @@
             "label": null,
             "text": "Mm. The threshold is real. Beyond it lie secrets that change how the Force answers, visions that unsettle destiny, and disciplines older than any name. Not every door should be opened. Which one calls to you?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -5722,7 +5756,7 @@
             "label": "Editorial alternative, shorter",
             "text": "Mm. Your path has reached a threshold. The Force has more doors than names, and each opens differently. Which do you choose to approach?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -5736,7 +5770,7 @@
             "label": "Q1",
             "text": "As a Force Disciple, what part of your understanding or command of the Force would you most like to deepen?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -6487,7 +6521,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 1668,
               "heading": "17.3 Candidate Q1 answer library"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "curated_from_source_heading"
           }
         ]
       },
@@ -7000,7 +7036,7 @@
             "label": "Preferred introduction — DRAFT",
             "text": "Well, look who's earned a place among the quick draws. Nice. A pistol in the right hands can end a fight, save a life, or make one spectacular entrance. Me? I like having options. So tell me—what kind of Gunslinger are you going to be?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -7012,7 +7048,7 @@
             "label": "Alternative A — shorter",
             "text": "Look at you. Fast hands, a sharp eye, and room to become dangerous. There's more to this than drawing first, you know. What's your kind of gunfight?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -7024,7 +7060,7 @@
             "label": "Alternative B — more playful",
             "text": "So, you've reached the part where style starts counting as a survival skill. Try not to smile too much. Tell me what you're after: the perfect shot, the faster draw, or something cleverer?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -7038,7 +7074,7 @@
             "label": "Question",
             "text": "As a Gunslinger, what part of the craft do you want to make your own?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -7836,7 +7872,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 1837,
               "heading": "18.3 Complete first-pass candidate answers (first-person)"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -8352,7 +8390,7 @@
             "label": "Preferred intro (DRAFT, no assumed former-master relationship)",
             "text": "You have come far enough to stand at the threshold of Knighthood. The trust placed in a Jedi Knight is not a command to become only one thing. Some stand between danger and the vulnerable. Others heal, seek truth, teach, or prevent a conflict before it begins. Which part of this responsibility calls you to grow?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -8364,7 +8402,7 @@
             "label": null,
             "text": "Knighthood is not a single path, nor is it merely a step toward another title. You have earned the right to choose how you will serve. Tell me what you wish to cultivate.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -8378,7 +8416,7 @@
             "label": "Prompt (DRAFT)",
             "text": "As a Jedi Knight, which kind of service or discipline do you want to deepen?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -9758,7 +9796,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 2115,
               "heading": "19.5 Identity, lifelong Knighthood and neutral answers"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "curated_from_source_heading"
           }
         ]
       },
@@ -10314,10 +10354,22 @@
       "q1": {
         "introCandidates": [
           {
+            "label": "Miraj",
+            "text": "The title of Master does not end the need to learn. It deepens our responsibility for what our choices teach. Some find their purpose in guiding others, some in understanding the Force, and some in knowing when not to act. Tell me—which part of Mastery calls you to grow?",
+            "editorialStatus": "draft_text",
+            "selection": "provisional_default",
+            "sourceRef": {
+              "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+              "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
+              "line": 2160,
+              "heading": "20.2 Miraj Q1 introduction — preferred candidate (DRAFT)"
+            }
+          },
+          {
             "label": "Alternative, shorter",
             "text": "You have reached a place of trust, not certainty. A Master still chooses how to serve. Which discipline will you carry further?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -10331,7 +10383,7 @@
             "label": "Q1",
             "text": "As a Jedi Master, what aspect of your discipline or responsibility do you wish to deepen?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -11432,7 +11484,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 2304,
               "heading": "20.3 Candidate Q1 library"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "curated_from_source_heading"
           }
         ]
       },
@@ -11970,11 +12024,23 @@
             "label": "Preferred proposed Korr intro",
             "text": "The qualifications are earned. The responsibility is not yet discharged. An officer's judgment determines where people stand, what risks they take, and which orders they trust. There is more than one way to command. Which discipline will you make your own?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 2367,
+              "heading": "21.2 Admiral Korr voice authority and proposed Q1 introduction (DRAFT)"
+            }
+          },
+          {
+            "label": "Alternate A — shorter",
+            "text": "You have earned the right to lead. That is not the same as earning trust. Decisions, protection, strategy, and morale all have their place. Which will you strengthen?",
+            "editorialStatus": "draft_text",
+            "selection": "alternative",
+            "sourceRef": {
+              "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+              "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
+              "line": 2371,
               "heading": "21.2 Admiral Korr voice authority and proposed Q1 introduction (DRAFT)"
             }
           }
@@ -11984,7 +12050,7 @@
             "label": "Q1",
             "text": "As an Officer, what kind of leadership or operational skill do you want to develop?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -12865,7 +12931,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 2479,
               "heading": "21.5 Identity, terminal prestige, and neutral — 3 (OF-ID01–03)"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "curated_from_source_heading"
           }
         ]
       },
@@ -13388,7 +13456,7 @@
             "label": "Preferred Q1 line",
             "text": "So. You have earned a place among the Sith. A title is nothing without the strength to keep it. Will you sharpen your blade, bend minds, make servants of your enemies—or learn to turn your own pain into power? Choose. I dislike hesitation.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -13400,7 +13468,7 @@
             "label": "Shorter alternative",
             "text": "You survived the threshold. Do not confuse that with victory. What will you make of the power before you?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -13414,7 +13482,7 @@
             "label": "Question",
             "text": "As a Sith Apprentice, what form of power or discipline do you intend to master?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -14239,7 +14307,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 2642,
               "heading": "22.2 Sith Apprentice — complete Q1 player answer library"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "curated_from_source_heading"
           }
         ]
       },
@@ -14758,7 +14828,7 @@
             "label": "Preferred Q1 line",
             "text": "You have reached the threshold of Sith Lord. A blade can end a life. A secret can outlast a century. The Force can make others mistake your will for their own. Titles do none of this. Decide which mastery will endure when you are gone.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -14770,7 +14840,7 @@
             "label": "Shorter alternative",
             "text": "Authority is not declared. It is demonstrated. Choose the discipline that will make your will unavoidable.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "alternative",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -14784,7 +14854,7 @@
             "label": "Question",
             "text": "As a Sith Lord, which part of your power or influence will you bring under greater control?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -16103,7 +16173,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 2835,
               "heading": "23.2 Sith Lord — complete Q1 player answer library"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "curated_from_source_heading"
           }
         ]
       },
@@ -16653,7 +16725,7 @@
             "label": null,
             "text": "Corporate authority. A comforting phrase, until somebody asks you to make a decision. Your employer gives you access; it doesn't give you judgment. Are you here to lead people, build connections, or make competitors hesitate? Spare me the slogan.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -16667,7 +16739,7 @@
             "label": "Core prompt",
             "text": "As a Corporate Agent, what kind of professional influence do you want to develop?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -17081,7 +17153,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 2982,
               "heading": "Identity / neutral — 3 answers"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -17571,7 +17645,7 @@
             "label": null,
             "text": "Ah, the arena. I've seen a match teach the same lesson twice. Not many fighters enjoy the second one. You've reached the threshold; what would you rather master—staying alive, reading the next move, or giving the crowd something worth remembering?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -17585,7 +17659,7 @@
             "label": "Core prompt",
             "text": "As a Gladiator, what part of arena fighting do you want to make your own?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -17957,7 +18031,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3044,
               "heading": "Identity / neutral — 3 answers"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -18444,7 +18520,7 @@
             "label": null,
             "text": "A duel is not won by reputation. It is decided by distance, timing, and the choices made when another fighter moves. You have earned the chance to study this craft. Which part will you train until it no longer demands thought?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -18458,7 +18534,7 @@
             "label": "Core prompt",
             "text": "As a Melee Duelist, what kind of close-combat expertise do you want to perfect?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -19082,7 +19158,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3124,
               "heading": "Identity / neutral — 3 answers"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -19587,7 +19665,7 @@
             "label": null,
             "text": "Got an organization behind you. Fine. That means nothing if you can't handle the next problem. You want to track somebody down, bring them in, or make sure they don't try anything? Pick what works.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -19601,7 +19679,7 @@
             "label": "Q1",
             "text": "As an Enforcer, which kind of investigative or enforcement expertise do you intend to develop?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -19833,7 +19911,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3194,
               "heading": "1. Enforcer - Krag the Immovable"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -20310,7 +20390,7 @@
             "label": null,
             "text": "<Diagnostic: Independence confirmed.> Your former specifications describe a function. They do not determine your next decision. Will you defend your autonomy, modify your systems, or surpass the limits of your model? Choose deliberately.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -20324,7 +20404,7 @@
             "label": "Q1",
             "text": "As an Independent Droid, how do you intend to develop beyond your original programming?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -20654,7 +20734,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3262,
               "heading": "2. Independent Droid - Seraphim"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -21138,7 +21220,7 @@
             "label": null,
             "text": "Nice. You made it into a profession where nobody's supposed to remember your face. So what're we working on: getting inside, staying unnoticed, learning their secrets, or dropping a guard before the alarm goes off?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -21152,7 +21234,7 @@
             "label": "Q1",
             "text": "As an Infiltrator, which part of covert operations do you want to master?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -21608,7 +21690,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3344,
               "heading": "3. Infiltrator - Delta"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -22101,7 +22185,7 @@
             "label": null,
             "text": "Ah, now that is a profession with a lovely reputation: respectable to whoever hires you, pirate to whoever you stop. Tell me—will you master the boarding action, preserve a prize worth taking, or make your crew's name carry farther than the ship?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -22115,7 +22199,7 @@
             "label": "Q1",
             "text": "As a Master Privateer, what kind of raiding or command expertise do you intend to develop?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -22669,7 +22753,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3432,
               "heading": "4. Master Privateer - The Captain"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -23169,7 +23255,7 @@
             "label": null,
             "text": "Welcome to the part of the job where somebody else's bad day becomes your emergency. You can learn to work faster, save someone the others have given up on, or keep your hands steady while the room falls apart. Which skill needs the training?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -23183,7 +23269,7 @@
             "label": "Q1",
             "text": "As a Medic, what kind of healing or emergency-care expertise do you want to develop?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -23499,7 +23585,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3497,
               "heading": "5. Medic - Kyber"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -23982,7 +24070,7 @@
             "label": null,
             "text": "Good sabotage doesn't break everything. It breaks the one thing that makes everything else work. Want to cut a circuit, reshape a blast, assemble a turret, or make their whole operation stumble? Let's choose the interesting failure point.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -23996,7 +24084,7 @@
             "label": "Q1",
             "text": "As a Saboteur, what kind of disruption or technical expertise do you want to master?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -24606,7 +24694,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3589,
               "heading": "6. Saboteur - Spark"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -25110,7 +25200,7 @@
             "label": null,
             "text": "Someone in authority wants you caught. Congratulations - they finally admitted you matter. You can run, disappear, outsmart them, or turn their own pursuit against them. So tell me: which part of staying free are you going to make an art?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -25124,7 +25214,7 @@
             "label": "Q1",
             "text": "Now that you have earned a place among the outlaws, how do you want to protect your freedom?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -25610,7 +25700,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3698,
               "heading": "27.2 Outlaw - Rogue"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -26103,7 +26195,7 @@
             "label": null,
             "text": "<Assessment: Command eligibility confirmed.> A unit is not effective because its orders are loud. It is effective because information, timing, and support reach the right droids. Identify your priority: coordination, resilience, or decisive action.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -26117,7 +26209,7 @@
             "label": "Question",
             "text": "As a Droid Commander, which command function do you intend to develop?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -26545,7 +26637,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3808,
               "heading": "28.2 Droid Commander — General Axiom (30 Q1 draft answers)"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -27036,7 +27130,7 @@
             "label": null,
             "text": "An army does not fail only when its soldiers fall. It fails when a vehicle stops, a route closes, or one component breaks at the wrong moment. Those are engineering problems. Choose the problem you intend to solve first.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -27050,7 +27144,7 @@
             "label": "Question",
             "text": "As a Military Engineer, which form of battlefield engineering do you intend to perfect?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -27310,7 +27404,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3864,
               "heading": "28.3 Military Engineer — Chief Engineer Rax (18 Q1 draft answers)"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -27789,7 +27885,7 @@
             "label": null,
             "text": "The first line of defense begins before the enemy reaches us. Someone must find the danger, remain unseen, and get the warning home. You have earned a place at that edge. Which duty will you sharpen?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -27803,7 +27899,7 @@
             "label": "Question",
             "text": "As a Vanguard, what part of forward reconnaissance do you want to master?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -28147,7 +28243,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 3933,
               "heading": "28.4 Vanguard — Shield Captain Theron (24 Q1 draft answers)"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -28632,7 +28730,7 @@
             "label": null,
             "text": "The hand that reaches for a weapon has one answer. The empty hand has many. You have earned the right to study beyond the foundations. Will you train your sight, your movement, your hold, or the strike that ends a struggle? Choose with care.",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -28646,7 +28744,7 @@
             "label": "Q1",
             "text": "As a Martial Arts Master, which discipline of the empty hand do you want to deepen?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -29032,7 +29130,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 4042,
               "heading": "29.3 First-person candidate bank"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -29520,7 +29620,7 @@
             "label": null,
             "text": "Your oath gives your service its direction; it does not decide every action you will take. An Imperial Knight must guard with judgment, not merely obey with a blade. Will you deepen your defense, your lightsaber discipline, your care for those beside you, or your command of the Force?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -29534,7 +29634,7 @@
             "label": "Q1",
             "text": "As an Imperial Knight, which duty or discipline will you strengthen first?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -30214,7 +30314,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 4175,
               "heading": "30.3 First-person talent candidate bank"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -30723,7 +30825,7 @@
             "label": null,
             "text": "A living tool does not remain what it was yesterday. Neither does its maker. You have earned the discipline to shape what grows and heals—and what changes another being. Which of those responsibilities will you learn to carry with precision?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -30737,7 +30839,7 @@
             "label": "Q1",
             "text": "As a Shaper, which part of living technology do you wish to master?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -31067,7 +31169,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 4253,
               "heading": "31.3 First-person candidate bank"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -31551,7 +31655,7 @@
             "label": null,
             "text": "Heard you qualified to make a name disappear. Cute. The hard part isn’t landing a shot—it’s knowing when to move, when to wait, and how to get out. So what’s your specialty gonna be?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -31565,7 +31669,7 @@
             "label": "Q1",
             "text": "As an Assassin, what technique or discipline do you want to develop?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -32119,7 +32223,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 4428,
               "heading": "Class features, personal identity, capstone and neutral"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -32619,7 +32725,7 @@
             "label": null,
             "text": "Darling, a convincing smile opens more doors than a blaster ever will. After that, it’s a question of timing: a well-placed lie, a useful distraction, or a little luck. Which part of the art would you like to perfect?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -32633,7 +32739,7 @@
             "label": "Q1",
             "text": "As a Charlatan, what kind of social craft or calculated misdirection do you want to master?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -33061,7 +33167,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 4497,
               "heading": "Class features, personal identity, capstone and neutral"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -33552,7 +33660,7 @@
             "label": null,
             "text": "Okay, so you’ve got no tools, half a broken machine, and exactly the wrong spare parts. That’s practically a vacation! Are we fixing something, making something, or finding the one person who has what we need?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -33566,7 +33674,7 @@
             "label": "Q1",
             "text": "As an Improviser, what problem-solving specialty do you want to develop?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -33840,7 +33948,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 4555,
               "heading": "Class features, personal identity, capstone and neutral"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },
@@ -34320,7 +34430,7 @@
             "label": null,
             "text": "Finding a route is the easy part. Making sure everyone can use it—and has somewhere defensible to stop—is the job. So what are you developing: sharper reconnaissance, better movement, or positions the whole team can trust?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -34334,7 +34444,7 @@
             "label": "Q1",
             "text": "As a Pathfinder, what part of scouting and establishing safe ground do you want to master?",
             "editorialStatus": "draft_text",
-            "selection": "owner_choice_pending",
+            "selection": "provisional_default",
             "sourceRef": {
               "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
@@ -34706,7 +34816,9 @@
               "file": "docs/design/SWSE_Prestige_Survey_Rolling_Design.md",
               "line": 4620,
               "heading": "Class features, personal identity, capstone and neutral"
-            }
+            },
+            "kind": "neutral",
+            "neutralBasis": "source_id_name"
           }
         ]
       },

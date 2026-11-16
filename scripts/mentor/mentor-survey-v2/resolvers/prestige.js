@@ -14,7 +14,7 @@ import { evaluateScopeRelease, isRecordPlayable, toViewOption } from '../content
 
 export const PRESTIGE_QUESTIONS = Object.freeze(['q1', 'q2', 'q3', 'q4', 'q5', 'q5b', 'q6']);
 const BLOCKED = ['q2', 'q6'];
-export const Q1_PAGE_SIZE = 8;
+export const Q1_PAGE_SIZE = 6; // owner ruling MSV-RD-013: six substantive answers per page; the neutral answer is always offered separately
 const UI_MORE = 'Show more answers'; // interface control label, not Mentor dialogue; the browse order is the source order and claims no relevance
 
 /** Trigger: a prestige class not yet held (finalized levels). Each acquisition is its own scope; earlier ones are untouched. */
@@ -53,15 +53,14 @@ export function resolvePrestigeQuestion({ pack, draft, qid, ctx, preview = false
   if (qid === 'q1') {
     if (!pack.q1q3?.classes?.[id]) return unavailable('blocked_source');
     const cls = pack.q1q3.classes[id].q1;
-    const i = pickCandidate(cls.introCandidates, preview); const q = pickCandidate(cls.questionCandidates, preview);
+    const i = pickCandidate(cls.introCandidates); const q = pickCandidate(cls.questionCandidates);
     if (!q) return unavailable('needs_owner_selection');
-    const all = q1Offerable(pack, id);
-    if (!all.length) return unavailable('blocked_source');
-    const start = Math.max(0, Number(pageIndex) || 0) * Q1_PAGE_SIZE;
-    records = all.slice(start, start + Q1_PAGE_SIZE);
-    if (!records.length) return unavailable('unknown_page');
+    if (!q1Offerable(pack, id).length) return unavailable('blocked_source');
+    const pg = q1PageIds(pack, id, pageIndex);
+    if (pg.empty) return unavailable('unknown_page');
+    records = pg.ids;
     intro = pseudo(`pr.${id}.q1.intro`, i?.text, i); prompt = pseudo(`pr.${id}.q1.question`, q.text, q);
-    page = { index: Math.max(0, Number(pageIndex) || 0), hasMore: start + records.length < all.length, moreText: start + records.length < all.length ? UI_MORE : null };
+    page = { index: Math.max(0, Number(pageIndex) || 0), hasMore: pg.hasMore, moreText: pg.hasMore ? UI_MORE : null };
   } else if (qid === 'q3') {
     if (!pack.q1q3?.classes?.[id]) return unavailable('blocked_source');
     const q1 = draft?.answers?.q1;
@@ -103,14 +102,22 @@ export function q1Offerable(pack, classId) {
 }
 
 /**
- * Opening / question: the source holds several authored candidates and the owner has not chosen. A candidate marked
- * `owner_selected` is used when present; otherwise the GM-only editorial preview shows the first candidate in source order
- * (a preview convenience, recorded in the register); players get nothing, so the question is unavailable.
+ * Opening / question (MSV-RD-012): `owner_selected` wins; otherwise the provisional editorial default (the authored preferred
+ * opening and its question). A provisional default is draft text, so the release gate still keeps it from players.
  */
-export function pickCandidate(list = [], preview = false) {
-  const chosen = list.find((c) => c.selection === 'owner_selected');
-  if (chosen) return chosen;
-  return preview ? (list[0] ?? null) : null;
+export function pickCandidate(list = []) {
+  return list.find((c) => c.selection === 'owner_selected') || list.find((c) => c.selection === 'provisional_default') || null;
+}
+
+/** Substantive answers (paged) and the separately offered neutral answer, both in stable source order. */
+export function q1Split(pack, classId) {
+  const all = q1Offerable(pack, classId);
+  return { substantive: all.filter((a) => a.kind !== 'neutral'), neutral: all.find((a) => a.kind === 'neutral') ?? null };
+}
+export function q1PageIds(pack, classId, pageIndex) {
+  const { substantive, neutral } = q1Split(pack, classId);
+  const start = Math.max(0, Number(pageIndex) || 0) * Q1_PAGE_SIZE;
+  return { ids: [...substantive.slice(start, start + Q1_PAGE_SIZE), ...(neutral ? [neutral] : [])], hasMore: start + Q1_PAGE_SIZE < substantive.length, empty: start >= substantive.length && start > 0 };
 }
 
 /** The Q3 scene whose exact Q1 route list contains the chosen Q1 answer (class-scoped). */

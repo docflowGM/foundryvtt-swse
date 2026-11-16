@@ -118,7 +118,7 @@ test('PR-03 PrestigeSurveyStep runs a real Ace Pilot acquisition: Q1 browse, rou
   await step.onStepEnter(shell);
   let d = await step.getStepData({ shell });
   assert.equal(d.phase, 'question'); assert.equal(d.view.questionId, 'q1'); assert.equal(d.questionNumber, 1);
-  assert.equal(d.view.options.length, 8, 'Q1 browse page of eight, source order, no ranking claim'); assert.equal(d.view.page.hasMore, true);
+  assert.equal(d.view.options.length, 7, 'Q1 browse page: six substantive answers plus the neutral answer, source order, no ranking claim'); assert.equal(d.view.page.hasMore, true);
   await click(step, shell, 'msurvey-more', { questionId: 'q1', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q1'); assert.equal(d.view.page.index, 1);
   await click(step, shell, 'msurvey-choose', { questionId: 'q1', optionId: d.view.options[0].optionId, seq: String(d.seq) });

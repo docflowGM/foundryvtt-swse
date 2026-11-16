@@ -118,6 +118,13 @@ const player = [];
 const s93 = idx(/^### 9\.3 Q6 main question/, 0, SH);
 for (let i = s93; i < s93 + 30; i++) { const m = /^\| \*\*([A-E])\*\* \| (“[^|]+”) \|/.exec(SH[i]); if (m) player.push(rec(`mc.q6.choice.${m[1].toLowerCase()}`, quoted(m[2]), SH_F, SH_COMMIT, `9.3 answer ${m[1]}`, { kind: 'calibration', calibration: m[1], ...(isFirstPerson(quoted(m[2])) ? {} : { editorialIssue: 'not_first_person' }) })); }
 if (player.map((p) => p.calibration).join('') !== 'ABCDE') fail('A-E player answers not found');
+/* Owner ruling MSV-RD-011 (2026-11-16): replacement first-person wording for answer B. Id, calibration meaning and source provenance preserved. */
+const ruledB = player.find((p) => p.calibration === 'B');
+ruledB.originalText = ruledB.text;
+ruledB.text = "I recognize much of what you've described, but I want to correct one or two details.";
+ruledB.editorialStatus = 'owner_approved_text';
+ruledB.ownerRuling = 'MSV-RD-011';
+delete ruledB.editorialIssue;
 
 const issues = player.filter((p) => p.editorialIssue).map((p) => p.id);
 const counts = { editorialIssues: issues, mentors: 5, frames: 5 * 9, clauseVariants: clauseCount, negativeKinds: 10, negativeWordings: 20, identityRows: 297, freeStanding: 18, playerChoices: 5 };

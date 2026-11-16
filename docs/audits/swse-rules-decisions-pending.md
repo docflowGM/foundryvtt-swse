@@ -3075,3 +3075,19 @@ An independent primary-source audit was ingested: branch `audit/prestige-cross-c
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+
+## RESOLUTIONS (appended 2026-11-16; the original entries above are preserved unchanged)
+
+Owner rulings received 2026-11-16 ("Owner Decisions and Source-Recovery Corrections"). Status of each decision after the ruling:
+
+| ID | Ruling | Status | Implementing commit |
+|---|---|---|---|
+| MSV-RD-011 | Answer B becomes: "I recognize much of what you've described, but I want to correct one or two details." Id, B meaning and provenance preserved. | RESOLVED, owner_approved_text | milestone A (see git log, "Owner rulings A") |
+| MSV-RD-012 | Per class: the opening labeled preferred (else first primary proposed) and its same-section question are the provisional editorial default; alternatives preserved; not release approval. Review table: `14-PRESTIGE-Q1-OPENING-SELECTION-REVIEW.md`. | RESOLVED as provisional default; wording approval still pending | milestone A |
+| MSV-RD-013 / MSV-RD-005 | Six substantive answers per page plus a separate always-reachable neutral answer; stable source order; no rotation, weighting or ranking; bank never truncated; quarantined rows excluded; unknown per-route flags stay unresolved. | RESOLVED (presentation); per-route flags remain open | milestone A |
+| MSV-RD-014 | Approve the newer Character Synthesis design; shared verified stems plus class-specific reviewed connective text; authoring pass authorized; text stays draft. | RESOLVED (approach); wording approval pending | milestone C |
+| MSV-RD-004 | Explicit origin selection when two or more foundation classes are owned; other classes stay in Q2/Q6 evidence. | RESOLVED | milestone B |
+| MSV-RD-008 / -009 | Import the existing Q5 fallbacks and no-goal replacements; neutral Q4 uses a curated low-assumption scenario with a recorded gap if none fits. | RESOLVED | milestone B |
+| MSV-RD-010 | Discover, Explore, Affirm preserved; only an explicit affirmation of a valid target declares a goal. | RESOLVED (rule); conversation text not authored beyond Ace Pilot | milestone C |
+| MSV-RD-007 | `q1_focus` catalog and E/F authorized as drafts; approved E and F statements. | RESOLVED (approach); phrases are draft | milestone B |
