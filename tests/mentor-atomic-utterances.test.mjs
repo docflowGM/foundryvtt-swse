@@ -59,7 +59,8 @@ function createShell(stepId = 'species') {
     source: 'recommendation', text: 'Actually, choose Twi\u0027lek.',
     stepId: 'species', temporary: false,
   });
-  assert.equal(lateRecommendation, PRESENTATION.REJECTED_SPEAKING);
+  assert.equal(lateRecommendation, PRESENTATION.REJECTED_PRIORITY,
+    'Automatic recommendation must never supersede an existing step introduction');
   assert.equal(controller.presentFocusReaction({
     text: 'Maybe a Rodian?', stepId: 'species',
   }), PRESENTATION.REJECTED_SPEAKING);
