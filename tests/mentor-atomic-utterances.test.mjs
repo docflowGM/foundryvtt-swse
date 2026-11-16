@@ -71,10 +71,20 @@ function createShell(stepId = 'species') {
   }), PRESENTATION.REJECTED_SPEAKING);
   assert.equal(written.length, 1, 'Mentor replaced its own unfinished sentence');
   assert.equal(controller.activeMessage.text, 'Consider your species.');
-  assert.equal(controller.stats().midSentenceInterruptionsPrevented, 4);
+  // The recommendation is rejected before the animation gate; focus,
+  // commit and explicit Ask Mentor are rejected by the in-progress sentence.
+  assert.equal(controller.stats().midSentenceInterruptionsPrevented, 3);
+
+  // A delayed automatic recommendation must not change the mentor's mind
+  // AFTER the introduction finishes, either.
+  shell.mentor.isAnimating = false;
+  assert.equal(controller.present({
+    source: 'recommendation', text: 'Here is another theory.',
+    stepId: 'species', temporary: false,
+  }), PRESENTATION.REJECTED_PRIORITY);
+  assert.equal(written.length, 1, 'Completed introduction was overwritten without player action');
 
   // Once the reveal completes, a fresh meaningful action can speak.
-  shell.mentor.isAnimating = false;
   assert.equal(controller.presentCommitReaction({
     text: 'Your choice is settled.', stepId: 'species',
   }), PRESENTATION.DISPLAYED);
