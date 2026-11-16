@@ -176,6 +176,7 @@ export const PRESENTATION = Object.freeze({
   QUEUED: 'queued',
   REJECTED_STALE: 'rejected-stale',
   REJECTED_PRIORITY: 'rejected-priority',
+  REJECTED_SPEAKING: 'rejected-speaking',
   REJECTED_DUPLICATE: 'rejected-duplicate',
   UNAVAILABLE: 'unavailable',
 });
@@ -254,6 +255,7 @@ export class MentorRecommendationController {
       directBypassCount: 0,
       reconnectReplays: 0,
       reconnectsSkipped: 0,
+      midSentenceInterruptionsPrevented: 0,
     };
     this._lastTrace = null;
   }
@@ -450,6 +452,38 @@ export class MentorRecommendationController {
       && revision <= this.activeMessage.revision) {
       this._trace({ result: 'discarded-lower-priority', source: message.source, priority });
       return PRESENTATION.REJECTED_PRIORITY;
+    }
+
+    // Automatic recommendation work is background preparation, not permission
+    // to replace the introduction or a player's chosen reaction. Even after
+    // its animation finishes, the visible same-step message stays put until
+    // the player makes a meaningful new choice. applyRecommendation() retains
+    // rejected advice as a candidate rather than presenting it over the line.
+    const activeStepId = this.activeMessage?.stepId ?? this._currentStepId();
+    const incomingStepId = message.stepId ?? this._currentStepId();
+    if (message.source === 'recommendation'
+      && this.activeMessage
+      && this.activeMessage.source !== 'recommendation'
+      && activeStepId === incomingStepId) {
+      this._trace({ result: 'background-recommendation-not-announced', stepId: incomingStepId });
+      return PRESENTATION.REJECTED_PRIORITY;
+    }
+
+    // Once the mentor starts a sentence, finish it. Priority decides which
+    // message may START, not which message may interrupt a running reveal.
+    // Step transitions are the exception: they must retire obsolete speech.
+    // Competing messages are dropped rather than building up a chatter queue.
+    if (this.activeMessage
+      && this.shell?.mentor?.isAnimating === true
+      && activeStepId === incomingStepId) {
+      this._stats.midSentenceInterruptionsPrevented += 1;
+      this._trace({
+        result: 'discarded-mid-sentence',
+        activeSource: this.activeMessage.source,
+        source: message.source,
+        stepId: incomingStepId,
+      });
+      return PRESENTATION.REJECTED_SPEAKING;
     }
 
     // A temporary line (a focus or commit bark) borrows the rail; it must not
