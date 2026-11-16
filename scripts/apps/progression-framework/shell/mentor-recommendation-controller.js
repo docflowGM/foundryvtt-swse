@@ -454,13 +454,25 @@ export class MentorRecommendationController {
       return PRESENTATION.REJECTED_PRIORITY;
     }
 
+    // Automatic recommendation work is background preparation, not permission
+    // to replace the introduction or a player's chosen reaction. Even after
+    // its animation finishes, the visible same-step message stays put until
+    // the player makes a meaningful new choice. applyRecommendation() retains
+    // rejected advice as a candidate rather than presenting it over the line.
+    const activeStepId = this.activeMessage?.stepId ?? this._currentStepId();
+    const incomingStepId = message.stepId ?? this._currentStepId();
+    if (message.source === 'recommendation'
+      && this.activeMessage
+      && this.activeMessage.source !== 'recommendation'
+      && activeStepId === incomingStepId) {
+      this._trace({ result: 'background-recommendation-not-announced', stepId: incomingStepId });
+      return PRESENTATION.REJECTED_PRIORITY;
+    }
+
     // Once the mentor starts a sentence, finish it. Priority decides which
     // message may START, not which message may interrupt a running reveal.
     // Step transitions are the exception: they must retire obsolete speech.
-    // Do not queue competing chatter; only the latest meaningful subsequent
-    // interaction may speak after the current sentence has finished.
-    const activeStepId = this.activeMessage?.stepId ?? this._currentStepId();
-    const incomingStepId = message.stepId ?? this._currentStepId();
+    // Competing messages are dropped rather than building up a chatter queue.
     if (this.activeMessage
       && this.shell?.mentor?.isAnimating === true
       && activeStepId === incomingStepId) {
