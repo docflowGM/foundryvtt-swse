@@ -176,6 +176,7 @@ export const PRESENTATION = Object.freeze({
   QUEUED: 'queued',
   REJECTED_STALE: 'rejected-stale',
   REJECTED_PRIORITY: 'rejected-priority',
+  REJECTED_SPEAKING: 'rejected-speaking',
   REJECTED_DUPLICATE: 'rejected-duplicate',
   UNAVAILABLE: 'unavailable',
 });
@@ -254,6 +255,7 @@ export class MentorRecommendationController {
       directBypassCount: 0,
       reconnectReplays: 0,
       reconnectsSkipped: 0,
+      midSentenceInterruptionsPrevented: 0,
     };
     this._lastTrace = null;
   }
@@ -450,6 +452,26 @@ export class MentorRecommendationController {
       && revision <= this.activeMessage.revision) {
       this._trace({ result: 'discarded-lower-priority', source: message.source, priority });
       return PRESENTATION.REJECTED_PRIORITY;
+    }
+
+    // Once the mentor starts a sentence, finish it. Priority decides which
+    // message may START, not which message may interrupt a running reveal.
+    // Step transitions are the exception: they must retire obsolete speech.
+    // Do not queue competing chatter; only the latest meaningful subsequent
+    // interaction may speak after the current sentence has finished.
+    const activeStepId = this.activeMessage?.stepId ?? this._currentStepId();
+    const incomingStepId = message.stepId ?? this._currentStepId();
+    if (this.activeMessage
+      && this.shell?.mentor?.isAnimating === true
+      && activeStepId === incomingStepId) {
+      this._stats.midSentenceInterruptionsPrevented += 1;
+      this._trace({
+        result: 'discarded-mid-sentence',
+        activeSource: this.activeMessage.source,
+        source: message.source,
+        stepId: incomingStepId,
+      });
+      return PRESENTATION.REJECTED_SPEAKING;
     }
 
     // A temporary line (a focus or commit bark) borrows the rail; it must not
