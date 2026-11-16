@@ -88,73 +88,65 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // Canonical 3-5 sentence descriptions loaded from data/species-canonical-descriptions.json.
     // This is a fallback for stale sidecars or registry entries that lack description text.
     this._canonicalDescriptionBySlug = new Map();
+    // Data-only warmup is shared by the splash and the real step entry.
+    // Promise reuse prevents duplicate network work if the player skips boot.
+    this._preloadPromise = null;
   }
 
   // ---------------------------------------------------------------------------
   // Lifecycle
   // ---------------------------------------------------------------------------
 
+  /**
+   * Prepare immutable species browsing resources without entering the step,
+   * modifying the draft, selecting a species, or making the mentor speak.
+   * The splash starts this early; onStepEnter joins the same promise.
+   */
+  preload() {
+    if (!this._preloadPromise) {
+      this._preloadPromise = this._preloadSpeciesResources().catch(error => {
+        this._preloadPromise = null; // A transient preload failure remains retryable.
+        throw error;
+      });
+    }
+    return this._preloadPromise;
+  }
+
+  async _preloadSpeciesResources() {
+    if (!SpeciesRegistry.isInitialized()) await SpeciesRegistry.initialize();
+
+    const species = SpeciesRegistry.getAll();
+    this._allSpecies = Array.isArray(species)
+      ? species.map(entry => this._ensureSpeciesIdentity(entry))
+      : [];
+
+    // These are all read-only fetches; run concurrently during animation.
+    await Promise.all([
+      this._buildSpeciesImgMap(),
+      this._loadCanonicalSpeciesDescriptions(),
+      this._loadOlSaltySpeciesDialogues(),
+    ]);
+  }
+
+  async _loadOlSaltySpeciesDialogues() {
+    try {
+      const res = await fetch('systems/foundryvtt-swse/data/dialogue/mentors/ol_salty/ol-salty-species-dialogues.json');
+      this._olSaltyDialogues = res.ok ? await res.json() : {};
+    } catch (err) {
+      swseLogger.warn('[SpeciesStep] Species dialogue prewarm unavailable:', err?.message);
+      this._olSaltyDialogues = {};
+    }
+  }
+
   async onStepEnter(shell) {
     console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
     console.log('[SpeciesStep] STEP ENTER — HYDRATION START');
 
-    // Guard against uninitialized registry — initialize if needed
-    if (!SpeciesRegistry.isInitialized()) {
-      console.warn('[SpeciesStep] ⚠ SpeciesRegistry not initialized on step enter; initializing now');
-      await SpeciesRegistry.initialize();
-      console.log('[SpeciesStep] ✓ SpeciesRegistry initialized');
-    }
+    // Wait on the same data-only warmup started during the chargen splash.
+    // If boot was skipped, this starts the exact same load on demand.
+    await this.preload();
 
-    // Load all species from registry and harden identity handoff.
-    this._allSpecies = SpeciesRegistry.getAll().map(species => this._ensureSpeciesIdentity(species));
-    if (!Array.isArray(this._allSpecies)) this._allSpecies = [];
-
-    console.log('[SpeciesStep] ✓ Loaded species count:', this._allSpecies.length);
-
-    // Log first 3 species structure for debugging
-    if (this._allSpecies.length > 0) {
-      console.log('[SpeciesStep] Sample species (first 3):');
-      this._allSpecies.slice(0, 3).forEach((s, i) => {
-        console.log(`  [${i}]`, {
-          name: s.name,
-          size: s.size,
-          source: s.source,
-          abilityScores: s.abilityScores,
-          abilities: Array.isArray(s.abilities) ? `${s.abilities.length} abilities` : 'none',
-          languages: Array.isArray(s.languages) ? `${s.languages.length} languages` : 'none',
-        });
-      });
-    }
-
-    // Warn if empty
-    if (this._allSpecies.length === 0) {
-      console.error('[SpeciesStep] ✗ CRITICAL: Species authority is empty after initialization attempt');
-    }
-
-    console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
-
-    // Build image map from assets/species/ directory
-    await this._buildSpeciesImgMap();
-
-    // Load canonical species prose so the details rail remains informative even when
-    // a stale sidecar/registry path does not expose system.description.
-    await this._loadCanonicalSpeciesDescriptions();
-
-    // Load Ol' Salty species dialogues from the authoritative JSON file.
-    // Each key is a species name; each value is an array of one or more lines.
-    // _getOlSaltyDialogue() picks randomly when multiple lines are available.
-    try {
-      const res = await fetch('systems/foundryvtt-swse/data/dialogue/mentors/ol_salty/ol-salty-species-dialogues.json');
-      if (res.ok) {
-        this._olSaltyDialogues = await res.json();
-      } else {
-        console.warn('[SpeciesStep] Could not load ol-salty-species-dialogues.json — status', res.status);
-        this._olSaltyDialogues = {};
-      }
-    } catch (err) {
-      console.warn('[SpeciesStep] Failed to fetch ol-salty-species-dialogues.json:', err);
-      this._olSaltyDialogues = {};
-    }
+    console.log('[SpeciesStep] Loaded species count:', this._allSpecies.length);
 
     // Get suggested species
     await this._getSuggestedSpecies(shell.actor, shell);
