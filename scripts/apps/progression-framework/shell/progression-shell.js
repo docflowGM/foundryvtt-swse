@@ -2125,14 +2125,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // recommendation so its signature cannot suppress the new one, then ask
       // exactly once. This is not awaited — navigation never waits on advice.
       this.mentorRecommendations?.reset?.();
-      this.requestMentorRecommendation(`step-enter:${descriptor.stepId}`);
 
       if (!this.progressionSession.visitedStepIds.includes(descriptor.stepId)) {
         this.progressionSession.visitedStepIds.push(descriptor.stepId);
       }
 
+      // Step guidance is the mentor's committed opening sentence.
+      // Present it BEFORE launching asynchronous recommendation evaluation:
+      // a late recommendation must never change the line mid-sentence.
       this._syncMentorForStep(descriptor);
       this._presentStepPluginGuidance(plugin, descriptor?.stepId);
+      this.requestMentorRecommendation(`step-enter:${descriptor.stepId}`);
       this._syncAskMentorState(plugin, descriptor);
       this.utilityBar.setConfig(plugin.getUtilityBarConfig());
       this._activeStepEnterContext = null;
