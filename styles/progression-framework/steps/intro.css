@@ -4605,3 +4605,120 @@
 .progression-shell .prog-intro-stage .prog-intro-surface--droid-v2 .actions {
   flex: 0 0 auto;
 }
+
+
+/* ============================================================================
+   PROGRESSION INTRO — DATAPAD VIEWPORT CONTAINMENT
+
+   The progression shell is already the device frame. The actor/droid intro
+   must size itself from that frame's *interior*, not from the browser viewport.
+
+   The old actor-specific override always forced 270px + center + 310px columns
+   (even beneath the viewport @media rule). On a narrower embedded datapad
+   those fixed columns overflowed; overflow:hidden merely cut them off.
+
+   One container-query breakpoint governs BOTH active intro variants. Outside
+   that breakpoint the original full-width composition remains unchanged.
+   ============================================================================ */
+
+.progression-shell[data-step-id="intro"] .prog-intro-stage[data-region="work-surface"] {
+  container-type: inline-size;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.progression-shell[data-step-id="intro"] .prog-intro-stage > .prog-intro-surface {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .screen,
+.progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .screen {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* A small viewport is NOT the same thing as a small browser window. Foundry's
+   inline character-sheet holopad may be 700px wide on a 1920px monitor. */
+@container (max-width: 1020px) {
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .screen,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .screen {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .boot,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .boot {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    min-height: 0;
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .pane,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .diag,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .stream {
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    overflow: visible;
+  }
+
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .screen-inner {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .actions,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 15;
+    min-width: 0;
+    padding: 10px;
+    background: rgba(4, 10, 24, 0.93);
+    border-top: 1px solid rgba(122, 215, 255, 0.2);
+  }
+}
+
+@container (max-width: 600px) {
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .screen,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .screen-inner {
+    padding: 10px;
+  }
+
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .hud,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .hud,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .intro-ring-row {
+    flex-wrap: wrap;
+  }
+
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .hp-row,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .translate {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .stg-name {
+    font-size: 18px;
+    letter-spacing: 0.08em;
+  }
+
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--actor-v2 .actions,
+  .progression-shell[data-step-id="intro"] .prog-intro-surface--droid-v2 .actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
