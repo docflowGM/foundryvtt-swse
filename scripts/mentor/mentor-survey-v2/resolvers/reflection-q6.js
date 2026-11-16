@@ -42,7 +42,7 @@ export function q6Profile({ surveyKind, pack, ctx, draft }) {
     const sid = draft?.answers?.q1?.meta?.sourceId;
     const row = sid ? (pack.q1q3?.classes?.[classId]?.q1.answers || []).find((a) => a.sourceId === sid) : null;
     return { surveyKind, classId, mentorId: pack.classes?.[classId]?.mentorRegistryKey ?? null, idPrefix: 'pr', frame: specific?.frame ?? q6.neutral.frame, clauses: specific?.clauses ?? q6.neutral.clauses, neutralFrame: !specific,
-      milestone: fill(q6.neutral.milestone.text, { class_name: className }), q1Text: row && row.kind !== 'neutral' ? row.text : null };
+      milestone: { ...q6.neutral.milestone, text: fill(q6.neutral.milestone.text, { class_name: className }) }, q1Text: row && row.kind !== 'neutral' ? row.text : null };
   }
   const origin = ctx.originClassId ?? draft?.answers?.q0?.meta?.originClassId;
   const m = draft?.answers?.q1?.meta;
@@ -70,22 +70,29 @@ export function amCandidatesFor(q6, reading) {
 
 /** Pass A composition: identity -> evidence -> goal -> exact Q1 quote -> relation. Missing parts are omitted, never padded. */
 export function composeParagraphs({ profile, reading }) {
+  const { paragraphs } = composeReading({ profile, reading });
+  return paragraphs;
+}
+
+/** Composition that also returns every clause RECORD it selected, so the release gate can check each one (a draft clause must never ride in on approved buttons). */
+export function composeReading({ profile, reading }) {
   const c = profile.clauses; const q1Text = profile.q1Text;
   const seed = `${reading.readingId}|${profile.classId}`;
-  const paras = [];
-  if (profile.milestone) paras.push(profile.milestone); // prestige: the earned or pending milestone, with no owned ability claimed
-  paras.push(pick(c.unresolved.all, `${seed}|unresolved`).text); // no verified identity source: the unresolved reading
+  const paras = []; const used = [];
+  const take = (list, key) => { const r = pick(list, `${seed}|${key}`); used.push(r); return r; };
+  if (profile.milestone) { paras.push(profile.milestone.text); used.push(profile.milestone); } // prestige: the earned or pending milestone, with no owned ability claimed
+  paras.push(take(c.unresolved.all, 'unresolved').text); // no verified identity source: the unresolved reading
   const facts = reading.evidence.filter((f) => FACT_SENTENCE[f.kind]).slice(0, 3);
   if (facts.length) {
     const key = ['one', 'two', 'three'][facts.length - 1];
-    paras.push(fill(pick(c.evidence[key], `${seed}|evidence${key}`).text, { evidence_text: facts.map((f) => FACT_SENTENCE[f.kind](f)).join(' ') }));
+    paras.push(fill(take(c.evidence[key], `evidence${key}`).text, { evidence_text: facts.map((f) => FACT_SENTENCE[f.kind](f)).join(' ') }));
   }
   const goalQuote = reading.goal?.quote ?? null;
-  if (reading.goalDeclared && goalQuote) paras.push(fill(pick(c.goal.declared, `${seed}|goal`).text, { quoted_goal: quote(goalQuote) }));
-  else if (!reading.goalDeclared) paras.push(pick(c.goal.unrecorded, `${seed}|nogoal`).text);
-  if (q1Text) paras.push(fill(pick(c.q1quote.all, `${seed}|q1`).text, { quoted_q1: quote(q1Text) }));
-  if (reading.goalDeclared && goalQuote) paras.push(pick(c.relation.unknown, `${seed}|relation`).text); // identity unresolved => relation unknown
-  return paras;
+  if (reading.goalDeclared && goalQuote) paras.push(fill(take(c.goal.declared, 'goal').text, { quoted_goal: quote(goalQuote) }));
+  else if (!reading.goalDeclared) paras.push(take(c.goal.unrecorded, 'nogoal').text);
+  if (q1Text) paras.push(fill(take(c.q1quote.all, 'q1').text, { quoted_q1: quote(q1Text) }));
+  if (reading.goalDeclared && goalQuote) paras.push(take(c.relation.unknown, 'relation').text); // identity unresolved => relation unknown
+  return { paragraphs: paras, used };
 }
 
 /** Everything the three Q6 questions need, computed once from the same inputs (so it is stable across renders). */
@@ -95,15 +102,16 @@ export function q6Context({ surveyKind = 'multiclass', pack, draft, ctx, runtime
   const base = { surveyKind, scopeId: profile.classId, projection: runtime.evidence, events: runtime.events, archetypeLookup, actorRevision: ctx.evidenceRevision };
   const cands = amCandidatesFor(pack.q6Content, createReading({ ...base, claims: [] }));
   const reading = createReading({ ...base, claims, amCandidates: cands.map(({ candidateId, canonicalRef, free }) => ({ candidateId, canonicalRef, free })) });
-  const paragraphs = composeParagraphs({ profile, reading });
-  return { reading, paragraphs, candidates: cands, profile };
+  const { paragraphs, used } = composeReading({ profile, reading });
+  return { reading, paragraphs, candidates: cands, profile, clausesUsed: used };
 }
 
 const unavailable = (reason) => ({ available: false, reason, view: null, records: [] });
-const gate = (shown, records, preview) => {
+const gate = (shown, records, preview, templates = [], renderedText = []) => {
   // A record the importer flagged (e.g. not first person) is never shown to players, even if its text were approved.
   if (!preview && records.some((r) => r.editorialIssue)) return 'editorial_issue';
-  if ([...shown, ...records].some((r) => /\{\w+\}/.test(r.text))) return 'unfilled_slot'; // a template slot must never reach a player
+  // a template slot must never reach a player: clause templates are slot-bearing by design, so their RENDERED text is what is checked
+  if ([...shown.filter((r) => !templates.includes(r)), ...records].some((r) => /\{\w+\}/.test(r.text)) || renderedText.some((t) => /\{\w+\}/.test(t))) return 'unfilled_slot';
   if (!shown.every((r) => r.editorialStatus === EDITORIAL_STATUS.APPROVED || preview)) return 'unapproved_content';
   if (!records.every((r) => isRecordPlayable(r, { preview }))) return 'unplayable_record';
   return null;
@@ -118,7 +126,7 @@ export function resolveQ6({ surveyKind = 'multiclass', pack, draft, qid, ctx, ru
 
   if (qid === 'q6') {
     const records = pack.q6Content.playerChoices;
-    const why = gate([frame.opening, frame.closing, ...records], records, preview); if (why) return unavailable(why);
+    const why = gate([frame.opening, frame.closing, ...q6.clausesUsed, ...records], records, preview, q6.clausesUsed, q6.paragraphs); if (why) return unavailable(why);
     return { available: true, reason: 'ok', records, preview, view: { surveyKind, ...meta, questionId: 'q6', mentorIntro: frame.opening.text, situation: q6.paragraphs.join('\n\n'), prompt: frame.closing.text, options: records.map((r) => toViewOption(r)), page: null, canSkip: true, canGoBack: true } };
   }
   if (!choice || choice === 'A') return unavailable('not_applicable');

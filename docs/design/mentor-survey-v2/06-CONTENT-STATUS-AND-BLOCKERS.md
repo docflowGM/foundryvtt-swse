@@ -122,7 +122,7 @@ Built: one generic `SurveyController` with per-survey adapters (L1 and multiclas
 
 **Blocked at the source (skipped, never invented):**
 - **Q2** (`MSV-RD-007`): no certified `q1_focus` phrases, no authored E/F answers, unverified top-four scores accessor.
-- **Q6**: the Q6 libraries are not imported and no verified identity-claim source exists. The shared reflection engine is built and tested but not connected.
+- **Q6**: the Q6 libraries are not imported and no verified identity-claim source exists. The shared reflection engine is connected to both surveys (Prestige uses a neutral frame until the package is supplied).
 - **Q4/Q5 for an undecided Q1** (`MSV-RD-008`).
 - **Q5 career-continuity template** (`MSV-RD-009`).
 - **Two or more prior foundation classes** (`MSV-RD-004`): withheld.
@@ -151,7 +151,7 @@ Built: `resolvers/prestige.js` (trigger: newly acquired prestige class; Q4 depth
 - **Q1** class discovery: banks not imported (varied source formats; the slate policy is unapproved, `MSV-RD-005`).
 - **Q2** synthesis: actor-evidence templates not imported; needs approved wording.
 - **Q3** scenes: keyed to Q1 route ids, so unavailable without Q1.
-- **Q6**: the 32-class Q6 package is **not in Git**; owner to supply, never reconstructed. The shared reflection engine is built and tested but not connected.
+- **Q6**: the 32-class Q6 package is **not in Git**; owner to supply, never reconstructed. The shared reflection engine is connected to both surveys (Prestige uses a neutral frame until the package is supplied).
 - **Another career** (`MSV-RD-010`): records a purpose only; no prestige answer declares a goal.
 So the V2 prestige survey currently offers Q4 and Q5 only; it is **not** the six-question design and must not be released until Q1, Q2, Q3 and Q6 are supplied, the slate policy is approved and the owner signs off (rolling design 39.5).
 

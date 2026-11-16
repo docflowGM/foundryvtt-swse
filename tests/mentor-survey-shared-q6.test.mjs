@@ -102,3 +102,26 @@ test('SV-18 the release gate still applies: draft neutral text never reaches pla
   assert.equal(r(true, { ...prPack, q6Content: undefined }).reason, 'blocked_source');
   assert.deepEqual(S.scanViewForLeaks(r(true).view), []);
 });
+
+test('SV-18 release gate covers every selected reflection clause: approved buttons and frame never carry a draft clause to a player', () => {
+  const approve = (r) => ({ ...r, editorialStatus: 'owner_approved_text' });
+  const ctl = prStart('ace_pilot'); const used = Q6.q6Context({ surveyKind: 'prestige', pack: prPack, draft: ctl.draft, ctx: ctl.ctx, runtime: ctl.runtime, archetypeLookup: lookup }).clausesUsed;
+  assert.ok(used.length >= 4, 'milestone, unresolved, evidence and goal clauses are all tracked');
+  const allApprovedExcept = (skipId) => {
+    const walk = (o) => Array.isArray(o) ? o.map(walk) : o && typeof o === 'object' ? (o.editorialStatus && o.id !== skipId ? approve(Object.fromEntries(Object.entries(o).map(([k, v]) => [k, walk(v)]))) : Object.fromEntries(Object.entries(o).map(([k, v]) => [k, walk(v)]))) : o;
+    return { ...prPack, q6Content: walk(q6c) };
+  };
+  const run = (pack) => Q6.resolveQ6({ surveyKind: 'prestige', pack, draft: { answers: {} }, qid: 'q6', ctx: ctl.ctx, runtime: ctl.runtime, archetypeLookup: lookup, preview: false });
+  assert.equal(run(allApprovedExcept(null)).available, true, 'everything approved: shown');
+  for (const c of used) assert.equal(run(allApprovedExcept(c.id)).reason, 'unapproved_content', `one draft clause (${c.id}) blocks the question`);
+  const mc = mcStart(); const mcUsed = Q6.q6Context({ surveyKind: 'multiclass', pack: mcPack, draft: mc.draft, ctx: mc.ctx, runtime: mc.runtime, archetypeLookup: lookup }).clausesUsed;
+  assert.ok(mcUsed.length >= 3 && mcUsed.every((c) => c.id.startsWith('mc.noble.q6.clause.')), 'the multiclass reading is gated the same way');
+});
+
+test('SV-09 the release manifest keeps every scope withheld and its reasons describe the current V2 state, not the retired legacy surveys', () => {
+  for (const [kind, scopes] of Object.entries(manifest.surveys)) for (const [id, c] of Object.entries(scopes)) {
+    assert.equal(c.releaseState, 'withheld', `${kind}:${id}`);
+    assert.ok(!/Legacy survey still active|not yet cut over|package missing/i.test(c.reason), `${kind}:${id} reason is current`);
+  }
+  assert.match(manifest.surveys.prestige.ace_pilot.reason, /shared Mentor's Reflection/); assert.match(manifest.surveys.multiclass.jedi.reason, /Foundry v13/);
+});

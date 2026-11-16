@@ -133,6 +133,7 @@ test('PR-03 PrestigeSurveyStep runs a real Ace Pilot acquisition: Q1 browse, rou
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q3'); assert.equal(d.view.options.length, 5); assert.ok(d.view.situation);
   await click(step, shell, 'msurvey-choose', { questionId: 'q3', optionId: d.view.options[1].optionId, seq: String(d.seq) });
   d = await step.getStepData({ shell });
+  assert.equal(d.neutralFrame, false); assert.notEqual(d.mentorName, 'Reflection', 'Q1-Q5 keep the normal Mentor presentation');
   assert.equal(d.view.questionId, 'q4'); assert.equal(d.title, 'What does this achievement mean to you?');
   assert.equal(d.questionNumber, 4); assert.equal(d.totalQuestions, 6, 'Q5 second purpose is an inner stage, not a seventh question');
   await click(step, shell, 'msurvey-choose', { questionId: 'q4', optionId: 'pr.q4.swim', seq: String(d.seq) });
@@ -142,6 +143,7 @@ test('PR-03 PrestigeSurveyStep runs a real Ace Pilot acquisition: Q1 browse, rou
   await click(step, shell, 'msurvey-choose', { questionId: 'q5b', optionId: 'pr.ace_pilot.q5b.decline', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q6'); assert.equal(d.questionNumber, 6);
   assert.ok(d.view.neutralFrame === true && d.view.surveyKind === 'prestige', 'the shared reflection with the neutral, unattributed frame');
+  assert.equal(d.neutralFrame, true); assert.equal(d.mentorName, 'Reflection'); assert.equal(d.mentorTitle, null); assert.equal(d.mentorPortraitMarkup, '', 'no Mentor portrait on the unattributed frame');
   await click(step, shell, 'msurvey-choose', { questionId: 'q6', optionId: 'mc.q6.choice.a', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.phase, 'ready');
   await click(step, shell, 'msurvey-finish', { seq: String(d.seq) });
@@ -178,4 +180,13 @@ test('SV-01/PR-01 prestige cutover: the legacy four-question survey, its pruning
   assert.ok(!/prestigeSurvey/.test(read('scripts/apps/progression-framework/shell/progression-session.js')));
   assert.match(read('scripts/apps/progression-framework/shell/active-step-computer.js'), /prestigeTrigger/);
   const sys = JSON.parse(read('system.json')); assert.ok(sys.styles.includes('styles/progression-framework/steps/l1-survey-step.css'), 'shared survey styles still shipped for the V2 template');
+});
+
+
+test('SV-18 the work-surface template drops the Mentor portrait, scan, voice-keyed text and "Mentor Interview" heading when the frame is neutral, and keeps them otherwise', () => {
+  const t = fs.readFileSync(path.join(ROOT, 'templates/apps/progression-framework/steps/mentor-survey-work-surface.hbs'), 'utf8');
+  assert.match(t, /\{\{#unless neutralFrame\}\}\{\{\{mentorPortraitMarkup\}\}\}[\s\S]*?mentor-scan[\s\S]*?\{\{\/unless\}\}/);
+  assert.match(t, /\{\{#if neutralFrame\}\}Reflection\{\{else\}\}Mentor Interview\{\{\/if\}\}/);
+  const src = fs.readFileSync(path.join(ROOT, 'scripts/apps/progression-framework/steps/mentor-survey-step.js'), 'utf8');
+  assert.match(src, /if \(v\.view\?\.neutralFrame === true\) return;[^\n]*\n\s*const key =/, 'the Mentor-keyed Aurebesh translation sidecar is skipped for the neutral frame');
 });

@@ -29,153 +29,153 @@
     "multiclass": {
       "jedi": {
         "releaseState": "withheld",
-        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+        "reason": "Withheld: Q0-Q6 run on the V2 shared components but all dialogue is draft_text awaiting owner line-approval; q1_focus phrases, neutral Q4 families and the goal-reference sentence are editorial drafts; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "noble": {
         "releaseState": "withheld",
-        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+        "reason": "Withheld: Q0-Q6 run on the V2 shared components but all dialogue is draft_text awaiting owner line-approval; q1_focus phrases, neutral Q4 families and the goal-reference sentence are editorial drafts; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "scoundrel": {
         "releaseState": "withheld",
-        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+        "reason": "Withheld: Q0-Q6 run on the V2 shared components but all dialogue is draft_text awaiting owner line-approval; q1_focus phrases, neutral Q4 families and the goal-reference sentence are editorial drafts; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "scout": {
         "releaseState": "withheld",
-        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+        "reason": "Withheld: Q0-Q6 run on the V2 shared components but all dialogue is draft_text awaiting owner line-approval; q1_focus phrases, neutral Q4 families and the goal-reference sentence are editorial drafts; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "soldier": {
         "releaseState": "withheld",
-        "reason": "Legacy survey still active; V2 multiclass runtime not yet cut over."
+        "reason": "Withheld: Q0-Q6 run on the V2 shared components but all dialogue is draft_text awaiting owner line-approval; q1_focus phrases, neutral Q4 families and the goal-reference sentence are editorial drafts; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       }
     },
     "prestige": {
       "ace_pilot": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "bounty_hunter": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "crime_lord": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "elite_trooper": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "force_adept": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "force_disciple": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "gunslinger": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "jedi_knight": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "jedi_master": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "officer": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "sith_apprentice": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "sith_lord": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "corporate_agent": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "gladiator": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "melee_duelist": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "enforcer": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "independent_droid": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "infiltrator": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "master_privateer": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "medic": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "saboteur": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "outlaw": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "droid_commander": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "military_engineer": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "vanguard": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "martial_arts_master": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "imperial_knight": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "shaper": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "assassin": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "charlatan": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "improviser": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       },
       "pathfinder": {
         "releaseState": "withheld",
-        "reason": "V2 prestige runtime not yet cut over; Q6 package missing from Git; owner sign-off required (rolling design 39.5)."
+        "reason": "Withheld: Q1-Q6 run on the V2 shared components (Q6 is the same shared Mentor's Reflection, with a neutral unattributed frame) but all dialogue is draft_text awaiting owner line-approval; the authored class-specific Prestige Q6 Mentor dialogue is not yet committed; answer-to-tag mappings uncertified; not yet tested in Foundry v13 (see docs/design/mentor-survey-v2/06)."
       }
     }
   }

@@ -103,6 +103,7 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
   async _renderInlineTranslation(shell) {
     if (!shell?.element) return;
     const v = this._ctl?.view?.() || {};
+    if (v.view?.neutralFrame === true) return; // no Mentor voice treatment (Aurebesh reveal keyed to a Mentor) on an unattributed frame
     const key = `${v.phase}_${v.view?.questionId ?? ''}_${v.view?.page?.index ?? 0}`;
     if (this._lastTranslationKey === key) return;
     this._lastTranslationKey = key;
@@ -159,14 +160,17 @@ export class MentorSurveyStep extends ProgressionStepPlugin {
     const mentor = getStepMentorObject(shell?.actor ?? null, shell);
     const mentorPortrait = resolveMentorPortraitPath(mentor?.portrait || null);
     const v = this._ctl ? this._ctl.view() : { phase: 'unavailable', reason: this._loadError ? 'content_unavailable' : 'not_ready' };
+    // The shared reflection with no class-specific Mentor script is delivered by NO established Mentor: no name, portrait or voice treatment for that question only.
+    const neutral = v.view?.neutralFrame === true;
     // Inner stages (Q5's optional second purpose) belong to their question: count distinct question numbers.
     const qs = this._ctl?.flow?.questions ?? ['q1', 'q2', 'q3', 'q4', 'q5'];
     const numbers = [...new Set(qs.map((q) => Number(String(q).match(/\d/)[0])).filter((n) => n > 0))];
     const total = numbers.length;
     const resolvedNum = (n) => qs.filter((q) => Number(String(q).match(/\d/)[0]) === n).every((q) => this._ctl?.draft?.answers?.[q] || this._ctl?.draft?.skipped?.[q]);
     return {
-      mentorName: mentor?.name || null, mentorTitle: mentor?.title || mentor?.class || null,
-      mentorPortraitMarkup: portraitMarkup(mentorPortrait, mentor?.name),
+      neutralFrame: neutral,
+      mentorName: neutral ? 'Reflection' : (mentor?.name || null), mentorTitle: neutral ? null : (mentor?.title || mentor?.class || null),
+      mentorPortraitMarkup: neutral ? '' : portraitMarkup(mentorPortrait, mentor?.name),
       phase: v.phase, seq: v.seq ?? 0, preview: v.preview === true,
       view: v.view || null, multiSelect: v.view?.multiSelect === true, questionNumber: v.questionNumber ?? null, totalQuestions: total,
       reconfirm: v.reconfirm || null, staleNotice: v.staleNotice || null, selectedOptionId: v.selectedOptionId || null,
