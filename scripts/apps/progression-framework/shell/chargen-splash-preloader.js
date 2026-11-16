@@ -43,7 +43,13 @@ async function warmTemplates() {
 }
 
 async function warmDataAuthorities() {
-  const { dataPreloader } = await import('/systems/foundryvtt-swse/scripts/core/data-preloader.js');
+  const [{ dataPreloader }, { ClassesRegistry }] = await Promise.all([
+    import('/systems/foundryvtt-swse/scripts/core/data-preloader.js'),
+    import('/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js'),
+  ]);
+  // The class step consumes ClassesRegistry directly; make sure it is built
+  // before caching its contents, rather than caching an empty index.
+  if (!ClassesRegistry.isInitialized()) await ClassesRegistry.initialize();
   // Species is warmed by SpeciesStep.preload() so both don't initialize the
   // same registry concurrently. Remaining registries use the shared cache.
   await dataPreloader.preload({
