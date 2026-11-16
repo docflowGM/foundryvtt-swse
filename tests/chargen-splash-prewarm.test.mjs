@@ -12,7 +12,7 @@ const species = read('scripts/apps/progression-framework/steps/species-step.js')
 const shellSrc = read('scripts/apps/progression-framework/shell/progression-shell.js');
 
 function setup() {
-  const counts = { templates: 0, registry: 0, background: 0, species: 0, mentor: 0 };
+  const counts = { templates: 0, registry: 0, background: 0, species: 0, mentor: 0, classes: 0 };
   const context = {
     console,
     loadTemplates: async paths => {
@@ -20,7 +20,14 @@ function setup() {
       assert.ok(paths.some(p => p.includes('species-work-surface.hbs')));
       assert.ok(paths.some(p => p.includes('attribute-work-surface.hbs')));
     },
+    __testClassRegistry: async () => ({
+      ClassesRegistry: {
+        isInitialized() { return false; },
+        async initialize() { counts.classes += 1; return true; },
+      },
+    }),
     __testPreloader: async () => ({
+
       dataPreloader: {
         async preload(options) {
           counts.registry += 1;
@@ -36,7 +43,8 @@ function setup() {
   // a Foundry runtime. The real production control flow is evaluated as-is.
   const executable = src
     .replace(/export (function|const|class) /g, '$1 ')
-    .replace("import('/systems/foundryvtt-swse/scripts/core/data-preloader.js')", 'globalThis.__testPreloader()');
+    .replace("import('/systems/foundryvtt-swse/scripts/core/data-preloader.js')", 'globalThis.__testPreloader()')
+    .replace("import('/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js')", 'globalThis.__testClassRegistry()');
   assert.notEqual(executable, src, 'Production module must remain testable');
   const api = vm.runInNewContext(executable +
     '\n({ startChargenSplashPreload, consumeSplashMentorGuidance, splashPrewarmStatus })',
@@ -65,7 +73,7 @@ function setup() {
   const second = api.startChargenSplashPreload(shell);
   assert.strictEqual(first, second, 'Double render should join the same preload');
   await first;
-  assert.deepEqual(counts, { templates: 1, registry: 1, background: 1, species: 1, mentor: 1 });
+  assert.deepEqual(counts, { templates: 1, registry: 1, background: 1, species: 1, mentor: 1, classes: 1 });
   assert.equal(api.splashPrewarmStatus(shell).completed, true);
   assert.equal(api.consumeSplashMentorGuidance(shell, 'species'), 'Species await your decision.');
   assert.equal(api.consumeSplashMentorGuidance(shell, 'species'), null, 'Line must be consumed once');
@@ -89,7 +97,7 @@ function setup() {
   shell.mode = 'chargen';
   shell.currentStepIndex = 1;
   assert.equal((await api.startChargenSplashPreload(shell)).skipped, true);
-  assert.deepEqual(counts, { templates: 0, registry: 0, background: 0, species: 0, mentor: 0 });
+  assert.deepEqual(counts, { templates: 0, registry: 0, background: 0, species: 0, mentor: 0, classes: 0 });
 }
 
 // No loading delay, pending preload gate, second registry, or navigation side
