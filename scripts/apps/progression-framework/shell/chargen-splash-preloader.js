@@ -13,6 +13,10 @@ const CORE_TEMPLATES = Object.freeze([
   ROOT + 'steps/species-work-surface.hbs',
   ROOT + 'steps/class-work-surface.hbs',
   ROOT + 'steps/attribute-work-surface.hbs',
+  ROOT + 'steps/galactic-profile-class-work-surface.hbs',
+  ROOT + 'steps/galactic-profile-archetype-work-surface.hbs',
+  ROOT + 'steps/galactic-profile-review-work-surface.hbs',
+  ROOT + 'details-panel/galactic-profile-details.hbs',
   ROOT + 'details-panel/empty-state.hbs',
   ROOT + 'details-panel/species-details.hbs',
   ROOT + 'summary-panel/species-summary.hbs',
@@ -50,8 +54,8 @@ async function warmDataAuthorities() {
   // The class step consumes ClassesRegistry directly; make sure it is built
   // before caching its contents, rather than caching an empty index.
   if (!ClassesRegistry.isInitialized()) await ClassesRegistry.initialize();
-  // Species is warmed by SpeciesStep.preload() so both don't initialize the
-  // same registry concurrently. Remaining registries use the shared cache.
+  // The active next-step plugin owns its own read-only resources (Species or
+  // Galactic Profile). Shared registries are cached independently below.
   await dataPreloader.preload({
     priority: ['classes', 'skills'],
     background: ['feats', 'talents', 'forcePowers'],
@@ -60,9 +64,12 @@ async function warmDataAuthorities() {
   await dataPreloader.waitForAll();
 }
 
-async function warmSpeciesStep(shell) {
-  const species = shell?.stepPlugins?.get?.('species');
-  if (typeof species?.preload === 'function') await species.preload();
+async function warmFollowingStep(shell) {
+  // The next step may be Species OR Galactic Profile (or another conditional
+  // descriptor). A plugin may opt in only with a read-only preload() contract.
+  const next = getFollowingStep(shell);
+  const plugin = next ? shell?.stepPlugins?.get?.(next.stepId) : null;
+  if (typeof plugin?.preload === 'function') await plugin.preload(shell);
 }
 
 async function warmFollowingMentorLine(shell, state) {
@@ -113,7 +120,7 @@ export function startChargenSplashPreload(shell) {
   };
 
   state.promise = Promise.all([
-    run('species-resources', () => warmSpeciesStep(shell)),
+    run('next-step-resources', () => warmFollowingStep(shell)),
     run('shared-data-authorities', warmDataAuthorities),
     run('handlebars-templates', warmTemplates),
     // The next-step line may be recorded immediately; no UI is mutated.
