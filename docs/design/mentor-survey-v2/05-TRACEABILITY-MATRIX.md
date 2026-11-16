@@ -128,4 +128,5 @@ Tests are `tests/mentor-survey-*.test.mjs` (run with `node --test`). Each test t
 | PR-13 | Prestige Q1 (32 banks, 1,293 answers) and Q3 (160 scenes, 800 answers) imported; all 1,293 route assignments validated class-scoped | Rolling design v0.26; Q3 library v0.1 | `build-prestige-q1q3-content.mjs`, `prestige-q1q3.json`, `10-*` reports | Tested (offline) |
 | PR-14 | Authoritative source ids preserved; runtime ids class-namespaced; 23 cross-class id reuses scoped | same | importer | Tested (offline) |
 | PR-15 | Q3 keeps the class Mentor voice; no tag, bias key or developer note imported | Q3 library; directive tag exclusion | importer, tests | Tested (offline) |
+| PR-17 | Prestige Q2: shared stems + class connective, evidence-backed A-D, E/F, draft only, no owned-thing claims | owner ruling MSV-RD-014; Q2 Character Synthesis v0.8 | `build-prestige-q2-content.mjs`, `resolvePrestigeQuestion` q2 | Tested (offline); wording approval pending |
 | PR-16 | Release gate and honest coverage: draft text only in preview; incomplete survey (Q2/Q6 unavailable) recorded as incomplete | directive release gate | `survey-controller._coverage`, ledger | Tested (offline) |

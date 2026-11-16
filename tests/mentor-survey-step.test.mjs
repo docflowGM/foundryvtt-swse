@@ -127,6 +127,9 @@ test('PR-03 PrestigeSurveyStep runs a real Ace Pilot acquisition: Q1 browse, rou
   await click(step, shell, 'msurvey-more', { questionId: 'q1', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q1'); assert.equal(d.view.page.index, 1);
   await click(step, shell, 'msurvey-choose', { questionId: 'q1', optionId: d.view.options[0].optionId, seq: String(d.seq) });
+  d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q2');
+  assert.deepEqual(d.view.options.map((o) => o.optionId), ['pr.ace_pilot.q2.alt', 'pr.ace_pilot.q2.undecided'], 'no evidence-backed strength in this fixture: only E and F');
+  await click(step, shell, 'msurvey-choose', { questionId: 'q2', optionId: 'pr.ace_pilot.q2.alt', seq: String(d.seq) });
   d = await step.getStepData({ shell }); assert.equal(d.view.questionId, 'q3'); assert.equal(d.view.options.length, 5); assert.ok(d.view.situation);
   await click(step, shell, 'msurvey-choose', { questionId: 'q3', optionId: d.view.options[1].optionId, seq: String(d.seq) });
   d = await step.getStepData({ shell });
@@ -143,8 +146,8 @@ test('PR-03 PrestigeSurveyStep runs a real Ace Pilot acquisition: Q1 browse, rou
   const done = ev.find((e) => e.type === 'survey_completed');
   assert.match(done.typed.classDiscoverySourceId, /^AP-Q1-/); assert.match(done.typed.responsibilityScene, /^AP-Q3-S0[1-5]$/); assert.match(done.typed.responsibilityLetter, /^[A-E]$/);
   assert.equal(done.typed.declaredPrestigeDepth, 'swim'); assert.equal(done.typed.primaryPurpose, 'calling');
-  assert.equal(done.coverage.complete, false, 'Q2 and Q6 have no usable source: skipped, and the survey is reported incomplete');
-  assert.deepEqual(done.coverage.unavailable.map((u) => u.questionId).sort(), ['q2', 'q6']);
+  assert.equal(done.coverage.complete, false, 'Q6 has no source package: skipped, and the survey is reported incomplete');
+  assert.deepEqual(done.coverage.unavailable.map((u) => u.questionId).sort(), ['q6']);
   assert.equal(shell.actor.flags['foundryvtt-swse'], undefined);
 });
 

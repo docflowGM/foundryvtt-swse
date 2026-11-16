@@ -232,6 +232,12 @@ export class PrestigeSurveyStep extends MentorSurveyStep {
   get _title() { return 'What does this achievement mean to you?'; }
   _createController(deps, stored) { return new PrestigeSurveyController(deps, stored); }
   _liveContext(shell) {
-    return { selectedClassId: resolveClassId(shell), classLevels: projectActorEvidence(shell?.actor).classLevels };
+    return {
+      selectedClassId: resolveClassId(shell), classLevels: projectActorEvidence(shell?.actor).classLevels,
+      // Q2 reads the existing observed-only accessor and its read-only provenance (finalized owned items, trained skills); no new scorer.
+      observedBias: (() => { try { return IdentityEngine.computeObservedBehaviorBias(shell?.actor)?.mechanicalBias || {}; } catch (_e) { return {}; } })(),
+      observedProvenance: (() => { try { return IdentityEngine.computeObservedBehaviorBiasProvenance(shell?.actor) || null; } catch (_e) { return null; } })(),
+      canonicalBiasKeys: this._ctl?.pack?.q2Content?.keys || [],
+    };
   }
 }

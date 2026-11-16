@@ -173,27 +173,25 @@ Still present and classified (not removed here): a **producer-less** input chann
 
 `MentorSurfaceService` has its own unrelated chat-surface survey (`mentorSurveyCompleted`); it was not part of these surveys and was not touched.
 
-## 11. Blocker ledger by category (updated 2026-11-16, source-recovery milestone)
+## 11. Blocker ledger by category (updated 2026-11-16, owner rulings milestone)
 
-Five categories: **MS** missing source (not in Git) · **SI** source exists but not imported · **AP** approval pending · **MC** mechanical certification pending · **RI** runtime integration pending.
+Five categories: **MS** missing source (not in Git) | **SI** source exists but not imported | **AP** approval pending | **MC** mechanical certification pending | **RI** runtime integration pending.
 
 | Item | Category | Precise evidence |
 |---|---|---|
-| Prestige Q6 (32 classes) | **MS** | `SWSE_Prestige_Q6_Fresh_Chat_Handoff_2026-11-15.md` is a handoff only; the per-class dialogue package is not in any committed file. Never reconstructed. Shared engine is ready. |
-| Prestige Q1/Q3 per-route quarantine flags | **MS** | The Q3 library says flagged routes are "preserved in the JSON" (Ace Pilot companion JSON); that JSON is not in Git. 35 rows are detected from in-row markers only. |
-| Q3 explicit answer ids and the two unscored controls | **MS** (low impact) | Committed Q3 text has no per-answer ids (derived `<sceneId>-<letter>`); "I am not sure yet"/"Try another situation" are described, not authored per scene. |
-| Multiclass Q2 `q1_focus` phrases (125 answers x 20 routes) and E/F text | **MS** | `q1Focus` is empty in `multiclass-q2.json`; no committed file authors these. |
-| Multiclass Q4/Q5 fallback banks for an undecided Q1 | **MS** | Only in an uncommitted JSON (`MSV-RD-008`). |
-| Prestige Q2 per-class answers and E/F | **SI** (editorial) | Contract, introductions, questions, route inventories and 110 hypothetical six-answer fixtures exist (`11-PRESTIGE-Q2-AUDIT.md`); no key-by-class answer set for an arbitrary actor. Not importable as player text. |
-| Prestige Q1 openings and questions (32) | **SI imported, AP** | All candidates imported (44 openings, 35 question lines); choice is `MSV-RD-012`. |
-| Prestige Q1 slate | **AP** | `MSV-RD-005` / `MSV-RD-013`. |
+| Prestige Q6 (32 classes, 160 A-E responses) | **MS** | Only `SWSE_Prestige_Q6_Fresh_Chat_Handoff_2026-11-15.md` is committed. The authored package is in five files that are not in Git: `SWSE_Prestige_Q6_Mayu_Prototype_v01.md`, `..._Batch_02_Classes_02-11_v01.md`, `..._Batch_03_Classes_12-21_v01.md`, `..._Final_Batch_Classes_22-32_v01.md`, `..._Complete_32_Class_Editorial_v01.md`. The owner's `SWSE_Prestige_Q1-Q6_Final_Editorial_Review_v01(1).md` verifies 32/32 coverage but is a review, not the dialogue. Never reconstructed. Shared engine ready; Mayu's approved prototype to be kept distinct on import. |
+| Prestige Q1/Q3 per-route quarantine flags | **MS** (partly recoverable) | The Q3 library says flagged routes are "preserved in the JSON"; that JSON is not in Git. 35 rows are detected from in-row markers; the reconciliation table in `10-PRESTIGE-Q1-Q3-IMPORT-REPORT.md` lists what would settle each group from the tree audits. |
+| Q3 explicit answer ids and unscored controls | **MS** (low impact) | Derived `<sceneId>-<letter>`; the two controls are described, not authored per scene. |
+| Multiclass Q4/Q5 undecided-Q1 content | resolved | Imported (25 Q5 responses, 5 no-goal replacements) and curated neutral Q4 families (`MSV-RD-015`). |
+| Multiclass `q1_focus` phrases (100), neutral focus, E/F | **AP** | Drafted under owner authorization; neutral focus and E/F approved; the 100 phrases are `draft_text`. |
+| Multiclass Q2 evidence provenance | **MC** | A-D need an owned item or trained-skill contribution (`computeObservedBehaviorBiasProvenance`); engine exposes item names but only layer-level skill provenance; four emitted keys outside the 125 are ignored. |
+| Prestige Q2 (32 classes) | **AP** | Implemented: shared stems + class connective + E/F, all `draft_text` (`MSV-RD-014`, `-015`). Not 1,293 bespoke banks by design. |
+| Prestige Q1 openings and questions | **AP** | Provisional defaults chosen by rule (`14-PRESTIGE-Q1-OPENING-SELECTION-REVIEW.md`); wording approval pending. |
+| Prestige Q1 per-class neutral ids | **AP** | Six classes curated (`MSV-RD-015`). |
 | All L1, multiclass and prestige dialogue | **AP** | Line approval; every scope `withheld`. |
-| Multiclass Q6 answer B wording | **AP** | `MSV-RD-011`. |
-| Multiclass with 2+ prior foundation classes; career continuity; another-career conversation | **AP** | `MSV-RD-004`, `-009`, `-010`. |
-| Prestige Q2 authoring path and sign-off | **AP** | `MSV-RD-014`. |
-| Gunslinger Pistoleer, Outlaw Fringer/Slicer, Teras Kasi, Stolen Form, Officer prerequisite collisions, Charlatan Fortune, JM/SL/Force Disciple tree alternatives | **MC** | `MSV-RD-006` and the independent tree audit; marker-flagged rows are never offered. |
+| Prestige another-career Discover/Explore/Affirm | **AP** | Rule settled (`MSV-RD-010`); conversation text authored only for Ace Pilot; no goal is declared until a conversation exists. |
+| Gunslinger Pistoleer, Outlaw Fringer/Slicer, Teras Kasi, Stolen Form, Officer prerequisite collisions, Charlatan Fortune, JM/SL/Force Disciple tree alternatives | **MC** | `MSV-RD-006` and the independent tree audit. |
 | Answer-to-tag mappings and influence coefficients | **MC** | Tag boundary inert; coefficients provisional (`07`). |
-| Observed-strength accessor for 4 non-canonical keys | **MC** | `mobility`, `perception`, `techControl`, `forceConnection` are ignored (not in the 125). |
-| Live Foundry rendering, real finalizer transaction, settings UI, template compilation | **RI** | No Foundry runtime available; manual procedures in sections 7-9. |
+| Live Foundry rendering, real finalizer transaction, settings UI, template compilation | **RI** | No Foundry runtime in this environment; manual procedures in sections 7-9. |
 | Real Suggestion Engine ranking with certified tags | **RI** | Channel is empty until tags are certified. |
 | Producer-less `mentorBiases` channel deletion | **RI** (cleanup) | Section 10. |

@@ -172,7 +172,7 @@ test('PR-16 a full Q1 to Q5 run commits as a preview, incomplete survey: Q2 and 
 
 test('PR-16 the Q1/Q3 pack is wired through the content loader and the six-question flow keeps Q2 and Q6 blocked', () => {
   const loader = fs.readFileSync(path.join(ROOT, `${dir}/content-loader.js`), 'utf8');
-  assert.match(loader, /prestige: \[\['prestige-q1q3', 'q1q3'\]\]/);
+  assert.match(loader, /prestige: \[\['prestige-q1q3', 'q1q3'\], \['prestige-q2', 'q2Content'\]\]/);
   assert.deepEqual(Object.keys(base.blocked).sort(), ['q2', 'q6']);
   for (const q of ['q2', 'q6']) assert.equal(R.resolvePrestigeQuestion({ pack, draft: { answers: {} }, qid: q, ctx: { destinationClassId: 'ace_pilot' }, preview: true }).reason, 'blocked_source');
 });

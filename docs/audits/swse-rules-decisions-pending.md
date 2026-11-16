@@ -3091,3 +3091,23 @@ Owner rulings received 2026-11-16 ("Owner Decisions and Source-Recovery Correcti
 | MSV-RD-008 / -009 | Import the existing Q5 fallbacks and no-goal replacements; neutral Q4 uses a curated low-assumption scenario with a recorded gap if none fits. | RESOLVED | milestone B |
 | MSV-RD-010 | Discover, Explore, Affirm preserved; only an explicit affirmation of a valid target declares a goal. | RESOLVED (rule); conversation text not authored beyond Ace Pilot | milestone C |
 | MSV-RD-007 | `q1_focus` catalog and E/F authorized as drafts; approved E and F statements. | RESOLVED (approach); phrases are draft | milestone B |
+
+
+## MSV-RD-015 — Implementation choices made under the 2026-11-16 rulings, flagged for editorial review
+
+These are engineering or drafting choices the rulings delegated. None sets a game rule. Each is draft text or a reversible mapping and is withheld from players until reviewed.
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / editorial implementation choices |
+| Feature | (a) Multiclass Q5 `{declared_goal}` slot phrase; (b) curated neutral Q4 families; (c) six curated neutral Q1 ids; (d) 100 `q1_focus` phrases; (e) 32 prestige Q2 connective sentences; (f) origin-lens wording |
+| Source | Owner rulings of 2026-11-16 (sections 5, 6, 4, 7); multiclass design lines 7142-7194 and 2142-2172 |
+| Evidence | (a) The ruling says substitute only the verified player-affirmed content; no certified grammatical phrase exists, so the slot is filled with the pointer phrase "the goal I have already declared" (`mc.q5.goalphrase`), never the goal text. (b) noble `leadership`, jedi `consular`, scout `recon`, soldier `tactics`, scoundrel `opportunist`, each judged understandable without specialist training (rationale in `multiclass.json` `q4Neutral`). (c) FD-UN00, JK-ID03, JM-ID03, OF-ID03, SA-ID03, SL-ID03 are the authored undecided answers in classes whose neutral id is not named NEUTRAL. (d)(e)(f) drafted wording. |
+| Confirmed behavior | Declaring or not declaring a goal never creates or replaces one; undecided is never a negative preference. |
+| Unresolved question | Editorial approval of each item above; whether (a) should instead name the goal once a reviewed phrase catalog exists. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | All items are `draft_text` or marked `curated_pending_editorial_review`; players see nothing until approved. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

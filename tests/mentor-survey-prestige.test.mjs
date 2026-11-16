@@ -107,7 +107,7 @@ test('PR-07 Q5 offers seven class-specific first-person purposes with no titles;
   assert.ok(!second.view.options.some((o) => o.optionId.endsWith('.refinement')) && !second.view.options.some((o) => o.optionId.endsWith('.undecided')));
   assert.equal(second.view.options.at(-1).optionId, 'pr.ace_pilot.q5b.decline');
   c.choose('q5b', 'pr.ace_pilot.q5.contribution', c.seq);
-  assert.deepEqual(R.prestigeTyped(pack, c.draft, c.ctx), { prestigeClassId: 'ace_pilot', classDiscoverySourceId: null, responsibilityScene: null, responsibilityLetter: null, declaredPrestigeDepth: 'dive', primaryPurpose: 'refinement', secondaryPurpose: 'contribution' });
+  assert.deepEqual(R.prestigeTyped(pack, c.draft, c.ctx), { prestigeClassId: 'ace_pilot', q2BiasKey: null, classDiscoverySourceId: null, responsibilityScene: null, responsibilityLetter: null, declaredPrestigeDepth: 'dive', primaryPurpose: 'refinement', secondaryPurpose: 'contribution' });
 });
 
 test('PR-07/PR-09 declining the second purpose and choosing "undecided" are valid and force nothing: no goal, no next class', () => {

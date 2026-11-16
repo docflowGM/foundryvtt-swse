@@ -18,7 +18,7 @@ export function primeManifest() {
 export function getManifestSync() { return manifest; }
 
 /** Companion packs attached to a survey's pack under the given key (kept separate on disk to keep each file reviewable). */
-const COMPANIONS = { multiclass: [['multiclass-q6', 'q6Content'], ['multiclass-q2', 'q2Content']], prestige: [['prestige-q1q3', 'q1q3']] };
+const COMPANIONS = { multiclass: [['multiclass-q6', 'q6Content'], ['multiclass-q2', 'q2Content']], prestige: [['prestige-q1q3', 'q1q3'], ['prestige-q2', 'q2Content']] };
 
 export async function loadSurveyContent(kind) {
   if (!packs.has(kind)) {

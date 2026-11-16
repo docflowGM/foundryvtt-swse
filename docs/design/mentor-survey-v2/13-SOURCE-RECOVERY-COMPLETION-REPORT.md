@@ -1,5 +1,20 @@
 # Source Recovery and Full-Question Completion Report
 
+> **Update 2026-11-16 (owner rulings milestone).** Sections 1 to 10 below describe the first recovery milestone. The owner then settled `MSV-RD-011` to `-014` and ordered further recovery. Current state, superseding any older line below:
+>
+> | Area | Now |
+> |---|---|
+> | Multiclass Q6 answer B | owner-approved wording in place; the calibration question is no longer withheld for editorial reasons |
+> | Multiclass Q2 | 100 drafted `q1_focus` phrases, approved neutral focus ("what this new training could offer"), approved E and F; A-D only for strengths with actor provenance (owned item or trained skill, new read-only `computeObservedBehaviorBiasProvenance`); zero evidence or a neutral Q1 still offers E and F; no new scorer |
+> | Multiclass Q4/Q5 for an undecided Q1 | imported: 25 undecided-Q1 Q5 responses (design lines 7142-7184) and 5 no-goal replacements (7186-7194); Q4 uses a curated low-assumption family per destination with recorded rationale |
+> | Multiclass with two or more owned foundation classes | the player first chooses the origin lens (q0); the destination Mentor narrates; the other classes stay in Q2/Q6 evidence |
+> | Prestige Q1 | provisional openings and questions by the ruled selection rule (32-class review table); six substantive answers per page plus a separate neutral answer; quarantine reconciliation report |
+> | Prestige Q2 | implemented for all 32 classes: shared verified stems + class connective sentence + E/F, all draft; no 1,293 bespoke banks |
+> | Prestige Q6 | still missing source: the five authored files are not in Git |
+> | Clean-break consumers | done earlier in this PR (`12-*`) |
+>
+> Nothing is player-visible and nothing was run in Foundry v13. The earlier statement that 35 question candidates were imported was a stale intermediate count: the correct number is 32 (one per class) plus 48 opening candidates; no variant was lost.
+
 **Branch:** `refactor/mentor-surveys-v2-cutover` (never merged to `main`). **Date:** 2026-11-16.
 **Foundry v13 certification: not claimed.** No live Foundry session was available; every result below is offline.
 
@@ -77,8 +92,8 @@ The 32-class package is not in Git. It was not reconstructed and no generic dial
 
 | Check | Result |
 |---|---|
-| Survey suites | **194 tests in 17 files, all passing** (new: `prestige-q1q3` 12, `clean-break` 4; updated `step` and `prestige`) |
-| Full repository suite (`node --test tests/*.test.mjs`) | **2,337 tests = 2,324 pass + 5 fail + 8 skipped; 0 cancelled, 0 todo** |
+| Survey suites | **208 tests in 19 files, all passing** (added since the first milestone: `prestige-q1q3` 14, `prestige-q2` 6, `multiclass-fallbacks` 4, `clean-break` 4; `multiclass`, `multiclass-q2`, `multiclass-q6`, `step` and `prestige` updated) |
+| Full repository suite (`node --test tests/*.test.mjs`) | **2,351 tests = 2,338 pass + 5 fail + 8 skipped; 0 cancelled, 0 todo** (run after the owner-rulings milestone) |
 | The 5 failures | `force-power-final-integration`, `phase3-force-power-corrections`, `phase4-force-modifier-automation`, `phase5-force-healing-mitigation`, `phase6-force-direct-damage`: identical on a clean `origin/main`, not caused by this branch |
 | 8 skips | declared by existing tests, none in the survey suites |
 | Validators | `system.json` valid; partial validator passes; data validator passes; progression-integrity findings 47 |
