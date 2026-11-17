@@ -29,8 +29,14 @@
       },
       "choices": {
         "class": "fec1f8af44fcc35a",
-        "species": "species-mirialan",
-        "background": "alderaan-origin",
+        "species": {
+          "sourceId": "species-mirialan",
+          "name": "Mirialan"
+        },
+        "background": {
+          "sourceId": "alderaan-origin",
+          "name": "Alderaan Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -193,8 +199,14 @@
       },
       "choices": {
         "class": "fec1f8af44fcc35a",
-        "species": "species-miraluka",
-        "background": "alpheridies-origin",
+        "species": {
+          "sourceId": "species-miraluka",
+          "name": "Miraluka"
+        },
+        "background": {
+          "sourceId": "alpheridies-origin",
+          "name": "Alpheridies Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -356,8 +368,14 @@
       },
       "choices": {
         "class": "fec1f8af44fcc35a",
-        "species": "species-zabrak",
-        "background": "o8ysca1cvyn",
+        "species": {
+          "sourceId": "species-zabrak",
+          "name": "Zabrak"
+        },
+        "background": {
+          "sourceId": "o8ysca1cvyn",
+          "name": "Scarred"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -514,8 +532,14 @@
       },
       "choices": {
         "class": "fec1f8af44fcc35a",
-        "species": "species-miraluka",
-        "background": "nar-shaddaa-origin",
+        "species": {
+          "sourceId": "species-miraluka",
+          "name": "Miraluka"
+        },
+        "background": {
+          "sourceId": "nar-shaddaa-origin",
+          "name": "Nar Shaddaa Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -680,8 +704,14 @@
       },
       "choices": {
         "class": "8c58016e587dd2c7",
-        "species": "species-zeltron",
-        "background": "alderaan-origin",
+        "species": {
+          "sourceId": "species-zeltron",
+          "name": "Zeltron"
+        },
+        "background": {
+          "sourceId": "alderaan-origin",
+          "name": "Alderaan Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -829,8 +859,14 @@
       },
       "choices": {
         "class": "8c58016e587dd2c7",
-        "species": "species-human",
-        "background": "coruscant-origin",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
+        "background": {
+          "sourceId": "coruscant-origin",
+          "name": "Coruscant Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -980,8 +1016,14 @@
       },
       "choices": {
         "class": "8c58016e587dd2c7",
-        "species": "species-bothan",
-        "background": "fondor-origin",
+        "species": {
+          "sourceId": "species-bothan",
+          "name": "Bothan"
+        },
+        "background": {
+          "sourceId": "fondor-origin",
+          "name": "Fondor Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -1160,8 +1202,14 @@
       },
       "choices": {
         "class": "8c58016e587dd2c7",
-        "species": "species-zeltron",
-        "background": "o8ysca1cvyn",
+        "species": {
+          "sourceId": "species-zeltron",
+          "name": "Zeltron"
+        },
+        "background": {
+          "sourceId": "o8ysca1cvyn",
+          "name": "Scarred"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -1310,8 +1358,14 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-human",
-        "background": "military-academy",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
+        "background": {
+          "sourceId": "military-academy",
+          "name": "Military Academy"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -1437,8 +1491,14 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-human",
-        "background": "frontier-settler",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
+        "background": {
+          "sourceId": "frontier-settler",
+          "name": "Frontier Settler"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -1564,8 +1624,14 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-human",
-        "background": "common-worker",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
+        "background": {
+          "sourceId": "common-worker",
+          "name": "Common Worker"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -1697,8 +1763,14 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-wolf",
-        "background": "creature-feral",
+        "species": {
+          "sourceId": "species-wolf",
+          "name": "Wolf"
+        },
+        "background": {
+          "sourceId": "creature-feral",
+          "name": "Feral Creature"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -1837,8 +1909,14 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-bear",
-        "background": "creature-feral",
+        "species": {
+          "sourceId": "species-bear",
+          "name": "Bear"
+        },
+        "background": {
+          "sourceId": "creature-feral",
+          "name": "Feral Creature"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -1983,7 +2061,10 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-human",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
         "background": null,
         "attributes": {
           "basis": "unresolved",
@@ -2116,7 +2197,10 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-human",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
         "background": null,
         "attributes": {
           "basis": "unresolved",
@@ -2265,7 +2349,10 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-human",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
         "background": null,
         "attributes": {
           "basis": "unresolved",
@@ -2396,7 +2483,10 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-human",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
         "background": null,
         "attributes": {
           "basis": "unresolved",
@@ -2524,7 +2614,10 @@
       },
       "choices": {
         "class": "nonheroic",
-        "species": "species-human",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
         "background": null,
         "attributes": {
           "basis": "unresolved",
@@ -2657,8 +2750,14 @@
       },
       "choices": {
         "class": "21dfe84d159a1b7f",
-        "species": "species-human",
-        "background": "corellia-origin",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
+        "background": {
+          "sourceId": "corellia-origin",
+          "name": "Corellia Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -2826,8 +2925,14 @@
       },
       "choices": {
         "class": "21dfe84d159a1b7f",
-        "species": "species-bothan",
-        "background": "bothawui-origin",
+        "species": {
+          "sourceId": "species-bothan",
+          "name": "Bothan"
+        },
+        "background": {
+          "sourceId": "bothawui-origin",
+          "name": "Bothawui Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -2993,8 +3098,14 @@
       },
       "choices": {
         "class": "21dfe84d159a1b7f",
-        "species": "species-duros",
-        "background": "dp2c58wnn6i",
+        "species": {
+          "sourceId": "species-duros",
+          "name": "Duros"
+        },
+        "background": {
+          "sourceId": "dp2c58wnn6i",
+          "name": "Enslaved"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -3162,8 +3273,14 @@
       },
       "choices": {
         "class": "21dfe84d159a1b7f",
-        "species": "species-twi-lek",
-        "background": "ryloth-origin",
+        "species": {
+          "sourceId": "species-twi-lek",
+          "name": "Twi'lek"
+        },
+        "background": {
+          "sourceId": "ryloth-origin",
+          "name": "Ryloth Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -3337,8 +3454,14 @@
       },
       "choices": {
         "class": "21dfe84d159a1b7f",
-        "species": "species-duros",
-        "background": "sryc2ulg2u",
+        "species": {
+          "sourceId": "species-duros",
+          "name": "Duros"
+        },
+        "background": {
+          "sourceId": "sryc2ulg2u",
+          "name": "Disgraced"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -3507,8 +3630,14 @@
       },
       "choices": {
         "class": "b5bed5d1b5f42958",
-        "species": "species-duros",
-        "background": "duro-origin",
+        "species": {
+          "sourceId": "species-duros",
+          "name": "Duros"
+        },
+        "background": {
+          "sourceId": "duro-origin",
+          "name": "Duro Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -3683,8 +3812,14 @@
       },
       "choices": {
         "class": "b5bed5d1b5f42958",
-        "species": "species-mon-calamari",
-        "background": "fondor-origin",
+        "species": {
+          "sourceId": "species-mon-calamari",
+          "name": "Mon Calamari"
+        },
+        "background": {
+          "sourceId": "fondor-origin",
+          "name": "Fondor Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -3884,8 +4019,14 @@
       },
       "choices": {
         "class": "b5bed5d1b5f42958",
-        "species": "species-codru-ji",
-        "background": "tatooine-origin",
+        "species": {
+          "sourceId": "species-codru-ji",
+          "name": "Codru-Ji"
+        },
+        "background": {
+          "sourceId": "tatooine-origin",
+          "name": "Tatooine Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -4064,8 +4205,14 @@
       },
       "choices": {
         "class": "b5bed5d1b5f42958",
-        "species": "species-ithorian",
-        "background": "308eft0e0lz",
+        "species": {
+          "sourceId": "species-ithorian",
+          "name": "Ithorian"
+        },
+        "background": {
+          "sourceId": "308eft0e0lz",
+          "name": "Bankrupt"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -4246,8 +4393,14 @@
       },
       "choices": {
         "class": "b5bed5d1b5f42958",
-        "species": "species-bothan",
-        "background": "bothawui-origin",
+        "species": {
+          "sourceId": "species-bothan",
+          "name": "Bothan"
+        },
+        "background": {
+          "sourceId": "bothawui-origin",
+          "name": "Bothawui Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -4418,8 +4571,14 @@
       },
       "choices": {
         "class": "f62ca2e639cab614",
-        "species": "species-houk",
-        "background": "6ybllwkh0nc",
+        "species": {
+          "sourceId": "species-houk",
+          "name": "Houk"
+        },
+        "background": {
+          "sourceId": "6ybllwkh0nc",
+          "name": "Orphaned"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -4479,7 +4638,7 @@
           {
             "name": "Commanding Presence",
             "sourceIds": [
-              "commanding-presence"
+              "438e13c99c7b53a6"
             ]
           }
         ],
@@ -4623,8 +4782,14 @@
       },
       "choices": {
         "class": "f62ca2e639cab614",
-        "species": "species-human",
-        "background": "anaxes-origin",
+        "species": {
+          "sourceId": "species-human",
+          "name": "Human"
+        },
+        "background": {
+          "sourceId": "anaxes-origin",
+          "name": "Anaxes Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -4788,8 +4953,14 @@
       },
       "choices": {
         "class": "f62ca2e639cab614",
-        "species": "mantellian-savrip",
-        "background": "6ybllwkh0nc",
+        "species": {
+          "sourceId": "mantellian-savrip",
+          "name": "Mantellian Savrip"
+        },
+        "background": {
+          "sourceId": "6ybllwkh0nc",
+          "name": "Orphaned"
+        },
         "attributes": {
           "basis": "base",
           "base": {
@@ -4949,8 +5120,14 @@
       },
       "choices": {
         "class": "f62ca2e639cab614",
-        "species": "gen'dai",
-        "background": "pk7obuc4ny",
+        "species": {
+          "sourceId": "gen'dai",
+          "name": "Gen'Dai"
+        },
+        "background": {
+          "sourceId": "pk7obuc4ny",
+          "name": "Crippled"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {
@@ -5115,8 +5292,14 @@
       },
       "choices": {
         "class": "f62ca2e639cab614",
-        "species": "species-sullustan",
-        "background": "sullust-origin",
+        "species": {
+          "sourceId": "species-sullustan",
+          "name": "Sullustan"
+        },
+        "background": {
+          "sourceId": "sullust-origin",
+          "name": "Sullust Origin"
+        },
         "attributes": {
           "basis": "unresolved",
           "base": {

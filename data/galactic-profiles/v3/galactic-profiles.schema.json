@@ -187,11 +187,21 @@
         "class": {
           "$ref": "#/$defs/id"
         },
-        "species": {
-          "$ref": "#/$defs/nullableId"
-        },
         "background": {
-          "$ref": "#/$defs/nullableId"
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "sourceId": {
+              "$ref": "#/$defs/nullableId"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         },
         "attributes": {
           "$ref": "#/$defs/attributes"
@@ -275,6 +285,22 @@
           "items": {
             "type": "string",
             "pattern": "^GP-RD-[0-9]{3}$"
+          }
+        },
+        "species": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "sourceId": {
+              "$ref": "#/$defs/nullableId"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         }
       }
@@ -514,7 +540,10 @@
               "choices": {
                 "properties": {
                   "species": {
-                    "type": "string"
+                    "type": "object",
+                    "required": [
+                      "name"
+                    ]
                   },
                   "attributes": {
                     "properties": {
@@ -612,7 +641,10 @@
                     "const": "nonheroic"
                   },
                   "species": {
-                    "type": "string"
+                    "type": "object",
+                    "required": [
+                      "name"
+                    ]
                   },
                   "talents": {
                     "maxItems": 0
@@ -674,7 +706,10 @@
                     "const": "nonheroic"
                   },
                   "species": {
-                    "type": "string"
+                    "type": "object",
+                    "required": [
+                      "name"
+                    ]
                   },
                   "talents": {
                     "maxItems": 0

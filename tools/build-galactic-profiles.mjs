@@ -45,6 +45,10 @@ export const AUTHORING_CORRECTIONS = Object.freeze({
     'Energy Cell': { id: 'tool-energy-cell', reason: 'PC-1: authored with id:null; exactly one exact-name V2 equipment document exists', verify: { pack: 'equipment', name: 'Energy Cell' } },
     'Datapad, Basic': { id: 'computer-datapad-basic', reason: 'authored with id:null and resolution sourceNameLookupRequired; exactly one exact-name V2 equipment document exists', verify: { pack: 'equipment', name: 'Datapad, Basic' } }
   },
+  // GP-RD-002 (owner-approved): Commanding Presence for soldier_rifleman is the Mercenary-tree talent.
+  talents: {
+    soldier_rifleman: { 'Commanding Presence': { id: '438e13c99c7b53a6', reason: 'GP-RD-002: owner-approved Mercenary-tree identity (Force Unleashed Campaign Guide p.28); V2 access/prerequisites still decide legality', verify: { name: 'Commanding Presence', treeName: 'Mercenary' } } }
+  },
   // soldier_brawler: the archive note states "STR 22 (after +4 racial), CON 20 (after +4 racial)" against stored 18/16,
   // i.e. the stored scores are base values. Other profiles stay 'unresolved' (see audit §R.3).
   attributeBasis: {
@@ -67,6 +71,11 @@ const clone = v => JSON.parse(JSON.stringify(v));
 
 function refId(ref) {
   return ref?.canonicalIdCandidate ?? ref?.sourceRef?.id ?? null;
+}
+
+/** Species/background are carried as {sourceId, name}: the authored id is sometimes a slug, so V2 resolves id first, then the exact unique name. */
+function namedRef(ref) {
+  return ref ? { sourceId: refId(ref), name: ref.sourceRef?.name ?? null } : null;
 }
 
 function buildChoices(p, subtype) {
@@ -98,9 +107,10 @@ function buildChoices(p, subtype) {
   const slot = b.talents?.classSlot;
   if (slot?.selection) {
     const alt = (slot.alternateSourceCandidates || []).map(c => c.id);
+    const pin = AUTHORING_CORRECTIONS.talents[p.profileId]?.[slot.selection.sourceRef.name];
     talents.push({
       name: slot.selection.sourceRef.name,
-      sourceIds: [slot.selection.canonicalIdCandidate ?? slot.selection.sourceRef.id, ...alt],
+      sourceIds: pin ? [pin.id] : [slot.selection.canonicalIdCandidate ?? slot.selection.sourceRef.id, ...alt],
       ...(slot.parameters && Object.keys(slot.parameters).length ? { parameters: slot.parameters } : {})
     });
   }
@@ -117,8 +127,8 @@ function buildChoices(p, subtype) {
 
   return {
     class: subtype === 'nonheroic' || subtype === 'beast' ? 'nonheroic' : refId(p.identity.classRef),
-    species: subtype === 'droid' ? null : refId(p.identity.speciesRef),
-    background: refId(p.identity.backgroundRef),
+    species: subtype === 'droid' ? null : namedRef(p.identity.speciesRef),
+    background: namedRef(p.identity.backgroundRef),
     attributes,
     skills,
     feats,
