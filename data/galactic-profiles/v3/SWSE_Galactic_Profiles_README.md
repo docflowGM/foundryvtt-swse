@@ -1,3 +1,5 @@
+> **Superseded (implementation, P0).** The staging catalogs and schemas named below were replaced by the unified contract; see `README.md` in this folder. The original files remain in git history at `cdd5d33`.
+
 # SWSE Galactic Profiles v3 — Local Canonical-Ready Data Package
 
 **Repository staging only. This v3 proposal does not replace the production v2 templates or enable a runtime integration.**

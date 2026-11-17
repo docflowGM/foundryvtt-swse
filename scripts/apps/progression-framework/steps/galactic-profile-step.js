@@ -1,9 +1,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { TemplateRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-registry.js';
-import { TemplateAdapter } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-adapter.js';
-import { TemplateValidator } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-validator.js';
-import { TemplateTraversalPolicy } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-traversal-policy.js';
-import { ActiveStepComputer } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/active-step-computer.js';
+import { GalacticProfileRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/profile/galactic-profile-registry.js';
+import { GalacticProfileService } from '/systems/foundryvtt-swse/scripts/engine/progression/profile/galactic-profile-service.js';
+import { getProfileApplication } from '/systems/foundryvtt-swse/scripts/engine/progression/profile/galactic-profile-apply.js';
 import { getStepMentorContext, handleAskMentor, setSessionMentorContext } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/mentor-step-integration.js';
 import { getMentorForClass, getMentorKey, resolveMentorData } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { localizeMentorTemplateDialogues } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-localization.js';
@@ -11,8 +9,6 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 const ABILITIES = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 const ABILITY_LABELS = { str: 'STR', dex: 'DEX', con: 'CON', int: 'INT', wis: 'WIS', cha: 'CHA' };
-const PROFILE_STEP_IDS = new Set(['profile-class', 'profile-archetype', 'profile-review']);
-const REVIEW_EXCLUDED_STEPS = new Set(['intro', 'profile-class', 'profile-archetype', 'profile-review', 'confirm']);
 
 const CLASS_BRIEFS = {
   jedi: 'A disciplined Force-sensitive path built around lightsaber training, intuition, and moral pressure under fire.',
@@ -64,86 +60,80 @@ function modClass(mod) {
   if (mod < 0) return 'negative';
   return 'neutral';
 }
-function classNameForTemplate(template) {
-  return template?.classId?.name || template?.className || 'Unknown';
-}
-function classKeyForTemplate(template) {
-  return slug(classNameForTemplate(template).replace(/\s*\(Nonheroic\)\s*/i, '')) || template?.classId?.id || 'unknown';
-}
 function classImagePath(className) {
   const clean = String(className || '').replace(/\s*\(Nonheroic\)\s*/i, '').trim();
   return `systems/foundryvtt-swse/assets/class/${clean}.webp`;
 }
-function templateImagePath(template) {
-  if (template?.imagePath) return template.imagePath;
-  return `systems/foundryvtt-swse/assets/templates/${template?.id || slug(template?.name)}.webp`;
+function profileImagePath(profile) {
+  return profile.catalog.imagePath || `systems/foundryvtt-swse/assets/templates/${profile.profileId}.webp`;
 }
-function formatAbilities(template) {
-  const scores = template?.abilityScores || template?.abilities || {};
-  return ABILITIES.map(key => {
-    const score = Number(scores[key] ?? 10);
+function formatAbilities(profile) {
+  const base = profile.choices.attributes.base;
+  return ABILITIES.filter(key => base[key] !== undefined).map(key => {
+    const score = Number(base[key]);
     const mod = abilityModifier(score);
     return { key, label: ABILITY_LABELS[key], score, mod: fmtMod(mod), modClass: modClass(mod) };
   });
-}
-function itemName(item) {
-  if (typeof item === 'string') return item;
-  return item?.displayName || item?.name || item?.label || item?.id || '';
-}
-function itemNames(items, limit = 0) {
-  const names = (Array.isArray(items) ? items : []).map(itemName).filter(Boolean);
-  return limit > 0 ? names.slice(0, limit) : names;
 }
 function countLabel(count, singular, plural = `${singular}s`) {
   const n = Number(count || 0);
   return `${n} ${n === 1 ? singular : plural}`;
 }
-function roleTags(template) {
-  const tags = template?.roleTags || template?.role || [];
-  return (Array.isArray(tags) ? tags : [tags]).map(t => title(t)).filter(Boolean);
-}
-function backgroundName(template) {
-  return template?.backgroundId?.name || template?.backgroundName || '';
-}
-function speciesName(template) {
-  return template?.speciesId?.name || template?.species || '';
-}
-function templateArchetypeName(template) {
-  return template?.archetype || template?.name || title(template?.id);
-}
-function templateDisplayName(template) {
-  return template?.name || templateArchetypeName(template);
-}
+const roleTags = profile => (profile.catalog.roleTags || []).map(t => title(t)).filter(Boolean);
+const speciesName = profile => profile.choices.species?.name || (profile.subtype === 'droid' ? 'Droid' : '');
+const backgroundName = profile => profile.choices.background?.name || '';
+const names = (list, limit = 0) => { const n = (list || []).map(x => x.name).filter(Boolean); return limit > 0 ? n.slice(0, limit) : n; };
+const skillNames = (profile, limit = 0) => { const n = (profile.choices.skills || []).map(title); return limit > 0 ? n.slice(0, limit) : n; };
+
 function getShellFromContext(context, fallback = null) {
   if (context?.shell) return context.shell;
   if (context?._shell) return context._shell;
   if (context?.progressionSession || context?.actor) return context;
   return fallback || null;
 }
+/** Picker-local focus state. Choosing is an explicit click; nothing is ever pre-selected. */
 function getProfileState(shell) {
   const session = shell?.progressionSession;
   if (!session) return {};
   session.profileSelection ??= {};
   return session.profileSelection;
 }
-function groupTemplates(templates) {
-  const map = new Map();
-  for (const template of templates) {
-    const key = classKeyForTemplate(template);
-    if (!map.has(key)) {
-      const name = classNameForTemplate(template);
-      map.set(key, {
-        id: key,
-        name,
-        image: classImagePath(name),
-        count: 0,
-        templates: [],
-        description: CLASS_BRIEFS[key] || `A ${name} profile channel assembled from canonical template packages.`,
-      });
+function sessionSubtype(shell) {
+  return shell?.progressionSession?.subtype || null;
+}
+/** Browse-card model built from a generated catalog entry (no full-profile load until Review). */
+function toCardProfile(entry) {
+  const pv = entry.preview || {};
+  return {
+    profileId: entry.profileId,
+    revision: entry.revision,
+    subtype: entry.subtype,
+    catalog: { name: entry.name, archetype: entry.archetype, description: entry.description, quote: entry.quote, imagePath: entry.imagePath,
+      mentorKey: entry.mentorKey, dialogueKey: entry.dialogueKey, roleTags: entry.roleTags || [], classKey: entry.classKey, className: entry.className },
+    choices: {
+      species: pv.species ? { name: pv.species } : null,
+      background: pv.background ? { name: pv.background } : null,
+      attributes: { base: pv.abilities || {} },
+      skills: pv.skills || [], feats: (pv.feats || []).map(name => ({ name })), talents: [], forcePowers: (pv.powers || []).map(name => ({ name })), equipment: []
     }
-    const group = map.get(key);
-    group.count += 1;
-    group.templates.push(template);
+  };
+}
+/** Profiles offered = EXACT session subtype only. The creation lane establishes the subtype before the picker opens. */
+async function loadForShell(shell) {
+  const subtype = sessionSubtype(shell);
+  if (!subtype) return { subtype: null, profiles: [] };
+  const entries = await GalacticProfileRegistry.listCatalog({ subtype });
+  return { subtype, profiles: entries.map(toCardProfile) };
+}
+function groupProfiles(profiles) {
+  const map = new Map();
+  for (const profile of profiles) {
+    const key = profile.catalog.classKey;
+    if (!map.has(key)) {
+      const name = String(profile.catalog.className || title(key)).replace(/\s*\(Nonheroic\)\s*/i, '');
+      map.set(key, { id: key, name, image: classImagePath(name), count: 0, profiles: [], description: CLASS_BRIEFS[key] || `A ${name} profile channel.` });
+    }
+    const group = map.get(key); group.count += 1; group.profiles.push(profile);
   }
   return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -157,52 +147,33 @@ function formatClassGroup(group, state, index = 0) {
     count: group.count,
     description: group.description,
     profileCountLabel: countLabel(group.count, 'profile'),
-    archetypeNames: group.templates.map(templateArchetypeName).filter(Boolean),
+    archetypeNames: group.profiles.map(p => p.catalog.archetype).filter(Boolean),
     selected,
-    dimmed: !selected,
+    dimmed: !!state.classId && !selected,
   };
 }
-async function loadTemplatesForShell(shell) {
-  const all = await TemplateRegistry.getAllTemplates();
-  const subtype = shell?.progressionSession?.subtype || (shell?.actor?.type === 'droid' ? 'droid' : 'actor');
-  return all.filter(t => {
-    if (subtype === 'droid') return t.subtype === 'droid';
-    if (subtype === 'nonheroic') return t.isNonheroic === true || t.subtype === 'nonheroic';
-    return t.isNonheroic !== true && t.subtype !== 'droid' && t.subtype !== 'nonheroic';
-  });
-}
-async function loadTemplateDialogues() {
+async function loadProfileDialogues() {
   if (TEMPLATE_DIALOGUE_CACHE) return TEMPLATE_DIALOGUE_CACHE;
   try {
     const response = await fetch('systems/foundryvtt-swse/data/mentor-template-dialogues.json');
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     TEMPLATE_DIALOGUE_CACHE = localizeMentorTemplateDialogues(await response.json());
   } catch (err) {
-    swseLogger.warn('[GalacticProfile] Could not load mentor-template-dialogues.json; falling back to template quotes and step guidance.', { error: err?.message || String(err) });
-    TEMPLATE_DIALOGUE_CACHE = { mentors: {} };
+    // A failed fetch is NOT cached: the next call retries (fallback dialogue is used meanwhile).
+    swseLogger.warn('[GalacticProfile] Could not load mentor-template-dialogues.json; using profile quotes.', { error: err?.message || String(err) });
+    return { mentors: {} };
   }
   return TEMPLATE_DIALOGUE_CACHE;
 }
-function findTemplateDialogue(dialogueData, template, phase = 'greeting') {
-  if (!dialogueData || !template) return '';
-  const mentorKeys = [
-    template.mentor,
-    classNameForTemplate(template),
-    getMentorKey(resolveMentorData(template.mentor || classNameForTemplate(template))),
-  ].map(keySlug).filter(Boolean);
-  const templateKeys = [
-    template.id,
-    templateArchetypeName(template),
-    templateDisplayName(template),
-    `${classKeyForTemplate(template)}_${keySlug(templateArchetypeName(template))}`,
-  ].map(keySlug).filter(Boolean);
-
+function findProfileDialogue(dialogueData, profile, phase = 'greeting') {
+  if (!dialogueData || !profile) return '';
+  const mentorKeys = [profile.catalog.mentorKey, profile.catalog.className, getMentorKey(resolveMentorData(profile.catalog.mentorKey || profile.catalog.className))].map(keySlug).filter(Boolean);
+  const profileKeys = [profile.catalog.dialogueKey, profile.profileId, profile.catalog.archetype, profile.catalog.name].map(keySlug).filter(Boolean);
   for (const [mentorId, mentor] of Object.entries(dialogueData.mentors || {})) {
     if (!mentorKeys.includes(keySlug(mentorId)) && !mentorKeys.includes(keySlug(mentor?.name))) continue;
     const dialogues = mentor?.dialogues || {};
-    for (const key of templateKeys) {
-      const entry = dialogues[key] || dialogues[key.replace(/^soldier_just_a_dude$/, 'soldier_rifleman')];
-      const text = String(entry?.[phase] || '').trim();
+    for (const key of profileKeys) {
+      const text = String(dialogues[key]?.[phase] || '').trim();
       if (text) return text;
     }
   }
@@ -213,18 +184,13 @@ async function syncProfileMentor(shell, className, stepId = null) {
   const mentor = getMentorForClass(className) || resolveMentorData(className);
   const mentorKey = getMentorKey(mentor || className);
   return setSessionMentorContext(shell, {
-    mentor,
-    mentorId: mentorKey,
-    mentorKey,
-    className,
+    mentor, mentorId: mentorKey, mentorKey, className,
     stepId: stepId || shell?.steps?.[shell?.currentStepIndex]?.stepId || null,
-    source: 'class-selection',
-    confidence: 0.98,
-    reason: 'galactic profile class selection',
-    fallback: false,
+    source: 'class-selection', confidence: 0.98, reason: 'galactic profile class selection', fallback: false,
   }, { force: true });
 }
-function nodeBusiness(nodeId, index = 0) {
+function nodeBusiness(entry, index = 0) {
+  const nodeId = entry.stepId;
   const copy = NODE_BUSINESS_COPY[nodeId] || {};
   return {
     key: nodeId,
@@ -233,110 +199,100 @@ function nodeBusiness(nodeId, index = 0) {
     label: copy.label || title(nodeId),
     detail: copy.detail || `Resolve ${title(nodeId)} in the normal progression step.`,
     blocking: copy.blocking !== false,
-    stepHint: title(nodeId),
+    reason: entry.reason || null,
     ordinal: String(index + 1).padStart(2, '0'),
   };
 }
-function summarizeReconciliation(session) {
-  const reconciliation = session?.templateReconciliation || {};
-  const rows = [];
-  const removedClass = Number(reconciliation?.classAutoGrantFeatRemovals?.length || 0);
-  const replacedSpecies = Number(reconciliation?.speciesGrantedFeatReplacements?.length || 0);
-  const unresolvedFeats = Number(reconciliation?.unresolvedFeatSlots || 0);
-  if (removedClass > 0) rows.push(`${removedClass} class auto-grant ${removedClass === 1 ? 'feat was' : 'feats were'} removed from player-choice accounting.`);
-  if (replacedSpecies > 0) rows.push(`${replacedSpecies} species-granted ${replacedSpecies === 1 ? 'feat frees' : 'feats free'} replacement choice work.`);
-  if (unresolvedFeats > 0) rows.push(`${unresolvedFeats} feat ${unresolvedFeats === 1 ? 'slot remains' : 'slots remain'} open after reconciliation.`);
-  return rows;
+const REASON_COPY = {
+  FORCE_TRAINING_REQUIRED: 'This profile lists Force powers, but Force Training is not legally in the build yet. Choose it (and its powers) here.',
+  TALENT_ACCESS_UNVERIFIED: 'The authored talent is held until the talent step confirms the class can use its tree.',
+  PUBLICATION_VERSION_REQUIRED: 'This species has several published versions. Choose one explicitly.',
+};
+const BLOCK_COPY = {
+  ATTRIBUTE_BASIS_UNRESOLVED: 'The authored ability scores have not been confirmed as base or post-species values.',
+  RULING_BLOCKED: 'An open rules ruling prevents applying this profile.',
+  SKILL_KEY_UNRESOLVED: 'A listed skill does not exist in this ruleset.',
+  ITEM_WITHOUT_ID: 'A listed item has no canonical identity.',
+  ITEM_UNRESOLVED: 'A listed item could not be found in the canonical item data.',
+  SPECIES_UNRESOLVED: 'The listed species is not in the canonical species data.',
+  BACKGROUND_UNRESOLVED: 'The listed background is not in the canonical background data.',
+  FEAT_UNRESOLVED: 'A listed feat could not be matched to a canonical feat.',
+  FEAT_AMBIGUOUS: 'A listed feat matches more than one canonical feat.',
+  TALENT_UNRESOLVED: 'A listed talent could not be matched to a canonical talent.',
+  TALENT_AMBIGUOUS: 'A listed talent matches more than one canonical talent.',
+  SUBTYPE_MISMATCH: 'This profile is for a different kind of character than the one being created.',
+  UNKNOWN_SUBTYPE: 'This profile has an unknown character type.',
+};
+function describeBlocked(blocked = []) {
+  return blocked.map(b => ({ code: b.code, text: BLOCK_COPY[b.code] || 'This profile cannot be applied yet.', detail: b.detail }));
 }
-async function previewTemplateSession(shell, template) {
-  if (!shell?.actor || !template) return null;
-  const preview = await TemplateAdapter.initializeSessionFromTemplate(template, shell.actor, { mode: 'chargen' });
-  preview.profileSelection = { ...(shell.progressionSession?.profileSelection || {}), templateId: template.id, classId: classKeyForTemplate(template) };
-  preview.profileStepsComplete = true;
-  return preview;
-}
-async function buildRemainingBusiness(shell, template) {
-  try {
-    const preview = await previewTemplateSession(shell, template);
-    if (!preview) return [];
-    const computer = new ActiveStepComputer();
-    let activeNodeIds = await computer.computeActiveSteps(shell.actor, 'chargen', preview, { subtype: preview.subtype || 'actor' });
-    activeNodeIds = TemplateTraversalPolicy.filterActiveStepsForTemplate(activeNodeIds, preview, { skipLocked: true });
-    const filtered = activeNodeIds.filter(id => !REVIEW_EXCLUDED_STEPS.has(id));
-    return filtered.map((nodeId, index) => nodeBusiness(nodeId, index));
-  } catch (err) {
-    swseLogger.warn('[GalacticProfile] Failed to compute remaining business preview', { templateId: template?.id, error: err?.message || String(err) });
-    return [nodeBusiness('summary', 0)];
-  }
-}
-function firstBlockingBusiness(business = []) {
-  return business.find(item => item.blocking)?.stepId || business[0]?.stepId || null;
-}
-function formatTemplateForCard(template, state, dialogue = '') {
-  const className = classNameForTemplate(template);
-  const selected = template.id === state.templateId;
-  const skills = itemNames(template.trainedSkills, 3);
-  const feats = itemNames(template.feats, 3);
-  const powers = itemNames(template.forcePowers, 3);
+
+function formatProfileForCard(profile, state, dialogue = '') {
   return {
-    id: template.id,
-    name: templateDisplayName(template),
-    archetype: templateArchetypeName(template),
-    className,
-    image: templateImagePath(template),
-    description: template.description || '',
-    quote: dialogue || template.quote || '',
-    species: speciesName(template),
-    background: backgroundName(template),
-    abilities: formatAbilities(template),
-    roles: roleTags(template),
-    skillsPreview: skills,
-    featsPreview: feats,
-    powersPreview: powers,
-    selected,
+    id: profile.profileId,
+    name: profile.catalog.name,
+    archetype: profile.catalog.archetype,
+    className: profile.catalog.className,
+    image: profileImagePath(profile),
+    description: profile.catalog.description || '',
+    quote: dialogue || profile.catalog.quote || '',
+    species: speciesName(profile),
+    background: backgroundName(profile),
+    abilities: formatAbilities(profile),
+    roles: roleTags(profile),
+    skillsPreview: skillNames(profile, 3),
+    featsPreview: names(profile.choices.feats, 3),
+    powersPreview: names(profile.choices.forcePowers, 3),
+    selected: profile.profileId === state.templateId,
   };
 }
-function formatTemplateReview(template, business = [], dialogue = '', previewSession = null) {
-  const abilities = formatAbilities(template);
+
+function formatProfileReview(profile, compiled, dialogue, application) {
+  const business = (compiled?.open || []).map(nodeBusiness);
+  const isApplied = !!application && application.profileId === profile.profileId && application.revision === profile.revision && application.digest === compiled?.digest;
+  const notes = [];
+  for (const o of compiled?.open || []) if (REASON_COPY[o.reason]) notes.push(REASON_COPY[o.reason]);
+  for (const d of compiled?.diagnostics || []) if (d.code === 'FEAT_IS_CLASS_AUTOGRANT') notes.push(d.detail);
+  const wallet = compiled?.economy?.walletCredits ?? profile.choices.wallet.credits;
   return {
-    id: template.id,
-    name: templateDisplayName(template),
-    archetype: templateArchetypeName(template),
-    className: classNameForTemplate(template),
-    species: speciesName(template),
-    background: backgroundName(template),
-    image: templateImagePath(template),
-    description: template.description || '',
-    quote: template.quote || '',
-    mentorLine: dialogue || template.notes || '',
-    notes: template.notes || '',
-    roles: roleTags(template),
-    abilities,
-    feats: itemNames(template.feats),
-    talents: itemNames(template.talents),
-    skills: itemNames(template.trainedSkills),
-    forcePowers: itemNames(template.forcePowers),
-    equipment: itemNames(template.equipment),
-    credits: template.credits ?? '',
+    id: profile.profileId,
+    name: profile.catalog.name,
+    archetype: profile.catalog.archetype,
+    className: profile.catalog.className,
+    species: speciesName(profile),
+    background: backgroundName(profile),
+    image: profileImagePath(profile),
+    description: profile.catalog.description || '',
+    quote: profile.catalog.quote || '',
+    mentorLine: dialogue || '',
+    roles: roleTags(profile),
+    abilities: formatAbilities(profile),
+    feats: names(profile.choices.feats),
+    talents: names(profile.choices.talents),
+    skills: skillNames(profile),
+    forcePowers: names(profile.choices.forcePowers),
+    equipment: (profile.choices.equipment || []).map(e => (e.qty > 1 ? `${e.name} ×${e.qty}` : e.name)),
+    credits: `${wallet.toLocaleString?.() ?? wallet} (final balance)`,
     openBusiness: business,
     openCount: business.length,
-    blockingCount: business.filter(item => item.blocking).length,
-    isClean: business.length === 0,
-    reconciliationNotes: summarizeReconciliation(previewSession),
+    blockingCount: business.filter(b => b.blocking).length,
+    isClean: !!compiled?.ok && business.length === 0,
+    reconciliationNotes: notes,
+    blocked: describeBlocked(compiled?.blocked),
+    canApply: !!compiled?.ok,
+    isApplied,
+    applyLabel: isApplied ? 'Profile Applied' : 'Apply Profile',
   };
 }
 
 class GalacticProfileBaseStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
-    this._templates = [];
+    this._profiles = [];
     this._preloadPromise = null;
   }
 
-  /**
-   * Only load the canonical template registry. Do NOT enter the step or apply
-   * its default profile choices until the player actually reaches it.
-   */
+  /** Warm the lightweight catalog only (~40 KB). Never enters the step and never chooses or applies a profile. */
   preload(shell) {
     if (!this._preloadPromise) {
       this._preloadPromise = this._ensureProfileData(shell).catch(error => {
@@ -350,27 +306,21 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
   async _ensureProfileData(contextOrShell = null) {
     const shell = getShellFromContext(contextOrShell, this._shell);
     if (shell) this._shell = shell;
-    if (!this._templates.length && this._shell) {
-      this._templates = await loadTemplatesForShell(this._shell);
+    if (!this._profiles.length && this._shell) {
+      this._profiles = (await loadForShell(this._shell)).profiles;
     }
     return this._shell;
   }
 
   async onStepEnter(shell) {
-    // Reuse the in-flight splash warmup rather than refetching templates.
+    // Reuse the in-flight splash warmup rather than refetching profiles.
     await this.preload(shell);
     shell.mentor ??= {};
     shell.mentor.askMentorEnabled = true;
-
+    // Mentor follows an EXPLICIT choice only; entering the step selects nothing.
     const state = getProfileState(shell);
-    const groups = groupTemplates(this._templates);
-    if (!state.classId && groups[0]) state.classId = groups[0].id;
-    if (!state.templateId && state.classId) {
-      const first = groups.find(g => g.id === state.classId)?.templates?.[0];
-      if (first) state.templateId = first.id;
-    }
-    const template = state.templateId ? this._templates.find(t => t.id === state.templateId) : null;
-    const className = template ? classNameForTemplate(template) : groups.find(g => g.id === state.classId)?.name;
+    const selected = state.templateId ? this._profiles.find(p => p.profileId === state.templateId) : null;
+    const className = selected?.catalog.className ?? groupProfiles(this._profiles).find(g => g.id === state.classId)?.name;
     if (className) await syncProfileMentor(shell, className, this.descriptor?.stepId);
   }
 
@@ -391,49 +341,39 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
     return getStepMentorContext(shell?.actor ?? null, this.descriptor?.stepId || 'profile-review', '', shell ?? this._shell);
   }
 
+  /** Explicit class choice: changing class invalidates a stale archetype choice (no silent first pick). */
   async _selectProfileClass(shell, classId, phase = this.descriptor?.stepId || 'profile-class') {
     await this._ensureProfileData(shell);
-    const cleanId = String(classId || '').trim();
-    if (!cleanId) return false;
-    const groups = groupTemplates(this._templates);
-    const group = groups.find(g => g.id === cleanId);
+    const group = groupProfiles(this._profiles).find(g => g.id === String(classId || '').trim());
     if (!group) return false;
-
     const state = getProfileState(shell);
+    if (state.classId !== group.id) state.templateId = null;
     state.classId = group.id;
-    if (!state.templateId || !group.templates.some(template => template.id === state.templateId)) {
-      state.templateId = group.templates[0]?.id || null;
-    }
-
     await syncProfileMentor(shell, group.name, phase);
     await shell?.requestRender?.({ preserveScroll: true, reason: 'galactic-profile-select-class', structural: true });
     return true;
   }
 
-  async _selectProfileTemplate(shell, templateId, phase = this.descriptor?.stepId || 'profile-archetype') {
+  async _selectProfile(shell, profileId, phase = this.descriptor?.stepId || 'profile-archetype') {
     await this._ensureProfileData(shell);
-    const cleanId = String(templateId || '').trim();
-    const template = this._templates.find(t => t.id === cleanId);
-    if (!template) return false;
-
+    const profile = this._profiles.find(p => p.profileId === String(profileId || '').trim());
+    if (!profile) return false;
     const state = getProfileState(shell);
-    state.templateId = template.id;
-    state.classId = classKeyForTemplate(template);
-    await syncProfileMentor(shell, classNameForTemplate(template), phase);
+    state.templateId = profile.profileId;
+    state.classId = profile.catalog.classKey;
+    await syncProfileMentor(shell, profile.catalog.className, phase);
     await shell?.requestRender?.({ preserveScroll: true, reason: 'galactic-profile-select-template', structural: true });
     return true;
   }
 
   async handleAction(action, event, target, shell) {
     if (action === 'profile-select-class') {
-      event?.preventDefault?.();
-      event?.stopPropagation?.();
+      event?.preventDefault?.(); event?.stopPropagation?.();
       return this._selectProfileClass(shell, target?.dataset?.profileClassId, this.descriptor?.stepId || 'profile-class');
     }
     if (action === 'profile-select-template') {
-      event?.preventDefault?.();
-      event?.stopPropagation?.();
-      return this._selectProfileTemplate(shell, target?.dataset?.profileTemplateId, this.descriptor?.stepId || 'profile-archetype');
+      event?.preventDefault?.(); event?.stopPropagation?.();
+      return this._selectProfile(shell, target?.dataset?.profileTemplateId, this.descriptor?.stepId || 'profile-archetype');
     }
     return false;
   }
@@ -443,13 +383,11 @@ export class ProfileClassStep extends GalacticProfileBaseStep {
   async getStepData(context = null) {
     const shell = await this._ensureProfileData(context);
     const state = getProfileState(shell);
-    const groups = groupTemplates(this._templates);
-    if (!state.classId && groups[0]) state.classId = groups[0].id;
-    const selectedGroup = groups.find(g => g.id === state.classId) || groups[0] || null;
-    const classes = groups.map((group, index) => formatClassGroup(group, state, index));
+    const groups = groupProfiles(this._profiles);
+    const selectedGroup = groups.find(g => g.id === state.classId) || null;
     return {
-      classes,
-      selectedClassId: state.classId,
+      classes: groups.map((group, index) => formatClassGroup(group, state, index)),
+      selectedClassId: state.classId ?? null,
       selectedClass: selectedGroup ? formatClassGroup(selectedGroup, state, groups.indexOf(selectedGroup)) : null,
       route: { classDone: !!state.classId, archetypeDone: !!state.templateId, reviewDone: false },
     };
@@ -464,28 +402,15 @@ export class ProfileClassStep extends GalacticProfileBaseStep {
     return { selected: classId ? [classId] : [], count: classId ? 1 : 0, isComplete: !!classId };
   }
 
-  async onDataReady(shell) {
-    shell.element?.querySelectorAll?.('[data-profile-class-id]')?.forEach(btn => {
-      if (btn.dataset.profileBound === 'true') return;
-      btn.dataset.profileBound = 'true';
-      btn.addEventListener('click', async ev => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        await this._selectProfileClass(shell, btn.dataset.profileClassId, 'profile-class');
-      });
-    });
-  }
-
   _detailsData() {
     const state = getProfileState(this._shell);
-    const groups = groupTemplates(this._templates);
-    const group = groups.find(g => g.id === state.classId) || groups[0];
+    const group = groupProfiles(this._profiles).find(g => g.id === state.classId);
     return {
       mode: 'class',
       title: group?.name || 'Profile Class',
       image: group?.image,
       description: group?.description || 'Choose the training channel for this Galactic Profile.',
-      tags: [group?.profileCountLabel || countLabel(group?.count || 0, 'profile'), ...(group?.templates || []).map(templateArchetypeName).slice(0, 5)].filter(Boolean),
+      tags: group ? [countLabel(group.count, 'profile'), ...group.profiles.map(p => p.catalog.archetype).slice(0, 5)].filter(Boolean) : [],
     };
   }
 }
@@ -494,20 +419,16 @@ export class ProfileArchetypeStep extends GalacticProfileBaseStep {
   async getStepData(context = null) {
     const shell = await this._ensureProfileData(context);
     const state = getProfileState(shell);
-    const groups = groupTemplates(this._templates);
-    if (!state.classId && groups[0]) state.classId = groups[0].id;
-    const selectedGroup = groups.find(g => g.id === state.classId) || groups[0] || null;
-    const templates = this._templates.filter(t => classKeyForTemplate(t) === state.classId);
-    if (state.templateId && !templates.some(t => t.id === state.templateId)) state.templateId = templates[0]?.id || null;
-    if (!state.templateId && templates[0]) state.templateId = templates[0].id;
-    const dialogueData = await loadTemplateDialogues();
-
+    const groups = groupProfiles(this._profiles);
+    const selectedGroup = groups.find(g => g.id === state.classId) || null;
+    const profiles = selectedGroup ? selectedGroup.profiles : [];
+    const dialogueData = await loadProfileDialogues();
     return {
       classes: groups.map((group, index) => formatClassGroup(group, state, index)),
-      selectedClassId: state.classId,
+      selectedClassId: state.classId ?? null,
       selectedClass: selectedGroup ? formatClassGroup(selectedGroup, state, groups.indexOf(selectedGroup)) : null,
-      selectedTemplateId: state.templateId,
-      archetypes: templates.map(t => formatTemplateForCard(t, state, findTemplateDialogue(dialogueData, t, 'greeting'))),
+      selectedTemplateId: state.templateId ?? null,
+      archetypes: profiles.map(p => formatProfileForCard(p, state, findProfileDialogue(dialogueData, p, 'greeting'))),
       route: { classDone: !!state.classId, archetypeDone: !!state.templateId, reviewDone: false },
     };
   }
@@ -521,67 +442,51 @@ export class ProfileArchetypeStep extends GalacticProfileBaseStep {
     return { selected: templateId ? [templateId] : [], count: templateId ? 1 : 0, isComplete: !!templateId };
   }
 
-  async onDataReady(shell) {
-    shell.element?.querySelectorAll?.('[data-profile-class-id]')?.forEach(btn => {
-      if (btn.dataset.profileBound === 'true') return;
-      btn.dataset.profileBound = 'true';
-      btn.addEventListener('click', async ev => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        await this._selectProfileClass(shell, btn.dataset.profileClassId, 'profile-archetype');
-      });
-    });
-
-    shell.element?.querySelectorAll?.('[data-profile-template-id]')?.forEach(card => {
-      if (card.dataset.profileBound === 'true') return;
-      card.dataset.profileBound = 'true';
-      card.addEventListener('click', async ev => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        await this._selectProfileTemplate(shell, card.dataset.profileTemplateId, 'profile-archetype');
-      });
-    });
-  }
-
   _detailsData() {
     const state = getProfileState(this._shell);
-    const template = this._templates.find(t => t.id === state.templateId);
+    const profile = this._profiles.find(p => p.profileId === state.templateId);
     return {
       mode: 'archetype',
-      title: template?.name || 'Archetype',
-      image: template ? templateImagePath(template) : null,
-      description: template?.description || 'Select an archetype package.',
-      quote: template?.quote || '',
-      abilities: template ? formatAbilities(template) : [],
-      tags: template ? [classNameForTemplate(template), speciesName(template), ...roleTags(template)] : [],
+      title: profile?.catalog.name || 'Archetype',
+      image: profile ? profileImagePath(profile) : null,
+      description: profile?.catalog.description || 'Select an archetype package.',
+      quote: profile?.catalog.quote || '',
+      abilities: profile ? formatAbilities(profile) : [],
+      tags: profile ? [profile.catalog.className, speciesName(profile), ...roleTags(profile)].filter(Boolean) : [],
     };
   }
 }
 
 export class ProfileReviewStep extends GalacticProfileBaseStep {
+  constructor(descriptor) {
+    super(descriptor);
+    this._compiledCache = null;   // { key, compiled } — ONE compile per (profile, revision, session state) reused by review, open steps and Apply
+  }
+
+  async _compiled(shell, profile) {
+    const app = getProfileApplication(shell.progressionSession);
+    const key = `${profile.profileId}@${profile.revision}|${shell.progressionSession.subtype}|${app?.digest ?? ''}`;
+    if (this._compiledCache?.key === key) return this._compiledCache.compiled;
+    const compiled = await GalacticProfileService.compileForShell(shell, profile.profileId);
+    this._compiledCache = { key, compiled };
+    return compiled;
+  }
+
   async getStepData(context = null) {
     const shell = await this._ensureProfileData(context);
     const state = getProfileState(shell);
-    const template = this._templates.find(t => t.id === state.templateId) || null;
-    if (!template) return { template: null, characterName: state.characterName || '' };
-
-    await syncProfileMentor(shell, classNameForTemplate(template), 'profile-review');
-    const dialogueData = await loadTemplateDialogues();
-    const preview = await previewTemplateSession(shell, template).catch(err => {
-      swseLogger.warn('[GalacticProfile] Review preview session failed', { templateId: template.id, error: err?.message || String(err) });
-      return null;
+    const profile = state.templateId ? await GalacticProfileRegistry.getProfile(state.templateId) : null;
+    if (!profile || profile.subtype !== sessionSubtype(shell)) return { template: null, characterName: state.characterName || '' };
+    await syncProfileMentor(shell, profile.catalog.className, 'profile-review');
+    const dialogueData = await loadProfileDialogues();
+    const compiled = await this._compiled(shell, profile).catch(err => {
+      swseLogger.warn('[GalacticProfile] Review compile failed', { profileId: profile.profileId, error: err?.message || String(err) });
+      return { ok: false, blocked: [{ code: 'COMPILE_ERROR', detail: err?.message || String(err) }], open: [], diagnostics: [] };
     });
-    const business = await buildRemainingBusiness(shell, template);
-    const confirmation = findTemplateDialogue(dialogueData, template, 'confirmation');
-    const review = formatTemplateReview(template, business, confirmation, preview);
+    const review = formatProfileReview(profile, compiled, findProfileDialogue(dialogueData, profile, 'confirmation'), getProfileApplication(shell.progressionSession));
     review.characterName = state.characterName || '';
-    review.nextTargetStepId = firstBlockingBusiness(business) || 'summary';
-
-    return {
-      template: review,
-      characterName: state.characterName || '',
-      route: { classDone: !!state.classId, archetypeDone: !!state.templateId, reviewDone: true },
-    };
+    review.nextTargetStepId = review.openBusiness.find(b => b.blocking)?.stepId || review.openBusiness[0]?.stepId || 'summary';
+    return { template: review, characterName: state.characterName || '', route: { classDone: !!state.classId, archetypeDone: !!state.templateId, reviewDone: review.isApplied } };
   }
 
   renderWorkSurface(stepData) {
@@ -589,122 +494,100 @@ export class ProfileReviewStep extends GalacticProfileBaseStep {
   }
 
   getSelection() {
-    const templateId = this._shell?.progressionSession?.profileSelection?.templateId;
-    return { selected: templateId ? [templateId] : [], count: templateId ? 1 : 0, isComplete: !!templateId };
+    const state = this._shell?.progressionSession?.profileSelection;
+    return { selected: state?.templateId ? [state.templateId] : [], count: state?.templateId ? 1 : 0, isComplete: !!state?.templateId };
   }
 
-  async onStepExit(shell) {
-    await this._applyTemplateToSession(shell);
+  /** Next is allowed only once THIS profile has been explicitly applied. */
+  getBlockingIssues() {
+    const session = this._shell?.progressionSession;
+    const chosen = session?.profileSelection?.templateId;
+    const app = getProfileApplication(session);
+    if (!chosen) return ['Choose a Galactic Profile option before continuing.'];
+    if (!app || app.profileId !== chosen) return ['Apply the profile to continue.'];
+    return [];
   }
+  validate() { const issues = this.getBlockingIssues(); return { isValid: issues.length === 0, errors: issues, warnings: [] }; }
+
+  // NOTE: no onStepExit. Back / Close / Next never apply a profile; only the explicit Apply action does.
 
   async onDataReady(shell) {
     const nameInput = shell.element?.querySelector?.('[data-profile-character-name]');
-    if (nameInput) {
-      nameInput.addEventListener('input', () => {
-        const state = getProfileState(shell);
-        state.characterName = String(nameInput.value || '').trim();
-      });
-      nameInput.addEventListener('change', async () => {
-        const state = getProfileState(shell);
-        state.characterName = String(nameInput.value || '').trim();
-        await shell._persistSessionSnapshot?.('profile-review-name');
-      });
+    if (nameInput && nameInput.dataset.profileBound !== 'true') {
+      nameInput.dataset.profileBound = 'true';
+      const commitName = async persist => {
+        const name = String(nameInput.value || '').trim();
+        getProfileState(shell).characterName = name;
+        if (persist) {
+          shell.progressionSession.commitSelection('galactic-profile-name', 'survey', { ...(shell.progressionSession.draftSelections.survey || {}), characterName: name });
+          await shell._persistSessionSnapshot?.('profile-review-name');
+        }
+      };
+      nameInput.addEventListener('input', () => commitName(false));
+      nameInput.addEventListener('change', () => commitName(true));
     }
-
-    shell.element?.querySelectorAll?.('[data-profile-business-target]')?.forEach(row => {
-      row.addEventListener('click', async ev => {
-        ev.preventDefault();
-        const targetStepId = row.dataset.profileBusinessTarget;
-        await this._applyTemplateToSession(shell, { targetStepId, activateTarget: true });
-      });
-    });
   }
 
-  async _applyTemplateToSession(shell, options = {}) {
-    const { targetStepId = null, activateTarget = false } = options;
-    const state = getProfileState(shell);
-    const templateId = state.templateId;
-    if (!templateId) return false;
-
-    const beforeTemplateId = shell?.progressionSession?.templateId;
-    let nextSession = null;
-
-    if (shell.progressionSession?.templateId === templateId && shell.progressionSession?.profileStepsComplete === true) {
-      nextSession = shell.progressionSession;
-      if (state.characterName) {
-        nextSession.draftSelections ??= {};
-        nextSession.draftSelections.survey = {
-          ...(nextSession.draftSelections.survey || {}),
-          characterName: state.characterName,
-        };
-      }
-    } else {
-      const template = await TemplateRegistry.getTemplate(templateId);
-      if (!template) return false;
-      nextSession = await TemplateAdapter.initializeSessionFromTemplate(template, shell.actor, { mode: 'chargen' });
-      const validation = await TemplateValidator.validateTemplateSelections(nextSession, shell.actor);
-      if (!validation.valid) {
-        ui?.notifications?.warn?.(`Profile "${template.name}" has validation issues. Any remaining choices will stay in progression.`);
-      }
-      nextSession.profileSelection = { ...(state || {}), templateId, classId: classKeyForTemplate(template) };
-      nextSession.profileStepsComplete = true;
-      if (state.characterName) {
-        nextSession.draftSelections.survey = {
-          ...(nextSession.draftSelections.survey || {}),
-          characterName: state.characterName,
-        };
-      }
-      shell.progressionSession = nextSession;
-      shell._registerPersistenceHook?.();
-      shell._syncLegacyCommittedSelectionsFromSession?.();
-      swseLogger.log('[GalacticProfile] Applied profile to progression session', { templateId });
+  async handleAction(action, event, target, shell) {
+    if (action === 'profile-apply') {
+      event?.preventDefault?.(); event?.stopPropagation?.();
+      return this._applyProfile(shell);
     }
-
-    if (shell?.progressionSession?.templateId && shell.progressionSession.templateId !== beforeTemplateId) {
-      shell._targetStepId = activateTarget ? (targetStepId || null) : null;
-      if (!activateTarget) shell.currentStepIndex = 0;
-      await shell._initializeSteps?.();
-      if (!activateTarget) {
-        shell.currentStepIndex = 0;
-        shell.progressionSession.currentStepId = shell.steps?.[0]?.stepId || 'intro';
-      }
+    if (action === 'profile-resolve') {
+      event?.preventDefault?.(); event?.stopPropagation?.();
+      return this._goToStep(shell, target?.dataset?.profileBusinessTarget);
     }
+    return super.handleAction(action, event, target, shell);
+  }
 
-    if (activateTarget) {
-      const preferred = targetStepId || firstBlockingBusiness(await this._currentRemainingBusiness(shell));
-      const targetIndex = shell.steps?.findIndex?.(d => d.stepId === preferred) ?? -1;
-      const fallbackIndex = shell.steps?.findIndex?.(d => !PROFILE_STEP_IDS.has(d.stepId) && d.stepId !== 'intro') ?? 0;
-      const index = targetIndex >= 0 ? targetIndex : Math.max(0, fallbackIndex);
-      if (Number.isInteger(index) && index >= 0) {
-        await shell._activateStep?.(index, { source: 'galactic-profile-business', restoreIndex: shell.currentStepIndex });
+  /** The ONE explicit Apply: compile → atomic apply → steps recomputed once. Never touches the actor. */
+  async _applyProfile(shell) {
+    if (this._applying) return false;
+    this._applying = true;
+    try {
+      const state = getProfileState(shell);
+      if (!state.templateId) return false;
+      const result = await GalacticProfileService.applyForShell(shell, state.templateId);
+      this._compiledCache = null;
+      if (!result.ok) {
+        ui?.notifications?.warn?.(result.code === 'COMPILE_BLOCKED' ? 'This profile cannot be applied yet. See the reasons on the review page.' : `Profile not applied (${result.code}).`);
+        await shell?.requestRender?.({ preserveScroll: true, reason: 'galactic-profile-apply-blocked', structural: true });
+        return false;
       }
-      await shell._persistSessionSnapshot?.(shell.progressionSession.currentStepId || 'galactic-profile-business');
-      shell.requestRender?.({ preserveScroll: false, reason: 'galactic-profile-business-activate', structural: true });
-    } else {
-      await shell._persistSessionSnapshot?.('galactic-profile');
+      const note = [];
+      if (result.kept?.length) note.push(`kept your edits to: ${result.kept.join(', ')}`);
+      if (result.replaced?.length) note.push(`replaced: ${result.replaced.map(r => r.key).join(', ')}`);
+      if (note.length) ui?.notifications?.info?.(`Profile applied — ${note.join('; ')}.`);
+      const target = (result.application?.open || []).find(o => NODE_BUSINESS_COPY[o.stepId]?.blocking !== false)?.stepId || (result.application?.open || [])[0]?.stepId || null;
+      await this._goToStep(shell, target);
+      return true;
+    } finally {
+      this._applying = false;
     }
+  }
 
+  async _goToStep(shell, stepId) {
+    const preferred = stepId || 'summary';
+    const index = shell.steps?.findIndex?.(d => d.stepId === preferred) ?? -1;
+    const fallback = shell.steps?.findIndex?.(d => !['intro', 'profile-class', 'profile-archetype', 'profile-review'].includes(d.stepId)) ?? 0;
+    const target = index >= 0 ? index : Math.max(0, fallback);
+    await shell._activateStep?.(target, { source: 'galactic-profile-business', restoreIndex: shell.currentStepIndex });
+    await shell._persistSessionSnapshot?.(shell.progressionSession.currentStepId || 'galactic-profile-business');
+    shell.requestRender?.({ preserveScroll: false, reason: 'galactic-profile-business-activate', structural: true });
     return true;
-  }
-
-  async _currentRemainingBusiness(shell) {
-    const templateId = shell?.progressionSession?.profileSelection?.templateId || shell?.progressionSession?.templateId;
-    const template = this._templates.find(t => t.id === templateId) || await TemplateRegistry.getTemplate(templateId);
-    if (!template) return [];
-    return buildRemainingBusiness(shell, template);
   }
 
   _detailsData() {
     const state = getProfileState(this._shell);
-    const template = this._templates.find(t => t.id === state.templateId);
+    const profile = this._profiles.find(p => p.profileId === state.templateId);
     return {
       mode: 'review',
-      title: template?.name || 'Profile Review',
-      image: template ? templateImagePath(template) : null,
-      description: 'Review the package. Applying it seeds the normal progression session and routes only unresolved choices back onto the track.',
-      quote: template?.quote || '',
-      abilities: template ? formatAbilities(template) : [],
-      tags: template ? [classNameForTemplate(template), speciesName(template), 'Open assignments calculated from progression rules'] : [],
+      title: profile?.catalog.name || 'Profile Review',
+      image: profile ? profileImagePath(profile) : null,
+      description: 'Review the package. Apply Profile fills your character draft; nothing is created until you confirm at the end.',
+      quote: profile?.catalog.quote || '',
+      abilities: profile ? formatAbilities(profile) : [],
+      tags: profile ? [profile.catalog.className, speciesName(profile), 'Open assignments come from the rules engine'].filter(Boolean) : [],
     };
   }
 }

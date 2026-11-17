@@ -1678,9 +1678,7 @@
   "consumers": {
     "weapons": {
       "referencesAggregatePack": [
-        "scripts/apps/chargen/chargen-templates.js",
         "scripts/apps/progression-framework/shell/progression-finalizer.js",
-        "scripts/apps/template-character-creator.js",
         "scripts/engine/progression/engine/template-engine.js",
         "scripts/engine/store/index.js",
         "scripts/engine/store/store-constants.js",
@@ -1695,8 +1693,6 @@
     },
     "armor": {
       "referencesAggregatePack": [
-        "scripts/apps/chargen/chargen-templates.js",
-        "scripts/apps/template-character-creator.js",
         "scripts/engine/progression/engine/template-engine.js",
         "scripts/engine/store/index.js",
         "scripts/engine/store/store-constants.js",
@@ -1709,8 +1705,6 @@
     },
     "equipment": {
       "referencesAggregatePack": [
-        "scripts/apps/chargen/chargen-templates.js",
-        "scripts/apps/template-character-creator.js",
         "scripts/engine/abilities/progression/progression-adapter.js",
         "scripts/engine/progression/engine/template-engine.js",
         "scripts/engine/store/index.js",

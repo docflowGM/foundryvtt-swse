@@ -114,7 +114,7 @@ export class ArchitectureGovernance {
       {
         from: 'progression',
         to: 'template-engine',
-        reason: 'Use new template-adapter, not old engine',
+        reason: 'Use the Galactic Profile compiler, not the retired template engine',
       },
     ];
 
@@ -221,7 +221,7 @@ export class ArchitectureGovernance {
   static _checkTemplateAuthority() {
     const violations = [];
 
-    // Rule: Templates → TemplateAdapter → draftSelections
+    // Rule: Galactic Profiles → GalacticProfileCompiler → applyCompiledProfile → draftSelections
     // Rule: No template engine side paths
     // Rule: All template mutations via MutationPlan
 
@@ -285,7 +285,7 @@ export class ArchitectureGovernance {
         mutation: 'MutationPlan',
         state: 'ProgressionSession.draftSelections',
         invalidation: 'ProgressionReconciler',
-        templates: 'TemplateAdapter',
+        templates: 'GalacticProfileCompiler',
       },
       forbiddenImports: [
         { from: 'suggestion', to: 'progression-traverse' },
@@ -352,11 +352,11 @@ export class ArchitectureGovernance {
     lines.push('');
 
     lines.push('### 5. Templates flow through canonical spine');
-    lines.push('✅ DO: Templates → TemplateAdapter → draftSelections');
-    lines.push('✅ DO: Validate templates via TemplateValidator');
+    lines.push('✅ DO: Galactic Profiles → GalacticProfileCompiler → applyCompiledProfile → draftSelections');
+    lines.push('✅ DO: Resolve profile identities and entitlements through V2 authorities (compiler resolvers)');
     lines.push('✅ DO: Use MutationPlan to apply template choices');
     lines.push('❌ DON\'T: Use old TemplateEngine');
-    lines.push('❌ DON\'T: Bypass TemplateAdapter or TemplateValidator');
+    lines.push('❌ DON\'T: Write profile selections outside applyCompiledProfile / commitSelection');
     lines.push('');
 
     lines.push('## Enforcement Points');
