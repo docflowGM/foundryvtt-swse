@@ -453,19 +453,15 @@ export class DarkSideDevoteeMechanics {
     }
 
     if (spendFP) {
-      // Check Force Points
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
+      const receipt = await ActorEngine.spendForcePoints(actor, 1, {
+        source: 'DarkSideDevoteeMechanics.createDarkSideTalisman'
+      });
+      if (receipt?.spent !== 1) {
         return {
           success: false,
           message: 'Not enough Force Points. Creating a talisman requires 1 Force Point.'
         };
       }
-
-      // Spend Force Point
-      await ActorEngine.updateActor(actor, {
-        'system.forcePoints.value': currentFP - 1
-      });
     }
 
     const isGreater = this.hasGreaterDarkSideTalisman(actor);
