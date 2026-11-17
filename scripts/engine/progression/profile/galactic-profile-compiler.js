@@ -139,15 +139,33 @@ export async function compileProfile(profile, ctx = {}) {
   const autoGrantKeys = new Set(classModel ? (R.classAutoGrantNames(classModel) || []).map(nameKey) : []);
   const featDrafts = [];
   for (const entry of c.feats) {
-    const f = await R.feat(entry);
+    // Class/species auto-grants are V2's: never resolved, validated or committed as a selection.
+    if (autoGrantKeys.has(nameKey(entry.name))) {
+      note('FEAT_IS_CLASS_AUTOGRANT', 'choices.feats', `${entry.name} is granted by V2; not committed as a selection`);
+      continue;
+    }
+    const f = await R.feat(entry, { draft, classModel, speciesCtx, acceptedFeats: featDrafts });
     if (f.status !== 'resolved') { block(f.status === 'ambiguous' ? 'FEAT_AMBIGUOUS' : 'FEAT_UNRESOLVED', 'choices.feats', entry.name); continue; }
     if (autoGrantKeys.has(nameKey(entry.name)) || autoGrantKeys.has(nameKey(f.doc?.name))) {
       note('FEAT_IS_CLASS_AUTOGRANT', 'choices.feats', `${entry.name} is granted by V2; not committed as a selection`);
       continue;
     }
+    // Acquisition legality is V2's (AbilityEngine/PrerequisiteChecker). Never inferred here.
+    if (typeof R.prerequisites === 'function') {
+      const verdict = await R.prerequisites({ kind: 'feat', id: f.id, doc: f.doc, system: f.system ?? {}, draft, classModel, speciesCtx, acceptedFeats: featDrafts, subtype: profile.subtype });
+      if (verdict?.legal === false) { block('FEAT_PREREQUISITES_UNMET', 'choices.feats', `${entry.name}: ${(verdict.missing || []).join('; ') || 'prerequisites not met'}`); continue; }
+      for (const u of verdict?.unresolved || []) note('FEAT_PREREQUISITE_ADVISORY', 'choices.feats', `${entry.name}: ${u}`);
+    } else note('PREREQUISITES_NOT_EVALUATED', 'choices.feats', `${entry.name}: no acquisition authority supplied`);
     if (f.matchedBy === 'normalizedName') note('FEAT_MATCHED_BY_NORMALIZED_NAME', 'choices.feats', `${entry.name} -> ${f.doc?.name} (V2 registry key normalization; unique)`);
     if (f.choiceVerified === false) note('FEAT_CHOICE_UNVERIFIED', 'choices.feats', `${entry.name}: choice not validated by FeatChoiceResolver in this context`);
     featDrafts.push({ id: f.id, name: f.doc?.name ?? f.name ?? entry.name, pack: 'foundryvtt-swse.feats', type: 'feat', system: f.system ?? {}, source: 'profile' });
+  }
+  if (typeof R.featEntitlement === 'function' && profile.subtype !== 'nonheroic' && profile.subtype !== 'beast') {
+    const allowed = R.featEntitlement({ draft: { ...draft, feats: featDrafts }, subtype: profile.subtype });
+    if (Number.isFinite(allowed) && featDrafts.length > allowed) block('FEAT_SLOTS_EXCEEDED', 'choices.feats', `${featDrafts.length} selected feat(s) vs ${allowed} general feat entitlement(s) (V2)`);
+    else if (Number.isFinite(allowed)) resolved.featEntitlement = { allowed, selected: featDrafts.length };
+  } else if (profile.subtype === 'nonheroic' || profile.subtype === 'beast') {
+    note('FEAT_ENTITLEMENT_NOT_EVALUATED', 'choices.feats', 'nonheroic/beast starting-feat entitlements are owned by their V2 subtype steps and are not evaluated at compile');
   }
   draft.feats = normalizeFeats(featDrafts) || [];
   resolved.feats = featDrafts.map(f => f.id);
@@ -166,7 +184,17 @@ export async function compileProfile(profile, ctx = {}) {
       if (!open.some(o => o.reason === 'TALENT_ACCESS_UNVERIFIED')) open.push({ stepId: 'class-talent', reason: 'TALENT_ACCESS_UNVERIFIED' });
       continue;
     }
+    if (typeof R.prerequisites === 'function') {
+      const verdict = await R.prerequisites({ kind: 'talent', id: t.id, doc: t.doc, system: t.system ?? {}, draft: { ...draft, feats: featDrafts }, classModel, speciesCtx, acceptedFeats: featDrafts, acceptedTalents: talentDrafts, subtype: profile.subtype });
+      if (verdict?.legal === false) { block('TALENT_PREREQUISITES_UNMET', 'choices.talents', `${entry.name}: ${(verdict.missing || []).join('; ') || 'prerequisites not met'}`); continue; }
+      for (const u of verdict?.unresolved || []) note('TALENT_PREREQUISITE_ADVISORY', 'choices.talents', `${entry.name}: ${u}`);
+    } else note('PREREQUISITES_NOT_EVALUATED', 'choices.talents', `${entry.name}: no acquisition authority supplied`);
     talentDrafts.push({ id: t.id, name: t.name, pack: 'foundryvtt-swse.talents', type: 'talent', treeId: t.treeId ?? null, system: t.system ?? {}, source: 'profile' });
+  }
+  if (typeof R.talentEntitlement === 'function' && c.talents.length) {
+    const allowed = R.talentEntitlement({ subtype: profile.subtype });
+    if (Number.isFinite(allowed) && c.talents.length > allowed) block('TALENT_SLOTS_EXCEEDED', 'choices.talents', `${c.talents.length} authored talent(s) vs ${allowed} chargen talent entitlement(s) (V2 TalentCadenceEngine)`);
+    else if (Number.isFinite(allowed)) resolved.talentEntitlement = { allowed, authored: c.talents.length };
   }
   if (c.talents.length && !talentDrafts.length) note('TALENT_NOT_COMMITTED', 'choices.talents', 'no authored talent could be committed');
   draft.talents = talentDrafts.length ? (normalizeTalents(talentDrafts) || []) : [];
@@ -234,7 +262,7 @@ export async function compileProfile(profile, ctx = {}) {
   if (draft.attributes) locks.push('attribute');
   if (draft.background) locks.push('background');
   if (draft.skills && typeof R.skillAllowance === 'function') {
-    const allowance = R.skillAllowance(classModel, cleanBase);
+    const allowance = R.skillAllowance(classModel, cleanBase, { draft, speciesCtx });
     if (Number.isFinite(allowance) && allowance === goodSkills.length) locks.push('skills');
     else if (Number.isFinite(allowance)) note('SKILL_COUNT_DIFFERS_FROM_ALLOWANCE', 'choices.skills', `authored ${goodSkills.length}, V2 allowance ${allowance}`);
   }

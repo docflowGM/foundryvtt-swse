@@ -22,6 +22,13 @@ import { checkPublicationSelection } from '/systems/foundryvtt-swse/scripts/spec
 import { buildPendingSpeciesContext } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js';
 import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
+import { FeatRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/feat-registry.js';
+import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
+import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import { resolveCanonicalSkillKey } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js';
+import { getChargenGeneralFeatCount } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/chargen-feat-entitlement.js';
+import { TalentCadenceEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-cadence-engine.js';
+import { combineDroidAbilityMods } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
@@ -62,6 +69,7 @@ async function ensureAuthorities() {
   if (!ClassesRegistry.isInitialized?.()) await ClassesRegistry.initialize();
   if (!SpeciesRegistry.isInitialized?.()) await SpeciesRegistry.initialize();
   if (SkillRegistry.isBuilt === false) await SkillRegistry.build();
+  if (!FeatRegistry.isInitialized?.() && FeatRegistry.count?.() === 0) await FeatRegistry.initialize();
   await ProgressionContentAuthority.initialize?.();
 }
 
@@ -71,11 +79,17 @@ function buildDeps(shell, snapshot) {
   return {
     adapterRegistry: ProgressionSubtypeAdapterRegistry.getInstance(),
     snapshot,
-    classLookup: id => ClassesRegistry.getById(id) ?? null,
+    // resolveModel accepts the pack document _id (our authored id), the registry id, or a name — getById alone does not.
+    classLookup: id => ClassesRegistry.resolveModel(id) ?? null,
     backgroundsEnabled: () => ChargenRules.backgroundsEnabled(),
-    skillExists: key => !!SkillRegistry.byKey(key),
-    skillAllowance: (classModel, base) => {
-      const attributes = { int: { score: base?.int } };
+    // V2 keeps ONE 'Knowledge' skill document but canonical keys per specialization; the canonical resolver is the authority.
+    skillExists: key => !!resolveCanonicalSkillKey(key),
+    // V2's allowance is class base + INT MODIFIER: use the FINAL Int (base + species/droid modifiers), as the Skills step does.
+    skillAllowance: (classModel, base, { draft, speciesCtx } = {}) => {
+      const mods = subtype === 'droid'
+        ? combineDroidAbilityMods(draft?.droid?.droidDegree, draft?.droid?.droidSize)
+        : (speciesCtx ? (speciesCtx?.identity?.doc?.abilityMods ?? speciesCtx?.identity?.abilityMods ?? {}) : {});
+      const attributes = { int: { score: Number(base?.int) + (Number(mods.int) || 0) } };
       return Number(ProgressionContentAuthority.getClassSkillAllowance(classModel, attributes, actor));
     },
 
@@ -98,22 +112,72 @@ function buildDeps(shell, snapshot) {
       }
     },
 
-    /** Parameterized feat ("Skill Focus (Mechanics)"): the label must match a V2 option AND validate. Else unresolved (fail closed). */
-    async featChoice(featDoc, label) {
+    /**
+     * The pending state V2's feat/talent evaluators read (same shape FeatStep builds): selected class/feats/talents/skills,
+     * class-granted feats from the grant ledger, pending species, and pending ability scores incl. species/droid modifiers.
+     */
+    buildPending({ draft, speciesCtx, acceptedFeats = [], acceptedTalents = [] }) {
+      const values = draft.attributes?.values || {};
+      const mods = subtype === 'droid'
+        ? combineDroidAbilityMods(draft.droid?.droidDegree, draft.droid?.droidSize)
+        : (speciesCtx ? (speciesCtx?.identity?.doc?.abilityMods ?? speciesCtx?.identity?.abilityMods ?? {}) : {});
+      const finalValues = Object.fromEntries(Object.keys(values).map(k => [k, Number(values[k]) + (Number(mods[k]) || 0)]));
+      const base = {
+        selectedClass: draft.class || null,
+        selectedFeats: acceptedFeats,
+        selectedTalents: acceptedTalents,
+        selectedSkills: (draft.skills?.trained || []).map(key => ({ key })),
+        skillRanks: {},
+        grantedFeats: [],
+        pendingSpeciesContext: draft.pendingSpeciesContext || null,
+        attributes: { values, speciesMods: mods, finalValues }
+      };
+      const ledger = draft.class ? buildClassGrantLedger(actor, draft.class, base) : null;
+      return ledger ? { ...mergeLedgerIntoPending(base, ledger), attributes: base.attributes } : base;
+    },
+
+    /**
+     * Parameterized feat ("Skill Focus (Mechanics)"): V2's own FeatChoiceResolver on the REGISTRY feat with the pending
+     * shape it reads. The authored label must match exactly one V2 option AND validate; otherwise unresolved (fail closed).
+     */
+    async featChoice(featDoc, label, ctx = {}) {
       try {
-        const options = await FeatChoiceResolver.resolveOptions(actor, featDoc, { pending: shell.progressionSession.draftSelections });
-        const list = Array.isArray(options) ? options : (options?.options ?? []);
+        const feat = FeatRegistry.getById(featDoc._id) ?? featDoc;
+        const pending = this.buildPending({ draft: ctx.draft || {}, speciesCtx: ctx.speciesCtx, acceptedFeats: ctx.acceptedFeats || [] });
+        const options = await FeatChoiceResolver.resolveOptions(actor, feat, { pending });
         const want = String(label).trim().toLowerCase();
-        const matches = list.filter(o => [o?.label, o?.name, o?.value, o?.id].some(v => String(v ?? '').trim().toLowerCase() === want));
-        if (matches.length !== 1) return { ok: false, errors: [`choice "${label}" matched ${matches.length} option(s)`] };
-        const selected = matches[0].value ?? matches[0].id ?? matches[0];
-        const verdict = await FeatChoiceResolver.validateSelectedChoice(actor, featDoc, selected, { pending: shell.progressionSession.draftSelections });
+        const matches = (Array.isArray(options) ? options : []).filter(o => [o?.label, o?.name, o?.value, o?.id, o?.key].some(v => String(v ?? '').trim().toLowerCase() === want));
+        if (matches.length !== 1) return { ok: false, errors: [`choice "${label}" matched ${matches.length} of ${(options || []).length} V2 option(s)`] };
+        const selected = matches[0].value ?? matches[0].id ?? matches[0].key;
+        const verdict = await FeatChoiceResolver.validateSelectedChoice(actor, feat, selected, { pending });
         if (!verdict?.valid) return { ok: false, errors: verdict?.errors ?? ['choice not legal'] };
-        return { ok: true, system: FeatChoiceResolver.buildChoicePatch(featDoc, selected)?.system ?? { selectedChoice: selected } };
+        return { ok: true, system: FeatChoiceResolver.buildChoicePatch(feat, selected)?.system ?? { selectedChoice: selected } };
       } catch (err) {
         return { ok: false, errors: [err?.message || String(err)] };
       }
     },
+
+    /**
+     * Acquisition legality = V2's AbilityEngine (PrerequisiteChecker) on the REGISTRY-normalized document, evaluated
+     * against a pending draft shaped exactly like FeatStep's (selected class/feats/talents/skills, class-granted feats
+     * from the grant ledger, pending species, and pending ability scores incl. species/droid modifiers).
+     */
+    async prerequisites({ kind, id, system, draft, speciesCtx, acceptedFeats = [], acceptedTalents = [] }) {
+      try {
+        const candidate = kind === 'feat' ? FeatRegistry.getById(id) : (await game.packs.get('foundryvtt-swse.talents')?.getDocument(id))?.toObject?.();
+        if (!candidate) return { legal: false, missing: [`${kind} ${id} is not in the canonical registry`], unresolved: [] };
+        const pending = this.buildPending({ draft, speciesCtx, acceptedFeats, acceptedTalents });
+        const assessed = AbilityEngine.evaluateAcquisition(actor, { ...candidate, type: kind, system: { ...(candidate.system || {}), ...(system || {}) } }, pending);
+        return { legal: assessed.legal === true, missing: assessed.missing || [], unresolved: assessed.unresolved || [] };
+      } catch (err) {
+        return { legal: false, missing: [`acquisition evaluation failed: ${err?.message || err}`], unresolved: [] };   // fail closed
+      }
+    },
+    speciesAbilityModsFor: speciesCtx => speciesCtx?.identity?.doc?.abilityMods ?? speciesCtx?.identity?.abilityMods ?? null,
+
+    // ONE rule each: the Feat step's chargen count and the Talent cadence authority.
+    featEntitlement: ({ draft }) => getChargenGeneralFeatCount({ draft, actor, subtype }),
+    talentEntitlement: () => TalentCadenceEngine.calculateChargenTalentsRequired(),
 
     /** V2's own Force Training entitlement, evaluated against a TRANSIENT shell holding only the compiled draft. */
     forceEntitlement({ draft }) {

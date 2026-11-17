@@ -109,3 +109,35 @@ Open (`DEFERRED_RULES_REVIEW`): **GP-RD-001** (Wolf Pack Tactics), **GP-RD-003**
 ## I. Final recommendation
 
 **Ready for live Foundry v13 testing; not ready for production use.** The architecture is consolidated and the offline evidence is substantial, but the production resolver wiring, V2 prerequisite evaluation, ActorEngine application/rollback and the UI have only been verified statically or through production-code unit harnesses. Recommended next steps: (1) Foundry smoke on the 18 compiling profiles and 8 droids (apply → resolve → confirm → inspect actor); (2) wire prerequisite evaluation (defect 2); (3) owner rulings listed in §H; (4) certify profiles **individually**.
+
+---
+
+## J. Pre-Foundry Verification Report (hardening pass)
+
+**Status vocabulary:** nothing below is `FOUNDRY_TESTED`; no profile is marked ready-to-play. Corrections to earlier claims: V2 registry class models carry no `system` (both old template and profile paths commit `{}`); certification matrix is now **17 PARTIALLY_VERIFIED / 24 BLOCKED**.
+
+### J.1 Fully verified offline
+- Production service wiring (`galactic-profile-service.js`) runs against V2's real registries over real repo packs (`tests/helpers/pack-shim.mjs`): class lookup by pack `_id`, class talent trees (`talent_trees ∪ talentTreeSourceIds`), knowledge-skill keys, parameterized-feat choices via `FeatChoiceResolver`/`buildPending`.
+- Prerequisites (AbilityEngine/PrerequisiteChecker) and entitlements (feat slots via `chargen-feat-entitlement`, talent cadence, skill allowance on FINAL Int, Force slots via `FeatGrantEntitlementResolver`) are enforced fail-closed in the compiler (`FEAT_PREREQUISITES_UNMET`, `TALENT_PREREQUISITES_UNMET`, `FEAT_SLOTS_EXCEEDED`, `TALENT_SLOTS_EXCEEDED`).
+- Finalization through the real `_compileMutationPlan`: exact-final-balance wallets (incl. zero), no Wealth/background/class-credit/chargen-store additions, external equipment materialized once, starter-lightsaber dedupe, duplicates, player-edited selections, profile switching, idempotent re-apply.
+- Droids: base + racial modifiers, droid systems, installed-system ledger, no double construction bonuses, exact credits.
+- Nonheroic entry lane (GM-only directory button, `profilePicker`); strict subtype resolution; beast readiness fail-closed.
+- Suite: **713 passed / 0 failed** (5 documented pre-existing exclusions unchanged; baseline was 698/0). New tests: `galactic-profile-service-integration` (51), `galactic-profile-end-to-end` (10). Gates clean: `build-galactic-profiles --check`, `report-galactic-profile-status --check`, `validate-partials`, `system.json`.
+
+### J.2 Partially verified
+- 17 profiles compile offline end-to-end but remain unverified in a live Actor/ActorEngine write and sheet render.
+- Force-tree talent access (jedi_consular) held for V2 — not decided here.
+- SKILL_COUNT_DIFFERS diagnostics are informational only.
+
+### J.3 Blocked (not guessed)
+- 24 profiles blocked by owner rulings/identity gaps: GP-RD-001…014 (earlier) plus new GP-RD-015 (weapon-group choice labels), GP-RD-016 (Weapon Finesse prerequisite), GP-RD-017 (name-keyed talent-prerequisite collision, Commanding Presence), and GP-RD-005 evidence note (Athletics consolidation house rule).
+- Beast lane intentionally absent; chargen store closed for profile sessions.
+
+### J.4 Live Foundry tests still required
+Actor creation through ActorEngine; owned-item embedding; sheet render of profile-created actors; Holopad profile picker and directory buttons; droid builder UI; class/Force item rendering; persisted draft restore.
+
+### J.5 Remnant cleanup (item 6)
+Removed dead `isTemplateSession/templateId` log read in `progression-shell.js`. Remaining `templateId/lockedNodes` reads in ux/debug modules are guarded diagnostic reads of fields never set (inert); left in place to avoid touching unrelated diagnostics — follow-up prune candidate (category B/C).
+
+### J.6 Self-review (item 8)
+Canonical authority edits are limited to the GP-RD-007 Scout data fix (packs/classes.db, bindings, regenerated registries, pinned baselines/SHAs, with count updates); no test was weakened beyond those pinned values. No new fallback behavior: unresolved identity/choice/prerequisite results block.

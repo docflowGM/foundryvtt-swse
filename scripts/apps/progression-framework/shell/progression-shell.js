@@ -275,8 +275,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (options.initialSession) {
       this.progressionSession = options.initialSession;
       swseLogger.log('[ProgressionShell] Using provided initial session', {
-        isTemplate: this.progressionSession.isTemplateSession,
-        templateId: this.progressionSession.templateId,
+        mode: this.progressionSession.mode,
       });
     } else {
       this.progressionSession = new ProgressionSession({

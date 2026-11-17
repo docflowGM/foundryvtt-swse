@@ -53,9 +53,26 @@ function handleRenderActorDirectory(app, html, data) {
     });
   });
 
+  // GM-only: nonheroic NPCs (the 8 nonheroic profiles). The creation LANE (NPC + nonheroic subtype) is established
+  // BEFORE the picker opens, so only nonheroic profiles are offered. Beast profiles stay blocked (GP-RD-010), so no beast lane.
+  const nonheroicBtn = game.user?.isGM ? document.createElement('button') : null;
+  if (nonheroicBtn) {
+    nonheroicBtn.classList.add('swse-template-chargen-btn');
+    nonheroicBtn.type = 'button';
+    nonheroicBtn.innerHTML = '<i class="fa-solid fa-user-group"></i> Create Nonheroic From Profile';
+    nonheroicBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      launchNewProgression({ actorType: 'npc', subtype: 'nonheroic', profilePicker: true }).catch(err => {
+        ui?.notifications?.error?.(`Failed to open nonheroic profile creation: ${err.message}`);
+      });
+    });
+  }
+
   // Append buttons to container
   container.appendChild(guidedBtn);
   container.appendChild(templateBtn);
+  if (nonheroicBtn) container.appendChild(nonheroicBtn);
 
   // Add container to header
   header.appendChild(container);

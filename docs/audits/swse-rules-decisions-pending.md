@@ -3112,4 +3112,70 @@ Source document: `docs/audits/SWSE_Galactic_Profiles_v3_Unification_Audit.md`. E
 
 ---
 
+## GP-RD-015 — Weapon group choice labels
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-015 — Weapon group choice labels |
+| Rules domain | Feat/talent choice |
+| Feature | Weapon Focus (Light Melee) on noble_duelist; Weapon Proficiency (Advanced Melee) on soldier_brawler |
+| Source | Galactic Profiles v3 authored data |
+| Evidence | The authored labels are not option values V2's FeatChoiceResolver accepts for those feats. |
+| Confirmed behavior | The profiles name those feats. |
+| Unresolved question | Which V2 option corresponds to the authored label (or whether the selection is to be changed). |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Those two selections fail closed (feat choice unresolved); nothing was mapped by guess. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## GP-RD-016 — Weapon Finesse prerequisite on scoundrel_knuckledragger
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-016 — Weapon Finesse prerequisite on scoundrel_knuckledragger |
+| Rules domain | Feat prerequisites |
+| Feature | Weapon Finesse |
+| Source | V2 feat data (prerequisite check by AbilityEngine) |
+| Evidence | V2 evaluates the printed prerequisite (BAB +1) against the compiled level-1 draft. |
+| Confirmed behavior | V2's authority decides the result. |
+| Unresolved question | Whether the profile's authored selection is legal at level 1 under V2's prerequisite; profile data is not altered to pass. |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Profile blocked with FEAT_PREREQUISITES_UNMET if V2 rejects it. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## GP-RD-017 — Name-keyed talent prerequisite authority collision
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-017 — Name-keyed talent prerequisite authority collision |
+| Rules domain | Talent prerequisites |
+| Feature | Commanding Presence (two talents, same name) |
+| Source | V2 `TALENT_PREREQUISITE_AUTHORITY` (name-keyed) |
+| Evidence | V2 collapses same-name talents to one prerequisite entry; GP-RD-002 pins the Mercenary-tree document by id. |
+| Confirmed behavior | Profile pins the Mercenary-tree id (GP-RD-002). |
+| Unresolved question | Whether V2's name-keyed authority should be re-keyed by document id (engineering change to a canonical authority; not applied). |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Prerequisite result for soldier_rifleman follows V2's name-keyed entry; flagged for review. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+**GP-RD-005 evidence note:** V2 carries an Athletics consolidation house-rule relevant to the pending Athletics ruling; evidence only, no ruling implied.
+
+---
+
+- **Revision 68 (2026-11-17):** appended GP-RD-015 … GP-RD-017 and a GP-RD-005 evidence note from the hardening pass.
+
 - **Revision 67 (2026-11-17):** appended GP-RD-012 … GP-RD-014, found while implementing Galactic Profiles v3 (identity gaps in authored data; nothing was guessed).

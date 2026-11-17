@@ -96,14 +96,14 @@ export function createGalacticProfileResolvers(deps) {
     backgroundEnabled: () => deps.backgroundsEnabled?.() !== false,
     skill: key => !!deps.skillExists(key),
 
-    async feat(entry) {
+    async feat(entry, ctx = {}) {
       const r = resolveDoc(idx.feats, entry);
       if (r.status !== 'resolved') return { status: r.status, candidates: r.candidates };
       const choice = r.choice ?? (r.doc.name !== entry.name ? splitParameter(entry.name)?.choice : undefined);
       const matchedBy = r.matchedBy;
       if (!choice) return { status: 'resolved', id: r.doc._id, doc: r.doc, system: {}, choiceVerified: true, matchedBy };
       if (deps.featChoice) {
-        const v = await deps.featChoice(r.doc, choice, entry);
+        const v = await deps.featChoice(r.doc, choice, ctx);
         if (!v?.ok) return { status: 'unresolved', doc: r.doc, detail: v?.errors };
         return { status: 'resolved', id: r.doc._id, doc: r.doc, system: v.system ?? { selectedChoice: choice }, choiceVerified: true };
       }
@@ -115,11 +115,12 @@ export function createGalacticProfileResolvers(deps) {
       if (r.status !== 'resolved') return { status: r.status, candidates: r.candidates };
       const doc = r.doc;
       const treeId = doc.system?.treeId ?? doc.system?.talent_tree ?? null;
-      const classTrees = new Set([...(classModel?.system?.talent_trees || []), ...(classModel?.system?.talentTreeIds || []), ...(classModel?.talentTreeIds || [])]);
+      // Pack-shaped classes carry `system.talent_trees`; registry-shaped models carry `talentTreeSourceIds` (pack tree ids).
+      const classTrees = new Set([...(classModel?.system?.talent_trees || []), ...(classModel?.talentTreeSourceIds || []), ...(classModel?.system?.talentTreeSourceIds || [])]);
       let access = { allowed: !!treeId && classTrees.has(treeId), via: 'class', tree: treeId };
       if (!access.allowed && deps.talentAccessExtra) access = { ...(await deps.talentAccessExtra(classModel, doc)), tree: treeId };
       const label = entry.parameters?.weaponGroupLabel ?? r.choice ?? null;
-      return { status: 'resolved', id: doc._id, name: label ? `${doc.name} (${label})` : doc.name, treeId, access, system: label ? { selectedChoice: label } : {} };
+      return { status: 'resolved', id: doc._id, doc, name: label ? `${doc.name} (${label})` : doc.name, treeId, access, system: label ? { selectedChoice: label } : {} };
     },
 
     async forcePower(fp) {
@@ -145,7 +146,10 @@ export function createGalacticProfileResolvers(deps) {
     },
 
     forceEntitlement: args => deps.forceEntitlement(args),
-    skillAllowance: deps.skillAllowance ? (classModel, attributes) => deps.skillAllowance(classModel, attributes) : undefined,
+    prerequisites: deps.prerequisites ? args => deps.prerequisites(args) : undefined,
+    featEntitlement: deps.featEntitlement ? args => deps.featEntitlement(args) : undefined,
+    talentEntitlement: deps.talentEntitlement ? args => deps.talentEntitlement(args) : undefined,
+    skillAllowance: deps.skillAllowance ? (classModel, attributes, ctx) => deps.skillAllowance(classModel, attributes, ctx) : undefined,
     openSteps: deps.openSteps ? args => deps.openSteps(args) : undefined
   };
 }
