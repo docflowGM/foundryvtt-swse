@@ -783,7 +783,13 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
       // NPC-002: exactly the three printed starting feats, each legal and scoped.
       const startingFeats = (Array.isArray(draft.feats) ? draft.feats : []).filter(feat =>
         feat?.slotType === NONHEROIC_STARTING_FEAT_SLOT_TYPE || feat?.source === NONHEROIC_STARTING_FEAT_SOURCE);
-      const featCheck = validateNonheroicStartingFeats(startingFeats);
+      // A Galactic Profile session supplies its own owner-authored choices and
+      // bypasses the starting-feat step; whether such profiles must satisfy the
+      // three-feat rule is an open rules/data question (SWSE-NPC-RD-004), so the
+      // step-entitlement check is not imposed on them.
+      const featCheck = session?.profileStepsComplete === true
+        ? { valid: true, errors: [] }
+        : validateNonheroicStartingFeats(startingFeats);
       if (!featCheck.valid) {
         throw new Error(`[NonheroicAdapter] validateReadiness: ${featCheck.errors.join(' ')}`);
       }

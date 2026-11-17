@@ -3608,3 +3608,20 @@ Appended 2026-11-17 by the NPC V2 convergence pass. Append-only; the species (`S
 | Status | `SOURCE_VERIFIED` (prose); table cell awaiting visual confirmation |
 | Decision authority | Project owner |
 | Resolution | |
+
+## SWSE-NPC-RD-004 — Galactic Profile Nonheroic profiles vs. the three starting feats
+
+| Field | |
+|---|---|
+| Rules domain | Nonheroic starting feats / Galactic Profiles |
+| Feature | `nonheroic_worker` and the other Nonheroic profiles in `data/galactic-profiles/v3/galactic-profiles.json` |
+| Source | Core Rulebook p.277 (three starting feats from the nine printed options) vs. profile data |
+| Evidence | `nonheroic_worker` supplies a single feat, entered in the legacy name form "Skill Focus (Mechanics)" rather than a scoped Skill Focus selection. A profile-applied session bypasses the starting-feat step. |
+| Confirmed behavior | Profile sessions apply and finalize as before; the Nonheroic adapter does not impose the three-feat check on them (`session.profileStepsComplete`). |
+| Unresolved question | Whether Nonheroic profiles must be completed to three starting feats (and whether the legacy "Skill Focus (X)" form should map to a scoped selection). |
+| Options | None derivable from the sources; profile data is project-authored. |
+| Recommended ruling | None |
+| Implementation impact | Profile data not modified. Manual (non-profile) Nonheroic chargen enforces exactly three starting feats. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
