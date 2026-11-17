@@ -19,7 +19,7 @@ test('all five live DarkSidePowers class-talent FP costs call one paid helper',(
    ['static async triggerChannelAnger(', 'static async endChannelAnger('],
    ['static async triggerCripplingStrike(', 'static hasDarkSideTalisman('],
    ['static async createDarkSideTalisman(', 'static async destroyDarkSideTalisman('],
-   ['static async activateSithAlchemicalBonus(', 'static isSithAlchemicalWeapon('],
+   ['static async activateSithAlchemicalBonus(', 'static async clearSithAlchemicalBonus('],
  ];
  for(const [begin,end] of methods) {
    // Some following method names may change; ensure this check still covers
@@ -39,13 +39,6 @@ test('Sith crafting/weapon bonus consumers use the same paid _spendFP path',()=>
  assert.match(method,/receipt\?\.spent !== amount/);
  assert.match(method,/return \{ ok: true, before, after: receipt\.remaining, spent: receipt\.spent \}/);
  assert.doesNotMatch(method,/ActorEngine\.updateActor/);
- for(const action of ['startSithAmuletCraft','completeSithAmuletCraft',
-   'startSithWeaponCraft','completeSithWeaponCraft','activateSithWeaponBonus']){
-   const index=darkSidePowers.indexOf('function '+action+'(');
-   // At least two documented craft completions use this helper; do not
-   // assert methods that only start a delayed craft must pay immediately.
-   if(index<0)continue;
- }
  assert.ok((darkSidePowers.match(/await _spendFP\(actor, 1\)/g)||[]).length>=9,
    'Four craft/weapon consumers plus five talented direct actions should use paid helper');
 });
