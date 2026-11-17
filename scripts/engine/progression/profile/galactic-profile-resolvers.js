@@ -145,6 +145,7 @@ export function createGalacticProfileResolvers(deps) {
     },
 
     forceEntitlement: args => deps.forceEntitlement(args),
+    skillAllowance: deps.skillAllowance ? (classModel, attributes) => deps.skillAllowance(classModel, attributes) : undefined,
     openSteps: deps.openSteps ? args => deps.openSteps(args) : undefined
   };
 }

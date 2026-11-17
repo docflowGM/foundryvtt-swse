@@ -53,7 +53,7 @@ export async function compileProfile(profile, ctx = {}) {
     profileId: profile?.profileId ?? null,
     revision: profile?.revision ?? null,
     subtype: profile?.subtype ?? null,
-    blocked, diagnostics, open, resolved, draft, deferred, economy,
+    blocked, diagnostics, open, resolved, draft, deferred, economy, locks: resolved.locks ?? ['l1-survey'],
     digest: stableHash({ id: profile?.profileId, rev: profile?.revision, st: ctx.sessionSubtype, resolved, settings: ctx.settings ?? null })
   });
 
@@ -157,7 +157,15 @@ export async function compileProfile(profile, ctx = {}) {
   for (const entry of c.talents) {
     const t = await R.talent(entry, classModel);
     if (t.status !== 'resolved') { block(t.status === 'ambiguous' ? 'TALENT_AMBIGUOUS' : 'TALENT_UNRESOLVED', 'choices.talents', entry.name); continue; }
-    if (t.access?.allowed !== true) { block('TALENT_TREE_ACCESS', 'choices.talents', `${entry.name} (${t.access?.tree ?? 'unknown tree'}) is not available to ${classModel?.name ?? 'this class'}`); continue; }
+    if (t.access?.allowed !== true) {
+      // The class's registered trees do not include this talent's tree. V2's tree authority (Force trees, traditions,
+      // droid degree trees) evaluates actor state we do not have yet, so the talent is HELD as authored intent and the
+      // normal V2 talent step decides legality. It is never granted here.
+      deferred = { ...(deferred || {}), talents: [...(deferred?.talents || []), { id: t.id, name: t.name, treeId: t.treeId ?? null }] };
+      note('TALENT_ACCESS_DEFERRED_TO_V2', 'choices.talents', `${entry.name} (${t.access?.tree ?? 'unknown tree'}) is not in ${classModel?.name ?? 'the class'}'s registered trees; held for V2 tree authority`);
+      if (!open.some(o => o.reason === 'TALENT_ACCESS_UNVERIFIED')) open.push({ stepId: 'class-talent', reason: 'TALENT_ACCESS_UNVERIFIED' });
+      continue;
+    }
     talentDrafts.push({ id: t.id, name: t.name, pack: 'foundryvtt-swse.talents', type: 'talent', treeId: t.treeId ?? null, system: t.system ?? {}, source: 'profile' });
   }
   if (c.talents.length && !talentDrafts.length) note('TALENT_NOT_COMMITTED', 'choices.talents', 'no authored talent could be committed');
@@ -171,7 +179,7 @@ export async function compileProfile(profile, ctx = {}) {
 
   // ── 10. Force powers: preserved as intent; applied only where V2 says the entitlement legally exists ──────────
   if (c.forcePowers.length) {
-    const ent = R.forceEntitlement({ classModel, featIds: resolved.feats, featNames: [...autoGrantKeys, ...featDrafts.map(f => nameKey(f.name))], skills: goodSkills, attributes: cleanBase, speciesCtx });
+    const ent = R.forceEntitlement({ draft, subtype: profile.subtype, classModel, featIds: resolved.feats, featNames: [...autoGrantKeys, ...featDrafts.map(f => nameKey(f.name))], skills: goodSkills, attributes: cleanBase, speciesCtx });
     const powers = [];
     for (const fp of c.forcePowers) {
       const item = await R.forcePower(fp);
@@ -217,7 +225,24 @@ export async function compileProfile(profile, ctx = {}) {
   };
   resolved.economy = { credits: c.wallet.credits, items: equipment.map(i => `${i.itemId}x${i.qty}`) };
 
-  if (typeof R.openSteps === 'function') open.push(...(await R.openSteps({ profile, draft, open })) );
+  // ── 13. Steps the profile fully satisfied (persisted with the application; never inferred from array length) ──────
+  //   Only what this compile ESTABLISHED through V2 is locked. Entitlement-count-dependent steps (feats, languages,
+  //   Force) stay open unless V2 reports the count met; `l1-survey` is always answered by the profile itself.
+  const locks = ['l1-survey'];
+  if (draft.species) locks.push('species');
+  if (draft.class) locks.push('class');
+  if (draft.attributes) locks.push('attribute');
+  if (draft.background) locks.push('background');
+  if (draft.skills && typeof R.skillAllowance === 'function') {
+    const allowance = R.skillAllowance(classModel, cleanBase);
+    if (Number.isFinite(allowance) && allowance === goodSkills.length) locks.push('skills');
+    else if (Number.isFinite(allowance)) note('SKILL_COUNT_DIFFERS_FROM_ALLOWANCE', 'choices.skills', `authored ${goodSkills.length}, V2 allowance ${allowance}`);
+  }
+  if (talentDrafts.length && !deferred?.talents) locks.push('class-talent');
+  if (draft.droid) locks.push('droid-builder');
+  resolved.locks = locks;
+
+  if (typeof R.openSteps === 'function') open.push(...(await R.openSteps({ profile, draft, open, locks })));
   return result();
 }
 

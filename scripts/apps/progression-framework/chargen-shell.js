@@ -21,7 +21,7 @@ import { ActiveStepComputer } from './shell/active-step-computer.js';
 import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
 import { RolloutSettings } from './rollout/rollout-settings.js';
-import { TemplateTraversalPolicy } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-traversal-policy.js';
+import { filterActiveStepsForProfile } from '/systems/foundryvtt-swse/scripts/engine/progression/profile/galactic-profile-apply.js';
 import { NullStepPlugin } from './steps/null-step-plugin.js';
 import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
@@ -93,16 +93,7 @@ export class ChargenShell extends ProgressionShell {
       return 'beast';
     }
 
-    // Phase 2.6: Detect nonheroic subtype from template or class items
-    // Check if session is template-seeded and template is nonheroic
-    if (this.progressionSession?.isTemplateSession && this.progressionSession?.templateId) {
-      // Template will have set subtype in TemplateAdapter.initializeSessionFromTemplate
-      // Check the session's subtype if already set
-      if (this.progressionSession.subtype === 'nonheroic') {
-        return 'nonheroic';
-      }
-    }
-
+    // (Galactic Profile sessions carry their subtype from the creation lane; nothing is inferred from a template.)
     // Phase 2: Detect nonheroic subtype based on class items
     // If actor has any nonheroic class item, progression should be nonheroic
     const hasNonheroicClass = this.actor.items?.some(
@@ -174,13 +165,8 @@ export class ChargenShell extends ProgressionShell {
 
       // PHASE 5: For template sessions, filter out locked nodes (template-provided choices)
       // This creates a "bare-minimum-complete" traversal where players only revisit optional choices
-      if (this.progressionSession.isTemplateSession) {
-        activeNodeIds = TemplateTraversalPolicy.filterActiveStepsForTemplate(
-          activeNodeIds,
-          this.progressionSession,
-          { skipLocked: true }
-        );
-      }
+      // Galactic Profile sessions: skip only steps the applied profile fully satisfied (persisted `locks`, released on edit).
+      activeNodeIds = filterActiveStepsForProfile(activeNodeIds, this.progressionSession);
 
       // Convert active node IDs to StepDescriptors with plugins wired
       let descriptors = mapNodesToDescriptors(activeNodeIds);

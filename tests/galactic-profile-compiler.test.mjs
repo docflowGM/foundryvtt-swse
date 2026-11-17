@@ -21,7 +21,7 @@ const codes = r => [...new Set(r.blocked.map(b => b.code))].sort();
  */
 const EXPECTED_BLOCKS = {
   'jedi_guardian': ["ATTRIBUTE_BASIS_UNRESOLVED"],
-  'jedi_consular': ["ATTRIBUTE_BASIS_UNRESOLVED", "TALENT_TREE_ACCESS"],
+  'jedi_consular': ["ATTRIBUTE_BASIS_UNRESOLVED"],
   'jedi_defender': [],
   'jedi_sentinel': ["ATTRIBUTE_BASIS_UNRESOLVED", "FORCE_POWER_UNRESOLVED"],
   'noble_diplomat': ["ATTRIBUTE_BASIS_UNRESOLVED"],
@@ -45,7 +45,7 @@ const EXPECTED_BLOCKS = {
   'scoundrel_brigand': ["ATTRIBUTE_BASIS_UNRESOLVED", "ITEM_WITHOUT_ID"],
   'scout_sniper': ["ATTRIBUTE_BASIS_UNRESOLVED"],
   'scout_engineer': ["ATTRIBUTE_BASIS_UNRESOLVED"],
-  'scout_pistoleer': ["ITEM_UNRESOLVED", "TALENT_TREE_ACCESS"],
+  'scout_pistoleer': ["ITEM_UNRESOLVED"],
   'scout_survivalist': ["ATTRIBUTE_BASIS_UNRESOLVED"],
   'scout_infiltrator': ["ATTRIBUTE_BASIS_UNRESOLVED"],
   'soldier_rifleman': ["ATTRIBUTE_BASIS_UNRESOLVED", "ITEM_WITHOUT_ID"],
@@ -185,10 +185,12 @@ test('GP-RD-002/006: talent identity comes from the published talent document, n
   }
 });
 
-test('GP-RD-007: Mechanized Rider is blocked on V2 tree registration, not on the authored choice', async () => {
-  const r = await compile(byId('scout_pistoleer'));
-  assert.ok(codes(r).includes('TALENT_TREE_ACCESS'));
-  assert.equal(r.blocked.find(b => b.code === 'TALENT_TREE_ACCESS').detail.includes('c7a4e66f46044c7a'), true);
+test('talents outside the class registered trees are HELD for V2 tree authority, never granted or silently dropped', async () => {
+  const r = await compile(byId('jedi_consular'));
+  assert.deepEqual(r.draft.talents, []);
+  assert.equal(r.deferred.talents[0].name, 'Force Focus');
+  assert.ok(r.open.some(o => o.reason === 'TALENT_ACCESS_UNVERIFIED'));
+  assert.ok(r.diagnostics.some(d => d.code === 'TALENT_ACCESS_DEFERRED_TO_V2'));
 });
 
 test('registry: validates record by record, quarantines invalid/duplicate/unknown-subtype, serves the rest', () => {
