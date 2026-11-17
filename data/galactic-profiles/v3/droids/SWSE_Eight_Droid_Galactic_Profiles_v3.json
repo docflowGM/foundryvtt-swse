@@ -1,0 +1,3992 @@
+{
+  "schemaVersion": 3,
+  "format": "swse.galactic-profiles.v3",
+  "source": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "branch": "feature/chargen-splash-prewarm",
+    "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+    "rulesSources": [
+      "Saga Edition Core Rulebook, Creating a Droid Hero, pp. 186-187",
+      "Saga Edition Core Rulebook, Heroic Classes and Equipment",
+      "Scavenger's Guide to Droids, Creating Droid Heroes, pp. 10-11"
+    ],
+    "authorityModules": [
+      "scripts/engine/progression/droids/droid-trait-rules.js",
+      "scripts/domain/droids/droid-build-quote.js",
+      "scripts/domain/droids/droid-component-quote-authority.js",
+      "scripts/domain/droids/droid-component-source-review.js",
+      "scripts/apps/progression-framework/steps/droid-builder-step.js"
+    ]
+  },
+  "compatibility": {
+    "status": "newDroidProfileCompilerRequired",
+    "legacyTemplateRegistryDropIn": false,
+    "v3Extension": "droid",
+    "productionUse": false
+  },
+  "profiles": [
+    {
+      "schemaVersion": 3,
+      "profileId": "droid_scout_dex_recon_probe",
+      "revision": 1,
+      "catalog": {
+        "name": "Reconnaissance Probe",
+        "archetype": "Reconnaissance Probe",
+        "description": "Fast-moving sensor scout and tactical spotter",
+        "quote": null,
+        "imagePath": null,
+        "roleTags": [
+          "droid",
+          "scout",
+          "dex-focused",
+          "recon",
+          "mobility",
+          "sensors"
+        ],
+        "classKey": "scout",
+        "className": "Scout",
+        "mentorKey": "lead",
+        "dialogueKey": null,
+        "legacyNotes": "Fourth-degree with small size; dexterity rises from 15 to 19. Carries a concealable defensive weapon."
+      },
+      "identity": {
+        "level": 1,
+        "participantKind": "droid",
+        "rulesTrack": "heroic-droid",
+        "legacySubtype": null,
+        "classRef": {
+          "sourceRef": {
+            "id": "b5bed5d1b5f42958",
+            "name": "Scout",
+            "pack": "foundryvtt-swse.classes",
+            "type": "class"
+          },
+          "canonicalIdCandidate": "b5bed5d1b5f42958",
+          "resolution": "pendingV2Registry"
+        },
+        "speciesRef": null,
+        "speciesPublication": {
+          "status": "notApplicableDroid"
+        },
+        "backgroundRef": null,
+        "legacyParticipantKind": null
+      },
+      "build": {
+        "attributes": {
+          "basis": "RAWFiveScoreStandardArrayBeforeDegreeAndSize",
+          "scores": {
+            "str": 8,
+            "dex": 19,
+            "int": 11,
+            "wis": 14,
+            "cha": 10,
+            "con": null
+          },
+          "preDegreeAndSizeScores": {
+            "str": 10,
+            "dex": 15,
+            "int": 13,
+            "wis": 14,
+            "cha": 12,
+            "con": null
+          },
+          "degreeModifiers": {
+            "dex": 2,
+            "int": -2,
+            "cha": -2
+          },
+          "sizeModifiers": {
+            "str": -2,
+            "dex": 2
+          },
+          "applySpeciesModifiers": "neverForDroids"
+        },
+        "skills": {
+          "trained": [
+            {
+              "canonicalKeyCandidate": "initiative",
+              "sourceEntry": {
+                "id": "cb5493f65f0bdb62",
+                "name": "initiative"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "perception",
+              "sourceEntry": {
+                "id": "43c5941072ec78af",
+                "name": "perception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "stealth",
+              "sourceEntry": {
+                "id": "6d2ac22d9fcf402f",
+                "name": "stealth"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "pilot",
+              "sourceEntry": {
+                "id": "b8dad0c963f046c6",
+                "name": "pilot"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "survival",
+              "sourceEntry": {
+                "id": "Survival",
+                "name": "survival"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            }
+          ],
+          "entitlements": "classBasePlusFinalIntModifier",
+          "expectedCount": 5
+        },
+        "feats": {
+          "sourceSelections": [
+            {
+              "displayName": "Point Blank Shot",
+              "sourceCandidates": [
+                {
+                  "id": "point-blank-shot",
+                  "name": "Point Blank Shot",
+                  "pack": "foundryvtt-swse.feats",
+                  "type": "feat"
+                }
+              ],
+              "entitlement": "level1GeneralFeat",
+              "selectionStatus": "staticPrerequisiteCheckedPendingV2"
+            }
+          ],
+          "classAndSpeciesAutoGrants": "deriveFromV2",
+          "expectedAutomaticClassFeatNames": [
+            "Weapon Proficiency (Pistols)",
+            "Weapon Proficiency (Rifles)",
+            "Weapon Proficiency (Simple Weapons)"
+          ],
+          "generalFeatEntitlements": "oneAtCharacterLevel1",
+          "grantDirectlyFromSourceCandidates": false
+        },
+        "talents": {
+          "classSlot": {
+            "entitlementSlot": "class-talent",
+            "selection": {
+              "sourceRef": {
+                "id": "evasion",
+                "name": "Evasion",
+                "pack": "foundryvtt-swse.talents",
+                "type": "talent"
+              },
+              "canonicalIdCandidate": "evasion",
+              "resolution": "pendingV2Registry"
+            },
+            "sourceTree": null,
+            "parameters": {},
+            "validation": "staticBasePrerequisitesCheckedPendingV2"
+          },
+          "generalSlotWhenTalentWikiEnabled": {
+            "selection": null,
+            "resolution": "playerChoice",
+            "allowedOnlyWhenGmSetting": "talentWiki"
+          },
+          "additionalSourceEntries": [],
+          "policy": "deriveAvailableSlotsAndValidateTreePrerequisitesWithV2"
+        },
+        "forcePowers": {
+          "sourceSelections": [],
+          "grantAuthority": "droidForbidden"
+        },
+        "languages": {
+          "legacyKnownLanguages": [
+            "Binary"
+          ],
+          "grantPolicy": "DroidBinaryPlusVocabulatorForBasicPendingV2"
+        },
+        "droid": {
+          "creationMode": "custom",
+          "droidDegree": "4th-degree",
+          "droidSize": "small",
+          "chassis": null,
+          "isDroid": true,
+          "droidCalculationMode": "playable-derived",
+          "droidSystems": {
+            "locomotion": {
+              "id": "wheeled",
+              "speed": 6
+            },
+            "processor": {
+              "id": "heuristic"
+            },
+            "appendages": [
+              {
+                "id": "hand-1"
+              },
+              {
+                "id": "hand-2"
+              },
+              {
+                "id": "claw"
+              }
+            ],
+            "accessories": [
+              {
+                "id": "internal-comlink",
+                "category": "communications"
+              },
+              {
+                "id": "improved-sensor-package",
+                "category": "sensors"
+              },
+              {
+                "id": "darkvision",
+                "category": "sensors"
+              }
+            ],
+            "locomotionEnhancements": [],
+            "appendageEnhancements": []
+          },
+          "hardware": {
+            "budgetAuthority": "ProgressionRules.getDroidConstructionCredits",
+            "budgetCredits": 1000,
+            "spentCredits": 1000,
+            "remainingCredits": 0,
+            "unspentDisposition": "forfeit",
+            "allowClassCreditsOverflow": false,
+            "lineItems": [
+              {
+                "sourceId": "wheeled",
+                "category": "locomotion",
+                "name": "Wheeled Locomotion",
+                "sourcePriceCredits": 360,
+                "costCredits": 360,
+                "grantAuthority": null,
+                "sourceDecision": "SOURCE_SAFE_SUBSET",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "heuristic",
+                "category": "processor",
+                "name": "Heuristic Processor",
+                "sourcePriceCredits": 2000,
+                "costCredits": 0,
+                "grantAuthority": "heuristic-processor",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 100,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 100,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "internal-comlink",
+                "category": "accessory.communications",
+                "name": "Internal Comlink",
+                "sourcePriceCredits": 250,
+                "costCredits": 250,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "improved-sensor-package",
+                "category": "accessory.sensors",
+                "name": "Improved Sensor Package",
+                "sourcePriceCredits": 200,
+                "costCredits": 200,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "darkvision",
+                "category": "accessory.sensors",
+                "name": "Darkvision",
+                "sourcePriceCredits": 150,
+                "costCredits": 150,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "claw",
+                "category": "appendage",
+                "name": "Claw Appendage",
+                "sourcePriceCredits": 40,
+                "costCredits": 40,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              }
+            ],
+            "quotedBy": "localStaticReplicaOfV2Catalog",
+            "mustRequoteAtCommit": "scripts/domain/droids/droid-build-quote.js:quoteDroidBuild",
+            "initialInstallationAuthority": "scripts/domain/droids/droid-initial-installation-service.js:applyInitialInstallationToPlan",
+            "v2QuoteStatus": "pendingExecution",
+            "grants": [
+              "heuristic-processor",
+              "two-hands"
+            ]
+          },
+          "behavioralRestrictions": {
+            "degree": "4th-degree",
+            "nonviolenceInhibitor": false,
+            "obedienceInhibitor": true,
+            "mustBeEnforcedByV2": true
+          }
+        },
+        "startingPackage": {
+          "items": [
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "weapon-hold-out-blaster-pistol",
+                  "name": "Blaster Pistol, Hold-Out",
+                  "pack": "foundryvtt-swse.weapons-pistols",
+                  "type": "weapon"
+                },
+                "canonicalIdCandidate": "weapon-hold-out-blaster-pistol",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Blaster Pistol, Hold-Out",
+              "printedUnitPriceCredits": 300,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": null,
+                  "name": "Energy Cell",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": null,
+                "resolution": "sourceNameLookupRequired"
+              },
+              "quantity": 1,
+              "displayName": "Energy Cell",
+              "printedUnitPriceCredits": 10,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "detect-glow-rod",
+                  "name": "Glow Rod",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "detect-glow-rod",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Glow Rod",
+              "printedUnitPriceCredits": 10,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            }
+          ],
+          "wallet": {
+            "mode": "finalNetBalance",
+            "credits": 1180,
+            "allowZero": true
+          },
+          "budgetAccounting": "canonical3d4ClassStartingCreditsPreselectedRollSeparateFromDroid1000",
+          "startingClassCredits": {
+            "dice": "3d4",
+            "preselectedDiceResults": [
+              2,
+              2,
+              2
+            ],
+            "perDieTotal": 6,
+            "multiplier": 250,
+            "initial": 1500,
+            "purchasesTotal": 320,
+            "remaining": 1180
+          },
+          "duplicateProtection": "noHardwareRegrantInExternalEquipment"
+        },
+        "beastSourceMechanics": null
+      },
+      "optionalRules": {
+        "talentWiki": {
+          "whenEnabled": "allowOneAdditionalGeneralTalentEntitlement",
+          "selection": null,
+          "resolution": "playerChoice",
+          "mayNotCountAliasAsGrant": true
+        },
+        "droidConstructionCredits": {
+          "requiredBase": 1000,
+          "houseRuleOverrideAllowed": false
+        },
+        "allowDroidOverflow": false
+      },
+      "certification": {
+        "status": "staticRAWAndSourceChecksPassedPendingV2",
+        "publishableAsReadyToPlay": false,
+        "staticLegality": {
+          "levelOneHeroic": true,
+          "noConstitution": true,
+          "fiveScoreStandardArray": true,
+          "degreeChosen": true,
+          "smallOrMedium": true,
+          "classAllowed": true,
+          "skillCountAndClassSkills": true,
+          "oneGeneralFeatAndOneClassTalent": true,
+          "heuristicFree": true,
+          "twoHandsFree": true,
+          "constructionBudgetExact1000": true,
+          "atLeastOneWeaponAndGear": true,
+          "classCreditsCoverPurchases": true,
+          "weaponProficiencyCovered": true,
+          "noJediNoForcePowers": true
+        },
+        "issues": [
+          "V2_RUNTIME_QUOTE_AND_HOST_VALIDATION_PENDING",
+          "V2_CLASS_FEAT_TALENT_REGISTRY_RESOLUTION_PENDING",
+          "ITEM_REFERENCE_AND_AMOUNT_VALIDATION_PENDING",
+          "FOUNDRY_ACTOR_MUTATION_REGRESSION_PENDING"
+        ]
+      },
+      "provenance": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "branch": "feature/chargen-splash-prewarm",
+        "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+        "rulesSources": [
+          "Saga Edition Core Rulebook, Creating a Droid Hero, pp. 186-187",
+          "Saga Edition Core Rulebook, Heroic Classes and Equipment",
+          "Scavenger's Guide to Droids, Creating Droid Heroes, pp. 10-11"
+        ],
+        "authorityModules": [
+          "scripts/engine/progression/droids/droid-trait-rules.js",
+          "scripts/domain/droids/droid-build-quote.js",
+          "scripts/domain/droids/droid-component-quote-authority.js",
+          "scripts/domain/droids/droid-component-source-review.js",
+          "scripts/apps/progression-framework/steps/droid-builder-step.js"
+        ],
+        "authoringMethod": "newLevel1DroidTemplate",
+        "legacyId": null,
+        "sourceFile": null,
+        "sourceVersion": null,
+        "legacySupportLevel": null
+      }
+    },
+    {
+      "schemaVersion": 3,
+      "profileId": "droid_scout_int_astromech_pathfinder",
+      "revision": 1,
+      "catalog": {
+        "name": "Astromech Pathfinder",
+        "archetype": "Astromech Pathfinder",
+        "description": "Exploration cartographer and technical troubleshooter",
+        "quote": null,
+        "imagePath": null,
+        "roleTags": [
+          "droid",
+          "scout",
+          "int-focused",
+          "technical",
+          "navigation",
+          "exploration"
+        ],
+        "classKey": "scout",
+        "className": "Scout",
+        "mentorKey": "lead",
+        "dialogueKey": null,
+        "legacyNotes": "Second-degree nonviolence inhibitor applies; weapon is for proportionate defense."
+      },
+      "identity": {
+        "level": 1,
+        "participantKind": "droid",
+        "rulesTrack": "heroic-droid",
+        "legacySubtype": null,
+        "classRef": {
+          "sourceRef": {
+            "id": "b5bed5d1b5f42958",
+            "name": "Scout",
+            "pack": "foundryvtt-swse.classes",
+            "type": "class"
+          },
+          "canonicalIdCandidate": "b5bed5d1b5f42958",
+          "resolution": "pendingV2Registry"
+        },
+        "speciesRef": null,
+        "speciesPublication": {
+          "status": "notApplicableDroid"
+        },
+        "backgroundRef": null,
+        "legacyParticipantKind": null
+      },
+      "build": {
+        "attributes": {
+          "basis": "RAWFiveScoreStandardArrayBeforeDegreeAndSize",
+          "scores": {
+            "str": 8,
+            "dex": 16,
+            "int": 17,
+            "wis": 13,
+            "cha": 10,
+            "con": null
+          },
+          "preDegreeAndSizeScores": {
+            "str": 10,
+            "dex": 14,
+            "int": 15,
+            "wis": 13,
+            "cha": 12,
+            "con": null
+          },
+          "degreeModifiers": {
+            "int": 2,
+            "cha": -2
+          },
+          "sizeModifiers": {
+            "str": -2,
+            "dex": 2
+          },
+          "applySpeciesModifiers": "neverForDroids"
+        },
+        "skills": {
+          "trained": [
+            {
+              "canonicalKeyCandidate": "mechanics",
+              "sourceEntry": {
+                "id": "745a5686d6f21e8c",
+                "name": "mechanics"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "knowledgeTechnology",
+              "sourceEntry": {
+                "id": "knowledgeTechnology",
+                "name": "knowledgeTechnology"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "knowledgePhysicalSciences",
+              "sourceEntry": {
+                "id": "knowledgePhysicalSciences",
+                "name": "knowledgePhysicalSciences"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "perception",
+              "sourceEntry": {
+                "id": "43c5941072ec78af",
+                "name": "perception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "pilot",
+              "sourceEntry": {
+                "id": "b8dad0c963f046c6",
+                "name": "pilot"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "survival",
+              "sourceEntry": {
+                "id": "Survival",
+                "name": "survival"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "initiative",
+              "sourceEntry": {
+                "id": "cb5493f65f0bdb62",
+                "name": "initiative"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "stealth",
+              "sourceEntry": {
+                "id": "6d2ac22d9fcf402f",
+                "name": "stealth"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            }
+          ],
+          "entitlements": "classBasePlusFinalIntModifier",
+          "expectedCount": 8
+        },
+        "feats": {
+          "sourceSelections": [
+            {
+              "displayName": "Skill Focus (Mechanics)",
+              "sourceCandidates": [
+                {
+                  "id": "skill-focus-(mechanics)",
+                  "name": "Skill Focus (Mechanics)",
+                  "pack": "foundryvtt-swse.feats",
+                  "type": "feat"
+                }
+              ],
+              "entitlement": "level1GeneralFeat",
+              "selectionStatus": "staticPrerequisiteCheckedPendingV2"
+            }
+          ],
+          "classAndSpeciesAutoGrants": "deriveFromV2",
+          "expectedAutomaticClassFeatNames": [
+            "Weapon Proficiency (Pistols)",
+            "Weapon Proficiency (Rifles)",
+            "Weapon Proficiency (Simple Weapons)"
+          ],
+          "generalFeatEntitlements": "oneAtCharacterLevel1",
+          "grantDirectlyFromSourceCandidates": false
+        },
+        "talents": {
+          "classSlot": {
+            "entitlementSlot": "class-talent",
+            "selection": {
+              "sourceRef": {
+                "id": "acute-senses",
+                "name": "Acute Senses",
+                "pack": "foundryvtt-swse.talents",
+                "type": "talent"
+              },
+              "canonicalIdCandidate": "acute-senses",
+              "resolution": "pendingV2Registry"
+            },
+            "sourceTree": null,
+            "parameters": {},
+            "validation": "staticBasePrerequisitesCheckedPendingV2"
+          },
+          "generalSlotWhenTalentWikiEnabled": {
+            "selection": null,
+            "resolution": "playerChoice",
+            "allowedOnlyWhenGmSetting": "talentWiki"
+          },
+          "additionalSourceEntries": [],
+          "policy": "deriveAvailableSlotsAndValidateTreePrerequisitesWithV2"
+        },
+        "forcePowers": {
+          "sourceSelections": [],
+          "grantAuthority": "droidForbidden"
+        },
+        "languages": {
+          "legacyKnownLanguages": [
+            "Binary",
+            "Basic"
+          ],
+          "grantPolicy": "DroidBinaryPlusVocabulatorForBasicPendingV2"
+        },
+        "droid": {
+          "creationMode": "custom",
+          "droidDegree": "2nd-degree",
+          "droidSize": "small",
+          "chassis": null,
+          "isDroid": true,
+          "droidCalculationMode": "playable-derived",
+          "droidSystems": {
+            "locomotion": {
+              "id": "walking",
+              "speed": 4
+            },
+            "processor": {
+              "id": "heuristic"
+            },
+            "appendages": [
+              {
+                "id": "hand-1"
+              },
+              {
+                "id": "hand-2"
+              },
+              {
+                "id": "tool"
+              },
+              {
+                "id": "instrument"
+              }
+            ],
+            "accessories": [
+              {
+                "id": "internal-comlink",
+                "category": "communications"
+              },
+              {
+                "id": "improved-sensor-package",
+                "category": "sensors"
+              },
+              {
+                "id": "darkvision",
+                "category": "sensors"
+              },
+              {
+                "id": "vocabulator",
+                "category": "communications"
+              }
+            ],
+            "locomotionEnhancements": [],
+            "appendageEnhancements": []
+          },
+          "hardware": {
+            "budgetAuthority": "ProgressionRules.getDroidConstructionCredits",
+            "budgetCredits": 1000,
+            "spentCredits": 1000,
+            "remainingCredits": 0,
+            "unspentDisposition": "forfeit",
+            "allowClassCreditsOverflow": false,
+            "lineItems": [
+              {
+                "sourceId": "walking",
+                "category": "locomotion",
+                "name": "Walking Locomotion",
+                "sourcePriceCredits": 320,
+                "costCredits": 320,
+                "grantAuthority": null,
+                "sourceDecision": "SOURCE_SAFE_SUBSET",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "heuristic",
+                "category": "processor",
+                "name": "Heuristic Processor",
+                "sourcePriceCredits": 2000,
+                "costCredits": 0,
+                "grantAuthority": "heuristic-processor",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 100,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 100,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "internal-comlink",
+                "category": "accessory.communications",
+                "name": "Internal Comlink",
+                "sourcePriceCredits": 250,
+                "costCredits": 250,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "improved-sensor-package",
+                "category": "accessory.sensors",
+                "name": "Improved Sensor Package",
+                "sourcePriceCredits": 200,
+                "costCredits": 200,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "darkvision",
+                "category": "accessory.sensors",
+                "name": "Darkvision",
+                "sourcePriceCredits": 150,
+                "costCredits": 150,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "vocabulator",
+                "category": "accessory.communications",
+                "name": "Vocabulator",
+                "sourcePriceCredits": 50,
+                "costCredits": 50,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "tool",
+                "category": "appendage",
+                "name": "Tool Appendage",
+                "sourcePriceCredits": 20,
+                "costCredits": 20,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "instrument",
+                "category": "appendage",
+                "name": "Instrument Appendage",
+                "sourcePriceCredits": 10,
+                "costCredits": 10,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              }
+            ],
+            "quotedBy": "localStaticReplicaOfV2Catalog",
+            "mustRequoteAtCommit": "scripts/domain/droids/droid-build-quote.js:quoteDroidBuild",
+            "initialInstallationAuthority": "scripts/domain/droids/droid-initial-installation-service.js:applyInitialInstallationToPlan",
+            "v2QuoteStatus": "pendingExecution",
+            "grants": [
+              "heuristic-processor",
+              "two-hands"
+            ]
+          },
+          "behavioralRestrictions": {
+            "degree": "2nd-degree",
+            "nonviolenceInhibitor": true,
+            "obedienceInhibitor": true,
+            "mustBeEnforcedByV2": true
+          }
+        },
+        "startingPackage": {
+          "items": [
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "weapon-blaster-pistol",
+                  "name": "Blaster Pistol",
+                  "pack": "foundryvtt-swse.weapons-pistols",
+                  "type": "weapon"
+                },
+                "canonicalIdCandidate": "weapon-blaster-pistol",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Blaster Pistol",
+              "printedUnitPriceCredits": 500,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "tool-power-pack",
+                  "name": "Power Pack",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "tool-power-pack",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Power Pack",
+              "printedUnitPriceCredits": 25,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "tool-kit",
+                  "name": "Tool Kit",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "tool-kit",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Tool Kit",
+              "printedUnitPriceCredits": 250,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            }
+          ],
+          "wallet": {
+            "mode": "finalNetBalance",
+            "credits": 975,
+            "allowZero": true
+          },
+          "budgetAccounting": "canonical3d4ClassStartingCreditsPreselectedRollSeparateFromDroid1000",
+          "startingClassCredits": {
+            "dice": "3d4",
+            "preselectedDiceResults": [
+              3,
+              2,
+              2
+            ],
+            "perDieTotal": 7,
+            "multiplier": 250,
+            "initial": 1750,
+            "purchasesTotal": 775,
+            "remaining": 975
+          },
+          "duplicateProtection": "noHardwareRegrantInExternalEquipment"
+        },
+        "beastSourceMechanics": null
+      },
+      "optionalRules": {
+        "talentWiki": {
+          "whenEnabled": "allowOneAdditionalGeneralTalentEntitlement",
+          "selection": null,
+          "resolution": "playerChoice",
+          "mayNotCountAliasAsGrant": true
+        },
+        "droidConstructionCredits": {
+          "requiredBase": 1000,
+          "houseRuleOverrideAllowed": false
+        },
+        "allowDroidOverflow": false
+      },
+      "certification": {
+        "status": "staticRAWAndSourceChecksPassedPendingV2",
+        "publishableAsReadyToPlay": false,
+        "staticLegality": {
+          "levelOneHeroic": true,
+          "noConstitution": true,
+          "fiveScoreStandardArray": true,
+          "degreeChosen": true,
+          "smallOrMedium": true,
+          "classAllowed": true,
+          "skillCountAndClassSkills": true,
+          "oneGeneralFeatAndOneClassTalent": true,
+          "heuristicFree": true,
+          "twoHandsFree": true,
+          "constructionBudgetExact1000": true,
+          "atLeastOneWeaponAndGear": true,
+          "classCreditsCoverPurchases": true,
+          "weaponProficiencyCovered": true,
+          "noJediNoForcePowers": true
+        },
+        "issues": [
+          "V2_RUNTIME_QUOTE_AND_HOST_VALIDATION_PENDING",
+          "V2_CLASS_FEAT_TALENT_REGISTRY_RESOLUTION_PENDING",
+          "ITEM_REFERENCE_AND_AMOUNT_VALIDATION_PENDING",
+          "FOUNDRY_ACTOR_MUTATION_REGRESSION_PENDING"
+        ]
+      },
+      "provenance": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "branch": "feature/chargen-splash-prewarm",
+        "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+        "rulesSources": [
+          "Saga Edition Core Rulebook, Creating a Droid Hero, pp. 186-187",
+          "Saga Edition Core Rulebook, Heroic Classes and Equipment",
+          "Scavenger's Guide to Droids, Creating Droid Heroes, pp. 10-11"
+        ],
+        "authorityModules": [
+          "scripts/engine/progression/droids/droid-trait-rules.js",
+          "scripts/domain/droids/droid-build-quote.js",
+          "scripts/domain/droids/droid-component-quote-authority.js",
+          "scripts/domain/droids/droid-component-source-review.js",
+          "scripts/apps/progression-framework/steps/droid-builder-step.js"
+        ],
+        "authoringMethod": "newLevel1DroidTemplate",
+        "legacyId": null,
+        "sourceFile": null,
+        "sourceVersion": null,
+        "legacySupportLevel": null
+      }
+    },
+    {
+      "schemaVersion": 3,
+      "profileId": "droid_soldier_dex_security_enforcer",
+      "revision": 1,
+      "catalog": {
+        "name": "Security Enforcer",
+        "archetype": "Security Enforcer",
+        "description": "Mobile ranged defender with integrated protection",
+        "quote": null,
+        "imagePath": null,
+        "roleTags": [
+          "droid",
+          "soldier",
+          "dex-focused",
+          "ranged",
+          "defense",
+          "tactics"
+        ],
+        "classKey": "soldier",
+        "className": "Soldier",
+        "mentorKey": "breach",
+        "dialogueKey": null,
+        "legacyNotes": "Soldier grants light-armor proficiency; rifle is wielded with both granted hands."
+      },
+      "identity": {
+        "level": 1,
+        "participantKind": "droid",
+        "rulesTrack": "heroic-droid",
+        "legacySubtype": null,
+        "classRef": {
+          "sourceRef": {
+            "id": "f62ca2e639cab614",
+            "name": "Soldier",
+            "pack": "foundryvtt-swse.classes",
+            "type": "class"
+          },
+          "canonicalIdCandidate": "f62ca2e639cab614",
+          "resolution": "pendingV2Registry"
+        },
+        "speciesRef": null,
+        "speciesPublication": {
+          "status": "notApplicableDroid"
+        },
+        "backgroundRef": null,
+        "legacyParticipantKind": null
+      },
+      "build": {
+        "attributes": {
+          "basis": "RAWFiveScoreStandardArrayBeforeDegreeAndSize",
+          "scores": {
+            "str": 10,
+            "dex": 17,
+            "int": 11,
+            "wis": 14,
+            "cha": 10,
+            "con": null
+          },
+          "preDegreeAndSizeScores": {
+            "str": 10,
+            "dex": 15,
+            "int": 13,
+            "wis": 14,
+            "cha": 12,
+            "con": null
+          },
+          "degreeModifiers": {
+            "dex": 2,
+            "int": -2,
+            "cha": -2
+          },
+          "sizeModifiers": {},
+          "applySpeciesModifiers": "neverForDroids"
+        },
+        "skills": {
+          "trained": [
+            {
+              "canonicalKeyCandidate": "initiative",
+              "sourceEntry": {
+                "id": "cb5493f65f0bdb62",
+                "name": "initiative"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "perception",
+              "sourceEntry": {
+                "id": "43c5941072ec78af",
+                "name": "perception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "knowledgeTactics",
+              "sourceEntry": {
+                "id": "knowledgeTactics",
+                "name": "knowledgeTactics"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            }
+          ],
+          "entitlements": "classBasePlusFinalIntModifier",
+          "expectedCount": 3
+        },
+        "feats": {
+          "sourceSelections": [
+            {
+              "displayName": "Point Blank Shot",
+              "sourceCandidates": [
+                {
+                  "id": "point-blank-shot",
+                  "name": "Point Blank Shot",
+                  "pack": "foundryvtt-swse.feats",
+                  "type": "feat"
+                }
+              ],
+              "entitlement": "level1GeneralFeat",
+              "selectionStatus": "staticPrerequisiteCheckedPendingV2"
+            }
+          ],
+          "classAndSpeciesAutoGrants": "deriveFromV2",
+          "expectedAutomaticClassFeatNames": [
+            "Armor Proficiency (Light)",
+            "Armor Proficiency (Medium)",
+            "Weapon Proficiency (Pistols)",
+            "Weapon Proficiency (Rifles)",
+            "Weapon Proficiency (Simple Weapons)"
+          ],
+          "generalFeatEntitlements": "oneAtCharacterLevel1",
+          "grantDirectlyFromSourceCandidates": false
+        },
+        "talents": {
+          "classSlot": {
+            "entitlementSlot": "class-talent",
+            "selection": {
+              "sourceRef": {
+                "id": "battle-analysis",
+                "name": "Battle Analysis",
+                "pack": "foundryvtt-swse.talents",
+                "type": "talent"
+              },
+              "canonicalIdCandidate": "battle-analysis",
+              "resolution": "pendingV2Registry"
+            },
+            "sourceTree": null,
+            "parameters": {},
+            "validation": "staticBasePrerequisitesCheckedPendingV2"
+          },
+          "generalSlotWhenTalentWikiEnabled": {
+            "selection": null,
+            "resolution": "playerChoice",
+            "allowedOnlyWhenGmSetting": "talentWiki"
+          },
+          "additionalSourceEntries": [],
+          "policy": "deriveAvailableSlotsAndValidateTreePrerequisitesWithV2"
+        },
+        "forcePowers": {
+          "sourceSelections": [],
+          "grantAuthority": "droidForbidden"
+        },
+        "languages": {
+          "legacyKnownLanguages": [
+            "Binary"
+          ],
+          "grantPolicy": "DroidBinaryPlusVocabulatorForBasicPendingV2"
+        },
+        "droid": {
+          "creationMode": "custom",
+          "droidDegree": "4th-degree",
+          "droidSize": "medium",
+          "chassis": null,
+          "isDroid": true,
+          "droidCalculationMode": "playable-derived",
+          "droidSystems": {
+            "locomotion": {
+              "id": "walking",
+              "speed": 6
+            },
+            "processor": {
+              "id": "heuristic"
+            },
+            "appendages": [
+              {
+                "id": "hand-1"
+              },
+              {
+                "id": "hand-2"
+              }
+            ],
+            "accessories": [
+              {
+                "id": "plasteel-shell",
+                "category": "armor"
+              },
+              {
+                "id": "internal-comlink",
+                "category": "communications"
+              },
+              {
+                "id": "improved-sensor-package",
+                "category": "sensors"
+              },
+              {
+                "id": "darkvision",
+                "category": "sensors"
+              }
+            ],
+            "locomotionEnhancements": [],
+            "appendageEnhancements": []
+          },
+          "hardware": {
+            "budgetAuthority": "ProgressionRules.getDroidConstructionCredits",
+            "budgetCredits": 1000,
+            "spentCredits": 1000,
+            "remainingCredits": 0,
+            "unspentDisposition": "forfeit",
+            "allowClassCreditsOverflow": false,
+            "lineItems": [
+              {
+                "sourceId": "walking",
+                "category": "locomotion",
+                "name": "Walking Locomotion",
+                "sourcePriceCredits": 360,
+                "costCredits": 0,
+                "grantAuthority": "default-locomotion",
+                "sourceDecision": "SOURCE_SAFE_SUBSET",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "heuristic",
+                "category": "processor",
+                "name": "Heuristic Processor",
+                "sourcePriceCredits": 2000,
+                "costCredits": 0,
+                "grantAuthority": "heuristic-processor",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "plasteel-shell",
+                "category": "accessory.armor",
+                "name": "Plasteel Shell",
+                "sourcePriceCredits": 400,
+                "costCredits": 400,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "internal-comlink",
+                "category": "accessory.communications",
+                "name": "Internal Comlink",
+                "sourcePriceCredits": 250,
+                "costCredits": 250,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "improved-sensor-package",
+                "category": "accessory.sensors",
+                "name": "Improved Sensor Package",
+                "sourcePriceCredits": 200,
+                "costCredits": 200,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "darkvision",
+                "category": "accessory.sensors",
+                "name": "Darkvision",
+                "sourcePriceCredits": 150,
+                "costCredits": 150,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              }
+            ],
+            "quotedBy": "localStaticReplicaOfV2Catalog",
+            "mustRequoteAtCommit": "scripts/domain/droids/droid-build-quote.js:quoteDroidBuild",
+            "initialInstallationAuthority": "scripts/domain/droids/droid-initial-installation-service.js:applyInitialInstallationToPlan",
+            "v2QuoteStatus": "pendingExecution",
+            "grants": [
+              "heuristic-processor",
+              "two-hands",
+              "default-locomotion"
+            ]
+          },
+          "behavioralRestrictions": {
+            "degree": "4th-degree",
+            "nonviolenceInhibitor": false,
+            "obedienceInhibitor": true,
+            "mustBeEnforcedByV2": true
+          }
+        },
+        "startingPackage": {
+          "items": [
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "weapon-blaster-rifle",
+                  "name": "Blaster Rifle",
+                  "pack": "foundryvtt-swse.weapons-rifles",
+                  "type": "weapon"
+                },
+                "canonicalIdCandidate": "weapon-blaster-rifle",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Blaster Rifle",
+              "printedUnitPriceCredits": 1000,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "tool-power-pack",
+                  "name": "Power Pack",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "tool-power-pack",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Power Pack",
+              "printedUnitPriceCredits": 25,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "medical-medpac",
+                  "name": "Medpac",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "medical-medpac",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Medpac",
+              "printedUnitPriceCredits": 100,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            }
+          ],
+          "wallet": {
+            "mode": "finalNetBalance",
+            "credits": 875,
+            "allowZero": true
+          },
+          "budgetAccounting": "canonical3d4ClassStartingCreditsPreselectedRollSeparateFromDroid1000",
+          "startingClassCredits": {
+            "dice": "3d4",
+            "preselectedDiceResults": [
+              3,
+              3,
+              2
+            ],
+            "perDieTotal": 8,
+            "multiplier": 250,
+            "initial": 2000,
+            "purchasesTotal": 1125,
+            "remaining": 875
+          },
+          "duplicateProtection": "noHardwareRegrantInExternalEquipment"
+        },
+        "beastSourceMechanics": null
+      },
+      "optionalRules": {
+        "talentWiki": {
+          "whenEnabled": "allowOneAdditionalGeneralTalentEntitlement",
+          "selection": null,
+          "resolution": "playerChoice",
+          "mayNotCountAliasAsGrant": true
+        },
+        "droidConstructionCredits": {
+          "requiredBase": 1000,
+          "houseRuleOverrideAllowed": false
+        },
+        "allowDroidOverflow": false
+      },
+      "certification": {
+        "status": "staticRAWAndSourceChecksPassedPendingV2",
+        "publishableAsReadyToPlay": false,
+        "staticLegality": {
+          "levelOneHeroic": true,
+          "noConstitution": true,
+          "fiveScoreStandardArray": true,
+          "degreeChosen": true,
+          "smallOrMedium": true,
+          "classAllowed": true,
+          "skillCountAndClassSkills": true,
+          "oneGeneralFeatAndOneClassTalent": true,
+          "heuristicFree": true,
+          "twoHandsFree": true,
+          "constructionBudgetExact1000": true,
+          "atLeastOneWeaponAndGear": true,
+          "classCreditsCoverPurchases": true,
+          "weaponProficiencyCovered": true,
+          "noJediNoForcePowers": true
+        },
+        "issues": [
+          "V2_RUNTIME_QUOTE_AND_HOST_VALIDATION_PENDING",
+          "V2_CLASS_FEAT_TALENT_REGISTRY_RESOLUTION_PENDING",
+          "ITEM_REFERENCE_AND_AMOUNT_VALIDATION_PENDING",
+          "FOUNDRY_ACTOR_MUTATION_REGRESSION_PENDING"
+        ]
+      },
+      "provenance": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "branch": "feature/chargen-splash-prewarm",
+        "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+        "rulesSources": [
+          "Saga Edition Core Rulebook, Creating a Droid Hero, pp. 186-187",
+          "Saga Edition Core Rulebook, Heroic Classes and Equipment",
+          "Scavenger's Guide to Droids, Creating Droid Heroes, pp. 10-11"
+        ],
+        "authorityModules": [
+          "scripts/engine/progression/droids/droid-trait-rules.js",
+          "scripts/domain/droids/droid-build-quote.js",
+          "scripts/domain/droids/droid-component-quote-authority.js",
+          "scripts/domain/droids/droid-component-source-review.js",
+          "scripts/apps/progression-framework/steps/droid-builder-step.js"
+        ],
+        "authoringMethod": "newLevel1DroidTemplate",
+        "legacyId": null,
+        "sourceFile": null,
+        "sourceVersion": null,
+        "legacySupportLevel": null
+      }
+    },
+    {
+      "schemaVersion": 3,
+      "profileId": "droid_soldier_str_industrial_vanguard",
+      "revision": 1,
+      "catalog": {
+        "name": "Industrial Vanguard",
+        "archetype": "Industrial Vanguard",
+        "description": "Heavy-duty melee guardian and boarding unit",
+        "quote": null,
+        "imagePath": null,
+        "roleTags": [
+          "droid",
+          "soldier",
+          "str-focused",
+          "melee",
+          "strength",
+          "guardian"
+        ],
+        "classKey": "soldier",
+        "className": "Soldier",
+        "mentorKey": "breach",
+        "dialogueKey": null,
+        "legacyNotes": "Fourth-degree avoids the fifth-degree nonviolence inhibitor while keeping Strength 15 higher than Dexterity 12."
+      },
+      "identity": {
+        "level": 1,
+        "participantKind": "droid",
+        "rulesTrack": "heroic-droid",
+        "legacySubtype": null,
+        "classRef": {
+          "sourceRef": {
+            "id": "f62ca2e639cab614",
+            "name": "Soldier",
+            "pack": "foundryvtt-swse.classes",
+            "type": "class"
+          },
+          "canonicalIdCandidate": "f62ca2e639cab614",
+          "resolution": "pendingV2Registry"
+        },
+        "speciesRef": null,
+        "speciesPublication": {
+          "status": "notApplicableDroid"
+        },
+        "backgroundRef": null,
+        "legacyParticipantKind": null
+      },
+      "build": {
+        "attributes": {
+          "basis": "RAWFiveScoreStandardArrayBeforeDegreeAndSize",
+          "scores": {
+            "str": 15,
+            "dex": 12,
+            "int": 10,
+            "wis": 14,
+            "cha": 11,
+            "con": null
+          },
+          "preDegreeAndSizeScores": {
+            "str": 15,
+            "dex": 10,
+            "int": 12,
+            "wis": 14,
+            "cha": 13,
+            "con": null
+          },
+          "degreeModifiers": {
+            "dex": 2,
+            "int": -2,
+            "cha": -2
+          },
+          "sizeModifiers": {},
+          "applySpeciesModifiers": "neverForDroids"
+        },
+        "skills": {
+          "trained": [
+            {
+              "canonicalKeyCandidate": "initiative",
+              "sourceEntry": {
+                "id": "cb5493f65f0bdb62",
+                "name": "initiative"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "perception",
+              "sourceEntry": {
+                "id": "43c5941072ec78af",
+                "name": "perception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "jump",
+              "sourceEntry": {
+                "id": "jump",
+                "name": "jump"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            }
+          ],
+          "entitlements": "classBasePlusFinalIntModifier",
+          "expectedCount": 3
+        },
+        "feats": {
+          "sourceSelections": [
+            {
+              "displayName": "Weapon Proficiency (Advanced Melee Weapons)",
+              "sourceCandidates": [
+                {
+                  "id": "weapon-proficiency-(advanced-melee-weapons)",
+                  "name": "Weapon Proficiency (Advanced Melee Weapons)",
+                  "pack": "foundryvtt-swse.feats",
+                  "type": "feat"
+                }
+              ],
+              "entitlement": "level1GeneralFeat",
+              "selectionStatus": "staticPrerequisiteCheckedPendingV2"
+            }
+          ],
+          "classAndSpeciesAutoGrants": "deriveFromV2",
+          "expectedAutomaticClassFeatNames": [
+            "Armor Proficiency (Light)",
+            "Armor Proficiency (Medium)",
+            "Weapon Proficiency (Pistols)",
+            "Weapon Proficiency (Rifles)",
+            "Weapon Proficiency (Simple Weapons)"
+          ],
+          "generalFeatEntitlements": "oneAtCharacterLevel1",
+          "grantDirectlyFromSourceCandidates": false
+        },
+        "talents": {
+          "classSlot": {
+            "entitlementSlot": "class-talent",
+            "selection": {
+              "sourceRef": {
+                "id": "melee-smash",
+                "name": "Melee Smash",
+                "pack": "foundryvtt-swse.talents",
+                "type": "talent"
+              },
+              "canonicalIdCandidate": "melee-smash",
+              "resolution": "pendingV2Registry"
+            },
+            "sourceTree": null,
+            "parameters": {},
+            "validation": "staticBasePrerequisitesCheckedPendingV2"
+          },
+          "generalSlotWhenTalentWikiEnabled": {
+            "selection": null,
+            "resolution": "playerChoice",
+            "allowedOnlyWhenGmSetting": "talentWiki"
+          },
+          "additionalSourceEntries": [],
+          "policy": "deriveAvailableSlotsAndValidateTreePrerequisitesWithV2"
+        },
+        "forcePowers": {
+          "sourceSelections": [],
+          "grantAuthority": "droidForbidden"
+        },
+        "languages": {
+          "legacyKnownLanguages": [
+            "Binary"
+          ],
+          "grantPolicy": "DroidBinaryPlusVocabulatorForBasicPendingV2"
+        },
+        "droid": {
+          "creationMode": "custom",
+          "droidDegree": "4th-degree",
+          "droidSize": "medium",
+          "chassis": null,
+          "isDroid": true,
+          "droidCalculationMode": "playable-derived",
+          "droidSystems": {
+            "locomotion": {
+              "id": "wheeled",
+              "speed": 8
+            },
+            "processor": {
+              "id": "heuristic"
+            },
+            "appendages": [
+              {
+                "id": "hand-1"
+              },
+              {
+                "id": "hand-2"
+              },
+              {
+                "id": "claw"
+              },
+              {
+                "id": "tool"
+              }
+            ],
+            "accessories": [
+              {
+                "id": "plasteel-shell",
+                "category": "armor"
+              },
+              {
+                "id": "internal-comlink",
+                "category": "communications"
+              }
+            ],
+            "locomotionEnhancements": [],
+            "appendageEnhancements": []
+          },
+          "hardware": {
+            "budgetAuthority": "ProgressionRules.getDroidConstructionCredits",
+            "budgetCredits": 1000,
+            "spentCredits": 1000,
+            "remainingCredits": 0,
+            "unspentDisposition": "forfeit",
+            "allowClassCreditsOverflow": false,
+            "lineItems": [
+              {
+                "sourceId": "wheeled",
+                "category": "locomotion",
+                "name": "Wheeled Locomotion",
+                "sourcePriceCredits": 320,
+                "costCredits": 320,
+                "grantAuthority": null,
+                "sourceDecision": "SOURCE_SAFE_SUBSET",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "heuristic",
+                "category": "processor",
+                "name": "Heuristic Processor",
+                "sourcePriceCredits": 2000,
+                "costCredits": 0,
+                "grantAuthority": "heuristic-processor",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "plasteel-shell",
+                "category": "accessory.armor",
+                "name": "Plasteel Shell",
+                "sourcePriceCredits": 400,
+                "costCredits": 400,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "internal-comlink",
+                "category": "accessory.communications",
+                "name": "Internal Comlink",
+                "sourcePriceCredits": 250,
+                "costCredits": 250,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "claw",
+                "category": "appendage",
+                "name": "Claw Appendage",
+                "sourcePriceCredits": 20,
+                "costCredits": 20,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "tool",
+                "category": "appendage",
+                "name": "Tool Appendage",
+                "sourcePriceCredits": 10,
+                "costCredits": 10,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              }
+            ],
+            "quotedBy": "localStaticReplicaOfV2Catalog",
+            "mustRequoteAtCommit": "scripts/domain/droids/droid-build-quote.js:quoteDroidBuild",
+            "initialInstallationAuthority": "scripts/domain/droids/droid-initial-installation-service.js:applyInitialInstallationToPlan",
+            "v2QuoteStatus": "pendingExecution",
+            "grants": [
+              "heuristic-processor",
+              "two-hands"
+            ]
+          },
+          "behavioralRestrictions": {
+            "degree": "4th-degree",
+            "nonviolenceInhibitor": false,
+            "obedienceInhibitor": true,
+            "mustBeEnforcedByV2": true
+          }
+        },
+        "startingPackage": {
+          "items": [
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "weapon-vibroblade",
+                  "name": "Vibroblade",
+                  "pack": "foundryvtt-swse.weapons-simple",
+                  "type": "weapon"
+                },
+                "canonicalIdCandidate": "weapon-vibroblade",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Vibroblade",
+              "printedUnitPriceCredits": 250,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "medical-medpac",
+                  "name": "Medpac",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "medical-medpac",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Medpac",
+              "printedUnitPriceCredits": 100,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "tool-binder-cuffs",
+                  "name": "Binder Cuffs",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "tool-binder-cuffs",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Binder Cuffs",
+              "printedUnitPriceCredits": 50,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            }
+          ],
+          "wallet": {
+            "mode": "finalNetBalance",
+            "credits": 1350,
+            "allowZero": true
+          },
+          "budgetAccounting": "canonical3d4ClassStartingCreditsPreselectedRollSeparateFromDroid1000",
+          "startingClassCredits": {
+            "dice": "3d4",
+            "preselectedDiceResults": [
+              2,
+              3,
+              2
+            ],
+            "perDieTotal": 7,
+            "multiplier": 250,
+            "initial": 1750,
+            "purchasesTotal": 400,
+            "remaining": 1350
+          },
+          "duplicateProtection": "noHardwareRegrantInExternalEquipment"
+        },
+        "beastSourceMechanics": null
+      },
+      "optionalRules": {
+        "talentWiki": {
+          "whenEnabled": "allowOneAdditionalGeneralTalentEntitlement",
+          "selection": null,
+          "resolution": "playerChoice",
+          "mayNotCountAliasAsGrant": true
+        },
+        "droidConstructionCredits": {
+          "requiredBase": 1000,
+          "houseRuleOverrideAllowed": false
+        },
+        "allowDroidOverflow": false
+      },
+      "certification": {
+        "status": "staticRAWAndSourceChecksPassedPendingV2",
+        "publishableAsReadyToPlay": false,
+        "staticLegality": {
+          "levelOneHeroic": true,
+          "noConstitution": true,
+          "fiveScoreStandardArray": true,
+          "degreeChosen": true,
+          "smallOrMedium": true,
+          "classAllowed": true,
+          "skillCountAndClassSkills": true,
+          "oneGeneralFeatAndOneClassTalent": true,
+          "heuristicFree": true,
+          "twoHandsFree": true,
+          "constructionBudgetExact1000": true,
+          "atLeastOneWeaponAndGear": true,
+          "classCreditsCoverPurchases": true,
+          "weaponProficiencyCovered": true,
+          "noJediNoForcePowers": true
+        },
+        "issues": [
+          "V2_RUNTIME_QUOTE_AND_HOST_VALIDATION_PENDING",
+          "V2_CLASS_FEAT_TALENT_REGISTRY_RESOLUTION_PENDING",
+          "ITEM_REFERENCE_AND_AMOUNT_VALIDATION_PENDING",
+          "FOUNDRY_ACTOR_MUTATION_REGRESSION_PENDING"
+        ]
+      },
+      "provenance": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "branch": "feature/chargen-splash-prewarm",
+        "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+        "rulesSources": [
+          "Saga Edition Core Rulebook, Creating a Droid Hero, pp. 186-187",
+          "Saga Edition Core Rulebook, Heroic Classes and Equipment",
+          "Scavenger's Guide to Droids, Creating Droid Heroes, pp. 10-11"
+        ],
+        "authorityModules": [
+          "scripts/engine/progression/droids/droid-trait-rules.js",
+          "scripts/domain/droids/droid-build-quote.js",
+          "scripts/domain/droids/droid-component-quote-authority.js",
+          "scripts/domain/droids/droid-component-source-review.js",
+          "scripts/apps/progression-framework/steps/droid-builder-step.js"
+        ],
+        "authoringMethod": "newLevel1DroidTemplate",
+        "legacyId": null,
+        "sourceFile": null,
+        "sourceVersion": null,
+        "legacySupportLevel": null
+      }
+    },
+    {
+      "schemaVersion": 3,
+      "profileId": "droid_noble_int_medical_coordinator",
+      "revision": 1,
+      "catalog": {
+        "name": "Medical Coordinator",
+        "archetype": "Medical Coordinator",
+        "description": "Diagnostic analyst, field medic and knowledge specialist",
+        "quote": null,
+        "imagePath": null,
+        "roleTags": [
+          "droid",
+          "noble",
+          "int-focused",
+          "medical",
+          "intelligence",
+          "support"
+        ],
+        "classKey": "noble",
+        "className": "Noble",
+        "mentorKey": null,
+        "dialogueKey": null,
+        "legacyNotes": "First-degree nonviolence inhibitor and obedience limits apply; hold-out blaster is emergency defense."
+      },
+      "identity": {
+        "level": 1,
+        "participantKind": "droid",
+        "rulesTrack": "heroic-droid",
+        "legacySubtype": null,
+        "classRef": {
+          "sourceRef": {
+            "id": "8c58016e587dd2c7",
+            "name": "Noble",
+            "pack": "foundryvtt-swse.classes",
+            "type": "class"
+          },
+          "canonicalIdCandidate": "8c58016e587dd2c7",
+          "resolution": "pendingV2Registry"
+        },
+        "speciesRef": null,
+        "speciesPublication": {
+          "status": "notApplicableDroid"
+        },
+        "backgroundRef": null,
+        "legacyParticipantKind": null
+      },
+      "build": {
+        "attributes": {
+          "basis": "RAWFiveScoreStandardArrayBeforeDegreeAndSize",
+          "scores": {
+            "str": 8,
+            "dex": 12,
+            "int": 17,
+            "wis": 16,
+            "cha": 13,
+            "con": null
+          },
+          "preDegreeAndSizeScores": {
+            "str": 10,
+            "dex": 12,
+            "int": 15,
+            "wis": 14,
+            "cha": 13,
+            "con": null
+          },
+          "degreeModifiers": {
+            "int": 2,
+            "wis": 2,
+            "str": -2
+          },
+          "sizeModifiers": {},
+          "applySpeciesModifiers": "neverForDroids"
+        },
+        "skills": {
+          "trained": [
+            {
+              "canonicalKeyCandidate": "treatInjury",
+              "sourceEntry": {
+                "id": "633a13c5fa6101d7",
+                "name": "treatInjury"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "knowledgeLifeSciences",
+              "sourceEntry": {
+                "id": "knowledgeLifeSciences",
+                "name": "knowledgeLifeSciences"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "knowledgePhysicalSciences",
+              "sourceEntry": {
+                "id": "knowledgePhysicalSciences",
+                "name": "knowledgePhysicalSciences"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "useComputer",
+              "sourceEntry": {
+                "id": "8f5e21f92d6d976b",
+                "name": "useComputer"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "perception",
+              "sourceEntry": {
+                "id": "43c5941072ec78af",
+                "name": "perception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "persuasion",
+              "sourceEntry": {
+                "id": "b554f3e5a55ad53f",
+                "name": "persuasion"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "gatherInformation",
+              "sourceEntry": {
+                "id": "c9bf381579013b18",
+                "name": "gatherInformation"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "initiative",
+              "sourceEntry": {
+                "id": "cb5493f65f0bdb62",
+                "name": "initiative"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "knowledgeTechnology",
+              "sourceEntry": {
+                "id": "knowledgeTechnology",
+                "name": "knowledgeTechnology"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            }
+          ],
+          "entitlements": "classBasePlusFinalIntModifier",
+          "expectedCount": 9
+        },
+        "feats": {
+          "sourceSelections": [
+            {
+              "displayName": "Skill Focus (Treat Injury)",
+              "sourceCandidates": [
+                {
+                  "id": "skill-focus-(treat-injury)",
+                  "name": "Skill Focus (Treat Injury)",
+                  "pack": "foundryvtt-swse.feats",
+                  "type": "feat"
+                }
+              ],
+              "entitlement": "level1GeneralFeat",
+              "selectionStatus": "staticPrerequisiteCheckedPendingV2"
+            }
+          ],
+          "classAndSpeciesAutoGrants": "deriveFromV2",
+          "expectedAutomaticClassFeatNames": [
+            "Weapon Proficiency (Pistols)",
+            "Weapon Proficiency (Simple Weapons)",
+            "Linguist"
+          ],
+          "generalFeatEntitlements": "oneAtCharacterLevel1",
+          "grantDirectlyFromSourceCandidates": false
+        },
+        "talents": {
+          "classSlot": {
+            "entitlementSlot": "class-talent",
+            "selection": {
+              "sourceRef": {
+                "id": "inspire-haste",
+                "name": "Inspire Haste",
+                "pack": "foundryvtt-swse.talents",
+                "type": "talent"
+              },
+              "canonicalIdCandidate": "inspire-haste",
+              "resolution": "pendingV2Registry"
+            },
+            "sourceTree": null,
+            "parameters": {},
+            "validation": "staticBasePrerequisitesCheckedPendingV2"
+          },
+          "generalSlotWhenTalentWikiEnabled": {
+            "selection": null,
+            "resolution": "playerChoice",
+            "allowedOnlyWhenGmSetting": "talentWiki"
+          },
+          "additionalSourceEntries": [],
+          "policy": "deriveAvailableSlotsAndValidateTreePrerequisitesWithV2"
+        },
+        "forcePowers": {
+          "sourceSelections": [],
+          "grantAuthority": "droidForbidden"
+        },
+        "languages": {
+          "legacyKnownLanguages": [
+            "Binary",
+            "Basic"
+          ],
+          "grantPolicy": "DroidBinaryPlusVocabulatorForBasicPendingV2"
+        },
+        "droid": {
+          "creationMode": "custom",
+          "droidDegree": "1st-degree",
+          "droidSize": "medium",
+          "chassis": null,
+          "isDroid": true,
+          "droidCalculationMode": "playable-derived",
+          "droidSystems": {
+            "locomotion": {
+              "id": "wheeled",
+              "speed": 8
+            },
+            "processor": {
+              "id": "heuristic"
+            },
+            "appendages": [
+              {
+                "id": "hand-1"
+              },
+              {
+                "id": "hand-2"
+              },
+              {
+                "id": "tool"
+              },
+              {
+                "id": "tool"
+              },
+              {
+                "id": "tool"
+              }
+            ],
+            "accessories": [
+              {
+                "id": "internal-comlink",
+                "category": "communications"
+              },
+              {
+                "id": "improved-sensor-package",
+                "category": "sensors"
+              },
+              {
+                "id": "darkvision",
+                "category": "sensors"
+              },
+              {
+                "id": "vocabulator",
+                "category": "communications"
+              }
+            ],
+            "locomotionEnhancements": [],
+            "appendageEnhancements": []
+          },
+          "hardware": {
+            "budgetAuthority": "ProgressionRules.getDroidConstructionCredits",
+            "budgetCredits": 1000,
+            "spentCredits": 1000,
+            "remainingCredits": 0,
+            "unspentDisposition": "forfeit",
+            "allowClassCreditsOverflow": false,
+            "lineItems": [
+              {
+                "sourceId": "wheeled",
+                "category": "locomotion",
+                "name": "Wheeled Locomotion",
+                "sourcePriceCredits": 320,
+                "costCredits": 320,
+                "grantAuthority": null,
+                "sourceDecision": "SOURCE_SAFE_SUBSET",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "heuristic",
+                "category": "processor",
+                "name": "Heuristic Processor",
+                "sourcePriceCredits": 2000,
+                "costCredits": 0,
+                "grantAuthority": "heuristic-processor",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "internal-comlink",
+                "category": "accessory.communications",
+                "name": "Internal Comlink",
+                "sourcePriceCredits": 250,
+                "costCredits": 250,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "improved-sensor-package",
+                "category": "accessory.sensors",
+                "name": "Improved Sensor Package",
+                "sourcePriceCredits": 200,
+                "costCredits": 200,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "darkvision",
+                "category": "accessory.sensors",
+                "name": "Darkvision",
+                "sourcePriceCredits": 150,
+                "costCredits": 150,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "vocabulator",
+                "category": "accessory.communications",
+                "name": "Vocabulator",
+                "sourcePriceCredits": 50,
+                "costCredits": 50,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "tool",
+                "category": "appendage",
+                "name": "Tool Appendage",
+                "sourcePriceCredits": 10,
+                "costCredits": 10,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "tool",
+                "category": "appendage",
+                "name": "Tool Appendage",
+                "sourcePriceCredits": 10,
+                "costCredits": 10,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "tool",
+                "category": "appendage",
+                "name": "Tool Appendage",
+                "sourcePriceCredits": 10,
+                "costCredits": 10,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              }
+            ],
+            "quotedBy": "localStaticReplicaOfV2Catalog",
+            "mustRequoteAtCommit": "scripts/domain/droids/droid-build-quote.js:quoteDroidBuild",
+            "initialInstallationAuthority": "scripts/domain/droids/droid-initial-installation-service.js:applyInitialInstallationToPlan",
+            "v2QuoteStatus": "pendingExecution",
+            "grants": [
+              "heuristic-processor",
+              "two-hands"
+            ]
+          },
+          "behavioralRestrictions": {
+            "degree": "1st-degree",
+            "nonviolenceInhibitor": true,
+            "obedienceInhibitor": true,
+            "mustBeEnforcedByV2": true
+          }
+        },
+        "startingPackage": {
+          "items": [
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "weapon-hold-out-blaster-pistol",
+                  "name": "Blaster Pistol, Hold-Out",
+                  "pack": "foundryvtt-swse.weapons-pistols",
+                  "type": "weapon"
+                },
+                "canonicalIdCandidate": "weapon-hold-out-blaster-pistol",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Blaster Pistol, Hold-Out",
+              "printedUnitPriceCredits": 300,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": null,
+                  "name": "Energy Cell",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": null,
+                "resolution": "sourceNameLookupRequired"
+              },
+              "quantity": 1,
+              "displayName": "Energy Cell",
+              "printedUnitPriceCredits": 10,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "medical-medpac",
+                  "name": "Medpac",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "medical-medpac",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Medpac",
+              "printedUnitPriceCredits": 100,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": null,
+                  "name": "Datapad, Basic",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": null,
+                "resolution": "sourceNameLookupRequired"
+              },
+              "quantity": 1,
+              "displayName": "Datapad, Basic",
+              "printedUnitPriceCredits": 100,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            }
+          ],
+          "wallet": {
+            "mode": "finalNetBalance",
+            "credits": 1890,
+            "allowZero": true
+          },
+          "budgetAccounting": "canonical3d4ClassStartingCreditsPreselectedRollSeparateFromDroid1000",
+          "startingClassCredits": {
+            "dice": "3d4",
+            "preselectedDiceResults": [
+              2,
+              2,
+              2
+            ],
+            "perDieTotal": 6,
+            "multiplier": 400,
+            "initial": 2400,
+            "purchasesTotal": 510,
+            "remaining": 1890
+          },
+          "duplicateProtection": "noHardwareRegrantInExternalEquipment"
+        },
+        "beastSourceMechanics": null
+      },
+      "optionalRules": {
+        "talentWiki": {
+          "whenEnabled": "allowOneAdditionalGeneralTalentEntitlement",
+          "selection": null,
+          "resolution": "playerChoice",
+          "mayNotCountAliasAsGrant": true
+        },
+        "droidConstructionCredits": {
+          "requiredBase": 1000,
+          "houseRuleOverrideAllowed": false
+        },
+        "allowDroidOverflow": false
+      },
+      "certification": {
+        "status": "staticRAWAndSourceChecksPassedPendingV2",
+        "publishableAsReadyToPlay": false,
+        "staticLegality": {
+          "levelOneHeroic": true,
+          "noConstitution": true,
+          "fiveScoreStandardArray": true,
+          "degreeChosen": true,
+          "smallOrMedium": true,
+          "classAllowed": true,
+          "skillCountAndClassSkills": true,
+          "oneGeneralFeatAndOneClassTalent": true,
+          "heuristicFree": true,
+          "twoHandsFree": true,
+          "constructionBudgetExact1000": true,
+          "atLeastOneWeaponAndGear": true,
+          "classCreditsCoverPurchases": true,
+          "weaponProficiencyCovered": true,
+          "noJediNoForcePowers": true
+        },
+        "issues": [
+          "V2_RUNTIME_QUOTE_AND_HOST_VALIDATION_PENDING",
+          "V2_CLASS_FEAT_TALENT_REGISTRY_RESOLUTION_PENDING",
+          "ITEM_REFERENCE_AND_AMOUNT_VALIDATION_PENDING",
+          "FOUNDRY_ACTOR_MUTATION_REGRESSION_PENDING",
+          "MENTOR_ASSIGNMENT_PENDING"
+        ]
+      },
+      "provenance": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "branch": "feature/chargen-splash-prewarm",
+        "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+        "rulesSources": [
+          "Saga Edition Core Rulebook, Creating a Droid Hero, pp. 186-187",
+          "Saga Edition Core Rulebook, Heroic Classes and Equipment",
+          "Scavenger's Guide to Droids, Creating Droid Heroes, pp. 10-11"
+        ],
+        "authorityModules": [
+          "scripts/engine/progression/droids/droid-trait-rules.js",
+          "scripts/domain/droids/droid-build-quote.js",
+          "scripts/domain/droids/droid-component-quote-authority.js",
+          "scripts/domain/droids/droid-component-source-review.js",
+          "scripts/apps/progression-framework/steps/droid-builder-step.js"
+        ],
+        "authoringMethod": "newLevel1DroidTemplate",
+        "legacyId": null,
+        "sourceFile": null,
+        "sourceVersion": null,
+        "legacySupportLevel": null
+      }
+    },
+    {
+      "schemaVersion": 3,
+      "profileId": "droid_noble_cha_protocol_envoy",
+      "revision": 1,
+      "catalog": {
+        "name": "Protocol Envoy",
+        "archetype": "Protocol Envoy",
+        "description": "Diplomat, public liaison and cultural interpreter",
+        "quote": null,
+        "imagePath": null,
+        "roleTags": [
+          "droid",
+          "noble",
+          "cha-focused",
+          "diplomacy",
+          "charisma",
+          "protocol"
+        ],
+        "classKey": "noble",
+        "className": "Noble",
+        "mentorKey": null,
+        "dialogueKey": null,
+        "legacyNotes": "Third-degree droid with Cha 17, veto on deliberate harm except preventing greater harm, vocabulator for spoken Basic."
+      },
+      "identity": {
+        "level": 1,
+        "participantKind": "droid",
+        "rulesTrack": "heroic-droid",
+        "legacySubtype": null,
+        "classRef": {
+          "sourceRef": {
+            "id": "8c58016e587dd2c7",
+            "name": "Noble",
+            "pack": "foundryvtt-swse.classes",
+            "type": "class"
+          },
+          "canonicalIdCandidate": "8c58016e587dd2c7",
+          "resolution": "pendingV2Registry"
+        },
+        "speciesRef": null,
+        "speciesPublication": {
+          "status": "notApplicableDroid"
+        },
+        "backgroundRef": null,
+        "legacyParticipantKind": null
+      },
+      "build": {
+        "attributes": {
+          "basis": "RAWFiveScoreStandardArrayBeforeDegreeAndSize",
+          "scores": {
+            "str": 8,
+            "dex": 12,
+            "int": 13,
+            "wis": 16,
+            "cha": 17,
+            "con": null
+          },
+          "preDegreeAndSizeScores": {
+            "str": 10,
+            "dex": 12,
+            "int": 13,
+            "wis": 14,
+            "cha": 15,
+            "con": null
+          },
+          "degreeModifiers": {
+            "wis": 2,
+            "cha": 2,
+            "str": -2
+          },
+          "sizeModifiers": {},
+          "applySpeciesModifiers": "neverForDroids"
+        },
+        "skills": {
+          "trained": [
+            {
+              "canonicalKeyCandidate": "persuasion",
+              "sourceEntry": {
+                "id": "b554f3e5a55ad53f",
+                "name": "persuasion"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "deception",
+              "sourceEntry": {
+                "id": "9410ce2dfb6cefcb",
+                "name": "deception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "gatherInformation",
+              "sourceEntry": {
+                "id": "c9bf381579013b18",
+                "name": "gatherInformation"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "knowledgeGalacticLore",
+              "sourceEntry": {
+                "id": "knowledgeGalacticLore",
+                "name": "knowledgeGalacticLore"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "knowledgeSocialSciences",
+              "sourceEntry": {
+                "id": "knowledgeSocialSciences",
+                "name": "knowledgeSocialSciences"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "perception",
+              "sourceEntry": {
+                "id": "43c5941072ec78af",
+                "name": "perception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "initiative",
+              "sourceEntry": {
+                "id": "cb5493f65f0bdb62",
+                "name": "initiative"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            }
+          ],
+          "entitlements": "classBasePlusFinalIntModifier",
+          "expectedCount": 7
+        },
+        "feats": {
+          "sourceSelections": [
+            {
+              "displayName": "Skill Focus (Persuasion)",
+              "sourceCandidates": [
+                {
+                  "id": "skill-focus-(persuasion)",
+                  "name": "Skill Focus (Persuasion)",
+                  "pack": "foundryvtt-swse.feats",
+                  "type": "feat"
+                }
+              ],
+              "entitlement": "level1GeneralFeat",
+              "selectionStatus": "staticPrerequisiteCheckedPendingV2"
+            }
+          ],
+          "classAndSpeciesAutoGrants": "deriveFromV2",
+          "expectedAutomaticClassFeatNames": [
+            "Weapon Proficiency (Pistols)",
+            "Weapon Proficiency (Simple Weapons)",
+            "Linguist"
+          ],
+          "generalFeatEntitlements": "oneAtCharacterLevel1",
+          "grantDirectlyFromSourceCandidates": false
+        },
+        "talents": {
+          "classSlot": {
+            "entitlementSlot": "class-talent",
+            "selection": {
+              "sourceRef": {
+                "id": "inspire-confidence",
+                "name": "Inspire Confidence",
+                "pack": "foundryvtt-swse.talents",
+                "type": "talent"
+              },
+              "canonicalIdCandidate": "inspire-confidence",
+              "resolution": "pendingV2Registry"
+            },
+            "sourceTree": null,
+            "parameters": {},
+            "validation": "staticBasePrerequisitesCheckedPendingV2"
+          },
+          "generalSlotWhenTalentWikiEnabled": {
+            "selection": null,
+            "resolution": "playerChoice",
+            "allowedOnlyWhenGmSetting": "talentWiki"
+          },
+          "additionalSourceEntries": [],
+          "policy": "deriveAvailableSlotsAndValidateTreePrerequisitesWithV2"
+        },
+        "forcePowers": {
+          "sourceSelections": [],
+          "grantAuthority": "droidForbidden"
+        },
+        "languages": {
+          "legacyKnownLanguages": [
+            "Binary",
+            "Basic"
+          ],
+          "grantPolicy": "DroidBinaryPlusVocabulatorForBasicPendingV2"
+        },
+        "droid": {
+          "creationMode": "custom",
+          "droidDegree": "3rd-degree",
+          "droidSize": "medium",
+          "chassis": null,
+          "isDroid": true,
+          "droidCalculationMode": "playable-derived",
+          "droidSystems": {
+            "locomotion": {
+              "id": "tracked",
+              "speed": 6
+            },
+            "processor": {
+              "id": "heuristic"
+            },
+            "appendages": [
+              {
+                "id": "hand-1"
+              },
+              {
+                "id": "hand-2"
+              },
+              {
+                "id": "tool"
+              },
+              {
+                "id": "tool"
+              },
+              {
+                "id": "tool"
+              }
+            ],
+            "accessories": [
+              {
+                "id": "improved-sensor-package",
+                "category": "sensors"
+              },
+              {
+                "id": "vocabulator",
+                "category": "communications"
+              }
+            ],
+            "locomotionEnhancements": [],
+            "appendageEnhancements": []
+          },
+          "hardware": {
+            "budgetAuthority": "ProgressionRules.getDroidConstructionCredits",
+            "budgetCredits": 1000,
+            "spentCredits": 1000,
+            "remainingCredits": 0,
+            "unspentDisposition": "forfeit",
+            "allowClassCreditsOverflow": false,
+            "lineItems": [
+              {
+                "sourceId": "tracked",
+                "category": "locomotion",
+                "name": "Tracked Locomotion",
+                "sourcePriceCredits": 720,
+                "costCredits": 720,
+                "grantAuthority": null,
+                "sourceDecision": "SOURCE_SAFE_SUBSET",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "heuristic",
+                "category": "processor",
+                "name": "Heuristic Processor",
+                "sourcePriceCredits": 2000,
+                "costCredits": 0,
+                "grantAuthority": "heuristic-processor",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "improved-sensor-package",
+                "category": "accessory.sensors",
+                "name": "Improved Sensor Package",
+                "sourcePriceCredits": 200,
+                "costCredits": 200,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "vocabulator",
+                "category": "accessory.communications",
+                "name": "Vocabulator",
+                "sourcePriceCredits": 50,
+                "costCredits": 50,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "tool",
+                "category": "appendage",
+                "name": "Tool Appendage",
+                "sourcePriceCredits": 10,
+                "costCredits": 10,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "tool",
+                "category": "appendage",
+                "name": "Tool Appendage",
+                "sourcePriceCredits": 10,
+                "costCredits": 10,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "tool",
+                "category": "appendage",
+                "name": "Tool Appendage",
+                "sourcePriceCredits": 10,
+                "costCredits": 10,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              }
+            ],
+            "quotedBy": "localStaticReplicaOfV2Catalog",
+            "mustRequoteAtCommit": "scripts/domain/droids/droid-build-quote.js:quoteDroidBuild",
+            "initialInstallationAuthority": "scripts/domain/droids/droid-initial-installation-service.js:applyInitialInstallationToPlan",
+            "v2QuoteStatus": "pendingExecution",
+            "grants": [
+              "heuristic-processor",
+              "two-hands"
+            ]
+          },
+          "behavioralRestrictions": {
+            "degree": "3rd-degree",
+            "nonviolenceInhibitor": true,
+            "obedienceInhibitor": true,
+            "mustBeEnforcedByV2": true
+          }
+        },
+        "startingPackage": {
+          "items": [
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "weapon-hold-out-blaster-pistol",
+                  "name": "Blaster Pistol, Hold-Out",
+                  "pack": "foundryvtt-swse.weapons-pistols",
+                  "type": "weapon"
+                },
+                "canonicalIdCandidate": "weapon-hold-out-blaster-pistol",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Blaster Pistol, Hold-Out",
+              "printedUnitPriceCredits": 300,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": null,
+                  "name": "Energy Cell",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": null,
+                "resolution": "sourceNameLookupRequired"
+              },
+              "quantity": 1,
+              "displayName": "Energy Cell",
+              "printedUnitPriceCredits": 10,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": null,
+                  "name": "Datapad, Basic",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": null,
+                "resolution": "sourceNameLookupRequired"
+              },
+              "quantity": 1,
+              "displayName": "Datapad, Basic",
+              "printedUnitPriceCredits": 100,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "comms-comlink-short-range",
+                  "name": "Comlink, Short-Range",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "comms-comlink-short-range",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Comlink, Short-Range",
+              "printedUnitPriceCredits": 25,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            }
+          ],
+          "wallet": {
+            "mode": "finalNetBalance",
+            "credits": 2365,
+            "allowZero": true
+          },
+          "budgetAccounting": "canonical3d4ClassStartingCreditsPreselectedRollSeparateFromDroid1000",
+          "startingClassCredits": {
+            "dice": "3d4",
+            "preselectedDiceResults": [
+              3,
+              2,
+              2
+            ],
+            "perDieTotal": 7,
+            "multiplier": 400,
+            "initial": 2800,
+            "purchasesTotal": 435,
+            "remaining": 2365
+          },
+          "duplicateProtection": "noHardwareRegrantInExternalEquipment"
+        },
+        "beastSourceMechanics": null
+      },
+      "optionalRules": {
+        "talentWiki": {
+          "whenEnabled": "allowOneAdditionalGeneralTalentEntitlement",
+          "selection": null,
+          "resolution": "playerChoice",
+          "mayNotCountAliasAsGrant": true
+        },
+        "droidConstructionCredits": {
+          "requiredBase": 1000,
+          "houseRuleOverrideAllowed": false
+        },
+        "allowDroidOverflow": false
+      },
+      "certification": {
+        "status": "staticRAWAndSourceChecksPassedPendingV2",
+        "publishableAsReadyToPlay": false,
+        "staticLegality": {
+          "levelOneHeroic": true,
+          "noConstitution": true,
+          "fiveScoreStandardArray": true,
+          "degreeChosen": true,
+          "smallOrMedium": true,
+          "classAllowed": true,
+          "skillCountAndClassSkills": true,
+          "oneGeneralFeatAndOneClassTalent": true,
+          "heuristicFree": true,
+          "twoHandsFree": true,
+          "constructionBudgetExact1000": true,
+          "atLeastOneWeaponAndGear": true,
+          "classCreditsCoverPurchases": true,
+          "weaponProficiencyCovered": true,
+          "noJediNoForcePowers": true
+        },
+        "issues": [
+          "V2_RUNTIME_QUOTE_AND_HOST_VALIDATION_PENDING",
+          "V2_CLASS_FEAT_TALENT_REGISTRY_RESOLUTION_PENDING",
+          "ITEM_REFERENCE_AND_AMOUNT_VALIDATION_PENDING",
+          "FOUNDRY_ACTOR_MUTATION_REGRESSION_PENDING",
+          "MENTOR_ASSIGNMENT_PENDING"
+        ]
+      },
+      "provenance": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "branch": "feature/chargen-splash-prewarm",
+        "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+        "rulesSources": [
+          "Saga Edition Core Rulebook, Creating a Droid Hero, pp. 186-187",
+          "Saga Edition Core Rulebook, Heroic Classes and Equipment",
+          "Scavenger's Guide to Droids, Creating Droid Heroes, pp. 10-11"
+        ],
+        "authorityModules": [
+          "scripts/engine/progression/droids/droid-trait-rules.js",
+          "scripts/domain/droids/droid-build-quote.js",
+          "scripts/domain/droids/droid-component-quote-authority.js",
+          "scripts/domain/droids/droid-component-source-review.js",
+          "scripts/apps/progression-framework/steps/droid-builder-step.js"
+        ],
+        "authoringMethod": "newLevel1DroidTemplate",
+        "legacyId": null,
+        "sourceFile": null,
+        "sourceVersion": null,
+        "legacySupportLevel": null
+      }
+    },
+    {
+      "schemaVersion": 3,
+      "profileId": "droid_scoundrel_cha_service_operative",
+      "revision": 1,
+      "catalog": {
+        "name": "Service-Sector Operative",
+        "archetype": "Service-Sector Operative",
+        "description": "Disarming social infiltrator and covert negotiator",
+        "quote": null,
+        "imagePath": null,
+        "roleTags": [
+          "droid",
+          "scoundrel",
+          "cha-focused",
+          "social",
+          "infiltration",
+          "charisma"
+        ],
+        "classKey": "scoundrel",
+        "className": "Scoundrel",
+        "mentorKey": null,
+        "dialogueKey": null,
+        "legacyNotes": "Third-degree behavioral restrictions apply; armor proficiency is intentionally the level-1 general feat."
+      },
+      "identity": {
+        "level": 1,
+        "participantKind": "droid",
+        "rulesTrack": "heroic-droid",
+        "legacySubtype": null,
+        "classRef": {
+          "sourceRef": {
+            "id": "21dfe84d159a1b7f",
+            "name": "Scoundrel",
+            "pack": "foundryvtt-swse.classes",
+            "type": "class"
+          },
+          "canonicalIdCandidate": "21dfe84d159a1b7f",
+          "resolution": "pendingV2Registry"
+        },
+        "speciesRef": null,
+        "speciesPublication": {
+          "status": "notApplicableDroid"
+        },
+        "backgroundRef": null,
+        "legacyParticipantKind": null
+      },
+      "build": {
+        "attributes": {
+          "basis": "RAWFiveScoreStandardArrayBeforeDegreeAndSize",
+          "scores": {
+            "str": 8,
+            "dex": 12,
+            "int": 14,
+            "wis": 15,
+            "cha": 17,
+            "con": null
+          },
+          "preDegreeAndSizeScores": {
+            "str": 10,
+            "dex": 12,
+            "int": 14,
+            "wis": 13,
+            "cha": 15,
+            "con": null
+          },
+          "degreeModifiers": {
+            "wis": 2,
+            "cha": 2,
+            "str": -2
+          },
+          "sizeModifiers": {},
+          "applySpeciesModifiers": "neverForDroids"
+        },
+        "skills": {
+          "trained": [
+            {
+              "canonicalKeyCandidate": "persuasion",
+              "sourceEntry": {
+                "id": "b554f3e5a55ad53f",
+                "name": "persuasion"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "deception",
+              "sourceEntry": {
+                "id": "9410ce2dfb6cefcb",
+                "name": "deception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "gatherInformation",
+              "sourceEntry": {
+                "id": "c9bf381579013b18",
+                "name": "gatherInformation"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "perception",
+              "sourceEntry": {
+                "id": "43c5941072ec78af",
+                "name": "perception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "initiative",
+              "sourceEntry": {
+                "id": "cb5493f65f0bdb62",
+                "name": "initiative"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "useComputer",
+              "sourceEntry": {
+                "id": "8f5e21f92d6d976b",
+                "name": "useComputer"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            }
+          ],
+          "entitlements": "classBasePlusFinalIntModifier",
+          "expectedCount": 6
+        },
+        "feats": {
+          "sourceSelections": [
+            {
+              "displayName": "Armor Proficiency (Light)",
+              "sourceCandidates": [
+                {
+                  "id": "armor-proficiency-(light)",
+                  "name": "Armor Proficiency (Light)",
+                  "pack": "foundryvtt-swse.feats",
+                  "type": "feat"
+                }
+              ],
+              "entitlement": "level1GeneralFeat",
+              "selectionStatus": "staticPrerequisiteCheckedPendingV2"
+            }
+          ],
+          "classAndSpeciesAutoGrants": "deriveFromV2",
+          "expectedAutomaticClassFeatNames": [
+            "Point Blank Shot",
+            "Weapon Proficiency (Pistols)",
+            "Weapon Proficiency (Simple Weapons)"
+          ],
+          "generalFeatEntitlements": "oneAtCharacterLevel1",
+          "grantDirectlyFromSourceCandidates": false
+        },
+        "talents": {
+          "classSlot": {
+            "entitlementSlot": "class-talent",
+            "selection": {
+              "sourceRef": {
+                "id": "knack",
+                "name": "Knack",
+                "pack": "foundryvtt-swse.talents",
+                "type": "talent"
+              },
+              "canonicalIdCandidate": "knack",
+              "resolution": "pendingV2Registry"
+            },
+            "sourceTree": null,
+            "parameters": {},
+            "validation": "staticBasePrerequisitesCheckedPendingV2"
+          },
+          "generalSlotWhenTalentWikiEnabled": {
+            "selection": null,
+            "resolution": "playerChoice",
+            "allowedOnlyWhenGmSetting": "talentWiki"
+          },
+          "additionalSourceEntries": [],
+          "policy": "deriveAvailableSlotsAndValidateTreePrerequisitesWithV2"
+        },
+        "forcePowers": {
+          "sourceSelections": [],
+          "grantAuthority": "droidForbidden"
+        },
+        "languages": {
+          "legacyKnownLanguages": [
+            "Binary",
+            "Basic"
+          ],
+          "grantPolicy": "DroidBinaryPlusVocabulatorForBasicPendingV2"
+        },
+        "droid": {
+          "creationMode": "custom",
+          "droidDegree": "3rd-degree",
+          "droidSize": "medium",
+          "chassis": null,
+          "isDroid": true,
+          "droidCalculationMode": "playable-derived",
+          "droidSystems": {
+            "locomotion": {
+              "id": "wheeled",
+              "speed": 8
+            },
+            "processor": {
+              "id": "heuristic"
+            },
+            "appendages": [
+              {
+                "id": "hand-1"
+              },
+              {
+                "id": "hand-2"
+              },
+              {
+                "id": "claw"
+              },
+              {
+                "id": "tool"
+              }
+            ],
+            "accessories": [
+              {
+                "id": "plasteel-shell",
+                "category": "armor"
+              },
+              {
+                "id": "improved-sensor-package",
+                "category": "sensors"
+              },
+              {
+                "id": "vocabulator",
+                "category": "communications"
+              }
+            ],
+            "locomotionEnhancements": [],
+            "appendageEnhancements": []
+          },
+          "hardware": {
+            "budgetAuthority": "ProgressionRules.getDroidConstructionCredits",
+            "budgetCredits": 1000,
+            "spentCredits": 1000,
+            "remainingCredits": 0,
+            "unspentDisposition": "forfeit",
+            "allowClassCreditsOverflow": false,
+            "lineItems": [
+              {
+                "sourceId": "wheeled",
+                "category": "locomotion",
+                "name": "Wheeled Locomotion",
+                "sourcePriceCredits": 320,
+                "costCredits": 320,
+                "grantAuthority": null,
+                "sourceDecision": "SOURCE_SAFE_SUBSET",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "heuristic",
+                "category": "processor",
+                "name": "Heuristic Processor",
+                "sourcePriceCredits": 2000,
+                "costCredits": 0,
+                "grantAuthority": "heuristic-processor",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 50,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "plasteel-shell",
+                "category": "accessory.armor",
+                "name": "Plasteel Shell",
+                "sourcePriceCredits": 400,
+                "costCredits": 400,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "improved-sensor-package",
+                "category": "accessory.sensors",
+                "name": "Improved Sensor Package",
+                "sourcePriceCredits": 200,
+                "costCredits": 200,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "vocabulator",
+                "category": "accessory.communications",
+                "name": "Vocabulator",
+                "sourcePriceCredits": 50,
+                "costCredits": 50,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "claw",
+                "category": "appendage",
+                "name": "Claw Appendage",
+                "sourcePriceCredits": 20,
+                "costCredits": 20,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "tool",
+                "category": "appendage",
+                "name": "Tool Appendage",
+                "sourcePriceCredits": 10,
+                "costCredits": 10,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              }
+            ],
+            "quotedBy": "localStaticReplicaOfV2Catalog",
+            "mustRequoteAtCommit": "scripts/domain/droids/droid-build-quote.js:quoteDroidBuild",
+            "initialInstallationAuthority": "scripts/domain/droids/droid-initial-installation-service.js:applyInitialInstallationToPlan",
+            "v2QuoteStatus": "pendingExecution",
+            "grants": [
+              "heuristic-processor",
+              "two-hands"
+            ]
+          },
+          "behavioralRestrictions": {
+            "degree": "3rd-degree",
+            "nonviolenceInhibitor": true,
+            "obedienceInhibitor": true,
+            "mustBeEnforcedByV2": true
+          }
+        },
+        "startingPackage": {
+          "items": [
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "weapon-hold-out-blaster-pistol",
+                  "name": "Blaster Pistol, Hold-Out",
+                  "pack": "foundryvtt-swse.weapons-pistols",
+                  "type": "weapon"
+                },
+                "canonicalIdCandidate": "weapon-hold-out-blaster-pistol",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Blaster Pistol, Hold-Out",
+              "printedUnitPriceCredits": 300,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": null,
+                  "name": "Energy Cell",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": null,
+                "resolution": "sourceNameLookupRequired"
+              },
+              "quantity": 1,
+              "displayName": "Energy Cell",
+              "printedUnitPriceCredits": 10,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": null,
+                  "name": "Datapad, Basic",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": null,
+                "resolution": "sourceNameLookupRequired"
+              },
+              "quantity": 1,
+              "displayName": "Datapad, Basic",
+              "printedUnitPriceCredits": 100,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "comms-comlink-short-range",
+                  "name": "Comlink, Short-Range",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "comms-comlink-short-range",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Comlink, Short-Range",
+              "printedUnitPriceCredits": 25,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            }
+          ],
+          "wallet": {
+            "mode": "finalNetBalance",
+            "credits": 1315,
+            "allowZero": true
+          },
+          "budgetAccounting": "canonical3d4ClassStartingCreditsPreselectedRollSeparateFromDroid1000",
+          "startingClassCredits": {
+            "dice": "3d4",
+            "preselectedDiceResults": [
+              2,
+              3,
+              2
+            ],
+            "perDieTotal": 7,
+            "multiplier": 250,
+            "initial": 1750,
+            "purchasesTotal": 435,
+            "remaining": 1315
+          },
+          "duplicateProtection": "noHardwareRegrantInExternalEquipment"
+        },
+        "beastSourceMechanics": null
+      },
+      "optionalRules": {
+        "talentWiki": {
+          "whenEnabled": "allowOneAdditionalGeneralTalentEntitlement",
+          "selection": null,
+          "resolution": "playerChoice",
+          "mayNotCountAliasAsGrant": true
+        },
+        "droidConstructionCredits": {
+          "requiredBase": 1000,
+          "houseRuleOverrideAllowed": false
+        },
+        "allowDroidOverflow": false
+      },
+      "certification": {
+        "status": "staticRAWAndSourceChecksPassedPendingV2",
+        "publishableAsReadyToPlay": false,
+        "staticLegality": {
+          "levelOneHeroic": true,
+          "noConstitution": true,
+          "fiveScoreStandardArray": true,
+          "degreeChosen": true,
+          "smallOrMedium": true,
+          "classAllowed": true,
+          "skillCountAndClassSkills": true,
+          "oneGeneralFeatAndOneClassTalent": true,
+          "heuristicFree": true,
+          "twoHandsFree": true,
+          "constructionBudgetExact1000": true,
+          "atLeastOneWeaponAndGear": true,
+          "classCreditsCoverPurchases": true,
+          "weaponProficiencyCovered": true,
+          "noJediNoForcePowers": true
+        },
+        "issues": [
+          "V2_RUNTIME_QUOTE_AND_HOST_VALIDATION_PENDING",
+          "V2_CLASS_FEAT_TALENT_REGISTRY_RESOLUTION_PENDING",
+          "ITEM_REFERENCE_AND_AMOUNT_VALIDATION_PENDING",
+          "FOUNDRY_ACTOR_MUTATION_REGRESSION_PENDING",
+          "MENTOR_ASSIGNMENT_PENDING"
+        ]
+      },
+      "provenance": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "branch": "feature/chargen-splash-prewarm",
+        "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+        "rulesSources": [
+          "Saga Edition Core Rulebook, Creating a Droid Hero, pp. 186-187",
+          "Saga Edition Core Rulebook, Heroic Classes and Equipment",
+          "Scavenger's Guide to Droids, Creating Droid Heroes, pp. 10-11"
+        ],
+        "authorityModules": [
+          "scripts/engine/progression/droids/droid-trait-rules.js",
+          "scripts/domain/droids/droid-build-quote.js",
+          "scripts/domain/droids/droid-component-quote-authority.js",
+          "scripts/domain/droids/droid-component-source-review.js",
+          "scripts/apps/progression-framework/steps/droid-builder-step.js"
+        ],
+        "authoringMethod": "newLevel1DroidTemplate",
+        "legacyId": null,
+        "sourceFile": null,
+        "sourceVersion": null,
+        "legacySupportLevel": null
+      }
+    },
+    {
+      "schemaVersion": 3,
+      "profileId": "droid_scoundrel_dex_systems_infiltrator",
+      "revision": 1,
+      "catalog": {
+        "name": "Systems Infiltrator",
+        "archetype": "Systems Infiltrator",
+        "description": "Agile security slicer, saboteur and digital thief",
+        "quote": null,
+        "imagePath": null,
+        "roleTags": [
+          "droid",
+          "scoundrel",
+          "dex-focused",
+          "stealth",
+          "slicing",
+          "dexterity"
+        ],
+        "classKey": "scoundrel",
+        "className": "Scoundrel",
+        "mentorKey": null,
+        "dialogueKey": null,
+        "legacyNotes": "Second-degree behavioral restrictions apply; abilities after size/degree are Dex 17 and Int 16."
+      },
+      "identity": {
+        "level": 1,
+        "participantKind": "droid",
+        "rulesTrack": "heroic-droid",
+        "legacySubtype": null,
+        "classRef": {
+          "sourceRef": {
+            "id": "21dfe84d159a1b7f",
+            "name": "Scoundrel",
+            "pack": "foundryvtt-swse.classes",
+            "type": "class"
+          },
+          "canonicalIdCandidate": "21dfe84d159a1b7f",
+          "resolution": "pendingV2Registry"
+        },
+        "speciesRef": null,
+        "speciesPublication": {
+          "status": "notApplicableDroid"
+        },
+        "backgroundRef": null,
+        "legacyParticipantKind": null
+      },
+      "build": {
+        "attributes": {
+          "basis": "RAWFiveScoreStandardArrayBeforeDegreeAndSize",
+          "scores": {
+            "str": 8,
+            "dex": 17,
+            "int": 16,
+            "wis": 13,
+            "cha": 10,
+            "con": null
+          },
+          "preDegreeAndSizeScores": {
+            "str": 10,
+            "dex": 15,
+            "int": 14,
+            "wis": 13,
+            "cha": 12,
+            "con": null
+          },
+          "degreeModifiers": {
+            "int": 2,
+            "cha": -2
+          },
+          "sizeModifiers": {
+            "str": -2,
+            "dex": 2
+          },
+          "applySpeciesModifiers": "neverForDroids"
+        },
+        "skills": {
+          "trained": [
+            {
+              "canonicalKeyCandidate": "stealth",
+              "sourceEntry": {
+                "id": "6d2ac22d9fcf402f",
+                "name": "stealth"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "acrobatics",
+              "sourceEntry": {
+                "id": "a6c5e98148aad9a9",
+                "name": "acrobatics"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "mechanics",
+              "sourceEntry": {
+                "id": "745a5686d6f21e8c",
+                "name": "mechanics"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "initiative",
+              "sourceEntry": {
+                "id": "cb5493f65f0bdb62",
+                "name": "initiative"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "perception",
+              "sourceEntry": {
+                "id": "43c5941072ec78af",
+                "name": "perception"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "useComputer",
+              "sourceEntry": {
+                "id": "8f5e21f92d6d976b",
+                "name": "useComputer"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            },
+            {
+              "canonicalKeyCandidate": "pilot",
+              "sourceEntry": {
+                "id": "b8dad0c963f046c6",
+                "name": "pilot"
+              },
+              "resolution": "mappedFromExistingV3PendingV2"
+            }
+          ],
+          "entitlements": "classBasePlusFinalIntModifier",
+          "expectedCount": 7
+        },
+        "feats": {
+          "sourceSelections": [
+            {
+              "displayName": "Precise Shot",
+              "sourceCandidates": [
+                {
+                  "id": "precise-shot",
+                  "name": "Precise Shot",
+                  "pack": "foundryvtt-swse.feats",
+                  "type": "feat"
+                }
+              ],
+              "entitlement": "level1GeneralFeat",
+              "selectionStatus": "staticPrerequisiteCheckedPendingV2"
+            }
+          ],
+          "classAndSpeciesAutoGrants": "deriveFromV2",
+          "expectedAutomaticClassFeatNames": [
+            "Point Blank Shot",
+            "Weapon Proficiency (Pistols)",
+            "Weapon Proficiency (Simple Weapons)"
+          ],
+          "generalFeatEntitlements": "oneAtCharacterLevel1",
+          "grantDirectlyFromSourceCandidates": false
+        },
+        "talents": {
+          "classSlot": {
+            "entitlementSlot": "class-talent",
+            "selection": {
+              "sourceRef": {
+                "id": "sneak-attack",
+                "name": "Sneak Attack",
+                "pack": "foundryvtt-swse.talents",
+                "type": "talent"
+              },
+              "canonicalIdCandidate": "sneak-attack",
+              "resolution": "pendingV2Registry"
+            },
+            "sourceTree": null,
+            "parameters": {},
+            "validation": "staticBasePrerequisitesCheckedPendingV2"
+          },
+          "generalSlotWhenTalentWikiEnabled": {
+            "selection": null,
+            "resolution": "playerChoice",
+            "allowedOnlyWhenGmSetting": "talentWiki"
+          },
+          "additionalSourceEntries": [],
+          "policy": "deriveAvailableSlotsAndValidateTreePrerequisitesWithV2"
+        },
+        "forcePowers": {
+          "sourceSelections": [],
+          "grantAuthority": "droidForbidden"
+        },
+        "languages": {
+          "legacyKnownLanguages": [
+            "Binary"
+          ],
+          "grantPolicy": "DroidBinaryPlusVocabulatorForBasicPendingV2"
+        },
+        "droid": {
+          "creationMode": "custom",
+          "droidDegree": "2nd-degree",
+          "droidSize": "small",
+          "chassis": null,
+          "isDroid": true,
+          "droidCalculationMode": "playable-derived",
+          "droidSystems": {
+            "locomotion": {
+              "id": "wheeled",
+              "speed": 6
+            },
+            "processor": {
+              "id": "heuristic"
+            },
+            "appendages": [
+              {
+                "id": "hand-1"
+              },
+              {
+                "id": "hand-2"
+              },
+              {
+                "id": "claw"
+              }
+            ],
+            "accessories": [
+              {
+                "id": "internal-comlink",
+                "category": "communications"
+              },
+              {
+                "id": "improved-sensor-package",
+                "category": "sensors"
+              },
+              {
+                "id": "darkvision",
+                "category": "sensors"
+              }
+            ],
+            "locomotionEnhancements": [],
+            "appendageEnhancements": []
+          },
+          "hardware": {
+            "budgetAuthority": "ProgressionRules.getDroidConstructionCredits",
+            "budgetCredits": 1000,
+            "spentCredits": 1000,
+            "remainingCredits": 0,
+            "unspentDisposition": "forfeit",
+            "allowClassCreditsOverflow": false,
+            "lineItems": [
+              {
+                "sourceId": "wheeled",
+                "category": "locomotion",
+                "name": "Wheeled Locomotion",
+                "sourcePriceCredits": 360,
+                "costCredits": 360,
+                "grantAuthority": null,
+                "sourceDecision": "SOURCE_SAFE_SUBSET",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "heuristic",
+                "category": "processor",
+                "name": "Heuristic Processor",
+                "sourcePriceCredits": 2000,
+                "costCredits": 0,
+                "grantAuthority": "heuristic-processor",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 100,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "hand",
+                "category": "appendage",
+                "name": "Hand Appendage",
+                "sourcePriceCredits": 100,
+                "costCredits": 0,
+                "grantAuthority": "free-hand",
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "internal-comlink",
+                "category": "accessory.communications",
+                "name": "Internal Comlink",
+                "sourcePriceCredits": 250,
+                "costCredits": 250,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "improved-sensor-package",
+                "category": "accessory.sensors",
+                "name": "Improved Sensor Package",
+                "sourcePriceCredits": 200,
+                "costCredits": 200,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "darkvision",
+                "category": "accessory.sensors",
+                "name": "Darkvision",
+                "sourcePriceCredits": 150,
+                "costCredits": 150,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              },
+              {
+                "sourceId": "claw",
+                "category": "appendage",
+                "name": "Claw Appendage",
+                "sourcePriceCredits": 40,
+                "costCredits": 40,
+                "grantAuthority": null,
+                "sourceDecision": "PASS",
+                "sourceQuoteStatus": "staticCheckedPendingV2Execution"
+              }
+            ],
+            "quotedBy": "localStaticReplicaOfV2Catalog",
+            "mustRequoteAtCommit": "scripts/domain/droids/droid-build-quote.js:quoteDroidBuild",
+            "initialInstallationAuthority": "scripts/domain/droids/droid-initial-installation-service.js:applyInitialInstallationToPlan",
+            "v2QuoteStatus": "pendingExecution",
+            "grants": [
+              "heuristic-processor",
+              "two-hands"
+            ]
+          },
+          "behavioralRestrictions": {
+            "degree": "2nd-degree",
+            "nonviolenceInhibitor": true,
+            "obedienceInhibitor": true,
+            "mustBeEnforcedByV2": true
+          }
+        },
+        "startingPackage": {
+          "items": [
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "weapon-blaster-pistol",
+                  "name": "Blaster Pistol",
+                  "pack": "foundryvtt-swse.weapons-pistols",
+                  "type": "weapon"
+                },
+                "canonicalIdCandidate": "weapon-blaster-pistol",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Blaster Pistol",
+              "printedUnitPriceCredits": 500,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "tool-power-pack",
+                  "name": "Power Pack",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "tool-power-pack",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Power Pack",
+              "printedUnitPriceCredits": 25,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            },
+            {
+              "item": {
+                "sourceRef": {
+                  "id": "tool-kit",
+                  "name": "Tool Kit",
+                  "pack": "foundryvtt-swse.equipment",
+                  "type": "equipment"
+                },
+                "canonicalIdCandidate": "tool-kit",
+                "resolution": "pendingV2Registry"
+              },
+              "quantity": 1,
+              "displayName": "Tool Kit",
+              "printedUnitPriceCredits": 250,
+              "sourceExtra": null,
+              "resolution": "pendingV2ItemMaterializer"
+            }
+          ],
+          "wallet": {
+            "mode": "finalNetBalance",
+            "credits": 1225,
+            "allowZero": true
+          },
+          "budgetAccounting": "canonical3d4ClassStartingCreditsPreselectedRollSeparateFromDroid1000",
+          "startingClassCredits": {
+            "dice": "3d4",
+            "preselectedDiceResults": [
+              3,
+              3,
+              2
+            ],
+            "perDieTotal": 8,
+            "multiplier": 250,
+            "initial": 2000,
+            "purchasesTotal": 775,
+            "remaining": 1225
+          },
+          "duplicateProtection": "noHardwareRegrantInExternalEquipment"
+        },
+        "beastSourceMechanics": null
+      },
+      "optionalRules": {
+        "talentWiki": {
+          "whenEnabled": "allowOneAdditionalGeneralTalentEntitlement",
+          "selection": null,
+          "resolution": "playerChoice",
+          "mayNotCountAliasAsGrant": true
+        },
+        "droidConstructionCredits": {
+          "requiredBase": 1000,
+          "houseRuleOverrideAllowed": false
+        },
+        "allowDroidOverflow": false
+      },
+      "certification": {
+        "status": "staticRAWAndSourceChecksPassedPendingV2",
+        "publishableAsReadyToPlay": false,
+        "staticLegality": {
+          "levelOneHeroic": true,
+          "noConstitution": true,
+          "fiveScoreStandardArray": true,
+          "degreeChosen": true,
+          "smallOrMedium": true,
+          "classAllowed": true,
+          "skillCountAndClassSkills": true,
+          "oneGeneralFeatAndOneClassTalent": true,
+          "heuristicFree": true,
+          "twoHandsFree": true,
+          "constructionBudgetExact1000": true,
+          "atLeastOneWeaponAndGear": true,
+          "classCreditsCoverPurchases": true,
+          "weaponProficiencyCovered": true,
+          "noJediNoForcePowers": true
+        },
+        "issues": [
+          "V2_RUNTIME_QUOTE_AND_HOST_VALIDATION_PENDING",
+          "V2_CLASS_FEAT_TALENT_REGISTRY_RESOLUTION_PENDING",
+          "ITEM_REFERENCE_AND_AMOUNT_VALIDATION_PENDING",
+          "FOUNDRY_ACTOR_MUTATION_REGRESSION_PENDING",
+          "MENTOR_ASSIGNMENT_PENDING"
+        ]
+      },
+      "provenance": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "branch": "feature/chargen-splash-prewarm",
+        "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+        "rulesSources": [
+          "Saga Edition Core Rulebook, Creating a Droid Hero, pp. 186-187",
+          "Saga Edition Core Rulebook, Heroic Classes and Equipment",
+          "Scavenger's Guide to Droids, Creating Droid Heroes, pp. 10-11"
+        ],
+        "authorityModules": [
+          "scripts/engine/progression/droids/droid-trait-rules.js",
+          "scripts/domain/droids/droid-build-quote.js",
+          "scripts/domain/droids/droid-component-quote-authority.js",
+          "scripts/domain/droids/droid-component-source-review.js",
+          "scripts/apps/progression-framework/steps/droid-builder-step.js"
+        ],
+        "authoringMethod": "newLevel1DroidTemplate",
+        "legacyId": null,
+        "sourceFile": null,
+        "sourceVersion": null,
+        "legacySupportLevel": null
+      }
+    }
+  ]
+}

@@ -50,3 +50,7 @@ The conversion runs exhaustive per-profile source-preservation assertions for id
 ## Next implementation step
 
 Use the v3 profile ID to retrieve the record; compile with authoritative V2 registries, selected GM rules and actor context; return a validated, immutable build plan; show that plan in review; on explicit Apply commit its selections to the existing V2 ProgressionSession; then let the existing V2 finalizer materialize the actor with exact single-pass inventory and net credits. Back/Close must never commit the plan.
+
+## Staged custom heroic droid extension (8 additional profiles)
+
+The eight separately authored Level-1 **custom heroic droid** Galactic Profiles have been added under [`droids/`](droids/README.md). This extension preserves the 33 records above unchanged; intended total v3 regression coverage is **41**. Droid mechanical authoring JSON, display-only catalog and droid-specific structural JSON Schema are staged there. **They are not ready to play**, and the production TemplateRegistry still reads v2 until a canonical V2 compiler/finalization integration is implemented and certified. See [`docs/audits/SWSE_Galactic_Profiles_v3_Claude_Implementation_Handoff.md`](../../../docs/audits/SWSE_Galactic_Profiles_v3_Claude_Implementation_Handoff.md).
