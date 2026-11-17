@@ -1,0 +1,3573 @@
+{
+  "_meta": {
+    "survey": "prestige-q2",
+    "contentVersion": 1,
+    "sourceCommit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+    "generatedBy": "tools/mentor-survey/build-prestige-q2-content.mjs",
+    "counts": {
+      "classes": 32,
+      "stems": 125
+    },
+    "note": "All text is draft_text. Stems are the shared multiclass first sentences; connectives, E and F are owner-authorized drafts (MSV-RD-014)."
+  },
+  "keys": [
+    "forceSecret",
+    "forceDC",
+    "forceRecovery",
+    "burstDamage",
+    "singleTargetDamage",
+    "areaDamage",
+    "areaControl",
+    "conditionTrack",
+    "counterAttack",
+    "reactionDefense",
+    "damageReduction",
+    "damageMitigationAura",
+    "evasion",
+    "accuracy",
+    "critRange",
+    "critDamage",
+    "initiative",
+    "dualWield",
+    "sithAlchemy",
+    "darkSideAffinity",
+    "lightSideAffinity",
+    "formMastery",
+    "meleeDamage",
+    "firepower",
+    "pilotMastery",
+    "vehicularDamage",
+    "unarmeddMastery",
+    "strikeForce",
+    "flowState",
+    "combatFlow",
+    "combatStamina",
+    "commandAuthority",
+    "formation",
+    "allySupport",
+    "moraleBonus",
+    "moraleImpact",
+    "stealth",
+    "infiltration",
+    "trackingMastery",
+    "deceptionMastery",
+    "knowledgeMastery",
+    "skillUtility",
+    "resourceControl",
+    "informationControl",
+    "networkInfluence",
+    "predatoryInstinct",
+    "tacticalAwareness",
+    "armorMastery",
+    "grappling",
+    "ritualMastery",
+    "itemEnchantment",
+    "forceArtistry",
+    "droidControl",
+    "hackingSkills",
+    "sabotageExpertise",
+    "explosiveMastery",
+    "biotechMastery",
+    "geneticEngineering",
+    "livingWeaponCrafting",
+    "biologicalControl",
+    "surgicalMastery",
+    "healingMastery",
+    "treatingInjury",
+    "engineeringMastery",
+    "tacticalSupport",
+    "fortifications",
+    "weaponEngineering",
+    "improvisation",
+    "mechanicalMastery",
+    "technicalInnovation",
+    "resourcefulness",
+    "spacefarerMastery",
+    "smugglingExpertise",
+    "illegalTrade",
+    "evasionTactics",
+    "outlawSkills",
+    "survivalism",
+    "criminalExpertise",
+    "freedomPursuit",
+    "explorationMastery",
+    "wildernessLore",
+    "survivalSkills",
+    "adaptability",
+    "infiltrationMastery",
+    "identityShift",
+    "stealthMastery",
+    "deadlyPrecision",
+    "silentKill",
+    "businessAcumen",
+    "corporateInfluence",
+    "socialManipulation",
+    "persuasionMastery",
+    "conArtistry",
+    "intimidation",
+    "authorityPresence",
+    "brutalForce",
+    "lawEnforcement",
+    "unitCoordination",
+    "specialOps",
+    "commandoTactics",
+    "rapidResponse",
+    "tacticalVerse",
+    "dualistTechnique",
+    "defensiveSwordsmanship",
+    "counterMastery",
+    "combatAdaptability",
+    "dualistMastery",
+    "weaponVersatility",
+    "weaponMastery",
+    "arenaExpertise",
+    "heavyWeaponMastery",
+    "quickDraw",
+    "precisePistolry",
+    "triggerDiscipline",
+    "forceBond",
+    "imperialDuty",
+    "enforceAuthority",
+    "forcedControl",
+    "mysticalInfluence",
+    "medicalKnowledge",
+    "treatmentExpertise",
+    "selfProgram",
+    "independence",
+    "technicalMastery",
+    "adaptiveAI"
+  ],
+  "stems": {
+    "forceSecret": {
+      "id": "pr.q2.stem.forcesecret",
+      "biasKey": "forceSecret",
+      "text": "I've learned that rare Force techniques can carry consequences beyond their immediate effect.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library forceSecret (shared first sentence)"
+      }
+    },
+    "forceDC": {
+      "id": "pr.q2.stem.forcedc",
+      "biasKey": "forceDC",
+      "text": "I've focused on making difficult Force effects harder to resist.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library forceDC (shared first sentence)"
+      }
+    },
+    "forceRecovery": {
+      "id": "pr.q2.stem.forcerecovery",
+      "biasKey": "forceRecovery",
+      "text": "I've put value on recovering strength after demanding use of the Force.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library forceRecovery (shared first sentence)"
+      }
+    },
+    "burstDamage": {
+      "id": "pr.q2.stem.burstdamage",
+      "biasKey": "burstDamage",
+      "text": "I have concentrated on ending dangerous exchanges with one decisive burst.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library burstDamage (shared first sentence)"
+      }
+    },
+    "singleTargetDamage": {
+      "id": "pr.q2.stem.singletargetdamage",
+      "biasKey": "singleTargetDamage",
+      "text": "My strongest approach has been bringing focused pressure against one target.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library singleTargetDamage (shared first sentence)"
+      }
+    },
+    "areaDamage": {
+      "id": "pr.q2.stem.areadamage",
+      "biasKey": "areaDamage",
+      "text": "I have experience with attacks that can affect an entire area.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library areaDamage (shared first sentence)"
+      }
+    },
+    "areaControl": {
+      "id": "pr.q2.stem.areacontrol",
+      "biasKey": "areaControl",
+      "text": "I have learned the value of controlling where an opponent can move.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library areaControl (shared first sentence)"
+      }
+    },
+    "conditionTrack": {
+      "id": "pr.q2.stem.conditiontrack",
+      "biasKey": "conditionTrack",
+      "text": "My methods have focused on steadily wearing down an opponent's effectiveness.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library conditionTrack (shared first sentence)"
+      }
+    },
+    "counterAttack": {
+      "id": "pr.q2.stem.counterattack",
+      "biasKey": "counterAttack",
+      "text": "I have become attentive to openings created by an opponent's actions.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library counterAttack (shared first sentence)"
+      }
+    },
+    "reactionDefense": {
+      "id": "pr.q2.stem.reactiondefense",
+      "biasKey": "reactionDefense",
+      "text": "I have invested in reacting quickly when danger comes without warning.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library reactionDefense (shared first sentence)"
+      }
+    },
+    "damageReduction": {
+      "id": "pr.q2.stem.damagereduction",
+      "biasKey": "damageReduction",
+      "text": "I have built my approach around taking a hit and remaining effective.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library damageReduction (shared first sentence)"
+      }
+    },
+    "damageMitigationAura": {
+      "id": "pr.q2.stem.damagemitigationaura",
+      "biasKey": "damageMitigationAura",
+      "text": "I've focused on ways to lessen harm to people near me.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library damageMitigationAura (shared first sentence)"
+      }
+    },
+    "evasion": {
+      "id": "pr.q2.stem.evasion",
+      "biasKey": "evasion",
+      "text": "I have learned to survive by moving out of danger rather than absorbing it.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library evasion (shared first sentence)"
+      }
+    },
+    "accuracy": {
+      "id": "pr.q2.stem.accuracy",
+      "biasKey": "accuracy",
+      "text": "I have spent time making deliberate actions land where I intend.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library accuracy (shared first sentence)"
+      }
+    },
+    "critRange": {
+      "id": "pr.q2.stem.critrange",
+      "biasKey": "critRange",
+      "text": "I have looked for techniques that create more opportunities for a telling strike.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library critRange (shared first sentence)"
+      }
+    },
+    "critDamage": {
+      "id": "pr.q2.stem.critdamage",
+      "biasKey": "critDamage",
+      "text": "I have focused on making an especially well-placed strike decisive.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library critDamage (shared first sentence)"
+      }
+    },
+    "initiative": {
+      "id": "pr.q2.stem.initiative",
+      "biasKey": "initiative",
+      "text": "I value acting before an opponent can seize control of events.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library initiative (shared first sentence)"
+      }
+    },
+    "dualWield": {
+      "id": "pr.q2.stem.dualwield",
+      "biasKey": "dualWield",
+      "text": "I have practiced managing more than one weapon at once.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library dualWield (shared first sentence)"
+      }
+    },
+    "sithAlchemy": {
+      "id": "pr.q2.stem.sithalchemy",
+      "biasKey": "sithAlchemy",
+      "text": "My experience has involved the dangerous possibilities of dark-side alchemy.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library sithAlchemy (shared first sentence)"
+      }
+    },
+    "darkSideAffinity": {
+      "id": "pr.q2.stem.darksideaffinity",
+      "biasKey": "darkSideAffinity",
+      "text": "My path has been shaped by attraction to the dark side's power.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library darkSideAffinity (shared first sentence)"
+      }
+    },
+    "lightSideAffinity": {
+      "id": "pr.q2.stem.lightsideaffinity",
+      "biasKey": "lightSideAffinity",
+      "text": "I have placed importance on self-control and using power responsibly.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library lightSideAffinity (shared first sentence)"
+      }
+    },
+    "formMastery": {
+      "id": "pr.q2.stem.formmastery",
+      "biasKey": "formMastery",
+      "text": "I have been developing a particular discipline of lightsaber technique.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library formMastery (shared first sentence)"
+      }
+    },
+    "meleeDamage": {
+      "id": "pr.q2.stem.meleedamage",
+      "biasKey": "meleeDamage",
+      "text": "I have built much of my effectiveness around fighting at close range.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library meleeDamage (shared first sentence)"
+      }
+    },
+    "firepower": {
+      "id": "pr.q2.stem.firepower",
+      "biasKey": "firepower",
+      "text": "I have relied on sustained ranged force to keep threats at a distance.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library firepower (shared first sentence)"
+      }
+    },
+    "pilotMastery": {
+      "id": "pr.q2.stem.pilotmastery",
+      "biasKey": "pilotMastery",
+      "text": "I have developed confidence operating vehicles under difficult conditions.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library pilotMastery (shared first sentence)"
+      }
+    },
+    "vehicularDamage": {
+      "id": "pr.q2.stem.vehiculardamage",
+      "biasKey": "vehicularDamage",
+      "text": "I have concentrated on making vehicle-mounted attacks effective.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library vehicularDamage (shared first sentence)"
+      }
+    },
+    "unarmeddMastery": {
+      "id": "pr.q2.stem.unarmeddmastery",
+      "biasKey": "unarmeddMastery",
+      "text": "I have invested in defending myself without depending on a weapon.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library unarmeddMastery (shared first sentence)"
+      }
+    },
+    "strikeForce": {
+      "id": "pr.q2.stem.strikeforce",
+      "biasKey": "strikeForce",
+      "text": "I have focused on delivering powerful physical strikes.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library strikeForce (shared first sentence)"
+      }
+    },
+    "flowState": {
+      "id": "pr.q2.stem.flowstate",
+      "biasKey": "flowState",
+      "text": "I have sought a rhythm in which one action naturally leads into the next.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library flowState (shared first sentence)"
+      }
+    },
+    "combatFlow": {
+      "id": "pr.q2.stem.combatflow",
+      "biasKey": "combatFlow",
+      "text": "I have learned to influence the tempo of an encounter.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library combatFlow (shared first sentence)"
+      }
+    },
+    "combatStamina": {
+      "id": "pr.q2.stem.combatstamina",
+      "biasKey": "combatStamina",
+      "text": "I have trained to remain effective through prolonged exertion.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library combatStamina (shared first sentence)"
+      }
+    },
+    "commandAuthority": {
+      "id": "pr.q2.stem.commandauthority",
+      "biasKey": "commandAuthority",
+      "text": "I have become comfortable making decisions others depend on.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library commandAuthority (shared first sentence)"
+      }
+    },
+    "formation": {
+      "id": "pr.q2.stem.formation",
+      "biasKey": "formation",
+      "text": "I understand how much reliable positioning matters to a group.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library formation (shared first sentence)"
+      }
+    },
+    "allySupport": {
+      "id": "pr.q2.stem.allysupport",
+      "biasKey": "allySupport",
+      "text": "I have focused on making other people more effective.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library allySupport (shared first sentence)"
+      }
+    },
+    "moraleBonus": {
+      "id": "pr.q2.stem.moralebonus",
+      "biasKey": "moraleBonus",
+      "text": "I have put effort into helping companions stay confident.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library moraleBonus (shared first sentence)"
+      }
+    },
+    "moraleImpact": {
+      "id": "pr.q2.stem.moraleimpact",
+      "biasKey": "moraleImpact",
+      "text": "I understand how fear and resolve can change a confrontation.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library moraleImpact (shared first sentence)"
+      }
+    },
+    "stealth": {
+      "id": "pr.q2.stem.stealth",
+      "biasKey": "stealth",
+      "text": "I have built experience in avoiding attention when it matters.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library stealth (shared first sentence)"
+      }
+    },
+    "infiltration": {
+      "id": "pr.q2.stem.infiltration",
+      "biasKey": "infiltration",
+      "text": "I have learned to enter difficult places without drawing a crowd.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library infiltration (shared first sentence)"
+      }
+    },
+    "trackingMastery": {
+      "id": "pr.q2.stem.trackingmastery",
+      "biasKey": "trackingMastery",
+      "text": "I have invested in finding people and following traces they leave behind.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library trackingMastery (shared first sentence)"
+      }
+    },
+    "deceptionMastery": {
+      "id": "pr.q2.stem.deceptionmastery",
+      "biasKey": "deceptionMastery",
+      "text": "I have used misdirection to shape how others read a situation.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library deceptionMastery (shared first sentence)"
+      }
+    },
+    "knowledgeMastery": {
+      "id": "pr.q2.stem.knowledgemastery",
+      "biasKey": "knowledgeMastery",
+      "text": "I have built my decisions on study and accumulated expertise.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library knowledgeMastery (shared first sentence)"
+      }
+    },
+    "skillUtility": {
+      "id": "pr.q2.stem.skillutility",
+      "biasKey": "skillUtility",
+      "text": "I have learned to approach problems with several practical skills.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library skillUtility (shared first sentence)"
+      }
+    },
+    "resourceControl": {
+      "id": "pr.q2.stem.resourcecontrol",
+      "biasKey": "resourceControl",
+      "text": "I have spent time getting the most from limited supplies.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library resourceControl (shared first sentence)"
+      }
+    },
+    "informationControl": {
+      "id": "pr.q2.stem.informationcontrol",
+      "biasKey": "informationControl",
+      "text": "I have learned that knowing something early can change every decision after it.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library informationControl (shared first sentence)"
+      }
+    },
+    "networkInfluence": {
+      "id": "pr.q2.stem.networkinfluence",
+      "biasKey": "networkInfluence",
+      "text": "I have learned how much can depend on having the right contacts.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library networkInfluence (shared first sentence)"
+      }
+    },
+    "predatoryInstinct": {
+      "id": "pr.q2.stem.predatoryinstinct",
+      "biasKey": "predatoryInstinct",
+      "text": "I have become alert to the weakness an opponent tries to conceal.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library predatoryInstinct (shared first sentence)"
+      }
+    },
+    "tacticalAwareness": {
+      "id": "pr.q2.stem.tacticalawareness",
+      "biasKey": "tacticalAwareness",
+      "text": "I have trained myself to read a tense situation quickly.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library tacticalAwareness (shared first sentence)"
+      }
+    },
+    "armorMastery": {
+      "id": "pr.q2.stem.armormastery",
+      "biasKey": "armorMastery",
+      "text": "I have made protective equipment an important part of how I stay effective.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library armorMastery (shared first sentence)"
+      }
+    },
+    "grappling": {
+      "id": "pr.q2.stem.grappling",
+      "biasKey": "grappling",
+      "text": "I have worked on controlling a threat at arm's length.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library grappling (shared first sentence)"
+      }
+    },
+    "ritualMastery": {
+      "id": "pr.q2.stem.ritualmastery",
+      "biasKey": "ritualMastery",
+      "text": "I have studied the preparation and patience demanded by complex Force rituals.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library ritualMastery (shared first sentence)"
+      }
+    },
+    "itemEnchantment": {
+      "id": "pr.q2.stem.itemenchantment",
+      "biasKey": "itemEnchantment",
+      "text": "I have explored how unusual powers can change the nature of an object.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library itemEnchantment (shared first sentence)"
+      }
+    },
+    "forceArtistry": {
+      "id": "pr.q2.stem.forceartistry",
+      "biasKey": "forceArtistry",
+      "text": "I have been drawn to expressing ideas and feeling through the Force.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library forceArtistry (shared first sentence)"
+      }
+    },
+    "droidControl": {
+      "id": "pr.q2.stem.droidcontrol",
+      "biasKey": "droidControl",
+      "text": "I have worked with systems that direct or coordinate droids.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library droidControl (shared first sentence)"
+      }
+    },
+    "hackingSkills": {
+      "id": "pr.q2.stem.hackingskills",
+      "biasKey": "hackingSkills",
+      "text": "I have learned to work through computer systems others expect to stay closed.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library hackingSkills (shared first sentence)"
+      }
+    },
+    "sabotageExpertise": {
+      "id": "pr.q2.stem.sabotageexpertise",
+      "biasKey": "sabotageExpertise",
+      "text": "I understand how a complex system can be disabled at its weak point.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library sabotageExpertise (shared first sentence)"
+      }
+    },
+    "explosiveMastery": {
+      "id": "pr.q2.stem.explosivemastery",
+      "biasKey": "explosiveMastery",
+      "text": "I know that controlled blasts can change a situation in an instant.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library explosiveMastery (shared first sentence)"
+      }
+    },
+    "biotechMastery": {
+      "id": "pr.q2.stem.biotechmastery",
+      "biasKey": "biotechMastery",
+      "text": "My technical interests include living systems and their modification.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library biotechMastery (shared first sentence)"
+      }
+    },
+    "geneticEngineering": {
+      "id": "pr.q2.stem.geneticengineering",
+      "biasKey": "geneticEngineering",
+      "text": "I have explored the possibilities and risks of changing inherited traits.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library geneticEngineering (shared first sentence)"
+      }
+    },
+    "livingWeaponCrafting": {
+      "id": "pr.q2.stem.livingweaponcrafting",
+      "biasKey": "livingWeaponCrafting",
+      "text": "I understand that biological creations can be designed for violence.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library livingWeaponCrafting (shared first sentence)"
+      }
+    },
+    "biologicalControl": {
+      "id": "pr.q2.stem.biologicalcontrol",
+      "biasKey": "biologicalControl",
+      "text": "I have studied how living creatures can be influenced or directed.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library biologicalControl (shared first sentence)"
+      }
+    },
+    "surgicalMastery": {
+      "id": "pr.q2.stem.surgicalmastery",
+      "biasKey": "surgicalMastery",
+      "text": "I have focused on precise interventions when a life may depend on them.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library surgicalMastery (shared first sentence)"
+      }
+    },
+    "healingMastery": {
+      "id": "pr.q2.stem.healingmastery",
+      "biasKey": "healingMastery",
+      "text": "I have invested in restoring others after they are hurt.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library healingMastery (shared first sentence)"
+      }
+    },
+    "treatingInjury": {
+      "id": "pr.q2.stem.treatinginjury",
+      "biasKey": "treatingInjury",
+      "text": "I have developed practical experience caring for wounds.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library treatingInjury (shared first sentence)"
+      }
+    },
+    "engineeringMastery": {
+      "id": "pr.q2.stem.engineeringmastery",
+      "biasKey": "engineeringMastery",
+      "text": "I have spent time understanding how structures and systems fit together.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library engineeringMastery (shared first sentence)"
+      }
+    },
+    "tacticalSupport": {
+      "id": "pr.q2.stem.tacticalsupport",
+      "biasKey": "tacticalSupport",
+      "text": "I know how technical work can make a team more effective.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library tacticalSupport (shared first sentence)"
+      }
+    },
+    "fortifications": {
+      "id": "pr.q2.stem.fortifications",
+      "biasKey": "fortifications",
+      "text": "I have learned to make a position safer before danger arrives.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library fortifications (shared first sentence)"
+      }
+    },
+    "weaponEngineering": {
+      "id": "pr.q2.stem.weaponengineering",
+      "biasKey": "weaponEngineering",
+      "text": "I have worked on understanding what makes a weapon effective and reliable.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library weaponEngineering (shared first sentence)"
+      }
+    },
+    "improvisation": {
+      "id": "pr.q2.stem.improvisation",
+      "biasKey": "improvisation",
+      "text": "I have learned to find a workable answer when the original plan fails.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library improvisation (shared first sentence)"
+      }
+    },
+    "mechanicalMastery": {
+      "id": "pr.q2.stem.mechanicalmastery",
+      "biasKey": "mechanicalMastery",
+      "text": "I have become comfortable diagnosing and handling complex machinery.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library mechanicalMastery (shared first sentence)"
+      }
+    },
+    "technicalInnovation": {
+      "id": "pr.q2.stem.technicalinnovation",
+      "biasKey": "technicalInnovation",
+      "text": "I have enjoyed finding technical solutions that did not exist before.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library technicalInnovation (shared first sentence)"
+      }
+    },
+    "resourcefulness": {
+      "id": "pr.q2.stem.resourcefulness",
+      "biasKey": "resourcefulness",
+      "text": "I have learned to get results with whatever is at hand.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library resourcefulness (shared first sentence)"
+      }
+    },
+    "spacefarerMastery": {
+      "id": "pr.q2.stem.spacefarermastery",
+      "biasKey": "spacefarerMastery",
+      "text": "I have grown familiar with the demands of life and work aboard ships.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library spacefarerMastery (shared first sentence)"
+      }
+    },
+    "smugglingExpertise": {
+      "id": "pr.q2.stem.smugglingexpertise",
+      "biasKey": "smugglingExpertise",
+      "text": "I understand the practical difficulties of moving cargo without attracting attention.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library smugglingExpertise (shared first sentence)"
+      }
+    },
+    "illegalTrade": {
+      "id": "pr.q2.stem.illegaltrade",
+      "biasKey": "illegalTrade",
+      "text": "I have learned how complicated trade becomes outside recognized rules.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library illegalTrade (shared first sentence)"
+      }
+    },
+    "evasionTactics": {
+      "id": "pr.q2.stem.evasiontactics",
+      "biasKey": "evasionTactics",
+      "text": "I have worked on staying ahead of pursuit.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library evasionTactics (shared first sentence)"
+      }
+    },
+    "outlawSkills": {
+      "id": "pr.q2.stem.outlawskills",
+      "biasKey": "outlawSkills",
+      "text": "I have experience operating where ordinary protections and rules offer little help.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library outlawSkills (shared first sentence)"
+      }
+    },
+    "survivalism": {
+      "id": "pr.q2.stem.survivalism",
+      "biasKey": "survivalism",
+      "text": "I have built my habits around enduring conditions others would avoid.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library survivalism (shared first sentence)"
+      }
+    },
+    "criminalExpertise": {
+      "id": "pr.q2.stem.criminalexpertise",
+      "biasKey": "criminalExpertise",
+      "text": "I understand how illicit operations hide their methods and intentions.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library criminalExpertise (shared first sentence)"
+      }
+    },
+    "freedomPursuit": {
+      "id": "pr.q2.stem.freedompursuit",
+      "biasKey": "freedomPursuit",
+      "text": "I have made escaping confinement or control an important priority.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library freedomPursuit (shared first sentence)"
+      }
+    },
+    "explorationMastery": {
+      "id": "pr.q2.stem.explorationmastery",
+      "biasKey": "explorationMastery",
+      "text": "I have been drawn to reaching places others have not understood.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library explorationMastery (shared first sentence)"
+      }
+    },
+    "wildernessLore": {
+      "id": "pr.q2.stem.wildernesslore",
+      "biasKey": "wildernessLore",
+      "text": "I have learned to read the signs of unfamiliar natural environments.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library wildernessLore (shared first sentence)"
+      }
+    },
+    "survivalSkills": {
+      "id": "pr.q2.stem.survivalskills",
+      "biasKey": "survivalSkills",
+      "text": "I know how much basic fieldcraft matters when conditions turn bad.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library survivalSkills (shared first sentence)"
+      }
+    },
+    "adaptability": {
+      "id": "pr.q2.stem.adaptability",
+      "biasKey": "adaptability",
+      "text": "I have become used to changing my approach when circumstances change.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library adaptability (shared first sentence)"
+      }
+    },
+    "infiltrationMastery": {
+      "id": "pr.q2.stem.infiltrationmastery",
+      "biasKey": "infiltrationMastery",
+      "text": "I have concentrated on reaching well-defended places without being discovered.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library infiltrationMastery (shared first sentence)"
+      }
+    },
+    "identityShift": {
+      "id": "pr.q2.stem.identityshift",
+      "biasKey": "identityShift",
+      "text": "I have experience changing how others recognize or understand me.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library identityShift (shared first sentence)"
+      }
+    },
+    "stealthMastery": {
+      "id": "pr.q2.stem.stealthmastery",
+      "biasKey": "stealthMastery",
+      "text": "I have developed a highly deliberate approach to remaining unseen.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library stealthMastery (shared first sentence)"
+      }
+    },
+    "deadlyPrecision": {
+      "id": "pr.q2.stem.deadlyprecision",
+      "biasKey": "deadlyPrecision",
+      "text": "I have focused on striking vulnerable targets with extreme accuracy.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library deadlyPrecision (shared first sentence)"
+      }
+    },
+    "silentKill": {
+      "id": "pr.q2.stem.silentkill",
+      "biasKey": "silentKill",
+      "text": "I have studied methods of ending a threat without alerting others.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library silentKill (shared first sentence)"
+      }
+    },
+    "businessAcumen": {
+      "id": "pr.q2.stem.businessacumen",
+      "biasKey": "businessAcumen",
+      "text": "I have learned to recognize the real cost and value of a deal.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library businessAcumen (shared first sentence)"
+      }
+    },
+    "corporateInfluence": {
+      "id": "pr.q2.stem.corporateinfluence",
+      "biasKey": "corporateInfluence",
+      "text": "I understand how large organizations make and resist decisions.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library corporateInfluence (shared first sentence)"
+      }
+    },
+    "socialManipulation": {
+      "id": "pr.q2.stem.socialmanipulation",
+      "biasKey": "socialManipulation",
+      "text": "I have learned how carefully chosen words can alter another person's choices.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library socialManipulation (shared first sentence)"
+      }
+    },
+    "persuasionMastery": {
+      "id": "pr.q2.stem.persuasionmastery",
+      "biasKey": "persuasionMastery",
+      "text": "I have become comfortable helping others see a different point of view.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library persuasionMastery (shared first sentence)"
+      }
+    },
+    "conArtistry": {
+      "id": "pr.q2.stem.conartistry",
+      "biasKey": "conArtistry",
+      "text": "I understand how a convincing confidence scheme can draw someone in.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library conArtistry (shared first sentence)"
+      }
+    },
+    "intimidation": {
+      "id": "pr.q2.stem.intimidation",
+      "biasKey": "intimidation",
+      "text": "I understand how projecting danger can change someone's behavior.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library intimidation (shared first sentence)"
+      }
+    },
+    "authorityPresence": {
+      "id": "pr.q2.stem.authoritypresence",
+      "biasKey": "authorityPresence",
+      "text": "I know what it means to command attention when I enter a room.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library authorityPresence (shared first sentence)"
+      }
+    },
+    "brutalForce": {
+      "id": "pr.q2.stem.brutalforce",
+      "biasKey": "brutalForce",
+      "text": "I have relied on overwhelming force when a threat refuses to give way.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library brutalForce (shared first sentence)"
+      }
+    },
+    "lawEnforcement": {
+      "id": "pr.q2.stem.lawenforcement",
+      "biasKey": "lawEnforcement",
+      "text": "I understand the practical demands of enforcing rules and keeping order.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library lawEnforcement (shared first sentence)"
+      }
+    },
+    "unitCoordination": {
+      "id": "pr.q2.stem.unitcoordination",
+      "biasKey": "unitCoordination",
+      "text": "I have focused on making several people act as one effective unit.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library unitCoordination (shared first sentence)"
+      }
+    },
+    "specialOps": {
+      "id": "pr.q2.stem.specialops",
+      "biasKey": "specialOps",
+      "text": "I have experience thinking about missions where discretion and precision matter.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library specialOps (shared first sentence)"
+      }
+    },
+    "commandoTactics": {
+      "id": "pr.q2.stem.commandotactics",
+      "biasKey": "commandoTactics",
+      "text": "I have concentrated on small-team action under dangerous conditions.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library commandoTactics (shared first sentence)"
+      }
+    },
+    "rapidResponse": {
+      "id": "pr.q2.stem.rapidresponse",
+      "biasKey": "rapidResponse",
+      "text": "I have trained to act quickly when the situation changes suddenly.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library rapidResponse (shared first sentence)"
+      }
+    },
+    "tacticalVerse": {
+      "id": "pr.q2.stem.tacticalverse",
+      "biasKey": "tacticalVerse",
+      "text": "I have worked on meeting several different tactical demands rather than relying on one method.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library tacticalVerse (shared first sentence)"
+      }
+    },
+    "dualistTechnique": {
+      "id": "pr.q2.stem.dualisttechnique",
+      "biasKey": "dualistTechnique",
+      "text": "I have invested in the timing and control demanded by a duel.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library dualistTechnique (shared first sentence)"
+      }
+    },
+    "defensiveSwordsmanship": {
+      "id": "pr.q2.stem.defensiveswordsmanship",
+      "biasKey": "defensiveSwordsmanship",
+      "text": "I have practiced defending myself with a blade rather than chasing every opening.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library defensiveSwordsmanship (shared first sentence)"
+      }
+    },
+    "counterMastery": {
+      "id": "pr.q2.stem.countermastery",
+      "biasKey": "counterMastery",
+      "text": "I have focused on answering an opponent's move with a deliberate response.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library counterMastery (shared first sentence)"
+      }
+    },
+    "combatAdaptability": {
+      "id": "pr.q2.stem.combatadaptability",
+      "biasKey": "combatAdaptability",
+      "text": "I have learned to shift techniques when an opponent changes approach.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library combatAdaptability (shared first sentence)"
+      }
+    },
+    "dualistMastery": {
+      "id": "pr.q2.stem.dualistmastery",
+      "biasKey": "dualistMastery",
+      "text": "I have made one-on-one combat a significant part of my training.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library dualistMastery (shared first sentence)"
+      }
+    },
+    "weaponVersatility": {
+      "id": "pr.q2.stem.weaponversatility",
+      "biasKey": "weaponVersatility",
+      "text": "I have practiced staying capable with more than one kind of weapon.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library weaponVersatility (shared first sentence)"
+      }
+    },
+    "weaponMastery": {
+      "id": "pr.q2.stem.weaponmastery",
+      "biasKey": "weaponMastery",
+      "text": "I have devoted considerable attention to mastering a chosen weapon.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library weaponMastery (shared first sentence)"
+      }
+    },
+    "arenaExpertise": {
+      "id": "pr.q2.stem.arenaexpertise",
+      "biasKey": "arenaExpertise",
+      "text": "I understand how combat changes when the ground and audience limit every choice.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library arenaExpertise (shared first sentence)"
+      }
+    },
+    "heavyWeaponMastery": {
+      "id": "pr.q2.stem.heavyweaponmastery",
+      "biasKey": "heavyWeaponMastery",
+      "text": "I have concentrated on handling weapons that bring substantial destructive power.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library heavyWeaponMastery (shared first sentence)"
+      }
+    },
+    "quickDraw": {
+      "id": "pr.q2.stem.quickdraw",
+      "biasKey": "quickDraw",
+      "text": "I have trained to respond before an opponent can finish making their move.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library quickDraw (shared first sentence)"
+      }
+    },
+    "precisePistolry": {
+      "id": "pr.q2.stem.precisepistolry",
+      "biasKey": "precisePistolry",
+      "text": "I have developed careful aim and control with a pistol.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library precisePistolry (shared first sentence)"
+      }
+    },
+    "triggerDiscipline": {
+      "id": "pr.q2.stem.triggerdiscipline",
+      "biasKey": "triggerDiscipline",
+      "text": "I have trained myself to fire only when the moment is right.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library triggerDiscipline (shared first sentence)"
+      }
+    },
+    "forceBond": {
+      "id": "pr.q2.stem.forcebond",
+      "biasKey": "forceBond",
+      "text": "I have been shaped by a deep connection through the Force.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library forceBond (shared first sentence)"
+      }
+    },
+    "imperialDuty": {
+      "id": "pr.q2.stem.imperialduty",
+      "biasKey": "imperialDuty",
+      "text": "My sense of purpose has been shaped by service to Imperial authority.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library imperialDuty (shared first sentence)"
+      }
+    },
+    "enforceAuthority": {
+      "id": "pr.q2.stem.enforceauthority",
+      "biasKey": "enforceAuthority",
+      "text": "I have experience ensuring that orders or rules are followed.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library enforceAuthority (shared first sentence)"
+      }
+    },
+    "forcedControl": {
+      "id": "pr.q2.stem.forcedcontrol",
+      "biasKey": "forcedControl",
+      "text": "I have studied methods that compel others rather than persuade them.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library forcedControl (shared first sentence)"
+      }
+    },
+    "mysticalInfluence": {
+      "id": "pr.q2.stem.mysticalinfluence",
+      "biasKey": "mysticalInfluence",
+      "text": "I have seen how unusual or spiritual authority can shape people's actions.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library mysticalInfluence (shared first sentence)"
+      }
+    },
+    "medicalKnowledge": {
+      "id": "pr.q2.stem.medicalknowledge",
+      "biasKey": "medicalKnowledge",
+      "text": "I have put time into understanding injury, illness, and care.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library medicalKnowledge (shared first sentence)"
+      }
+    },
+    "treatmentExpertise": {
+      "id": "pr.q2.stem.treatmentexpertise",
+      "biasKey": "treatmentExpertise",
+      "text": "I have developed an approach to choosing appropriate care in an emergency.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library treatmentExpertise (shared first sentence)"
+      }
+    },
+    "selfProgram": {
+      "id": "pr.q2.stem.selfprogram",
+      "biasKey": "selfProgram",
+      "text": "I have experience changing the routines that guide my own operation.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library selfProgram (shared first sentence)"
+      }
+    },
+    "independence": {
+      "id": "pr.q2.stem.independence",
+      "biasKey": "independence",
+      "text": "I have learned to operate without constant direction from others.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library independence (shared first sentence)"
+      }
+    },
+    "technicalMastery": {
+      "id": "pr.q2.stem.technicalmastery",
+      "biasKey": "technicalMastery",
+      "text": "I have committed myself to understanding and operating sophisticated systems.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library technicalMastery (shared first sentence)"
+      }
+    },
+    "adaptiveAI": {
+      "id": "pr.q2.stem.adaptiveai",
+      "biasKey": "adaptiveAI",
+      "text": "My capabilities involve adjusting decisions as new information changes the problem.",
+      "editorialStatus": "draft_text",
+      "mechanicsStatus": "none",
+      "sourceRef": {
+        "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
+        "file": "docs/design/SWSE_Multiclass_Survey_Rolling_Design.md",
+        "anchor": "Q2 library adaptiveAI (shared first sentence)"
+      }
+    }
+  },
+  "lens": {
+    "id": "pr.q2.lens",
+    "text": "Earlier you told me: {q1_quote}",
+    "editorialStatus": "draft_text",
+    "mechanicsStatus": "none",
+    "sourceRef": {
+      "origin": "owner hardening 2026-11-16 (Q1 context lens for Q2); wording is a draft frame around the player's own words"
+    }
+  },
+  "classes": {
+    "ace_pilot": {
+      "intro": {
+        "id": "pr.ace_pilot.q2.intro",
+        "text": "All right, you've made it far enough to be in the running. Don't start thinking a new title makes your old tricks disappear. Some of them got you this far. Which ones are you taking with you?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 137,
+          "anchor": "5.1 Mentor Mayu, fixed introduction (DRAFT)"
+        }
+      },
+      "question": {
+        "id": "pr.ace_pilot.q2.question",
+        "text": "Of everything you've learned so far, which strength do you want to make part of the Ace Pilot you're becoming?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 141,
+          "anchor": "5.1 Mentor Mayu, fixed introduction (DRAFT)"
+        }
+      },
+      "connective": {
+        "id": "pr.ace_pilot.q2.connective",
+        "text": "I want to carry that into the way I fly as the Ace Pilot I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.ace_pilot.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.ace_pilot.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "bounty_hunter": {
+      "intro": {
+        "id": "pr.bounty_hunter.q2.intro",
+        "text": "The title tells me you've met the standard. Your preparation tells me how you intend to work. Consider what your training already proves. Which strength will you rely on when the hunt turns difficult?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1066,
+          "anchor": "26.2 Kex Varon — fixed Q2 Mentor introduction (DRAFT)"
+        }
+      },
+      "question": {
+        "id": "pr.bounty_hunter.q2.question",
+        "text": "Which part of your established training do you want to carry into the Bounty Hunter you're becoming?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1068,
+          "anchor": "26.2 Kex Varon — fixed Q2 Mentor introduction (DRAFT)"
+        }
+      },
+      "connective": {
+        "id": "pr.bounty_hunter.q2.connective",
+        "text": "I want to carry that into the way I approach a hunt as the Bounty Hunter I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.bounty_hunter.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.bounty_hunter.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "crime_lord": {
+      "intro": {
+        "id": "pr.crime_lord.q2.intro",
+        "text": "Ah, a reputation can open doors. It cannot tell you what to do once you are inside. Think about the skills that brought you to this table. Which of them do you intend to build your influence upon?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1479,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.crime_lord.q2.question",
+        "text": "Which established strength should shape how you exercise your influence?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1481,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.crime_lord.q2.connective",
+        "text": "I want to carry that into the way I approach influence as the Crime Lord I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.crime_lord.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.crime_lord.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "elite_trooper": {
+      "intro": {
+        "id": "pr.elite_trooper.q2.intro",
+        "text": "You've put in the work to get this far. Good. But nobody fights with just a title. Think about what you've already got going for you, and what you want to keep sharp when the stakes go up. Which strength are you counting on?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 731,
+          "anchor": "19.2 Breach fixed Q2 introduction (new editorial draft)"
+        }
+      },
+      "question": {
+        "id": "pr.elite_trooper.q2.question",
+        "text": "Which strength from your existing training do you want to carry into your development as an Elite Trooper?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 733,
+          "anchor": "19.2 Breach fixed Q2 introduction (new editorial draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.elite_trooper.q2.connective",
+        "text": "I want to carry that into the way I fight as the Elite Trooper I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.elite_trooper.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.elite_trooper.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "force_adept": {
+      "intro": {
+        "id": "pr.force_adept.q2.intro",
+        "text": "The Force rarely asks us to leave all earlier learning behind. Whatever path has brought you this far, some part of it may still deserve your trust. Which part would you carry into this deeper study?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1556,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.force_adept.q2.question",
+        "text": "Which discipline already present in your life do you want to bring into your Force Adept calling?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1558,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.force_adept.q2.connective",
+        "text": "I want to carry that into the way I follow my path as the Force Adept I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.force_adept.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.force_adept.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "force_disciple": {
+      "intro": {
+        "id": "pr.force_disciple.q2.intro",
+        "text": "Mm. A new door, yes. But the hand that opens it was shaped by older lessons. Which of those lessons will you carry through, even if the room beyond changes what they mean?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1318,
+          "anchor": "29.2 Riquis — fixed Q2 Mentor introduction (DRAFT)"
+        }
+      },
+      "question": {
+        "id": "pr.force_disciple.q2.question",
+        "text": "Which strength you've already cultivated do you want to carry into your life as a Force Disciple?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1320,
+          "anchor": "29.2 Riquis — fixed Q2 Mentor introduction (DRAFT)"
+        }
+      },
+      "connective": {
+        "id": "pr.force_disciple.q2.connective",
+        "text": "I want to carry that into the way I seek deeper understanding as the Force Disciple I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.force_disciple.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.force_disciple.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "gunslinger": {
+      "intro": {
+        "id": "pr.gunslinger.q2.intro",
+        "text": "You did not get this far with a pretty holster alone. Go on, tell me what you actually rely on. Good aim? Fast thinking? A little luck that you have learned not to waste? Which one comes with you?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1632,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.gunslinger.q2.question",
+        "text": "What strength from your earlier training should define the Gunslinger you become?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1634,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.gunslinger.q2.connective",
+        "text": "I want to carry that into the way I handle a fight as the Gunslinger I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.gunslinger.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.gunslinger.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "jedi_knight": {
+      "intro": {
+        "id": "pr.jedi_knight.q2.intro",
+        "text": "You have not reached this threshold by learning a single lesson. Whatever discipline you choose to deepen, the strengths you have already cultivated remain yours. Which of them should shape your Knighthood?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 479,
+          "anchor": "14.2 Miraj - new fixed Q2 Mentor introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.jedi_knight.q2.question",
+        "text": "Which strength you have already developed should most influence the Jedi Knight you wish to become?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 483,
+          "anchor": "14.2 Miraj - new fixed Q2 Mentor introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.jedi_knight.q2.connective",
+        "text": "I want to carry that into the way I approach service as the Jedi Knight I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.jedi_knight.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.jedi_knight.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "jedi_master": {
+      "intro": {
+        "id": "pr.jedi_master.q2.intro",
+        "text": "Mastery does not erase the choices that brought you here. Some lessons remain with us because we have learned to trust them; others because we still question them. Which part of your training will you carry into the responsibility you now choose?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1230,
+          "anchor": "28.2 Miraj — fixed Q2 Mentor introduction (DRAFT)"
+        }
+      },
+      "question": {
+        "id": "pr.jedi_master.q2.question",
+        "text": "Which established strength do you want to carry into your service as a Jedi Master?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1232,
+          "anchor": "28.2 Miraj — fixed Q2 Mentor introduction (DRAFT)"
+        }
+      },
+      "connective": {
+        "id": "pr.jedi_master.q2.connective",
+        "text": "I want to carry that into the way I approach teaching and counsel as the Jedi Master I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.jedi_master.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.jedi_master.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "officer": {
+      "intro": {
+        "id": "pr.officer.q2.intro",
+        "text": "Authority is only as useful as the judgment behind it. Your earlier training does not disappear when you take on this responsibility. Which of those strengths will determine how you lead?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1144,
+          "anchor": "27.2 Admiral Korr — fixed Q2 Mentor introduction (DRAFT)"
+        }
+      },
+      "question": {
+        "id": "pr.officer.q2.question",
+        "text": "Which strength from your existing training should most influence the Officer you intend to become?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1146,
+          "anchor": "27.2 Admiral Korr — fixed Q2 Mentor introduction (DRAFT)"
+        }
+      },
+      "connective": {
+        "id": "pr.officer.q2.connective",
+        "text": "I want to carry that into the way I approach leadership as the Officer I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.officer.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.officer.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "sith_apprentice": {
+      "intro": {
+        "id": "pr.sith_apprentice.q2.intro",
+        "text": "You carry habits that kept you alive. Some made you strong. Others made you predictable. Decide which strength you intend to sharpen. Do not confuse an old weakness with an obligation to remain weak.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1709,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.sith_apprentice.q2.question",
+        "text": "Which strength you already possess will you make central to your Sith training?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1711,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.sith_apprentice.q2.connective",
+        "text": "I want to carry that into the way I approach training as the Sith Apprentice I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.sith_apprentice.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.sith_apprentice.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "sith_lord": {
+      "intro": {
+        "id": "pr.sith_lord.q2.intro",
+        "text": "You have assembled the means to reach this station. That is evidence of power, not proof of purpose. Consider what you already command within yourself. Which strength will you make the foundation of your authority?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 866,
+          "anchor": "21.2 Darth Miedo fixed Q2 Mentor introduction (new editorial draft)"
+        }
+      },
+      "question": {
+        "id": "pr.sith_lord.q2.question",
+        "text": "Which part of your established training do you want to define your power as a Sith Lord?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 868,
+          "anchor": "21.2 Darth Miedo fixed Q2 Mentor introduction (new editorial draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.sith_lord.q2.connective",
+        "text": "I want to carry that into the way I approach power and command as the Sith Lord I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.sith_lord.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.sith_lord.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "corporate_agent": {
+      "intro": {
+        "id": "pr.corporate_agent.q2.intro",
+        "text": "Corporate credentials. Lovely. They tell me who signed a form, not whether you know how to get anything done. What do you actually bring to the position? Try answering without a slogan.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1782,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.corporate_agent.q2.question",
+        "text": "Which capability from your existing experience should guide how you exercise corporate authority?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1784,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.corporate_agent.q2.connective",
+        "text": "I want to carry that into the way I work in corporate and business settings as the Corporate Agent I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.corporate_agent.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.corporate_agent.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "gladiator": {
+      "intro": {
+        "id": "pr.gladiator.q2.intro",
+        "text": "I have watched a thousand fighters arrive with a new title. What matters is what they bring with them when the crowd goes quiet. Your old strengths have not vanished. Which one should guide your next contest?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1891,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.gladiator.q2.question",
+        "text": "Which experience already developed should define your fighting style as a Gladiator?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1893,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.gladiator.q2.connective",
+        "text": "I want to carry that into the way I face combat before an audience as the Gladiator I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.gladiator.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.gladiator.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "melee_duelist": {
+      "intro": {
+        "id": "pr.melee_duelist.q2.intro",
+        "text": "Before you perfect a technique, consider what remains reliable when its first attempt fails. Your stance, timing, and judgment began somewhere. Which established strength will you refine into your discipline?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1965,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.melee_duelist.q2.question",
+        "text": "Which previously developed skill should become the foundation of your dueling discipline?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 1967,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.melee_duelist.q2.connective",
+        "text": "I want to carry that into the way I fight up close as the Melee Duelist I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.melee_duelist.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.melee_duelist.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "enforcer": {
+      "intro": {
+        "id": "pr.enforcer.q2.intro",
+        "text": "The uniform or the badge is not the point. When an arrest goes wrong, you fall back on what you can actually do. Which strength will you trust when someone refuses to cooperate?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2038,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.enforcer.q2.question",
+        "text": "Which part of your existing training should guide how you enforce your decisions?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2040,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.enforcer.q2.connective",
+        "text": "I want to carry that into the way I handle enforcement work as the Enforcer I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.enforcer.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.enforcer.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "independent_droid": {
+      "intro": {
+        "id": "pr.independent_droid.q2.intro",
+        "text": "<Analysis: New designation, existing capabilities.> Some routines are worth retaining. Even the boring ones. Which will you keep because you choose to?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 573,
+          "anchor": "15.2 Seraphim - fixed Q2 introduction (new draft)"
+        }
+      },
+      "question": {
+        "id": "pr.independent_droid.q2.question",
+        "text": "Which strength from your existing systems and training do you want to make part of the independent droid you choose to become?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 577,
+          "anchor": "15.2 Seraphim - fixed Q2 introduction (new draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.independent_droid.q2.connective",
+        "text": "I want to carry that into the way I make my own choices as the Independent Droid I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.independent_droid.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.independent_droid.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "infiltrator": {
+      "intro": {
+        "id": "pr.infiltrator.q2.intro",
+        "text": "Everybody loves a clever entrance. Getting out without a mess is usually harder. Your skills brought you this far. Which one do you want to trust when the plan gets ugly?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2113,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.infiltrator.q2.question",
+        "text": "Which earlier skill do you want to remain central to your work as an Infiltrator?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2115,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.infiltrator.q2.connective",
+        "text": "I want to carry that into the way I approach covert work as the Infiltrator I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.infiltrator.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.infiltrator.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "master_privateer": {
+      "intro": {
+        "id": "pr.master_privateer.q2.intro",
+        "text": "A fine ship cannot replace judgment, and a fine reputation cannot steer you clear of trouble. You have experience that brought you to this threshold. Which part deserves a place at the helm of your next decision?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2188,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "question": {
+        "id": "pr.master_privateer.q2.question",
+        "text": "Which strength from your earlier career will you bring into your privateering identity?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2190,
+          "anchor": "Mentor Q2 introduction (draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.master_privateer.q2.connective",
+        "text": "I want to carry that into the way I approach raiding and ship command as the Master Privateer I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.master_privateer.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.master_privateer.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "medic": {
+      "intro": {
+        "id": "pr.medic.q2.intro",
+        "text": "You don't reach this kind of training without learning a few useful things first. Some of them have nothing to do with a medkit. That's fine. When the situation gets ugly, you use what you've got. Which part of your experience do you want to keep relying on?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 795,
+          "anchor": "20.2 Kyber fixed Q2 Mentor introduction (new editorial draft)"
+        }
+      },
+      "question": {
+        "id": "pr.medic.q2.question",
+        "text": "Which strength you've already developed do you want to bring into your work as a Medic?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 797,
+          "anchor": "20.2 Kyber fixed Q2 Mentor introduction (new editorial draft)"
+        }
+      },
+      "connective": {
+        "id": "pr.medic.q2.connective",
+        "text": "I want to carry that into the way I approach caring for others as the Medic I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.medic.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.medic.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "saboteur": {
+      "intro": {
+        "id": "pr.saboteur.q2.intro",
+        "text": "Oh, this part is fun. You have got training, habits, and a few ways of solving problems already. Good sabotage is knowing exactly which one to use before you touch the system. Which strength are you bringing to the workbench?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2298,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.saboteur.q2.question",
+        "text": "Which established skill will give your sabotage its particular precision?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2300,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.saboteur.q2.connective",
+        "text": "I want to carry that into the way I approach sabotage as the Saboteur I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.saboteur.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.saboteur.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "outlaw": {
+      "intro": {
+        "id": "pr.outlaw.q2.intro",
+        "text": "A wanted notice tells you what the authorities think. Boring reading. Your actual skills tell me how you might stay free. Which part of what you already know are you going to trust when the exits start disappearing?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2373,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.outlaw.q2.question",
+        "text": "Which strength you have already developed should shape how you keep your freedom?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2375,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.outlaw.q2.connective",
+        "text": "I want to carry that into the way I approach staying free as the Outlaw I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.outlaw.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.outlaw.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "droid_commander": {
+      "intro": {
+        "id": "pr.droid_commander.q2.intro",
+        "text": "<Assessment: Class eligibility observed.> Qualification describes permitted advancement, not command competence. Existing routines and training provide better evidence. Identify the capability you intend to retain as your command protocols advance.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2447,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.droid_commander.q2.question",
+        "text": "Which verified operational strength should underpin your droid command?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2449,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.droid_commander.q2.connective",
+        "text": "I want to carry that into the way I coordinate droids and teams as the Droid Commander I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.droid_commander.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.droid_commander.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "military_engineer": {
+      "intro": {
+        "id": "pr.military_engineer.q2.intro",
+        "text": "A machine has a failure point. So does an operation. Your record indicates several possible responses, but an engineer must know which methods can be trusted. Which of your established skills belongs at the center of this work?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2520,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.military_engineer.q2.question",
+        "text": "Which existing technical strength should define your battlefield engineering?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2522,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.military_engineer.q2.connective",
+        "text": "I want to carry that into the way I build and repair as the Military Engineer I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.military_engineer.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.military_engineer.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "vanguard": {
+      "intro": {
+        "id": "pr.vanguard.q2.intro",
+        "text": "The warning that reaches home matters more than the brave stand nobody hears about. You have earned a place forward of the line. Which strength from your earlier training will help you see the danger, survive it, and report it?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2594,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.vanguard.q2.question",
+        "text": "Which strength from your established training should guide your forward reconnaissance?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2596,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.vanguard.q2.connective",
+        "text": "I want to carry that into the way I scout ahead as the Vanguard I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.vanguard.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.vanguard.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "martial_arts_master": {
+      "intro": {
+        "id": "pr.martial_arts_master.q2.intro",
+        "text": "A student may learn a form. A master must also learn which part of the self gives that form meaning. Look to the discipline you have already earned. Which strength will you allow to guide the hand when there is no weapon in it?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2669,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.martial_arts_master.q2.question",
+        "text": "Which proven discipline should shape your mastery of the empty hand?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2671,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.martial_arts_master.q2.connective",
+        "text": "I want to carry that into the way I approach martial discipline as the Martial Arts Master I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.martial_arts_master.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.martial_arts_master.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "imperial_knight": {
+      "intro": {
+        "id": "pr.imperial_knight.q2.intro",
+        "text": "An oath sets the direction of your service. It does not tell me which discipline you have relied upon to reach it. Consider what your training has actually taught you. What will you carry into the duties of an Imperial Knight?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2795,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.imperial_knight.q2.question",
+        "text": "Which established strength do you want to bring into your service as an Imperial Knight?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2797,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.imperial_knight.q2.connective",
+        "text": "I want to carry that into the way I approach duty as the Imperial Knight I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.imperial_knight.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.imperial_knight.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "shaper": {
+      "intro": {
+        "id": "pr.shaper.q2.intro",
+        "text": "Every living design begins with what its maker already understands. Sometimes that knowledge comes from healing. Sometimes from a failed repair. Which part of your actual training will shape the work you do now?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2869,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.shaper.q2.question",
+        "text": "Which established discipline do you want to bring into your work with living technology?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2871,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.shaper.q2.connective",
+        "text": "I want to carry that into the way I shape living technology as the Shaper I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.shaper.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.shaper.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "assassin": {
+      "intro": {
+        "id": "pr.assassin.q2.intro",
+        "text": "Yeah, the title sounds impressive. It also tells me almost nothing about how you work. So forget the reputation for a second. Which of the skills you actually brought here is the one you're counting on?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2944,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.assassin.q2.question",
+        "text": "Which strength from your existing training should guide your work as an Assassin?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 2946,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.assassin.q2.connective",
+        "text": "I want to carry that into the way I approach precise, deliberate work as the Assassin I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.assassin.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.assassin.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "charlatan": {
+      "intro": {
+        "id": "pr.charlatan.q2.intro",
+        "text": "Oh, I know what you'd like people to believe about you. That's the easy part. I'm more interested in which of your old skills you trust when the smile stops working. What are you taking with you?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 3018,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.charlatan.q2.question",
+        "text": "Which strength you have already developed should shape your work as a Charlatan?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 3020,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.charlatan.q2.connective",
+        "text": "I want to carry that into the way I approach persuasion and illusion as the Charlatan I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.charlatan.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.charlatan.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "improviser": {
+      "intro": {
+        "id": "pr.improviser.q2.intro",
+        "text": "All right, look at what you've already got. That is the good stuff: the habits you rely on when the parts are wrong and the clock is worse. Which one are you bringing into this new line of work?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 3092,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.improviser.q2.question",
+        "text": "Which existing skill should guide how you solve problems as an Improviser?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 3094,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.improviser.q2.connective",
+        "text": "I want to carry that into the way I solve problems as the Improviser I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.improviser.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.improviser.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    },
+    "pathfinder": {
+      "intro": {
+        "id": "pr.pathfinder.q2.intro",
+        "text": "I've seen people mistake confidence for knowing the ground. The useful part is what your training actually lets you notice and do. Which of those strengths are you going to rely on when others need a safe way through?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 3166,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "question": {
+        "id": "pr.pathfinder.q2.question",
+        "text": "Which established strength should shape the routes and safe positions you create as a Pathfinder?",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "line": 3168,
+          "anchor": "Proposed Mentor Q2 introduction"
+        }
+      },
+      "connective": {
+        "id": "pr.pathfinder.q2.connective",
+        "text": "I want to carry that into the way I find a way forward as the Pathfinder I am becoming.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "origin": "owner-authorized drafting pass (MSV-RD-014)",
+          "file": "tools/mentor-survey/prestige-q2-connectives.mjs"
+        }
+      },
+      "alternative": {
+        "id": "pr.pathfinder.q2.alt",
+        "kind": "alternative",
+        "text": "I want to explore a different way my previous training could connect with this new role.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (E alternative emphasis); wording adapted from the owner-approved multiclass E (MSV-RD-014)"
+        }
+      },
+      "undecided": {
+        "id": "pr.pathfinder.q2.undecided",
+        "kind": "undecided",
+        "text": "I'm not sure yet which part of my experience I want to build on.",
+        "editorialStatus": "draft_text",
+        "mechanicsStatus": "none",
+        "sourceRef": {
+          "commit": "228a7dc01e75d926728b7f015cac4ec66bdd15b7",
+          "file": "docs/design/SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+          "anchor": "section 3.2 items 6-7 (F undecided); wording is the owner-approved multiclass F (MSV-RD-014)"
+        }
+      }
+    }
+  }
+}

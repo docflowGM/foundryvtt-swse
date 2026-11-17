@@ -147,6 +147,11 @@ export function getBiasTagsFromMentor(mentorBiases = {}) {
 
 export function getBiasTagsFromIdentity(identityBias = {}) {
   const out = {};
+  // Survey channel (event-decayed, certified-tag-only, bounded; see mentor-survey-v2/survey-influence.js). Ontology
+  // tags are used as-is and max-merged like every other source, so event count cannot stack past the channel bound.
+  for (const [tag, value] of Object.entries(identityBias.surveyTagAffinity || {})) {
+    if (value > 0) out[tag] = Math.max(out[tag] || 0, Number(value) || 0);
+  }
   for (const [key, value] of Object.entries(identityBias.mechanicalBias || {})) {
     if (!value) continue;
     for (const tag of MECHANICAL_BIAS_TO_TAGS[key] || []) {

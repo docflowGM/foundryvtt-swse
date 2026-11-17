@@ -90,7 +90,7 @@ export function validateIdentityEngine() {
             'computeClassBias',
             'computePrestigeBias',
             'computeObservedBehaviorBias',
-            'computeSurveyBias',
+            'computeSurveyTagAffinity',
             'computeReinforcement',
             'getActorIdentity'
         ];

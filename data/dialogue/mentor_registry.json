@@ -185,6 +185,12 @@
       "display_name": "Master Zhen",
       "aliases": [],
       "dialogue_path": "data/dialogue/mentors/zhen/zhen_dialogue.json"
+    },
+    "kharjo": {
+      "mentor_id": "m31",
+      "display_name": "Blade Master Kharjo",
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/kharjo/kharjo_dialogue.json"
     }
   }
 }

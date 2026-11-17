@@ -398,10 +398,10 @@ export class V2ComprehensiveAudit {
   async _auditSurveyImplementations() {
     console.log('Phase 6: Survey Implementation Audit');
 
-    const surveyFiles = [
-      'scripts/apps/mentor/mentor-survey.js',
-      'scripts/mentor/mentor-survey.js'
-    ];
+    // The legacy survey app shims (scripts/apps/mentor/mentor-survey.js, scripts/mentor/mentor-survey.js) were deleted in the
+    // mentor-survey V2 cutover. V2 surveys are progression steps that never mutate actors directly (the finalizer commits
+    // them), and tests/mentor-survey-*.test.mjs enforces that, so there are no survey app files left to audit here.
+    const surveyFiles = [];
 
     for (const filePath of surveyFiles) {
       this.stats.filesScanned++;

@@ -20,6 +20,10 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
+import { computeSurveyInfluence } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/survey-influence.js";
+import { readLedger } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/intent-ledger.js";
+import { projectActorEvidence, canonicalIdOf } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/actor-evidence.js";
+import { revisionOf } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/contract.js";
 import { buildEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 
 export class IdentityEngine {
@@ -81,9 +85,8 @@ export class IdentityEngine {
             attributeBias: {}
         };
 
-        // Layer 1: SurveyBias (decaying)
-        const surveyBias = this.computeSurveyBias(actor);
-        this.#addBias(totalBias, surveyBias);
+        // Layer 1 (legacy shared-decay SurveyBias) is retired. Survey influence is event-based and tag-scoped:
+        // see surveyTagAffinity below and scripts/mentor/mentor-survey-v2/survey-influence.js.
 
         // Layer 2: ClassChassisBias (Saga mechanics: BAB, HD, defense tier, skill breadth)
         const classChassisBias = this.computeClassChassisBias(actor);
@@ -116,6 +119,9 @@ export class IdentityEngine {
         // Layer 9: ReinforcementBias
         const reinforcementBias = this.computeReinforcement(actor);
         this.#addBias(totalBias, reinforcementBias);
+
+        // Survey channel: bounded, per-event decayed, certified-tag-only affinity (ranking signal; never eligibility).
+        totalBias.surveyTagAffinity = this.computeSurveyTagAffinity(actor);
 
         return totalBias;
     }
@@ -585,46 +591,17 @@ export class IdentityEngine {
     }
 
     /**
-     * Compute SurveyBias with decay
-     * Pure function
-     *
-     * @param {Object} actor - Foundry actor
-     * @returns {Object} SurveyBias
+     * Survey channel for the Suggestion Engine: { [ontologyTag]: weight }.
+     * Computed from the actor's immutable survey event ledger; each completed survey decays on its own half-life.
+     * Returns {} until certified answer-to-tag mappings exist. Replaces the legacy shared-decay computeSurveyBias.
+     * @param {Object} actor
+     * @returns {Record<string, number>}
      */
-    static computeSurveyBias(actor) {
-        const surveyBias = {
-            mechanicalBias: {},
-            roleBias: {},
-            attributeBias: {}
-        };
-
-        // Get survey bias from actor (if stored).
-        // L1 survey bias lives in system.swse.surveyBias.
-        // Completed base-class survey bias lives separately so it layers on top
-        // of, rather than replaces, the original L1 identity signal.
-        const rawSurveyBias = actor.system?.swse?.surveyBias || {};
-        const classSurveyBias = actor.system?.swse?.classSurveyBias || {};
-        if ((!rawSurveyBias || Object.keys(rawSurveyBias).length === 0)
-            && (!classSurveyBias || Object.keys(classSurveyBias).length === 0)) {
-            return surveyBias;
-        }
-
-        this.#addBias(surveyBias, rawSurveyBias);
-        this.#addBias(surveyBias, classSurveyBias);
-
-        // Calculate totalLevel from BASE CLASSES ONLY (exclude prestige)
-        const classes = actor.system?.classes || {};
-        let totalLevel = 0;
-        for (const [className, classData] of Object.entries(classes)) {
-            if (!this.#isPrestigeClass(className)) {
-                totalLevel += classData.level || 0;
-            }
-        }
-        totalLevel = Math.max(1, totalLevel);
-
-        const surveyWeight = Math.max(0.175, 1 - (totalLevel / 20));
-
-        return this.#scaleAllBias(surveyBias, surveyWeight);
+    static computeSurveyTagAffinity(actor) {
+        const events = readLedger(actor);
+        if (!events.length) return {};
+        const level = projectActorEvidence(actor).characterLevel || Number(actor?.system?.level) || 1;
+        return computeSurveyInfluence(events, level).suggestionTags;
     }
 
     /**
@@ -672,6 +649,82 @@ export class IdentityEngine {
         this.#addBias(behaviorBias, skillBias);
 
         return behaviorBias;
+    }
+
+    /**
+     * READ-ONLY provenance for the observed mechanical bias (Mentor survey Q2). It reuses this engine's own helpers and
+     * registries and adds no scoring. Ranking (computeObservedBehaviorBias) chooses among candidate strengths; this method
+     * only says which ACTOR FACTS may authorize a player-facing statement about a key. It fails closed:
+     *
+     *  - a rule counts only if its owning item is not disabled (`system.disabled`), the rule is always active
+     *    (a conditional or situational rule is listed under `excluded.conditional`), and the primitive maps through a
+     *    SPECIFIC registry entry (a target or type mapping), never the generic `default` fallback;
+     *  - `featGrant` recursion is not followed (the granted feat is its own owned item);
+     *  - a trained skill counts only through an EXPLICIT skill-bias registry entry, never the generic default, so an
+     *    unrelated trained skill is not proof of a specific capability;
+     *  - ability-score contributions are tendencies only (`attributes`), never evidence of past training.
+     *
+     * Shapes (exact source identifiers retained):
+     *   items:      { key: [{ itemId, type, name, canonicalId, certified, ruleType, specificity }] }
+     *   skills:     { key: [{ skillKey, canonicalId: 'skill:<key>', trained: true, skillFocus }] }
+     *   attributes: { key: true }
+     *   excluded:   { conditional: n, defaultMapping: n, disabled: n }
+     *   snapshot:   revision hash of the above (changes whenever the evidence does)
+     *
+     * @param {Object} actor
+     */
+    static computeObservedBehaviorBiasProvenance(actor) {
+        const out = { items: {}, skills: {}, attributes: {}, excluded: { conditional: 0, defaultMapping: 0, disabled: 0 }, snapshot: null };
+        if (!this.#primitiveMapping) { out.snapshot = revisionOf(out); return out; }
+        const seen = new Set();
+        for (const item of actor?.items || []) {
+            const rules = Array.isArray(item?.system?.rules) ? item.system.rules : [];
+            if (!rules.length) continue;
+            if (item.system?.disabled === true) { out.excluded.disabled += 1; continue; }
+            const ids = canonicalIdOf(item);
+            for (const rule of rules) {
+                if (!rule?.type || rule.type === 'featGrant') continue;
+                const contributed = this.#processPrimitive(rule, actor, new Set()).mechanicalBias || {};
+                if (!this.#isAlwaysActive(rule)) { if (Object.keys(contributed).length) out.excluded.conditional += 1; continue; }
+                const specificity = this.#primitiveSpecificity(rule.type, rule);
+                for (const [key, value] of Object.entries(contributed)) {
+                    if (!(Number(value) > 0)) continue;
+                    if (specificity === 'default') { out.excluded.defaultMapping += 1; continue; }
+                    const dedupe = `${item.id ?? item._id ?? item.name}|${key}|${rule.type}`;
+                    if (seen.has(dedupe)) continue; // duplicated primitives on one item count once
+                    seen.add(dedupe);
+                    (out.items[key] ||= []).push({ itemId: item.id ?? item._id ?? null, type: item.type, name: item.name, canonicalId: ids.canonicalId, certified: ids.certified, ruleType: rule.type, specificity });
+                }
+            }
+        }
+        for (const [k, v] of Object.entries(this.#computeAttributeBias(actor).mechanicalBias || {})) if (Number(v) > 0) out.attributes[k] = true;
+        if (this.#skillBiasMapping) {
+            const focus = new Set();
+            for (const item of actor?.items || []) {
+                if (item?.type === 'feat' && /skill focus/i.test(item.name || '') && item.system?.disabled !== true) { const m = /\(([^)]+)\)/.exec(item.name); if (m) focus.add(m[1].toLowerCase()); }
+            }
+            for (const [skillKey, data] of Object.entries(actor?.system?.skills || {})) {
+                if (!data?.trained) continue;
+                const reg = this.#normalizeSkillKey(skillKey);
+                const specific = this.#skillBiasMapping[reg];
+                if (!specific) { out.excluded.defaultMapping += 1; continue; } // generic fallback only: not proof of a capability
+                for (const [key, value] of Object.entries(specific.mechanicalBias || {})) {
+                    if (typeof value === 'number' && value > 0) (out.skills[key] ||= []).push({ skillKey, canonicalId: `skill:${skillKey}`, trained: true, skillFocus: focus.has(reg) });
+                }
+            }
+        }
+        out.snapshot = revisionOf({ items: out.items, skills: out.skills, attributes: out.attributes });
+        return out;
+    }
+
+    /** How specifically a primitive maps: 'target' (a rule.target entry), 'type' (a type-level mapping) or 'default' (generic fallback for an unmapped skill/target). Mirrors #getPrimitiveMapping's branches; no arithmetic. */
+    static #primitiveSpecificity(ruleType, rule) {
+        const typeMapping = this.#primitiveMapping?.[ruleType];
+        const map = typeMapping?.mapping;
+        if (!map || typeof map !== 'object') return 'default';
+        if (rule.skillId && map.default) return 'default'; // any skill maps to the same generic entry
+        if (rule.target) return map[rule.target] ? 'target' : 'default';
+        return 'type';
     }
 
     /**
@@ -947,7 +1000,7 @@ export class IdentityEngine {
      * @returns {Object} Mapped bias: { mechanicalBias, roleBias, attributeBias }
      */
     static #processPrimitive(rule, actor, processedFeats = new Set()) {
-        const bias = {
+        let bias = {
             mechanicalBias: {},
             roleBias: {},
             attributeBias: {}
@@ -1605,78 +1658,5 @@ export class IdentityEngine {
 
         // Return mapped variation or lowercase normalized form
         return variations[normalized] || normalized;
-    }
-
-    /**
-     * Inject survey bias into an actor's identity layer
-     * This replaces any existing survey bias and triggers recomputation
-     *
-     * Does NOT mutate the actor directly - stores in system.swse.surveyBias
-     * Caller is responsible for persisting changes if needed
-     *
-     * @param {Object} actor - Foundry actor (will have survey bias added to system data)
-     * @param {Object} biasObject - Survey bias object { mechanicalBias, roleBias, attributeBias }
-     * @returns {Object} Updated totalBias after injection
-     */
-    static injectSurveyBias(actor, biasObject = {}) {
-        if (!actor) {
-            SWSELogger.warn('[IdentityEngine.injectSurveyBias] No actor provided');
-            return this.computeTotalBias(actor);
-        }
-
-        if (!actor.system) {
-            actor.system = {};
-        }
-        if (!actor.system.swse) {
-            actor.system.swse = {};
-        }
-
-        // Replace survey bias (not additive)
-        actor.system.swse.surveyBias = {
-            mechanicalBias: biasObject.mechanicalBias || {},
-            roleBias: biasObject.roleBias || {},
-            attributeBias: biasObject.attributeBias || {}
-        };
-
-        SWSELogger.log('[IdentityEngine.injectSurveyBias] Injected survey bias:', actor.system.swse.surveyBias);
-
-        // Return recomputed total bias
-        return this.computeTotalBias(actor);
-    }
-
-    /**
-     * Clear survey bias from an actor's identity layer
-     * This removes all survey influence and triggers recomputation
-     *
-     * Does NOT mutate the actor directly - resets system.swse.surveyBias
-     * Caller is responsible for persisting changes if needed
-     *
-     * @param {Object} actor - Foundry actor
-     * @returns {Object} Updated totalBias after clearing
-     */
-    static clearSurveyBias(actor) {
-        if (!actor) {
-            SWSELogger.warn('[IdentityEngine.clearSurveyBias] No actor provided');
-            return this.computeTotalBias(actor);
-        }
-
-        if (!actor.system) {
-            actor.system = {};
-        }
-        if (!actor.system.swse) {
-            actor.system.swse = {};
-        }
-
-        // Clear survey bias
-        actor.system.swse.surveyBias = {
-            mechanicalBias: {},
-            roleBias: {},
-            attributeBias: {}
-        };
-
-        SWSELogger.log('[IdentityEngine.clearSurveyBias] Cleared survey bias for actor:', actor.id);
-
-        // Return recomputed total bias
-        return this.computeTotalBias(actor);
     }
 }

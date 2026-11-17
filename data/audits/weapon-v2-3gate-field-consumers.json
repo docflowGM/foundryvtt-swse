@@ -1186,8 +1186,6 @@
         "scripts/generation/npc/npc-flavor.js",
         "scripts/governance/actor-engine/actor-engine.js",
         "scripts/holonet/holonet-manager.js",
-        "scripts/mentor/mentor-survey/definitions/L1_Soldier_Survey.js",
-        "scripts/mentor/mentor-survey/definitions/PrC_Master_Privateer_Survey.js",
         "scripts/migration/active-ability-migration.js",
         "scripts/sheets/v2/HelpModeManager.js",
         "scripts/sheets/v2/character-like-sheet.js",

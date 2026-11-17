@@ -213,7 +213,7 @@ export function buildAttributePlanningProfile({ actor = null, pendingData = {}, 
   const abilityWeights = emptyAbilityMap(0, allowedAbilities);
   const species = getSpeciesSource(shell, pendingData);
   const speciesMods = extractSpeciesMods(shell, pendingData);
-  const surveyBias = pendingData?.mentorBiases || actor?.system?.swse?.mentorBuildIntentBiases || {};
+  const surveyBias = pendingData?.mentorBiases || {};
   const classSelection = pendingData?.selectedClass || pendingData?.classes?.[0] || shell?.progressionSession?.getSelection?.('class') || null;
   const classModel = resolveClassModel(classSelection);
   const classSkills = getClassSkills(classModel);

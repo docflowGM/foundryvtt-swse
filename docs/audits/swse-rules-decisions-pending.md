@@ -3179,3 +3179,374 @@ Source document: `docs/audits/SWSE_Galactic_Profiles_v3_Unification_Audit.md`. E
 - **Revision 68 (2026-11-17):** appended GP-RD-015 … GP-RD-017 and a GP-RD-005 evidence note from the hardening pass.
 
 - **Revision 67 (2026-11-17):** appended GP-RD-012 … GP-RD-014, found while implementing Galactic Profiles v3 (identity gaps in authored data; nothing was guessed).
+## Mentor Survey V2 register (`MSV-RD-###`) — appended 2026-11-15
+
+Independent register for the survey cutover (see `docs/design/mentor-survey-v2/`). Append-only; resolutions are recorded in each entry's *Resolution* field with date and implementing commit. Decision authority: project owner. Recommended ruling: none.
+
+## MSV-RD-001 — Level 1 Q2 career ranking (which careers fill A/B/C/D/E and page order)
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / L1 Q2 ranking |
+| Feature | Level 1 Q2 career ranking (which careers fill A/B/C/D/E and page order) |
+| Source | L1 rolling design v0.19 §12 (branch `docs/l1-adaptive-mentor-survey-q1-q5-20261113`) |
+| Evidence | Approved: A/B come preferentially from the class's four listed anchor careers; C/D/E are the three highest-ranked remaining parents irrespective of class route; F pages the next five never-shown parents. The design states that ranking coefficients, tie-breaks and Q1/species/attribute weighting are not approved. |
+| Confirmed behavior | Layout, anchors, no-repeat paging, zero intent from browsing. |
+| Unresolved question | How candidates are ranked: the relative weight of class, Q1 answer, species, attributes, and which two anchors become A/B. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Implemented ordering uses **no relevance claim**: A/B are the first two anchors in the printed §12.1 table order; C/D/E and all later pages follow ascending canonical parent ID. Replacing the ordering function is a one-function change; page/anchor/no-repeat logic is unchanged. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-002 — Level 1 Q4 child-specialization ranking driven by the Q3 answer's semantic tags
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / L1 Q4 personalization |
+| Feature | Level 1 Q4 child-specialization ranking driven by the Q3 answer's semantic tags |
+| Source | L1 rolling design v0.19, v0.18 checkpoint (P0) |
+| Evidence | Owner-approved: when a parent has more than five applicable children, the Q3 answer and its certified tags are the strongest ranking signal, matched to child primary then supporting tags. Blocking prerequisite P0: all 150 Q3 responses must first be mapped to members of the frozen 190-tag ontology; "Do not enable tag-based Q4 child personalization until this gate passes." |
+| Confirmed behavior | Q4 scenario selection by exact Q2 parent; Q3 never changes it; five-per-page composition; no repeats; no intent from paging. |
+| Unresolved question | How to rank >5 children before the P0 mapping exists. Answer-to-tag mapping is excluded from the current work by owner directive. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Tag-driven Q4 child ranking is **blocked**. Children and method backfill are ordered by canonical ID (no relevance claim). Nine parents have more than five children and are paged. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-003 — Multiclass Q5 (Next Milestone) content and mapping of the five milestone purposes
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q5 |
+| Feature | Multiclass Q5 (Next Milestone) content and mapping of the five milestone purposes |
+| Source | Multiclass rolling design v0.11, Q5 sections (branch `design/multiclass-mentor-survey-q1-q6-v011`) |
+| Evidence | Q5 is recorded as "PROPOSAL, NOT YET OWNER-APPROVED". 500 first-person templates (100 Q1 routes × 5 purposes) were authored as editorial drafts. The `career_continuity` and `prepare_future_route` purposes depend on declared-goal and verified-route facts. |
+| Confirmed behavior | Question purpose (a realistic next step, not a career election); undecided carries no weight; unselected alternatives are not goals. |
+| Unresolved question | Whether the Q5 design and its 500 templates are approved for players. |
+| Options | Approve as written; approve with edits; replace. |
+| Recommended ruling | None |
+| Implementation impact | Q5 content is imported as `draft_text` and is playable only under the editorial-preview setting. The multiclass survey is withheld for players until the owner releases it. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-004 — Which origin class keys the Q1/Q2 banks when a character already holds two or more other foundation classes
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q1 origin keying |
+| Feature | Which origin class keys the Q1/Q2 banks when a character already holds two or more other foundation classes |
+| Source | Multiclass rolling design v0.11 (Q1 origin-variant banks) |
+| Evidence | Q1 answers are authored per directed (origin, destination) pair: 20 transitions. The document states that multiclass with 3+ existing foundation classes must still work but does not say which origin class selects the bank. |
+| Confirmed behavior | 20 directed pairs, destination Mentor narrates. |
+| Unresolved question | Which origin (most recent, highest level, all, a blended set, or none) is used for characters with 2+ other foundation classes. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | The multiclass survey is withheld (skipped, fail-closed) for characters with 2+ other foundation classes. No origin is chosen by the implementation. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-005 — Prestige Q1 initial answer count, rotation, history-aware ordering and weights
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q1 slate policy |
+| Feature | Prestige Q1 initial answer count, rotation, history-aware ordering and weights |
+| Source | Prestige rolling design v0.26 §39.2, §39.4-D, §39.5 |
+| Evidence | Q1 is a class-discovery conversation drawn from per-class banks (1,293 route IDs). The design states: "No answer count, rotation, weighting, archetype target, or tag transformation is approved" and lists the slate/browse policy as requiring owner approval; also that the complete bank is not a mandate to render hundreds of controls. |
+| Confirmed behavior | Class-discovery purpose; neutral and capstone options exist for every class; selection never grants a mechanic or goal. |
+| Unresolved question | The initial number of answers shown, whether/how they rotate, and any ordering by history. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Implemented as a neutral, complete, deterministic browse (five per page in canonical ID order, no repeats, every route reachable) with no ordering claim. Prestige remains withheld for players pending sign-off (§39.5). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-006 — Class talent-tree access for Charlatan, Jedi Master, Sith Lord and Independent Droid
+
+| Field | |
+|---|---|
+| Rules domain | Prestige class / talent tree access |
+| Feature | Which talent trees each class may select class talents from |
+| Source | Scum and Villainy (Charlatan, printed pp. 30-31); Core Rulebook pp. 219-220 (Jedi Master) and 223-224 (Sith Lord); The Force Unleashed Campaign Guide pp. 46-47 (Independent Droid) |
+| Evidence | The prestige design record states that printed Charlatan access includes the Fortune tree while the repository lists Disgrace and Trickery only; that Jedi Master and Sith Lord may select from an eligible general Force talent tree under their class text while the repository lists Duelist and Sith only; and the repository's class pack lists three Independent Droid trees (Autonomy, Specialized Droid, Elite Droid) while the class-tree bindings file lists two. The sourcebook OCR for these pages is unreadable in this environment and the PDFs are not in the repository, so these statements could not be re-verified against print. |
+| Confirmed behavior | The repository's class pack, bindings file and generated registry are internally recorded as listed above. `packs/classes.db` is a frozen protected baseline. |
+| Unresolved question | What the printed tree list is for each class, and which repository authority (class pack, bindings file, registry) is to be corrected. |
+| Options | Source-supported options depend on the printed pages; none can be stated here. |
+| Recommended ruling | None |
+| Implementation impact | Survey answer records that depend on a Fortune-tree, general-Force-tree or Elite Droid talent are `unverified_mechanic` and are never offered as mechanics-driven options. No pack edit was made. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-007 — Multiclass Q2 (Build Integration) inputs
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q2 |
+| Feature | Multiclass Q2 (Build Integration) inputs |
+| Source | Multiclass rolling design v0.11 (Q2 contract, 625-answer library) |
+| Evidence | Q2 is specified as: four answers each joining a current-build strength (read from the existing Suggestion Engine's top four scores) with a certified `q1_focus` noun phrase for the player's Q1 answer, plus an E (alternate direction) and an F (not sure) answer. The committed design contains the 625 sentence templates with a `{{q1_focus}}` slot, but no `q1_focus` phrase for any of the 100 Q1 answers, only illustrative E/F text, and it states that a ready-made top-four accessor was not verified. |
+| Confirmed behavior | Q2 purpose and structure; answers must be grounded in verified current-build evidence; the neutral answer adds no evidence. |
+| Unresolved question | The certified `q1_focus` phrases, the Q2 E and F answer text, and which existing Suggestion Engine surface supplies the top four scored strengths. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Q2 is skipped (source-blocked) in the V2 multiclass survey. Nothing is invented. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-008 — Q4/Q5 routing when the player chooses "I'm not sure yet" in Q1
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q4 and Q5 for an undecided Q1 |
+| Feature | Q4/Q5 routing when the player chooses "I'm not sure yet" in Q1 |
+| Source | Multiclass rolling design v0.11 (Q4 route table note; Q5 library) |
+| Evidence | The design says an undecided Q1 should receive a "low-assumption scenario in the same destination class" for Q4 and "five extra destination-class fallback banks" for Q5, but no scenario is marked low-assumption and the Q5 fallback banks are not in the committed document (only in an uncommitted JSON). |
+| Confirmed behavior | Q4 and Q5 for the 100 substantive Q1 routes are fully routed. |
+| Unresolved question | Which authored Q4 scenario counts as low-assumption for each destination, and the content of the Q5 fallback banks. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Q4 and Q5 are skipped for an undecided Q1; Q3 depth still works. No route is guessed. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## MSV-RD-009 — Q5 `career_continuity` milestone and its `{declared_goal}` slot
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Multiclass Q5 career continuity |
+| Feature | Q5 `career_continuity` milestone and its `{declared_goal}` slot |
+| Source | Multiclass rolling design v0.11 (Q5 library) |
+| Evidence | 100 of the 500 Q5 templates contain a `{declared_goal}` slot that requires a grammatically suitable phrase for the player's declared goal, and the design says that when no goal exists a truthful exploration alternative should replace it. Neither a certified goal-phrase source nor the alternative text is authored. |
+| Confirmed behavior | The other four milestone kinds and the neutral answer need no goal. |
+| Unresolved question | How a declared goal becomes a grammatical phrase, and what text replaces the slot when there is no declared goal. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | The career-continuity option is withheld; players see four milestone options plus the neutral one. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-006 — PROGRESS NOTE (appended 2026-11-16; the original entry above is preserved unchanged)
+
+An independent primary-source audit was ingested: branch `audit/prestige-cross-class-tree-access-20261115` @ `76962662be0962a7b5424e57f7a6207e31b9287b`, file `docs/audits/prestige-cross-class-talent-tree-access-source-audit-2026-11-15.md`. It reports, against the printed books, that: Charlatan may select Trickery, Disgrace or Fortune (Scum and Villainy p.31) and the repository omits Fortune; Jedi Master (Core p.220), Sith Lord (Core pp.224-225) and Force Disciple (Core p.215) may take their named tree OR any eligible Force talent tree, and the repository lists only the named tree (Lightsaber Forms is not granted to Jedi Master by that sentence); Independent Droid's Elite Droid tree is printed expansion content (Scavenger's Guide to Droids pp.28-29), not spurious, and its `talentTreeIds` and `talentTreeSourceIds` arrays are positionally misaligned; Assassin and Infiltrator each hold one raw display-name string in `talent_trees`. This note changes no entry status: the correction belongs to the protected class-pack baseline owner and the project owner's ruling, and no pack was edited by the survey work. Survey content that depends on these trees remains `unverified_mechanic` until the class authority is corrected. The audit also lists open items it does not assert (additional Jedi Knight/Sith Apprentice expansion trees, Martial Arts Master and Elite Trooper supplemental trees, the Teras Kasi encoding identity), and it preserves the Sith Dark Side Score house rule as a separate owner decision.
+
+
+## MSV-RD-010 — Prestige Q5 "another career" conversation and goal declaration
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q5 and declared future goals |
+| Feature | The Discover -> Explore -> Affirm conversation that follows the "another career" purpose, and what it may declare |
+| Source | Prestige Q5 rolling editorial (conditional future career exploration authored as a proposal for Ace Pilot only); shared design v0.9 section 13 |
+| Evidence | The design says browsing another career is not a declaration and that a typed goal is declared only on an explicit affirmative choice (with separate confirmation to replace an earlier goal). The conditional branch dialogue is authored for one class (Ace Pilot) as a proposal, and no career picker content or typed target resolver is specified for the other 31 classes. |
+| Confirmed behavior | Browsing, exploring and declining declare nothing; a declared goal is never inferred; replacement needs separate confirmation. |
+| Unresolved question | How the conversation is presented for every class, which typed targets may be affirmed, and the approved wording. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Choosing the "another career" purpose records that purpose only. No prestige answer declares a goal. The goal-declaration lane exists in the ledger and is ready for the approved conversation. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-011 — Multiclass Q6 calibration answer B is not first person
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / shared Q6 reflection, calibration answers A-E |
+| Feature | Q6 answer B, the second calibration statement of the five-answer set |
+| Source | Shared design v0.9, Q6 section 9.3 (answer table); imported verbatim as `mc.q6.choice.b` |
+| Evidence | The authored sentence "Much of what you see is true, though some of it is not quite right." addresses the Mentor in second person; every other player answer is first person. |
+| Confirmed behavior | The A-E stages and their targeted B/C corrections are owner-confirmed; the answer text is design draft. |
+| Unresolved question | The owner-approved first-person wording of answer B. |
+| Options | None derivable from the sources (rewriting it would be an editorial decision). |
+| Recommended ruling | None |
+| Implementation impact | The record is flagged `editorialIssue: not_first_person` and withheld: the calibration question cannot be offered until the wording is supplied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-012 — Prestige Q1 openings and questions: which authored candidate is the player-facing text
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q1 (class discovery) |
+| Feature | The fixed Mentor opening and the Q1 question for each of the 32 prestige classes |
+| Source | Prestige rolling design v0.26, the per-class Q1 sections (for example section 13.2 Bounty Hunter, 15.2 Elite Trooper, 18.2 Gunslinger); commit `228a7dc01` |
+| Evidence | Each class section authors one "preferred" or "proposed" opening, often alternatives labeled A/B or "shorter", and a question; the design marks all of it DRAFT and states that no Mentor-specific Q1 wording is approved. |
+| Confirmed behavior | Every candidate is preserved with its source line (44 openings, 35 question lines across 32 classes). |
+| Unresolved question | Which candidate is shown to players, per class. |
+| Options | Only the candidates the sources themselves list. |
+| Recommended ruling | None |
+| Implementation impact | No candidate is chosen. Players get no Q1 until a candidate carries `selection: owner_selected`. The GM-only editorial preview shows the first candidate in source order purely so a GM can review the flow; that preview convenience is an engineering default and never reaches a player. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-013 — Prestige Q1 slate presentation and per-route quarantine flags (extends MSV-RD-005)
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q1 and Q3 |
+| Feature | How many Q1 answers are shown, which, and which routes are mechanically quarantined |
+| Source | Prestige rolling design sections 12 (slate proposal, not approved) and the Q3 library statement "specific flagged routes are preserved in the JSON" |
+| Evidence | The rolling design proposes a 6 substantive plus 1 neutral first render for one class only and marks it a proposal. The Q3 library says 24 routes in one batch carry explicit restriction or quarantine notes in a companion JSON that is not committed. |
+| Confirmed behavior | All 1,293 Q1 answers and 160 Q3 scenes are imported and their routes validate exactly. 35 rows carry quarantine or restriction markers in their own text and are never offered. |
+| Unresolved question | (a) The approved slate policy. (b) The per-route flags that exist only in the uncommitted JSON. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Q1 browses every offerable answer in source order, eight per page, with no relevance claim. Routes flagged only in the missing JSON cannot be detected and stay `unverified_mechanic`; every prestige scope stays `withheld`. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-014 — Prestige Q2 answer authoring path
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q2 (The Achievement) |
+| Feature | Per-class evidence-gated answer text for all 32 prestige classes |
+| Source | `SWSE_Prestige_Survey_Q2_Character_Synthesis.md` (v0.8), sections 3, 5, 60 |
+| Evidence | The source supplies the contract, Mentor introductions, questions, route inventories and hypothetical six-answer fixtures. It states it is not 1,293 personalized answer sets and that production readiness cannot be declared. Q2 also replaces an older Q2 design and needs owner sign-off. |
+| Confirmed behavior | A-D come only from verified observed strengths, E is an alternative emphasis, F is undecided, nothing is padded or inferred. |
+| Unresolved question | Whether to author per-class key stems, or reuse the 125 shared stems with a per-class connective line, and the approved wording; plus sign-off on replacing the older Q2. |
+| Options | The two authoring paths named in the source audit only. |
+| Recommended ruling | None |
+| Implementation impact | Prestige Q2 stays `blocked_source` and is skipped. The observed-strength accessor and the evidence projection already exist. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## RESOLUTIONS (appended 2026-11-16; the original entries above are preserved unchanged)
+
+Owner rulings received 2026-11-16 ("Owner Decisions and Source-Recovery Corrections"). Status of each decision after the ruling:
+
+| ID | Ruling | Status | Implementing commit |
+|---|---|---|---|
+| MSV-RD-011 | Answer B becomes: "I recognize much of what you've described, but I want to correct one or two details." Id, B meaning and provenance preserved. | RESOLVED, owner_approved_text | milestone A (see git log, "Owner rulings A") |
+| MSV-RD-012 | Per class: the opening labeled preferred (else first primary proposed) and its same-section question are the provisional editorial default; alternatives preserved; not release approval. Review table: `14-PRESTIGE-Q1-OPENING-SELECTION-REVIEW.md`. | RESOLVED as provisional default; wording approval still pending | milestone A |
+| MSV-RD-013 / MSV-RD-005 | Six substantive answers per page plus a separate always-reachable neutral answer; stable source order; no rotation, weighting or ranking; bank never truncated; quarantined rows excluded; unknown per-route flags stay unresolved. | RESOLVED (presentation); per-route flags remain open | milestone A |
+| MSV-RD-014 | Approve the newer Character Synthesis design; shared verified stems plus class-specific reviewed connective text; authoring pass authorized; text stays draft. | RESOLVED (approach); wording approval pending | milestone C |
+| MSV-RD-004 | Explicit origin selection when two or more foundation classes are owned; other classes stay in Q2/Q6 evidence. | RESOLVED | milestone B |
+| MSV-RD-008 / -009 | Import the existing Q5 fallbacks and no-goal replacements; neutral Q4 uses a curated low-assumption scenario with a recorded gap if none fits. | RESOLVED | milestone B |
+| MSV-RD-010 | Discover, Explore, Affirm preserved; only an explicit affirmation of a valid target declares a goal. | RESOLVED (rule); conversation text not authored beyond Ace Pilot | milestone C |
+| MSV-RD-007 | `q1_focus` catalog and E/F authorized as drafts; approved E and F statements. | RESOLVED (approach); phrases are draft | milestone B |
+
+
+## MSV-RD-015 — Implementation choices made under the 2026-11-16 rulings, flagged for editorial review
+
+These are engineering or drafting choices the rulings delegated. None sets a game rule. Each is draft text or a reversible mapping and is withheld from players until reviewed.
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / editorial implementation choices |
+| Feature | (a) Multiclass Q5 `{declared_goal}` slot phrase; (b) curated neutral Q4 families; (c) six curated neutral Q1 ids; (d) 100 `q1_focus` phrases; (e) 32 prestige Q2 connective sentences; (f) origin-lens wording |
+| Source | Owner rulings of 2026-11-16 (sections 5, 6, 4, 7); multiclass design lines 7142-7194 and 2142-2172 |
+| Evidence | (a) The ruling says substitute only the verified player-affirmed content; no certified grammatical phrase exists, so the slot is filled with the pointer phrase "the goal I have already declared" (`mc.q5.goalphrase`), never the goal text. (b) noble `leadership`, jedi `consular`, scout `recon`, soldier `tactics`, scoundrel `opportunist`, each judged understandable without specialist training (rationale in `multiclass.json` `q4Neutral`). (c) FD-UN00, JK-ID03, JM-ID03, OF-ID03, SA-ID03, SL-ID03 are the authored undecided answers in classes whose neutral id is not named NEUTRAL. (d)(e)(f) drafted wording. |
+| Confirmed behavior | Declaring or not declaring a goal never creates or replaces one; undecided is never a negative preference. |
+| Unresolved question | Editorial approval of each item above; whether (a) should instead name the goal once a reviewed phrase catalog exists. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | All items are `draft_text` or marked `curated_pending_editorial_review`; players see nothing until approved. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-015 / 016 — PROGRESS NOTES (appended 2026-11-16; originals preserved)
+
+- **MSV-RD-015(c), six curated neutral Q1 ids: CLOSED** by the owner after checking the source rows (FD-UN00, JK-ID03, JM-ID03, OF-ID03, SA-ID03, SL-ID03). Classification only; the line wording stays draft.
+- **MSV-RD-015(a), Q5 goal slot: superseded.** The pointer phrase was replaced by a typed goal display (canonical label or the player's exact words) inside one reviewed alternative; the alternative's wording is draft and pending approval.
+- **MSV-RD-015(b), neutral Q4 families:** kept for GM preview; a presumption scan excluded three scenes (`q4.soldier.tactics.seed01`, `q4.scoundrel.opportunist.seed01`, `q4.scoundrel.opportunist.seed07`); the remaining scene text is not yet owner-reviewed.
+- **MSV-RD-015(e), Prestige Q2 connectives:** revised after review (no units, position, employer, arena or crew assumed).
+
+## MSV-RD-016 — Prestige Q6 delivered by the shared reflection with a neutral frame
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / Prestige Q6 |
+| Feature | The neutral, non-character-specific reflection frame used until the authored 32-class Prestige Mentor dialogue is committed |
+| Source | Owner direction 2026-11-16: Multiclass and Prestige Q6 are one shared component; missing dialogue is an editorial dependency, not a blocker |
+| Evidence | The reflection engine, A-E contract, B/C corrections, D/E NOT then AM stages, 297-archetype authority and ledger persistence are shared; only milestone, class and Mentor presentation differ. |
+| Confirmed behavior | No dialogue is invented for or attributed to an established Mentor; the original package is preserved as a future asset. |
+| Unresolved question | Approval of the neutral frame wording (draft) and of each class Mentor script once imported. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Prestige Q6 runs in GM preview with the neutral frame; players see nothing until the draft text is approved. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-017 — Q6 method and theme inference (resolutions appended 2026-11-16; MSV-RD-016 original preserved)
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / shared Q6 identity inference |
+| Feature | Method-preference and mechanical-theme assessment clauses; legacy class-archetypes crosswalk; `past_to_present_trend` |
+| Source | `docs/design/mentor-survey-v2/17-Q6-IDENTITY-INFERENCE-AUDIT-AND-PROPOSAL.md`; owner decisions 2026-11-16 |
+| Evidence | The canonical 297 SSOT has no mechanical-bias field and audits its mechanics sections `draft`; `ArchetypeRegistry.get()` is the legacy 141-entry map and `getArchetype()` is the SSOT. |
+| Confirmed behavior | Approved shared wording for the method and theme clauses; method claims need two independent verified sources; the legacy crosswalk is **rejected**; trend claims stay deferred. |
+| Unresolved question | Review of the 125 draft method phrases; a certified source for theme claims. |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Method claims are produced (draft phrases, preview only); theme claims are not produced; the unresolved identity reading is preserved. |
+| Status | Crosswalk and clause wording: RESOLVED. Phrase review and theme source: `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | Clause wording approved; legacy crosswalk rejected; trend deferred (2026-11-16). |
+
+
+## MSV-RD-018 — Q6 method-key ledger review (progress note, 2026-11-16; MSV-RD-017 preserved)
+
+| Field | |
+|---|---|
+| Rules domain | Mentor survey / shared Q6 method inference |
+| Feature | Which of the 125 canonical mechanical-bias keys may be spoken as a `method_preference`, and in what words |
+| Source | `docs/design/mentor-survey-v2/18-Q6-METHOD-KEY-LEDGER.md`; owner review 2026-11-16 |
+| Evidence | Automatic camelCase phrases exposed mechanics shorthand and implied acts or affiliations; 48 of the 125 keys describe capabilities, roles, affiliations or unresolved concepts rather than approaches. |
+| Confirmed behavior | Only genuine, grounded method concepts may produce a claim; canonical identifiers are never renamed; the method correction is source-neutral (draft). |
+| Unresolved question | Owner approval of the 77 proposed method phrases and the 48 exclusions (notably `forceDC`, `tacticalVerse`, `unarmeddMastery` wording; `socialManipulation`, `biologicalControl`, `skillUtility` unresolved). |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Method claims are made only for ledger methods, with draft phrases, in GM preview only. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## MSV-RD-018 — OWNER DECISION (appended 2026-11-16; original entry preserved)
+
+- The 48 currently excluded keys are **accepted as a conservative runtime boundary** for Q6 method inference. This is not a permanent prohibition, and the concepts may be used elsewhere.
+- Twelve phrases were replaced by owner direction (`burstDamage`, `conditionTrack`, `accuracy`, `pilotMastery`, `knowledgeMastery`, `biotechMastery`, `surgicalMastery`, `wildernessLore`, `weaponMastery`, `medicalKnowledge`, `technicalMastery`, `tacticalVerse`).
+- Exclusion categories were corrected: legitimate techniques and areas of expertise are now `technique` (22), not `affiliation`; `affiliation` is limited to an actual tradition, allegiance or relationship (4).
+- The 77 method phrases remain `draft_text`; additional wording exceptions are reported in `19-Q6-METHOD-REVIEW-REPORT.md` section 3 (not applied). Status: phrase approval `DEFERRED_RULES_REVIEW`.
+
+
+## MSV-RD-018 — OWNER REVIEW OUTCOME (appended 2026-11-17; earlier entries preserved)
+
+The owner reviewed the method ledger and recommended four final wordings, applied here: `forceSecret` "refining the use of Force techniques"; `brutalForce` "applying overwhelming force"; `moraleImpact` "undermining an opponent's morale"; `dualistTechnique` "applying specific dueling techniques". The other 73 phrases were judged editorially acceptable; the overlapping medical, stealth and survival phrases stay distinct and are to be re-checked in live testing. The 48 exclusions are preserved. The recommendation covers player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release). The 77 records remain `draft_text` in the data until the owner confirms the approval of the wording itself (a recommendation is not a ruling, `CLAUDE.md` section 9).
+
+
+## MSV-RD-018 — OWNER APPROVAL (appended 2026-11-17; earlier entries preserved)
+
+The owner approved the 77 method phrases as player-facing wording ("They are approved the text"), after the four final refinements of 2026-11-17. Scope: phrase wording only. Not approved by this ruling: mechanical certification, tag assignments, Mentor dialogue, the source-neutral correction line (still draft), or release of any scope. Status: phrase wording RESOLVED. The 77 records in `reflection-q6.json` carry `editorialStatus: owner_approved_text` and `ownerApproval`. The question as a whole remains gated by the other draft Q6 text and the withheld manifest.
+
+
+## MSV-RD-018 — FINAL EDITORIAL APPROVAL (appended 2026-11-17; earlier entries preserved)
+
+Owner wording approval (stated 2026-11-16, recorded 2026-11-17) of: the 77 method phrases in their final wording (including `forceSecret` "refining the use of Force techniques", `brutalForce` "applying overwhelming force", `moraleImpact` "undermining an opponent's morale", `dualistTechnique` "applying specific dueling techniques") and the source-neutral method correction "I recognize that training, but I don't think it necessarily describes how I prefer to approach problems." (stable id `mc.q6.not.method_preference.1`, original text preserved in `originalText`). The shared positive method sentence was already approved. Scope: wording only. Unchanged: the 48 exclusions, canonical keys, evidence requirements, ranking, correction persistence, answer-to-tag mappings (uncertified), the neutral Q6 frame and every Mentor script (draft), and all 42 release scopes (withheld). Phrase wording and correction wording: RESOLVED.

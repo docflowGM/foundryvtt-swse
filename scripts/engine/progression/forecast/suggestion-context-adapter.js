@@ -182,31 +182,10 @@ export class SuggestionContextAdapter {
     const addCompletedSurvey = (key, survey) => {
       if (!survey || survey.completed !== true) return;
       surveyAnswers[key] = survey.answers || survey;
-      const tags = survey.intentTags || survey.mergedBias || {};
-      for (const value of tags.archetypeTags || tags.roleBias || []) {
-        if (value && !declaredArchetypes.includes(value)) declaredArchetypes.push(value);
-      }
-      for (const value of tags.prestigeClassTargets || tags.targetTags || []) {
-        if (value && !declaredTargets.includes(value)) declaredTargets.push(value);
-      }
     };
 
     const l1Session = shell.progressionSession?.draftSelections?.survey;
     addCompletedSurvey('l1-current', l1Session);
-    for (const [key, survey] of Object.entries(shell.actor?.system?.swse?.surveyResponses || {})) {
-      addCompletedSurvey(`l1-${key}`, survey);
-    }
-    for (const [key, survey] of Object.entries(shell.progressionSession?.draftSelections?.classSurveys || {})) {
-      addCompletedSurvey(`class-${key}`, survey);
-    }
-    for (const [key, survey] of Object.entries(shell.actor?.system?.swse?.classSurveyResponses || {})) {
-      addCompletedSurvey(`class-${key}`, survey);
-    }
-    const prestigeSession = shell.progressionSession?.draftSelections?.prestigeSurvey;
-    addCompletedSurvey(`prestige-${prestigeSession?.classId || 'current'}`, prestigeSession);
-    for (const [key, survey] of Object.entries(shell.actor?.system?.swse?.prestigeSurveyResponses || {})) {
-      addCompletedSurvey(`prestige-${key}`, survey);
-    }
 
     return { surveyAnswers, declaredArchetypes, declaredTargets };
   }
