@@ -52,6 +52,6 @@ The shared Mentor's Reflection builds an **unresolved identity** reading (`readi
 
 ## 6. Still needed
 
-- Owner review of the method-key ledger (`18-*`): the 77 proposed phrases and the 48 exclusions. The positive clause is approved; the method correction was replaced by a source-neutral draft line ("I recognize that training, but I don’t think it necessarily describes how I prefer to approach problems."), with each claim identified by an "About: <phrase>" detail line.
+- ~~Owner review of the method-key ledger (`18-*`)~~: the 77 phrases were approved as wording on 2026-11-17 (phrase wording only) and the 48 exclusions accepted as a runtime boundary. The positive clause is approved; the method correction was replaced by a source-neutral draft line ("I recognize that training, but I don’t think it necessarily describes how I prefer to approach problems."), with each claim identified by an "About: <phrase>" detail line.
 - A certified source for theme or archetype claims (a reviewed relationship between the 125 keys or the 190 tags and the 297 records, with the SSOT mechanics sections audited beyond `draft`).
 - Role-bias provenance, if `role_inference` is wanted.

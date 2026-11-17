@@ -12836,12 +12836,13 @@
         "key": "forceSecret",
         "text": "refining the use of Force techniques",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "forceSecret",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "forceDC": {
@@ -12849,12 +12850,13 @@
         "key": "forceDC",
         "text": "making Force powers harder to resist",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "forceDC",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "forceRecovery": {
@@ -12862,12 +12864,13 @@
         "key": "forceRecovery",
         "text": "sustaining your Force reserves",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "forceRecovery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "burstDamage": {
@@ -12875,12 +12878,13 @@
         "key": "burstDamage",
         "text": "delivering damage in a powerful burst",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "burstDamage",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "singleTargetDamage": {
@@ -12888,12 +12892,13 @@
         "key": "singleTargetDamage",
         "text": "focusing damage on a single target",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "singleTargetDamage",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "areaDamage": {
@@ -12901,12 +12906,13 @@
         "key": "areaDamage",
         "text": "striking several targets at once",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "areaDamage",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "areaControl": {
@@ -12914,12 +12920,13 @@
         "key": "areaControl",
         "text": "controlling territory and movement",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "areaControl",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "conditionTrack": {
@@ -12927,12 +12934,13 @@
         "key": "conditionTrack",
         "text": "hindering opponents through debilitating effects",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "conditionTrack",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "counterAttack": {
@@ -12940,12 +12948,13 @@
         "key": "counterAttack",
         "text": "answering an enemy action with a counterattack",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "counterAttack",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "reactionDefense": {
@@ -12953,12 +12962,13 @@
         "key": "reactionDefense",
         "text": "quick defensive reactions",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "reactionDefense",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "damageReduction": {
@@ -12966,12 +12976,13 @@
         "key": "damageReduction",
         "text": "withstanding incoming damage",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "damageReduction",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "damageMitigationAura": {
@@ -12979,12 +12990,13 @@
         "key": "damageMitigationAura",
         "text": "shielding allies from damage",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "damageMitigationAura",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "evasion": {
@@ -12992,12 +13004,13 @@
         "key": "evasion",
         "text": "avoiding attacks through movement",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "evasion",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "accuracy": {
@@ -13005,12 +13018,13 @@
         "key": "accuracy",
         "text": "making precise attacks",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "accuracy",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "initiative": {
@@ -13018,12 +13032,13 @@
         "key": "initiative",
         "text": "seizing the first move",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "initiative",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "dualWield": {
@@ -13031,12 +13046,13 @@
         "key": "dualWield",
         "text": "fighting with more than one weapon",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "dualWield",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "formMastery": {
@@ -13044,12 +13060,13 @@
         "key": "formMastery",
         "text": "lightsaber forms and technique",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "formMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "pilotMastery": {
@@ -13057,12 +13074,13 @@
         "key": "pilotMastery",
         "text": "operating vehicles with greater control",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "pilotMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "unarmeddMastery": {
@@ -13070,12 +13088,13 @@
         "key": "unarmeddMastery",
         "text": "unarmed fighting techniques",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "unarmeddMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "flowState": {
@@ -13083,12 +13102,13 @@
         "key": "flowState",
         "text": "fighting with timing and flow",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "flowState",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "combatFlow": {
@@ -13096,12 +13116,13 @@
         "key": "combatFlow",
         "text": "controlling the pace of combat",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "combatFlow",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "formation": {
@@ -13109,12 +13130,13 @@
         "key": "formation",
         "text": "fighting in formation",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "formation",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "allySupport": {
@@ -13122,12 +13144,13 @@
         "key": "allySupport",
         "text": "supporting and strengthening allies",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "allySupport",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "moraleBonus": {
@@ -13135,12 +13158,13 @@
         "key": "moraleBonus",
         "text": "inspiring confidence in allies",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "moraleBonus",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "moraleImpact": {
@@ -13148,12 +13172,13 @@
         "key": "moraleImpact",
         "text": "undermining an opponent’s morale",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "moraleImpact",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "stealth": {
@@ -13161,12 +13186,13 @@
         "key": "stealth",
         "text": "hiding and moving unseen",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "stealth",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "infiltration": {
@@ -13174,12 +13200,13 @@
         "key": "infiltration",
         "text": "quietly getting into position",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "infiltration",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "trackingMastery": {
@@ -13187,12 +13214,13 @@
         "key": "trackingMastery",
         "text": "finding and following a trail",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "trackingMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "deceptionMastery": {
@@ -13200,12 +13228,13 @@
         "key": "deceptionMastery",
         "text": "deception and disguise",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "deceptionMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "knowledgeMastery": {
@@ -13213,12 +13242,13 @@
         "key": "knowledgeMastery",
         "text": "applying specialized knowledge",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "knowledgeMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "resourceControl": {
@@ -13226,12 +13256,13 @@
         "key": "resourceControl",
         "text": "managing supplies and equipment",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "resourceControl",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "informationControl": {
@@ -13239,12 +13270,13 @@
         "key": "informationControl",
         "text": "gathering and controlling information",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "informationControl",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "tacticalAwareness": {
@@ -13252,12 +13284,13 @@
         "key": "tacticalAwareness",
         "text": "reading a tactical situation",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "tacticalAwareness",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "armorMastery": {
@@ -13265,12 +13298,13 @@
         "key": "armorMastery",
         "text": "fighting in armor",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "armorMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "grappling": {
@@ -13278,12 +13312,13 @@
         "key": "grappling",
         "text": "grappling and control techniques",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "grappling",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "forceArtistry": {
@@ -13291,12 +13326,13 @@
         "key": "forceArtistry",
         "text": "expressive use of the Force",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "forceArtistry",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "hackingSkills": {
@@ -13304,12 +13340,13 @@
         "key": "hackingSkills",
         "text": "working with computers and security systems",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "hackingSkills",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "explosiveMastery": {
@@ -13317,12 +13354,13 @@
         "key": "explosiveMastery",
         "text": "using explosives and blast effects",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "explosiveMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "biotechMastery": {
@@ -13330,12 +13368,13 @@
         "key": "biotechMastery",
         "text": "working with biotechnology",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "biotechMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "surgicalMastery": {
@@ -13343,12 +13382,13 @@
         "key": "surgicalMastery",
         "text": "using advanced surgical techniques",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "surgicalMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "healingMastery": {
@@ -13356,12 +13396,13 @@
         "key": "healingMastery",
         "text": "healing wounds and injuries",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "healingMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "treatingInjury": {
@@ -13369,12 +13410,13 @@
         "key": "treatingInjury",
         "text": "treating injuries",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "treatingInjury",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "engineeringMastery": {
@@ -13382,12 +13424,13 @@
         "key": "engineeringMastery",
         "text": "engineering and building structures",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "engineeringMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "tacticalSupport": {
@@ -13395,12 +13438,13 @@
         "key": "tacticalSupport",
         "text": "supporting tactics through engineering",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "tacticalSupport",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "fortifications": {
@@ -13408,12 +13452,13 @@
         "key": "fortifications",
         "text": "building defensive positions",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "fortifications",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "weaponEngineering": {
@@ -13421,12 +13466,13 @@
         "key": "weaponEngineering",
         "text": "designing and improving weapons",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "weaponEngineering",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "improvisation": {
@@ -13434,12 +13480,13 @@
         "key": "improvisation",
         "text": "improvising solutions on the spot",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "improvisation",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "mechanicalMastery": {
@@ -13447,12 +13494,13 @@
         "key": "mechanicalMastery",
         "text": "working with mechanical systems",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "mechanicalMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "technicalInnovation": {
@@ -13460,12 +13508,13 @@
         "key": "technicalInnovation",
         "text": "innovating technical solutions",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "technicalInnovation",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "resourcefulness": {
@@ -13473,12 +13522,13 @@
         "key": "resourcefulness",
         "text": "solving problems with what is at hand",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "resourcefulness",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "spacefarerMastery": {
@@ -13486,12 +13536,13 @@
         "key": "spacefarerMastery",
         "text": "starship navigation and operation",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "spacefarerMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "survivalism": {
@@ -13499,12 +13550,13 @@
         "key": "survivalism",
         "text": "surviving in harsh conditions",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "survivalism",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "explorationMastery": {
@@ -13512,12 +13564,13 @@
         "key": "explorationMastery",
         "text": "exploration and discovery",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "explorationMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "wildernessLore": {
@@ -13525,12 +13578,13 @@
         "key": "wildernessLore",
         "text": "applying knowledge of wilderness conditions",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "wildernessLore",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "survivalSkills": {
@@ -13538,12 +13592,13 @@
         "key": "survivalSkills",
         "text": "wilderness survival",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "survivalSkills",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "adaptability": {
@@ -13551,12 +13606,13 @@
         "key": "adaptability",
         "text": "adapting to the situation",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "adaptability",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "stealthMastery": {
@@ -13564,12 +13620,13 @@
         "key": "stealthMastery",
         "text": "advanced stealth technique",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "stealthMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "persuasionMastery": {
@@ -13577,12 +13634,13 @@
         "key": "persuasionMastery",
         "text": "persuading others",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "persuasionMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "intimidation": {
@@ -13590,12 +13648,13 @@
         "key": "intimidation",
         "text": "using intimidation",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "intimidation",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "brutalForce": {
@@ -13603,12 +13662,13 @@
         "key": "brutalForce",
         "text": "applying overwhelming force",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "brutalForce",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "rapidResponse": {
@@ -13616,12 +13676,13 @@
         "key": "rapidResponse",
         "text": "responding quickly",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "rapidResponse",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "tacticalVerse": {
@@ -13629,12 +13690,13 @@
         "key": "tacticalVerse",
         "text": "using varied tactical approaches",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "tacticalVerse",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "dualistTechnique": {
@@ -13642,12 +13704,13 @@
         "key": "dualistTechnique",
         "text": "applying specific dueling techniques",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "dualistTechnique",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "defensiveSwordsmanship": {
@@ -13655,12 +13718,13 @@
         "key": "defensiveSwordsmanship",
         "text": "defensive swordsmanship",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "defensiveSwordsmanship",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "counterMastery": {
@@ -13668,12 +13732,13 @@
         "key": "counterMastery",
         "text": "countering attacks",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "counterMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "combatAdaptability": {
@@ -13681,12 +13746,13 @@
         "key": "combatAdaptability",
         "text": "adapting to the style of a fight",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "combatAdaptability",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "dualistMastery": {
@@ -13694,12 +13760,13 @@
         "key": "dualistMastery",
         "text": "dueling",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "dualistMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "weaponVersatility": {
@@ -13707,12 +13774,13 @@
         "key": "weaponVersatility",
         "text": "using a range of weapons",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "weaponVersatility",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "weaponMastery": {
@@ -13720,12 +13788,13 @@
         "key": "weaponMastery",
         "text": "using specialized weapon techniques",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "weaponMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "heavyWeaponMastery": {
@@ -13733,12 +13802,13 @@
         "key": "heavyWeaponMastery",
         "text": "using heavy weapons",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "heavyWeaponMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "quickDraw": {
@@ -13746,12 +13816,13 @@
         "key": "quickDraw",
         "text": "drawing a weapon quickly",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "quickDraw",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "precisePistolry": {
@@ -13759,12 +13830,13 @@
         "key": "precisePistolry",
         "text": "precise pistol shooting",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "precisePistolry",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "triggerDiscipline": {
@@ -13772,12 +13844,13 @@
         "key": "triggerDiscipline",
         "text": "disciplined trigger control",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "triggerDiscipline",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "medicalKnowledge": {
@@ -13785,12 +13858,13 @@
         "key": "medicalKnowledge",
         "text": "applying medical knowledge",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "medicalKnowledge",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "treatmentExpertise": {
@@ -13798,12 +13872,13 @@
         "key": "treatmentExpertise",
         "text": "medical treatment",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "treatmentExpertise",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "independence": {
@@ -13811,12 +13886,13 @@
         "key": "independence",
         "text": "working independently",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "independence",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       },
       "technicalMastery": {
@@ -13824,12 +13900,13 @@
         "key": "technicalMastery",
         "text": "applying technical expertise",
         "category": "method",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
+        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
           "key": "technicalMastery",
-          "basis": "editorial ledger proposal; canonical identifier unchanged"
+          "basis": "editorial ledger; owner-approved wording; canonical identifier unchanged"
         }
       }
     },
