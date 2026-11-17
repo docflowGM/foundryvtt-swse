@@ -20,11 +20,12 @@ test('SV-01 clean break: the retired actor.system.swse.surveyResponses store and
   assert.deepEqual(hits(/survey\??\.prestigeClassTarget/), []);
 });
 
-test('SV-01 clean break: the overloaded progression "survey" draft key keeps only its ACTIVE meanings (character name and starting level, template advisory signals)', () => {
-  const writers = hits(/draftSelections\.survey\s*=/);
-  assert.deepEqual(writers.sort(), ['scripts/apps/progression-framework/steps/galactic-profile-step.js', 'scripts/engine/progression/template/template-adapter.js']);
-  for (const f of ['scripts/apps/progression-framework/steps/galactic-profile-step.js']) assert.match(read(f), /characterName/);
-  assert.match(read('scripts/engine/progression/template/template-adapter.js'), /source: 'template'/);
+test('SV-01 clean break: the overloaded progression "survey" draft key keeps only its ACTIVE meaning (character name and starting level) and is committed through ProgressionSession', () => {
+  // The retired template path (template-adapter) no longer exists; the Galactic Profile step commits the key through commitSelection.
+  assert.deepEqual(hits(/draftSelections\.survey\s*=/), []);
+  assert.match(read('scripts/apps/progression-framework/steps/galactic-profile-step.js'), /commitSelection\('galactic-profile-name', 'survey'/);
+  assert.match(read('scripts/apps/progression-framework/steps/galactic-profile-step.js'), /characterName/);
+  assert.ok(!fs.existsSync(path.join(ROOT, 'scripts/engine/progression/template/template-adapter.js')));
   const mentor = hits(/selections\??\.mentorSurvey/);
   assert.ok(mentor.some((f) => f.includes('progression-finalizer')), 'the V2 mentor survey draft key is a different key from survey');
 });
