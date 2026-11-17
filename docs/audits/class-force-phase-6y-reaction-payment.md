@@ -51,6 +51,19 @@ not claim these handlers are reached in every current V13 scene.
 - No new resource issuer, socket bridge, compatibility store, or direct
   actor mutation. No effect on unrelated zero-cost reactions.
 
+## Additional verified chat-runtime mismatch
+
+The existing ReactionEngine used `SWSEChat.postMessage()` at both its
+frequency-block and successful-resolution paths, but
+`scripts/chat/swse-chat.js` exposes `postHTML()`, not `postMessage()`.
+This could throw after an otherwise valid effect and committed FP spend,
+misreporting the mechanical result. The code now uses a single local
+`postReactionStatus()` formatting helper around the canonical
+`SWSEChat.postHTML()` API. It escapes reaction label and message text and
+logs failed chat delivery instead of reclassifying a completed mechanical
+reaction as a failure. The unit tests assert the real supported method and
+exercise nonfatal chat display errors.
+
 ## Verification
 
 `tests/class-phase-6y-reaction-committed-payment.test.mjs` loads the real
