@@ -26,7 +26,6 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SWSETranslationEngine } from '../engine/swse-translation-engine.js';
-import { TemplateInitializer } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-initializer.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { buildActorSplashV2Context } from './actor-splash-v2-controller.js';
 import { buildDroidSplashV2Context } from './droid-splash-v2-controller.js';
@@ -385,6 +384,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // DOM element cache (for direct mutation without full re-render)
     this._workSurfaceEl = null;
+    this._splashPrewarmStarted = false;
     this._translationTextEl = null;
     this._progressPercentEl = null;
     this._aurabeshEl = null;
@@ -861,59 +861,9 @@ export class IntroStep extends ProgressionStepPlugin {
       }
     });
 
-    $surface.on('click', '[data-role="droid-select-standard"]', async (event) => {
-      event.preventDefault();
-      event.stopPropagation();
 
-      if (!this._complete || this._transitionInProgress) return;
-      this._transitionInProgress = true;
-
-      try {
-        swseLogger.debug('[IntroStep.activateListeners] Droid Galactic Profile chosen');
-
-        const actor = this._shell?.actor;
-        if (!actor) {
-          ui?.notifications?.error?.('No droid actor is available for Galactic Profile selection.');
-          this._transitionInProgress = false;
-          return;
-        }
-
-        const templateSession = await TemplateInitializer.initializeForChargen(actor, { subtype: 'droid' });
-
-        if (!templateSession) {
-          this._transitionInProgress = false;
-          return;
-        }
-
-        this._shell.progressionSession = templateSession;
-        if (this._shell.progressionSession?.droidContext) {
-          this._shell.progressionSession.droidContext.creationMode = 'standard-model';
-        }
-        this._shell._registerPersistenceHook?.();
-        this._shell.currentStepIndex = 0;
-        this._shell._targetStepId = null;
-        await this._shell._initializeSteps?.();
-        this._shell._syncLegacyCommittedSelectionsFromSession?.();
-        await this._shell._persistSessionSnapshot?.('intro-droid-profile');
-
-        this._localizedMode = true;
-        this._complete = true;
-        this._introRunning = false;
-        this._continueClicked = true;
-        this._state = INTRO_STATE.TRANSITIONING;
-        ui?.notifications?.info?.('Droid Galactic Profile loaded. Continuing registration.');
-        await this._transitionToNextStep();
-      } catch (error) {
-        swseLogger.error('[IntroStep.activateListeners] ERROR handling Droid Galactic Profile button', {
-          error: error?.message || String(error),
-          stack: error?.stack,
-        });
-        ui?.notifications?.error?.('Could not load Droid Galactic Profile. You can still build a custom unit.');
-        this._transitionInProgress = false;
-        this._continueClicked = false;
-      }
-    });
-
+    // Droid Galactic Profile: the droid splash button uses the SAME explicit [data-role="intro-galactic-profile"] picker
+    // as organics (session subtype 'droid', creationMode stays 'custom'). The legacy template modal is retired.
     // Note: Go Back (data-action="previous-step") and Proceed (data-action="next-step")
     // are routed through the shell's action system via ApplicationV2. Keyboard
     // shortcuts are bound once per intro render by _bindIntroKeyboardShortcuts().
@@ -1036,8 +986,22 @@ export class IntroStep extends ProgressionStepPlugin {
       // Set _introRunning flag so animation loop knows it's active
       this._introRunning = true;
 
-      // Start the animation (async, doesn't block)
+      // Animation starts first. Prewarm begins after its first paint and
+      // never blocks the cinematic or the Continue/Skip interaction.
       this.startIntroSequence(shell);
+      if (shell?.mode === 'chargen' && !this._splashPrewarmStarted) {
+        this._splashPrewarmStarted = true;
+        const startPrewarm = () => {
+          void import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-splash-preloader.js')
+            .then(({ startChargenSplashPreload }) => startChargenSplashPreload(shell))
+            .catch(error => swseLogger.debug('[IntroStep] Noncritical splash prewarm failed:', error));
+        };
+        if (typeof requestAnimationFrame === 'function') {
+          requestAnimationFrame(() => setTimeout(startPrewarm, 0));
+        } else {
+          setTimeout(startPrewarm, 0);
+        }
+      }
     } else {
       swseLogger.debug('[IntroStep.afterRender] Not starting animation', {
         state: this._state,

@@ -250,6 +250,11 @@
       "name": "Melee Duelist",
       "approvedFingerprint": "2202:ac6078b30478f8cf",
       "reason": "Knights of the Old Republic CG: Master of Movement stable featureKey meleeDuelist.masterOfMovement on the existing scaling grants"
+    },
+    "b5bed5d1b5f42958": {
+      "name": "Scout",
+      "approvedFingerprint": "3940:6d0a38118e86aa74",
+      "reason": "GP-RD-007 (project owner, 2026-11-17): The Unknown Regions p.22 makes Mobile Scout a Scout talent tree; Mobile Scout (c7a4e66f46044c7a) registered on Scout. Only the four talent-tree reference arrays changed."
     }
   }
 }

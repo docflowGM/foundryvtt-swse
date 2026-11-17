@@ -53,7 +53,10 @@ test('the 37 class identities and talent-tree ownership survive mechanics correc
     const cls = byName.get(old.name);
     assert.ok(cls, old.name);
     assert.equal(cls._id, old.id);
-    assert.deepEqual(cls.system.talentTreeSourceIds || [], old.talentTreeSourceIds, old.name);
+    // The census is the frozen pre-correction state. The only approved change is GP-RD-007 (project owner, 2026-11-17):
+    // Mobile Scout (c7a4e66f46044c7a) is a Scout talent tree (The Unknown Regions p.22, owner-attested) and is appended.
+    const approvedTreeAdditions = { Scout: ['c7a4e66f46044c7a'] }[old.name] || [];
+    assert.deepEqual(cls.system.talentTreeSourceIds || [], [...old.talentTreeSourceIds, ...approvedTreeAdditions], old.name);
     assert.deepEqual(cls.system.starting_features || [], old.startingFeatures, old.name);
   }
 });

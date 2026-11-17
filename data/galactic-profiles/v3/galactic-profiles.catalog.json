@@ -1,0 +1,1643 @@
+{
+  "schemaVersion": 3,
+  "format": "swse.galactic-profiles.v3",
+  "sources": [
+    "data/galactic-profiles/v3/SWSE_Galactic_Profiles_v3.json",
+    "data/galactic-profiles/v3/droids/SWSE_Eight_Droid_Galactic_Profiles_v3.json"
+  ],
+  "totalProfiles": 41,
+  "profiles": [
+    {
+      "profileId": "jedi_guardian",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Guardian",
+      "archetype": "Guardian",
+      "description": "A nimble warrior specializing in lightsaber combat, using finesse and defensive techniques to overwhelm opponents.",
+      "quote": "Through the Force, I am the shield that guards the innocent.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_guardian.webp",
+      "classKey": "jedi",
+      "className": "Jedi",
+      "mentorKey": "miraj",
+      "dialogueKey": "jedi_guardian",
+      "roleTags": [
+        "force-user",
+        "melee"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Mirialan",
+        "background": "Alderaan Origin",
+        "abilities": {
+          "str": 10,
+          "dex": 16,
+          "con": 12,
+          "int": 12,
+          "wis": 14,
+          "cha": 8
+        },
+        "skills": [
+          "useTheForce",
+          "acrobatics",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Finesse"
+        ],
+        "powers": [
+          "Battle Strike",
+          "Surge"
+        ]
+      }
+    },
+    {
+      "profileId": "jedi_consular",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Consular",
+      "archetype": "Consular",
+      "description": "A Force-focused diplomat who relies on manipulation of the Force and wisdom rather than lightsaber combat.",
+      "quote": "The Force flows through all things. Let it guide your path to peace.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_consular.webp",
+      "classKey": "jedi",
+      "className": "Jedi",
+      "mentorKey": "miraj",
+      "dialogueKey": "jedi_consular",
+      "roleTags": [
+        "force-user"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Miraluka",
+        "background": "Alpheridies Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 12,
+          "con": 10,
+          "int": 12,
+          "wis": 16,
+          "cha": 14
+        },
+        "skills": [
+          "useTheForce",
+          "perception",
+          "knowledgeGalacticLore"
+        ],
+        "feats": [
+          "Skill Focus (Use the Force)"
+        ],
+        "powers": [
+          "Move Object",
+          "Mind Trick",
+          "Negate Energy"
+        ]
+      }
+    },
+    {
+      "profileId": "jedi_defender",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Defender",
+      "archetype": "Jedi Defender",
+      "description": "A durable frontline protector who can deflect attacks and shield allies from harm.",
+      "quote": "I can't afford to lose this fight! There are people depending on me.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_defender.webp",
+      "classKey": "jedi",
+      "className": "Jedi",
+      "mentorKey": "miraj",
+      "dialogueKey": "jedi_defender",
+      "roleTags": [
+        "force-user",
+        "tank"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Zabrak",
+        "background": "Scarred",
+        "abilities": {
+          "str": 14,
+          "dex": 12,
+          "con": 16,
+          "int": 10,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "useTheForce",
+          "endurance"
+        ],
+        "feats": [
+          "Skill Focus (Use the Force)"
+        ],
+        "powers": [
+          "Battle Strike",
+          "Negate Energy"
+        ]
+      }
+    },
+    {
+      "profileId": "jedi_sentinel",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Sentinel",
+      "archetype": "Sentinel",
+      "description": "An investigative shadow who hunts down dark side corruption with precision and stealth.",
+      "quote": "Darkness cannot hide from those who seek the light.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_sentinel.webp",
+      "classKey": "jedi",
+      "className": "Jedi",
+      "mentorKey": "miraj",
+      "dialogueKey": "jedi_sentinel",
+      "roleTags": [
+        "force-user"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Miraluka",
+        "background": "Nar Shaddaa Origin",
+        "abilities": {
+          "str": 10,
+          "dex": 14,
+          "con": 12,
+          "int": 12,
+          "wis": 16,
+          "cha": 12
+        },
+        "skills": [
+          "useTheForce",
+          "perception",
+          "stealth"
+        ],
+        "feats": [
+          "Force Training"
+        ],
+        "powers": [
+          "Force Sense",
+          "Battle Strike",
+          "Mind Trick"
+        ]
+      }
+    },
+    {
+      "profileId": "noble_diplomat",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Diplomat",
+      "archetype": "Diplomat",
+      "description": "The ultimate social character, capable of talking their way through any situation with charm and persuasion.",
+      "quote": "Words can open doors that even the strongest blade cannot.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_diplomat.webp",
+      "classKey": "noble",
+      "className": "Noble",
+      "mentorKey": "j0n1",
+      "dialogueKey": "noble_diplomat",
+      "roleTags": [
+        "diplomat",
+        "support"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Zeltron",
+        "background": "Alderaan Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 12,
+          "con": 10,
+          "int": 14,
+          "wis": 12,
+          "cha": 16
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Skill Focus (Persuasion)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "noble_leader",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Leader",
+      "archetype": "Leader",
+      "description": "A tactical commander who coordinates allies and inspires greatness on the battlefield.",
+      "quote": "Victory belongs to those who fight together as one!",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_leader.webp",
+      "classKey": "noble",
+      "className": "Noble",
+      "mentorKey": "j0n1",
+      "dialogueKey": "noble_leader",
+      "roleTags": [
+        "diplomat",
+        "support"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Coruscant Origin",
+        "abilities": {
+          "str": 10,
+          "dex": 12,
+          "con": 14,
+          "int": 12,
+          "wis": 14,
+          "cha": 16
+        },
+        "skills": [
+          "persuasion",
+          "initiative",
+          "perception"
+        ],
+        "feats": [
+          "Improved Defenses"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "noble_aristocrat",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Aristocrat",
+      "archetype": "Aristocrat",
+      "description": "A wealthy manipulator with extensive resources, connections, and information networks.",
+      "quote": "Information is the galaxy's most valuable currency, and I am very wealthy.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_aristocrat.webp",
+      "classKey": "noble",
+      "className": "Noble",
+      "mentorKey": "j0n1",
+      "dialogueKey": "noble_aristocrat",
+      "roleTags": [
+        "diplomat"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Bothan",
+        "background": "Fondor Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 10,
+          "con": 12,
+          "int": 16,
+          "wis": 12,
+          "cha": 14
+        },
+        "skills": [
+          "gatherInformation",
+          "persuasion",
+          "deception"
+        ],
+        "feats": [
+          "Skill Training"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "noble_duelist",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Duelist",
+      "archetype": "Duelist",
+      "description": "A social character with surprising melee combat effectiveness using grace and finesse.",
+      "quote": "Elegance in both word and blade—a true noble's art.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_duelist.webp",
+      "classKey": "noble",
+      "className": "Noble",
+      "mentorKey": "j0n1",
+      "dialogueKey": "noble_duelist",
+      "roleTags": [
+        "diplomat"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Zeltron",
+        "background": "Scarred",
+        "abilities": {
+          "str": 8,
+          "dex": 14,
+          "con": 12,
+          "int": 10,
+          "wis": 12,
+          "cha": 16
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Focus (Light Melee)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "soldier-guard",
+      "revision": 1,
+      "subtype": "nonheroic",
+      "name": "Guard",
+      "archetype": "Guard",
+      "description": "A trained soldier responsible for protecting installations, personnel, or assets. Guards provide steady, reliable defensive support and tactical awareness.",
+      "quote": "My duty is to protect those who cannot protect themselves.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Soldier.webp",
+      "classKey": "nonheroic",
+      "className": "Soldier (Nonheroic)",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Military Academy",
+        "abilities": {
+          "str": 14,
+          "dex": 12,
+          "con": 14,
+          "int": 10,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "initiative",
+          "perception"
+        ],
+        "feats": [
+          "Simple Weapon Proficiency",
+          "Armor Proficiency (Light)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scout-pathfinder",
+      "revision": 1,
+      "subtype": "nonheroic",
+      "name": "Scout/Pathfinder",
+      "archetype": "Scout",
+      "description": "An experienced scout or guide who excels at wilderness survival, tracking, and reconnaissance. Scouts rely on cunning and perception rather than military discipline.",
+      "quote": "The wilds are my home; I am never lost.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Scout.webp",
+      "classKey": "nonheroic",
+      "className": "Scout (Nonheroic)",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Frontier Settler",
+        "abilities": {
+          "str": 12,
+          "dex": 14,
+          "con": 12,
+          "int": 13,
+          "wis": 14,
+          "cha": 10
+        },
+        "skills": [
+          "perception",
+          "survival"
+        ],
+        "feats": [
+          "Simple Weapon Proficiency",
+          "Endurance"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "laborer-worker",
+      "revision": 1,
+      "subtype": "nonheroic",
+      "name": "Laborer/Worker",
+      "archetype": "Laborer",
+      "description": "A common laborer, factory worker, or tradesperson. Workers are skilled in practical tasks and basic survival, forming the foundation of civilian society.",
+      "quote": "Honest work is its own reward.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/Worker.webp",
+      "classKey": "nonheroic",
+      "className": "Laborer (Nonheroic)",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Common Worker",
+        "abilities": {
+          "str": 13,
+          "dex": 10,
+          "con": 14,
+          "int": 10,
+          "wis": 11,
+          "cha": 10
+        },
+        "skills": [
+          "endurance"
+        ],
+        "feats": [
+          "Simple Weapon Proficiency",
+          "Toughness"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "beast-wolf",
+      "revision": 1,
+      "subtype": "beast",
+      "name": "Wolf",
+      "archetype": "Beast",
+      "description": "A wild wolf or wolf-like creature. Beasts are non-sapient or low-intelligence creatures generated through the Creature Generator system. Wolves are pack hunters with keen senses and natural combat instincts.",
+      "quote": "The strength of the pack is the wolf, and the strength of the wolf is the pack.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/FAOR1cCJQ7OqEgPDL1WI--1--fx5hi.webp",
+      "classKey": "beast",
+      "className": "Beast (Nonheroic)",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Wolf",
+        "background": "Feral Creature",
+        "abilities": {
+          "str": 12,
+          "dex": 14,
+          "con": 11,
+          "int": 1,
+          "wis": 13,
+          "cha": 8
+        },
+        "skills": [
+          "perception",
+          "survival"
+        ],
+        "feats": [],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "beast-bear",
+      "revision": 1,
+      "subtype": "beast",
+      "name": "Bear",
+      "archetype": "Beast",
+      "description": "A wild bear or bear-like creature. Beasts are non-sapient or low-intelligence creatures generated through the Creature Generator system. Bears are apex predators with immense strength and natural combat prowess.",
+      "quote": "The forest yields to those with claw and fang.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/FAOR1cCJQ7OqEgPDL1WI--1--fx5hi.webp",
+      "classKey": "beast",
+      "className": "Beast (Nonheroic)",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Bear",
+        "background": "Feral Creature",
+        "abilities": {
+          "str": 16,
+          "dex": 10,
+          "con": 13,
+          "int": 2,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "climb",
+          "survival"
+        ],
+        "feats": [],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "nonheroic_worker",
+      "revision": 1,
+      "subtype": "nonheroic",
+      "name": "Worker",
+      "archetype": "Worker",
+      "description": "A skilled laborer, mechanic, or technician. Workers are the backbone of galactic civilization, maintaining infrastructure and repairing equipment.",
+      "quote": "Honest work, honest pay. That's all I need.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/Worker.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 12,
+          "dex": 10,
+          "con": 13,
+          "int": 12,
+          "wis": 11,
+          "cha": 8
+        },
+        "skills": [
+          "mechanics",
+          "useComputer"
+        ],
+        "feats": [
+          "Skill Focus (Mechanics)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "nonheroic_trooper",
+      "revision": 1,
+      "subtype": "nonheroic",
+      "name": "Trooper",
+      "archetype": "Trooper",
+      "description": "A baseline soldier, guard, or militia member. Troopers have basic military training but lack the experience and skill of true heroes.",
+      "quote": "Following orders. That's what keeps the galaxy running.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Soldier.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 13,
+          "dex": 12,
+          "con": 12,
+          "int": 10,
+          "wis": 11,
+          "cha": 8
+        },
+        "skills": [
+          "perception",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Proficiency (Rifles)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "nonheroic_criminal",
+      "revision": 1,
+      "subtype": "nonheroic",
+      "name": "Criminal",
+      "archetype": "Criminal",
+      "description": "A petty thug, gang member, or street criminal. Criminals live on the edge of society, relying on intimidation and violence.",
+      "quote": "Credits or your life. Your choice.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_brigand.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 12,
+          "dex": 13,
+          "con": 11,
+          "int": 10,
+          "wis": 9,
+          "cha": 11
+        },
+        "skills": [
+          "deception",
+          "stealth"
+        ],
+        "feats": [
+          "Weapon Proficiency (Pistols)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "nonheroic_merchant",
+      "revision": 1,
+      "subtype": "nonheroic",
+      "name": "Merchant",
+      "archetype": "Merchant",
+      "description": "A trader, shopkeeper, or business professional. Merchants know the value of everything and have connections throughout the commercial sector.",
+      "quote": "Everything has a price, my friend. Let's negotiate.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/merchant.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 8,
+          "dex": 10,
+          "con": 10,
+          "int": 13,
+          "wis": 12,
+          "cha": 13
+        },
+        "skills": [
+          "persuasion",
+          "gatherInformation",
+          "useComputer"
+        ],
+        "feats": [
+          "Skill Focus (Persuasion)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "nonheroic_police",
+      "revision": 1,
+      "subtype": "nonheroic",
+      "name": "Police Officer",
+      "archetype": "Police",
+      "description": "A law enforcement officer, security guard, or constable. Police maintain order and enforce laws in civilized systems.",
+      "quote": "By the authority of the law, stand down!",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/Police.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 12,
+          "dex": 11,
+          "con": 13,
+          "int": 11,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "perception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Weapon Proficiency (Pistols)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scoundrel_pistoleer",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Pistoleer",
+      "archetype": "Pistoleer",
+      "description": "A precision shooter who deals devastating damage with sneak attacks from the shadows.",
+      "quote": "They never see it coming. That's the whole point.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_pistoleer.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_pistoleer",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Corellia Origin",
+        "abilities": {
+          "str": 10,
+          "dex": 16,
+          "con": 12,
+          "int": 14,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "stealth",
+          "perception",
+          "initiative"
+        ],
+        "feats": [
+          "Precise Shot"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scoundrel_skill_monkey",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Skill Monkey",
+      "archetype": "Skill Monkey",
+      "description": "A versatile specialist covering social, technical, and infiltration roles with expertise.",
+      "quote": "Every problem has a solution. You just need the right skills.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_skill_monkey.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_skill_monkey",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Bothan",
+        "background": "Bothawui Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 14,
+          "con": 10,
+          "int": 16,
+          "wis": 12,
+          "cha": 14
+        },
+        "skills": [
+          "useComputer",
+          "mechanics",
+          "deception"
+        ],
+        "feats": [
+          "Skill Focus (Use Computer)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scoundrel_knuckledragger",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Knuckledragger",
+      "archetype": "Knuckledragger",
+      "description": "An aggressive street fighter who pushes enemies down the condition track with dirty tactics.",
+      "quote": "No such thing as a fair fight when survival's on the line.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_knuckledragger.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_knuckledragger",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Duros",
+        "background": "Enslaved",
+        "abilities": {
+          "str": 10,
+          "dex": 16,
+          "con": 14,
+          "int": 12,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "deception",
+          "stealth",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Finesse"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scoundrel_outlaw",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Outlaw",
+      "archetype": "Outlaw",
+      "description": "A charming rogue who uses luck and Force Points strategically to turn the odds in their favor.",
+      "quote": "Luck? I make my own luck, friend.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_outlaw.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_outlaw",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Twi'lek",
+        "background": "Ryloth Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 14,
+          "con": 12,
+          "int": 12,
+          "wis": 10,
+          "cha": 16
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Improved Defenses"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scoundrel_brigand",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Brigand",
+      "archetype": "Brigand",
+      "description": "A roguish brigand who combines exceptional piloting skills with tactical combat prowess, striking from unexpected angles with deadly precision.",
+      "quote": "The galaxy's wealth flows to those bold enough to take it.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_brigand.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_brigand",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Duros",
+        "background": "Disgraced",
+        "abilities": {
+          "str": 8,
+          "dex": 18,
+          "con": 8,
+          "int": 14,
+          "wis": 12,
+          "cha": 14
+        },
+        "skills": [
+          "deception",
+          "initiative",
+          "perception"
+        ],
+        "feats": [
+          "Point-Blank Shot",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Simple Weapons)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scout_sniper",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Sniper",
+      "archetype": "Sniper",
+      "description": "A long-range precision shooter who operates from concealment with deadly accuracy.",
+      "quote": "One shot, one kill. That's all it takes.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_sniper.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_sniper",
+      "roleTags": [
+        "rogue",
+        "ranged"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Duros",
+        "background": "Duro Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 16,
+          "con": 10,
+          "int": 14,
+          "wis": 12,
+          "cha": 12
+        },
+        "skills": [
+          "pilot",
+          "stealth",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Proficiency (Rifles)",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Simple Weapons)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scout_engineer",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Engineer",
+      "archetype": "Engineer",
+      "description": "A skilled technician who specializes in maintenance, repair, and engineering solutions in the field.",
+      "quote": "Every problem has a technical solution.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Scout.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_engineer",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Mon Calamari",
+        "background": "Fondor Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 16,
+          "con": 12,
+          "int": 14,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "mechanics"
+        ],
+        "feats": [
+          "Weapon Proficiency (Rifles)",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Simple Weapons)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scout_pistoleer",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Pistoleer",
+      "archetype": "Pistoleer",
+      "description": "A skilled rider specializing in hit-and-run tactics from a speeder bike, utilizing dual-weapon mastery.",
+      "quote": "Speed and precision - that's all you need.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Scout.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_pistoleer",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Codru-Ji",
+        "background": "Tatooine Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 16,
+          "con": 14,
+          "int": 12,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "initiative",
+          "endurance",
+          "perception"
+        ],
+        "feats": [
+          "Weapon Proficiency (Rifles)",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Simple Weapons)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scout_survivalist",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Survivalist",
+      "archetype": "Survivalist",
+      "description": "A wilderness expert who excels at tracking and surviving the harshest conditions.",
+      "quote": "The wilderness doesn't forgive mistakes. Neither do I.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_survivalist.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_survivalist",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Ithorian",
+        "background": "Bankrupt",
+        "abilities": {
+          "str": 12,
+          "dex": 14,
+          "con": 16,
+          "int": 12,
+          "wis": 14,
+          "cha": 8
+        },
+        "skills": [
+          "survival",
+          "perception",
+          "endurance"
+        ],
+        "feats": [
+          "Skill Focus (Survival)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "scout_infiltrator",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Infiltrator",
+      "archetype": "Infiltrator",
+      "description": "A stealthy infiltrator specializing in reconnaissance and espionage operations.",
+      "quote": "The best battles are the ones your enemy never knew you fought.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_infiltrator.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_infiltrator",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Bothan",
+        "background": "Bothawui Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 16,
+          "con": 12,
+          "int": 14,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "stealth",
+          "perception",
+          "mechanics"
+        ],
+        "feats": [
+          "Skill Focus (Stealth)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "soldier_rifleman",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Rifleman",
+      "archetype": "Just A Dude",
+      "description": "A straightforward soldier carrying a slugthrower rifle and a big pistol. Perfect for new players learning weapon versatility and the practical Bandolier.",
+      "quote": "I've got firepower. Let's see what you've got.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_rifleman.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_rifleman",
+      "roleTags": [
+        "warrior"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Houk",
+        "background": "Orphaned",
+        "abilities": {
+          "str": 16,
+          "dex": 16,
+          "con": 14,
+          "int": 12,
+          "wis": 8,
+          "cha": 6
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "endurance"
+        ],
+        "feats": [
+          "Armor Proficiency (Light)",
+          "Armor Proficiency (Medium)",
+          "Weapon Proficiency (Pistols)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "soldier_gunner",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Gunner",
+      "archetype": "Gunner",
+      "description": "A heavy weapons specialist focusing on area suppression and overwhelming firepower.",
+      "quote": "More firepower solves most problems.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_gunner.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_gunner",
+      "roleTags": [
+        "warrior",
+        "ranged"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Anaxes Origin",
+        "abilities": {
+          "str": 14,
+          "dex": 16,
+          "con": 14,
+          "int": 12,
+          "wis": 10,
+          "cha": 8
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "endurance"
+        ],
+        "feats": [
+          "Weapon Proficiency (Heavy Weapons)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "soldier_brawler",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Brawler",
+      "archetype": "Brawler",
+      "description": "A fearsome Mantellian Savrip brawler wielding natural claws and innate ferocity. Solid walls of muscle and primal power, devastating in close combat.",
+      "quote": "Feel the wrath of the claws!",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_brawler.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_brawler",
+      "roleTags": [
+        "warrior"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Mantellian Savrip",
+        "background": "Orphaned",
+        "abilities": {
+          "str": 18,
+          "dex": 12,
+          "con": 16,
+          "int": 10,
+          "wis": 10,
+          "cha": 8
+        },
+        "skills": [
+          "initiative",
+          "endurance",
+          "perception"
+        ],
+        "feats": [
+          "Weapon Proficiency (Advanced Melee)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "soldier_tank",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Tank",
+      "archetype": "Tank",
+      "description": "An armored defender designed to absorb massive amounts of damage and protect allies.",
+      "quote": "Behind me, soldier. I'll handle this.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_tank.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_tank",
+      "roleTags": [
+        "warrior",
+        "tank"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Gen'Dai",
+        "background": "Crippled",
+        "abilities": {
+          "str": 12,
+          "dex": 14,
+          "con": 16,
+          "int": 10,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "endurance",
+          "perception",
+          "initiative"
+        ],
+        "feats": [
+          "Armor Proficiency (Heavy)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "soldier_commando",
+      "revision": 1,
+      "subtype": "actor",
+      "name": "Commando",
+      "archetype": "Commando",
+      "description": "A specialized commando operative trained for elite strike missions and team-based combat operations.",
+      "quote": "With my squad at my side, we can handle anything.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Soldier.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_commando",
+      "roleTags": [
+        "warrior"
+      ],
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Sullustan",
+        "background": "Sullust Origin",
+        "abilities": {
+          "str": 12,
+          "dex": 16,
+          "con": 12,
+          "int": 12,
+          "wis": 10,
+          "cha": 8
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "endurance"
+        ],
+        "feats": [
+          "Armor Proficiency (Light)",
+          "Armor Proficiency (Medium)",
+          "Weapon Proficiency (Pistols)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "droid_scout_dex_recon_probe",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Reconnaissance Probe",
+      "archetype": "Reconnaissance Probe",
+      "description": "Fast-moving sensor scout and tactical spotter",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "scout",
+      "className": "Scout",
+      "mentorKey": "lead",
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "scout",
+        "dex-focused",
+        "recon",
+        "mobility",
+        "sensors"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 15,
+          "int": 13,
+          "wis": 14,
+          "cha": 12
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "stealth"
+        ],
+        "feats": [
+          "Point Blank Shot"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "droid_scout_int_astromech_pathfinder",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Astromech Pathfinder",
+      "archetype": "Astromech Pathfinder",
+      "description": "Exploration cartographer and technical troubleshooter",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "scout",
+      "className": "Scout",
+      "mentorKey": "lead",
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "scout",
+        "int-focused",
+        "technical",
+        "navigation",
+        "exploration"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 14,
+          "int": 15,
+          "wis": 13,
+          "cha": 12
+        },
+        "skills": [
+          "mechanics",
+          "knowledgeTechnology",
+          "knowledgePhysicalSciences"
+        ],
+        "feats": [
+          "Skill Focus (Mechanics)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "droid_soldier_dex_security_enforcer",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Security Enforcer",
+      "archetype": "Security Enforcer",
+      "description": "Mobile ranged defender with integrated protection",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "soldier",
+      "className": "Soldier",
+      "mentorKey": "breach",
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "soldier",
+        "dex-focused",
+        "ranged",
+        "defense",
+        "tactics"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 15,
+          "int": 13,
+          "wis": 14,
+          "cha": 12
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "knowledgeTactics"
+        ],
+        "feats": [
+          "Point Blank Shot"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "droid_soldier_str_industrial_vanguard",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Industrial Vanguard",
+      "archetype": "Industrial Vanguard",
+      "description": "Heavy-duty melee guardian and boarding unit",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "soldier",
+      "className": "Soldier",
+      "mentorKey": "breach",
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "soldier",
+        "str-focused",
+        "melee",
+        "strength",
+        "guardian"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 15,
+          "dex": 10,
+          "int": 12,
+          "wis": 14,
+          "cha": 13
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "jump"
+        ],
+        "feats": [
+          "Weapon Proficiency (Advanced Melee Weapons)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "droid_noble_int_medical_coordinator",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Medical Coordinator",
+      "archetype": "Medical Coordinator",
+      "description": "Diagnostic analyst, field medic and knowledge specialist",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "noble",
+      "className": "Noble",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "noble",
+        "int-focused",
+        "medical",
+        "intelligence",
+        "support"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 12,
+          "int": 15,
+          "wis": 14,
+          "cha": 13
+        },
+        "skills": [
+          "treatInjury",
+          "knowledgeLifeSciences",
+          "knowledgePhysicalSciences"
+        ],
+        "feats": [
+          "Skill Focus (Treat Injury)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "droid_noble_cha_protocol_envoy",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Protocol Envoy",
+      "archetype": "Protocol Envoy",
+      "description": "Diplomat, public liaison and cultural interpreter",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "noble",
+      "className": "Noble",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "noble",
+        "cha-focused",
+        "diplomacy",
+        "charisma",
+        "protocol"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 12,
+          "int": 13,
+          "wis": 14,
+          "cha": 15
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Skill Focus (Persuasion)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "droid_scoundrel_cha_service_operative",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Service-Sector Operative",
+      "archetype": "Service-Sector Operative",
+      "description": "Disarming social infiltrator and covert negotiator",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "scoundrel",
+        "cha-focused",
+        "social",
+        "infiltration",
+        "charisma"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 12,
+          "int": 14,
+          "wis": 13,
+          "cha": 15
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Armor Proficiency (Light)"
+        ],
+        "powers": []
+      }
+    },
+    {
+      "profileId": "droid_scoundrel_dex_systems_infiltrator",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Systems Infiltrator",
+      "archetype": "Systems Infiltrator",
+      "description": "Agile security slicer, saboteur and digital thief",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "scoundrel",
+        "dex-focused",
+        "stealth",
+        "slicing",
+        "dexterity"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 15,
+          "int": 14,
+          "wis": 13,
+          "cha": 12
+        },
+        "skills": [
+          "stealth",
+          "acrobatics",
+          "mechanics"
+        ],
+        "feats": [
+          "Precise Shot"
+        ],
+        "powers": []
+      }
+    }
+  ]
+}

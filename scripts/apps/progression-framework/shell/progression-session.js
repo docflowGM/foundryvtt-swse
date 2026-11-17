@@ -86,6 +86,9 @@ export class ProgressionSession {
       survey: null,
       mentorSurvey: null,
       droid: null,
+      // Galactic Profile bookkeeping (identity, revision, ownership map, exact economy, deferred intent). NOT a second
+      // copy of the character: every actual choice lives in its normal key. Declared here so the snapshot persists it.
+      profileApplication: null,
       pendingSpeciesContext: null,
       pendingBackgroundContext: null,
       backgroundLedger: null,
@@ -179,7 +182,7 @@ export class ProgressionSession {
    * @param {*} value - Value to commit (must match schema)
    * @returns {boolean} true if successful
    */
-  commitSelection(stepId, selectionKey, value) {
+  commitSelection(stepId, selectionKey, value, options = {}) {
     const selectionAliases = {
       'general-feat': 'feats',
       'class-feat': 'feats',
@@ -216,7 +219,11 @@ export class ProgressionSession {
       // domains are append/replace-by-slot safe so legacy singleton commits can
       // never erase the rest of a build at Summary.
       const previousValue = this.draftSelections[selectionKey];
-      const valueToStore = this._mergeArraySelection(selectionKey, normalizedValue, { stepId });
+      // `options.replace` (Galactic Profile Apply) bypasses singleton-by-identity merging so a one-item array
+      // REPLACES the prior array instead of merging into it.
+      const valueToStore = options.replace === true && Array.isArray(normalizedValue)
+        ? this._dedupeSelectionArray(normalizedValue)
+        : this._mergeArraySelection(selectionKey, normalizedValue, { stepId });
 
       // No-op unchanged commits. This is important for Summary/Business Items
       // and language selection: repeated render-time validation must never cause
@@ -466,6 +473,7 @@ export class ProgressionSession {
       survey: null,
       mentorSurvey: null,
       droid: null,
+      profileApplication: null,
     };
     this.visitedStepIds = [];
     this.completedStepIds = [];
@@ -606,6 +614,10 @@ export class ProgressionSession {
         type: 'object',
         description:
           '{frame, systems, locomotion, creditsUsed, metadata}',
+      },
+      profileApplication: {
+        type: 'object',
+        description: 'Galactic Profile application record: {schema, profileId, revision, subtype, digest, owned, economy, deferred, overrides}',
       },
       pendingSpeciesContext: {
         type: 'object',

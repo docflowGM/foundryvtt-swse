@@ -14,7 +14,6 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { launchProgression, launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
-import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { NPCTemplateImporter } from "/systems/foundryvtt-swse/scripts/apps/npc-template-importer.js";
 import { GMDatapad } from "/systems/foundryvtt-swse/scripts/apps/gm-datapad.js";
 import { DossierDragDropService } from "/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js";
@@ -77,14 +76,12 @@ function onClickStore(app) {
 }
 
 function onClickTemplates(app) {
-  // Templates can create a new actor from a template
-  SWSELogger.log('[Actor Sidebar] Opening Template Character Creator');
-  try {
-    TemplateCharacterCreator.create();
-  } catch (err) {
-    SWSELogger.error('[Actor Sidebar] Error opening template creator:', err);
-    ui?.notifications?.error?.(`Failed to open template creator: ${err.message}`);
-  }
+  // Galactic Profiles: the same ProgressionSession path as every other creation route (no actor until confirm).
+  SWSELogger.log('[Actor Sidebar] Opening Galactic Profile creation');
+  launchNewProgression({ actorType: 'character', profilePicker: true }).catch(err => {
+    SWSELogger.error('[Actor Sidebar] Error opening Galactic Profile creation:', err);
+    ui?.notifications?.error?.(`Failed to open Galactic Profile creation: ${err.message}`);
+  });
 }
 
 function onClickGMDashboard(app) {

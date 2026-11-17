@@ -74,6 +74,7 @@ import { FeatTalentPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/pro
 import { ForcePlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/force-plan-builder.js';
 import { SkillsLanguagesPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js';
 import { SpeciesBackgroundPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/species-background-plan-builder.js';
+import { compileProfileEquipmentItems, hasResolvedProfileWallet, profileKitProvidesLightsaber } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/profile-economy-plan-builder.js';
 import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
 import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 import { beginAbilityIncreaseTransaction, verifyAbilityIncreaseCommit, describeAbilityTransaction, ABILITY_HISTORY_KEY, strictCount } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-increase-guard.js';
@@ -944,7 +945,8 @@ export class ProgressionFinalizer {
       }
       const creditMode = ProgressionRules.getStartingCreditMode?.() || 'roll';
       const autoCredits = ProgressionRules.getMaxStartingCreditsEnabled?.() === true || creditMode === 'max' || creditMode === 'maximum' || creditMode === 'average';
-      const hasResolvedCredits = summarySelection.startingCreditsResolved === true || Number(summarySelection.startingCredits || 0) > 0;
+      const hasResolvedCredits = summarySelection.startingCreditsResolved === true || Number(summarySelection.startingCredits || 0) > 0
+        || hasResolvedProfileWallet(selections.profileApplication?.economy);
       if (!autoCredits && !hasResolvedCredits) {
         throw new Error('Chargen incomplete: starting credits must be rolled or otherwise resolved before finalization');
       }
@@ -1366,7 +1368,7 @@ export class ProgressionFinalizer {
         add.items.push({
           name: clazz.name || clazz.label || String(clazz),
           type: 'class',
-          system: classSystemForActor,
+          system: this._chargenClassItemSystem(classSystemForActor),
           flags: {
             swse: {
               progression: {
@@ -1737,6 +1739,7 @@ export class ProgressionFinalizer {
       droid: selections.droid,
     }));
     add.items.push(...await this._compileClassStarterEquipmentItems(actor, selections, sessionState));
+    add.items.push(...await this._compileProfileEquipmentItems(actor, selections, sessionState));
     if (sessionState.mode === 'levelup') {
       const automaticClassFeatures = await this._compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState, update.items);
       add.items.push(...filterDroidForbiddenItemSpecs(automaticClassFeatures, actor, {
@@ -3002,6 +3005,8 @@ export class ProgressionFinalizer {
     if (sessionState?.mode !== 'chargen') return [];
     if (!this._isJediClassSelection(selections?.class)) return [];
     if (this._actorHasLightsaber(actor)) return [];
+    // A Galactic Profile kit that already carries a lightsaber supersedes the class starter lightsaber (never two).
+    if (profileKitProvidesLightsaber(selections?.profileApplication?.economy)) return [];
 
     const sessionId = sessionState.sessionId || 'unknown';
     const baseItem = await this._loadStarterLightsaberItemData();
@@ -3044,6 +3049,42 @@ export class ProgressionFinalizer {
     }, { inplace: false, recursive: true });
 
     return [itemData];
+  }
+
+  /**
+   * Galactic Profile starting equipment: draft-only until this plan is applied at final confirmation.
+   * Items are loaded from the canonical compendia by id; an unloadable item aborts compilation (fail closed).
+   */
+  static async _compileProfileEquipmentItems(actor, selections, sessionState) {
+    const economy = selections?.profileApplication?.economy;
+    if (sessionState?.mode !== 'chargen' || !economy?.equipment?.length) return [];
+    return compileProfileEquipmentItems({
+      economy,
+      sessionId: sessionState.sessionId || 'unknown',
+      loadItemData: entry => this._loadCanonicalItemData(entry)
+    });
+  }
+
+  static async _loadCanonicalItemData(entry) {
+    const packs = [entry.pack, ...Array.from(globalThis.game?.packs?.keys?.() || []).filter(k => /^foundryvtt-swse\.(equipment|weapons|armor)/.test(k))]
+      .filter(Boolean);
+    for (const key of new Set(packs)) {
+      const pack = globalThis.game?.packs?.get?.(key);
+      const doc = pack && typeof pack.getDocument === 'function' ? await pack.getDocument(entry.itemId).catch(() => null) : null;
+      if (doc) return doc.toObject ? doc.toObject() : foundry.utils.deepClone(doc);
+    }
+    return null;
+  }
+
+  /**
+   * Chargen creates the FIRST class level. Heroic class documents carry no `system.level` (the item schema default
+   * is 1), but the synthetic Nonheroic model carries an explicit 0 (it is a level-up track counter). An explicit
+   * non-positive level must never become the level of a character's first class item.
+   */
+  static _chargenClassItemSystem(system = {}) {
+    const next = { ...(system || {}) };
+    if ('level' in next && !(Number(next.level) >= 1)) next.level = 1;
+    return next;
   }
 
   static _isJediClassSelection(classSelection = null) {

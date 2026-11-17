@@ -7,6 +7,7 @@
  * finalizer to merge and apply through ActorEngine.
  */
 
+import { profileWalletCredits } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/profile-economy-plan-builder.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { buildChargenLedger, buildLevelUpLedger, HP_LEDGER_PATH } from '/systems/foundryvtt-swse/scripts/engine/HP/hp-accounting.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
@@ -307,7 +308,12 @@ export class ProgressionEconomyPlanBuilder {
     const startingCredits = explicitStartingCredits > 0
       ? explicitStartingCredits + (wealthBonus > 0 && !explicitIncludesWealth ? wealthBonus : 0)
       : baseStartingCredits + wealthBonus;
-    if (Number.isFinite(startingCredits) && startingCredits > 0) set['system.credits'] = resolveFinalStartingCredits(actor, startingCredits);
+    // Galactic Profile: the authored wallet is the EXACT final balance (all grants already included; 0 is valid).
+    // Class credits, background credits, Wealth and the actor-backed chargen store are NOT applied on top of it.
+    const profileWallet = profileWalletCredits(selections.profileApplication?.economy);
+    if (profileWallet !== null) set['system.credits'] = profileWallet;
+    else if (Number.isFinite(startingCredits) && startingCredits > 0) set['system.credits'] = resolveFinalStartingCredits(actor, startingCredits);
+    // The Wealth history is still recorded so level-up never re-grants level 1.
     if (wealthBonus > 0) set['flags.swse.progressionHistory'] = withWealthProgressionHistory(actor, selections, sessionState);
 
     const startingLevel = Number(summary.startingLevel || 1) || 1;

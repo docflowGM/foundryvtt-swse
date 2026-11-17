@@ -19,6 +19,7 @@
  * Phase 1 rule: Adapters must be structurally wired but logic is deferred.
  */
 
+import { resolveAdapterStrict as resolveAdapterStrictPure } from './strict-subtype-resolution.js';
 import { swseLogger } from '../../../utils/logger.js';
 import {
   ActorSubtypeAdapter,
@@ -90,6 +91,19 @@ export class ProgressionSubtypeAdapterRegistry {
     swseLogger.debug(
       `[ProgressionSubtypeAdapterRegistry] Registered adapter: ${adapter.subtypeId}`
     );
+  }
+
+  /**
+   * Strict resolution: EXACT `subtypeId` match or null.
+   *
+   * Unlike resolveAdapter() this never falls back to the actor adapter and never consults `handles()`
+   * aliases (`standard`, `imported-statblock`, `mount`). Galactic Profile compilation/Apply uses this so an
+   * unknown or mistyped subtype is rejected instead of silently becoming an ordinary heroic actor.
+   * @param {string} subtype
+   * @returns {ProgressionSubtypeAdapter | null}
+   */
+  resolveAdapterStrict(subtype) {
+    return resolveAdapterStrictPure(this.adapters, subtype);
   }
 
   /**

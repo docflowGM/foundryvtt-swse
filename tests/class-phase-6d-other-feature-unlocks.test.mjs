@@ -74,6 +74,6 @@ test('all eleven approved class progression records and the other 30 are protect
   const guard = verifyClassPackProtectedState(root);
   assert.equal(guard.ok, true, guard.failures.join('; '));
   const baseline = JSON.parse(read('data/audits/class-mechanics-protected-baseline.json'));
-  assert.equal(Object.keys(baseline.approvedProgressionExceptions).length, 11); // +Bounty Hunter, +Assassin, +Charlatan, +Melee Duelist featureKeys
+  assert.equal(Object.keys(baseline.approvedProgressionExceptions).length, 12); // +Bounty Hunter, +Assassin, +Charlatan, +Melee Duelist featureKeys, +Scout (GP-RD-007: Mobile Scout tree registration; owner-approved)
   assert.equal(classes.length, 37);
 });

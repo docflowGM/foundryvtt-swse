@@ -31,6 +31,19 @@ const BEAST_CLASS_SKILLS = [
   'Swim',
 ];
 
+/**
+ * Beast Intelligence from the DRAFT attributes (the player's/profile's actual selection), never the actor's stale
+ * pre-creation value and never defaulted. Returns null when the draft has no Intelligence yet.
+ * @param {object} session
+ * @returns {number|null}
+ */
+export function readBeastIntelligence(session) {
+  const raw = session?.draftSelections?.attributes?.values?.int;
+  if (raw === undefined || raw === null || raw === '') return null;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : NaN;
+}
+
 export class BeastSubtypeAdapter extends ProgressionSubtypeAdapter {
   constructor() {
     super('beast', 'Beast Character', ParticipantKind.INDEPENDENT, {
@@ -160,7 +173,7 @@ export class BeastSubtypeAdapter extends ProgressionSubtypeAdapter {
       restrictions.metadata = {};
     }
     restrictions.metadata.beastMulticlassGate = true;
-    restrictions.metadata.beastCurrentIntelligence = session.beastContext?.intelligence || 1;
+    restrictions.metadata.beastCurrentIntelligence = readBeastIntelligence(session) ?? session.beastContext?.intelligence ?? null;
 
     return restrictions;
   }
@@ -210,21 +223,25 @@ export class BeastSubtypeAdapter extends ProgressionSubtypeAdapter {
   }
 
   async validateReadiness(session, actor) {
-    // Phase 2.7: Beast-specific validation
-    const isBeast = session?.beastContext?.isBeast === true;
+    // Fail closed. A session routed to this adapter is a Beast session whether or not context seeding found beast
+    // metadata on the actor: missing context must BLOCK finalization, not silently skip validation.
+    const isBeastSession = session?.subtype === 'beast' || session?.subtype === 'mount' || session?.beastContext?.isBeast === true;
+    if (!isBeastSession) return;
 
-    if (!isBeast) {
-      return;
+    if (session?.beastContext?.isBeast !== true) {
+      throw new Error('[BeastAdapter] validateReadiness: Beast session has no beast context (missing beast creature data); finalization blocked');
     }
 
-    // Beast intelligence must be 1 or 2 at creation
-    const intelligence = session.beastContext?.intelligence || 1;
-    if (intelligence < 1 || intelligence > 2) {
-      swseLogger.warn('[BeastAdapter] Beast creation with invalid intelligence', {
-        intelligence,
-        expected: '1 or 2',
-      });
-      // Allow creation to proceed; will be corrected at finalization if needed
+    // The Beast Intelligence rule ("Intelligence 1-2 at creation") is stated by this adapter's own contract. It is
+    // enforced at CREATION; later ability increases may raise Int (the multiclass gate opens at Int 3+).
+    if (session?.mode !== 'chargen') return;
+
+    const intelligence = readBeastIntelligence(session);
+    if (intelligence === null) {
+      throw new Error('[BeastAdapter] validateReadiness: Beast Intelligence is not set in the draft attributes; finalization blocked');
+    }
+    if (!Number.isInteger(intelligence) || intelligence < 1 || intelligence > 2) {
+      throw new Error(`[BeastAdapter] validateReadiness: Beast Intelligence must be 1 or 2 at creation (draft Int ${intelligence}); finalization blocked`);
     }
   }
 

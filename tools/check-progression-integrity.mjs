@@ -102,7 +102,7 @@ const DRAFT_WRITE_TRANSITIONAL = [
   /\/steps\/follower-steps\//,
   /\/steps\/galactic-profile-step\.js$/,
   /\/steps\/class-step\.js$/,
-  /\/progression\/template\/template-adapter\.js$/,
+  /\/progression\/profile\/galactic-profile-apply\.js$/,   // atomic-rollback draft restore only; all writes go through commitSelection
 ];
 function classifyDraftWriter(relPath) {
   return DRAFT_WRITE_TRANSITIONAL.some((re) => re.test(relPath)) ? 'transitional' : 'suspicious';

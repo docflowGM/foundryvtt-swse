@@ -562,6 +562,11 @@ export class ConfirmStep extends ProgressionStepPlugin {
    * Returns a promise that resolves when store is closed.
    */
   async enterStore(actor, shell = null) {
+    // Galactic Profile sessions keep equipment/credits as draft-only plan state; the actor-backed store stays closed.
+    if (shell?.progressionSession?.draftSelections?.profileApplication?.economy) {
+      globalThis.ui?.notifications?.info?.('This Galactic Profile already includes its starting equipment and credits. Shopping opens after the character is created.');
+      return null;
+    }
     const { SWSEStore } = await import('../../../apps/store/store-main.js');
     this._storeVisited = true;
 
