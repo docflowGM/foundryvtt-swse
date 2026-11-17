@@ -2994,7 +2994,7 @@ Source document: `docs/audits/SWSE_Galactic_Profiles_v3_Unification_Audit.md`. E
 |---|---|
 | Decision ID | GP-RD-009 |
 | Rules domain | Attributes |
-| Feature | Authored score basis (base vs post-species) (profiles: 20 organic/nonheroic profiles (see audit §R.3), plus `beast-wolf`/`beast-bear`) |
+| Feature | Authored score basis (base vs post-species) (profiles: 17 organic profiles (see the generated certification matrix) plus `beast-wolf`/`beast-bear`; `jedi_defender` became moot with GP-RD-008) |
 | Source | see Evidence |
 | Evidence | Point-buy fit is non-discriminating; two Duros profiles disagree; 12 profiles are moot (species has no ability modifiers), 1 has an explicit authored note (`soldier_brawler`). |
 | Confirmed behavior | Authoring fact per profile. |
@@ -3049,3 +3049,67 @@ Source document: `docs/audits/SWSE_Galactic_Profiles_v3_Unification_Audit.md`. E
 ---
 
 - **Revision 66 (2026-11-17):** appended GP-RD-001 … GP-RD-011 from the project owner's review of the Galactic Profiles v3 unification audit. Implementing commits are recorded in the next appended line.
+
+---
+
+## GP-RD-012 — "Simple Weapon Proficiency" (legacy alias)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-012 |
+| Rules domain | Feat identity |
+| Feature | "Simple Weapon Proficiency" (legacy alias) (profiles: `soldier-guard`, `scout-pathfinder`, `laborer-worker`) |
+| Source | repository data (Galactic Profiles v3 evidence) |
+| Evidence | Authored feat `Simple Weapon Proficiency` (ids `weapon-proficiency-simple` / `simple-weapon-proficiency`) matches no V2 feat document by id, exact name, or punctuation-normalized name. V2 has the parameterized `Weapon Proficiency` feat and Jedi/Scout/Scoundrel/Noble/Soldier class grants named `Weapon Proficiency (Simple Weapons)`. |
+| Confirmed behavior | The authored name is not a V2 identity. |
+| Unresolved question | Whether `Simple Weapon Proficiency` is intended to be `Weapon Proficiency (Simple Weapons)`. |
+| Options (source-supported) | map to `Weapon Proficiency (Simple Weapons)` / different feat intended |
+| Recommended ruling | none |
+| Implementation impact | Three nonheroic profiles blocked (`FEAT_UNRESOLVED`); no alias is guessed. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## GP-RD-013 — Items with no canonical V2 identity
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-013 |
+| Rules domain | Equipment identity |
+| Feature | Items with no canonical V2 identity (profiles: `scoundrel_brigand`, `soldier_rifleman` ("Clips" x2 / x10); `scout_pistoleer` ("FC-20 Speeder Bike (Used)")) |
+| Source | repository data (Galactic Profiles v3 evidence) |
+| Evidence | "Clips" authored with id null and no pack/type; no V2 item named Clips exists. The speeder bike is a vehicle actor document (`foundryvtt-swse.vehicles`, absent as a pack; vehicles live in vehicle packs), not an item V2 can place in `add.items`. |
+| Confirmed behavior | Neither maps to a V2 item. |
+| Unresolved question | Which item Clips means; whether a starting vehicle is an owned-vehicle actor and how V2 should materialize it. |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Those profiles blocked (`ITEM_WITHOUT_ID`, `ITEM_UNRESOLVED`); never substituted or dropped. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## GP-RD-014 — Backgrounds not present in V2
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-014 |
+| Rules domain | Background identity |
+| Feature | Backgrounds not present in V2 (profiles: `soldier-guard` (Military Academy), `scout-pathfinder` (Frontier Settler), `laborer-worker` (Common Worker), `beast-wolf`/`beast-bear` (Feral Creature)) |
+| Source | repository data (Galactic Profiles v3 evidence) |
+| Evidence | No background document exists with those names or ids in `packs/backgrounds.db`. |
+| Confirmed behavior | Not V2 backgrounds. |
+| Unresolved question | Whether to author new backgrounds, map to existing ones, or drop the background for these profiles. |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Those profiles blocked (`BACKGROUND_UNRESOLVED`); not defaulted. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+- **Revision 67 (2026-11-17):** appended GP-RD-012 … GP-RD-014, found while implementing Galactic Profiles v3 (identity gaps in authored data; nothing was guessed).
