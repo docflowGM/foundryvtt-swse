@@ -39,6 +39,23 @@
           {{#if template.quote}}<blockquote>“{{template.quote}}”</blockquote>{{/if}}
         </div>
 
+        {{#if template.blocked.length}}
+          <div class="prog-profile-callout is-blocked" role="alert">
+            <i class="fas fa-triangle-exclamation"></i>
+            <div>
+              <strong>This profile cannot be applied yet</strong>
+              {{#each template.blocked}}<span>{{text}}{{#if detail}} <em>({{detail}})</em>{{/if}}</span>{{/each}}
+            </div>
+          </div>
+        {{/if}}
+
+        <div class="profile-apply-row">
+          <button type="button" class="btn primary" data-action="profile-apply" {{#unless template.canApply}}disabled{{/unless}} {{#if template.isApplied}}aria-pressed="true"{{/if}}>
+            <i class="fas {{#if template.isApplied}}fa-check{{else}}fa-id-card{{/if}}"></i> {{template.applyLabel}}
+          </button>
+          <span class="profile-apply-hint">{{#if template.isApplied}}Your draft is filled in. Resolve any open assignments, then continue.{{else}}Fills your character draft only. Nothing is created until you confirm at the end.{{/if}}</span>
+        </div>
+
         <div class="profile-abilities profile-abilities--review">
           {{#each template.abilities}}
             <span class="profile-ability"><b class="swse-ability-label swse-ability-label--{{key}}">{{label}}</b> {{score}} <i class="mod-{{modClass}}">({{mod}})</i></span>
@@ -70,10 +87,10 @@
         <div class="business-list">
           {{#if template.openBusiness}}
             {{#each template.openBusiness}}
-              <button type="button" class="business-row {{#if blocking}}is-blocking{{/if}}" data-profile-business-target="{{stepId}}">
+              <button type="button" class="business-row {{#if blocking}}is-blocking{{/if}}" data-action="profile-resolve" data-profile-business-target="{{stepId}}" {{#unless ../template.isApplied}}disabled{{/unless}}>
                 <i class="fas {{icon}}"></i>
                 <span><strong>{{label}}</strong><em>{{detail}}</em></span>
-                <b>Resolve</b>
+                <b>{{#if ../template.isApplied}}Resolve{{else}}After apply{{/if}}</b>
               </button>
             {{/each}}
           {{else}}

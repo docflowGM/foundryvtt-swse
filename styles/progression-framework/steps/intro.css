@@ -4722,3 +4722,11 @@
     gap: 8px;
   }
 }
+
+/* Galactic Profile review: explicit Apply + fail-closed reasons */
+.prog-galactic-profile .prog-profile-callout.is-blocked { border-color: var(--swse-danger, #d9534f); }
+.prog-galactic-profile .prog-profile-callout.is-blocked span { display: block; }
+.prog-galactic-profile .profile-apply-row { display: flex; align-items: center; gap: 0.75rem; margin: 0.75rem 0; flex-wrap: wrap; }
+.prog-galactic-profile .profile-apply-row .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+.prog-galactic-profile .profile-apply-hint { opacity: 0.8; font-size: 0.85em; }
+.prog-galactic-profile .business-row[disabled] { opacity: 0.55; cursor: default; }
