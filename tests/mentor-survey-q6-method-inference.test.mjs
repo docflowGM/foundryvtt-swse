@@ -82,7 +82,7 @@ test('SV-19 the release gate covers the assessment clause and every phrase recor
   assert.ok(used.some((r) => r.id === 'reflection.assessment.method') && used.some((r) => r.id === `reflection.assessment.phrase.${K1}`));
   const run = (pack, preview) => Q6.resolveQ6({ surveyKind: 'multiclass', pack, draft: { answers: {} }, qid: 'q6', ctx: ctl.ctx, runtime: ctl.runtime, archetypeLookup: () => null, preview });
   assert.equal(run(mcPack, false).reason, 'unapproved_content'); assert.equal(run(mcPack, true).available, true);
-  assert.ok(Object.values(q6c.assessment.methodKeys).every((p) => p.editorialStatus === 'draft_text' && p.category === 'method' && !/\{|\}/.test(p.text)));
+  assert.ok(Object.values(q6c.assessment.methodKeys).every((p) => p.editorialStatus === 'owner_approved_text' && p.category === 'method' && !/\{|\}/.test(p.text)));
   assert.equal(Object.keys(q6c.assessment.methodKeys).length, 77); assert.equal(Object.keys(q6c.assessment.ledger).length, 125);
 });
 

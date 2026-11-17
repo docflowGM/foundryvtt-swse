@@ -3185,3 +3185,13 @@ These are engineering or drafting choices the rulings delegated. None sets a gam
 ## MSV-RD-018 — OWNER REVIEW OUTCOME (appended 2026-11-17; earlier entries preserved)
 
 The owner reviewed the method ledger and recommended four final wordings, applied here: `forceSecret` "refining the use of Force techniques"; `brutalForce` "applying overwhelming force"; `moraleImpact` "undermining an opponent's morale"; `dualistTechnique` "applying specific dueling techniques". The other 73 phrases were judged editorially acceptable; the overlapping medical, stealth and survival phrases stay distinct and are to be re-checked in live testing. The 48 exclusions are preserved. The recommendation covers player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release). The 77 records remain `draft_text` in the data until the owner confirms the approval of the wording itself (a recommendation is not a ruling, `CLAUDE.md` section 9).
+
+
+## MSV-RD-018 — OWNER APPROVAL (appended 2026-11-17; earlier entries preserved)
+
+The owner approved the 77 method phrases as player-facing wording ("They are approved the text"), after the four final refinements of 2026-11-17. Scope: phrase wording only. Not approved by this ruling: mechanical certification, tag assignments, Mentor dialogue, the source-neutral correction line (still draft), or release of any scope. Status: phrase wording RESOLVED. The 77 records in `reflection-q6.json` carry `editorialStatus: owner_approved_text` and `ownerApproval`. The question as a whole remains gated by the other draft Q6 text and the withheld manifest.
+
+
+## MSV-RD-018 — FINAL EDITORIAL APPROVAL (appended 2026-11-17; earlier entries preserved)
+
+Owner wording approval (stated 2026-11-16, recorded 2026-11-17) of: the 77 method phrases in their final wording (including `forceSecret` "refining the use of Force techniques", `brutalForce` "applying overwhelming force", `moraleImpact` "undermining an opponent's morale", `dualistTechnique` "applying specific dueling techniques") and the source-neutral method correction "I recognize that training, but I don't think it necessarily describes how I prefer to approach problems." (stable id `mc.q6.not.method_preference.1`, original text preserved in `originalText`). The shared positive method sentence was already approved. Scope: wording only. Unchanged: the 48 exclusions, canonical keys, evidence requirements, ranking, correction persistence, answer-to-tag mappings (uncertified), the neutral Q6 frame and every Mentor script (draft), and all 42 release scopes (withheld). Phrase wording and correction wording: RESOLVED.

@@ -81,10 +81,10 @@ test('SV-19 editorial ledger: all 125 canonical keys are classified once; only m
   for (const k of ['silentKill', 'critRange', 'imperialDuty']) assert.deepEqual(MI.methodClaims({ projection: E.projectActorEvidence(actor([A, B])), observedBias: { [k]: 9 }, provenance: { ...evid, items: { [k]: [entry(A), entry(B)] } }, methodKeys: q6c.assessment.methodKeys }), [], `${k} never makes a claim even with perfect provenance`);
 });
 
-test('SV-19 correction grammar: the method correction is source-neutral (same stable id, draft, original preserved) and claims are told apart by a reviewed phrase detail', () => {
+test('SV-19 correction grammar: the method correction is source-neutral (same stable id, owner-approved wording, original preserved) and claims are told apart by a reviewed phrase detail', () => {
   const neg = q6c.negatives.method_preference[0];
   assert.equal(neg.id, 'mc.q6.not.method_preference.1'); assert.equal(neg.text, 'I recognize that training, but I don’t think it necessarily describes how I prefer to approach problems.');
-  assert.equal(neg.hasSlots, false); assert.equal(neg.editorialStatus, 'draft_text'); assert.match(neg.originalText, /\{method_phrase\}/);
+  assert.equal(neg.hasSlots, false); assert.equal(neg.editorialStatus, 'owner_approved_text'); assert.match(neg.ownerApproval, /source-neutral method correction only/); assert.match(neg.originalText, /\{method_phrase\}/);
   assert.deepEqual(S.validateResponseRecord(neg), []); assert.ok(S.isFirstPerson(neg.text));
   assert.ok(Object.values(q6c.negatives).flat().filter((r) => /method_phrase/.test(r.text)).length === 0, 'no correction concatenates a raw phrase into a sentence');
 });
@@ -93,9 +93,26 @@ test('SV-19 owner-reviewed phrases and accurate exclusion categories: twelve spe
   const m = q6c.assessment.methodKeys; const L = q6c.assessment.ledger;
   const want = { forceSecret: 'refining the use of Force techniques', brutalForce: 'applying overwhelming force', moraleImpact: 'undermining an opponent\u2019s morale', dualistTechnique: 'applying specific dueling techniques', burstDamage: 'delivering damage in a powerful burst', conditionTrack: 'hindering opponents through debilitating effects', accuracy: 'making precise attacks', pilotMastery: 'operating vehicles with greater control', knowledgeMastery: 'applying specialized knowledge', biotechMastery: 'working with biotechnology', surgicalMastery: 'using advanced surgical techniques', wildernessLore: 'applying knowledge of wilderness conditions', weaponMastery: 'using specialized weapon techniques', medicalKnowledge: 'applying medical knowledge', technicalMastery: 'applying technical expertise', tacticalVerse: 'using varied tactical approaches' };
   for (const [k, t] of Object.entries(want)) assert.equal(m[k].text, t, k);
-  assert.ok(Object.values(m).every((x) => x.editorialStatus === 'draft_text'), 'no phrase is approved');
+  assert.ok(Object.values(m).every((x) => x.editorialStatus === 'owner_approved_text' && /phrase wording only/.test(x.ownerApproval)), 'the 77 phrases carry the owner approval, scoped to wording');
   assert.deepEqual(Object.entries(L).filter(([, v]) => v.category === 'affiliation').map(([k]) => k).sort(), ['forceBond', 'imperialDuty', 'networkInfluence', 'sithAlchemy']);
   for (const k of ['sabotageExpertise', 'commandoTactics', 'ritualMastery', 'itemEnchantment', 'businessAcumen']) { assert.equal(L[k].category, 'technique', k); assert.match(L[k].excludedBecause, /^a legitimate (technique|tactical technique|area of (knowledge|expertise))/, `${k} reason does not call the concept invalid`); assert.ok(!m[k], `${k} stays excluded`); }
   const report = fs.readFileSync(path.join(ROOT, 'docs/design/mentor-survey-v2/19-Q6-METHOD-REVIEW-REPORT.md'), 'utf8');
   assert.match(report, /## 3\. Review notes/); assert.match(report, /applying overwhelming force/); assert.match(report, /Rendered examples/);
+});
+
+test('SV-19 final editorial approval: exactly 77 approved phrases, 48 exclusions, nothing else approved, no release state changed, unapproved dialogue still fails closed', async () => {
+  const a = q6c.assessment; const man = json('data/mentor-survey/release-manifest.json');
+  assert.equal(Object.keys(a.methodKeys).length, 77); assert.ok(Object.values(a.methodKeys).every((p) => p.editorialStatus === 'owner_approved_text'));
+  assert.equal(Object.values(a.ledger).filter((x) => x.category !== 'method').length, 48); assert.ok(Object.keys(a.ledger).filter((k) => a.ledger[k].category !== 'method').every((k) => !a.methodKeys[k]));
+  assert.deepEqual(Object.keys(a.ledger).sort(), Object.keys(json('data/bias-keys-canonical.json').mechanicalBias).sort(), 'canonical keys unchanged');
+  // approved records, by id, in the whole Q6 pack: the 77 phrases, the two assessment clauses, answer B and the one correction. Nothing else.
+  const approved = []; const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') { if (o.editorialStatus === 'owner_approved_text') approved.push(o.id); Object.values(o).forEach(walk); } }; walk(q6c);
+  const expected = [...Object.values(a.methodKeys).map((p) => p.id), 'reflection.assessment.method', 'reflection.assessment.theme', 'mc.q6.choice.b', 'mc.q6.not.method_preference.1'].sort();
+  assert.deepEqual([...approved].sort(), expected, 'no unrelated Q6 dialogue was promoted');
+  assert.ok(q6c.neutral.frame.opening.editorialStatus === 'draft_text' && Object.values(q6c.mentors).every((m) => m.opening.editorialStatus === 'draft_text'), 'the neutral frame and every Mentor script stay draft');
+  const states = Object.values(man.surveys).flatMap((s) => Object.values(s)); assert.equal(states.length, 42); assert.ok(states.every((c) => c.releaseState === 'withheld'), 'all 42 scopes stay withheld');
+  const Q6 = await import(u(`${dir}/resolvers/reflection-q6.js`)); const E2 = await import(u(`${dir}/actor-evidence.js`));
+  const ev = E2.projectActorEvidence(actor([A, B])); const prov = { items: { [K1]: [entry(A), entry(B)] }, skills: {}, attributes: {}, snapshot: 's' };
+  const r = Q6.resolveQ6({ surveyKind: 'prestige', pack: prPack, draft: { answers: {} }, qid: 'q6', ctx: { destinationClassId: 'ace_pilot', evidenceRevision: 'r' }, runtime: { evidence: ev, events: [], observedBias: { [K1]: 5 }, observedProvenance: prov }, archetypeLookup: () => null, preview: false });
+  assert.equal(r.reason, 'unapproved_content', 'approved phrases do not release a question whose other text is draft');
 });
