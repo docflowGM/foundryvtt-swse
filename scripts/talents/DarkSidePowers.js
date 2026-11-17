@@ -297,19 +297,9 @@ export class DarkSidePowers {
     const damageDice = Math.min(characterLevel, 10);
 
     if (spendFP) {
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Channel Aggression requires 1 Force Point.'
-        };
-      }
-
-      await ActorEngine.updateActor(actor, {
-        'system.forcePoints.value': currentFP - 1
-      });
+      const payment = await _spendFP(actor, 1);
+      if (!payment.ok) return { success: false, message: payment.message };
     }
-
     const roll = await RollEngine.safeRoll(`${damageDice}d6`);
     if (!roll) { SWSELogger.error('Damage roll failed'); return; }
     const damageAmount = roll.total;
@@ -363,19 +353,9 @@ export class DarkSidePowers {
     }
 
     if (spendFP) {
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Channel Anger requires 1 Force Point.'
-        };
-      }
-
-      await ActorEngine.updateActor(actor, {
-        'system.forcePoints.value': currentFP - 1
-      });
+      const payment = await _spendFP(actor, 1);
+      if (!payment.ok) return { success: false, message: payment.message };
     }
-
     const conModifier = actor.system.attributes.con?.mod || 0;
     const durationRounds = 5 + conModifier;
     const currentRound = game.combat?.round || 0;
@@ -471,19 +451,9 @@ export class DarkSidePowers {
     }
 
     if (spendFP) {
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Crippling Strike requires 1 Force Point.'
-        };
-      }
-
-      await ActorEngine.updateActor(actor, {
-        'system.forcePoints.value': currentFP - 1
-      });
+      const payment = await _spendFP(actor, 1);
+      if (!payment.ok) return { success: false, message: payment.message };
     }
-
     const targetActor = targetToken.actor;
     const originalSpeed = targetActor.system.speed?.base || 6;
     const crippledSpeed = Math.ceil(originalSpeed / 2);
@@ -618,19 +588,9 @@ export class DarkSidePowers {
     }
 
     if (spendFP) {
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Creating a talisman requires 1 Force Point.'
-        };
-      }
-
-      await ActorEngine.updateActor(actor, {
-        'system.forcePoints.value': currentFP - 1
-      });
+      const payment = await _spendFP(actor, 1);
+      if (!payment.ok) return { success: false, message: payment.message };
     }
-
     const isGreater = this.hasGreaterDarkSideTalisman(actor);
     const defenseText = isGreater ? 'all Defenses' : selectedDefense || 'one Defense';
     const defenseBonus = isGreater ? 'all' : selectedDefense;
@@ -1655,19 +1615,10 @@ export class DarkSidePowers {
       };
     }
 
-    // Check Force Points
-    const currentFP = actor.system.forcePoints?.value || 0;
-    if (currentFP < 1) {
-      return {
-        success: false,
-        message: 'Not enough Force Points. Sith Alchemical Weapon ability requires 1 Force Point.'
-      };
-    }
-
-    // Spend Force Point
-    await ActorEngine.updateActor(actor, {
-      'system.forcePoints.value': currentFP - 1
-    });
+    // Commit a real Force Point spend before the damage/DSP effect.
+    // The canonical spender emits the Temptation receipt after the write.
+    const payment = await _spendFP(actor, 1);
+    if (!payment.ok) return { success: false, message: payment.message };
 
     // Get Dark Side Score (from canonical storage)
     const dspBonus = DSPEngine.getValue(actor);
@@ -1975,12 +1926,18 @@ export function _getFP(actor) {
 }
 
 export async function _spendFP(actor, amount = 1) {
-  const fp = _getFP(actor);
-  if (fp < amount) {
+  const before = _getFP(actor);
+  if (!actor || !Number.isSafeInteger(amount) || amount < 1)
+    return { ok: false, message: 'Invalid Force Point payment request.' };
+  // Do not calculate a replacement value from a potentially stale client
+  // snapshot. The canonical ActorEngine spender owns bonus-first allocation,
+  // committed expenditure, and typed post-spend receipts for Temptation.
+  const receipt = await ActorEngine.spendForcePoints(actor, amount, {
+    source: 'DarkSidePowers.talentAction'
+  });
+  if (receipt?.spent !== amount)
     return { ok: false, message: `Not enough Force Points. Requires ${amount} Force Point(s).` };
-  }
-  await ActorEngine.updateActor(actor, { 'system.forcePoints.value': fp - amount });
-  return { ok: true, before: fp, after: fp - amount };
+  return { ok: true, before, after: receipt.remaining, spent: receipt.spent };
 }
 
 export function _getDSP(actor) {
