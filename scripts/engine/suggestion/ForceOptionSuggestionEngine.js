@@ -261,52 +261,6 @@ export const FORCE_OPTIONS_CATALOG = {
 
 export class ForceOptionSuggestionEngine {
   /**
-   * Get Force power suggestions for a prestige class
-   * Now data-driven: checks prestige item metadata first, falls back to hardcoded mappings
-   * @param {string} prestigeClass - Prestige class name or ID
-   * @returns {Array} Array of force option IDs
-   * @private
-   */
-  static _getPrestigeClassPowerSuggestions(prestigeClass) {
-    // Hardcoded fallback mappings for vanilla prestige classes
-    const hardcodedSuggestions = {
-      'Jedi Knight': ['battle_strike', 'enlighten', 'improved_battle_meditation', 'surge'],
-      'Jedi Master': ['enlighten', 'force_sensitivity_focus', 'improved_battle_meditation', 'negate_energy'],
-      'Sith Apprentice': ['force_lightning', 'force_grip', 'dark_side_mastery', 'stun'],
-      'Sith Lord': ['force_lightning', 'dark_side_mastery', 'force_grip', 'move_object'],
-      'Force Adept': ['move_object', 'force_lightning', 'negate_energy', 'telekinetic_savant'],
-      'Force Disciple': ['move_object', 'enlighten', 'force_sensitivity_focus', 'telekinetic_savant'],
-      'Imperial Knight': ['battle_strike', 'negate_energy', 'surge', 'mind_trick'],
-      'Imperial Knight Errant': ['surge', 'mind_trick', 'battle_strike', 'quicken_power'],
-      'Imperial Knight Inquisitor': ['mind_trick', 'force_grip', 'force_lightning', 'awareness']
-    };
-
-    // Try to find prestige item in world
-    if (game?.items) {
-      // Search by ID first (if prestigeClass is an ID)
-      let prestigeItem = game.items.get(prestigeClass);
-
-      // If not found, search by name
-      if (!prestigeItem) {
-        prestigeItem = game.items.find(item =>
-          item.type === 'prestige' && item.name === prestigeClass
-        );
-      }
-
-      // If found and has associatedForceOptions, use them
-      if (prestigeItem && prestigeItem.system?.associatedForceOptions) {
-        const options = prestigeItem.system.associatedForceOptions;
-        if (Array.isArray(options) && options.length > 0) {
-          return options;
-        }
-      }
-    }
-
-    // Fall back to hardcoded mappings for vanilla prestige classes
-    return hardcodedSuggestions[prestigeClass] || [];
-  }
-
-  /**
    * Suggest Force options based on character build
    * @param {Array} options - Array of force options to evaluate
    * @param {Actor} actor - The character
@@ -331,9 +285,6 @@ export class ForceOptionSuggestionEngine {
       const forceSuiteRoleCounts = countForceSuiteRoles(forceChoiceContext);
       const { DSPEngine } = await import("/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js").catch(() => ({ DSPEngine: null }));
       const dspValue = DSPEngine?.getValue(actor) ?? actor?.system?.darkSide?.value ?? 0;
-
-      // Get prestige class target from L1 survey if available
-      const prestigeClassTarget = actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
 
       const suggestedOptions = options.map(option => {
         let tier = FORCE_OPTION_TIERS.AVAILABLE;
@@ -433,15 +384,6 @@ export class ForceOptionSuggestionEngine {
         if (roleTags.has('lightsaberform') && buildIntent.combatStyle === 'lightsaber') {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
           reasons.push('Extends your lightsaber-form Force suite');
-        }
-
-        // Prestige class alignment from L1 survey (highest priority)
-        if (prestigeClassTarget) {
-          const prestigeConfig = this._getPrestigeClassPowerSuggestions(prestigeClassTarget);
-          if (prestigeConfig && prestigeConfig.includes(option.id)) {
-            tier = Math.max(tier, FORCE_OPTION_TIERS.PRESTIGE_ALIGNED);
-            reasons.push(`Supports your goal: ${prestigeClassTarget}`);
-          }
         }
 
         // Prestige class alignment - FIXED: Use prestigeAffinities (array) instead of prestigeTargets

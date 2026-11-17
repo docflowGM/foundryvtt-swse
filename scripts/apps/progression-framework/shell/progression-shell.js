@@ -1496,9 +1496,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
       languages: 'languages',
       language: 'languages',
       survey: 'survey',
-      'l1-survey': 'survey',
-      'base-class-survey': 'classSurveys',
-      'prestige-survey': 'prestigeSurvey',
+      'l1-survey': 'mentorSurvey',
+      'base-class-survey': 'mentorSurvey',
+      'prestige-survey': 'mentorSurvey',
       droid: 'droid',
       'droid-model': 'droid',
       'droid-degree': 'droid',
@@ -1635,8 +1635,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const aliases = {
       attribute: 'attributes',
       attributes: 'attributes',
-      'l1-survey': 'survey',
-      'base-class-survey': 'classSurveys',
+      'l1-survey': 'mentorSurvey',
+      'base-class-survey': 'mentorSurvey',
       'general-feat': 'feats',
       'class-feat': 'feats',
       'heroic-feat': 'feats',
@@ -1650,7 +1650,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'medical-secrets': 'medicalSecrets',
       'starship-maneuver': 'starshipManeuvers',
       'starship-maneuvers': 'starshipManeuvers',
-      'prestige-survey': 'prestigeSurvey',
+      'prestige-survey': 'mentorSurvey',
     };
 
     const isEmpty = (value) => {

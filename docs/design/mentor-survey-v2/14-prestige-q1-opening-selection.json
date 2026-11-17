@@ -1,0 +1,706 @@
+[
+  {
+    "classId": "ace_pilot",
+    "className": "Ace Pilot",
+    "mentorRegistryKey": "mayu",
+    "opening": {
+      "id": "pr.ace_pilot.q1.intro.712",
+      "label": "Candidate B (preferred editorial revision)",
+      "line": 712,
+      "text": "Well, look at that. You've earned your shot at being an ace. Doesn't mean there's only one way to fly, though. So tell me - what do you want to be known for?",
+      "basis": "preferred_label"
+    },
+    "question": {
+      "id": "pr.ace_pilot.q1.question.716",
+      "label": "Q1 (draft)",
+      "line": 716,
+      "text": "Now that you've reached the threshold of Ace Pilot, what part of the role do you want to make your own?"
+    },
+    "alternativeOpenings": 1,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "bounty_hunter",
+    "className": "Bounty Hunter",
+    "mentorRegistryKey": "kex_varon",
+    "opening": {
+      "id": "pr.bounty_hunter.q1.intro.901",
+      "label": null,
+      "line": 901,
+      "text": "You’ve met the requirements. That tells me you have the training. It doesn’t tell me how you intend to use it. A successful hunt is decided long before the first shot. So tell me—what part of the work do you intend to master?",
+      "basis": "proposed_primary"
+    },
+    "question": {
+      "id": "pr.bounty_hunter.q1.question.903",
+      "label": "Player question (DRAFT)",
+      "line": 903,
+      "text": "As you take on the role of Bounty Hunter, what kind of expertise do you want to develop?"
+    },
+    "alternativeOpenings": 2,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "crime_lord",
+    "className": "Crime Lord",
+    "mentorRegistryKey": "tio_the_hutt",
+    "opening": {
+      "id": "pr.crime_lord.q1.intro.1059",
+      "label": "Preferred Tío fixed introduction — PROPOSED",
+      "line": 1059,
+      "text": "Ahh, now we're getting somewhere. You've earned a seat at the table, my friend. But power comes in different currencies—fear, favors, loyal people, a well-timed word. So tell Tío: which one do you intend to make yours?",
+      "basis": "preferred_label"
+    },
+    "question": {
+      "id": "pr.crime_lord.q1.question.1069",
+      "label": "Shared Q1 player-facing question — PROPOSED",
+      "line": 1069,
+      "text": "Now that you've reached the Crime Lord's threshold, what kind of influence do you want to cultivate?"
+    },
+    "alternativeOpenings": 2,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "elite_trooper",
+    "className": "Elite Trooper",
+    "mentorRegistryKey": "breach",
+    "opening": {
+      "id": "pr.elite_trooper.q1.intro.1200",
+      "label": "Preferred introduction (DRAFT)",
+      "line": 1200,
+      "text": "Well, you made it this far. Good. Elite training gives you a few ways to get the job done: hit harder, stay standing, work smarter, or keep somebody else alive. Which one's worth your time?",
+      "basis": "preferred_label"
+    },
+    "question": {
+      "id": "pr.elite_trooper.q1.question.1210",
+      "label": "Player-facing Q1 text (DRAFT)",
+      "line": 1210,
+      "text": "As an Elite Trooper, what kind of combat expertise do you want to make your own?"
+    },
+    "alternativeOpenings": 2,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "force_adept",
+    "className": "Force Adept",
+    "mentorRegistryKey": "venn",
+    "opening": {
+      "id": "pr.force_adept.q1.intro.1394",
+      "label": null,
+      "line": 1394,
+      "text": "There are many ways to listen to the Force, and you have come far enough to walk one of them more deeply. Some seek understanding, others protection, and some choose paths I would not choose myself. None of that tells me what *you* hope to learn. Which part of this calling draws you?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.force_adept.q1.question.1396",
+      "label": "Proposed player-facing question",
+      "line": 1396,
+      "text": "As a Force Adept, what part of your connection to the Force do you want to deepen?"
+    },
+    "alternativeOpenings": 1,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "force_disciple",
+    "className": "Force Disciple",
+    "mentorRegistryKey": "anchorite",
+    "opening": {
+      "id": "pr.force_disciple.q1.intro.1536",
+      "label": null,
+      "line": 1536,
+      "text": "Mm. The threshold is real. Beyond it lie secrets that change how the Force answers, visions that unsettle destiny, and disciplines older than any name. Not every door should be opened. Which one calls to you?",
+      "basis": "proposed_primary"
+    },
+    "question": {
+      "id": "pr.force_disciple.q1.question.1538",
+      "label": "Q1",
+      "line": 1538,
+      "text": "As a Force Disciple, what part of your understanding or command of the Force would you most like to deepen?"
+    },
+    "alternativeOpenings": 1,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "gunslinger",
+    "className": "Gunslinger",
+    "mentorRegistryKey": "rajma",
+    "opening": {
+      "id": "pr.gunslinger.q1.intro.1731",
+      "label": "Preferred introduction — DRAFT",
+      "line": 1731,
+      "text": "Well, look who's earned a place among the quick draws. Nice. A pistol in the right hands can end a fight, save a life, or make one spectacular entrance. Me? I like having options. So tell me—what kind of Gunslinger are you going to be?",
+      "basis": "preferred_label"
+    },
+    "question": {
+      "id": "pr.gunslinger.q1.question.1741",
+      "label": "Question",
+      "line": 1741,
+      "text": "As a Gunslinger, what part of the craft do you want to make your own?"
+    },
+    "alternativeOpenings": 2,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "jedi_knight",
+    "className": "Jedi Knight",
+    "mentorRegistryKey": "miraj",
+    "opening": {
+      "id": "pr.jedi_knight.q1.intro.1895",
+      "label": "Preferred intro (DRAFT, no assumed former-master relationship)",
+      "line": 1895,
+      "text": "You have come far enough to stand at the threshold of Knighthood. The trust placed in a Jedi Knight is not a command to become only one thing. Some stand between danger and the vulnerable. Others heal, seek truth, teach, or prevent a conflict before it begins. Which part of this responsibility calls you to grow?",
+      "basis": "preferred_label"
+    },
+    "question": {
+      "id": "pr.jedi_knight.q1.question.1897",
+      "label": "Prompt (DRAFT)",
+      "line": 1897,
+      "text": "As a Jedi Knight, which kind of service or discipline do you want to deepen?"
+    },
+    "alternativeOpenings": 1,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "jedi_master",
+    "className": "Jedi Master",
+    "mentorRegistryKey": "miraj",
+    "opening": {
+      "id": "pr.jedi_master.q1.intro.2160",
+      "label": "Miraj",
+      "line": 2160,
+      "text": "The title of Master does not end the need to learn. It deepens our responsibility for what our choices teach. Some find their purpose in guiding others, some in understanding the Force, and some in knowing when not to act. Tell me—which part of Mastery calls you to grow?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.jedi_master.q1.question.2162",
+      "label": "Q1",
+      "line": 2162,
+      "text": "As a Jedi Master, what aspect of your discipline or responsibility do you wish to deepen?"
+    },
+    "alternativeOpenings": 1,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "officer",
+    "className": "Officer",
+    "mentorRegistryKey": "korr",
+    "opening": {
+      "id": "pr.officer.q1.intro.2367",
+      "label": "Preferred proposed Korr intro",
+      "line": 2367,
+      "text": "The qualifications are earned. The responsibility is not yet discharged. An officer's judgment determines where people stand, what risks they take, and which orders they trust. There is more than one way to command. Which discipline will you make your own?",
+      "basis": "preferred_label"
+    },
+    "question": {
+      "id": "pr.officer.q1.question.2369",
+      "label": "Q1",
+      "line": 2369,
+      "text": "As an Officer, what kind of leadership or operational skill do you want to develop?"
+    },
+    "alternativeOpenings": 1,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "sith_apprentice",
+    "className": "Sith Apprentice",
+    "mentorRegistryKey": "darth_malbada",
+    "opening": {
+      "id": "pr.sith_apprentice.q1.intro.2529",
+      "label": "Preferred Q1 line",
+      "line": 2529,
+      "text": "So. You have earned a place among the Sith. A title is nothing without the strength to keep it. Will you sharpen your blade, bend minds, make servants of your enemies—or learn to turn your own pain into power? Choose. I dislike hesitation.",
+      "basis": "preferred_label"
+    },
+    "question": {
+      "id": "pr.sith_apprentice.q1.question.2531",
+      "label": "Question",
+      "line": 2531,
+      "text": "As a Sith Apprentice, what form of power or discipline do you intend to master?"
+    },
+    "alternativeOpenings": 1,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "sith_lord",
+    "className": "Sith Lord",
+    "mentorRegistryKey": "darth_miedo",
+    "opening": {
+      "id": "pr.sith_lord.q1.intro.2679",
+      "label": "Preferred Q1 line",
+      "line": 2679,
+      "text": "You have reached the threshold of Sith Lord. A blade can end a life. A secret can outlast a century. The Force can make others mistake your will for their own. Titles do none of this. Decide which mastery will endure when you are gone.",
+      "basis": "preferred_label"
+    },
+    "question": {
+      "id": "pr.sith_lord.q1.question.2681",
+      "label": "Question",
+      "line": 2681,
+      "text": "As a Sith Lord, which part of your power or influence will you bring under greater control?"
+    },
+    "alternativeOpenings": 1,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "corporate_agent",
+    "className": "Corporate Agent",
+    "mentorRegistryKey": "skindar",
+    "opening": {
+      "id": "pr.corporate_agent.q1.intro.2926",
+      "label": null,
+      "line": 2926,
+      "text": "Corporate authority. A comforting phrase, until somebody asks you to make a decision. Your employer gives you access; it doesn't give you judgment. Are you here to lead people, build connections, or make competitors hesitate? Spare me the slogan.",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.corporate_agent.q1.question.2924",
+      "label": "Core prompt",
+      "line": 2924,
+      "text": "As a Corporate Agent, what kind of professional influence do you want to develop?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "gladiator",
+    "className": "Gladiator",
+    "mentorRegistryKey": "pegar",
+    "opening": {
+      "id": "pr.gladiator.q1.intro.2991",
+      "label": null,
+      "line": 2991,
+      "text": "Ah, the arena. I've seen a match teach the same lesson twice. Not many fighters enjoy the second one. You've reached the threshold; what would you rather master—staying alive, reading the next move, or giving the crowd something worth remembering?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.gladiator.q1.question.2989",
+      "label": "Core prompt",
+      "line": 2989,
+      "text": "As a Gladiator, what part of arena fighting do you want to make your own?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "melee_duelist",
+    "className": "Melee Duelist",
+    "mentorRegistryKey": "kharjo",
+    "opening": {
+      "id": "pr.melee_duelist.q1.intro.3053",
+      "label": null,
+      "line": 3053,
+      "text": "A duel is not won by reputation. It is decided by distance, timing, and the choices made when another fighter moves. You have earned the chance to study this craft. Which part will you train until it no longer demands thought?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.melee_duelist.q1.question.3051",
+      "label": "Core prompt",
+      "line": 3051,
+      "text": "As a Melee Duelist, what kind of close-combat expertise do you want to perfect?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "enforcer",
+    "className": "Enforcer",
+    "mentorRegistryKey": "krag",
+    "opening": {
+      "id": "pr.enforcer.q1.intro.3158",
+      "label": null,
+      "line": 3158,
+      "text": "Got an organization behind you. Fine. That means nothing if you can't handle the next problem. You want to track somebody down, bring them in, or make sure they don't try anything? Pick what works.",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.enforcer.q1.question.3160",
+      "label": "Q1",
+      "line": 3160,
+      "text": "As an Enforcer, which kind of investigative or enforcement expertise do you intend to develop?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "independent_droid",
+    "className": "Independent Droid",
+    "mentorRegistryKey": "seraphim",
+    "opening": {
+      "id": "pr.independent_droid.q1.intro.3215",
+      "label": null,
+      "line": 3215,
+      "text": "<Diagnostic: Independence confirmed.> Your former specifications describe a function. They do not determine your next decision. Will you defend your autonomy, modify your systems, or surpass the limits of your model? Choose deliberately.",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.independent_droid.q1.question.3217",
+      "label": "Q1",
+      "line": 3217,
+      "text": "As an Independent Droid, how do you intend to develop beyond your original programming?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "infiltrator",
+    "className": "Infiltrator",
+    "mentorRegistryKey": "delta",
+    "opening": {
+      "id": "pr.infiltrator.q1.intro.3284",
+      "label": null,
+      "line": 3284,
+      "text": "Nice. You made it into a profession where nobody's supposed to remember your face. So what're we working on: getting inside, staying unnoticed, learning their secrets, or dropping a guard before the alarm goes off?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.infiltrator.q1.question.3286",
+      "label": "Q1",
+      "line": 3286,
+      "text": "As an Infiltrator, which part of covert operations do you want to master?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "master_privateer",
+    "className": "Master Privateer",
+    "mentorRegistryKey": "captain",
+    "opening": {
+      "id": "pr.master_privateer.q1.intro.3365",
+      "label": null,
+      "line": 3365,
+      "text": "Ah, now that is a profession with a lovely reputation: respectable to whoever hires you, pirate to whoever you stop. Tell me—will you master the boarding action, preserve a prize worth taking, or make your crew's name carry farther than the ship?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.master_privateer.q1.question.3367",
+      "label": "Q1",
+      "line": 3367,
+      "text": "As a Master Privateer, what kind of raiding or command expertise do you intend to develop?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "medic",
+    "className": "Medic",
+    "mentorRegistryKey": "kyber",
+    "opening": {
+      "id": "pr.medic.q1.intro.3455",
+      "label": null,
+      "line": 3455,
+      "text": "Welcome to the part of the job where somebody else's bad day becomes your emergency. You can learn to work faster, save someone the others have given up on, or keep your hands steady while the room falls apart. Which skill needs the training?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.medic.q1.question.3457",
+      "label": "Q1",
+      "line": 3457,
+      "text": "As a Medic, what kind of healing or emergency-care expertise do you want to develop?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "saboteur",
+    "className": "Saboteur",
+    "mentorRegistryKey": "spark",
+    "opening": {
+      "id": "pr.saboteur.q1.intro.3518",
+      "label": null,
+      "line": 3518,
+      "text": "Good sabotage doesn't break everything. It breaks the one thing that makes everything else work. Want to cut a circuit, reshape a blast, assemble a turret, or make their whole operation stumble? Let's choose the interesting failure point.",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.saboteur.q1.question.3520",
+      "label": "Q1",
+      "line": 3520,
+      "text": "As a Saboteur, what kind of disruption or technical expertise do you want to master?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "outlaw",
+    "className": "Outlaw",
+    "mentorRegistryKey": "rogue",
+    "opening": {
+      "id": "pr.outlaw.q1.intro.3635",
+      "label": null,
+      "line": 3635,
+      "text": "Someone in authority wants you caught. Congratulations - they finally admitted you matter. You can run, disappear, outsmart them, or turn their own pursuit against them. So tell me: which part of staying free are you going to make an art?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.outlaw.q1.question.3637",
+      "label": "Q1",
+      "line": 3637,
+      "text": "Now that you have earned a place among the outlaws, how do you want to protect your freedom?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "droid_commander",
+    "className": "Droid Commander",
+    "mentorRegistryKey": "axiom",
+    "opening": {
+      "id": "pr.droid_commander.q1.intro.3746",
+      "label": null,
+      "line": 3746,
+      "text": "<Assessment: Command eligibility confirmed.> A unit is not effective because its orders are loud. It is effective because information, timing, and support reach the right droids. Identify your priority: coordination, resilience, or decisive action.",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.droid_commander.q1.question.3748",
+      "label": "Question",
+      "line": 3748,
+      "text": "As a Droid Commander, which command function do you intend to develop?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "military_engineer",
+    "className": "Military Engineer",
+    "mentorRegistryKey": "rax",
+    "opening": {
+      "id": "pr.military_engineer.q1.intro.3821",
+      "label": null,
+      "line": 3821,
+      "text": "An army does not fail only when its soldiers fall. It fails when a vehicle stops, a route closes, or one component breaks at the wrong moment. Those are engineering problems. Choose the problem you intend to solve first.",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.military_engineer.q1.question.3823",
+      "label": "Question",
+      "line": 3823,
+      "text": "As a Military Engineer, which form of battlefield engineering do you intend to perfect?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "vanguard",
+    "className": "Vanguard",
+    "mentorRegistryKey": "theron",
+    "opening": {
+      "id": "pr.vanguard.q1.intro.3877",
+      "label": null,
+      "line": 3877,
+      "text": "The first line of defense begins before the enemy reaches us. Someone must find the danger, remain unseen, and get the warning home. You have earned a place at that edge. Which duty will you sharpen?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.vanguard.q1.question.3879",
+      "label": "Question",
+      "line": 3879,
+      "text": "As a Vanguard, what part of forward reconnaissance do you want to master?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "martial_arts_master",
+    "className": "Martial Arts Master",
+    "mentorRegistryKey": "zhen",
+    "opening": {
+      "id": "pr.martial_arts_master.q1.intro.3974",
+      "label": null,
+      "line": 3974,
+      "text": "The hand that reaches for a weapon has one answer. The empty hand has many. You have earned the right to study beyond the foundations. Will you train your sight, your movement, your hold, or the strike that ends a struggle? Choose with care.",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.martial_arts_master.q1.question.3976",
+      "label": "Q1",
+      "line": 3976,
+      "text": "As a Martial Arts Master, which discipline of the empty hand do you want to deepen?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "imperial_knight",
+    "className": "Imperial Knight",
+    "mentorRegistryKey": "dezmin",
+    "opening": {
+      "id": "pr.imperial_knight.q1.intro.4063",
+      "label": null,
+      "line": 4063,
+      "text": "Your oath gives your service its direction; it does not decide every action you will take. An Imperial Knight must guard with judgment, not merely obey with a blade. Will you deepen your defense, your lightsaber discipline, your care for those beside you, or your command of the Force?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.imperial_knight.q1.question.4065",
+      "label": "Q1",
+      "line": 4065,
+      "text": "As an Imperial Knight, which duty or discipline will you strengthen first?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "shaper",
+    "className": "Shaper",
+    "mentorRegistryKey": "urza",
+    "opening": {
+      "id": "pr.shaper.q1.intro.4198",
+      "label": null,
+      "line": 4198,
+      "text": "A living tool does not remain what it was yesterday. Neither does its maker. You have earned the discipline to shape what grows and heals—and what changes another being. Which of those responsibilities will you learn to carry with precision?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.shaper.q1.question.4200",
+      "label": "Q1",
+      "line": 4200,
+      "text": "As a Shaper, which part of living technology do you wish to master?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "assassin",
+    "className": "Assassin",
+    "mentorRegistryKey": "delta",
+    "opening": {
+      "id": "pr.assassin.q1.intro.4354",
+      "label": null,
+      "line": 4354,
+      "text": "Heard you qualified to make a name disappear. Cute. The hard part isn’t landing a shot—it’s knowing when to move, when to wait, and how to get out. So what’s your specialty gonna be?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.assassin.q1.question.4356",
+      "label": "Q1",
+      "line": 4356,
+      "text": "As an Assassin, what technique or discipline do you want to develop?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "charlatan",
+    "className": "Charlatan",
+    "mentorRegistryKey": "sela",
+    "opening": {
+      "id": "pr.charlatan.q1.intro.4439",
+      "label": null,
+      "line": 4439,
+      "text": "Darling, a convincing smile opens more doors than a blaster ever will. After that, it’s a question of timing: a well-placed lie, a useful distraction, or a little luck. Which part of the art would you like to perfect?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.charlatan.q1.question.4441",
+      "label": "Q1",
+      "line": 4441,
+      "text": "As a Charlatan, what kind of social craft or calculated misdirection do you want to master?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "improviser",
+    "className": "Improviser",
+    "mentorRegistryKey": "jack",
+    "opening": {
+      "id": "pr.improviser.q1.intro.4508",
+      "label": null,
+      "line": 4508,
+      "text": "Okay, so you’ve got no tools, half a broken machine, and exactly the wrong spare parts. That’s practically a vacation! Are we fixing something, making something, or finding the one person who has what we need?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.improviser.q1.question.4510",
+      "label": "Q1",
+      "line": 4510,
+      "text": "As an Improviser, what problem-solving specialty do you want to develop?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  },
+  {
+    "classId": "pathfinder",
+    "className": "Pathfinder",
+    "mentorRegistryKey": "lead",
+    "opening": {
+      "id": "pr.pathfinder.q1.intro.4566",
+      "label": null,
+      "line": 4566,
+      "text": "Finding a route is the easy part. Making sure everyone can use it—and has somewhere defensible to stop—is the job. So what are you developing: sharper reconnaissance, better movement, or positions the whole team can trust?",
+      "basis": "first_primary"
+    },
+    "question": {
+      "id": "pr.pathfinder.q1.question.4568",
+      "label": "Q1",
+      "line": 4568,
+      "text": "As a Pathfinder, what part of scouting and establishing safe ground do you want to master?"
+    },
+    "alternativeOpenings": 0,
+    "questionCandidates": 1,
+    "flags": [],
+    "editorialApproval": "provisional_default_not_approved"
+  }
+]

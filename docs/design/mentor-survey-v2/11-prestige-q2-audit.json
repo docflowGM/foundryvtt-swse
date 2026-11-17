@@ -1,0 +1,922 @@
+{
+  "source": "SWSE_Prestige_Survey_Q2_Character_Synthesis.md",
+  "summary": {
+    "classes": 32,
+    "withIntroAndQuestion": 32,
+    "withRouteInventoryMatchingQ1": 18,
+    "fixtureSets": 110,
+    "answerRows": 595,
+    "distinctCanonicalKeysInFixtures": 75
+  },
+  "classes": [
+    {
+      "classId": "ace_pilot",
+      "className": "Ace Pilot",
+      "mentorRegistryKey": "mayu",
+      "q1Routes": 33,
+      "routeInventoryTotal": 33,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 22,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "engineeringMastery",
+        "evasion",
+        "initiative",
+        "pilotMastery",
+        "reactionDefense",
+        "skillUtility",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        115,
+        133,
+        235,
+        371
+      ]
+    },
+    {
+      "classId": "bounty_hunter",
+      "className": "Bounty Hunter",
+      "mentorRegistryKey": "kex_varon",
+      "q1Routes": 43,
+      "routeInventoryTotal": 43,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "hackingSkills",
+        "informationControl",
+        "knowledgeMastery",
+        "persuasionMastery",
+        "reactionDefense",
+        "survivalism",
+        "tacticalAwareness",
+        "trackingMastery"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1048
+      ]
+    },
+    {
+      "classId": "crime_lord",
+      "className": "Crime Lord",
+      "mentorRegistryKey": "tio_the_hutt",
+      "q1Routes": 34,
+      "routeInventoryTotal": 34,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "deceptionMastery",
+        "informationControl",
+        "networkInfluence",
+        "persuasionMastery",
+        "resourceControl",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1463
+      ]
+    },
+    {
+      "classId": "elite_trooper",
+      "className": "Elite Trooper",
+      "mentorRegistryKey": "breach",
+      "q1Routes": 62,
+      "routeInventoryTotal": 62,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "armorMastery",
+        "formation",
+        "initiative",
+        "moraleBonus",
+        "reactionDefense",
+        "resourcefulness",
+        "stealth",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        707
+      ]
+    },
+    {
+      "classId": "force_adept",
+      "className": "Force Adept",
+      "mentorRegistryKey": "venn",
+      "q1Routes": 40,
+      "routeInventoryTotal": 40,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "engineeringMastery",
+        "forceBond",
+        "forceRecovery",
+        "itemEnchantment",
+        "knowledgeMastery",
+        "persuasionMastery",
+        "reactionDefense",
+        "survivalism"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1536
+      ]
+    },
+    {
+      "classId": "force_disciple",
+      "className": "Force Disciple",
+      "mentorRegistryKey": "anchorite",
+      "q1Routes": 52,
+      "routeInventoryTotal": 52,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "damageReduction",
+        "forceRecovery",
+        "knowledgeMastery",
+        "reactionDefense",
+        "survivalism",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1297
+      ]
+    },
+    {
+      "classId": "gunslinger",
+      "className": "Gunslinger",
+      "mentorRegistryKey": "rajma",
+      "q1Routes": 55,
+      "routeInventoryTotal": 55,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "evasion",
+        "firepower",
+        "quickDraw",
+        "reactionDefense",
+        "tacticalAwareness",
+        "weaponVersatility"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1613
+      ]
+    },
+    {
+      "classId": "jedi_knight",
+      "className": "Jedi Knight",
+      "mentorRegistryKey": "miraj",
+      "q1Routes": 98,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 24,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "evasion",
+        "formMastery",
+        "healingMastery",
+        "knowledgeMastery",
+        "reactionDefense",
+        "tacticalAwareness",
+        "treatingInjury"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        450
+      ]
+    },
+    {
+      "classId": "jedi_master",
+      "className": "Jedi Master",
+      "mentorRegistryKey": "miraj",
+      "q1Routes": 77,
+      "routeInventoryTotal": 77,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "forceRecovery",
+        "informationControl",
+        "knowledgeMastery",
+        "reactionDefense",
+        "skillUtility",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1209
+      ]
+    },
+    {
+      "classId": "officer",
+      "className": "Officer",
+      "mentorRegistryKey": "korr",
+      "q1Routes": 62,
+      "routeInventoryTotal": 62,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "engineeringMastery",
+        "formation",
+        "persuasionMastery",
+        "pilotMastery",
+        "reactionDefense",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1126
+      ]
+    },
+    {
+      "classId": "sith_apprentice",
+      "className": "Sith Apprentice",
+      "mentorRegistryKey": "darth_malbada",
+      "q1Routes": 58,
+      "routeInventoryTotal": 58,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "commandAuthority",
+        "engineeringMastery",
+        "forceRecovery",
+        "formMastery",
+        "intimidation",
+        "knowledgeMastery",
+        "reactionDefense",
+        "resourceControl",
+        "ritualMastery",
+        "sithAlchemy",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1689
+      ]
+    },
+    {
+      "classId": "sith_lord",
+      "className": "Sith Lord",
+      "mentorRegistryKey": "darth_miedo",
+      "q1Routes": 89,
+      "routeInventoryTotal": 89,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "commandAuthority",
+        "deceptionMastery",
+        "forceDC",
+        "forceRecovery",
+        "formMastery",
+        "informationControl",
+        "itemEnchantment",
+        "knowledgeMastery",
+        "socialManipulation",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        844
+      ]
+    },
+    {
+      "classId": "corporate_agent",
+      "className": "Corporate Agent",
+      "mentorRegistryKey": "skindar",
+      "q1Routes": 29,
+      "routeInventoryTotal": 29,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "businessAcumen",
+        "corporateInfluence",
+        "engineeringMastery",
+        "informationControl",
+        "knowledgeMastery",
+        "networkInfluence",
+        "persuasionMastery",
+        "resourceControl",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1766
+      ]
+    },
+    {
+      "classId": "gladiator",
+      "className": "Gladiator",
+      "mentorRegistryKey": "pegar",
+      "q1Routes": 26,
+      "routeInventoryTotal": 26,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "combatFlow",
+        "combatStamina",
+        "evasion",
+        "improvisation",
+        "intimidation",
+        "reactionDefense",
+        "tacticalAwareness",
+        "weaponVersatility"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1875
+      ]
+    },
+    {
+      "classId": "melee_duelist",
+      "className": "Melee Duelist",
+      "mentorRegistryKey": "kharjo",
+      "q1Routes": 44,
+      "routeInventoryTotal": 44,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "adaptability",
+        "combatFlow",
+        "counterMastery",
+        "deceptionMastery",
+        "dualistMastery",
+        "evasion",
+        "reactionDefense",
+        "tacticalAwareness",
+        "weaponMastery"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        1949
+      ]
+    },
+    {
+      "classId": "enforcer",
+      "className": "Enforcer",
+      "mentorRegistryKey": "krag",
+      "q1Routes": 16,
+      "routeInventoryTotal": 16,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "grappling",
+        "initiative",
+        "lawEnforcement",
+        "persuasionMastery",
+        "pilotMastery",
+        "reactionDefense",
+        "tacticalAwareness",
+        "trackingMastery"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2023
+      ]
+    },
+    {
+      "classId": "independent_droid",
+      "className": "Independent Droid",
+      "mentorRegistryKey": "seraphim",
+      "q1Routes": 23,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 5,
+      "answerRows": 27,
+      "canonicalKeysInFixtures": [
+        "engineeringMastery",
+        "hackingSkills",
+        "knowledgeMastery",
+        "mechanicalMastery",
+        "reactionDefense",
+        "skillUtility",
+        "tacticalAwareness",
+        "technicalInnovation"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        537
+      ]
+    },
+    {
+      "classId": "infiltrator",
+      "className": "Infiltrator",
+      "mentorRegistryKey": "delta",
+      "q1Routes": 32,
+      "routeInventoryTotal": 32,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "deceptionMastery",
+        "evasion",
+        "informationControl",
+        "knowledgeMastery",
+        "networkInfluence",
+        "reactionDefense",
+        "skillUtility",
+        "stealth",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2096
+      ]
+    },
+    {
+      "classId": "master_privateer",
+      "className": "Master Privateer",
+      "mentorRegistryKey": "captain",
+      "q1Routes": 39,
+      "routeInventoryTotal": 39,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 4,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "informationControl",
+        "networkInfluence",
+        "persuasionMastery",
+        "pilotMastery",
+        "resourceControl",
+        "spacefarerMastery",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2171
+      ]
+    },
+    {
+      "classId": "medic",
+      "className": "Medic",
+      "mentorRegistryKey": "kyber",
+      "q1Routes": 22,
+      "routeInventoryTotal": 22,
+      "routeInventoryMatchesQ1": true,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "healingMastery",
+        "medicalKnowledge",
+        "reactionDefense",
+        "resourceControl",
+        "skillUtility",
+        "surgicalMastery",
+        "survivalism",
+        "tacticalAwareness",
+        "treatingInjury"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        778
+      ]
+    },
+    {
+      "classId": "saboteur",
+      "className": "Saboteur",
+      "mentorRegistryKey": "spark",
+      "q1Routes": 43,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "engineeringMastery",
+        "explosiveMastery",
+        "hackingSkills",
+        "improvisation",
+        "mechanicalMastery",
+        "resourcefulness",
+        "sabotageExpertise",
+        "tacticalAwareness",
+        "tacticalSupport",
+        "technicalInnovation",
+        "technicalMastery"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2281
+      ]
+    },
+    {
+      "classId": "outlaw",
+      "className": "Outlaw",
+      "mentorRegistryKey": "rogue",
+      "q1Routes": 32,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "deceptionMastery",
+        "evasion",
+        "freedomPursuit",
+        "hackingSkills",
+        "identityShift",
+        "informationControl",
+        "reactionDefense",
+        "resourcefulness",
+        "survivalism",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2356
+      ]
+    },
+    {
+      "classId": "droid_commander",
+      "className": "Droid Commander",
+      "mentorRegistryKey": "axiom",
+      "q1Routes": 30,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "commandAuthority",
+        "droidControl",
+        "formation",
+        "informationControl",
+        "knowledgeMastery",
+        "rapidResponse",
+        "resourceControl",
+        "tacticalAwareness",
+        "unitCoordination"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2431
+      ]
+    },
+    {
+      "classId": "military_engineer",
+      "className": "Military Engineer",
+      "mentorRegistryKey": "rax",
+      "q1Routes": 18,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "droidControl",
+        "engineeringMastery",
+        "explosiveMastery",
+        "fortifications",
+        "knowledgeMastery",
+        "mechanicalMastery",
+        "resourcefulness",
+        "tacticalAwareness",
+        "tacticalSupport",
+        "technicalInnovation"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2505
+      ]
+    },
+    {
+      "classId": "vanguard",
+      "className": "Vanguard",
+      "mentorRegistryKey": "theron",
+      "q1Routes": 24,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "allySupport",
+        "formation",
+        "infiltration",
+        "reactionDefense",
+        "stealth",
+        "survivalSkills",
+        "tacticalAwareness",
+        "tacticalSupport",
+        "trackingMastery"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2578
+      ]
+    },
+    {
+      "classId": "martial_arts_master",
+      "className": "Martial Arts Master",
+      "mentorRegistryKey": "zhen",
+      "q1Routes": 27,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "combatAdaptability",
+        "combatFlow",
+        "combatStamina",
+        "grappling",
+        "meleeDamage",
+        "reactionDefense",
+        "tacticalAwareness",
+        "unarmeddMastery"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2652
+      ]
+    },
+    {
+      "classId": "imperial_knight",
+      "className": "Imperial Knight",
+      "mentorRegistryKey": "dezmin",
+      "q1Routes": 48,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "armorMastery",
+        "damageReduction",
+        "forceRecovery",
+        "formMastery",
+        "reactionDefense",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2776
+      ]
+    },
+    {
+      "classId": "shaper",
+      "className": "Shaper",
+      "mentorRegistryKey": "urza",
+      "q1Routes": 23,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "biologicalControl",
+        "healingMastery",
+        "knowledgeMastery",
+        "mechanicalMastery",
+        "resourcefulness",
+        "surgicalMastery",
+        "technicalInnovation"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2853
+      ]
+    },
+    {
+      "classId": "assassin",
+      "className": "Assassin",
+      "mentorRegistryKey": "delta",
+      "q1Routes": 39,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "accuracy",
+        "deadlyPrecision",
+        "infiltration",
+        "knowledgeMastery",
+        "reactionDefense",
+        "skillUtility",
+        "stealth",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        2927
+      ]
+    },
+    {
+      "classId": "charlatan",
+      "className": "Charlatan",
+      "mentorRegistryKey": "sela",
+      "q1Routes": 30,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "adaptability",
+        "allySupport",
+        "conArtistry",
+        "deceptionMastery",
+        "networkInfluence",
+        "persuasionMastery",
+        "resourcefulness",
+        "skillUtility",
+        "socialManipulation",
+        "tacticalAwareness"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        3002
+      ]
+    },
+    {
+      "classId": "improviser",
+      "className": "Improviser",
+      "mentorRegistryKey": "jack",
+      "q1Routes": 19,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "allySupport",
+        "engineeringMastery",
+        "improvisation",
+        "knowledgeMastery",
+        "mechanicalMastery",
+        "resourceControl",
+        "resourcefulness",
+        "tacticalSupport",
+        "technicalInnovation"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        3076
+      ]
+    },
+    {
+      "classId": "pathfinder",
+      "className": "Pathfinder",
+      "mentorRegistryKey": "lead",
+      "q1Routes": 26,
+      "routeInventoryTotal": null,
+      "routeInventoryMatchesQ1": false,
+      "mentorIntroCandidates": 1,
+      "questionLines": 1,
+      "fixtures": 3,
+      "answerRows": 18,
+      "canonicalKeysInFixtures": [
+        "adaptability",
+        "allySupport",
+        "explorationMastery",
+        "formation",
+        "fortifications",
+        "reactionDefense",
+        "survivalSkills",
+        "survivalism",
+        "tacticalAwareness",
+        "trackingMastery",
+        "wildernessLore"
+      ],
+      "nonCanonicalKeys": [],
+      "hasIntroAndQuestion": true,
+      "sections": [
+        3150
+      ]
+    }
+  ]
+}
