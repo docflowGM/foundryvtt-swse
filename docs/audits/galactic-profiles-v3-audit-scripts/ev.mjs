@@ -1,0 +1,11 @@
+import fs from 'fs';
+const rd=f=>fs.readFileSync(f,'utf8').split('\n').filter(Boolean).map(l=>JSON.parse(l));
+const T=rd('packs/talents.db'),TR=rd('packs/talent_trees.db'),F=rd('packs/feats.db'),SK=rd('packs/skills.db'),C=rd('packs/classes.db');
+const tn=Object.fromEntries(TR.map(t=>[t._id,t]));
+const show=t=>{const s=t.system||{};return {id:t._id,name:t.name,tree:(tn[s.talent_tree||s.treeId||s.tree]?.name)||s.talent_tree||s.treeId,treeSource:tn[s.talent_tree||s.treeId||s.tree]?.system?.source,source:s.source,page:s.page??s.sourcePage??s.pageNumber,prereq:String(s.prerequisites||'').slice(0,160),benefit:String(s.benefit||s.description||'').replace(/<[^>]+>/g,' ').slice(0,220)}};
+for(const n of ['Commanding Presence','Surveillance','Sizing Up','Mechanized Rider','Devastating Attack'])for(const t of T.filter(x=>x.name.toLowerCase()===n.toLowerCase()))console.log(JSON.stringify(show(t)));
+console.log('--- Force Training');for(const f of F.filter(x=>/force training/i.test(x.name)))console.log(JSON.stringify({id:f._id,name:f.name,source:f.system?.source,page:f.system?.page,prereq:String(f.system?.prerequisites||'').slice(0,200),benefit:String(f.system?.benefit||f.system?.description||'').replace(/<[^>]+>/g,' ').slice(0,260)}));
+console.log('--- skills named like Athletics:',SK.filter(s=>/athlet/i.test(s.name)).map(s=>s.name),'| all skills:',SK.map(s=>s.name).join(', ').slice(0,500));
+console.log('--- Scout class trees:',(C.find(c=>c.name==='Scout').system.talent_trees||[]).map(i=>tn[i]?.name+'('+(tn[i]?.system?.source||'?')+')').join(' | '));
+console.log('--- trees named Mobile Scout / Jedi Sentinel / Reconnaissance / Spy:');for(const t of TR.filter(x=>/mobile scout|^jedi sentinel$|reconnaissance|^spy$|espionage|versatility/i.test(x.name)))console.log(' ',t._id,t.name,'|',t.system?.source,'|',(t.system?.classes||t.system?.class||'')?.toString().slice(0,60));
+console.log('--- all keys on a talent doc:',Object.keys(T[0].system).join(','));
