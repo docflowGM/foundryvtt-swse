@@ -1,0 +1,710 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swse.local/schema/galactic-profiles.v3.json",
+  "title": "SWSE Galactic Profiles v3 \u2014 unified runtime contract",
+  "description": "ONE contract for all four participant subtypes (actor, droid, nonheroic, beast). `subtype` equals the V2 ProgressionSubtypeAdapter id. A profile is authored player intent only: V2 authorities derive every mechanical value. Schema validity is structural; it is never proof of a legal character.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "format",
+    "sources",
+    "profiles"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 3
+    },
+    "format": {
+      "const": "swse.galactic-profiles.v3"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/profile"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nullableId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "abilityScore": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50
+    },
+    "nameRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "sourceIds"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "parameters": {
+          "type": "object"
+        }
+      }
+    },
+    "equipmentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "sourceId",
+        "qty",
+        "pack"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceId": {
+          "$ref": "#/$defs/nullableId"
+        },
+        "qty": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pack": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "forceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "sourceId"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "sourceId": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "base"
+      ],
+      "properties": {
+        "basis": {
+          "enum": [
+            "unresolved",
+            "base",
+            "droidPreModifier"
+          ]
+        },
+        "base": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "str",
+            "dex",
+            "int",
+            "wis",
+            "cha"
+          ],
+          "properties": {
+            "str": {
+              "$ref": "#/$defs/abilityScore"
+            },
+            "dex": {
+              "$ref": "#/$defs/abilityScore"
+            },
+            "con": {
+              "$ref": "#/$defs/abilityScore"
+            },
+            "int": {
+              "$ref": "#/$defs/abilityScore"
+            },
+            "wis": {
+              "$ref": "#/$defs/abilityScore"
+            },
+            "cha": {
+              "$ref": "#/$defs/abilityScore"
+            }
+          }
+        }
+      }
+    },
+    "choices": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "species",
+        "background",
+        "attributes",
+        "skills",
+        "feats",
+        "talents",
+        "languages",
+        "forcePowers",
+        "equipment",
+        "wallet",
+        "unresolved",
+        "rulingBlocks"
+      ],
+      "properties": {
+        "class": {
+          "$ref": "#/$defs/id"
+        },
+        "species": {
+          "$ref": "#/$defs/nullableId"
+        },
+        "background": {
+          "$ref": "#/$defs/nullableId"
+        },
+        "attributes": {
+          "$ref": "#/$defs/attributes"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "feats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nameRef"
+          }
+        },
+        "talents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nameRef"
+          }
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "forcePowers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/forceRef"
+          }
+        },
+        "equipment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/equipmentRef"
+          }
+        },
+        "wallet": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "credits"
+          ],
+          "properties": {
+            "mode": {
+              "const": "exactFinalBalance"
+            },
+            "credits": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "unresolved": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "authored",
+              "code"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "authored": {},
+              "code": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "rulingBlocks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^GP-RD-[0-9]{3}$"
+          }
+        }
+      }
+    },
+    "droidExtension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "degree",
+        "size",
+        "systems"
+      ],
+      "properties": {
+        "mode": {
+          "const": "custom"
+        },
+        "degree": {
+          "enum": [
+            "1st-degree",
+            "2nd-degree",
+            "3rd-degree",
+            "4th-degree",
+            "5th-degree"
+          ]
+        },
+        "size": {
+          "enum": [
+            "small",
+            "medium"
+          ]
+        },
+        "systems": {
+          "type": "object",
+          "required": [
+            "locomotion",
+            "processor",
+            "appendages",
+            "accessories",
+            "locomotionEnhancements",
+            "appendageEnhancements"
+          ],
+          "properties": {
+            "locomotion": {
+              "type": "object",
+              "required": [
+                "id"
+              ]
+            },
+            "processor": {
+              "type": "object",
+              "required": [
+                "id"
+              ]
+            },
+            "appendages": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "object",
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "accessories": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "category"
+                ]
+              }
+            },
+            "locomotionEnhancements": {
+              "type": "array"
+            },
+            "appendageEnhancements": {
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "profileId",
+        "revision",
+        "subtype",
+        "level",
+        "catalog",
+        "choices",
+        "extension",
+        "provenance",
+        "certification"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 3
+        },
+        "profileId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "subtype": {
+          "enum": [
+            "actor",
+            "droid",
+            "nonheroic",
+            "beast"
+          ]
+        },
+        "level": {
+          "const": 1
+        },
+        "catalog": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "archetype",
+            "description",
+            "roleTags",
+            "classKey",
+            "className"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "archetype": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "quote": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "imagePath": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mentorKey": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dialogueKey": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "roleTags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "classKey": {
+              "type": "string"
+            },
+            "className": {
+              "type": "string"
+            }
+          }
+        },
+        "choices": {
+          "$ref": "#/$defs/choices"
+        },
+        "extension": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "droid": {
+              "$ref": "#/$defs/droidExtension"
+            },
+            "beast": {
+              "type": "object"
+            }
+          }
+        },
+        "provenance": {
+          "type": "object"
+        },
+        "certification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "publishableAsReadyToPlay",
+            "issues"
+          ],
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "publishableAsReadyToPlay": {
+              "type": "boolean"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "subtype": {
+                "const": "actor"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "choices": {
+                "properties": {
+                  "species": {
+                    "type": "string"
+                  },
+                  "attributes": {
+                    "properties": {
+                      "basis": {
+                        "enum": [
+                          "unresolved",
+                          "base"
+                        ]
+                      },
+                      "base": {
+                        "required": [
+                          "con"
+                        ]
+                      }
+                    }
+                  },
+                  "class": {
+                    "not": {
+                      "const": "nonheroic"
+                    }
+                  }
+                }
+              },
+              "extension": {
+                "not": {
+                  "required": [
+                    "droid"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "subtype": {
+                "const": "droid"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "extension"
+            ],
+            "properties": {
+              "choices": {
+                "properties": {
+                  "species": {
+                    "type": "null"
+                  },
+                  "background": {
+                    "type": "null"
+                  },
+                  "forcePowers": {
+                    "maxItems": 0
+                  },
+                  "attributes": {
+                    "properties": {
+                      "basis": {
+                        "const": "droidPreModifier"
+                      },
+                      "base": {
+                        "not": {
+                          "required": [
+                            "con"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "extension": {
+                "required": [
+                  "droid"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "subtype": {
+                "const": "nonheroic"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "choices": {
+                "properties": {
+                  "class": {
+                    "const": "nonheroic"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "talents": {
+                    "maxItems": 0
+                  },
+                  "attributes": {
+                    "properties": {
+                      "basis": {
+                        "enum": [
+                          "unresolved",
+                          "base"
+                        ]
+                      },
+                      "base": {
+                        "required": [
+                          "con"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "extension": {
+                "allOf": [
+                  {
+                    "not": {
+                      "required": [
+                        "droid"
+                      ]
+                    }
+                  },
+                  {
+                    "not": {
+                      "required": [
+                        "beast"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "subtype": {
+                "const": "beast"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "extension"
+            ],
+            "properties": {
+              "choices": {
+                "properties": {
+                  "class": {
+                    "const": "nonheroic"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "talents": {
+                    "maxItems": 0
+                  },
+                  "attributes": {
+                    "properties": {
+                      "basis": {
+                        "enum": [
+                          "unresolved",
+                          "base"
+                        ]
+                      },
+                      "base": {
+                        "required": [
+                          "con"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "extension": {
+                "required": [
+                  "beast"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

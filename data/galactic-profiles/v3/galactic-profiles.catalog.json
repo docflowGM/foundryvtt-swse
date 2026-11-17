@@ -1,14 +1,16 @@
 {
   "schemaVersion": 3,
-  "format": "swse.galactic-profiles.catalog.v3",
-  "source": {
-    "generatedFrom": "SWSE_Galactic_Profiles_v3.json"
-  },
-  "totalProfiles": 33,
+  "format": "swse.galactic-profiles.v3",
+  "sources": [
+    "data/galactic-profiles/v3/SWSE_Galactic_Profiles_v3.json",
+    "data/galactic-profiles/v3/droids/SWSE_Eight_Droid_Galactic_Profiles_v3.json"
+  ],
+  "totalProfiles": 41,
   "profiles": [
     {
       "profileId": "jedi_guardian",
       "revision": 1,
+      "subtype": "actor",
       "name": "Guardian",
       "archetype": "Guardian",
       "description": "A nimble warrior specializing in lightsaber combat, using finesse and defensive techniques to overwhelm opponents.",
@@ -16,7 +18,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_guardian.webp",
       "classKey": "jedi",
       "className": "Jedi",
-      "participantKind": "heroic",
       "mentorKey": "miraj",
       "dialogueKey": "jedi_guardian",
       "roleTags": [
@@ -28,6 +29,7 @@
     {
       "profileId": "jedi_consular",
       "revision": 1,
+      "subtype": "actor",
       "name": "Consular",
       "archetype": "Consular",
       "description": "A Force-focused diplomat who relies on manipulation of the Force and wisdom rather than lightsaber combat.",
@@ -35,7 +37,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_consular.webp",
       "classKey": "jedi",
       "className": "Jedi",
-      "participantKind": "heroic",
       "mentorKey": "miraj",
       "dialogueKey": "jedi_consular",
       "roleTags": [
@@ -46,6 +47,7 @@
     {
       "profileId": "jedi_defender",
       "revision": 1,
+      "subtype": "actor",
       "name": "Defender",
       "archetype": "Jedi Defender",
       "description": "A durable frontline protector who can deflect attacks and shield allies from harm.",
@@ -53,7 +55,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_defender.webp",
       "classKey": "jedi",
       "className": "Jedi",
-      "participantKind": "heroic",
       "mentorKey": "miraj",
       "dialogueKey": "jedi_defender",
       "roleTags": [
@@ -65,6 +66,7 @@
     {
       "profileId": "jedi_sentinel",
       "revision": 1,
+      "subtype": "actor",
       "name": "Sentinel",
       "archetype": "Sentinel",
       "description": "An investigative shadow who hunts down dark side corruption with precision and stealth.",
@@ -72,7 +74,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_sentinel.webp",
       "classKey": "jedi",
       "className": "Jedi",
-      "participantKind": "heroic",
       "mentorKey": "miraj",
       "dialogueKey": "jedi_sentinel",
       "roleTags": [
@@ -83,6 +84,7 @@
     {
       "profileId": "noble_diplomat",
       "revision": 1,
+      "subtype": "actor",
       "name": "Diplomat",
       "archetype": "Diplomat",
       "description": "The ultimate social character, capable of talking their way through any situation with charm and persuasion.",
@@ -90,7 +92,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_diplomat.webp",
       "classKey": "noble",
       "className": "Noble",
-      "participantKind": "heroic",
       "mentorKey": "j0n1",
       "dialogueKey": "noble_diplomat",
       "roleTags": [
@@ -102,6 +103,7 @@
     {
       "profileId": "noble_leader",
       "revision": 1,
+      "subtype": "actor",
       "name": "Leader",
       "archetype": "Leader",
       "description": "A tactical commander who coordinates allies and inspires greatness on the battlefield.",
@@ -109,7 +111,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_leader.webp",
       "classKey": "noble",
       "className": "Noble",
-      "participantKind": "heroic",
       "mentorKey": "j0n1",
       "dialogueKey": "noble_leader",
       "roleTags": [
@@ -121,6 +122,7 @@
     {
       "profileId": "noble_aristocrat",
       "revision": 1,
+      "subtype": "actor",
       "name": "Aristocrat",
       "archetype": "Aristocrat",
       "description": "A wealthy manipulator with extensive resources, connections, and information networks.",
@@ -128,7 +130,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_aristocrat.webp",
       "classKey": "noble",
       "className": "Noble",
-      "participantKind": "heroic",
       "mentorKey": "j0n1",
       "dialogueKey": "noble_aristocrat",
       "roleTags": [
@@ -139,6 +140,7 @@
     {
       "profileId": "noble_duelist",
       "revision": 1,
+      "subtype": "actor",
       "name": "Duelist",
       "archetype": "Duelist",
       "description": "A social character with surprising melee combat effectiveness using grace and finesse.",
@@ -146,7 +148,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_duelist.webp",
       "classKey": "noble",
       "className": "Noble",
-      "participantKind": "heroic",
       "mentorKey": "j0n1",
       "dialogueKey": "noble_duelist",
       "roleTags": [
@@ -157,6 +158,7 @@
     {
       "profileId": "soldier-guard",
       "revision": 1,
+      "subtype": "nonheroic",
       "name": "Guard",
       "archetype": "Guard",
       "description": "A trained soldier responsible for protecting installations, personnel, or assets. Guards provide steady, reliable defensive support and tactical awareness.",
@@ -164,7 +166,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/class/Soldier.webp",
       "classKey": "nonheroic",
       "className": "Soldier (Nonheroic)",
-      "participantKind": "nonheroic",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -173,6 +174,7 @@
     {
       "profileId": "scout-pathfinder",
       "revision": 1,
+      "subtype": "nonheroic",
       "name": "Scout/Pathfinder",
       "archetype": "Scout",
       "description": "An experienced scout or guide who excels at wilderness survival, tracking, and reconnaissance. Scouts rely on cunning and perception rather than military discipline.",
@@ -180,7 +182,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/class/Scout.webp",
       "classKey": "nonheroic",
       "className": "Scout (Nonheroic)",
-      "participantKind": "nonheroic",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -189,6 +190,7 @@
     {
       "profileId": "laborer-worker",
       "revision": 1,
+      "subtype": "nonheroic",
       "name": "Laborer/Worker",
       "archetype": "Laborer",
       "description": "A common laborer, factory worker, or tradesperson. Workers are skilled in practical tasks and basic survival, forming the foundation of civilian society.",
@@ -196,7 +198,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/Worker.webp",
       "classKey": "nonheroic",
       "className": "Laborer (Nonheroic)",
-      "participantKind": "nonheroic",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -205,6 +206,7 @@
     {
       "profileId": "beast-wolf",
       "revision": 1,
+      "subtype": "beast",
       "name": "Wolf",
       "archetype": "Beast",
       "description": "A wild wolf or wolf-like creature. Beasts are non-sapient or low-intelligence creatures generated through the Creature Generator system. Wolves are pack hunters with keen senses and natural combat instincts.",
@@ -212,7 +214,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/FAOR1cCJQ7OqEgPDL1WI--1--fx5hi.webp",
       "classKey": "beast",
       "className": "Beast (Nonheroic)",
-      "participantKind": "beast",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -221,6 +222,7 @@
     {
       "profileId": "beast-bear",
       "revision": 1,
+      "subtype": "beast",
       "name": "Bear",
       "archetype": "Beast",
       "description": "A wild bear or bear-like creature. Beasts are non-sapient or low-intelligence creatures generated through the Creature Generator system. Bears are apex predators with immense strength and natural combat prowess.",
@@ -228,7 +230,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/FAOR1cCJQ7OqEgPDL1WI--1--fx5hi.webp",
       "classKey": "beast",
       "className": "Beast (Nonheroic)",
-      "participantKind": "beast",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -237,6 +238,7 @@
     {
       "profileId": "nonheroic_worker",
       "revision": 1,
+      "subtype": "nonheroic",
       "name": "Worker",
       "archetype": "Worker",
       "description": "A skilled laborer, mechanic, or technician. Workers are the backbone of galactic civilization, maintaining infrastructure and repairing equipment.",
@@ -244,7 +246,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/Worker.webp",
       "classKey": "nonheroic",
       "className": "Nonheroic",
-      "participantKind": "nonheroic",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -253,6 +254,7 @@
     {
       "profileId": "nonheroic_trooper",
       "revision": 1,
+      "subtype": "nonheroic",
       "name": "Trooper",
       "archetype": "Trooper",
       "description": "A baseline soldier, guard, or militia member. Troopers have basic military training but lack the experience and skill of true heroes.",
@@ -260,7 +262,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/class/Soldier.webp",
       "classKey": "nonheroic",
       "className": "Nonheroic",
-      "participantKind": "nonheroic",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -269,6 +270,7 @@
     {
       "profileId": "nonheroic_criminal",
       "revision": 1,
+      "subtype": "nonheroic",
       "name": "Criminal",
       "archetype": "Criminal",
       "description": "A petty thug, gang member, or street criminal. Criminals live on the edge of society, relying on intimidation and violence.",
@@ -276,7 +278,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_brigand.webp",
       "classKey": "nonheroic",
       "className": "Nonheroic",
-      "participantKind": "nonheroic",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -285,6 +286,7 @@
     {
       "profileId": "nonheroic_merchant",
       "revision": 1,
+      "subtype": "nonheroic",
       "name": "Merchant",
       "archetype": "Merchant",
       "description": "A trader, shopkeeper, or business professional. Merchants know the value of everything and have connections throughout the commercial sector.",
@@ -292,7 +294,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/merchant.webp",
       "classKey": "nonheroic",
       "className": "Nonheroic",
-      "participantKind": "nonheroic",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -301,6 +302,7 @@
     {
       "profileId": "nonheroic_police",
       "revision": 1,
+      "subtype": "nonheroic",
       "name": "Police Officer",
       "archetype": "Police",
       "description": "A law enforcement officer, security guard, or constable. Police maintain order and enforce laws in civilized systems.",
@@ -308,7 +310,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/Police.webp",
       "classKey": "nonheroic",
       "className": "Nonheroic",
-      "participantKind": "nonheroic",
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
@@ -317,6 +318,7 @@
     {
       "profileId": "scoundrel_pistoleer",
       "revision": 1,
+      "subtype": "actor",
       "name": "Pistoleer",
       "archetype": "Pistoleer",
       "description": "A precision shooter who deals devastating damage with sneak attacks from the shadows.",
@@ -324,7 +326,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_pistoleer.webp",
       "classKey": "scoundrel",
       "className": "Scoundrel",
-      "participantKind": "heroic",
       "mentorKey": "salty",
       "dialogueKey": "scoundrel_pistoleer",
       "roleTags": [
@@ -335,6 +336,7 @@
     {
       "profileId": "scoundrel_skill_monkey",
       "revision": 1,
+      "subtype": "actor",
       "name": "Skill Monkey",
       "archetype": "Skill Monkey",
       "description": "A versatile specialist covering social, technical, and infiltration roles with expertise.",
@@ -342,7 +344,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_skill_monkey.webp",
       "classKey": "scoundrel",
       "className": "Scoundrel",
-      "participantKind": "heroic",
       "mentorKey": "salty",
       "dialogueKey": "scoundrel_skill_monkey",
       "roleTags": [
@@ -353,6 +354,7 @@
     {
       "profileId": "scoundrel_knuckledragger",
       "revision": 1,
+      "subtype": "actor",
       "name": "Knuckledragger",
       "archetype": "Knuckledragger",
       "description": "An aggressive street fighter who pushes enemies down the condition track with dirty tactics.",
@@ -360,7 +362,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_knuckledragger.webp",
       "classKey": "scoundrel",
       "className": "Scoundrel",
-      "participantKind": "heroic",
       "mentorKey": "salty",
       "dialogueKey": "scoundrel_knuckledragger",
       "roleTags": [
@@ -371,6 +372,7 @@
     {
       "profileId": "scoundrel_outlaw",
       "revision": 1,
+      "subtype": "actor",
       "name": "Outlaw",
       "archetype": "Outlaw",
       "description": "A charming rogue who uses luck and Force Points strategically to turn the odds in their favor.",
@@ -378,7 +380,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_outlaw.webp",
       "classKey": "scoundrel",
       "className": "Scoundrel",
-      "participantKind": "heroic",
       "mentorKey": "salty",
       "dialogueKey": "scoundrel_outlaw",
       "roleTags": [
@@ -389,6 +390,7 @@
     {
       "profileId": "scoundrel_brigand",
       "revision": 1,
+      "subtype": "actor",
       "name": "Brigand",
       "archetype": "Brigand",
       "description": "A roguish brigand who combines exceptional piloting skills with tactical combat prowess, striking from unexpected angles with deadly precision.",
@@ -396,7 +398,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_brigand.webp",
       "classKey": "scoundrel",
       "className": "Scoundrel",
-      "participantKind": "heroic",
       "mentorKey": "salty",
       "dialogueKey": "scoundrel_brigand",
       "roleTags": [
@@ -407,6 +408,7 @@
     {
       "profileId": "scout_sniper",
       "revision": 1,
+      "subtype": "actor",
       "name": "Sniper",
       "archetype": "Sniper",
       "description": "A long-range precision shooter who operates from concealment with deadly accuracy.",
@@ -414,7 +416,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_sniper.webp",
       "classKey": "scout",
       "className": "Scout",
-      "participantKind": "heroic",
       "mentorKey": "lead",
       "dialogueKey": "scout_sniper",
       "roleTags": [
@@ -426,6 +427,7 @@
     {
       "profileId": "scout_engineer",
       "revision": 1,
+      "subtype": "actor",
       "name": "Engineer",
       "archetype": "Engineer",
       "description": "A skilled technician who specializes in maintenance, repair, and engineering solutions in the field.",
@@ -433,7 +435,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/class/Scout.webp",
       "classKey": "scout",
       "className": "Scout",
-      "participantKind": "heroic",
       "mentorKey": "lead",
       "dialogueKey": "scout_engineer",
       "roleTags": [
@@ -444,6 +445,7 @@
     {
       "profileId": "scout_pistoleer",
       "revision": 1,
+      "subtype": "actor",
       "name": "Pistoleer",
       "archetype": "Pistoleer",
       "description": "A skilled rider specializing in hit-and-run tactics from a speeder bike, utilizing dual-weapon mastery.",
@@ -451,7 +453,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/class/Scout.webp",
       "classKey": "scout",
       "className": "Scout",
-      "participantKind": "heroic",
       "mentorKey": "lead",
       "dialogueKey": "scout_pistoleer",
       "roleTags": [
@@ -462,6 +463,7 @@
     {
       "profileId": "scout_survivalist",
       "revision": 1,
+      "subtype": "actor",
       "name": "Survivalist",
       "archetype": "Survivalist",
       "description": "A wilderness expert who excels at tracking and surviving the harshest conditions.",
@@ -469,7 +471,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_survivalist.webp",
       "classKey": "scout",
       "className": "Scout",
-      "participantKind": "heroic",
       "mentorKey": "lead",
       "dialogueKey": "scout_survivalist",
       "roleTags": [
@@ -480,6 +481,7 @@
     {
       "profileId": "scout_infiltrator",
       "revision": 1,
+      "subtype": "actor",
       "name": "Infiltrator",
       "archetype": "Infiltrator",
       "description": "A stealthy infiltrator specializing in reconnaissance and espionage operations.",
@@ -487,7 +489,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_infiltrator.webp",
       "classKey": "scout",
       "className": "Scout",
-      "participantKind": "heroic",
       "mentorKey": "lead",
       "dialogueKey": "scout_infiltrator",
       "roleTags": [
@@ -498,6 +499,7 @@
     {
       "profileId": "soldier_rifleman",
       "revision": 1,
+      "subtype": "actor",
       "name": "Rifleman",
       "archetype": "Just A Dude",
       "description": "A straightforward soldier carrying a slugthrower rifle and a big pistol. Perfect for new players learning weapon versatility and the practical Bandolier.",
@@ -505,7 +507,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_rifleman.webp",
       "classKey": "soldier",
       "className": "Soldier",
-      "participantKind": "heroic",
       "mentorKey": "breach",
       "dialogueKey": "soldier_rifleman",
       "roleTags": [
@@ -516,6 +517,7 @@
     {
       "profileId": "soldier_gunner",
       "revision": 1,
+      "subtype": "actor",
       "name": "Gunner",
       "archetype": "Gunner",
       "description": "A heavy weapons specialist focusing on area suppression and overwhelming firepower.",
@@ -523,7 +525,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_gunner.webp",
       "classKey": "soldier",
       "className": "Soldier",
-      "participantKind": "heroic",
       "mentorKey": "breach",
       "dialogueKey": "soldier_gunner",
       "roleTags": [
@@ -535,6 +536,7 @@
     {
       "profileId": "soldier_brawler",
       "revision": 1,
+      "subtype": "actor",
       "name": "Brawler",
       "archetype": "Brawler",
       "description": "A fearsome Mantellian Savrip brawler wielding natural claws and innate ferocity. Solid walls of muscle and primal power, devastating in close combat.",
@@ -542,7 +544,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_brawler.webp",
       "classKey": "soldier",
       "className": "Soldier",
-      "participantKind": "heroic",
       "mentorKey": "breach",
       "dialogueKey": "soldier_brawler",
       "roleTags": [
@@ -553,6 +554,7 @@
     {
       "profileId": "soldier_tank",
       "revision": 1,
+      "subtype": "actor",
       "name": "Tank",
       "archetype": "Tank",
       "description": "An armored defender designed to absorb massive amounts of damage and protect allies.",
@@ -560,7 +562,6 @@
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_tank.webp",
       "classKey": "soldier",
       "className": "Soldier",
-      "participantKind": "heroic",
       "mentorKey": "breach",
       "dialogueKey": "soldier_tank",
       "roleTags": [
@@ -572,6 +573,7 @@
     {
       "profileId": "soldier_commando",
       "revision": 1,
+      "subtype": "actor",
       "name": "Commando",
       "archetype": "Commando",
       "description": "A specialized commando operative trained for elite strike missions and team-based combat operations.",
@@ -579,13 +581,196 @@
       "imagePath": "systems/foundryvtt-swse/assets/class/Soldier.webp",
       "classKey": "soldier",
       "className": "Soldier",
-      "participantKind": "heroic",
       "mentorKey": "breach",
       "dialogueKey": "soldier_commando",
       "roleTags": [
         "warrior"
       ],
       "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "droid_scout_dex_recon_probe",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Reconnaissance Probe",
+      "archetype": "Reconnaissance Probe",
+      "description": "Fast-moving sensor scout and tactical spotter",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "scout",
+      "className": "Scout",
+      "mentorKey": "lead",
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "scout",
+        "dex-focused",
+        "recon",
+        "mobility",
+        "sensors"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_scout_int_astromech_pathfinder",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Astromech Pathfinder",
+      "archetype": "Astromech Pathfinder",
+      "description": "Exploration cartographer and technical troubleshooter",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "scout",
+      "className": "Scout",
+      "mentorKey": "lead",
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "scout",
+        "int-focused",
+        "technical",
+        "navigation",
+        "exploration"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_soldier_dex_security_enforcer",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Security Enforcer",
+      "archetype": "Security Enforcer",
+      "description": "Mobile ranged defender with integrated protection",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "soldier",
+      "className": "Soldier",
+      "mentorKey": "breach",
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "soldier",
+        "dex-focused",
+        "ranged",
+        "defense",
+        "tactics"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_soldier_str_industrial_vanguard",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Industrial Vanguard",
+      "archetype": "Industrial Vanguard",
+      "description": "Heavy-duty melee guardian and boarding unit",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "soldier",
+      "className": "Soldier",
+      "mentorKey": "breach",
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "soldier",
+        "str-focused",
+        "melee",
+        "strength",
+        "guardian"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_noble_int_medical_coordinator",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Medical Coordinator",
+      "archetype": "Medical Coordinator",
+      "description": "Diagnostic analyst, field medic and knowledge specialist",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "noble",
+      "className": "Noble",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "noble",
+        "int-focused",
+        "medical",
+        "intelligence",
+        "support"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_noble_cha_protocol_envoy",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Protocol Envoy",
+      "archetype": "Protocol Envoy",
+      "description": "Diplomat, public liaison and cultural interpreter",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "noble",
+      "className": "Noble",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "noble",
+        "cha-focused",
+        "diplomacy",
+        "charisma",
+        "protocol"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_scoundrel_cha_service_operative",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Service-Sector Operative",
+      "archetype": "Service-Sector Operative",
+      "description": "Disarming social infiltrator and covert negotiator",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "scoundrel",
+        "cha-focused",
+        "social",
+        "infiltration",
+        "charisma"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_scoundrel_dex_systems_infiltrator",
+      "revision": 1,
+      "subtype": "droid",
+      "name": "Systems Infiltrator",
+      "archetype": "Systems Infiltrator",
+      "description": "Agile security slicer, saboteur and digital thief",
+      "quote": null,
+      "imagePath": null,
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [
+        "droid",
+        "scoundrel",
+        "dex-focused",
+        "stealth",
+        "slicing",
+        "dexterity"
+      ],
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
     }
   ]
 }

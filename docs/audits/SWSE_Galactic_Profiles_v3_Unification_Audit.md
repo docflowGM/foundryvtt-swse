@@ -699,3 +699,28 @@ Existing tests that must stay green: `species-publication-selection`, `chargen-s
 * **Q-C** Approve PC-1 (Energy Cell id).
 * **Q-D** For the 12 MOOT, 1 EXPLICIT profiles, may they proceed once the schema/compiler exist while the other 20 stay blocked?
 * **Q-E** Permission to commit and push this document (currently an uncommitted file in the working tree) to the branch of your choice so it survives this container.
+
+---
+
+# PART 3 — Owner review dispositions and contract corrections (recorded at implementation start)
+
+Recorded from the project owner's review of PR #1152. Where Part 3 differs from Part 2, **Part 3 governs**. These are owner dispositions; I could not independently read the printed books (not available in the build environment), so each is recorded as *owner-attested*.
+
+| Ruling | Disposition | Implementation effect |
+|---|---|---|
+| GP-RD-001 Wolf Pack Tactics | **Blocked** | `beast-wolf` carries `rulingBlocks: [GP-RD-001, GP-RD-010]`; trait not applied |
+| GP-RD-002 Commanding Presence | **Approved: Mercenary-tree talent** (`438e13c99c7b53a6`, FUCG p.28), subject to V2 entitlement validation | compiler pins `soldier_rifleman`'s talent to this id; V2 prerequisite/access still decides legality |
+| GP-RD-003 Jedi Force Training | **Blocked pending legal choices.** Preserve authored feats and powers as intent; do **not** replace feats or silently drop powers | compiler withholds Force powers from the draft until Force Training + slots are legally present; keeps them as deferred intent and reports an open step |
+| GP-RD-004 Wealth | **Approved: 465 is the exact final balance (net, post-grant)** | `wallet.mode = exactFinalBalance`; no Wealth is ever added to it |
+| GP-RD-005 Athletics | **Blocked** (selection needed) | `laborer-worker.choices.unresolved` |
+| GP-RD-006 Surveillance / Sizing Up | **Approved: published talent identities** (Spy; Espionage) | authored `sourceTree` is evidence only; resolve by talent document |
+| GP-RD-007 Mechanized Rider | **Revised:** *The Unknown Regions* p.22 makes Mobile Scout a **Scout** talent tree; the profile choice is legal; the gap is V2 class→tree registration | V2 Scout tree-access data corrected (see P5 commit); profile selection unchanged |
+| GP-RD-008 Zabrak | **Approved: Core Zabrak have no ability-score adjustments**; the legacy CON-bonus note is incorrect | note kept only in `evidence`; `jedi_defender` basis is moot |
+| GP-RD-009 Attribute basis | Unresolved profiles stay blocked; no blanket conversion | compiler `ATTRIBUTE_BASIS_UNRESOLVED` |
+| GP-RD-010 Beast creation | **Blocked** until sources and a V2 draft/finalization path exist | beast profiles blocked, infrastructure improved |
+| GP-RD-011 Beast readiness | **Approved: strict blocking, using the draft** | `BeastSubtypeAdapter.validateReadiness` throws; reads draft INT |
+
+**Contract corrections (all three adopted):**
+1. **Plan parity** is validated *after* the player resolves open choices: the authoritative preview is computed at final confirmation, then the plan that is applied must equal that previewed plan. A pre-resolution preview is informational only.
+2. **`wallet` has one meaning** — the exact final balance. A balance that excludes a grant would need a *different, explicitly named* accounting mode; none exists.
+3. **Subtype is established before the picker opens.** The creation lane (ordinary actor, custom droid, nonheroic, beast) sets the session subtype first; the picker offers only exact-subtype profiles. A new ordinary actor session cannot select a droid profile.
