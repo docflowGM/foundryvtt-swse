@@ -12834,7 +12834,7 @@
       "forceSecret": {
         "id": "reflection.assessment.phrase.forceSecret",
         "key": "forceSecret",
-        "text": "Force techniques refined through secrets",
+        "text": "refining the use of Force techniques",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13146,7 +13146,7 @@
       "moraleImpact": {
         "id": "reflection.assessment.phrase.moraleImpact",
         "key": "moraleImpact",
-        "text": "shaking an enemy’s nerve",
+        "text": "undermining an opponent’s morale",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13601,7 +13601,7 @@
       "brutalForce": {
         "id": "reflection.assessment.phrase.brutalForce",
         "key": "brutalForce",
-        "text": "relying on overwhelming force",
+        "text": "applying overwhelming force",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13640,7 +13640,7 @@
       "dualistTechnique": {
         "id": "reflection.assessment.phrase.dualistTechnique",
         "key": "dualistTechnique",
-        "text": "dueling technique",
+        "text": "applying specific dueling techniques",
         "category": "method",
         "editorialStatus": "draft_text",
         "mechanicsStatus": "none",
@@ -13836,7 +13836,7 @@
     "ledger": {
       "forceSecret": {
         "category": "method",
-        "phrase": "Force techniques refined through secrets",
+        "phrase": "refining the use of Force techniques",
         "excludedBecause": null
       },
       "forceDC": {
@@ -14011,7 +14011,7 @@
       },
       "moraleImpact": {
         "category": "method",
-        "phrase": "shaking an enemy’s nerve",
+        "phrase": "undermining an opponent’s morale",
         "excludedBecause": null
       },
       "stealth": {
@@ -14311,7 +14311,7 @@
       },
       "brutalForce": {
         "category": "method",
-        "phrase": "relying on overwhelming force",
+        "phrase": "applying overwhelming force",
         "excludedBecause": null
       },
       "lawEnforcement": {
@@ -14346,7 +14346,7 @@
       },
       "dualistTechnique": {
         "category": "method",
-        "phrase": "dueling technique",
+        "phrase": "applying specific dueling techniques",
         "excludedBecause": null
       },
       "defensiveSwordsmanship": {

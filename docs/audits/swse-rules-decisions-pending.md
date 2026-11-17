@@ -3180,3 +3180,8 @@ These are engineering or drafting choices the rulings delegated. None sets a gam
 - Twelve phrases were replaced by owner direction (`burstDamage`, `conditionTrack`, `accuracy`, `pilotMastery`, `knowledgeMastery`, `biotechMastery`, `surgicalMastery`, `wildernessLore`, `weaponMastery`, `medicalKnowledge`, `technicalMastery`, `tacticalVerse`).
 - Exclusion categories were corrected: legitimate techniques and areas of expertise are now `technique` (22), not `affiliation`; `affiliation` is limited to an actual tradition, allegiance or relationship (4).
 - The 77 method phrases remain `draft_text`; additional wording exceptions are reported in `19-Q6-METHOD-REVIEW-REPORT.md` section 3 (not applied). Status: phrase approval `DEFERRED_RULES_REVIEW`.
+
+
+## MSV-RD-018 — OWNER REVIEW OUTCOME (appended 2026-11-17; earlier entries preserved)
+
+The owner reviewed the method ledger and recommended four final wordings, applied here: `forceSecret` "refining the use of Force techniques"; `brutalForce` "applying overwhelming force"; `moraleImpact` "undermining an opponent's morale"; `dualistTechnique` "applying specific dueling techniques". The other 73 phrases were judged editorially acceptable; the overlapping medical, stealth and survival phrases stay distinct and are to be re-checked in live testing. The 48 exclusions are preserved. The recommendation covers player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release). The 77 records remain `draft_text` in the data until the owner confirms the approval of the wording itself (a recommendation is not a ruling, `CLAUDE.md` section 9).

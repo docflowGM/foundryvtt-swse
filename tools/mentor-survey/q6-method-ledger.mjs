@@ -10,7 +10,7 @@
 const M = (phrase) => ['method', phrase, null];
 const X = (cat, why) => [cat, null, why];
 export const LEDGER = {
-  forceSecret: M('Force techniques refined through secrets'),
+  forceSecret: M('refining the use of Force techniques'),
   forceDC: M('making Force powers harder to resist'),
   forceRecovery: M('sustaining your Force reserves'),
   burstDamage: M('delivering damage in a powerful burst'),
@@ -45,7 +45,7 @@ export const LEDGER = {
   formation: M('fighting in formation'),
   allySupport: M('supporting and strengthening allies'),
   moraleBonus: M('inspiring confidence in allies'),
-  moraleImpact: M('shaking an enemy’s nerve'),
+  moraleImpact: M('undermining an opponent\u2019s morale'),
   stealth: M('hiding and moving unseen'),
   infiltration: M('quietly getting into position'),
   trackingMastery: M('finding and following a trail'),
@@ -105,14 +105,14 @@ export const LEDGER = {
   conArtistry: X('technique', 'a legitimate technique; excluded for now because it would suggest confidence schemes'),
   intimidation: M('using intimidation'),
   authorityPresence: X('role', 'implies authority or position'),
-  brutalForce: M('relying on overwhelming force'),
+  brutalForce: M('applying overwhelming force'),
   lawEnforcement: X('technique', 'a legitimate area of expertise; excluded for now because it would suggest lawful employment, and the class can represent other forms of enforcement'),
   unitCoordination: X('role', 'assumes military units the actor may not command'),
   specialOps: X('technique', 'a legitimate area of expertise; excluded for now because the name denotes a professional specialty and no neutral phrase has been reviewed'),
   commandoTactics: X('technique', 'a legitimate tactical technique; excluded for now because the name denotes a military role and no neutral phrase has been reviewed'),
   rapidResponse: M('responding quickly'),
   tacticalVerse: M('using varied tactical approaches'),
-  dualistTechnique: M('dueling technique'),
+  dualistTechnique: M('applying specific dueling techniques'),
   defensiveSwordsmanship: M('defensive swordsmanship'),
   counterMastery: M('countering attacks'),
   combatAdaptability: M('adapting to the style of a fight'),
@@ -138,16 +138,13 @@ export const LEDGER = {
 };
 export const CORRECTION_NEUTRAL = 'I recognize that training, but I don’t think it necessarily describes how I prefer to approach problems.';
 
-// Review exceptions among the 77 method phrases: REPORTED, NOT applied (owner: do not silently rewrite). Each says why and what to consider.
+// Review notes (owner review 2026-11-17): the four wording exceptions were resolved (forceSecret, brutalForce, moraleImpact, dualistTechnique);
+// deceptionMastery and intimidation were judged acceptable as written. The overlapping groups below stay distinct because they are different
+// canonical keys; repetitive presentation is to be judged in live Foundry testing, not changed offline.
 export const EXCEPTIONS = [
-  { keys: ['deceptionMastery'], note: 'The phrase "deception and disguise" asks whether the player prefers to deceive others. It is a legitimate method, but the owner may prefer to move it to the excluded technique group (as with identityShift and conArtistry).' },
-  { keys: ['intimidation'], note: '"using intimidation" names a coercive act. Consider "applying intimidation", or exclude.' },
-  { keys: ['brutalForce'], note: '"relying on overwhelming force" asserts reliance (a habit), which the question form is meant to avoid. Consider "applying overwhelming force".' },
-  { keys: ['forceSecret'], note: '"secrets" is a game term (Force Secrets) and may read as concealment. Consider "refined Force techniques".' },
-  { keys: ['moraleImpact'], note: '"shaking an enemy’s nerve" is a coercion-adjacent idiom; acceptable, flagged for tone.' },
-  { keys: ['dualistTechnique', 'dualistMastery'], note: 'Near-duplicate wording ("dueling technique" and "dueling"): if both keys qualify, two displayed claims would read almost identically (the detail line still tells them apart).' },
-  { keys: ['healingMastery', 'treatingInjury', 'treatmentExpertise', 'medicalKnowledge', 'surgicalMastery'], note: 'Overlapping medical phrases; at most two claims are shown, so a medic may see two similar lines. Consider merging in display, never in the canonical keys.' },
-  { keys: ['survivalism', 'survivalSkills'], note: 'Overlapping survival phrases (same consideration).' },
-  { keys: ['stealth', 'stealthMastery'], note: 'Overlapping stealth phrases (same consideration).' },
-  { keys: ['resourceControl', 'resourcefulness'], note: 'Similar-sounding phrases with different meanings (managing supplies versus improvising with what is at hand).' },
+  { keys: ['dualistTechnique', 'dualistMastery'], note: 'Now "applying specific dueling techniques" and "dueling": distinct enough; accepted.' },
+  { keys: ['healingMastery', 'treatingInjury', 'treatmentExpertise', 'medicalKnowledge', 'surgicalMastery'], note: 'Overlapping medical phrases accepted as distinct canonical keys; at most two claims are shown. Re-check in Foundry testing.' },
+  { keys: ['survivalism', 'survivalSkills'], note: 'Overlapping survival phrases accepted as distinct keys. Re-check in Foundry testing.' },
+  { keys: ['stealth', 'stealthMastery'], note: 'Overlapping stealth phrases accepted as distinct keys. Re-check in Foundry testing.' },
+  { keys: ['resourceControl', 'resourcefulness'], note: 'Similar-sounding phrases with different meanings; accepted.' },
 ];
