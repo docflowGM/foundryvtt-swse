@@ -292,6 +292,22 @@ export class ReactionEngine {
 
     const resolvedReactionKey = reactionDef.key ?? normalizeReactionKey(reactionKey);
 
+    // The registered rule is the authoritative reaction cost. The optional
+    // legacy caller cost may increase it, but cannot waive a printed cost.
+    const declaredForceCost = Number(reactionDef.cost?.forcePoints ?? 0);
+    const callerForceCost = Number(forcePointCost ?? 0);
+    if (![declaredForceCost, callerForceCost].every(
+      cost => Number.isSafeInteger(cost) && cost >= 0
+    )) {
+      return {
+        success: false,
+        error: 'Invalid reaction Force Point cost',
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
+    const requiredForcePoints = Math.max(declaredForceCost, callerForceCost);
+
     try {
       const usage = reactionDef.usage ?? {};
       const limitType = usage.perEncounter === true
@@ -328,16 +344,21 @@ export class ReactionEngine {
         }
       }
 
-      if (forcePointCost > 0) {
-        const currentForce = defender.system?.forcePoints?.value ?? 0;
-        if (currentForce < forcePointCost) {
-          const reason = `Insufficient Force Points (need ${forcePointCost}, have ${currentForce})`;
-          SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${reason}`);
-          await SWSEChat.postMessage({
-            flavor: `❌ ${reactionDef.label}`,
-            content: reason,
-            actor: defender
-          });
+      // Pay before invoking a handler. A reaction attempt consumes its cost
+      // even when the handler's roll fails; do not grant a free effect and
+      // then subtract a possibly stale pool value. The canonical spender
+      // owns bonus-point allocation and the post-commit Temptation receipt.
+      if (requiredForcePoints > 0) {
+        const payment = await ActorEngine.spendForcePoints(
+          defender, requiredForcePoints,
+          { source: 'ReactionEngine.' + resolvedReactionKey }
+        );
+        if (payment?.spent !== requiredForcePoints) {
+          const partiallySpent = Number(payment?.spent ?? 0) > 0;
+          const reason = partiallySpent
+            ? 'Reaction Force Point payment incomplete; GM review required'
+            : 'Insufficient Force Points for this reaction';
+          SWSELogger.warn('[ReactionEngine] BLOCKED paid reaction: ' + reason);
           return {
             success: false,
             error: reason,
@@ -365,10 +386,16 @@ export class ReactionEngine {
         };
       }
 
-      if (forcePointCost > 0) {
-        await ActorEngine.updateActor(defender, {
-          'system.forcePoints.value': Math.max(0, (defender.system?.forcePoints?.value ?? 0) - forcePointCost)
-        });
+      // A paid attempt is still a committed spend if the handler fails.
+      // The spender has already emitted its receipt. Do not report a failed
+      // handler as a successful reaction or consume its per-round limit.
+      if (result?.success === false || result?.error) {
+        return {
+          success: false,
+          error: result?.error ?? result?.message ?? 'Reaction handler failed',
+          modifiedDamage: null,
+          resultMessage: result?.resultMessage ?? null
+        };
       }
 
       if (limitType) {
