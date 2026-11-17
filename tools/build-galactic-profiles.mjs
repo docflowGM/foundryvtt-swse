@@ -216,7 +216,16 @@ function buildCatalogEntry(profile) {
     mentorKey: c.mentorKey,
     dialogueKey: c.dialogueKey,
     roleTags: c.roleTags,
-    certificationStatus: profile.certification.status
+    certificationStatus: profile.certification.status,
+    // Everything a browse card shows, so the picker never loads full profiles until Review. Derived, never authoritative.
+    preview: {
+      species: profile.choices.species?.name ?? (profile.subtype === 'droid' ? 'Droid' : null),
+      background: profile.choices.background?.name ?? null,
+      abilities: { ...profile.choices.attributes.base },
+      skills: profile.choices.skills.slice(0, 3),
+      feats: profile.choices.feats.slice(0, 3).map(f => f.name),
+      powers: profile.choices.forcePowers.slice(0, 3).map(f => f.name)
+    }
   };
 }
 

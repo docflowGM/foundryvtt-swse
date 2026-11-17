@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createSession } from './helpers/session-harness.mjs';
-import { createOfflineResolvers, loadProfilesDoc, loadSchema } from './helpers/galactic-profile-fixtures.mjs';
+import { createOfflineResolvers, loadProfilesDoc, loadSchema, loadCatalog } from './helpers/galactic-profile-fixtures.mjs';
 
 const { ProfileClassStep, ProfileArchetypeStep, ProfileReviewStep } = await import('../scripts/apps/progression-framework/steps/galactic-profile-step.js');
 const { GalacticProfileRegistry } = await import('../scripts/engine/progression/profile/galactic-profile-registry.js');
@@ -15,6 +15,7 @@ const doc = loadProfilesDoc();
 // Test seam: prime the registry cache exactly as a successful load would (no network).
 GalacticProfileRegistry._clearCache();
 GalacticProfileRegistry._loaded = GalacticProfileRegistry.validateDocument(doc, loadSchema());
+GalacticProfileRegistry._catalog = loadCatalog().profiles;
 
 const makeShell = async subtype => {
   const session = await createSession(subtype);
@@ -129,4 +130,24 @@ test('source contracts: no template system, Apply action present, droid splash u
   assert.equal(hbs.includes('droid-select-standard'), false);
   const review = fs.readFileSync(new URL('../templates/apps/progression-framework/steps/galactic-profile-review-work-surface.hbs', import.meta.url), 'utf8');
   assert.match(review, /data-action="profile-apply"/);
+});
+
+test('perf: class and archetype steps render from the catalog alone; the full profile document loads only at Review', async () => {
+  const savedLoaded = GalacticProfileRegistry._loaded; const savedFetch = globalThis.fetch;
+  GalacticProfileRegistry._loaded = null;                       // full profiles NOT loaded
+  const requested = [];
+  globalThis.fetch = async url => { requested.push(String(url)); return { ok: true, json: async () => ({ mentors: {} }) }; };
+  try {
+    const { shell } = await makeShell('actor');
+    const cls = step(ProfileClassStep, 'profile-class', shell);
+    const arch = step(ProfileArchetypeStep, 'profile-archetype', shell);
+    await cls.preload(shell);
+    await cls.getStepData(shell);
+    await cls._selectProfileClass(shell, 'jedi');
+    const view = await arch.getStepData(shell);
+    assert.equal(view.archetypes.length, 4);
+    assert.ok(view.archetypes[0].abilities.length === 6 && view.archetypes[0].species, 'cards are fully populated from the catalog preview');
+    assert.equal(requested.some(u => u.includes('galactic-profiles.json') || u.includes('schema')), false, `full profiles must not load before Review (requested: ${requested})`);
+    assert.equal(GalacticProfileRegistry._loaded, null);
+  } finally { GalacticProfileRegistry._loaded = savedLoaded; globalThis.fetch = savedFetch; }
 });

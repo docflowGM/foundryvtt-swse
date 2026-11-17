@@ -101,13 +101,29 @@ function getProfileState(shell) {
 function sessionSubtype(shell) {
   return shell?.progressionSession?.subtype || null;
 }
+/** Browse-card model built from a generated catalog entry (no full-profile load until Review). */
+function toCardProfile(entry) {
+  const pv = entry.preview || {};
+  return {
+    profileId: entry.profileId,
+    revision: entry.revision,
+    subtype: entry.subtype,
+    catalog: { name: entry.name, archetype: entry.archetype, description: entry.description, quote: entry.quote, imagePath: entry.imagePath,
+      mentorKey: entry.mentorKey, dialogueKey: entry.dialogueKey, roleTags: entry.roleTags || [], classKey: entry.classKey, className: entry.className },
+    choices: {
+      species: pv.species ? { name: pv.species } : null,
+      background: pv.background ? { name: pv.background } : null,
+      attributes: { base: pv.abilities || {} },
+      skills: pv.skills || [], feats: (pv.feats || []).map(name => ({ name })), talents: [], forcePowers: (pv.powers || []).map(name => ({ name })), equipment: []
+    }
+  };
+}
 /** Profiles offered = EXACT session subtype only. The creation lane establishes the subtype before the picker opens. */
 async function loadForShell(shell) {
   const subtype = sessionSubtype(shell);
   if (!subtype) return { subtype: null, profiles: [] };
-  const loaded = await GalacticProfileRegistry.loadProfiles();
-  const profiles = Array.from(loaded.byId.values()).filter(p => p.subtype === subtype);
-  return { subtype, profiles };
+  const entries = await GalacticProfileRegistry.listCatalog({ subtype });
+  return { subtype, profiles: entries.map(toCardProfile) };
 }
 function groupProfiles(profiles) {
   const map = new Map();
@@ -276,7 +292,7 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
     this._preloadPromise = null;
   }
 
-  /** Warm the shared registry only. Never enters the step and never chooses or applies a profile. */
+  /** Warm the lightweight catalog only (~40 KB). Never enters the step and never chooses or applies a profile. */
   preload(shell) {
     if (!this._preloadPromise) {
       this._preloadPromise = this._ensureProfileData(shell).catch(error => {
@@ -459,8 +475,8 @@ export class ProfileReviewStep extends GalacticProfileBaseStep {
   async getStepData(context = null) {
     const shell = await this._ensureProfileData(context);
     const state = getProfileState(shell);
-    const profile = this._profiles.find(p => p.profileId === state.templateId) || null;
-    if (!profile) return { template: null, characterName: state.characterName || '' };
+    const profile = state.templateId ? await GalacticProfileRegistry.getProfile(state.templateId) : null;
+    if (!profile || profile.subtype !== sessionSubtype(shell)) return { template: null, characterName: state.characterName || '' };
     await syncProfileMentor(shell, profile.catalog.className, 'profile-review');
     const dialogueData = await loadProfileDialogues();
     const compiled = await this._compiled(shell, profile).catch(err => {

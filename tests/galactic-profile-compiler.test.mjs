@@ -193,6 +193,16 @@ test('talents outside the class registered trees are HELD for V2 tree authority,
   assert.ok(r.diagnostics.some(d => d.code === 'TALENT_ACCESS_DEFERRED_TO_V2'));
 });
 
+test('GP-RD-007: Mechanized Rider commits for a Scout once Mobile Scout is registered (the authored choice was legal; V2 tree data was incomplete)', async () => {
+  const r = await compile(byId('scout_pistoleer'));
+  assert.deepEqual(r.draft.talents.map(t => t.name), ['Mechanized Rider']);
+  assert.equal(r.deferred?.talents, undefined);
+  assert.equal(r.open.some(o => o.reason === 'TALENT_ACCESS_UNVERIFIED'), false);
+  assert.ok(r.locks.includes('class-talent'));
+  // the profile is still blocked, but only by its unresolved vehicle item — never by the talent
+  assert.deepEqual(codes(r), ['ITEM_UNRESOLVED']);
+});
+
 test('registry: validates record by record, quarantines invalid/duplicate/unknown-subtype, serves the rest', () => {
   const schema = loadSchema();
   const good = clone(doc);

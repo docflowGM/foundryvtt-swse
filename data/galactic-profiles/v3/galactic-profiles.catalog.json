@@ -24,7 +24,31 @@
         "force-user",
         "melee"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Mirialan",
+        "background": "Alderaan Origin",
+        "abilities": {
+          "str": 10,
+          "dex": 16,
+          "con": 12,
+          "int": 12,
+          "wis": 14,
+          "cha": 8
+        },
+        "skills": [
+          "useTheForce",
+          "acrobatics",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Finesse"
+        ],
+        "powers": [
+          "Battle Strike",
+          "Surge"
+        ]
+      }
     },
     {
       "profileId": "jedi_consular",
@@ -42,7 +66,32 @@
       "roleTags": [
         "force-user"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Miraluka",
+        "background": "Alpheridies Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 12,
+          "con": 10,
+          "int": 12,
+          "wis": 16,
+          "cha": 14
+        },
+        "skills": [
+          "useTheForce",
+          "perception",
+          "knowledgeGalacticLore"
+        ],
+        "feats": [
+          "Skill Focus (Use the Force)"
+        ],
+        "powers": [
+          "Move Object",
+          "Mind Trick",
+          "Negate Energy"
+        ]
+      }
     },
     {
       "profileId": "jedi_defender",
@@ -61,7 +110,30 @@
         "force-user",
         "tank"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Zabrak",
+        "background": "Scarred",
+        "abilities": {
+          "str": 14,
+          "dex": 12,
+          "con": 16,
+          "int": 10,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "useTheForce",
+          "endurance"
+        ],
+        "feats": [
+          "Skill Focus (Use the Force)"
+        ],
+        "powers": [
+          "Battle Strike",
+          "Negate Energy"
+        ]
+      }
     },
     {
       "profileId": "jedi_sentinel",
@@ -79,7 +151,32 @@
       "roleTags": [
         "force-user"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Miraluka",
+        "background": "Nar Shaddaa Origin",
+        "abilities": {
+          "str": 10,
+          "dex": 14,
+          "con": 12,
+          "int": 12,
+          "wis": 16,
+          "cha": 12
+        },
+        "skills": [
+          "useTheForce",
+          "perception",
+          "stealth"
+        ],
+        "feats": [
+          "Force Training"
+        ],
+        "powers": [
+          "Force Sense",
+          "Battle Strike",
+          "Mind Trick"
+        ]
+      }
     },
     {
       "profileId": "noble_diplomat",
@@ -98,7 +195,28 @@
         "diplomat",
         "support"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Zeltron",
+        "background": "Alderaan Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 12,
+          "con": 10,
+          "int": 14,
+          "wis": 12,
+          "cha": 16
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Skill Focus (Persuasion)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "noble_leader",
@@ -117,7 +235,28 @@
         "diplomat",
         "support"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Coruscant Origin",
+        "abilities": {
+          "str": 10,
+          "dex": 12,
+          "con": 14,
+          "int": 12,
+          "wis": 14,
+          "cha": 16
+        },
+        "skills": [
+          "persuasion",
+          "initiative",
+          "perception"
+        ],
+        "feats": [
+          "Improved Defenses"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "noble_aristocrat",
@@ -135,7 +274,28 @@
       "roleTags": [
         "diplomat"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Bothan",
+        "background": "Fondor Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 10,
+          "con": 12,
+          "int": 16,
+          "wis": 12,
+          "cha": 14
+        },
+        "skills": [
+          "gatherInformation",
+          "persuasion",
+          "deception"
+        ],
+        "feats": [
+          "Skill Training"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "noble_duelist",
@@ -153,7 +313,28 @@
       "roleTags": [
         "diplomat"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Zeltron",
+        "background": "Scarred",
+        "abilities": {
+          "str": 8,
+          "dex": 14,
+          "con": 12,
+          "int": 10,
+          "wis": 12,
+          "cha": 16
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Focus (Light Melee)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "soldier-guard",
@@ -169,7 +350,28 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Military Academy",
+        "abilities": {
+          "str": 14,
+          "dex": 12,
+          "con": 14,
+          "int": 10,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "initiative",
+          "perception"
+        ],
+        "feats": [
+          "Simple Weapon Proficiency",
+          "Armor Proficiency (Light)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scout-pathfinder",
@@ -185,7 +387,28 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Frontier Settler",
+        "abilities": {
+          "str": 12,
+          "dex": 14,
+          "con": 12,
+          "int": 13,
+          "wis": 14,
+          "cha": 10
+        },
+        "skills": [
+          "perception",
+          "survival"
+        ],
+        "feats": [
+          "Simple Weapon Proficiency",
+          "Endurance"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "laborer-worker",
@@ -201,7 +424,27 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Common Worker",
+        "abilities": {
+          "str": 13,
+          "dex": 10,
+          "con": 14,
+          "int": 10,
+          "wis": 11,
+          "cha": 10
+        },
+        "skills": [
+          "endurance"
+        ],
+        "feats": [
+          "Simple Weapon Proficiency",
+          "Toughness"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "beast-wolf",
@@ -217,7 +460,25 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Wolf",
+        "background": "Feral Creature",
+        "abilities": {
+          "str": 12,
+          "dex": 14,
+          "con": 11,
+          "int": 1,
+          "wis": 13,
+          "cha": 8
+        },
+        "skills": [
+          "perception",
+          "survival"
+        ],
+        "feats": [],
+        "powers": []
+      }
     },
     {
       "profileId": "beast-bear",
@@ -233,7 +494,25 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Bear",
+        "background": "Feral Creature",
+        "abilities": {
+          "str": 16,
+          "dex": 10,
+          "con": 13,
+          "int": 2,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "climb",
+          "survival"
+        ],
+        "feats": [],
+        "powers": []
+      }
     },
     {
       "profileId": "nonheroic_worker",
@@ -249,7 +528,27 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 12,
+          "dex": 10,
+          "con": 13,
+          "int": 12,
+          "wis": 11,
+          "cha": 8
+        },
+        "skills": [
+          "mechanics",
+          "useComputer"
+        ],
+        "feats": [
+          "Skill Focus (Mechanics)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "nonheroic_trooper",
@@ -265,7 +564,27 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 13,
+          "dex": 12,
+          "con": 12,
+          "int": 10,
+          "wis": 11,
+          "cha": 8
+        },
+        "skills": [
+          "perception",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Proficiency (Rifles)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "nonheroic_criminal",
@@ -281,7 +600,27 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 12,
+          "dex": 13,
+          "con": 11,
+          "int": 10,
+          "wis": 9,
+          "cha": 11
+        },
+        "skills": [
+          "deception",
+          "stealth"
+        ],
+        "feats": [
+          "Weapon Proficiency (Pistols)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "nonheroic_merchant",
@@ -297,7 +636,28 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 8,
+          "dex": 10,
+          "con": 10,
+          "int": 13,
+          "wis": 12,
+          "cha": 13
+        },
+        "skills": [
+          "persuasion",
+          "gatherInformation",
+          "useComputer"
+        ],
+        "feats": [
+          "Skill Focus (Persuasion)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "nonheroic_police",
@@ -313,7 +673,27 @@
       "mentorKey": null,
       "dialogueKey": null,
       "roleTags": [],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": null,
+        "abilities": {
+          "str": 12,
+          "dex": 11,
+          "con": 13,
+          "int": 11,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "perception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Weapon Proficiency (Pistols)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scoundrel_pistoleer",
@@ -331,7 +711,28 @@
       "roleTags": [
         "rogue"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Corellia Origin",
+        "abilities": {
+          "str": 10,
+          "dex": 16,
+          "con": 12,
+          "int": 14,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "stealth",
+          "perception",
+          "initiative"
+        ],
+        "feats": [
+          "Precise Shot"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scoundrel_skill_monkey",
@@ -349,7 +750,28 @@
       "roleTags": [
         "rogue"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Bothan",
+        "background": "Bothawui Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 14,
+          "con": 10,
+          "int": 16,
+          "wis": 12,
+          "cha": 14
+        },
+        "skills": [
+          "useComputer",
+          "mechanics",
+          "deception"
+        ],
+        "feats": [
+          "Skill Focus (Use Computer)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scoundrel_knuckledragger",
@@ -367,7 +789,28 @@
       "roleTags": [
         "rogue"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Duros",
+        "background": "Enslaved",
+        "abilities": {
+          "str": 10,
+          "dex": 16,
+          "con": 14,
+          "int": 12,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "deception",
+          "stealth",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Finesse"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scoundrel_outlaw",
@@ -385,7 +828,28 @@
       "roleTags": [
         "rogue"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Twi'lek",
+        "background": "Ryloth Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 14,
+          "con": 12,
+          "int": 12,
+          "wis": 10,
+          "cha": 16
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Improved Defenses"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scoundrel_brigand",
@@ -403,7 +867,30 @@
       "roleTags": [
         "rogue"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Duros",
+        "background": "Disgraced",
+        "abilities": {
+          "str": 8,
+          "dex": 18,
+          "con": 8,
+          "int": 14,
+          "wis": 12,
+          "cha": 14
+        },
+        "skills": [
+          "deception",
+          "initiative",
+          "perception"
+        ],
+        "feats": [
+          "Point-Blank Shot",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Simple Weapons)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scout_sniper",
@@ -422,7 +909,30 @@
         "rogue",
         "ranged"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Duros",
+        "background": "Duro Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 16,
+          "con": 10,
+          "int": 14,
+          "wis": 12,
+          "cha": 12
+        },
+        "skills": [
+          "pilot",
+          "stealth",
+          "initiative"
+        ],
+        "feats": [
+          "Weapon Proficiency (Rifles)",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Simple Weapons)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scout_engineer",
@@ -440,7 +950,30 @@
       "roleTags": [
         "rogue"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Mon Calamari",
+        "background": "Fondor Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 16,
+          "con": 12,
+          "int": 14,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "mechanics"
+        ],
+        "feats": [
+          "Weapon Proficiency (Rifles)",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Simple Weapons)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scout_pistoleer",
@@ -458,7 +991,30 @@
       "roleTags": [
         "rogue"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Codru-Ji",
+        "background": "Tatooine Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 16,
+          "con": 14,
+          "int": 12,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "initiative",
+          "endurance",
+          "perception"
+        ],
+        "feats": [
+          "Weapon Proficiency (Rifles)",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Simple Weapons)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scout_survivalist",
@@ -476,7 +1032,28 @@
       "roleTags": [
         "rogue"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Ithorian",
+        "background": "Bankrupt",
+        "abilities": {
+          "str": 12,
+          "dex": 14,
+          "con": 16,
+          "int": 12,
+          "wis": 14,
+          "cha": 8
+        },
+        "skills": [
+          "survival",
+          "perception",
+          "endurance"
+        ],
+        "feats": [
+          "Skill Focus (Survival)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "scout_infiltrator",
@@ -494,7 +1071,28 @@
       "roleTags": [
         "rogue"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Bothan",
+        "background": "Bothawui Origin",
+        "abilities": {
+          "str": 8,
+          "dex": 16,
+          "con": 12,
+          "int": 14,
+          "wis": 12,
+          "cha": 10
+        },
+        "skills": [
+          "stealth",
+          "perception",
+          "mechanics"
+        ],
+        "feats": [
+          "Skill Focus (Stealth)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "soldier_rifleman",
@@ -512,7 +1110,30 @@
       "roleTags": [
         "warrior"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Houk",
+        "background": "Orphaned",
+        "abilities": {
+          "str": 16,
+          "dex": 16,
+          "con": 14,
+          "int": 12,
+          "wis": 8,
+          "cha": 6
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "endurance"
+        ],
+        "feats": [
+          "Armor Proficiency (Light)",
+          "Armor Proficiency (Medium)",
+          "Weapon Proficiency (Pistols)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "soldier_gunner",
@@ -531,7 +1152,28 @@
         "warrior",
         "ranged"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Human",
+        "background": "Anaxes Origin",
+        "abilities": {
+          "str": 14,
+          "dex": 16,
+          "con": 14,
+          "int": 12,
+          "wis": 10,
+          "cha": 8
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "endurance"
+        ],
+        "feats": [
+          "Weapon Proficiency (Heavy Weapons)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "soldier_brawler",
@@ -549,7 +1191,28 @@
       "roleTags": [
         "warrior"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Mantellian Savrip",
+        "background": "Orphaned",
+        "abilities": {
+          "str": 18,
+          "dex": 12,
+          "con": 16,
+          "int": 10,
+          "wis": 10,
+          "cha": 8
+        },
+        "skills": [
+          "initiative",
+          "endurance",
+          "perception"
+        ],
+        "feats": [
+          "Weapon Proficiency (Advanced Melee)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "soldier_tank",
@@ -568,7 +1231,28 @@
         "warrior",
         "tank"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Gen'Dai",
+        "background": "Crippled",
+        "abilities": {
+          "str": 12,
+          "dex": 14,
+          "con": 16,
+          "int": 10,
+          "wis": 12,
+          "cha": 8
+        },
+        "skills": [
+          "endurance",
+          "perception",
+          "initiative"
+        ],
+        "feats": [
+          "Armor Proficiency (Heavy)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "soldier_commando",
@@ -586,7 +1270,30 @@
       "roleTags": [
         "warrior"
       ],
-      "certificationStatus": "pendingV2Certification"
+      "certificationStatus": "pendingV2Certification",
+      "preview": {
+        "species": "Sullustan",
+        "background": "Sullust Origin",
+        "abilities": {
+          "str": 12,
+          "dex": 16,
+          "con": 12,
+          "int": 12,
+          "wis": 10,
+          "cha": 8
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "endurance"
+        ],
+        "feats": [
+          "Armor Proficiency (Light)",
+          "Armor Proficiency (Medium)",
+          "Weapon Proficiency (Pistols)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "droid_scout_dex_recon_probe",
@@ -609,7 +1316,27 @@
         "mobility",
         "sensors"
       ],
-      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 15,
+          "int": 13,
+          "wis": 14,
+          "cha": 12
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "stealth"
+        ],
+        "feats": [
+          "Point Blank Shot"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "droid_scout_int_astromech_pathfinder",
@@ -632,7 +1359,27 @@
         "navigation",
         "exploration"
       ],
-      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 14,
+          "int": 15,
+          "wis": 13,
+          "cha": 12
+        },
+        "skills": [
+          "mechanics",
+          "knowledgeTechnology",
+          "knowledgePhysicalSciences"
+        ],
+        "feats": [
+          "Skill Focus (Mechanics)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "droid_soldier_dex_security_enforcer",
@@ -655,7 +1402,27 @@
         "defense",
         "tactics"
       ],
-      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 15,
+          "int": 13,
+          "wis": 14,
+          "cha": 12
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "knowledgeTactics"
+        ],
+        "feats": [
+          "Point Blank Shot"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "droid_soldier_str_industrial_vanguard",
@@ -678,7 +1445,27 @@
         "strength",
         "guardian"
       ],
-      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 15,
+          "dex": 10,
+          "int": 12,
+          "wis": 14,
+          "cha": 13
+        },
+        "skills": [
+          "initiative",
+          "perception",
+          "jump"
+        ],
+        "feats": [
+          "Weapon Proficiency (Advanced Melee Weapons)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "droid_noble_int_medical_coordinator",
@@ -701,7 +1488,27 @@
         "intelligence",
         "support"
       ],
-      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 12,
+          "int": 15,
+          "wis": 14,
+          "cha": 13
+        },
+        "skills": [
+          "treatInjury",
+          "knowledgeLifeSciences",
+          "knowledgePhysicalSciences"
+        ],
+        "feats": [
+          "Skill Focus (Treat Injury)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "droid_noble_cha_protocol_envoy",
@@ -724,7 +1531,27 @@
         "charisma",
         "protocol"
       ],
-      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 12,
+          "int": 13,
+          "wis": 14,
+          "cha": 15
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Skill Focus (Persuasion)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "droid_scoundrel_cha_service_operative",
@@ -747,7 +1574,27 @@
         "infiltration",
         "charisma"
       ],
-      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 12,
+          "int": 14,
+          "wis": 13,
+          "cha": 15
+        },
+        "skills": [
+          "persuasion",
+          "deception",
+          "gatherInformation"
+        ],
+        "feats": [
+          "Armor Proficiency (Light)"
+        ],
+        "powers": []
+      }
     },
     {
       "profileId": "droid_scoundrel_dex_systems_infiltrator",
@@ -770,7 +1617,27 @@
         "slicing",
         "dexterity"
       ],
-      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2",
+      "preview": {
+        "species": "Droid",
+        "background": null,
+        "abilities": {
+          "str": 10,
+          "dex": 15,
+          "int": 14,
+          "wis": 13,
+          "cha": 12
+        },
+        "skills": [
+          "stealth",
+          "acrobatics",
+          "mechanics"
+        ],
+        "feats": [
+          "Precise Shot"
+        ],
+        "powers": []
+      }
     }
   ]
 }

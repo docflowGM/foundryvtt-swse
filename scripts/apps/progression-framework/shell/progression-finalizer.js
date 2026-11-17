@@ -1366,7 +1366,7 @@ export class ProgressionFinalizer {
         add.items.push({
           name: clazz.name || clazz.label || String(clazz),
           type: 'class',
-          system: classSystemForActor,
+          system: this._chargenClassItemSystem(classSystemForActor),
           flags: {
             swse: {
               progression: {
@@ -3130,6 +3130,17 @@ export class ProgressionFinalizer {
       if (doc) return doc.toObject ? doc.toObject() : foundry.utils.deepClone(doc);
     }
     return null;
+  }
+
+  /**
+   * Chargen creates the FIRST class level. Heroic class documents carry no `system.level` (the item schema default
+   * is 1), but the synthetic Nonheroic model carries an explicit 0 (it is a level-up track counter). An explicit
+   * non-positive level must never become the level of a character's first class item.
+   */
+  static _chargenClassItemSystem(system = {}) {
+    const next = { ...(system || {}) };
+    if ('level' in next && !(Number(next.level) >= 1)) next.level = 1;
+    return next;
   }
 
   static _isJediClassSelection(classSelection = null) {

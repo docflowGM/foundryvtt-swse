@@ -2821,3 +2821,231 @@ The RECON-001 ruling narrows this question but does not answer it. `talentEveryL
 - **Revision 65 (2026-11-14):** appended the RECON-001 project owner ruling (canonical class-based talents; Talent Wiki house rule), a RECON-005 progress note, and TALENT-RD-001.
 
 **RECON-001 — implementing commit:** `e38026aac93d2926fa7bc6c4e0e2eeca5ed02f7d` (ruling above; recorded after the commit existed, per the append-only rule).
+
+---
+
+# Galactic Profiles v3 — rulings (project owner review of PR #1152, 2026-11-17)
+
+Source document: `docs/audits/SWSE_Galactic_Profiles_v3_Unification_Audit.md`. Each entry preserves the original question; the owner's disposition is recorded in the Resolution field. Printed-book citations are as recorded by the repository (the printed books were not available in the build environment).
+
+## GP-RD-001 — Wolf — "Pack Tactics (advantage on melee attack rolls if ally is within 5 squares)"
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-001 |
+| Rules domain | Beast |
+| Feature | Wolf — "Pack Tactics (advantage on melee attack rolls if ally is within 5 squares)" (profiles: `beast-wolf`) |
+| Source | see Evidence |
+| Evidence | none located; the string exists only in `data/nonheroic-templates.json` (v2 template). No pack, species trait or other V2 data contains it. |
+| Confirmed behavior | Wolf has no species document; "advantage" is not SWSE terminology. |
+| Unresolved question | Whether any SWSE-printed trait is intended. |
+| Options (source-supported) | none source-supported |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Wolf profile blocked (`rulingBlocks`); trait never applied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: keep blocked.** Authored advantage mechanic is not established as an SWSE rule. |
+
+---
+
+## GP-RD-002 — Commanding Presence (Mercenary vs Leadership)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-002 |
+| Rules domain | Talent identity |
+| Feature | Commanding Presence (Mercenary vs Leadership) (profiles: `soldier_rifleman`) |
+| Source | see Evidence |
+| Evidence | Force Unleashed Campaign Guide p.28 (tree Mercenary, no prerequisites, doc `438e13c99c7b53a6`); Galaxy at War p.19 (tree Leadership, prerequisites Born Leader + Tactical Savvy, doc `d442508aa9d9bdf6`). Page numbers are as recorded by the repository. |
+| Confirmed behavior | Soldier's V2 trees include Mercenary, not Leadership; the profile's own tree label is Mercenary. |
+| Unresolved question | Which publication's talent is intended. |
+| Options (source-supported) | A) Mercenary-tree talent; B) Leadership-tree talent |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Authoring correction pins `sourceIds` to `438e13c99c7b53a6`; V2 access/prerequisite still decide legality. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved A (Mercenary-tree identity)**, subject to V2 entitlement validation. |
+
+---
+
+## GP-RD-003 — Jedi Force powers without Force Training
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-003 |
+| Rules domain | Force |
+| Feature | Jedi Force powers without Force Training (profiles: `jedi_guardian`, `jedi_consular`, `jedi_defender`) |
+| Source | see Evidence |
+| Evidence | Force Training (Saga Edition Core Rulebook p.85 as recorded): prerequisites Force Sensitivity + trained Use the Force; adds 1 + WIS modifier powers. Guardian authors 2 powers (Force Training would give 3 at WIS 14). |
+| Confirmed behavior | Profiles list Force powers but select no Force Training feat. |
+| Unresolved question | Whether to add/swap a feat or leave powers to the player. |
+| Options (source-supported) | (a) swap a selected feat; (b) leave powers unselected; (c) other legal source (none located) |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Compiler preserves feats and powers as authored intent, withholds powers from the draft until V2 reports the entitlement, and opens the feat step. |
+| Status | `DEFERRED_RULES_REVIEW` (intent preserved; powers withheld) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: keep blocked pending legal choices.** Do not replace feats or silently discard powers. |
+
+---
+
+## GP-RD-004 — Wealth talent vs authored net wallet
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-004 |
+| Rules domain | Credits |
+| Feature | Wealth talent vs authored net wallet (profiles: `noble_aristocrat`) |
+| Source | see Evidence |
+| Evidence | Authored wallet 465; legacy note "6,500 starting credits with Wealth talent"; V2 adds lineageLevel × 5000 for Wealth. |
+| Confirmed behavior | Whether 465 is inclusive or exclusive of the Wealth grant. |
+| Unresolved question | Inclusive vs exclusive. |
+| Options (source-supported) | inclusive / exclusive |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | `wallet.mode = exactFinalBalance`; the economy builder writes the authored balance exactly and never adds Wealth. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved — 465 is the exact post-grant final balance;** no second Wealth grant. |
+
+---
+
+## GP-RD-005 — "Athletics"
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-005 |
+| Rules domain | Skills |
+| Feature | "Athletics" (profiles: `laborer-worker`) |
+| Source | see Evidence |
+| Evidence | V2 skills have no Athletics (Climb, Jump, Swim, Endurance, … are separate skills). |
+| Confirmed behavior | Which skill(s) were intended. |
+| Unresolved question | Which V2 skill(s). |
+| Options (source-supported) | none source-supported |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | `choices.unresolved` blocks the profile. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: keep blocked;** replacement needs selection. |
+
+---
+
+## GP-RD-006 — Surveillance (Spy) and Sizing Up (Espionage)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-006 |
+| Rules domain | Talent identity |
+| Feature | Surveillance (Spy) and Sizing Up (Espionage) (profiles: `scout_sniper`, `scout_engineer`) |
+| Source | see Evidence |
+| Evidence | Surveillance: Force Unleashed Campaign Guide p.28, tree Spy, doc `f23b63464e0aeff7`; Sizing Up: Galaxy of Intrigue p.23, tree Espionage, doc `95579a44ff466f19` (as recorded). Authored tree labels differ. |
+| Confirmed behavior | Unique talent documents; authored tree assertions contradict them. |
+| Unresolved question | Intended identity. |
+| Options (source-supported) | resolve by talent document / different talent intended |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Authored `sourceTree` retained as evidence only; identity and prerequisites come from the talent authority. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved published talent identities** (Surveillance → Spy; Sizing Up → Espionage). |
+
+---
+
+## GP-RD-007 — Mechanized Rider / Mobile Scout tree for Scouts
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-007 |
+| Rules domain | Talent access |
+| Feature | Mechanized Rider / Mobile Scout tree for Scouts (profiles: `scout_pistoleer`) |
+| Source | see Evidence |
+| Evidence | The Unknown Regions p.22 (as recorded; tree document tagged `scout`): Mobile Scout is a Scout talent tree; Mechanized Rider requires trained Pilot and Ride (profile has both). V2 Scout `talent_trees` omitted the tree. |
+| Confirmed behavior | Printed text not available in the build environment; the owner states the tree applies to Scouts. |
+| Unresolved question | Whether Scout may use Mobile Scout (owner: yes). |
+| Options (source-supported) | — |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | V2 data corrected: Mobile Scout added to Scout in `packs/classes.db` and `data/fixes/class-talent-tree-bindings.json`; profile selection unchanged. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED; printed source owner-attested) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: revised — the profile choice is legal; correct the V2 tree registration.** Printed-source verification remains owner-attested. |
+
+---
+
+## GP-RD-008 — Zabrak ability modifiers
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-008 |
+| Rules domain | Species |
+| Feature | Zabrak ability modifiers (profiles: `jedi_defender`) |
+| Source | see Evidence |
+| Evidence | V2 Zabrak (Core) `abilityMods` are all 0; a legacy note says "Zabrak CON bonus". |
+| Confirmed behavior | Legacy note vs canonical species data. |
+| Unresolved question | Which is right. |
+| Options (source-supported) | V2 data / legacy note |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Legacy note kept only in evidence; basis for `jedi_defender` is moot. |
+| Status | `RESOLVED_BY_OWNER` (no data change needed; V2 already has no Zabrak modifiers) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved — Core Rulebook Zabrak have no ability-score adjustments;** the legacy CON-bonus note is incorrect. |
+
+---
+
+## GP-RD-009 — Authored score basis (base vs post-species)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-009 |
+| Rules domain | Attributes |
+| Feature | Authored score basis (base vs post-species) (profiles: 20 organic/nonheroic profiles (see audit §R.3), plus `beast-wolf`/`beast-bear`) |
+| Source | see Evidence |
+| Evidence | Point-buy fit is non-discriminating; two Duros profiles disagree; 12 profiles are moot (species has no ability modifiers), 1 has an explicit authored note (`soldier_brawler`). |
+| Confirmed behavior | Authoring fact per profile. |
+| Unresolved question | base or final per profile. |
+| Options (source-supported) | base / final |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Compiler `ATTRIBUTE_BASIS_UNRESOLVED`; no number is ever rewritten. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: unresolved profiles stay blocked; no blanket conversion.** |
+
+---
+
+## GP-RD-010 — Beast creation authority (Wolf/Bear)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-010 |
+| Rules domain | Beast |
+| Feature | Beast creation authority (Wolf/Bear) (profiles: `beast-wolf`, `beast-bear`) |
+| Source | see Evidence |
+| Evidence | No species documents, no beast draft/finalization destination (`flags.swse.beastData` is written by nothing in progression); `BeastSubtypeAdapter` rules exist in code. |
+| Confirmed behavior | Which source defines Wolf/Bear stat blocks. |
+| Unresolved question | Source identity. |
+| Options (source-supported) | none source-supported |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Beast profiles blocked; shared infrastructure and readiness hardened. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: keep blocked** until source identities and a V2 draft/finalization path exist. |
+
+---
+
+## GP-RD-011 — Beast readiness must block
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-011 |
+| Rules domain | Beast |
+| Feature | Beast readiness must block (profiles: all beast sessions) |
+| Source | see Evidence |
+| Evidence | `BeastSubtypeAdapter.validateReadiness` only warned, read the actor's stale Int, and defaulted 0 to 1. |
+| Confirmed behavior | The adapter's own contract states Intelligence 1–2 at creation; its validation only warned and nothing corrected a bad value at finalization. |
+| Unresolved question | Whether invalid beast builds must block finalization. |
+| Options (source-supported) | — |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Readiness throws on missing context, missing/invalid draft Int (creation: 1–2); draft is authoritative. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved — strict blocking using the draft, not stale actor attributes.** |
+
+---
+
+- **Revision 66 (2026-11-17):** appended GP-RD-001 … GP-RD-011 from the project owner's review of the Galactic Profiles v3 unification audit. Implementing commits are recorded in the next appended line.
