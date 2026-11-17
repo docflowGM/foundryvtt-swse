@@ -121,11 +121,11 @@ try {
  await test('reaction engine calls supported postHTML API, not missing postMessage',()=>{
   const engineSource=readFileSync(new URL('../scripts/engine/combat/reactions/reaction-engine.js',import.meta.url),'utf8');
   const chatSource=readFileSync(new URL('../scripts/chat/swse-chat.js',import.meta.url),'utf8');
-  assert.match(engineSource,/SWSEChat\\.postHTML\\(/);
-  assert.doesNotMatch(engineSource,/SWSEChat\\.postMessage\\(/);
-  assert.match(chatSource,/static async postHTML\\(/);
-  assert.doesNotMatch(chatSource,/static async postMessage\\(/);
-  assert.match(engineSource,/escapeReactionText\\(message\\)/,
+  assert.match(engineSource,/SWSEChat\.postHTML\(/);
+  assert.doesNotMatch(engineSource,/SWSEChat\.postMessage\(/);
+  assert.match(chatSource,/static async postHTML\(/);
+  assert.doesNotMatch(chatSource,/static async postMessage\(/);
+  assert.match(engineSource,/escapeReactionText\(message\)/,
     'reaction messages must escape untrusted result text');
  });
 
