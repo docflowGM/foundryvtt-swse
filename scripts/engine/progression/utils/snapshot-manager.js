@@ -129,6 +129,58 @@ export class SnapshotManager {
     }
 
     /**
+     * True when the actor has at least one snapshot available for revert.
+     * (Snapshot ownership lives here; the legacy NPC packet engine is retired.)
+     * @param {Actor} actor
+     * @returns {boolean}
+     */
+    static hasSnapshots(actor) {
+        if (!actor) return false;
+        return this.getSnapshots(actor).length > 0;
+    }
+
+    /**
+     * Display info for the latest snapshot, or null.
+     * @param {Actor} actor
+     * @returns {{label: string, timestamp: number, level: *, date: string}|null}
+     */
+    static getLatestSnapshotInfo(actor) {
+        if (!actor) return null;
+        const snapshot = this.getLatestSnapshot(actor);
+        if (!snapshot) return null;
+        return {
+            label: snapshot.label,
+            timestamp: snapshot.timestamp,
+            level: snapshot.level,
+            date: new Date(snapshot.timestamp).toLocaleString()
+        };
+    }
+
+    /**
+     * Revert an actor to its latest snapshot (statblock restoration after NPC
+     * progression). Restoration itself is the existing identity-exact
+     * restoreSnapshot() path; this only selects the latest snapshot.
+     * @param {Actor} actor
+     * @returns {Promise<boolean>} true if restored; false when none existed
+     */
+    static async revertToLatestSnapshot(actor) {
+        if (!actor) throw new Error('SnapshotManager.revertToLatestSnapshot: no actor');
+        const snapshot = this.getLatestSnapshot(actor);
+        if (!snapshot) {
+            SWSELogger.warn(`No snapshot available for ${actor.name}`);
+            ui.notifications?.warn('No previous snapshot found.');
+            return false;
+        }
+        const restored = await this.restoreSnapshot(actor, snapshot.timestamp);
+        if (!restored) {
+            SWSELogger.error('Failed to restore snapshot for', actor.name);
+            throw new Error('Snapshot restoration failed');
+        }
+        SWSELogger.log(`Restored ${actor.name} to snapshot: "${snapshot.label}"`);
+        return true;
+    }
+
+    /**
      * Restore actor to a previous snapshot, exactly and honestly.
      * PHASE 10 ADDENDUM (P1-7): delegates to SnapshotService.restoreFromSnapshot()
      * directly (not through ActorEngine.restoreFromSnapshot()'s indirection —

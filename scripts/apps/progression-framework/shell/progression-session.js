@@ -25,6 +25,7 @@
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { ProgressionSubtypeAdapterRegistry } from '../adapters/progression-subtype-adapter-registry.js';
+import { getFeatSelectionScopeKey } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js';
 
 export class ProgressionSession {
   /**
@@ -781,7 +782,13 @@ export class ProgressionSession {
     if (entry === null || entry === undefined) return '';
     if (typeof entry !== 'object') return String(entry);
     const raw = entry.uuid || entry.id || entry._id || entry.key || entry.slug || entry.name || entry.label;
-    return raw ? String(raw).trim().toLowerCase() : '';
+    if (!raw) return '';
+    // Choice-bearing feats (Skill Focus, Skill Training, Weapon Proficiency...)
+    // are distinct per chosen scope; identity must include it or repeatable
+    // selections collapse into one entry.
+    const scope = getFeatSelectionScopeKey(entry.system?.selectedChoice ?? entry.selectedChoice ?? null);
+    const base = String(raw).trim().toLowerCase();
+    return scope ? `${base}::${scope}` : base;
   }
 
   /** @private */

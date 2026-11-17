@@ -1,73 +1,45 @@
 /**
- * NonheroicStartingFeatsStep - Constrained feat selection for nonheroic characters
+ * NonheroicStartingFeatsStep - the Nonheroic class's three printed starting feats
  *
- * Enforces strict nonheroic feat constraints:
- * - Exactly 3 feat slots (all must be filled)
- * - Only nonheroic-legal feats allowed
- * - Skill Focus and Training are repeatable
- * - Focus/commit interaction model
+ * Source: Saga Edition Core Rulebook, Nonheroic Characters, p.277. The legal
+ * options, the "exactly three" rule and the repeatable (Skill Focus / Skill
+ * Training) rule live in ONE place - NONHEROIC_STARTING_FEAT_RULE in
+ * nonheroic-class-model.js - not in this step.
  *
- * Phase 2.5: Replaces normal FeatStep for nonheroic chargen
+ * - Selections are keyed by feat identity + chosen scope (never feat id alone),
+ *   so Skill Focus (Perception) and Skill Focus (Stealth) are two selections.
+ * - Choice-bearing feats go through canonical FeatChoiceDialog /
+ *   FeatChoiceResolver validation and persist the canonical
+ *   system.selectedChoice payload (FeatChoiceResolver.buildChoicePatch).
+ * - These are CLASS grants (slotType 'nonheroic-starting'), distinct from the
+ *   ordinary level-1 general feat, which keeps its own general-feat step.
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { FeatRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js';
+import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
+import { FeatChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import {
+  NONHEROIC_STARTING_FEAT_RULE,
+  NONHEROIC_STARTING_FEAT_SLOT_TYPE,
+  NONHEROIC_STARTING_FEAT_SOURCE,
+  isNonheroicStartingFeatFamily,
+  matchNonheroicStartingFeatOption,
+  validateNonheroicStartingFeats,
+  getStartingFeatSelectionKey,
+} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js';
 
-// Nonheroic-specific feat families that are allowed. Use normalized family
-// matching because the compendium stores many SWSE proficiencies as variants
-// such as "Weapon Proficiency (Simple Weapons)" and "Armor Proficiency (light)".
-const NONHEROIC_LEGAL_FEAT_FAMILIES = [
-  'alertness',
-  'armor proficiency',
-  'blind fight',
-  'cleave',
-  'dodge',
-  'exotic weapon proficiency',
-  'far shot',
-  'improved initiative',
-  'improved unarmed strike',
-  'martial arts i',
-  'martial arts training',
-  'power attack',
-  'quick draw',
-  'shield proficiency',
-  'simple weapon proficiency',
-  'skill focus',
-  'skill training',
-  'toughness',
-  'weapon focus',
-  'weapon proficiency',
-];
+const TOTAL_SLOTS = NONHEROIC_STARTING_FEAT_RULE.count;
 
 function _featId(feat) {
   return feat?.id || feat?._id || feat?.uuid || feat?.name || null;
 }
 
-function _normalizeFeatName(name) {
-  return String(name || '')
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u2018\u2019\u201B\u2032']/g, '')
-    .replace(/[\u2010-\u2015]/g, '-')
-    .replace(/&/g, ' and ')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
-}
-
-function _isNonheroicLegalFeatName(name) {
-  const key = _normalizeFeatName(name);
-  if (!key) return false;
-
-  if (key === 'weapon proficiency simple weapons') return true;
-  if (key === 'simple weapon proficiency') return true;
-  if (key.startsWith('armor proficiency')) return true;
-  if (key.startsWith('weapon proficiency')) return true;
-  if (key === 'martial arts i') return true;
-
-  return NONHEROIC_LEGAL_FEAT_FAMILIES.some(family => key === family);
+function _isStartingSelection(entry) {
+  return entry?.slotType === NONHEROIC_STARTING_FEAT_SLOT_TYPE || entry?.source === NONHEROIC_STARTING_FEAT_SOURCE;
 }
 
 export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
@@ -76,7 +48,7 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
 
     this._allFeats = [];           // All feats from registry
     this._legalFeats = [];         // Feats legal for nonheroic characters
-    this._selectedFeatIds = [];    // Up to 3 selected feat IDs
+    this._selected = [];           // Canonical selection entries (identity + scope), max 3
     this._focusedFeatId = null;    // Currently focused feat
     this._searchQuery = '';        // Search filter
 
@@ -99,6 +71,11 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
 
     // Load all feats from registry
     this._allFeats = FeatRegistry.list?.() || [];
+
+    // Hydrate from the canonical session so backtracking / session recovery
+    // preserve prior picks (including their scoped choices).
+    const draftFeats = shell?.progressionSession?.draftSelections?.feats;
+    this._selected = (Array.isArray(draftFeats) ? draftFeats : []).filter(_isStartingSelection).slice(0, TOTAL_SLOTS);
 
     // Get legal feats for nonheroic context
     // PHASE 3.1: Pass shell to access pending class grants
@@ -161,12 +138,12 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     return {
-      selectedFeats: this._selectedFeatIds.map(id => {
-        const feat = this._findFeat(id);
-        return feat ? { id: _featId(feat), name: feat.name } : null;
-      }).filter(Boolean),
-      availableSlots: 3 - this._selectedFeatIds.length,
-      totalSlots: 3,
+      selectedFeats: this._selected.map(entry => ({
+        id: getStartingFeatSelectionKey(entry),
+        name: this._selectionLabel(entry),
+      })),
+      availableSlots: TOTAL_SLOTS - this._selected.length,
+      totalSlots: TOTAL_SLOTS,
       allFeats: this._getFilteredFeats(),
       focusedFeatId: this._focusedFeatId,
       searchQuery: this._searchQuery,
@@ -175,10 +152,20 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
 
   getSelection() {
     return {
-      selected: this._selectedFeatIds,
-      count: this._selectedFeatIds.length,
-      isComplete: this._selectedFeatIds.length === 3, // Must fill all 3 slots
+      selected: this._selected.map(getStartingFeatSelectionKey),
+      count: this._selected.length,
+      isComplete: this._isComplete(),
     };
+  }
+
+  _isComplete() {
+    return validateNonheroicStartingFeats(this._selected).valid;
+  }
+
+  _selectionLabel(entry) {
+    const choice = entry?.system?.selectedChoice ?? null;
+    const label = choice ? (FeatChoiceResolver.getChoiceLabel?.(choice) || '') : '';
+    return label ? `${entry.name} (${label})` : entry.name;
   }
 
   // ---------------------------------------------------------------------------
@@ -212,30 +199,98 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async _onFeatClicked(featId, shell) {
-    // Toggle selection
-    const index = this._selectedFeatIds.indexOf(featId);
-    if (index >= 0) {
-      // Already selected, remove it
-      this._selectedFeatIds.splice(index, 1);
-    } else {
-      // Not selected and we have room
-      if (this._selectedFeatIds.length < 3) {
-        this._selectedFeatIds.push(featId);
-      }
+    this._focusedFeatId = null;
+
+    // A click on an already-selected entry (identified by identity + scope) removes it.
+    if (this._selected.some(entry => getStartingFeatSelectionKey(entry) === featId)) {
+      return this._onFeatRemoved(featId, shell);
     }
 
-    this._focusedFeatId = null;
+    const feat = this._findFeat(featId);
+    if (!feat) return;
+
+    if (this._selected.length >= TOTAL_SLOTS) {
+      ui.notifications?.warn?.(`Nonheroic characters receive exactly ${TOTAL_SLOTS} starting feats. Remove one first.`);
+      return;
+    }
+
+    const entry = await this._buildSelectionWithChoice(feat, shell);
+    if (!entry) return;
+
+    // Non-choice feats toggle by identity: a second click removes the existing one.
+    const key = getStartingFeatSelectionKey(entry);
+    if (this._selected.some(existing => getStartingFeatSelectionKey(existing) === key)) {
+      ui.notifications?.warn?.(`${this._selectionLabel(entry)} is already selected.`);
+      return;
+    }
+
+    const candidate = [...this._selected, entry];
+    const check = validateNonheroicStartingFeats(candidate, { requireComplete: false });
+    if (!check.valid) {
+      ui.notifications?.warn?.(check.errors.join(' '));
+      return;
+    }
+
+    this._selected = candidate;
     await this._commitSelectedFeats(shell);
     shell.requestRender({ preserveScroll: true, reason: 'nonheroic-starting-feats-step:_onFeatClicked' });
   }
 
-  async _onFeatRemoved(featId, shell) {
-    const index = this._selectedFeatIds.indexOf(featId);
-    if (index >= 0) {
-      this._selectedFeatIds.splice(index, 1);
-    }
+  async _onFeatRemoved(featKey, shell) {
+    this._selected = this._selected.filter(entry => getStartingFeatSelectionKey(entry) !== featKey);
     await this._commitSelectedFeats(shell);
     shell.requestRender({ preserveScroll: true, reason: 'nonheroic-starting-feats-step:_onFeatRemoved' });
+  }
+
+  /**
+   * Build the canonical selection entry. Choice-bearing feats are routed through
+   * the canonical FeatChoiceDialog + FeatChoiceResolver validation (the same
+   * path FeatStep uses) and then restricted to the printed Nonheroic options.
+   */
+  async _buildSelectionWithChoice(feat, shell) {
+    const base = {
+      id: feat.id || feat._id,
+      name: feat.name || '',
+      type: feat.type || 'feat',
+      img: feat.iconPath || feat.img || undefined,
+      uuid: feat.uuid || undefined,
+      system: { ...(feat.system || {}) },
+      slotType: NONHEROIC_STARTING_FEAT_SLOT_TYPE,
+      source: NONHEROIC_STARTING_FEAT_SOURCE,
+      slotKey: this.descriptor?.stepId || 'nonheroic-starting-feats',
+      stepId: this.descriptor?.stepId || null,
+      // Provenance: a Nonheroic CLASS grant, not a character-level selection.
+      grantSource: 'class:nonheroic',
+    };
+
+    const meta = FeatChoiceResolver.getChoiceMeta(feat);
+    const choiceSource = FeatChoiceResolver.inferChoiceSource(feat);
+    if (meta?.required && choiceSource !== 'grantPool') {
+      const pending = this._buildPendingStateWithClassGrants(shell.actor, shell);
+      const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, feat, {
+        title: `Choose ${feat.name}`,
+        context: { pending },
+      });
+      if (!selectedChoice) return null;
+
+      const validation = await FeatChoiceResolver.validateSelectedChoice(shell.actor, feat, selectedChoice, { pending });
+      if (!validation.valid) {
+        ui.notifications?.warn?.(validation.errors?.join(' ') || 'That choice is not currently legal.');
+        return null;
+      }
+      if (!matchNonheroicStartingFeatOption(feat.name, selectedChoice)) {
+        ui.notifications?.warn?.(`${feat.name} with that choice is not on the Nonheroic starting feat list.`);
+        return null;
+      }
+
+      const patch = FeatChoiceResolver.buildChoicePatch(feat, selectedChoice) || {};
+      base.system = { ...base.system, ...(patch.system || {}) };
+    } else if (!matchNonheroicStartingFeatOption(feat.name, null)) {
+      ui.notifications?.warn?.(`${feat.name} is not on the Nonheroic starting feat list.`);
+      return null;
+    }
+
+    return base;
   }
 
   // ---------------------------------------------------------------------------
@@ -243,33 +298,21 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   validate() {
-    const errors = [];
-
-    if (this._selectedFeatIds.length < 3) {
-      errors.push(`Select ${3 - this._selectedFeatIds.length} more feat(s)`);
-    }
-
-    return {
-      isValid: this._selectedFeatIds.length === 3,
-      errors,
-      warnings: [],
-    };
+    const result = validateNonheroicStartingFeats(this._selected);
+    return { isValid: result.valid, errors: result.errors, warnings: [] };
   }
 
   getBlockingIssues() {
-    if (this._selectedFeatIds.length < 3) {
-      return [`Select ${3 - this._selectedFeatIds.length} more feat(s)`];
-    }
-    return [];
+    return validateNonheroicStartingFeats(this._selected).errors;
   }
 
   getRemainingPicks() {
-    const remaining = 3 - this._selectedFeatIds.length;
+    const remaining = Math.max(0, TOTAL_SLOTS - this._selected.length);
     return [
       {
-        label: `Feats selected: ${this._selectedFeatIds.length}/3`,
+        label: `Feats selected: ${this._selected.length}/${TOTAL_SLOTS}`,
         count: remaining,
-        isWarning: remaining > 0
+        isWarning: remaining > 0 || !this._isComplete(),
       }
     ];
   }
@@ -289,31 +332,22 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
     const pending = this._buildPendingStateWithClassGrants(actor, shell);
 
     for (const feat of this._allFeats) {
-      // Check if feat is in nonheroic legal list
-      if (!_isNonheroicLegalFeatName(feat.name)) {
-        continue;
-      }
+      // Eligibility is the printed list in NONHEROIC_STARTING_FEAT_RULE.
+      if (!isNonheroicStartingFeatFamily(feat.name)) continue;
 
-      // Check if feat meets prerequisites
-      // PHASE 3.1: Pass pending state so prerequisites see class-granted features
+      // Canonical prerequisite evaluation (pending state sees current picks).
       const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pending);
-      if (!assessment.legal) {
-        continue;
-      }
+      if (!assessment.legal) continue;
 
-      // Check if already owned (unless repeatable)
+      // Non-repeatable, non-choice feats already owned cannot be taken again.
+      // (Choice-bearing/repeatable feats are scoped; duplicates are rejected by
+      // identity + scope in validateNonheroicStartingFeats.)
+      const option = matchNonheroicStartingFeatOption(feat.name, null);
+      const isScoped = !option || option.repeatable || option.scope === 'weapon-group';
       const alreadyOwned = actor.items.some(i =>
         i.type === 'feat' && i.name.toLowerCase() === feat.name.toLowerCase()
       );
-
-      // Skill Focus and Training are repeatable for nonheroic
-      const isRepeatable = ['skill focus', 'skill training'].includes(
-        _normalizeFeatName(feat.name)
-      );
-
-      if (alreadyOwned && !isRepeatable) {
-        continue;
-      }
+      if (alreadyOwned && !isScoped) continue;
 
       legal.push(feat);
     }
@@ -326,13 +360,21 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
    * @private
    */
   _buildPendingStateWithClassGrants(actor, shell = null) {
+    const draft = shell?.progressionSession?.draftSelections || {};
+    const trainedSkills = Array.isArray(draft.skills?.trained) ? draft.skills.trained
+      : Array.isArray(draft.skills) ? draft.skills : [];
     const basePending = {
-      selectedClass: shell?.committedSelections?.get?.('class') || null,
-      selectedFeats: [],
+      selectedClass: draft.class || shell?.committedSelections?.get?.('class') || null,
+      // Current starting picks are visible so e.g. Armor Proficiency (Medium)
+      // sees an already-selected Armor Proficiency (Light).
+      selectedFeats: this._selected,
       selectedTalents: [],
-      selectedSkills: [],
+      selectedSkills: trainedSkills
+        .map(key => (typeof key === 'string' ? { key } : (key?.key ? { key: key.key } : null)))
+        .filter(Boolean),
       skillRanks: {},
       grantedFeats: [],
+      pendingSpeciesContext: draft.pendingSpeciesContext || null,
     };
 
     // Derive class-granted features
@@ -359,23 +401,31 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
       );
     }
 
-    // Sort: selected first, then alphabetical
+    // A feat row is "selected" when any starting pick uses that feat identity.
+    const selectedFeatIds = new Set(this._selected.map(entry => String(entry.id || entry.name)));
+    const isPicked = feat => selectedFeatIds.has(String(_featId(feat)));
+
     filtered.sort((a, b) => {
-      const aSelected = this._selectedFeatIds.includes(_featId(a)) ? 0 : 1;
-      const bSelected = this._selectedFeatIds.includes(_featId(b)) ? 0 : 1;
+      const aSelected = isPicked(a) ? 0 : 1;
+      const bSelected = isPicked(b) ? 0 : 1;
       if (aSelected !== bSelected) return aSelected - bSelected;
       return a.name?.localeCompare(b.name) ?? 0;
     });
 
-    return filtered.map(feat => ({
-      id: _featId(feat),
-      name: feat.name,
-      description: feat.system?.description || feat.system?.rules || '',
-      isSelected: this._selectedFeatIds.includes(_featId(feat)),
-      isRepeatable: ['skill focus', 'skill training'].includes(
-        _normalizeFeatName(feat.name)
-      ),
-    }));
+    return filtered.map(feat => {
+      const option = matchNonheroicStartingFeatOption(feat.name, null);
+      const isGroupedWeapon = String(feat.name || '').toLowerCase() === 'weapon proficiency';
+      return {
+        id: _featId(feat),
+        name: feat.name,
+        description: feat.system?.description || feat.system?.rules || '',
+        isSelected: isPicked(feat),
+        // Repeatable per RULE: Skill Focus / Skill Training, once per different skill.
+        isRepeatable: option?.repeatable === true,
+        // Grouped Weapon Proficiency is taken once per allowed weapon group.
+        isScoped: isGroupedWeapon,
+      };
+    });
   }
 
 
@@ -386,19 +436,11 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
   }
 
   async _commitSelectedFeats(shell) {
-    const selected = this._selectedFeatIds
-      .map(id => this._findFeat(id))
-      .filter(Boolean)
-      .map(feat => ({
-        id: _featId(feat),
-        _id: feat?._id || feat?.id || null,
-        uuid: feat?.uuid || null,
-        name: feat?.name || _featId(feat),
-        type: 'feat',
-        source: 'nonheroic-starting-feats'
-      }));
-
-    await this._commitNormalized(shell, 'feats', selected);
+    // Preserve every non-starting feat already in the draft (e.g. the ordinary
+    // level-1 general feat); only the starting-feat slot is replaced here.
+    const draftFeats = shell?.progressionSession?.draftSelections?.feats;
+    const others = (Array.isArray(draftFeats) ? draftFeats : []).filter(entry => !_isStartingSelection(entry));
+    await this._commitNormalized(shell, 'feats', [...others, ...this._selected]);
   }
 
   getAutoAdvanceConfig(shell) {

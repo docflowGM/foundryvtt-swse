@@ -56,6 +56,24 @@ function handleRenderActorDirectory(app, html, data) {
   container.appendChild(guidedBtn);
   container.appendChild(templateBtn);
 
+  // GM-only NPC creation through the canonical progression shell. The track is
+  // chosen explicitly here (no inferred default), so the new NPC's identity is
+  // established from creation data.
+  if (game.user?.isGM) {
+    for (const [track, label, icon] of [['heroic', 'Heroic NPC', 'fa-user-shield'], ['nonheroic', 'Nonheroic NPC', 'fa-user']]) {
+      const npcBtn = document.createElement('button');
+      npcBtn.classList.add('swse-npc-chargen-btn', `swse-npc-chargen-btn--${track}`);
+      npcBtn.type = 'button';
+      npcBtn.innerHTML = `<i class="fa-solid ${icon}"></i> ${label}`;
+      npcBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        await launchNewProgression({ actorType: 'npc', subtype: track, source: `actor-directory.npc-${track}` });
+      });
+      container.appendChild(npcBtn);
+    }
+  }
+
   // Add container to header
   header.appendChild(container);
 }

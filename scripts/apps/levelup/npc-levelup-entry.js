@@ -3,11 +3,12 @@ import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-a
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { NpcProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js";
 import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { getNpcMode, getNpcProfileState } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
+import { evaluateNonheroicTransition } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
   static PARTS = {
@@ -43,7 +44,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
 
     const mode = getNpcMode(actor);
     const npcProfileState = getNpcProfileState(actor);
-    const hasSnapshot = NpcProgressionEngine.hasSnapshot(actor);
+    const hasSnapshot = SnapshotManager.hasSnapshots(actor);
     const isBeast = npcProfileState?.legalProfile === 'beast' || npcProfileState?.kind === 'beast';
     const isMount = npcProfileState?.legalProfile === 'mount' || npcProfileState?.kind === 'mount';
     const isOwnerSynced = npcProfileState?.mode === 'owner-sync' || ['minion', 'privateer'].includes(npcProfileState?.kind);
@@ -56,6 +57,12 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
             : npcProfileState?.legalProfile === 'heroic' || npcProfileState?.kind === 'heroic'
               ? 'heroic'
               : 'imported-statblock';
+
+    // One canonical heroic/nonheroic transition policy (shared with ClassStep).
+    const nonheroicTransition = evaluateNonheroicTransition({ heroicLevel: heroicLevels, nonheroicLevel: nonheroicLevels, target: 'nonheroic' });
+    const heroicTransition = evaluateNonheroicTransition({ heroicLevel: heroicLevels, nonheroicLevel: nonheroicLevels, target: 'heroic' });
+    const identityConflicts = npcProfileState?.identityConflicts ?? [];
+    const requiresStatblockConversion = this._requiresStatblockConversion(npcProfileState);
 
     // Phase 5: Progression summary for status block
     const classes = actor.items?.filter(i => i.type === 'class') || [];
@@ -87,6 +94,14 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       heroicAdvisory,
       nonheroicBlocked,
       nonheroicAdvisory,
+
+      // Transition policy: the entry never offers a route ClassStep cannot complete.
+      nonheroicTransitionAllowed: nonheroicTransition.allowed,
+      nonheroicTransitionReason: nonheroicTransition.reason,
+      heroicTransitionAllowed: heroicTransition.allowed,
+      identityConflicts,
+      hasIdentityConflict: identityConflicts.length > 0,
+      requiresStatblockConversion,
 
       // Phase 5: Progression summary fields
       classCount,
@@ -134,6 +149,66 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     });
   }
 
+  /**
+   * Statblock-authoritative NPC (imported/Play Mode): its published HP,
+   * defenses, BAB and attacks stay authoritative until the GM explicitly
+   * converts it to calculated progression.
+   */
+  _requiresStatblockConversion(profile = getNpcProfileState(this.actor)) {
+    if (!profile) return false;
+    const dependent = ['beast', 'mount', 'follower', 'minion', 'privateer'].includes(profile.kind);
+    if (dependent || profile.mode === 'owner-sync') return false;
+    return profile.sourceAuthority === 'statblock' || profile.mode === 'play' || profile.imported === true;
+  }
+
+  /**
+   * Gate every manual advancement: contradictory identity blocks; a
+   * statblock NPC needs explicit GM authorization, then (with the pre-level
+   * snapshot already taken by the caller) the authority is switched through
+   * ActorEngine so the decision is persisted and every consumer (sheet,
+   * entry, finalizer, derived calc) reads the same authority.
+   * @returns {Promise<boolean>} true when progression may start
+   */
+  async _authorizeProgressionStart(target) {
+    const profile = getNpcProfileState(this.actor);
+    if (profile?.identityConflicts?.length) {
+      ui.notifications.warn(`${profile.identityConflicts.map(c => c.message).join(' ')} Resolve this in NPC Legal Review & Repair before advancing.`);
+      return false;
+    }
+    if (!this._requiresStatblockConversion(profile)) return true;
+
+    const ok = await SWSEDialogV2.confirm({
+      title: 'Convert Statblock NPC to Calculated Progression?',
+      content: `<p><strong>${foundry.utils.escapeHTML?.(this.actor?.name ?? 'This NPC') ?? 'This NPC'}</strong> uses its published statblock values as authority.</p>
+        <p>Continuing makes it a <strong>${target}</strong> NPC with <strong>calculated</strong> HP, defenses, BAB and attacks. A snapshot is saved first; use <em>Revert to Statblock</em> to restore the published values.</p>`
+    });
+    if (!ok) return false;
+
+    await SnapshotManager.createSnapshot(this.actor, `Statblock before conversion to ${target} progression`);
+    // Declared identity must agree with the embedded class records: existing
+    // class history wins (a Nonheroic NPC taking its first heroic class stays
+    // 'nonheroic' until that class exists); only a classless NPC takes the target.
+    const identityKind = profile.hasClassItems && ['heroic', 'nonheroic'].includes(profile.kind) ? profile.kind : target;
+    await ActorEngine.updateActor(this.actor, {
+      'system.npcProfile.kind': identityKind,
+      'system.npcProfile.legalProfile': identityKind,
+      'system.npcProfile.mode': 'progression',
+      'system.npcProfile.sourceAuthority': 'progression',
+      'system.npcProfile.legalReview.statblockConversion': {
+        convertedAt: new Date().toISOString(),
+        convertedBy: game.user?.id ?? null,
+        fromAuthority: profile.sourceAuthority,
+        fromMode: profile.mode,
+      },
+    }, {
+      source: 'npc-levelup-entry.statblock-conversion',
+      render: false,
+      suppressAppRefresh: true,
+      meta: { guardKey: `npc-statblock-conversion:${this.actor.id}` },
+    });
+    return true;
+  }
+
   _getNpcProgressionSubtype(preferred = null) {
     const profile = getNpcProfileState(this.actor);
     if (preferred === 'heroic') return 'heroic';
@@ -172,12 +247,13 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     if ((Number(nonheroicLevel) || 0) > 0) {
       const ok = await SWSEDialogV2.confirm({
         title: 'Add Heroic Level?',
-        content: '<p>This NPC already has nonheroic levels. Mixed progression is legal but uncommon. Continue?</p>'
+        content: '<p>This NPC already has nonheroic levels. A nonheroic character may multiclass into a heroic class (Core Rulebook p.277); its nonheroic levels stay in its class history. Continue?</p>'
       });
       if (!ok) {return;}
     }
 
     try {
+      if (!(await this._authorizeProgressionStart('heroic'))) return;
       const nextLevel = (Number(this.actor.system?.level) || 1) + 1;
       await SnapshotManager.createSnapshot(this.actor, `Before Heroic Level-Up to ${nextLevel}`);
 
@@ -207,15 +283,15 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       return ui.notifications.warn('Epic Override required to take Nonheroic levels beyond 20.');
     }
 
-    if ((Number(heroicLevel) || 0) > 0) {
-      const ok = await SWSEDialogV2.confirm({
-        title: 'Add Nonheroic Level?',
-        content: '<p>This NPC already has heroic levels. Mixed progression is legal but uncommon. Continue?</p>'
-      });
-      if (!ok) {return;}
+    // Same policy ClassStep enforces: reject unsupported transitions BEFORE
+    // opening the shell so nothing is offered that cannot be completed.
+    const transition = evaluateNonheroicTransition({ heroicLevel, nonheroicLevel, target: 'nonheroic' });
+    if (!transition.allowed) {
+      return ui.notifications.warn(transition.reason);
     }
 
     try {
+      if (!(await this._authorizeProgressionStart('nonheroic'))) return;
       const nextLevel = (Number(this.actor.system?.level) || 1) + 1;
       await SnapshotManager.createSnapshot(this.actor, `Before Nonheroic Level-Up to ${nextLevel}`);
 
@@ -234,7 +310,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
   async _handleRevert() {
     if (!game.user?.isGM) {return ui.notifications.warn('GM only.');}
 
-    const snapshotInfo = NpcProgressionEngine.getSnapshotInfo(this.actor);
+    const snapshotInfo = SnapshotManager.getLatestSnapshotInfo(this.actor);
     if (!snapshotInfo) {
       return ui.notifications.warn('No snapshot available to revert to.');
     }
@@ -246,7 +322,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     if (!ok) {return;}
 
     try {
-      await NpcProgressionEngine.revertToSnapshot(this.actor);
+      await SnapshotManager.revertToLatestSnapshot(this.actor);
       this.close();
     } catch (err) {
       SWSELogger.error('Snapshot revert failed:', err);

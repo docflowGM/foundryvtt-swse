@@ -90,6 +90,37 @@ function hasClassItems(actor) {
   return Boolean(actor?.items?.some?.(item => item?.type === 'class'));
 }
 
+function isNonheroicClassItem(item) {
+  if (item?.system?.isNonheroic === true) return true;
+  const key = normalizeKey(item?.system?.classId ?? item?.system?.class_name ?? item?.name);
+  return key === 'nonheroic';
+}
+
+/**
+ * Progression identity established by EMBEDDED CLASS RECORDS (the canonical
+ * class history), not by descriptive text. All class items nonheroic ->
+ * 'nonheroic'; any heroic class item -> 'heroic' (mixed-track NPCs are heroic
+ * by identity and expose both levels through getLevelSplit()); no class items
+ * -> null.
+ */
+function classItemKind(actor) {
+  const classItems = actor?.items?.filter?.(item => item?.type === 'class') ?? [];
+  if (!classItems.length) return null;
+  return classItems.every(isNonheroicClassItem) ? 'nonheroic' : 'heroic';
+}
+
+/** Text/pack-derived kind (descriptive metadata; never outranks class records). */
+function heuristicKind(actor) {
+  const pack = getPackKey(actor);
+  if (pack.includes('nonheroic') || rawContains(actor, ['nonheroic'])) return 'nonheroic';
+  if (pack.includes('heroic')) return 'heroic';
+
+  const classText = normalizeKey(`${actor?.system?.className ?? ''} ${actor?.system?.class ?? ''}`);
+  if (classText.includes('nonheroic')) return 'nonheroic';
+  if (classText) return 'heroic';
+  return null;
+}
+
 function inferKind(actor) {
   const explicit = normalizeKey(actor?.system?.npcProfile?.kind ?? actor?.system?.npcProfile?.type);
   if (NPC_KINDS.has(explicit)) return explicit;
@@ -106,14 +137,53 @@ function inferKind(actor) {
   const creatureType = normalizeKey(actor?.system?.creatureType ?? actor?.system?.type ?? actor?.system?.npcType);
   if (creatureType.includes('mount')) return 'mount';
   if (creatureType.includes('beast') || hasBeastData(actor) || pack.includes('beast')) return 'beast';
-  if (pack.includes('nonheroic') || rawContains(actor, ['nonheroic'])) return 'nonheroic';
-  if (pack.includes('heroic')) return 'heroic';
 
-  const classText = normalizeKey(`${actor?.system?.className ?? ''} ${actor?.system?.class ?? ''}`);
-  if (classText.includes('nonheroic')) return 'nonheroic';
-  if (classText) return 'heroic';
+  // Canonical class history outranks descriptive text.
+  const fromClasses = classItemKind(actor);
+  if (fromClasses) return fromClasses;
 
-  return getRawImport(actor) ? 'imported' : 'standard';
+  return heuristicKind(actor) ?? (getRawImport(actor) ? 'imported' : 'standard');
+}
+
+/**
+ * Report (never silently resolve) disagreements between the NPC's declared
+ * identity and its embedded class records:
+ *  - explicit npcProfile.kind/legalProfile heroic|nonheroic vs class-derived kind
+ *  - descriptive pack/text kind vs class-derived kind
+ * @param {Actor} actor
+ * @returns {Array<{code:string, declared:string, derived:string, message:string}>}
+ */
+export function getNpcIdentityConflicts(actor) {
+  if (actor?.type !== 'npc') return [];
+  const derived = classItemKind(actor);
+  if (!derived) return [];
+  const conflicts = [];
+
+  const declaredExplicit = [
+    normalizeKey(actor?.system?.npcProfile?.kind ?? actor?.system?.npcProfile?.type),
+    normalizeKey(actor?.system?.npcProfile?.legalProfile)
+  ].filter(value => value === 'heroic' || value === 'nonheroic');
+  for (const declared of new Set(declaredExplicit)) {
+    if (declared !== derived) {
+      conflicts.push({
+        code: 'profile-vs-class-items',
+        declared,
+        derived,
+        message: `NPC profile says "${declared}" but its embedded class records are ${derived}.`
+      });
+    }
+  }
+
+  const textual = heuristicKind(actor);
+  if (!declaredExplicit.length && textual && textual !== derived) {
+    conflicts.push({
+      code: 'metadata-vs-class-items',
+      declared: textual,
+      derived,
+      message: `NPC metadata (pack/class text) suggests "${textual}" but its embedded class records are ${derived}.`
+    });
+  }
+  return conflicts;
 }
 
 function inferMode(actor, kind = inferKind(actor)) {
@@ -215,9 +285,15 @@ export function getNpcProfileState(actor) {
   const imported = Boolean(rawImport || packKey);
   const profileMissing = !actor?.system?.npcProfile;
   const classItemCount = actor?.items?.filter?.(item => item?.type === 'class')?.length ?? 0;
+  const identityConflicts = getNpcIdentityConflicts(actor);
 
   return {
     kind,
+    // Contradictory identity data is reported, never silently resolved. An
+    // identity is "ambiguous" when neither an explicit profile, a dependent
+    // relationship nor class records establish what this NPC is.
+    identityConflicts,
+    identityAmbiguous: ['standard', 'imported'].includes(kind) && classItemCount === 0,
     mode,
     sourceAuthority,
     legalProfile,
