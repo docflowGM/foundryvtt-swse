@@ -330,6 +330,21 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
     this._templates = [];
+    this._preloadPromise = null;
+  }
+
+  /**
+   * Only load the canonical template registry. Do NOT enter the step or apply
+   * its default profile choices until the player actually reaches it.
+   */
+  preload(shell) {
+    if (!this._preloadPromise) {
+      this._preloadPromise = this._ensureProfileData(shell).catch(error => {
+        this._preloadPromise = null;
+        throw error;
+      });
+    }
+    return this._preloadPromise;
   }
 
   async _ensureProfileData(contextOrShell = null) {
@@ -342,7 +357,8 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
   }
 
   async onStepEnter(shell) {
-    await this._ensureProfileData(shell);
+    // Reuse the in-flight splash warmup rather than refetching templates.
+    await this.preload(shell);
     shell.mentor ??= {};
     shell.mentor.askMentorEnabled = true;
 

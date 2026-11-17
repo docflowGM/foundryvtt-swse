@@ -385,6 +385,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // DOM element cache (for direct mutation without full re-render)
     this._workSurfaceEl = null;
+    this._splashPrewarmStarted = false;
     this._translationTextEl = null;
     this._progressPercentEl = null;
     this._aurabeshEl = null;
@@ -1036,8 +1037,22 @@ export class IntroStep extends ProgressionStepPlugin {
       // Set _introRunning flag so animation loop knows it's active
       this._introRunning = true;
 
-      // Start the animation (async, doesn't block)
+      // Animation starts first. Prewarm begins after its first paint and
+      // never blocks the cinematic or the Continue/Skip interaction.
       this.startIntroSequence(shell);
+      if (shell?.mode === 'chargen' && !this._splashPrewarmStarted) {
+        this._splashPrewarmStarted = true;
+        const startPrewarm = () => {
+          void import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-splash-preloader.js')
+            .then(({ startChargenSplashPreload }) => startChargenSplashPreload(shell))
+            .catch(error => swseLogger.debug('[IntroStep] Noncritical splash prewarm failed:', error));
+        };
+        if (typeof requestAnimationFrame === 'function') {
+          requestAnimationFrame(() => setTimeout(startPrewarm, 0));
+        } else {
+          setTimeout(startPrewarm, 0);
+        }
+      }
     } else {
       swseLogger.debug('[IntroStep.afterRender] Not starting animation', {
         state: this._state,

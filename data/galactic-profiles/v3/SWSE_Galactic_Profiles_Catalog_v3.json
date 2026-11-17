@@ -1,0 +1,591 @@
+{
+  "schemaVersion": 3,
+  "format": "swse.galactic-profiles.catalog.v3",
+  "source": {
+    "generatedFrom": "SWSE_Galactic_Profiles_v3.json"
+  },
+  "totalProfiles": 33,
+  "profiles": [
+    {
+      "profileId": "jedi_guardian",
+      "revision": 1,
+      "name": "Guardian",
+      "archetype": "Guardian",
+      "description": "A nimble warrior specializing in lightsaber combat, using finesse and defensive techniques to overwhelm opponents.",
+      "quote": "Through the Force, I am the shield that guards the innocent.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_guardian.webp",
+      "classKey": "jedi",
+      "className": "Jedi",
+      "participantKind": "heroic",
+      "mentorKey": "miraj",
+      "dialogueKey": "jedi_guardian",
+      "roleTags": [
+        "force-user",
+        "melee"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "jedi_consular",
+      "revision": 1,
+      "name": "Consular",
+      "archetype": "Consular",
+      "description": "A Force-focused diplomat who relies on manipulation of the Force and wisdom rather than lightsaber combat.",
+      "quote": "The Force flows through all things. Let it guide your path to peace.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_consular.webp",
+      "classKey": "jedi",
+      "className": "Jedi",
+      "participantKind": "heroic",
+      "mentorKey": "miraj",
+      "dialogueKey": "jedi_consular",
+      "roleTags": [
+        "force-user"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "jedi_defender",
+      "revision": 1,
+      "name": "Defender",
+      "archetype": "Jedi Defender",
+      "description": "A durable frontline protector who can deflect attacks and shield allies from harm.",
+      "quote": "I can't afford to lose this fight! There are people depending on me.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_defender.webp",
+      "classKey": "jedi",
+      "className": "Jedi",
+      "participantKind": "heroic",
+      "mentorKey": "miraj",
+      "dialogueKey": "jedi_defender",
+      "roleTags": [
+        "force-user",
+        "tank"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "jedi_sentinel",
+      "revision": 1,
+      "name": "Sentinel",
+      "archetype": "Sentinel",
+      "description": "An investigative shadow who hunts down dark side corruption with precision and stealth.",
+      "quote": "Darkness cannot hide from those who seek the light.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_sentinel.webp",
+      "classKey": "jedi",
+      "className": "Jedi",
+      "participantKind": "heroic",
+      "mentorKey": "miraj",
+      "dialogueKey": "jedi_sentinel",
+      "roleTags": [
+        "force-user"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "noble_diplomat",
+      "revision": 1,
+      "name": "Diplomat",
+      "archetype": "Diplomat",
+      "description": "The ultimate social character, capable of talking their way through any situation with charm and persuasion.",
+      "quote": "Words can open doors that even the strongest blade cannot.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_diplomat.webp",
+      "classKey": "noble",
+      "className": "Noble",
+      "participantKind": "heroic",
+      "mentorKey": "j0n1",
+      "dialogueKey": "noble_diplomat",
+      "roleTags": [
+        "diplomat",
+        "support"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "noble_leader",
+      "revision": 1,
+      "name": "Leader",
+      "archetype": "Leader",
+      "description": "A tactical commander who coordinates allies and inspires greatness on the battlefield.",
+      "quote": "Victory belongs to those who fight together as one!",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_leader.webp",
+      "classKey": "noble",
+      "className": "Noble",
+      "participantKind": "heroic",
+      "mentorKey": "j0n1",
+      "dialogueKey": "noble_leader",
+      "roleTags": [
+        "diplomat",
+        "support"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "noble_aristocrat",
+      "revision": 1,
+      "name": "Aristocrat",
+      "archetype": "Aristocrat",
+      "description": "A wealthy manipulator with extensive resources, connections, and information networks.",
+      "quote": "Information is the galaxy's most valuable currency, and I am very wealthy.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_aristocrat.webp",
+      "classKey": "noble",
+      "className": "Noble",
+      "participantKind": "heroic",
+      "mentorKey": "j0n1",
+      "dialogueKey": "noble_aristocrat",
+      "roleTags": [
+        "diplomat"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "noble_duelist",
+      "revision": 1,
+      "name": "Duelist",
+      "archetype": "Duelist",
+      "description": "A social character with surprising melee combat effectiveness using grace and finesse.",
+      "quote": "Elegance in both word and blade—a true noble's art.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/noble_duelist.webp",
+      "classKey": "noble",
+      "className": "Noble",
+      "participantKind": "heroic",
+      "mentorKey": "j0n1",
+      "dialogueKey": "noble_duelist",
+      "roleTags": [
+        "diplomat"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "soldier-guard",
+      "revision": 1,
+      "name": "Guard",
+      "archetype": "Guard",
+      "description": "A trained soldier responsible for protecting installations, personnel, or assets. Guards provide steady, reliable defensive support and tactical awareness.",
+      "quote": "My duty is to protect those who cannot protect themselves.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Soldier.webp",
+      "classKey": "nonheroic",
+      "className": "Soldier (Nonheroic)",
+      "participantKind": "nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scout-pathfinder",
+      "revision": 1,
+      "name": "Scout/Pathfinder",
+      "archetype": "Scout",
+      "description": "An experienced scout or guide who excels at wilderness survival, tracking, and reconnaissance. Scouts rely on cunning and perception rather than military discipline.",
+      "quote": "The wilds are my home; I am never lost.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Scout.webp",
+      "classKey": "nonheroic",
+      "className": "Scout (Nonheroic)",
+      "participantKind": "nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "laborer-worker",
+      "revision": 1,
+      "name": "Laborer/Worker",
+      "archetype": "Laborer",
+      "description": "A common laborer, factory worker, or tradesperson. Workers are skilled in practical tasks and basic survival, forming the foundation of civilian society.",
+      "quote": "Honest work is its own reward.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/Worker.webp",
+      "classKey": "nonheroic",
+      "className": "Laborer (Nonheroic)",
+      "participantKind": "nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "beast-wolf",
+      "revision": 1,
+      "name": "Wolf",
+      "archetype": "Beast",
+      "description": "A wild wolf or wolf-like creature. Beasts are non-sapient or low-intelligence creatures generated through the Creature Generator system. Wolves are pack hunters with keen senses and natural combat instincts.",
+      "quote": "The strength of the pack is the wolf, and the strength of the wolf is the pack.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/FAOR1cCJQ7OqEgPDL1WI--1--fx5hi.webp",
+      "classKey": "beast",
+      "className": "Beast (Nonheroic)",
+      "participantKind": "beast",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "beast-bear",
+      "revision": 1,
+      "name": "Bear",
+      "archetype": "Beast",
+      "description": "A wild bear or bear-like creature. Beasts are non-sapient or low-intelligence creatures generated through the Creature Generator system. Bears are apex predators with immense strength and natural combat prowess.",
+      "quote": "The forest yields to those with claw and fang.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/FAOR1cCJQ7OqEgPDL1WI--1--fx5hi.webp",
+      "classKey": "beast",
+      "className": "Beast (Nonheroic)",
+      "participantKind": "beast",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "nonheroic_worker",
+      "revision": 1,
+      "name": "Worker",
+      "archetype": "Worker",
+      "description": "A skilled laborer, mechanic, or technician. Workers are the backbone of galactic civilization, maintaining infrastructure and repairing equipment.",
+      "quote": "Honest work, honest pay. That's all I need.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/Worker.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "participantKind": "nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "nonheroic_trooper",
+      "revision": 1,
+      "name": "Trooper",
+      "archetype": "Trooper",
+      "description": "A baseline soldier, guard, or militia member. Troopers have basic military training but lack the experience and skill of true heroes.",
+      "quote": "Following orders. That's what keeps the galaxy running.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Soldier.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "participantKind": "nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "nonheroic_criminal",
+      "revision": 1,
+      "name": "Criminal",
+      "archetype": "Criminal",
+      "description": "A petty thug, gang member, or street criminal. Criminals live on the edge of society, relying on intimidation and violence.",
+      "quote": "Credits or your life. Your choice.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_brigand.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "participantKind": "nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "nonheroic_merchant",
+      "revision": 1,
+      "name": "Merchant",
+      "archetype": "Merchant",
+      "description": "A trader, shopkeeper, or business professional. Merchants know the value of everything and have connections throughout the commercial sector.",
+      "quote": "Everything has a price, my friend. Let's negotiate.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/merchant.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "participantKind": "nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "nonheroic_police",
+      "revision": 1,
+      "name": "Police Officer",
+      "archetype": "Police",
+      "description": "A law enforcement officer, security guard, or constable. Police maintain order and enforce laws in civilized systems.",
+      "quote": "By the authority of the law, stand down!",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/Police.webp",
+      "classKey": "nonheroic",
+      "className": "Nonheroic",
+      "participantKind": "nonheroic",
+      "mentorKey": null,
+      "dialogueKey": null,
+      "roleTags": [],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scoundrel_pistoleer",
+      "revision": 1,
+      "name": "Pistoleer",
+      "archetype": "Pistoleer",
+      "description": "A precision shooter who deals devastating damage with sneak attacks from the shadows.",
+      "quote": "They never see it coming. That's the whole point.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_pistoleer.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "participantKind": "heroic",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_pistoleer",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scoundrel_skill_monkey",
+      "revision": 1,
+      "name": "Skill Monkey",
+      "archetype": "Skill Monkey",
+      "description": "A versatile specialist covering social, technical, and infiltration roles with expertise.",
+      "quote": "Every problem has a solution. You just need the right skills.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_skill_monkey.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "participantKind": "heroic",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_skill_monkey",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scoundrel_knuckledragger",
+      "revision": 1,
+      "name": "Knuckledragger",
+      "archetype": "Knuckledragger",
+      "description": "An aggressive street fighter who pushes enemies down the condition track with dirty tactics.",
+      "quote": "No such thing as a fair fight when survival's on the line.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_knuckledragger.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "participantKind": "heroic",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_knuckledragger",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scoundrel_outlaw",
+      "revision": 1,
+      "name": "Outlaw",
+      "archetype": "Outlaw",
+      "description": "A charming rogue who uses luck and Force Points strategically to turn the odds in their favor.",
+      "quote": "Luck? I make my own luck, friend.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_outlaw.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "participantKind": "heroic",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_outlaw",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scoundrel_brigand",
+      "revision": 1,
+      "name": "Brigand",
+      "archetype": "Brigand",
+      "description": "A roguish brigand who combines exceptional piloting skills with tactical combat prowess, striking from unexpected angles with deadly precision.",
+      "quote": "The galaxy's wealth flows to those bold enough to take it.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_brigand.webp",
+      "classKey": "scoundrel",
+      "className": "Scoundrel",
+      "participantKind": "heroic",
+      "mentorKey": "salty",
+      "dialogueKey": "scoundrel_brigand",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scout_sniper",
+      "revision": 1,
+      "name": "Sniper",
+      "archetype": "Sniper",
+      "description": "A long-range precision shooter who operates from concealment with deadly accuracy.",
+      "quote": "One shot, one kill. That's all it takes.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_sniper.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "participantKind": "heroic",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_sniper",
+      "roleTags": [
+        "rogue",
+        "ranged"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scout_engineer",
+      "revision": 1,
+      "name": "Engineer",
+      "archetype": "Engineer",
+      "description": "A skilled technician who specializes in maintenance, repair, and engineering solutions in the field.",
+      "quote": "Every problem has a technical solution.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Scout.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "participantKind": "heroic",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_engineer",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scout_pistoleer",
+      "revision": 1,
+      "name": "Pistoleer",
+      "archetype": "Pistoleer",
+      "description": "A skilled rider specializing in hit-and-run tactics from a speeder bike, utilizing dual-weapon mastery.",
+      "quote": "Speed and precision - that's all you need.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Scout.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "participantKind": "heroic",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_pistoleer",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scout_survivalist",
+      "revision": 1,
+      "name": "Survivalist",
+      "archetype": "Survivalist",
+      "description": "A wilderness expert who excels at tracking and surviving the harshest conditions.",
+      "quote": "The wilderness doesn't forgive mistakes. Neither do I.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_survivalist.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "participantKind": "heroic",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_survivalist",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "scout_infiltrator",
+      "revision": 1,
+      "name": "Infiltrator",
+      "archetype": "Infiltrator",
+      "description": "A stealthy infiltrator specializing in reconnaissance and espionage operations.",
+      "quote": "The best battles are the ones your enemy never knew you fought.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_infiltrator.webp",
+      "classKey": "scout",
+      "className": "Scout",
+      "participantKind": "heroic",
+      "mentorKey": "lead",
+      "dialogueKey": "scout_infiltrator",
+      "roleTags": [
+        "rogue"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "soldier_rifleman",
+      "revision": 1,
+      "name": "Rifleman",
+      "archetype": "Just A Dude",
+      "description": "A straightforward soldier carrying a slugthrower rifle and a big pistol. Perfect for new players learning weapon versatility and the practical Bandolier.",
+      "quote": "I've got firepower. Let's see what you've got.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_rifleman.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "participantKind": "heroic",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_rifleman",
+      "roleTags": [
+        "warrior"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "soldier_gunner",
+      "revision": 1,
+      "name": "Gunner",
+      "archetype": "Gunner",
+      "description": "A heavy weapons specialist focusing on area suppression and overwhelming firepower.",
+      "quote": "More firepower solves most problems.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_gunner.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "participantKind": "heroic",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_gunner",
+      "roleTags": [
+        "warrior",
+        "ranged"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "soldier_brawler",
+      "revision": 1,
+      "name": "Brawler",
+      "archetype": "Brawler",
+      "description": "A fearsome Mantellian Savrip brawler wielding natural claws and innate ferocity. Solid walls of muscle and primal power, devastating in close combat.",
+      "quote": "Feel the wrath of the claws!",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_brawler.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "participantKind": "heroic",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_brawler",
+      "roleTags": [
+        "warrior"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "soldier_tank",
+      "revision": 1,
+      "name": "Tank",
+      "archetype": "Tank",
+      "description": "An armored defender designed to absorb massive amounts of damage and protect allies.",
+      "quote": "Behind me, soldier. I'll handle this.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_tank.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "participantKind": "heroic",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_tank",
+      "roleTags": [
+        "warrior",
+        "tank"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    },
+    {
+      "profileId": "soldier_commando",
+      "revision": 1,
+      "name": "Commando",
+      "archetype": "Commando",
+      "description": "A specialized commando operative trained for elite strike missions and team-based combat operations.",
+      "quote": "With my squad at my side, we can handle anything.",
+      "imagePath": "systems/foundryvtt-swse/assets/class/Soldier.webp",
+      "classKey": "soldier",
+      "className": "Soldier",
+      "participantKind": "heroic",
+      "mentorKey": "breach",
+      "dialogueKey": "soldier_commando",
+      "roleTags": [
+        "warrior"
+      ],
+      "certificationStatus": "pendingV2Certification"
+    }
+  ]
+}

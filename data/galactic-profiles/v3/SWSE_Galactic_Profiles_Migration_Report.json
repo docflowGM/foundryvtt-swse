@@ -1,0 +1,1374 @@
+{
+  "reportVersion": 1,
+  "sourceCommit": "b5e2a7514e0d5ea695a4dcf420d7a028c7c4208d",
+  "totalInputProfiles": 33,
+  "totalOutputProfiles": 33,
+  "sourceRecordsPreserved": 33,
+  "contentPreservationAssertionsPassed": true,
+  "v3RuntimeIntegrated": false,
+  "rawMechanicsCertified": false,
+  "countsByParticipantKind": {
+    "heroic": 23,
+    "nonheroic": 8,
+    "beast": 2
+  },
+  "issueCounts": {
+    "V2_RUNTIME_CERTIFICATION_PENDING": 33,
+    "ATTRIBUTE_SCORE_BASIS_UNVERIFIED": 33,
+    "CANONICAL_REFERENCE_RESOLUTION_PENDING": 33,
+    "SPECIES_PUBLICATION_SELECTION_UNVERIFIED": 33,
+    "FORCE_TRAINING_ENTITLEMENT_MISSING": 3,
+    "DUPLICATE_FEAT_ALIASES_QUARANTINED": 11,
+    "WEALTH_CREDITS_EXACTLY_ONCE": 1,
+    "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING": 10,
+    "MENTOR_COVERAGE_UNSPECIFIED": 10,
+    "SKILL_KEY_UNRESOLVED": 1,
+    "BEAST_RULES_SOURCE_REVIEW_PENDING": 2,
+    "LEGACY_NONHEROIC_MISCLASSIFICATION": 5,
+    "EQUIPMENT_SOURCE_ID_MISSING": 2,
+    "SURVEILLANCE_TALENT_TREE_REVIEW": 1,
+    "COMMANDING_PRESENCE_IDENTITY_COLLISION": 1,
+    "DUPLICATE_TALENT_ALIASES_QUARANTINED": 3
+  },
+  "profiles": [
+    {
+      "profileId": "jedi_guardian",
+      "name": "Guardian",
+      "participantKind": "heroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 4,
+      "finalNetCredits": 465,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "FORCE_TRAINING_ENTITLEMENT_MISSING",
+          "severity": "blocking",
+          "detail": "Legacy Force powers exist without explicit Force Training; no free feat or power grant was inserted."
+        }
+      ]
+    },
+    {
+      "profileId": "jedi_consular",
+      "name": "Consular",
+      "participantKind": "heroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 2,
+      "finalNetCredits": 500,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "FORCE_TRAINING_ENTITLEMENT_MISSING",
+          "severity": "blocking",
+          "detail": "Legacy Force powers exist without explicit Force Training; no free feat or power grant was inserted."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        }
+      ]
+    },
+    {
+      "profileId": "jedi_defender",
+      "name": "Defender",
+      "participantKind": "heroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 3,
+      "finalNetCredits": 475,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "FORCE_TRAINING_ENTITLEMENT_MISSING",
+          "severity": "blocking",
+          "detail": "Legacy Force powers exist without explicit Force Training; no free feat or power grant was inserted."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        }
+      ]
+    },
+    {
+      "profileId": "jedi_sentinel",
+      "name": "Sentinel",
+      "participantKind": "heroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 3,
+      "finalNetCredits": 450,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        }
+      ]
+    },
+    {
+      "profileId": "noble_diplomat",
+      "name": "Diplomat",
+      "participantKind": "heroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 2,
+      "finalNetCredits": 1175,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        }
+      ]
+    },
+    {
+      "profileId": "noble_leader",
+      "name": "Leader",
+      "participantKind": "heroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 3,
+      "finalNetCredits": 625,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        }
+      ]
+    },
+    {
+      "profileId": "noble_aristocrat",
+      "name": "Aristocrat",
+      "participantKind": "heroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 7,
+      "finalNetCredits": 465,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "WEALTH_CREDITS_EXACTLY_ONCE",
+          "severity": "review",
+          "detail": "Net profile credits include legally purchased starting package; do not additionally trigger Wealth starting-level credit grant."
+        }
+      ]
+    },
+    {
+      "profileId": "noble_duelist",
+      "name": "Duelist",
+      "participantKind": "heroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 3,
+      "finalNetCredits": 475,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        }
+      ]
+    },
+    {
+      "profileId": "soldier-guard",
+      "name": "Guard",
+      "participantKind": "nonheroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 2,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 0,
+      "finalNetCredits": 0,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        }
+      ]
+    },
+    {
+      "profileId": "scout-pathfinder",
+      "name": "Scout/Pathfinder",
+      "participantKind": "nonheroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 2,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 0,
+      "finalNetCredits": 0,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        }
+      ]
+    },
+    {
+      "profileId": "laborer-worker",
+      "name": "Laborer/Worker",
+      "participantKind": "nonheroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 2,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 0,
+      "finalNetCredits": 0,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        },
+        {
+          "code": "SKILL_KEY_UNRESOLVED",
+          "severity": "blocking",
+          "detail": "At least one trained skill cannot be normalized from the existing V2 finalizer key mapping."
+        }
+      ]
+    },
+    {
+      "profileId": "beast-wolf",
+      "name": "Wolf",
+      "participantKind": "beast",
+      "sourceFeats": 0,
+      "groupedFeatCandidates": 0,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 0,
+      "finalNetCredits": 0,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "BEAST_RULES_SOURCE_REVIEW_PENDING",
+          "severity": "blocking",
+          "detail": "Legacy beastData is preserved verbatim; natural attacks and special qualities are not yet Saga RAW certified."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        }
+      ]
+    },
+    {
+      "profileId": "beast-bear",
+      "name": "Bear",
+      "participantKind": "beast",
+      "sourceFeats": 0,
+      "groupedFeatCandidates": 0,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 0,
+      "finalNetCredits": 0,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "BEAST_RULES_SOURCE_REVIEW_PENDING",
+          "severity": "blocking",
+          "detail": "Legacy beastData is preserved verbatim; natural attacks and special qualities are not yet Saga RAW certified."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        }
+      ]
+    },
+    {
+      "profileId": "nonheroic_worker",
+      "name": "Worker",
+      "participantKind": "nonheroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 3,
+      "finalNetCredits": 125,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "LEGACY_NONHEROIC_MISCLASSIFICATION",
+          "severity": "correctedInV3",
+          "detail": "Original lacked isNonheroic=true; v3 classifies under nonheroic rules track."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        }
+      ]
+    },
+    {
+      "profileId": "nonheroic_trooper",
+      "name": "Trooper",
+      "participantKind": "nonheroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 6,
+      "finalNetCredits": 1850,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "LEGACY_NONHEROIC_MISCLASSIFICATION",
+          "severity": "correctedInV3",
+          "detail": "Original lacked isNonheroic=true; v3 classifies under nonheroic rules track."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        }
+      ]
+    },
+    {
+      "profileId": "nonheroic_criminal",
+      "name": "Criminal",
+      "participantKind": "nonheroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 3,
+      "finalNetCredits": 575,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "LEGACY_NONHEROIC_MISCLASSIFICATION",
+          "severity": "correctedInV3",
+          "detail": "Original lacked isNonheroic=true; v3 classifies under nonheroic rules track."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        }
+      ]
+    },
+    {
+      "profileId": "nonheroic_merchant",
+      "name": "Merchant",
+      "participantKind": "nonheroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 2,
+      "finalNetCredits": 725,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "LEGACY_NONHEROIC_MISCLASSIFICATION",
+          "severity": "correctedInV3",
+          "detail": "Original lacked isNonheroic=true; v3 classifies under nonheroic rules track."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        }
+      ]
+    },
+    {
+      "profileId": "nonheroic_police",
+      "name": "Police Officer",
+      "participantKind": "nonheroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 0,
+      "classTalentAssigned": false,
+      "startingEquipmentCount": 3,
+      "finalNetCredits": 850,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "NONHEROIC_SUBTYPE_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "Nonheroic/beast actor subtype and legal class grant path require dedicated V2 check."
+        },
+        {
+          "code": "LEGACY_NONHEROIC_MISCLASSIFICATION",
+          "severity": "correctedInV3",
+          "detail": "Original lacked isNonheroic=true; v3 classifies under nonheroic rules track."
+        },
+        {
+          "code": "MENTOR_COVERAGE_UNSPECIFIED",
+          "severity": "review",
+          "detail": "No dedicated profile mentor key is present; player-facing UI should use an explicit appropriate fallback."
+        }
+      ]
+    },
+    {
+      "profileId": "scoundrel_pistoleer",
+      "name": "Pistoleer",
+      "participantKind": "heroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 6,
+      "finalNetCredits": 25,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        }
+      ]
+    },
+    {
+      "profileId": "scoundrel_skill_monkey",
+      "name": "Skill Monkey",
+      "participantKind": "heroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 5,
+      "finalNetCredits": 475,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        }
+      ]
+    },
+    {
+      "profileId": "scoundrel_knuckledragger",
+      "name": "Knuckledragger",
+      "participantKind": "heroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 6,
+      "finalNetCredits": 600,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        }
+      ]
+    },
+    {
+      "profileId": "scoundrel_outlaw",
+      "name": "Outlaw",
+      "participantKind": "heroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 7,
+      "finalNetCredits": 35,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        }
+      ]
+    },
+    {
+      "profileId": "scoundrel_brigand",
+      "name": "Brigand",
+      "participantKind": "heroic",
+      "sourceFeats": 3,
+      "groupedFeatCandidates": 3,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 4,
+      "finalNetCredits": 375,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "EQUIPMENT_SOURCE_ID_MISSING",
+          "severity": "blocking",
+          "detail": "One or more source kit items lack a usable compendium ID (legacy Clips); preserve their name and quantity, but require explicit canonical materialization identity."
+        }
+      ]
+    },
+    {
+      "profileId": "scout_sniper",
+      "name": "Sniper",
+      "participantKind": "heroic",
+      "sourceFeats": 3,
+      "groupedFeatCandidates": 3,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 5,
+      "finalNetCredits": 150,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "SURVEILLANCE_TALENT_TREE_REVIEW",
+          "severity": "review",
+          "detail": "Check Surveillance talent identity against tree membership before granting."
+        }
+      ]
+    },
+    {
+      "profileId": "scout_engineer",
+      "name": "Engineer",
+      "participantKind": "heroic",
+      "sourceFeats": 4,
+      "groupedFeatCandidates": 4,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 8,
+      "finalNetCredits": 0,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        }
+      ]
+    },
+    {
+      "profileId": "scout_pistoleer",
+      "name": "Pistoleer",
+      "participantKind": "heroic",
+      "sourceFeats": 4,
+      "groupedFeatCandidates": 4,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 5,
+      "finalNetCredits": 0,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        }
+      ]
+    },
+    {
+      "profileId": "scout_survivalist",
+      "name": "Survivalist",
+      "participantKind": "heroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 8,
+      "finalNetCredits": 615,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        }
+      ]
+    },
+    {
+      "profileId": "scout_infiltrator",
+      "name": "Infiltrator",
+      "participantKind": "heroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 6,
+      "finalNetCredits": 900,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        }
+      ]
+    },
+    {
+      "profileId": "soldier_rifleman",
+      "name": "Rifleman",
+      "participantKind": "heroic",
+      "sourceFeats": 6,
+      "groupedFeatCandidates": 6,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 7,
+      "finalNetCredits": 325,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "COMMANDING_PRESENCE_IDENTITY_COLLISION",
+          "severity": "blocking",
+          "detail": "Same-name Mercenary vs Leadership talents exist; Soldier requires the eligible Mercenary identity, which is not assumed resolved."
+        },
+        {
+          "code": "EQUIPMENT_SOURCE_ID_MISSING",
+          "severity": "blocking",
+          "detail": "One or more source kit items lack a usable compendium ID (legacy Clips); preserve their name and quantity, but require explicit canonical materialization identity."
+        }
+      ]
+    },
+    {
+      "profileId": "soldier_gunner",
+      "name": "Gunner",
+      "participantKind": "heroic",
+      "sourceFeats": 1,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 2,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 5,
+      "finalNetCredits": 350,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "DUPLICATE_TALENT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "Alternate Devastating Attack records retained as identity candidates, not separate talent or Talent Wiki grants."
+        }
+      ]
+    },
+    {
+      "profileId": "soldier_brawler",
+      "name": "Brawler",
+      "participantKind": "heroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 2,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 4,
+      "finalNetCredits": 750,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        },
+        {
+          "code": "DUPLICATE_TALENT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "Alternate Devastating Attack records retained as identity candidates, not separate talent or Talent Wiki grants."
+        }
+      ]
+    },
+    {
+      "profileId": "soldier_tank",
+      "name": "Tank",
+      "participantKind": "heroic",
+      "sourceFeats": 2,
+      "groupedFeatCandidates": 1,
+      "sourceTalents": 2,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 5,
+      "finalNetCredits": 225,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        },
+        {
+          "code": "DUPLICATE_FEAT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "One or more feat names have multiple source IDs; alternatives grouped without awarding duplicate feats."
+        },
+        {
+          "code": "DUPLICATE_TALENT_ALIASES_QUARANTINED",
+          "severity": "review",
+          "detail": "Alternate Devastating Attack records retained as identity candidates, not separate talent or Talent Wiki grants."
+        }
+      ]
+    },
+    {
+      "profileId": "soldier_commando",
+      "name": "Commando",
+      "participantKind": "heroic",
+      "sourceFeats": 5,
+      "groupedFeatCandidates": 5,
+      "sourceTalents": 1,
+      "classTalentAssigned": true,
+      "startingEquipmentCount": 7,
+      "finalNetCredits": 350,
+      "issues": [
+        {
+          "code": "V2_RUNTIME_CERTIFICATION_PENDING",
+          "severity": "blocking",
+          "detail": "This is a data-only remap; current V2 registry/prerequisite/finalizer has not certified this build."
+        },
+        {
+          "code": "ATTRIBUTE_SCORE_BASIS_UNVERIFIED",
+          "severity": "blocking",
+          "detail": "Legacy scores have not been proven pre- or post-species modifiers. Preserve values unchanged and validate before applying."
+        },
+        {
+          "code": "CANONICAL_REFERENCE_RESOLUTION_PENDING",
+          "severity": "blocking",
+          "detail": "All existing pack IDs and names are retained as candidates, not asserted to be resolved canonical V2 IDs."
+        },
+        {
+          "code": "SPECIES_PUBLICATION_SELECTION_UNVERIFIED",
+          "severity": "review",
+          "detail": "Explicit published species variant absent; require it only where V2 confirms multi-publication ambiguity."
+        }
+      ]
+    }
+  ]
+}

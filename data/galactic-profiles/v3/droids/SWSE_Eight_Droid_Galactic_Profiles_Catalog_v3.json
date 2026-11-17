@@ -1,0 +1,356 @@
+{
+  "schemaVersion": 3,
+  "format": "swse.galactic-droid-profiles.catalog.v3",
+  "source": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "branch": "feature/chargen-splash-prewarm",
+    "sourceCommit": "c8c1c4b121575e5848b8e06d940f734e19048bcb",
+    "authoringFile": "SWSE_Eight_Droid_Galactic_Profiles_v3.json"
+  },
+  "compatibility": {
+    "stagedOnly": true,
+    "productionUse": false,
+    "requiresCanonicalV2Compiler": true
+  },
+  "profiles": [
+    {
+      "profileId": "droid_scout_dex_recon_probe",
+      "revision": 1,
+      "name": "Reconnaissance Probe",
+      "archetype": "Reconnaissance Probe",
+      "description": "Fast-moving sensor scout and tactical spotter",
+      "imagePath": null,
+      "classKey": "scout",
+      "mentorKey": "lead",
+      "roleTags": [
+        "droid",
+        "scout",
+        "dex-focused",
+        "recon",
+        "mobility",
+        "sensors"
+      ],
+      "participantKind": "droid",
+      "rulesTrack": "heroic-droid",
+      "creationMode": "custom",
+      "focus": "dex",
+      "degree": "4th-degree",
+      "size": "small",
+      "finalAttributes": {
+        "str": 8,
+        "dex": 19,
+        "int": 11,
+        "wis": 14,
+        "cha": 10,
+        "con": null
+      },
+      "weapon": "Blaster Pistol, Hold-Out",
+      "gear": [
+        "Energy Cell",
+        "Glow Rod"
+      ],
+      "constructionCreditsSpent": 1000,
+      "constructionCreditsRemaining": 0,
+      "classStartingCreditsRemaining": 1180,
+      "readyToPlay": false,
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_scout_int_astromech_pathfinder",
+      "revision": 1,
+      "name": "Astromech Pathfinder",
+      "archetype": "Astromech Pathfinder",
+      "description": "Exploration cartographer and technical troubleshooter",
+      "imagePath": null,
+      "classKey": "scout",
+      "mentorKey": "lead",
+      "roleTags": [
+        "droid",
+        "scout",
+        "int-focused",
+        "technical",
+        "navigation",
+        "exploration"
+      ],
+      "participantKind": "droid",
+      "rulesTrack": "heroic-droid",
+      "creationMode": "custom",
+      "focus": "int",
+      "degree": "2nd-degree",
+      "size": "small",
+      "finalAttributes": {
+        "str": 8,
+        "dex": 16,
+        "int": 17,
+        "wis": 13,
+        "cha": 10,
+        "con": null
+      },
+      "weapon": "Blaster Pistol",
+      "gear": [
+        "Power Pack",
+        "Tool Kit"
+      ],
+      "constructionCreditsSpent": 1000,
+      "constructionCreditsRemaining": 0,
+      "classStartingCreditsRemaining": 975,
+      "readyToPlay": false,
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_soldier_dex_security_enforcer",
+      "revision": 1,
+      "name": "Security Enforcer",
+      "archetype": "Security Enforcer",
+      "description": "Mobile ranged defender with integrated protection",
+      "imagePath": null,
+      "classKey": "soldier",
+      "mentorKey": "breach",
+      "roleTags": [
+        "droid",
+        "soldier",
+        "dex-focused",
+        "ranged",
+        "defense",
+        "tactics"
+      ],
+      "participantKind": "droid",
+      "rulesTrack": "heroic-droid",
+      "creationMode": "custom",
+      "focus": "dex",
+      "degree": "4th-degree",
+      "size": "medium",
+      "finalAttributes": {
+        "str": 10,
+        "dex": 17,
+        "int": 11,
+        "wis": 14,
+        "cha": 10,
+        "con": null
+      },
+      "weapon": "Blaster Rifle",
+      "gear": [
+        "Power Pack",
+        "Medpac"
+      ],
+      "constructionCreditsSpent": 1000,
+      "constructionCreditsRemaining": 0,
+      "classStartingCreditsRemaining": 875,
+      "readyToPlay": false,
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_soldier_str_industrial_vanguard",
+      "revision": 1,
+      "name": "Industrial Vanguard",
+      "archetype": "Industrial Vanguard",
+      "description": "Heavy-duty melee guardian and boarding unit",
+      "imagePath": null,
+      "classKey": "soldier",
+      "mentorKey": "breach",
+      "roleTags": [
+        "droid",
+        "soldier",
+        "str-focused",
+        "melee",
+        "strength",
+        "guardian"
+      ],
+      "participantKind": "droid",
+      "rulesTrack": "heroic-droid",
+      "creationMode": "custom",
+      "focus": "str",
+      "degree": "4th-degree",
+      "size": "medium",
+      "finalAttributes": {
+        "str": 15,
+        "dex": 12,
+        "int": 10,
+        "wis": 14,
+        "cha": 11,
+        "con": null
+      },
+      "weapon": "Vibroblade",
+      "gear": [
+        "Medpac",
+        "Binder Cuffs"
+      ],
+      "constructionCreditsSpent": 1000,
+      "constructionCreditsRemaining": 0,
+      "classStartingCreditsRemaining": 1350,
+      "readyToPlay": false,
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_noble_int_medical_coordinator",
+      "revision": 1,
+      "name": "Medical Coordinator",
+      "archetype": "Medical Coordinator",
+      "description": "Diagnostic analyst, field medic and knowledge specialist",
+      "imagePath": null,
+      "classKey": "noble",
+      "mentorKey": null,
+      "roleTags": [
+        "droid",
+        "noble",
+        "int-focused",
+        "medical",
+        "intelligence",
+        "support"
+      ],
+      "participantKind": "droid",
+      "rulesTrack": "heroic-droid",
+      "creationMode": "custom",
+      "focus": "int",
+      "degree": "1st-degree",
+      "size": "medium",
+      "finalAttributes": {
+        "str": 8,
+        "dex": 12,
+        "int": 17,
+        "wis": 16,
+        "cha": 13,
+        "con": null
+      },
+      "weapon": "Blaster Pistol, Hold-Out",
+      "gear": [
+        "Energy Cell",
+        "Medpac",
+        "Datapad, Basic"
+      ],
+      "constructionCreditsSpent": 1000,
+      "constructionCreditsRemaining": 0,
+      "classStartingCreditsRemaining": 1890,
+      "readyToPlay": false,
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_noble_cha_protocol_envoy",
+      "revision": 1,
+      "name": "Protocol Envoy",
+      "archetype": "Protocol Envoy",
+      "description": "Diplomat, public liaison and cultural interpreter",
+      "imagePath": null,
+      "classKey": "noble",
+      "mentorKey": null,
+      "roleTags": [
+        "droid",
+        "noble",
+        "cha-focused",
+        "diplomacy",
+        "charisma",
+        "protocol"
+      ],
+      "participantKind": "droid",
+      "rulesTrack": "heroic-droid",
+      "creationMode": "custom",
+      "focus": "cha",
+      "degree": "3rd-degree",
+      "size": "medium",
+      "finalAttributes": {
+        "str": 8,
+        "dex": 12,
+        "int": 13,
+        "wis": 16,
+        "cha": 17,
+        "con": null
+      },
+      "weapon": "Blaster Pistol, Hold-Out",
+      "gear": [
+        "Energy Cell",
+        "Datapad, Basic",
+        "Comlink, Short-Range"
+      ],
+      "constructionCreditsSpent": 1000,
+      "constructionCreditsRemaining": 0,
+      "classStartingCreditsRemaining": 2365,
+      "readyToPlay": false,
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_scoundrel_cha_service_operative",
+      "revision": 1,
+      "name": "Service-Sector Operative",
+      "archetype": "Service-Sector Operative",
+      "description": "Disarming social infiltrator and covert negotiator",
+      "imagePath": null,
+      "classKey": "scoundrel",
+      "mentorKey": null,
+      "roleTags": [
+        "droid",
+        "scoundrel",
+        "cha-focused",
+        "social",
+        "infiltration",
+        "charisma"
+      ],
+      "participantKind": "droid",
+      "rulesTrack": "heroic-droid",
+      "creationMode": "custom",
+      "focus": "cha",
+      "degree": "3rd-degree",
+      "size": "medium",
+      "finalAttributes": {
+        "str": 8,
+        "dex": 12,
+        "int": 14,
+        "wis": 15,
+        "cha": 17,
+        "con": null
+      },
+      "weapon": "Blaster Pistol, Hold-Out",
+      "gear": [
+        "Energy Cell",
+        "Datapad, Basic",
+        "Comlink, Short-Range"
+      ],
+      "constructionCreditsSpent": 1000,
+      "constructionCreditsRemaining": 0,
+      "classStartingCreditsRemaining": 1315,
+      "readyToPlay": false,
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    },
+    {
+      "profileId": "droid_scoundrel_dex_systems_infiltrator",
+      "revision": 1,
+      "name": "Systems Infiltrator",
+      "archetype": "Systems Infiltrator",
+      "description": "Agile security slicer, saboteur and digital thief",
+      "imagePath": null,
+      "classKey": "scoundrel",
+      "mentorKey": null,
+      "roleTags": [
+        "droid",
+        "scoundrel",
+        "dex-focused",
+        "stealth",
+        "slicing",
+        "dexterity"
+      ],
+      "participantKind": "droid",
+      "rulesTrack": "heroic-droid",
+      "creationMode": "custom",
+      "focus": "dex",
+      "degree": "2nd-degree",
+      "size": "small",
+      "finalAttributes": {
+        "str": 8,
+        "dex": 17,
+        "int": 16,
+        "wis": 13,
+        "cha": 10,
+        "con": null
+      },
+      "weapon": "Blaster Pistol",
+      "gear": [
+        "Power Pack",
+        "Tool Kit"
+      ],
+      "constructionCreditsSpent": 1000,
+      "constructionCreditsRemaining": 0,
+      "classStartingCreditsRemaining": 1225,
+      "readyToPlay": false,
+      "certificationStatus": "staticRAWAndSourceChecksPassedPendingV2"
+    }
+  ]
+}
