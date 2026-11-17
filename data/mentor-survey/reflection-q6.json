@@ -3038,7 +3038,7 @@
       {
         "id": "mc.q6.not.method_preference.1",
         "text": "I recognize that training, but I don’t think it necessarily describes how I prefer to approach problems.",
-        "editorialStatus": "draft_text",
+        "editorialStatus": "owner_approved_text",
         "mechanicsStatus": "none",
         "sourceRef": {
           "commit": "eb531a6b0fc5482edd62eedfea4dfebd312946ee",
@@ -3049,6 +3049,7 @@
         "claimKind": "method_preference",
         "hasSlots": false,
         "originalText": "I may use {method_phrase}, but I don't think it is the way I prefer to handle every problem.",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): source-neutral method correction only",
         "replacedBy": "owner review 2026-11-16 (grammar)"
       },
       {
@@ -12837,7 +12838,7 @@
         "text": "refining the use of Force techniques",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12851,7 +12852,7 @@
         "text": "making Force powers harder to resist",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12865,7 +12866,7 @@
         "text": "sustaining your Force reserves",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12879,7 +12880,7 @@
         "text": "delivering damage in a powerful burst",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12893,7 +12894,7 @@
         "text": "focusing damage on a single target",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12907,7 +12908,7 @@
         "text": "striking several targets at once",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12921,7 +12922,7 @@
         "text": "controlling territory and movement",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12935,7 +12936,7 @@
         "text": "hindering opponents through debilitating effects",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12949,7 +12950,7 @@
         "text": "answering an enemy action with a counterattack",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12963,7 +12964,7 @@
         "text": "quick defensive reactions",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12977,7 +12978,7 @@
         "text": "withstanding incoming damage",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -12991,7 +12992,7 @@
         "text": "shielding allies from damage",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13005,7 +13006,7 @@
         "text": "avoiding attacks through movement",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13019,7 +13020,7 @@
         "text": "making precise attacks",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13033,7 +13034,7 @@
         "text": "seizing the first move",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13047,7 +13048,7 @@
         "text": "fighting with more than one weapon",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13061,7 +13062,7 @@
         "text": "lightsaber forms and technique",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13075,7 +13076,7 @@
         "text": "operating vehicles with greater control",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13089,7 +13090,7 @@
         "text": "unarmed fighting techniques",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13103,7 +13104,7 @@
         "text": "fighting with timing and flow",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13117,7 +13118,7 @@
         "text": "controlling the pace of combat",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13131,7 +13132,7 @@
         "text": "fighting in formation",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13145,7 +13146,7 @@
         "text": "supporting and strengthening allies",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13159,7 +13160,7 @@
         "text": "inspiring confidence in allies",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13173,7 +13174,7 @@
         "text": "undermining an opponent’s morale",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13187,7 +13188,7 @@
         "text": "hiding and moving unseen",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13201,7 +13202,7 @@
         "text": "quietly getting into position",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13215,7 +13216,7 @@
         "text": "finding and following a trail",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13229,7 +13230,7 @@
         "text": "deception and disguise",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13243,7 +13244,7 @@
         "text": "applying specialized knowledge",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13257,7 +13258,7 @@
         "text": "managing supplies and equipment",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13271,7 +13272,7 @@
         "text": "gathering and controlling information",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13285,7 +13286,7 @@
         "text": "reading a tactical situation",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13299,7 +13300,7 @@
         "text": "fighting in armor",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13313,7 +13314,7 @@
         "text": "grappling and control techniques",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13327,7 +13328,7 @@
         "text": "expressive use of the Force",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13341,7 +13342,7 @@
         "text": "working with computers and security systems",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13355,7 +13356,7 @@
         "text": "using explosives and blast effects",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13369,7 +13370,7 @@
         "text": "working with biotechnology",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13383,7 +13384,7 @@
         "text": "using advanced surgical techniques",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13397,7 +13398,7 @@
         "text": "healing wounds and injuries",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13411,7 +13412,7 @@
         "text": "treating injuries",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13425,7 +13426,7 @@
         "text": "engineering and building structures",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13439,7 +13440,7 @@
         "text": "supporting tactics through engineering",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13453,7 +13454,7 @@
         "text": "building defensive positions",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13467,7 +13468,7 @@
         "text": "designing and improving weapons",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13481,7 +13482,7 @@
         "text": "improvising solutions on the spot",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13495,7 +13496,7 @@
         "text": "working with mechanical systems",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13509,7 +13510,7 @@
         "text": "innovating technical solutions",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13523,7 +13524,7 @@
         "text": "solving problems with what is at hand",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13537,7 +13538,7 @@
         "text": "starship navigation and operation",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13551,7 +13552,7 @@
         "text": "surviving in harsh conditions",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13565,7 +13566,7 @@
         "text": "exploration and discovery",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13579,7 +13580,7 @@
         "text": "applying knowledge of wilderness conditions",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13593,7 +13594,7 @@
         "text": "wilderness survival",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13607,7 +13608,7 @@
         "text": "adapting to the situation",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13621,7 +13622,7 @@
         "text": "advanced stealth technique",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13635,7 +13636,7 @@
         "text": "persuading others",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13649,7 +13650,7 @@
         "text": "using intimidation",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13663,7 +13664,7 @@
         "text": "applying overwhelming force",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13677,7 +13678,7 @@
         "text": "responding quickly",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13691,7 +13692,7 @@
         "text": "using varied tactical approaches",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13705,7 +13706,7 @@
         "text": "applying specific dueling techniques",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13719,7 +13720,7 @@
         "text": "defensive swordsmanship",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13733,7 +13734,7 @@
         "text": "countering attacks",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13747,7 +13748,7 @@
         "text": "adapting to the style of a fight",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13761,7 +13762,7 @@
         "text": "dueling",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13775,7 +13776,7 @@
         "text": "using a range of weapons",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13789,7 +13790,7 @@
         "text": "using specialized weapon techniques",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13803,7 +13804,7 @@
         "text": "using heavy weapons",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13817,7 +13818,7 @@
         "text": "drawing a weapon quickly",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13831,7 +13832,7 @@
         "text": "precise pistol shooting",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13845,7 +13846,7 @@
         "text": "disciplined trigger control",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13859,7 +13860,7 @@
         "text": "applying medical knowledge",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13873,7 +13874,7 @@
         "text": "medical treatment",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13887,7 +13888,7 @@
         "text": "working independently",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
@@ -13901,7 +13902,7 @@
         "text": "applying technical expertise",
         "category": "method",
         "editorialStatus": "owner_approved_text",
-        "ownerApproval": "2026-11-17: player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
+        "ownerApproval": "owner wording approval (stated 2026-11-16, recorded 2026-11-17): player-facing phrase wording only (not mechanical certification, tags, Mentor dialogue or release)",
         "mechanicsStatus": "none",
         "sourceRef": {
           "file": "tools/mentor-survey/q6-method-ledger.mjs",
