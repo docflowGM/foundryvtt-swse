@@ -3132,7 +3132,9 @@
       "93b73db64423a7a3"
     ],
     "sourceId": "c7a4e66f46044c7a",
-    "classAccess": []
+    "classAccess": [
+      "Scout"
+    ]
   },
   {
     "id": "mystic",

@@ -238,7 +238,9 @@ async _preloadSpecies() {
    */
   
 async _preloadSkills() {
-  await SkillRegistry.build();
+  // The shared skill registry is already hydrated at system startup in most
+  // worlds. Don't re-fetch its entire compendium just to populate this cache.
+  if (!SkillRegistry.isBuilt) await SkillRegistry.build();
   const entries = SkillRegistry.list?.() || [];
   this._skillsCache.set('_index', entries);
   const byName = new Map();

@@ -22,6 +22,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { FeatRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js';
 import { FeatSlotValidator } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js';
 import { FeatEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js';
+import { getChargenGeneralFeatCount } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/chargen-feat-entitlement.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -1048,31 +1049,12 @@ export class FeatStep extends ProgressionStepPlugin {
       return 0;
     }
 
-    const draft = shell?.progressionSession?.draftSelections || {};
-    const species = draft.species || null;
-    const pendingSpeciesContext = draft.pendingSpeciesContext || species?.pendingContext || species?.pendingSpeciesContext || null;
-    const explicitCount = Number(
-      pendingSpeciesContext?.entitlements?.featsRequired
-      ?? species?.entitlements?.featsRequired
-      ?? species?.featsRequired
-      ?? shell?.actor?.system?.featsRequired
-    );
-    if (Number.isFinite(explicitCount) && explicitCount >= 0) {
-      return Math.floor(explicitCount);
-    }
-
-    const speciesName = String(
-      species?.speciesName
-      || species?.name
-      || species?.label
-      || species?.id
-      || pendingSpeciesContext?.identity?.speciesName
-      || pendingSpeciesContext?.identity?.name
-      || ''
-    ).toLowerCase();
-    const isHumanLike = speciesName === 'human' || speciesName === 'near-human' || speciesName === 'near human';
-    const isNPC = shell?.actor?.type === 'npc' || shell?.progressionSession?.subtype === 'npc';
-    return isHumanLike ? (isNPC ? 3 : 2) : (isNPC ? 2 : 1);
+    // Single authority shared with the Galactic Profile compiler (behaviour unchanged).
+    return getChargenGeneralFeatCount({
+      draft: shell?.progressionSession?.draftSelections || {},
+      actor: shell?.actor || null,
+      subtype: shell?.progressionSession?.subtype || null,
+    });
   }
 
   _getSelectedFeatIdsForSlot(shell) {

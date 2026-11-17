@@ -2824,6 +2824,361 @@ The RECON-001 ruling narrows this question but does not answer it. `talentEveryL
 
 ---
 
+# Galactic Profiles v3 — rulings (project owner review of PR #1152, 2026-11-17)
+
+Source document: `docs/audits/SWSE_Galactic_Profiles_v3_Unification_Audit.md`. Each entry preserves the original question; the owner's disposition is recorded in the Resolution field. Printed-book citations are as recorded by the repository (the printed books were not available in the build environment).
+
+## GP-RD-001 — Wolf — "Pack Tactics (advantage on melee attack rolls if ally is within 5 squares)"
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-001 |
+| Rules domain | Beast |
+| Feature | Wolf — "Pack Tactics (advantage on melee attack rolls if ally is within 5 squares)" (profiles: `beast-wolf`) |
+| Source | see Evidence |
+| Evidence | none located; the string exists only in `data/nonheroic-templates.json` (v2 template). No pack, species trait or other V2 data contains it. |
+| Confirmed behavior | Wolf has no species document; "advantage" is not SWSE terminology. |
+| Unresolved question | Whether any SWSE-printed trait is intended. |
+| Options (source-supported) | none source-supported |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Wolf profile blocked (`rulingBlocks`); trait never applied. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: keep blocked.** Authored advantage mechanic is not established as an SWSE rule. |
+
+---
+
+## GP-RD-002 — Commanding Presence (Mercenary vs Leadership)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-002 |
+| Rules domain | Talent identity |
+| Feature | Commanding Presence (Mercenary vs Leadership) (profiles: `soldier_rifleman`) |
+| Source | see Evidence |
+| Evidence | Force Unleashed Campaign Guide p.28 (tree Mercenary, no prerequisites, doc `438e13c99c7b53a6`); Galaxy at War p.19 (tree Leadership, prerequisites Born Leader + Tactical Savvy, doc `d442508aa9d9bdf6`). Page numbers are as recorded by the repository. |
+| Confirmed behavior | Soldier's V2 trees include Mercenary, not Leadership; the profile's own tree label is Mercenary. |
+| Unresolved question | Which publication's talent is intended. |
+| Options (source-supported) | A) Mercenary-tree talent; B) Leadership-tree talent |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Authoring correction pins `sourceIds` to `438e13c99c7b53a6`; V2 access/prerequisite still decide legality. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved A (Mercenary-tree identity)**, subject to V2 entitlement validation. |
+
+---
+
+## GP-RD-003 — Jedi Force powers without Force Training
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-003 |
+| Rules domain | Force |
+| Feature | Jedi Force powers without Force Training (profiles: `jedi_guardian`, `jedi_consular`, `jedi_defender`) |
+| Source | see Evidence |
+| Evidence | Force Training (Saga Edition Core Rulebook p.85 as recorded): prerequisites Force Sensitivity + trained Use the Force; adds 1 + WIS modifier powers. Guardian authors 2 powers (Force Training would give 3 at WIS 14). |
+| Confirmed behavior | Profiles list Force powers but select no Force Training feat. |
+| Unresolved question | Whether to add/swap a feat or leave powers to the player. |
+| Options (source-supported) | (a) swap a selected feat; (b) leave powers unselected; (c) other legal source (none located) |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Compiler preserves feats and powers as authored intent, withholds powers from the draft until V2 reports the entitlement, and opens the feat step. |
+| Status | `DEFERRED_RULES_REVIEW` (intent preserved; powers withheld) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: keep blocked pending legal choices.** Do not replace feats or silently discard powers. |
+
+---
+
+## GP-RD-004 — Wealth talent vs authored net wallet
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-004 |
+| Rules domain | Credits |
+| Feature | Wealth talent vs authored net wallet (profiles: `noble_aristocrat`) |
+| Source | see Evidence |
+| Evidence | Authored wallet 465; legacy note "6,500 starting credits with Wealth talent"; V2 adds lineageLevel × 5000 for Wealth. |
+| Confirmed behavior | Whether 465 is inclusive or exclusive of the Wealth grant. |
+| Unresolved question | Inclusive vs exclusive. |
+| Options (source-supported) | inclusive / exclusive |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | `wallet.mode = exactFinalBalance`; the economy builder writes the authored balance exactly and never adds Wealth. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved — 465 is the exact post-grant final balance;** no second Wealth grant. |
+
+---
+
+## GP-RD-005 — "Athletics"
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-005 |
+| Rules domain | Skills |
+| Feature | "Athletics" (profiles: `laborer-worker`) |
+| Source | see Evidence |
+| Evidence | V2 skills have no Athletics (Climb, Jump, Swim, Endurance, … are separate skills). |
+| Confirmed behavior | Which skill(s) were intended. |
+| Unresolved question | Which V2 skill(s). |
+| Options (source-supported) | none source-supported |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | `choices.unresolved` blocks the profile. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: keep blocked;** replacement needs selection. |
+
+---
+
+## GP-RD-006 — Surveillance (Spy) and Sizing Up (Espionage)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-006 |
+| Rules domain | Talent identity |
+| Feature | Surveillance (Spy) and Sizing Up (Espionage) (profiles: `scout_sniper`, `scout_engineer`) |
+| Source | see Evidence |
+| Evidence | Surveillance: Force Unleashed Campaign Guide p.28, tree Spy, doc `f23b63464e0aeff7`; Sizing Up: Galaxy of Intrigue p.23, tree Espionage, doc `95579a44ff466f19` (as recorded). Authored tree labels differ. |
+| Confirmed behavior | Unique talent documents; authored tree assertions contradict them. |
+| Unresolved question | Intended identity. |
+| Options (source-supported) | resolve by talent document / different talent intended |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Authored `sourceTree` retained as evidence only; identity and prerequisites come from the talent authority. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved published talent identities** (Surveillance → Spy; Sizing Up → Espionage). |
+
+---
+
+## GP-RD-007 — Mechanized Rider / Mobile Scout tree for Scouts
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-007 |
+| Rules domain | Talent access |
+| Feature | Mechanized Rider / Mobile Scout tree for Scouts (profiles: `scout_pistoleer`) |
+| Source | see Evidence |
+| Evidence | The Unknown Regions p.22 (as recorded; tree document tagged `scout`): Mobile Scout is a Scout talent tree; Mechanized Rider requires trained Pilot and Ride (profile has both). V2 Scout `talent_trees` omitted the tree. |
+| Confirmed behavior | Printed text not available in the build environment; the owner states the tree applies to Scouts. |
+| Unresolved question | Whether Scout may use Mobile Scout (owner: yes). |
+| Options (source-supported) | — |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | V2 data corrected: Mobile Scout added to Scout in `packs/classes.db` and `data/fixes/class-talent-tree-bindings.json`; profile selection unchanged. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED; printed source owner-attested) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: revised — the profile choice is legal; correct the V2 tree registration.** Printed-source verification remains owner-attested. |
+
+---
+
+## GP-RD-008 — Zabrak ability modifiers
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-008 |
+| Rules domain | Species |
+| Feature | Zabrak ability modifiers (profiles: `jedi_defender`) |
+| Source | see Evidence |
+| Evidence | V2 Zabrak (Core) `abilityMods` are all 0; a legacy note says "Zabrak CON bonus". |
+| Confirmed behavior | Legacy note vs canonical species data. |
+| Unresolved question | Which is right. |
+| Options (source-supported) | V2 data / legacy note |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Legacy note kept only in evidence; basis for `jedi_defender` is moot. |
+| Status | `RESOLVED_BY_OWNER` (no data change needed; V2 already has no Zabrak modifiers) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved — Core Rulebook Zabrak have no ability-score adjustments;** the legacy CON-bonus note is incorrect. |
+
+---
+
+## GP-RD-009 — Authored score basis (base vs post-species)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-009 |
+| Rules domain | Attributes |
+| Feature | Authored score basis (base vs post-species) (profiles: 17 organic profiles (see the generated certification matrix) plus `beast-wolf`/`beast-bear`; `jedi_defender` became moot with GP-RD-008) |
+| Source | see Evidence |
+| Evidence | Point-buy fit is non-discriminating; two Duros profiles disagree; 12 profiles are moot (species has no ability modifiers), 1 has an explicit authored note (`soldier_brawler`). |
+| Confirmed behavior | Authoring fact per profile. |
+| Unresolved question | base or final per profile. |
+| Options (source-supported) | base / final |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Compiler `ATTRIBUTE_BASIS_UNRESOLVED`; no number is ever rewritten. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: unresolved profiles stay blocked; no blanket conversion.** |
+
+---
+
+## GP-RD-010 — Beast creation authority (Wolf/Bear)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-010 |
+| Rules domain | Beast |
+| Feature | Beast creation authority (Wolf/Bear) (profiles: `beast-wolf`, `beast-bear`) |
+| Source | see Evidence |
+| Evidence | No species documents, no beast draft/finalization destination (`flags.swse.beastData` is written by nothing in progression); `BeastSubtypeAdapter` rules exist in code. |
+| Confirmed behavior | Which source defines Wolf/Bear stat blocks. |
+| Unresolved question | Source identity. |
+| Options (source-supported) | none source-supported |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Beast profiles blocked; shared infrastructure and readiness hardened. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: keep blocked** until source identities and a V2 draft/finalization path exist. |
+
+---
+
+## GP-RD-011 — Beast readiness must block
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-011 |
+| Rules domain | Beast |
+| Feature | Beast readiness must block (profiles: all beast sessions) |
+| Source | see Evidence |
+| Evidence | `BeastSubtypeAdapter.validateReadiness` only warned, read the actor's stale Int, and defaulted 0 to 1. |
+| Confirmed behavior | The adapter's own contract states Intelligence 1–2 at creation; its validation only warned and nothing corrected a bad value at finalization. |
+| Unresolved question | Whether invalid beast builds must block finalization. |
+| Options (source-supported) | — |
+| Recommended ruling | none (owner ruled) |
+| Implementation impact | Readiness throws on missing context, missing/invalid draft Int (creation: 1–2); draft is authoritative. |
+| Status | `RESOLVED_BY_OWNER` (IMPLEMENTED; OFFLINE_TESTED) |
+| Decision authority | Project owner |
+| Resolution | **Owner 2026-11-17: approved — strict blocking using the draft, not stale actor attributes.** |
+
+---
+
+- **Revision 66 (2026-11-17):** appended GP-RD-001 … GP-RD-011 from the project owner's review of the Galactic Profiles v3 unification audit. Implementing commits are recorded in the next appended line.
+
+---
+
+## GP-RD-012 — "Simple Weapon Proficiency" (legacy alias)
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-012 |
+| Rules domain | Feat identity |
+| Feature | "Simple Weapon Proficiency" (legacy alias) (profiles: `soldier-guard`, `scout-pathfinder`, `laborer-worker`) |
+| Source | repository data (Galactic Profiles v3 evidence) |
+| Evidence | Authored feat `Simple Weapon Proficiency` (ids `weapon-proficiency-simple` / `simple-weapon-proficiency`) matches no V2 feat document by id, exact name, or punctuation-normalized name. V2 has the parameterized `Weapon Proficiency` feat and Jedi/Scout/Scoundrel/Noble/Soldier class grants named `Weapon Proficiency (Simple Weapons)`. |
+| Confirmed behavior | The authored name is not a V2 identity. |
+| Unresolved question | Whether `Simple Weapon Proficiency` is intended to be `Weapon Proficiency (Simple Weapons)`. |
+| Options (source-supported) | map to `Weapon Proficiency (Simple Weapons)` / different feat intended |
+| Recommended ruling | none |
+| Implementation impact | Three nonheroic profiles blocked (`FEAT_UNRESOLVED`); no alias is guessed. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## GP-RD-013 — Items with no canonical V2 identity
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-013 |
+| Rules domain | Equipment identity |
+| Feature | Items with no canonical V2 identity (profiles: `scoundrel_brigand`, `soldier_rifleman` ("Clips" x2 / x10); `scout_pistoleer` ("FC-20 Speeder Bike (Used)")) |
+| Source | repository data (Galactic Profiles v3 evidence) |
+| Evidence | "Clips" authored with id null and no pack/type; no V2 item named Clips exists. The speeder bike is a vehicle actor document (`foundryvtt-swse.vehicles`, absent as a pack; vehicles live in vehicle packs), not an item V2 can place in `add.items`. |
+| Confirmed behavior | Neither maps to a V2 item. |
+| Unresolved question | Which item Clips means; whether a starting vehicle is an owned-vehicle actor and how V2 should materialize it. |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Those profiles blocked (`ITEM_WITHOUT_ID`, `ITEM_UNRESOLVED`); never substituted or dropped. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## GP-RD-014 — Backgrounds not present in V2
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-014 |
+| Rules domain | Background identity |
+| Feature | Backgrounds not present in V2 (profiles: `soldier-guard` (Military Academy), `scout-pathfinder` (Frontier Settler), `laborer-worker` (Common Worker), `beast-wolf`/`beast-bear` (Feral Creature)) |
+| Source | repository data (Galactic Profiles v3 evidence) |
+| Evidence | No background document exists with those names or ids in `packs/backgrounds.db`. |
+| Confirmed behavior | Not V2 backgrounds. |
+| Unresolved question | Whether to author new backgrounds, map to existing ones, or drop the background for these profiles. |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Those profiles blocked (`BACKGROUND_UNRESOLVED`); not defaulted. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## GP-RD-015 — Weapon group choice labels
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-015 — Weapon group choice labels |
+| Rules domain | Feat/talent choice |
+| Feature | Weapon Focus (Light Melee) on noble_duelist; Weapon Proficiency (Advanced Melee) on soldier_brawler |
+| Source | Galactic Profiles v3 authored data |
+| Evidence | The authored labels are not option values V2's FeatChoiceResolver accepts for those feats. |
+| Confirmed behavior | The profiles name those feats. |
+| Unresolved question | Which V2 option corresponds to the authored label (or whether the selection is to be changed). |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Those two selections fail closed (feat choice unresolved); nothing was mapped by guess. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## GP-RD-016 — Weapon Finesse prerequisite on scoundrel_knuckledragger
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-016 — Weapon Finesse prerequisite on scoundrel_knuckledragger |
+| Rules domain | Feat prerequisites |
+| Feature | Weapon Finesse |
+| Source | V2 feat data (prerequisite check by AbilityEngine) |
+| Evidence | V2 evaluates the printed prerequisite (BAB +1) against the compiled level-1 draft. |
+| Confirmed behavior | V2's authority decides the result. |
+| Unresolved question | Whether the profile's authored selection is legal at level 1 under V2's prerequisite; profile data is not altered to pass. |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Profile blocked with FEAT_PREREQUISITES_UNMET if V2 rejects it. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+## GP-RD-017 — Name-keyed talent prerequisite authority collision
+
+| Field | |
+|---|---|
+| Decision ID | GP-RD-017 — Name-keyed talent prerequisite authority collision |
+| Rules domain | Talent prerequisites |
+| Feature | Commanding Presence (two talents, same name) |
+| Source | V2 `TALENT_PREREQUISITE_AUTHORITY` (name-keyed) |
+| Evidence | V2 collapses same-name talents to one prerequisite entry; GP-RD-002 pins the Mercenary-tree document by id. |
+| Confirmed behavior | Profile pins the Mercenary-tree id (GP-RD-002). |
+| Unresolved question | Whether V2's name-keyed authority should be re-keyed by document id (engineering change to a canonical authority; not applied). |
+| Options (source-supported) | — |
+| Recommended ruling | none |
+| Implementation impact | Prerequisite result for soldier_rifleman follows V2's name-keyed entry; flagged for review. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | (blank until approved) |
+
+---
+
+**GP-RD-005 evidence note:** V2 carries an Athletics consolidation house-rule relevant to the pending Athletics ruling; evidence only, no ruling implied.
+
+---
+
+- **Revision 68 (2026-11-17):** appended GP-RD-015 … GP-RD-017 and a GP-RD-005 evidence note from the hardening pass.
+
+- **Revision 67 (2026-11-17):** appended GP-RD-012 … GP-RD-014, found while implementing Galactic Profiles v3 (identity gaps in authored data; nothing was guessed).
 ## Mentor Survey V2 register (`MSV-RD-###`) — appended 2026-11-15
 
 Independent register for the survey cutover (see `docs/design/mentor-survey-v2/`). Append-only; resolutions are recorded in each entry's *Resolution* field with date and implementing commit. Decision authority: project owner. Recommended ruling: none.

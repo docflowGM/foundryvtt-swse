@@ -1798,6 +1798,13 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   async enterStore(actor, shell = null) {
+    // A Galactic Profile session carries its equipment and exact final balance as DRAFT-ONLY economy state in the
+    // single MutationPlan. The chargen store stages credits and a flag on the actor before confirmation, which would
+    // violate "no actor mutation before final confirmation" and could double-charge, so it is not opened here.
+    if (shell?.progressionSession?.draftSelections?.profileApplication?.economy) {
+      globalThis.ui?.notifications?.info?.('This Galactic Profile already includes its starting equipment and credits. Shopping opens after the character is created.');
+      return null;
+    }
     const { SWSEStore } = await import('../../../apps/store/store-main.js');
     await this._stageStartingCreditsForStore(actor, shell);
     return SWSEStore.open(actor, {
