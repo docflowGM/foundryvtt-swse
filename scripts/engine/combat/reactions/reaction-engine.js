@@ -160,6 +160,25 @@ function getRegisteredReactionForActor(actor, reactionKey) {
     ?? null;
 }
 
+// SWSEChat exposes postHTML(), not postMessage(). Presentation failures
+// must not roll back a paid mechanical reaction or falsify its result.
+function escapeReactionText(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
+}
+async function postReactionStatus(actor, label, message, {failed=false}={}) {
+  const kind=failed?'failure':'success';
+  try {
+    await SWSEChat.postHTML({
+      actor,
+      content: `<div class="swse-reaction-result swse-reaction-result--${kind}"><strong>${escapeReactionText(label)}</strong><p>${escapeReactionText(message)}</p></div>`
+    });
+  } catch (error) {
+    SWSELogger.warn('[ReactionEngine] Reaction chat presentation failed', error);
+  }
+}
+
 export class ReactionEngine {
   /**
    * Get available reactions for a defender in a given attack context.
@@ -330,11 +349,8 @@ export class ReactionEngine {
         if (!limitCheck.allowed) {
           const cadence = limitType === LimitType.ENCOUNTER ? 'encounter' : 'round';
           SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${limitCheck.reason}`);
-          await SWSEChat.postMessage({
-            flavor: `❌ ${reactionDef.label}`,
-            content: `Reaction already used this ${cadence}`,
-            actor: defender
-          });
+          await postReactionStatus(defender,reactionDef.label,
+            `Reaction already used this ${cadence}`,{failed:true});
           return {
             success: false,
             error: limitCheck.reason,
@@ -403,11 +419,7 @@ export class ReactionEngine {
       }
 
       const resultMsg = result?.resultMessage ?? `${reactionDef.label} triggered`;
-      await SWSEChat.postMessage({
-        flavor: `✓ ${reactionDef.label}`,
-        content: resultMsg,
-        actor: defender
-      });
+      await postReactionStatus(defender,reactionDef.label,resultMsg);
 
       SWSELogger.log(`[ReactionEngine] SUCCESS: "${resolvedReactionKey}" resolved for ${defender.name}`);
 
