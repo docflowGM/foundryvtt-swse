@@ -23,11 +23,11 @@ const { graftRealForcePointMethods,setPath }=await import('./helpers/real-force-
 
 const emitted=[],order=[];
 const oldCallAll=globalThis.Hooks.callAll;
-const oldPost=SWSEChat.postMessage;
+const oldPost=SWSEChat.postHTML;
 globalThis.Hooks.callAll=(name,evt)=>{
  if(name==='swse.resourceSpent'){emitted.push(evt);order.push('receipt');}
 };
-SWSEChat.postMessage=async()=>{order.push('chat');};
+SWSEChat.postHTML=async()=>{order.push('chat');};
 
 const writer=async(actor,set)=>{
  for(const [path,value] of Object.entries(set))setPath(actor,path,value);
@@ -106,6 +106,29 @@ try {
   assert.equal(order.includes('paid-handler'),false);
  });
 
+ await test('chat delivery failure does not change paid mechanical success',async()=>{
+  const original=SWSEChat.postHTML;
+  SWSEChat.postHTML=async()=>{throw new Error('chat display unavailable');};
+  try {
+    setReaction({cost:0,handler:async()=>({success:true,resultMessage:'resolved'})});
+    const res=await run(actor(0,0));
+    assert.equal(res.success,true,'chat presentation cannot roll back the handler');
+  } finally {
+    SWSEChat.postHTML=original;
+  }
+ });
+
+ await test('reaction engine calls supported postHTML API, not missing postMessage',()=>{
+  const engineSource=readFileSync(new URL('../scripts/engine/combat/reactions/reaction-engine.js',import.meta.url),'utf8');
+  const chatSource=readFileSync(new URL('../scripts/chat/swse-chat.js',import.meta.url),'utf8');
+  assert.match(engineSource,/SWSEChat\\.postHTML\\(/);
+  assert.doesNotMatch(engineSource,/SWSEChat\\.postMessage\\(/);
+  assert.match(chatSource,/static async postHTML\\(/);
+  assert.doesNotMatch(chatSource,/static async postMessage\\(/);
+  assert.match(engineSource,/escapeReactionText\\(message\\)/,
+    'reaction messages must escape untrusted result text');
+ });
+
  await test('invalid reaction cost fails closed',async()=>{
   order.length=0;emitted.length=0;
   setReaction({cost:-1,handler:async()=>{order.push('handler');}});
@@ -128,7 +151,7 @@ try {
  });
 } finally {
  restore();
- SWSEChat.postMessage=oldPost;
+ SWSEChat.postHTML=oldPost;
  globalThis.Hooks.callAll=oldCallAll;
  delete ReactionRegistry.registry[key];
 }
