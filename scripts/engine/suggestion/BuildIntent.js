@@ -278,10 +278,6 @@ export class BuildIntent {
             });
         }
 
-        // Apply mentor survey biases if available (check pendingData as fallback for chargen)
-        SWSELogger.log(`[BUILD-INTENT] analyze() - Applying mentor survey biases`);
-        this._applyMentorBiases(actor, intent, pendingData);
-
         // Primary themes and combat style already determined by BuildThemeProjection
         SWSELogger.log(`[BUILD-INTENT] analyze() - Primary themes:`, intent.primaryThemes);
         SWSELogger.log(`[BUILD-INTENT] analyze() - Combat style:`, intent.combatStyle);
@@ -697,33 +693,6 @@ export class BuildIntent {
         }
 
         SWSELogger.log(`[BUILD-INTENT] _applyTemplateArchetypeBias() COMPLETE - Final themes after template bias:`, intent.themes);
-    }
-
-    /**
-     * [DEPRECATED] Apply mentor survey biases to theme scores
-     *
-     * DEPRECATED: Survey bias is now handled exclusively by IdentityEngine.
-     * This method exists only for backward compatibility and will log a deprecation warning.
-     * All survey influence now flows through:
-     *   1. MentorSurvey.convertSurveyAnswersToBias() - converts survey to bias layers
-     *   2. IdentityEngine.injectSurveyBias() - injects bias into identity layer
-     *   3. IdentityEngine.computeTotalBias() - aggregates all layers including survey
-     *
-     * BuildIntent no longer modifies bias. It only reads identity for analysis.
-     *
-     * @deprecated Use IdentityEngine.injectSurveyBias() instead
-     * @private
-     * @param {Actor} actor - The actor being analyzed (unused)
-     * @param {Object} intent - The build intent object (not modified)
-     * @param {Object} pendingData - Pending selections (unused)
-     */
-    static _applyMentorBiases(actor, intent, pendingData = {}) {
-        SWSELogger.warn(
-            `[BUILD-INTENT] _applyMentorBiases() DEPRECATED - ` +
-            `Survey bias is now injected via IdentityEngine.injectSurveyBias(). ` +
-            `This method no longer does anything.`
-        );
-        // DEPRECATED: Do nothing. Survey authority has moved to IdentityEngine.
     }
 
     /**

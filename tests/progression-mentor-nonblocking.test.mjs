@@ -15,7 +15,7 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // see mentor-recommendation-architecture.test.mjs and
 // mentor-translator-cancellation.test.mjs for that existing coverage.
 //
-// The two real gaps this pass found and fixed: L1SurveyStep.onDataReady()
+// The two real gaps this pass found and fixed: MentorSurveyStep.onDataReady()
 // and ConfirmStep.afterRender() each sequentially AWAITED an Aurebesh/
 // translation reveal loop. Both hooks are awaited by the render scheduler's
 // in-flight lock (both the structural _onRender() path and the scoped
@@ -73,8 +73,8 @@ const { MentorChoiceReactionRouter } = await import(
 const { ProgressionShell } = await import(
   '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-shell.js'
 );
-const { L1SurveyStep } = await import(
-  '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/l1-survey-step.js'
+const { MentorSurveyStep } = await import(
+  '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/mentor-survey-step.js'
 );
 const { ConfirmStep } = await import(
   '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/confirm-step.js'
@@ -227,7 +227,7 @@ async function withStub(owner, methodName, impl, fn) {
 }
 
 /* ==================================================================== *
- * TEST 1 / real fix — L1SurveyStep.onDataReady() cannot block the render
+ * TEST 1 / real fix — MentorSurveyStep.onDataReady() cannot block the render
  * pipeline behind its inline Aurebesh translation pass. This is the actual
  * bug found in this pass: onDataReady() is awaited by
  * ProgressionShell._maybeRunOnDataReady(), which the render scheduler holds
@@ -242,16 +242,13 @@ async function withStub(owner, methodName, impl, fn) {
     const fakeElement = { querySelectorAll: (sel) => (sel === '[data-l1-survey-dialogue-text]' ? [dialogueEl] : []) };
     const shell = { element: fakeElement };
 
-    const step = new L1SurveyStep({ stepId: 'l1-survey' });
-    step._surveyDefinition = { classId: 'test-class' };
-    step._surveyPhase = 'question';
-    step._activeQuestionIndex = 0;
+    const step = new MentorSurveyStep({ stepId: 'l1-survey' });
 
     const order = [];
     const onDataReadyPromise = step.onDataReady(shell).then(() => order.push('onDataReady-resolved'));
 
     // Must resolve WITHOUT the translation ever settling.
-    await withTimeout(onDataReadyPromise, 200, 'L1SurveyStep.onDataReady()');
+    await withTimeout(onDataReadyPromise, 200, 'MentorSurveyStep.onDataReady()');
     assert.deepEqual(order, ['onDataReady-resolved']);
     assert.equal(control.calls.length, 1, 'the translation sidecar was never invoked');
     assert.equal(control.calls[0].signal?.aborted, false, 'a fresh sidecar pass should not start pre-aborted');
@@ -568,7 +565,7 @@ function makeRouterShell() {
 /* ==================================================================== *
  * STATIC AUDIT — no progression control-flow file directly awaits mentor
  * presentation work. This is the guard that would have caught the two real
- * bugs this pass fixed (L1SurveyStep.onDataReady(),
+ * bugs this pass fixed (MentorSurveyStep.onDataReady(),
  * ConfirmStep.afterRender()) before they were fixed, and prevents the next
  * one. Files that ARE the mentor sidecar's own implementation are exempt --
  * MentorRail.speak() legitimately awaits its own translation call.

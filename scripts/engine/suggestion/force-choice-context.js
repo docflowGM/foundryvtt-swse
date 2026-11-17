@@ -88,10 +88,8 @@ function inferClassName(actor, pendingData = {}) {
 }
 
 function inferPrestigeTarget(actor, pendingData = {}) {
-  return pendingData?.survey?.prestigeClassTarget
-    || pendingData?.prestigeClassTarget
+  return pendingData?.prestigeClassTarget
     || pendingData?.mentorBiases?.prestigeClassTarget
-    || actor?.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget
     || null;
 }
 

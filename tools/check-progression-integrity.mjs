@@ -79,8 +79,8 @@ const PROGRESSION_DIRS = [
 const CANONICAL_SELECTION_KEYS = new Set([
   'species', 'class', 'background', 'attributes', 'skills', 'feats', 'talents',
   'languages', 'forcePowers', 'forceRegimens', 'forceTechniques', 'forceSecrets',
-  'medicalSecrets', 'classSurveyDrafts', 'classSurveys', 'starshipManeuvers',
-  'survey', 'prestigeSurvey', 'droid', 'pendingSpeciesContext',
+  'medicalSecrets', 'mentorSurvey', 'starshipManeuvers',
+  'survey', 'droid', 'pendingSpeciesContext',
   'pendingBackgroundContext', 'backgroundLedger', 'pendingEntitlements',
   'immediateChoices',
   // Follower (dependent participant) sub-schema — declared in ProgressionSession
@@ -100,7 +100,6 @@ const DRAFT_WRITE_ALLOW = [
 // NOT matching these is labelled "suspicious" so new bypasses stand out.
 const DRAFT_WRITE_TRANSITIONAL = [
   /\/steps\/follower-steps\//,
-  /\/steps\/base-class-survey-step\.js$/,
   /\/steps\/galactic-profile-step\.js$/,
   /\/steps\/class-step\.js$/,
   /\/progression\/profile\/galactic-profile-apply\.js$/,   // atomic-rollback draft restore only; all writes go through commitSelection

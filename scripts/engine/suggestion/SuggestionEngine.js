@@ -357,11 +357,7 @@ export class SuggestionEngine {
                 buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
-                // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions
-                const mentorBiases = actor.system?.swse?.mentorBuildIntentBiases || {};
-                buildIntent = mentorBiases && Object.keys(mentorBiases).length > 0
-                    ? { mentorBiases }
-                    : null;
+                buildIntent = null; // no stored survey bias exists any more (V2 surveys write only the event ledger)
             }
         }
 
@@ -488,11 +484,7 @@ export class SuggestionEngine {
                 buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
-                // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions
-                const mentorBiases = actor.system?.swse?.mentorBuildIntentBiases || {};
-                buildIntent = mentorBiases && Object.keys(mentorBiases).length > 0
-                    ? { mentorBiases }
-                    : null;
+                buildIntent = null; // no stored survey bias exists any more (V2 surveys write only the event ledger)
             }
         }
 

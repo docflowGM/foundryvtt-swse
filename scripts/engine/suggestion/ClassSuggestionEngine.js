@@ -274,7 +274,7 @@ export class ClassSuggestionEngine {
         actorState.routeConfidenceSummary = summarizeRouteConfidenceProfile(routeConfidenceProfile);
 
         // Check for prestige class target from L1 survey
-        const prestigeClassTarget = pendingData?.prestigeClassTarget || actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
+        const prestigeClassTarget = pendingData?.prestigeClassTarget || null;
         if (prestigeClassTarget) {
             logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target detected: "${prestigeClassTarget}"`);
         }

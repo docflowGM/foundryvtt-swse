@@ -83,7 +83,7 @@ export class BackgroundSuggestionEngine {
   }
 
   static _buildCharacterProfile(actor, pendingData) {
-    const mentorBiases = pendingData?.mentorBiases || actor?.system?.swse?.mentorBuildIntentBiases || {};
+    const mentorBiases = pendingData?.mentorBiases || {};
     const planningProfile = buildAttributePlanningProfile({ actor, pendingData });
     const classSelection = pendingData?.selectedClass || pendingData?.classes?.[0] || null;
     const classModel = resolveClassModel(classSelection);

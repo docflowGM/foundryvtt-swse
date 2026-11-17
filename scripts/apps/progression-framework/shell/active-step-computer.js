@@ -23,6 +23,12 @@
  *   );
  */
 
+import { prestigeTrigger } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/resolvers/prestige.js';
+import { multiclassTrigger } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/resolvers/multiclass.js';
+import { getManifestSync } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/content-loader.js';
+import { evaluateScopeRelease } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/content-store.js';
+import { projectActorEvidence } from '/systems/foundryvtt-swse/scripts/mentor/mentor-survey-v2/actor-evidence.js';
+import { canUseEditorialPreview } from '/systems/foundryvtt-swse/scripts/settings/mentor-survey-preview.js';
 import { swseLogger } from '../../../utils/logger.js';
 import {
   PROGRESSION_NODE_REGISTRY,
@@ -560,34 +566,36 @@ export class ActiveStepComputer {
     return new Set(keys.map(key => this._normalizeLanguageKey(key)).filter(Boolean));
   }
 
+  /**
+   * Multiclass survey: active only for the FIRST acquisition of a new foundation class (finalized class levels decide),
+   * with one prior foundation class, or several (the player then chooses the origin lens, MSV-RD-004), and only when the release manifest releases that destination or a GM has editorial preview on.
+   * The manifest is primed at world ready; if it is not loaded this fails closed (no empty step is shown).
+   */
   _hasBaseClassSurveyWork(actor, progressionSession) {
     const context = buildLevelUpEventContext(actor, progressionSession);
     if (!context?.isNewBaseClass) return false;
-
-    const classKey = context.selectedClassId;
-    if (!classKey) return false;
-
-    const completed = actor?.system?.swse?.classSurveyResponses?.[classKey]?.completed === true
-      || progressionSession?.draftSelections?.classSurveys?.[classKey]?.completed === true;
-    return !completed;
+    const trigger = multiclassTrigger({ selectedClassId: context.selectedClassId, classLevels: projectActorEvidence(actor).classLevels });
+    if (!trigger.applicable || !(trigger.originClassId || trigger.originClassIds?.length > 1)) return false;
+    const manifest = getManifestSync();
+    if (!manifest) return false;
+    return evaluateScopeRelease(manifest, 'multiclass', trigger.destinationClassId, { preview: canUseEditorialPreview() }).playable;
   }
 
+  /**
+   * Prestige survey: active when a prestige class is newly acquired (finalized class levels), the release manifest
+   * releases that class or a GM has editorial preview on. Fails closed if the manifest has not loaded.
+   */
   _hasPrestigeSurveyWork(actor, progressionSession) {
     const context = buildLevelUpEventContext(actor, progressionSession);
     if (!context?.isNewPrestigeClass) return false;
-
-    const classKey = context.selectedClassId;
-    if (!classKey) return false;
-
-    const completed = actor?.system?.swse?.prestigeSurveyResponses?.[classKey]?.completed === true;
-    if (completed) return false;
-
-    const sessionSurvey = progressionSession?.draftSelections?.prestigeSurvey;
-    if (sessionSurvey?.completed === true && (sessionSurvey?.classId === classKey || sessionSurvey?.classId === context.selectedClassName)) {
-      return false;
-    }
-
-    return true;
+    const id = context.selectedClassId;
+    if (!id) return false;
+    const manifest = getManifestSync();
+    if (!manifest) return false;
+    const known = Object.keys(manifest.surveys?.prestige || {});
+    const trigger = prestigeTrigger({ selectedClassId: id, classLevels: projectActorEvidence(actor).classLevels, knownClassIds: known });
+    if (!trigger.applicable) return false;
+    return evaluateScopeRelease(manifest, 'prestige', trigger.destinationClassId, { preview: canUseEditorialPreview() }).playable;
   }
 
 
