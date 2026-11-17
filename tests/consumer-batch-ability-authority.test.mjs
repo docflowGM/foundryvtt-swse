@@ -12,7 +12,7 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // the original ledger). Each previously read only the legacy
 // system.abilities mirror (or read it before system.attributes), which is
 // always {base:10, mod:0,...} regardless of the actor's real scores.
-// scripts/engine/store/index.js and scripts/apps/template-character-creator.js
+// scripts/engine/store/index.js and (retired) template-character-creator.js
 // are covered by source-contract assertions instead, since their relevant
 // functions are unexported/instance-bound on heavy classes.
 
@@ -134,22 +134,14 @@ function rawExportActor({ dexBase = 10 } = {}) {
 // Source-contract checks for the two files in this batch whose relevant
 // functions are unexported (store/index.js#getDroidStatblockQuality) or
 // instance-bound on a heavy FormApplication subclass
-// (template-character-creator.js#_openSkillTraining), and so cannot be
+// (retired template-character-creator.js), and so cannot be
 // imported/called directly under the foundry-shim harness.
 // ---------------------------------------------------------------------------
 {
   const fs = await import('node:fs');
   // (store/index.js droid statblock-quality heuristic was deleted in Store V2 S1; nothing left to guard.)
 
-  const creatorSrc = fs.readFileSync(
-    new URL('../scripts/apps/template-character-creator.js', import.meta.url),
-    'utf8'
-  );
-  assert.match(
-    creatorSrc,
-    /const intTotal = SchemaAdapters\.getAbilityScore\(actor, 'int'\);/,
-    'template-character-creator.js#_openSkillTraining must resolve Int via SchemaAdapters.getAbilityScore, not a raw system.abilities/system.attributes ternary'
-  );
+  // (template-character-creator.js was retired in the Galactic Profiles cutover; its _openSkillTraining guard retired with it.)
 }
 
 console.log('Consumer-batch ability authority guards passed (VehicleCrewPositions, shared-suggestion-utilities, mentor-conditional-variants, MentorDialogueV2Integration, store/index.js, template-character-creator.js).');

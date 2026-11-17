@@ -5,7 +5,6 @@
  */
 
 import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
-import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 
 /**
  * Add character creation buttons to Actor Directory header
@@ -44,12 +43,14 @@ function handleRenderActorDirectory(app, html, data) {
   const templateBtn = document.createElement('button');
   templateBtn.classList.add('swse-template-chargen-btn');
   templateBtn.type = 'button';
-  templateBtn.innerHTML = '<i class="fa-solid fa-file-alt"></i> Create From Template';
+  templateBtn.innerHTML = '<i class="fa-solid fa-id-card"></i> Create From Galactic Profile';
   templateBtn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const app = new TemplateCharacterCreator();
-    app.render(true);
+    // One creation path: the transient ProgressionSession opens on the Galactic Profile picker; no actor exists until confirm.
+    launchNewProgression({ actorType: 'character', profilePicker: true }).catch(err => {
+      ui?.notifications?.error?.(`Failed to open Galactic Profile creation: ${err.message}`);
+    });
   });
 
   // Append buttons to container

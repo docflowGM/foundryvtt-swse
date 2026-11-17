@@ -291,10 +291,11 @@ const makeStep = () => { const s = Object.create(SpeciesStep.prototype); s._sele
   assert.ok(body.indexOf('requiresPublicationSelection(registryEntry)') > -1 && body.indexOf('_promptSpeciesVersion') > -1);
   assert.ok(body.indexOf('_promptSpeciesVersion') < body.indexOf('buildSpeciesReplacementPlan('), 'the version is chosen before any plan is built');
 
-  const { TemplateAdapter } = await import('/systems/foundryvtt-swse/scripts/engine/progression/template/template-adapter.js');
-  assert.equal(TemplateAdapter._templateSpeciesNeedsVersion({ id: entry('Chiss').id, name: 'Chiss' }), true, 'template without a version leaves the species for the player');
-  assert.equal(TemplateAdapter._templateSpeciesNeedsVersion({ id: entry('Chiss').id, name: 'Chiss', variantId: 'chiss-ur-2b-10' }), false);
-  assert.equal(TemplateAdapter._templateSpeciesNeedsVersion({ id: entry('Human').id, name: 'Human' }), false);
+  // Galactic Profile compilation uses this same policy: a profile species without a verified version is left to the player.
+  const { checkPublicationSelection } = await import('/systems/foundryvtt-swse/scripts/species/species-publication-selection.js');
+  assert.equal(checkPublicationSelection(entry('Chiss'), null).ok, false, 'profile without a version leaves the species for the player');
+  assert.equal(checkPublicationSelection(entry('Chiss'), 'chiss-ur-2b-10').ok, true);
+  assert.equal(checkPublicationSelection(entry('Human'), null).ok, true);
 }
 
 // ---- Existing variant ids are preserved ----

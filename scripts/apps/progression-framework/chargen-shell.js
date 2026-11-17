@@ -165,6 +165,17 @@ export class ChargenShell extends ProgressionShell {
 
       // PHASE 5: For template sessions, filter out locked nodes (template-provided choices)
       // This creates a "bare-minimum-complete" traversal where players only revisit optional choices
+      // Launch option from "Create From Galactic Profile": open straight into the picker (the subtype was already
+      // established by the creation lane). Never re-applied on resume once a profile exists.
+      if (this.options?.profilePicker === true && this.progressionSession && !this.progressionSession._profileLaunchHandled) {
+        this.progressionSession._profileLaunchHandled = true;
+        if (!this.progressionSession.draftSelections?.profileApplication) {
+          this.progressionSession.profilePickerMode = true;
+          this.progressionSession.profileStepsComplete = false;
+          this.progressionSession.profileSelection ??= {};
+        }
+      }
+
       // Galactic Profile sessions: skip only steps the applied profile fully satisfied (persisted `locks`, released on edit).
       activeNodeIds = filterActiveStepsForProfile(activeNodeIds, this.progressionSession);
 
