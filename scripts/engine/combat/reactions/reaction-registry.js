@@ -1042,13 +1042,20 @@ const SWSE_FIRST_WAVE_REACTION_FALLBACKS = {
   },
 
   async "force-point"({ defender } = {}) {
-    const current = defender?.system?.forcePoints?.value ?? 0;
-    if (current > 0 && typeof ActorEngine?.apply === "function") {
-      await ActorEngine.apply(defender, {
-        update: {
-          "system.forcePoints.value": Math.max(0, current - 1)
-        }
-      });
+    // Fallback UI still represents an actual committed resource spend:
+    // don't silently subtract a stale pool value or claim success at zero.
+    const { ActorEngine } = await import(
+      "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js"
+    );
+    const payment = defender ? await ActorEngine.spendForcePoints(
+      defender, 1, { source: "ReactionRegistry.force-point" }
+    ) : null;
+    if (payment?.spent !== 1) {
+      return swsePostReactionFallback(swseReactionResultCard({
+        title: "Force Point Not Spent",
+        subtitle: defender?.name ?? "Actor",
+        state: "failure"
+      }));
     }
     return swsePostReactionFallback(swseReactionResultCard({
       title: "Force Point Spent",
@@ -1058,13 +1065,17 @@ const SWSE_FIRST_WAVE_REACTION_FALLBACKS = {
   },
 
   async "destiny-point"({ defender } = {}) {
-    const current = defender?.system?.destinyPoints?.value ?? 0;
-    if (current > 0 && typeof ActorEngine?.apply === "function") {
-      await ActorEngine.apply(defender, {
-        update: {
-          "system.destinyPoints.value": Math.max(0, current - 1)
-        }
-      });
+    const { ActorEngine } = await import(
+      "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js"
+    );
+    const payment = defender
+      ? await ActorEngine.spendDestinyPoints(defender, 1) : null;
+    if (payment?.spent !== 1) {
+      return swsePostReactionFallback(swseReactionResultCard({
+        title: "Destiny Point Not Spent",
+        subtitle: defender?.name ?? "Actor",
+        state: "failure"
+      }));
     }
     return swsePostReactionFallback(swseReactionResultCard({
       title: "Destiny Point Spent",
