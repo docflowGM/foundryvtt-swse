@@ -24,6 +24,13 @@ import { encodeCombatWorkflowContext, summarizeCombatWorkflowContext } from "/sy
 import { getActiveRevision } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-message-state.js";
 import { FULL_ATTACK_PACKAGES } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 
+function _reactionAttr(value) {
+  const joined = Array.isArray(value) ? value.join(',') : String(value ?? '');
+  return joined.replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
+}
+
 function _packageLabel(packageType) {
   return {
     [FULL_ATTACK_PACKAGES.NORMAL]:        'Full Attack',
@@ -184,6 +191,12 @@ function renderFullAttackRow(actor, entry, rxnCtx = null) {
                 data-swse-dc="${total}"
                 data-swse-attack-total="${total}"
                 data-swse-trigger="ON_ATTACK_DECLARED"
+                data-swse-attack-type="${_reactionAttr(rxnCtx.attackType)}"
+                data-swse-damage-type="${_reactionAttr(rxnCtx.damageType)}"
+                data-swse-damage-types="${_reactionAttr(rxnCtx.damageTypes)}"
+                data-swse-original-damage-types="${_reactionAttr(rxnCtx.originalDamageTypes)}"
+                data-swse-cannot-be-negated-by="${_reactionAttr(rxnCtx.cannotBeNegatedBy)}"
+                data-swse-sonic-cannot-be-deflected="${rxnCtx.sonicCannotBeDeflected === true}"
                 style="margin-left:4px;padding:2px 7px;font-size:0.8em;cursor:pointer;
                        background:#1a2a4a;border:1px solid #48f;border-radius:3px;color:#8af">
           ${rxn.glyph ?? '↩'} ${rxn.label}
