@@ -38,7 +38,10 @@ buttons did not carry these facts back into `resolveReaction`.
    reactionContext -> roll card presenter -> button attributes -> chat
    bridge -> `resolveReaction` for both single and full-attack cards:
    attackType, damageType(s), originalDamageTypes,
-   sonicCannotBeDeflected, and cannotBeNegatedBy.
+   sonicCannotBeDeflected, and cannotBeNegatedBy. The button also carries
+   `weaponId`, which the click bridge resolves against the attacking actor's
+   **owned weapon Item** before checking `requiresWeaponText`; it never
+   trusts an arbitrary client-supplied weapon name as eligibility authority.
 5. No secondary reaction engine or resource ledger was created.
    Invalid reactions fail before calling `ActorEngine.spendForcePoints`
    and cannot emit false Sith Lord Temptation receipts.
