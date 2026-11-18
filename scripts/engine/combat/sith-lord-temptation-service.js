@@ -187,12 +187,22 @@ export class SithLordTemptationService {
       ...Array.from(globalThis.canvas?.tokens?.placeables??[]).map(t=>t.actor).filter(Boolean),
     ];
     for(const target of new Map(actors.filter(x=>x?.id).map(x=>[actorIdentity(x),x])).values()){
-      const plan=expireTemptationEntries(target,combat,{encounterEnd,nextTurn});
-      if(!plan.changed)continue;
+      // Avoid queueing an async lock for every unrelated world Actor on
+      // every combat turn. An active mark is only a prefilter: expiration
+      // must still re-read and replan AFTER entering the target queue.
+      if(!currentTemptations(target).some(entry=>entry?.state==='active'))continue;
       try{
-        await locked(target,()=>ActorEngine.applyMutationPlan(target,{
-          set:{[TEMPTATION_PATH]:plan.entries}
-        },{source:'SithLordTemptationService.expire',transactional:true}));
+        // The expiration decision must read fresh target state only AFTER
+        // entering the same per-actor queue as committed spend receipts.
+        // A pre-lock snapshot can overwrite newer marks or resurrect
+        // already-expired rows when another operation finishes first.
+        await locked(target,async()=>{
+          const plan=expireTemptationEntries(target,combat,{encounterEnd,nextTurn});
+          if(!plan.changed)return;
+          await ActorEngine.applyMutationPlan(target,{
+            set:{[TEMPTATION_PATH]:plan.entries}
+          },{source:'SithLordTemptationService.expire',transactional:true});
+        });
       }catch(error){
         globalThis.ui?.notifications?.error?.(
           'Temptation expiry requires GM review: '+error.message);
