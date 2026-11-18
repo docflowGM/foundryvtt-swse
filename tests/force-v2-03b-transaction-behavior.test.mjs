@@ -41,6 +41,21 @@ try {
     check('condition steps 3 and 4 remain capable; helpless step 5 refuses');
   }
   {
+    const a = makeActor({ normal: 2 });
+    a.system.darkSide = { value: 1 };
+    a.items.push({ id: 'dark-power', type: 'force-power', system: { descriptor: 'Dark Side' } });
+    a.items.push({ id: 'light-power', type: 'force-power', system: { tags: ['light_side'] } });
+    a.items.push({ id: 'neutral-power', type: 'force-power', system: { descriptors: ['Telekinetic'] } });
+    const powerRoll = (targetItemInstanceId) => ({
+      useKind: 'roll-bonus', rollDomain: 'force-power.activation', targetItemInstanceId
+    });
+    assert.equal(ForcePointsService.authorizeSpend(a, powerRoll('dark-power')).valid, false);
+    assert.equal(ForcePointsService.authorizeSpend(a, powerRoll('light-power')).valid, false);
+    assert.equal(ForcePointsService.authorizeSpend(a, powerRoll('neutral-power')).valid, true);
+    assert.equal(ForcePointsService.authorizeSpend(a, powerRoll('missing-power')).valid, false);
+    check('Core Power descriptors constrain paid UTF activation, not unrelated checks');
+  }
+  {
     const a = makeActor({ normal: 0, bonus: [{
       id: 'restricted-1', source: 'Guardian Spirit', value: 1, max: 1,
       restrictions: 'Power or technique only', expires: 'daily-rest-cycle'
