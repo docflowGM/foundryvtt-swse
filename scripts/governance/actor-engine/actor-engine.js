@@ -38,6 +38,25 @@ import { normalizeActiveEffectDataForRuntime } from "/systems/foundryvtt-swse/sc
 // Track instrumented actors to avoid re-patching
 const _instrumentedActors = new WeakMap();
 
+// Serialize Force Point commits/compensations for one Actor document in this
+// client. Foundry has no cross-client compare-and-swap; live multi-client
+// authority remains a separate acceptance requirement.
+const _forcePointQueues = new WeakMap();
+async function withForcePointQueue(actor, operation) {
+  const prior = _forcePointQueues.get(actor) ?? Promise.resolve();
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  const tail = prior.then(() => pending);
+  _forcePointQueues.set(actor, tail);
+  await prior;
+  try { return await operation(); }
+  finally {
+    release();
+    if (_forcePointQueues.get(actor) === tail) _forcePointQueues.delete(actor);
+  }
+}
+
+
 export const ActorEngine = {
   // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
   // Uses reference counting to handle nested updates (preUpdateActor hooks calling updateActor again)
@@ -1999,103 +2018,128 @@ export const ActorEngine = {
   },
 
   /**
-   * spendForcePoints() — Reduce actor's force points
-   *
-   * @param {Actor} actor - target actor
-   * @param {number} amount - number of points to spend
+   * Canonical Force Point mutation: re-authorize inside the actor queue and
+   * debit one exact eligible source together with its persisted receipt.
+   * Unclassified two-argument callers must be cut over, not silently allowed.
    */
-  async spendForcePoints(actor, amount = 1) {
-    try {
-      if (!actor) {throw new Error('spendForcePoints() called with no actor');}
-      if (typeof amount !== 'number' || amount < 0) {
-        throw new Error(`Invalid force point amount: ${amount}`);
-      }
+  async spendForcePoints(actor, amount = 1, context = {}) {
+    if (!actor?.id) throw new Error('spendForcePoints requires an identified actor');
+    return withForcePointQueue(actor, async () => {
+      const requestId = String(context?.requestId ||
+        globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.() || '');
+      if (!requestId) throw new Error('Force Point transaction request identity unavailable');
+      const decision = ForcePointsService.authorizeSpend(actor, {
+        ...context, requestedCount: amount, requestId
+      });
+      if (!decision.valid) throw new Error(decision.message);
 
-      const normalizeBonusEntries = (pool = {}) => {
-        const entries = Array.isArray(pool.entries) ? pool.entries.map((entry, index) => ({
-          id: String(entry?.id ?? `bonus-${index}`),
-          source: String(entry?.source ?? 'Bonus Force Point'),
-          value: Math.max(0, Number(entry?.value ?? 0) || 0),
-          max: Math.max(0, Number(entry?.max ?? entry?.value ?? 0) || 0),
-          restrictions: entry?.restrictions ?? entry?.restriction ?? '',
-          expires: entry?.expires ?? '',
-          encounterId: entry?.encounterId ?? null,
-          createdAt: entry?.createdAt ?? null
-        })).filter(entry => entry.value > 0) : [];
-        const legacyValue = Math.max(0, Number(pool.value ?? 0) || 0);
-        const entryTotal = entries.reduce((sum, entry) => sum + entry.value, 0);
-        if (!entries.length && legacyValue > 0) {
-          entries.push({ id: 'legacy-bonus-force-points', source: Array.isArray(pool.sources) && pool.sources.length ? pool.sources.join(', ') : 'Bonus Force Point', value: legacyValue, max: Math.max(legacyValue, Number(pool.max ?? legacyValue) || legacyValue), restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
-        } else if (legacyValue > entryTotal) {
-          entries.push({ id: 'legacy-bonus-force-points', source: 'Bonus Force Point', value: legacyValue - entryTotal, max: legacyValue - entryTotal, restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
+      const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+      const sourceEntries = Array.isArray(pool.entries) ? pool.entries.map(entry => ({ ...entry })) : [];
+      const debit = decision.bonusEntriesSpent ?? [];
+      for (const spentEntry of debit) {
+        const found = sourceEntries.find(entry => entry.id === spentEntry.id);
+        if (!found || Number(found.value) < spentEntry.amount) {
+          throw new Error('Bonus Force Point source changed before commit');
         }
-        return entries;
+        found.value = Number(found.value) - spentEntry.amount;
+      }
+      const normal = Number(actor.system?.forcePoints?.value ?? 0);
+      if (normal < decision.normalSpent) throw new Error('Normal Force Points changed before commit');
+      const kept = sourceEntries.filter(entry => Number(entry.value ?? 0) > 0);
+      const bonusAfter = kept.reduce((sum, entry) => sum + Number(entry.value), 0);
+      const normalAfter = normal - decision.normalSpent;
+      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+      const entries = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
+      if (entries.some(entry => entry.requestId === requestId)) throw new Error('Duplicate Force Point transaction');
+      const receiptId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
+      if (!receiptId) throw new Error('Force Point receipt identity unavailable');
+      const receipt = {
+        receiptId, requestId, actorId: actor.id,
+        roundKey: decision.roundKey, useKind: decision.useKind,
+        countsTowardRoundLimit: decision.countsTowardRoundLimit,
+        normalSpent: decision.normalSpent,
+        bonusEntriesSpent: debit.map(({ id, source, amount, entry }) =>
+          ({ id, source, amount, entry: { ...entry } })),
+        spent: amount, state: 'committed'
       };
-      const buildBonusPool = (entries = [], existing = {}) => {
-        const clean = entries.filter(entry => Math.max(0, Number(entry.value) || 0) > 0);
-        const value = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
-        const max = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-        return {
-          ...existing,
-          value,
-          max: Math.max(value, max),
-          sources: [...new Set(clean.map(entry => entry.source).filter(Boolean))],
-          entries: clean,
-          note: existing.note || 'Bonus Force Points are spent before normal Force Points and may have source-specific restrictions.'
+      const ledger = { receipts: [...entries, receipt] };
+      const update = {
+        'system.forcePoints.value': normalAfter,
+        'flags.swse.forcePointLedger': ledger
+      };
+      if (debit.length > 0) {
+        update['flags.swse.bonusForcePoints'] = {
+          ...pool,
+          entries: kept,
+          value: bonusAfter,
+          max: Math.max(bonusAfter, kept.reduce((sum, entry) => sum + Number(entry.max ?? entry.value ?? 0), 0)),
+          sources: [...new Set(kept.map(entry => entry.source).filter(Boolean))]
         };
-      };
-
-      const bonusPool = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
-      const bonusEntries = normalizeBonusEntries(bonusPool);
-      const bonusCurrent = bonusEntries.reduce((sum, entry) => sum + entry.value, 0);
-      const bonusSpent = Math.min(bonusCurrent, amount);
-      const normalToSpend = Math.max(0, amount - bonusSpent);
-
-      let remainingBonusSpend = bonusSpent;
-      const remainingEntries = [];
-      for (const entry of bonusEntries) {
-        if (remainingBonusSpend <= 0) {
-          remainingEntries.push(entry);
-          continue;
-        }
-        const used = Math.min(entry.value, remainingBonusSpend);
-        remainingBonusSpend -= used;
-        const left = entry.value - used;
-        if (left > 0) remainingEntries.push({ ...entry, value: left });
       }
-
-      // Delegate normal FP calculation to ForcePointsService; mutation stays here.
-      const { newValue: newFP, actualSpent: normalSpent } = ForcePointsService.calcSpend(actor, normalToSpend);
-      const actualSpent = bonusSpent + normalSpent;
-
-      if (actualSpent === 0) {
-        SWSELogger.debug(`${actor.name} has no force points to spend`);
-        return { spent: 0, remaining: newFP, bonusSpent: 0, normalSpent: 0, bonusRemaining: bonusCurrent };
-      }
-
-      const update = { 'system.forcePoints.value': newFP };
-      if (bonusSpent > 0) {
-        update['flags.swse.bonusForcePoints'] = buildBonusPool(remainingEntries, bonusPool);
-      }
-
+      // A rejected or thrown write is never interpreted as a successful
+      // payment; an applied-then-threw write is indeterminate, not retried.
       await this.updateActor(actor, update);
+      return {
+        ...receipt, remaining: normalAfter, bonusRemaining: bonusAfter,
+        bonusSpent: debit.reduce((sum, entry) => sum + entry.amount, 0)
+      };
+    });
+  },
 
-      SWSELogger.log(`Force points spent: ${actor.name} used ${actualSpent}FP (${bonusSpent} bonus, ${normalSpent} normal; normal now: ${newFP})`, {
-        amount: actualSpent,
-        bonusSpent,
-        normalSpent,
-        bonusRemaining: remainingEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0)
-      });
-
-      return { spent: actualSpent, remaining: newFP, bonusSpent, normalSpent, bonusRemaining: remainingEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0) };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.spendForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        amount
-      });
-      throw err;
-    }
+  /**
+   * Exact compensation of one committed, not-yet-finalized expenditure.
+   * Read the actor-owned journal, never trust a caller-supplied debit amount.
+   */
+  async rollbackForcePointSpend(actor, spentReceipt) {
+    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Identified actor and Force Point receipt required');
+    return withForcePointQueue(actor, async () => {
+      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+      const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
+      const index = records.findIndex(entry => entry.receiptId === spentReceipt.receiptId && entry.actorId === actor.id);
+      if (index < 0 || records[index].state !== 'committed') return { rolledBack: false, reason: 'Receipt missing or already compensated' };
+      const own = records[index];
+      const normal = Number(actor.system?.forcePoints?.value ?? 0);
+      const max = Number(actor.system?.forcePoints?.max ?? normal);
+      if (normal + own.normalSpent > max) {
+        return { rolledBack: false, reason: 'Normal Force Point capacity changed; manual reconciliation required' };
+      }
+      const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+      const merged = Array.isArray(pool.entries) ? pool.entries.map(e => ({ ...e })) : [];
+      for (const used of own.bonusEntriesSpent ?? []) {
+        const existing = merged.find(e => e.id === used.id);
+        if (existing) {
+          const e = used.entry;
+          if (existing.source !== e.source || existing.expires !== e.expires ||
+              JSON.stringify(existing.restrictions ?? existing.restriction ?? '') !== JSON.stringify(e.restrictions ?? e.restriction ?? '')) {
+            return { rolledBack: false, reason: 'Bonus Force Point entry identity has changed' };
+          }
+          if (Number(existing.value ?? 0) + used.amount > Number(existing.max ?? e.max ?? 0)) {
+            return { rolledBack: false, reason: 'Bonus Force Point entry has no capacity for exact refund' };
+          }
+          existing.value = Number(existing.value) + used.amount;
+        } else {
+          merged.push({ ...used.entry, value: used.amount });
+        }
+      }
+      const bonusValue = merged.reduce((sum, e) => sum + Number(e.value ?? 0), 0);
+      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'rolled-back' } : r);
+      const update = {
+        'system.forcePoints.value': normal + own.normalSpent,
+        'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords }
+      };
+      if (own.bonusEntriesSpent?.length) {
+        update['flags.swse.bonusForcePoints'] = {
+          ...pool,
+          entries: merged,
+          value: bonusValue,
+          max: Math.max(bonusValue, merged.reduce((sum, e) => sum + Number(e.max ?? e.value ?? 0), 0)),
+          sources: [...new Set(merged.map(e => e.source).filter(Boolean))]
+        };
+      }
+      await this.updateActor(actor, update);
+      return { rolledBack: true, receiptId: own.receiptId, normalRestored: own.normalSpent,
+        bonusRestored: (own.bonusEntriesSpent ?? []).reduce((sum, e) => sum + e.amount, 0) };
+    });
   },
 
   /**
