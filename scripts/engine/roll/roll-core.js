@@ -98,7 +98,7 @@ export class RollCore {
         // above; since this roll never happened, refund it rather than leaving
         // the actor short a point for a bonus they never received.
         if (forcePointDetails?.success && forcePointDetails.spent > 0) {
-          await this._refundForcePoints(actor, forcePointDetails.spent, 'main-roll-execution-failed');
+          await this._refundForcePoints(actor, forcePointDetails.spendReceipt, 'main-roll-execution-failed');
         }
         return { success: false, error: `Roll execution failed: ${err.message}`, domain, breakdown: {} };
       }
@@ -236,17 +236,28 @@ export class RollCore {
       dieSize: receipt.dieSize,
       dieUpgradeSteps: receipt.dieUpgradeSteps,
       dieUpgradeSource: receipt.dieUpgradeSource,
-      roll: receipt.roll
+      roll: receipt.roll,
+      spendReceipt: receipt.spendReceipt
     };
   }
 
-  /** Refund Force Points already spent when a roll they paid for never completed. */
-  static async _refundForcePoints(actor, amount, refundReason) {
+  /** Compensate an unexecuted paid roll from the persisted source-exact receipt. */
+  static async _refundForcePoints(actor, receipt, refundReason) {
+    if (!receipt?.receiptId) {
+      swseLogger.error(`[RollCore] Cannot compensate ${refundReason}: missing exact Force Point receipt`);
+      return false;
+    }
     try {
       const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-      await ActorEngine.gainForcePoints(actor, amount);
+      const result = await ActorEngine.rollbackForcePointSpend(actor, receipt);
+      if (!result?.rolledBack) {
+        swseLogger.error(`[RollCore] Exact Force Point compensation refused after ${refundReason}: ${result?.reason}`);
+        return false;
+      }
+      return true;
     } catch (err) {
-      swseLogger.error(`[RollCore] Failed to refund ${amount} Force Point(s) after ${refundReason}; actor may be short a point.`, err);
+      swseLogger.error(`[RollCore] Exact Force Point compensation failed after ${refundReason}; manual reconciliation required.`, err);
+      return false;
     }
   }
 
