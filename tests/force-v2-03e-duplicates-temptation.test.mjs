@@ -127,3 +127,22 @@ const lightPower = { type: 'force-power', name: 'Valor', system: { descriptors: 
   check('talent pathway: tree + prerequisite gates, temp talents count, end of encounter removes them and raises DSS by Force Points spent');
 }
 console.log(`ALL ${n} PASSED`);
+
+// --- V2 progression: duplicate Force Power copies and duplicate maneuvers become separate owned items
+{
+  const { ProgressionContentAuthority } = await import('/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js');
+  ProgressionContentAuthority.getForceDocument = async (entry) => ({ toObject: () => ({ name: entry.name, type: 'force-power', system: { dcChart: [] } }) });
+  const actor = mkActor([{ id: 'own1', type: 'force-power', name: 'Surge', system: {}, flags: {} }, { id: 'man1', type: 'maneuver', name: 'Attack Pattern Delta', system: {}, flags: {} }]);
+  const out = await ProgressionFinalizer._compileProgressionAbilityItemsBase(actor, {
+    forcePowers: [{ id: 'surge', name: 'Surge', count: 2 }],
+    starshipManeuvers: [{ id: 'apd', name: 'Attack Pattern Delta', count: 1 }]
+  }, { sessionId: 'S9' });
+  const surges = out.items.filter(i => i.type === 'force-power' && i.name === 'Surge');
+  assert.equal(surges.length, 2, 'two NEW copies even though the actor already owns one');
+  assert.deepEqual(surges.map(i => i.flags.swse.progression.countIndex), [0, 1], 'each copy has its own identity');
+  const maneuvers = out.items.filter(i => i.type === 'maneuver');
+  assert.equal(maneuvers.length, 1, 'an already-owned maneuver can be added again');
+  assert.equal(maneuvers[0].system.discarded, false); assert.equal('spent' in maneuvers[0].system, false);
+  assert.deepEqual(out.metadata?.postApply?.starshipManeuverMarkers ?? out.postApply.starshipManeuverMarkers, [{ sessionId: 'S9', selectionId: 'apd', countIndex: 0 }]);
+  console.log('PASS 7: V2 progression finalizer creates separate owned copies for duplicate Force Powers and maneuvers');
+}

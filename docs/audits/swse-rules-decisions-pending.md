@@ -3865,3 +3865,33 @@ Implemented (`scripts/engine/force/temptation-of-the-dark-side.js`) as two SEPAR
 Also in 03E (engineering, no ruling): Core Rulebook, Force Powers ("you can select the same Force power more than once") and Starships of the Galaxy (Starship Tactics: "You can add the same maneuver more than once") are printed rules, so name-based "already known" filters were removed from `ForcePowerEngine.applySelected` and `StarshipManeuverManager.getAvailableManeuvers`; the progression suite sync matches the exact copies a session created (per-copy markers) instead of every same-name maneuver; owned-copy removal accepts an exact `itemId`.
 
 Decision authority: project owner. Recommended ruling: none. Resolution: blank.
+
+
+## Game-night hardening (appended 2026-11-18; earlier entries preserved)
+
+### FP-RD-011 — OWNER RULING RECORDED (original question preserved above)
+Resolution: the project owner (PR #1165 owner directive, 2026-11-18) supplied the Core Rulebook errata for **Force Grip and Move Object (Core pp.97-98): maintaining requires a standard action and a fresh Use the Force check each round.** Implemented in `MAINTENANCE_CONTRACTS` (both: `maintainAction: 'standard'`, `freshCheckEachRound: true`). The errata PDF itself is still not in the repository; the owner's statement is the authority. Still open within FP-RD-011: whether damage while maintaining forces a concentration check for these two (not printed) — remains `DEFERRED_RULES_REVIEW`; no automatic concentration prompt is raised for them.
+
+### FP-RD-014 — When does an unmaintained instance end? (new)
+| Field | Value |
+| --- | --- |
+| Feature | Maintenance timing for Energy Resistance, Force Whirlwind, Kinetic Combat, Resist Force, Valor, Force Grip, Move Object |
+| Source | KOTOR Campaign Guide / FUCG / Core: "You can maintain X from round to round, extending the normal duration" (durations "until the beginning of your next turn") |
+| Confirmed | Maintenance costs the printed action on the caster's turn and extends the duration. |
+| Unresolved | Exactly when an unmaintained instance ends: at the START of the caster's next turn (strict reading of the duration) or at the END of that turn (the caster's chance to spend the maintenance action). |
+| Implementation (engineering default, reversible) | Lapse at the END of the caster's turn (`updateCombat` turn change → `lapseUnmaintained`), so the caster always gets the turn in which to maintain; maintenance at most once per round. Out-of-combat instances have no turn clock and never auto-lapse (end them with the End control). One function changes it. |
+| Recommended ruling | None |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-013d — fail-closed applied (original question preserved above)
+Temptation acquisition is refused (and not charged) unless a combat is started, and end-of-encounter removal is scoped to that combat. Outside combat the optional rule is unavailable until the owner rules on what ends an out-of-combat encounter.
+
+### FP-RD-012 — engineering follow-up progress
+Resist Force / Valor conditional bonuses remain reminder-gated effects (no automatic defense math). New table-facing pathway: when a Force power is activated against a target, the Force power card lists the target's applicable conditional defense bonuses (Resist Force vs any Force power; Valor vs mind-affecting/fear, or all Will-targeting effects when its Force Point option was paid). Force power defense comparison is still adjudicated at the table (the executor has no automated target-defense comparison).
+
+### Defects fixed during the game-night pass (engineering, no ruling needed)
+- `ForceExecutor.executeForcePower` referenced an undefined `telekineticPowerRepeatAction`; every activation threw after rolling, spending and applying effects, then a runtime wrapper restored the power to ready (present on `main` too).
+- Duplicate Force power selections in V2 progression shared ONE item object, so every copy received the last copy's identity (`countIndex`); each copy is now its own object.
+- Rest proofs: honored only on a GM client and only with an explicit unit (GM services emit minutes).

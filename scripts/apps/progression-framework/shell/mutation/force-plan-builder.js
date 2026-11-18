@@ -245,7 +245,8 @@ export class ForcePlanBuilder {
           if (existingBySessionMarker.has(sessionMarker)) continue;
           if (!allowDuplicateForEntry && existingByTypeAndName.has(dedupeKey)) continue;
 
-          const baseItem = resolvedData || {
+          // Each copy is its own item object: sharing one object across count>1 gave every copy the last copy's identity.
+          const baseItem = (resolvedData ? foundry.utils.deepClone(resolvedData) : null) || {
             name: storedName,
             type: domain.type,
             system: rawEntry?.system || {},

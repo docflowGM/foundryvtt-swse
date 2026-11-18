@@ -299,7 +299,8 @@ export class ForcePointsService {
       const item = Array.from(actor.items ?? []).find(i => i.id === context.targetItemInstanceId);
       const power = useKind === 'recover-one-force-power';
       if (!item || (power ? !['force-power', 'lightsaber-form-power'].includes(item.type) : item.type !== 'maneuver') ||
-          (item.system?.spent !== true && item.system?.discarded !== true)) {
+          item.system?.discarded !== true || item.flags?.swse?.temptation) {
+        // Canonical suite state only (system.discarded); a Temptation power (FUCG p.85) can never be recovered.
         return reject('A specific owned spent suite instance is required for recovery');
       }
     } else if (useKind === 'avoid-death') {
