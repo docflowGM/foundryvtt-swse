@@ -1,0 +1,1429 @@
+{
+  "schemaVersion": "0.1",
+  "audit": "SWSE Force V2 Checkpoint 02 — owner identity crosswalk",
+  "date": "2026-11-18",
+  "branch": "audit/force-v2-seven-book-packages-v2-9-20261117",
+  "classification": "OFFLINE IDENTITY RECONCILIATION ONLY; NO RUNTIME CERTIFICATION OR PRODUCTION MUTATION",
+  "graphEdges": 178,
+  "externalSourceIdentifierCount": 67,
+  "externalSourceCounts": {
+    "feat": 9,
+    "rule": 12,
+    "talent": 44,
+    "equipment": 2
+  },
+  "identityLinkedCount": 54,
+  "ownerDecisionsRemaining": 13,
+  "externalGraphTargets": [
+    {
+      "sourceDefinitionId": "core/talent/battle-meditation",
+      "ownerType": "talent-item",
+      "ownerRecordId": "9461c7aa79dd07c6",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Guardian|Battle Meditation",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    }
+  ],
+  "interpretation": [
+    "Graph semantic IDs are not Foundry item IDs.",
+    "Existing canonical feat/talent identities reused, including three Phase 3E additions.",
+    "Skill Focus (Use the Force) remains scoped to generic Skill Focus.",
+    "Combat Thrusters belongs to vehicle-modifications/movement-systems.json.",
+    "Death Sticks is not assigned an invented equipment ID.",
+    "Twelve external rule identifiers require policy owners rather than new Items.",
+    "None of these resolutions certify executable effect behavior."
+  ],
+  "sources": [
+    {
+      "sourceDefinitionId": "core/feat/force-boon",
+      "sourceName": "Force Boon",
+      "sourceDomain": "feat",
+      "sourcePages": [
+        85
+      ],
+      "influenceRuleIds": [
+        "core/influence/force-boon"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "feat-item",
+      "ownerRecordId": "53444cc061d81627",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/audits/feat-provenance-canonical-authority.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/feat/force-sensitivity",
+      "sourceName": "Force Sensitivity",
+      "sourceDomain": "feat",
+      "sourcePages": [
+        85
+      ],
+      "influenceRuleIds": [
+        "core/influence/force-sensitivity"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "feat-item",
+      "ownerRecordId": "ddbeb23013d9e917",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/audits/feat-provenance-canonical-authority.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/feat/force-training",
+      "sourceName": "Force Training",
+      "sourceDomain": "feat",
+      "sourcePages": [
+        85
+      ],
+      "influenceRuleIds": [
+        "core/influence/force-training"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "feat-item",
+      "ownerRecordId": "9b7b869a86f39190",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/audits/feat-provenance-canonical-authority.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/feat/improved-disarm",
+      "sourceName": "Improved Disarm",
+      "sourceDomain": "feat",
+      "sourcePages": [
+        97
+      ],
+      "influenceRuleIds": [
+        "core/influence/improved-disarm"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "feat-item",
+      "ownerRecordId": "ce473e52f90b160a",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/audits/feat-provenance-canonical-authority.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/feat/skill-focus-use-the-force",
+      "sourceName": "Skill Focus (Use the Force)",
+      "sourceDomain": "feat",
+      "sourcePages": [
+        88
+      ],
+      "influenceRuleIds": [
+        "core/influence/skill-focus-use-the-force"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "feat-item",
+      "ownerRecordId": "1592aaedf4b6e40a",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/audits/feat-provenance-canonical-authority.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "scope": {
+        "kind": "skill",
+        "value": "Use the Force"
+      },
+      "comment": "Scoped choice of generic Skill Focus feat; no independent feat item."
+    },
+    {
+      "sourceDefinitionId": "core/feat/strong-in-the-force",
+      "sourceName": "Strong in the Force",
+      "sourceDomain": "feat",
+      "sourcePages": [
+        88
+      ],
+      "influenceRuleIds": [
+        "core/influence/strong-in-the-force"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "feat-item",
+      "ownerRecordId": "71892687abbed346",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/audits/feat-provenance-canonical-authority.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/rule/move-light-object-projectile",
+      "sourceName": "Move Light Object Projectile",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        77
+      ],
+      "influenceRuleIds": [
+        "core/influence/move-light-object-projectile"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "core/rule/telekinetic-descriptor",
+      "sourceName": "Telekinetic Descriptor",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        96
+      ],
+      "influenceRuleIds": [
+        "core/influence/telekinetic-descriptor"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "core/talent/deflect",
+      "sourceName": "Deflect",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        41
+      ],
+      "influenceRuleIds": [
+        "core/influence/deflect"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "72c644f7a09b1186",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Combat|Deflect",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/talent/disciplined-strike",
+      "sourceName": "Disciplined Strike",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        100
+      ],
+      "influenceRuleIds": [
+        "core/influence/disciplined-strike"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "0fc08fad3a87a830",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Disciplined Strike",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/talent/force-focus",
+      "sourceName": "Force Focus",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        101
+      ],
+      "influenceRuleIds": [
+        "core/influence/force-focus"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "af51d4e76675b183",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Control|Force Focus",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/talent/force-perception",
+      "sourceName": "Force Perception",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        101
+      ],
+      "influenceRuleIds": [
+        "core/influence/force-perception"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "a358402a9fc26c02",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Force Perception",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/talent/force-pilot",
+      "sourceName": "Force Pilot",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        101
+      ],
+      "influenceRuleIds": [
+        "core/influence/force-pilot",
+        "sotg/influence/force-pilot-applies-only-pilot",
+        "sotg/influence/force-pilot-does-not-apply-gunner",
+        "sotg/influence/force-pilot-does-not-apply-target-sense"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json",
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "443373859f1ecca3",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Force Pilot",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/talent/swift-power",
+      "sourceName": "Swift Power",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        101
+      ],
+      "influenceRuleIds": [
+        "core/influence/swift-power"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "09609e71ba6cd4aa",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Swift Power",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/talent/telekinetic-power",
+      "sourceName": "Telekinetic Power",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        100
+      ],
+      "influenceRuleIds": [
+        "core/influence/telekinetic-power",
+        "cwcg/influence/telekinetic-power"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json",
+        "REVALIDATED_CloneWars_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "11cae48e1213c407",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Telekinetic Power",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/talent/telekinetic-savant",
+      "sourceName": "Telekinetic Savant",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        100
+      ],
+      "influenceRuleIds": [
+        "core/influence/telekinetic-savant",
+        "cwcg/influence/telekinetic-savant"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json",
+        "REVALIDATED_CloneWars_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "ddacb8e4517da6b5",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Telekinetic Savant",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "core/talent/visions",
+      "sourceName": "Visions",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        101
+      ],
+      "influenceRuleIds": [
+        "core/influence/visions"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Core_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "da12fc505efc5eea",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Visions",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "cwcg/talent/attuned",
+      "sourceName": "Attuned",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        53
+      ],
+      "influenceRuleIds": [
+        "cwcg/influence/attuned"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_CloneWars_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "bd797d3f83d0f61f",
+      "canonicalIdentity": "Clone Wars Campaign Guide|Light Side|Attuned",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "cwcg/talent/focused-force-talisman",
+      "sourceName": "Focused Force Talisman",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        40
+      ],
+      "influenceRuleIds": [
+        "cwcg/influence/focused-force-talisman"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_CloneWars_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "12eea831f06c45f7",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Item|Focused Force Talisman",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "cwcg/talent/greater-focused-force-talisman",
+      "sourceName": "Greater Focused Force Talisman",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        40
+      ],
+      "influenceRuleIds": [
+        "cwcg/influence/greater-focused-force-talisman"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_CloneWars_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "4ae840aaa4e0eba0",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Item|Greater Focused Force Talisman",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "cwcg/talent/psychometry",
+      "sourceName": "Psychometry",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        53
+      ],
+      "influenceRuleIds": [
+        "cwcg/influence/psychometry"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_CloneWars_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "8ff0ec89e13b6d51",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Psychometry",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "cwcg/talent/surge-of-light",
+      "sourceName": "Surge of Light",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        53
+      ],
+      "influenceRuleIds": [
+        "cwcg/influence/surge-of-light"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_CloneWars_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "8223d30bfce0c14d",
+      "canonicalIdentity": "Clone Wars Campaign Guide|Light Side|Surge of Light",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "cwcg/talent/the-will-to-resist",
+      "sourceName": "The Will to Resist",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        53
+      ],
+      "influenceRuleIds": [
+        "cwcg/influence/the-will-to-resist"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_CloneWars_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "9befb5e9bce19fa0",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Control|The Will To Resist",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "fucg/feat/unleashed",
+      "sourceName": "Unleashed",
+      "sourceDomain": "feat",
+      "sourcePages": [
+        35
+      ],
+      "influenceRuleIds": [
+        "fucg/influence/unleashed-feat-gating"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_ForceUnleashed_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "feat-item",
+      "ownerRecordId": "bcc7f3fe56008a28",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/audits/feat-provenance-canonical-authority.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "fucg/rule/temptation-of-dark-side",
+      "sourceName": "Temptation of the Dark Side",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        85
+      ],
+      "influenceRuleIds": [
+        "fucg/influence/temptation-of-dark-side-temporary-talents"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_ForceUnleashed_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "fucg/talent/feel-the-force",
+      "sourceName": "Feel the Force",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        88
+      ],
+      "influenceRuleIds": [
+        "fucg/influence/feel-the-force"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_ForceUnleashed_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "301415f97665a33b",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Feel the Force",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-force-unleashed-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "fucg/talent/force-exertion",
+      "sourceName": "Force Exertion",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        87
+      ],
+      "influenceRuleIds": [
+        "fucg/influence/force-exertion"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_ForceUnleashed_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "7d0259a008e5d68f",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Control|Force Exertion",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-force-unleashed-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "fucg/talent/illusion",
+      "sourceName": "Illusion",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        87
+      ],
+      "influenceRuleIds": [
+        "fucg/influence/illusion"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_ForceUnleashed_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "708a47d1be414990",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Illusion",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-force-unleashed-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "fucg/talent/telekinetic-prodigy",
+      "sourceName": "Telekinetic Prodigy",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        87
+      ],
+      "influenceRuleIds": [
+        "fucg/influence/telekinetic-prodigy"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_ForceUnleashed_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "7af4caf439358120",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Telekinetic Prodigy",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-force-unleashed-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "fucg/talent/wrath-of-the-dark-side",
+      "sourceName": "Wrath of the Dark Side",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        88
+      ],
+      "influenceRuleIds": [
+        "fucg/influence/wrath-of-the-dark-side"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_ForceUnleashed_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "f5ebaf5d77257e0c",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Wrath of the Dark Side",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-force-unleashed-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "kotor/rule/energy-resistance-continuation",
+      "sourceName": "Energy Resistance Continuation",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        50
+      ],
+      "influenceRuleIds": [
+        "kotor/influence/energy-resistance-continuation"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_KOTOR_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "kotor/rule/kotor-size-adjusted-fortitude",
+      "sourceName": "KOTOR Size-Adjusted Fortitude",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        50
+      ],
+      "influenceRuleIds": [
+        "kotor/influence/kotor-size-adjusted-fortitude"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_KOTOR_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "kotor/talent/beast-trick",
+      "sourceName": "Beast Trick",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        53
+      ],
+      "influenceRuleIds": [
+        "kotor/influence/beast-trick"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_KOTOR_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "6c374ec52e710f11",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Control|Beast Trick",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "kotor/talent/force-flow",
+      "sourceName": "Force Flow",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        52
+      ],
+      "influenceRuleIds": [
+        "kotor/influence/force-flow"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_KOTOR_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "b0898acb0a19a3cd",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Force Flow",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "kotor/talent/force-suppression",
+      "sourceName": "Force Suppression",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        53
+      ],
+      "influenceRuleIds": [
+        "kotor/influence/force-suppression"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_KOTOR_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "7fa47c5d2c33ed40",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Control|Force Suppression",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "kotor/talent/rebuke-the-dark",
+      "sourceName": "Rebuke the Dark",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        39
+      ],
+      "influenceRuleIds": [
+        "kotor/influence/rebuke-the-dark"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_KOTOR_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "55379010171cf765",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jedi Shadow|Rebuke the Dark",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "kotor/talent/taint-of-the-dark-side",
+      "sourceName": "Taint of the Dark Side",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        39
+      ],
+      "influenceRuleIds": [
+        "kotor/influence/taint-of-the-dark-side"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_KOTOR_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "3f5b1b3566f16ff5",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jedi Shadow|Taint of the Dark Side",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "kotor/talent/telepathic-influence",
+      "sourceName": "Telepathic Influence",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        53
+      ],
+      "influenceRuleIds": [
+        "kotor/influence/telepathic-influence"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_KOTOR_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "3b30ffbfc3e3270f",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Telepathic Influence",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "kotor/talent/telepathic-link",
+      "sourceName": "Telepathic Link",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        53
+      ],
+      "influenceRuleIds": [
+        "kotor/influence/telepathic-link"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_KOTOR_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "25dd9d9b3b66c048",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Telepathic Link",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "legacy/equipment/death-sticks",
+      "sourceName": "Death Sticks",
+      "sourceDomain": "equipment",
+      "sourcePages": [
+        56
+      ],
+      "influenceRuleIds": [
+        "legacy/equipment/death-sticks/use-the-force-check-penalty",
+        "legacy/equipment/death-sticks/force-point-spend-prohibition",
+        "legacy/equipment/death-sticks/morale-attack",
+        "legacy/equipment/death-sticks/morale-defenses"
+      ],
+      "sourceGraphFiles": [
+        "SWSE_Force_V2_Legacy_Era_Book_7_Cross_Domain_Influence_Graph_v0.1.json"
+      ],
+      "identityStatus": "requires-owner-decision",
+      "ownerType": "equipment-or-consumable-status",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "No verified canonical equipment identity. Requires consumable and effect-lifecycle ownership; do not confuse with Darkstick weapon."
+    },
+    {
+      "sourceDefinitionId": "sotg/equipment/combat-thrusters",
+      "sourceName": "Combat Thrusters",
+      "sourceDomain": "equipment",
+      "sourcePages": [
+        40
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/combat-thrusters"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "vehicle-modification",
+      "ownerRecordId": "combat-thrusters",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/vehicle-modifications/movement-systems.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "sotg/feat/starship-tactics",
+      "sourceName": "Starship Tactics",
+      "sourceDomain": "feat",
+      "sourcePages": [
+        20
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/starship-tactics-slots"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "feat-item",
+      "ownerRecordId": "376d805d1b73f7e6",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/audits/feat-provenance-canonical-authority.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "sotg/feat/tactical-genius",
+      "sourceName": "Tactical Genius",
+      "sourceDomain": "feat",
+      "sourcePages": [
+        20
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/tactical-genius"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "feat-item",
+      "ownerRecordId": "da8e272f5dae09b9",
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": "data/audits/feat-provenance-canonical-authority.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "sotg/rule/corellian-slip-errata",
+      "sourceName": "Corellian Slip Errata",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        25
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/corellian-slip-errata"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "sotg/rule/fighter-group",
+      "sourceName": "Fighter Groups (Errata)",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        31
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/fighter-group-errata"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "sotg/rule/fp-recovery",
+      "sourceName": "Force Point Maneuver Recovery",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        24
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/fp-recover-one"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "sotg/rule/one-active-attack-pattern",
+      "sourceName": "Attack Pattern Exclusivity",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        24
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/one-active-pattern"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "sotg/rule/pilot-nat20",
+      "sourceName": "Maneuver Pilot Natural 20",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        24
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/pilot-natural-20-recovery"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "sotg/rule/rest-recovery",
+      "sourceName": "Maneuver After-Combat Rest",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        24
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/rest-recover-all"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "sotg/rule/target-sense-battle-strike",
+      "sourceName": "Target Sense and Battle Strike",
+      "sourceDomain": "rule",
+      "sourcePages": [
+        30
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/target-sense-battle-strike"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "requires-policy-owner",
+      "ownerType": "rules-policy",
+      "ownerRecordId": null,
+      "canonicalIdentity": null,
+      "ownerAuthorityFile": null,
+      "runtimeWiringStatus": "NOT_CERTIFIED",
+      "comment": "Not a compendium item; executable rules owner and regression evidence pending."
+    },
+    {
+      "sourceDefinitionId": "sotg/talent/force-reflexes",
+      "sourceName": "Force Reflexes",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        16
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/force-reflexes"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "ece2612b7449f39a",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Force Reflexes",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "sotg/talent/squadron-tactics",
+      "sourceName": "Squadron Tactics",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        18
+      ],
+      "influenceRuleIds": [
+        "sotg/influence/squadron-tactics-errata"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_Starships_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "ec12bc7f161a0893",
+      "canonicalIdentity": "Starships of the Galaxy|Squadron Leader|Squadron Tactics",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/alter/move-massive-object",
+      "sourceName": "Move Massive Object",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        55
+      ],
+      "influenceRuleIds": [
+        "legacy/talent/move-massive-object"
+      ],
+      "sourceGraphFiles": [
+        "SWSE_Force_V2_Legacy_Era_Book_7_Cross_Domain_Influence_Graph_v0.1.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "62d461ae3b0fcfa9",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Move Massive Object",
+      "ownerAuthorityFile": "data/audits/talent-phase-3e-canonical-additions.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/control/telekinetic-stability",
+      "sourceName": "Telekinetic Stability",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        55
+      ],
+      "influenceRuleIds": [
+        "legacy/talent/telekinetic-stability"
+      ],
+      "sourceGraphFiles": [
+        "SWSE_Force_V2_Legacy_Era_Book_7_Cross_Domain_Influence_Graph_v0.1.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "208e1e15e989323f",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Control|Telekinetic Stability",
+      "ownerAuthorityFile": "data/audits/talent-phase-3e-canonical-additions.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/dark-side/dark-preservation",
+      "sourceName": "Dark Preservation",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        55
+      ],
+      "influenceRuleIds": [
+        "legacy/talent/dark-preservation"
+      ],
+      "sourceGraphFiles": [
+        "SWSE_Force_V2_Legacy_Era_Book_7_Cross_Domain_Influence_Graph_v0.1.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "192279eaa0b61d36",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Dark Preservation",
+      "ownerAuthorityFile": "data/audits/talent-phase-3e-canonical-additions.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/ataru",
+      "sourceName": "Ataru",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        31,
+        34
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/hawk-bat-swoop",
+        "jatm/influence/form-rider/saber-swarm"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "0b3f4075ed84aee0",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Ataru",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/djem-so",
+      "sourceName": "Djem So",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        31
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/falling-avalanche",
+        "jatm/influence/form-rider/fluid-riposte"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "9dfce712a60a097f",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Djem So",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/jar-kai",
+      "sourceName": "Jar'Kai",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        33,
+        35
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/rising-whirlwind",
+        "jatm/influence/form-rider/twin-strike"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "4552785ad56d90d4",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Jar'Kai",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/juyo",
+      "sourceName": "Juyo",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        29,
+        36
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/assured-strike",
+        "jatm/influence/form-rider/vornskr-s-ferocity"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "5fd19be0deca1115",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Juyo",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/makashi",
+      "sourceName": "Makashi",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        29,
+        32
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/contentious-opportunity",
+        "jatm/influence/form-rider/makashi-riposte"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "8ddbb7f6d4a11725",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Makashi",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/niman",
+      "sourceName": "Niman",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        30,
+        33
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/draw-closer",
+        "jatm/influence/form-rider/pushing-slash"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "7842befd5a8713c5",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Niman",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/shien",
+      "sourceName": "Shien",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        29,
+        34
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/barrier-of-blades",
+        "jatm/influence/form-rider/shien-deflection"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "e0223a2b572f2ef5",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Shien",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/shii-cho",
+      "sourceName": "Shii-Cho",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        30,
+        34
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/disarming-slash",
+        "jatm/influence/form-rider/sarlacc-sweep"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "c116f6249f4f47c9",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Shii-Cho",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/sokan",
+      "sourceName": "Sokan",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        32,
+        36
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/high-ground-defense",
+        "jatm/influence/form-rider/unhindered-charge"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "c95b1077ab31f9b0",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Sokan",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/soresu",
+      "sourceName": "Soresu",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        29,
+        30
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/circle-of-shelter",
+        "jatm/influence/form-rider/deflecting-slash"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "af8c6f9b6c06b448",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Soresu",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/trakata",
+      "sourceName": "Trakata",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        32,
+        35
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/pass-the-blade",
+        "jatm/influence/form-rider/unbalancing-block"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "629a0efa292511b7",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Trakata",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    },
+    {
+      "sourceDefinitionId": "talent/lightsaber-form/vaapad",
+      "sourceName": "Vaapad",
+      "sourceDomain": "talent",
+      "sourcePages": [
+        35
+      ],
+      "influenceRuleIds": [
+        "jatm/influence/form-rider/swift-flank",
+        "jatm/influence/form-rider/tempered-aggression"
+      ],
+      "sourceGraphFiles": [
+        "REVALIDATED_JATM_Influences_for_v2.9.json"
+      ],
+      "identityStatus": "matched-to-existing-authority",
+      "ownerType": "talent-item",
+      "ownerRecordId": "87c0a929a04eb870",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Vaapad",
+      "ownerAuthorityFile": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "runtimeWiringStatus": "NOT_CERTIFIED"
+    }
+  ]
+}
