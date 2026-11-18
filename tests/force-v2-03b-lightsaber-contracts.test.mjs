@@ -59,7 +59,10 @@ try {
   {
     assert.deepEqual(Object.keys(ABILITY_OPTION_CONTRACTS).filter(k => k.startsWith('lightsaber:')).sort(), ['lightsaber:promptBlock', 'lightsaber:promptDeflect', 'lightsaber:promptForceFortification', 'lightsaber:promptImprovedLightsaberThrow']);
     // The only other certified contracts are the two printed Force POWER activation options (KOTOR Resist Force / Valor Special).
-    assert.deepEqual(Object.keys(ABILITY_OPTION_CONTRACTS).filter(k => !k.startsWith('lightsaber:')).sort(), ['forcePower:resistForceTwoDefenses', 'forcePower:valorAllWill']);
+    // Other certified contracts: the two printed Force POWER activation options plus the talent contracts certified in
+    // tests/force-v2-03b-talent-contracts.test.mjs (each listed explicitly; no title-pattern authorization).
+    assert.deepEqual(Object.keys(ABILITY_OPTION_CONTRACTS).filter(k => k.startsWith('forcePower:')).sort(), ['forcePower:resistForceTwoDefenses', 'forcePower:valorAllWill']);
+    assert.ok(Object.keys(ABILITY_OPTION_CONTRACTS).every(k => !k.includes('${')), 'no templated refs');
     check('batch 1 certifies exactly four lightsaber contracts (the rest stay uncertified) plus the two Force power activation options');
   }
   {

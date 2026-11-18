@@ -2113,6 +2113,8 @@ export const ActorEngine = {
         receiptId, requestId, actorId: actor.id,
         roundKey: decision.roundKey, useKind: decision.useKind, reactionEventId: decision.reactionEventId ?? null, entitlement: decision.entitlement ?? null, abilitySourceRef: decision.abilitySourceRef ?? null, adjudicatedBy: decision.adjudicatedBy ?? null,
         countsTowardRoundLimit: decision.countsTowardRoundLimit,
+        // Campaign clock at the spend (once-per-day contract limits read it; null when the world has no clock).
+        worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null,
         normalSpent: decision.normalSpent,
         bonusEntriesSpent: debit.map(({ id, source, amount, entry }) =>
           ({ id, source, amount, entry: { ...entry } })),

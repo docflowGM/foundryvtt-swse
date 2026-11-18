@@ -1,3 +1,4 @@
+import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
@@ -232,16 +233,6 @@ async function promptFields(title, body, fields = []) {
   });
 }
 
-async function spendOneForcePoint(actor, title) {
-  // No caller-supplied override flag is accepted: no exception is granted by an
-  // unverified flag. See FP-RD-004 (Greater Focused Force Talisman).
-  const result = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: `force-adept:${title}` });
-  if (!result?.spent) {
-    ui?.notifications?.warn?.(`${title} requires spending 1 Force Point.`);
-    return false;
-  }
-  return true;
-}
 
 async function grantBonusForcePoint(actor, source) {
   const pool = actor.getFlag?.(NS, 'bonusForcePoints') ?? {};
@@ -392,9 +383,12 @@ export class ForceAdeptTalentActions {
     if (selected.recordOnly) {
       return postCard(actor, 'Force Power Adept', `<p>Recorded <strong>${esc(selected.powerName)}</strong> as a selected Force Power for Force Power Adept.</p><p>Recorded selections: <strong>${nextPowers.map(esc).join(', ')}</strong>.</p><p>When using a selected power, this actor may spend a Force Point to roll two Use the Force checks and keep the better result.</p>`, { powerName: selected.powerName, powers: nextPowers, recordedOnly: true });
     }
-    if (!(await spendOneForcePoint(actor, 'Force Power Adept'))) return null;
-    const result = await rollUseTheForce(actor, 'Force Power Adept', { keepBetter: true });
-    return postCard(actor, 'Force Power Adept', `<p>${esc(actor.name)} spends 1 Force Point while using <strong>${esc(selected.powerName)}</strong>.</p><p>Roll two Use the Force checks and keep the better result. <strong>Kept:</strong> ${result.kept?.total ?? '?'}.</p>`, { powerName: selected.powerName, powers: nextPowers, original: result.first?.total ?? null, reroll: result.second?.total ?? null, kept: result.kept?.total ?? null });
+    const fp = await beginContractedForcePoint(actor, "force-adept:Force Power Adept", {}, { label: "Force Power Adept" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const result = await rollUseTheForce(actor, 'Force Power Adept', { keepBetter: true });
+      return postCard(actor, 'Force Power Adept', `<p>${esc(actor.name)} spends 1 Force Point while using <strong>${esc(selected.powerName)}</strong>.</p><p>Roll two Use the Force checks and keep the better result. <strong>Kept:</strong> ${result.kept?.total ?? '?'}.</p>`, { powerName: selected.powerName, powers: nextPowers, original: result.first?.total ?? null, reroll: result.second?.total ?? null, kept: result.kept?.total ?? null });
+    });
   }
 
   static async promptForceTreatment(actor) {
@@ -450,7 +444,9 @@ export class ForceAdeptTalentActions {
       { name: 'dc', label: 'Original Telepathy DC', placeholder: 'optional' }
     ]);
     if (!choice) return null;
-    if (choice.mode === 'multi' && !(await spendOneForcePoint(actor, 'Long Call'))) return null;
+    const fp = choice.mode === 'multi' ? await beginContractedForcePoint(actor, 'force-adept:Long Call', {}, { label: 'Long Call' }) : null;
+    if (fp && !fp.ok) return null;
+    const run = async () => {
     const dc = Number(choice.dc) || null;
     const effectiveDc = choice.mode === 'willing' && dc ? Math.ceil(dc / 2) : dc;
     const result = choice.mode === 'unwilling'
@@ -462,6 +458,8 @@ export class ForceAdeptTalentActions {
         ? `Spent 1 Force Point to contact up to ${maxTargets} targets with one Use the Force check.`
         : 'Against an unwilling target, roll twice and keep the better result.';
     return postCard(actor, 'Long Call', `<p>${modeText}</p><p><strong>Use the Force:</strong> ${result.kept?.total ?? '?'}${effectiveDc ? ` vs DC ${effectiveDc}` : ''}.</p>`, { mode: choice.mode, dc: effectiveDc, maxTargets });
+    };
+    return fp ? fp.settle(run) : run();
   }
 
   static async promptMysticalLink(actor) {
@@ -506,10 +504,13 @@ export class ForceAdeptTalentActions {
     ]);
     const weapon = weapons.find(w => w.id === selected?.weaponId);
     if (!weapon) return null;
-    if (!(await spendOneForcePoint(actor, 'Attune Weapon'))) return null;
-    const state = forceItemState(weapon);
-    await weapon.setFlag?.(NS, 'forceItem', { ...state, attuned: { actorId: actor.id, actorName: actor.name, attackBonus: 1, createdAt: Date.now() } });
-    return postCard(actor, 'Attune Weapon', `<p>${esc(actor.name)} attunes <strong>${esc(weapon.name)}</strong>.</p><p>When wielded by this actor, that weapon gains a +1 Force bonus on attack rolls. This has been stored on the weapon and is read by the attack roller.</p>`, { weaponId: weapon.id, attackBonus: 1 });
+    const fp = await beginContractedForcePoint(actor, "force-adept:Attune Weapon", {}, { label: "Attune Weapon" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const state = forceItemState(weapon);
+      await weapon.setFlag?.(NS, 'forceItem', { ...state, attuned: { actorId: actor.id, actorName: actor.name, attackBonus: 1, createdAt: Date.now() } });
+      return postCard(actor, 'Attune Weapon', `<p>${esc(actor.name)} attunes <strong>${esc(weapon.name)}</strong>.</p><p>When wielded by this actor, that weapon gains a +1 Force bonus on attack rolls. This has been stored on the weapon and is read by the attack roller.</p>`, { weaponId: weapon.id, attackBonus: 1 });
+    });
   }
 
   static async promptEmpowerWeapon(actor) {
@@ -521,10 +522,13 @@ export class ForceAdeptTalentActions {
     ]);
     const weapon = weapons.find(w => w.id === selected?.weaponId);
     if (!weapon) return null;
-    if (!(await spendOneForcePoint(actor, 'Empower Weapon'))) return null;
-    const state = forceItemState(weapon);
-    await weapon.setFlag?.(NS, 'forceItem', { ...state, empowered: { actorId: actor.id, actorName: actor.name, extraDamageDie: true, createdAt: Date.now() } });
-    return postCard(actor, 'Empower Weapon', `<p>${esc(actor.name)} empowers <strong>${esc(weapon.name)}</strong>.</p><p>When wielded by this actor, the weapon adds one extra die matching its base weapon damage. This has been stored on the weapon and is read by the damage roller.</p>`, { weaponId: weapon.id, extraDamageDie: true });
+    const fp = await beginContractedForcePoint(actor, "force-adept:Empower Weapon", {}, { label: "Empower Weapon" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const state = forceItemState(weapon);
+      await weapon.setFlag?.(NS, 'forceItem', { ...state, empowered: { actorId: actor.id, actorName: actor.name, extraDamageDie: true, createdAt: Date.now() } });
+      return postCard(actor, 'Empower Weapon', `<p>${esc(actor.name)} empowers <strong>${esc(weapon.name)}</strong>.</p><p>When wielded by this actor, the weapon adds one extra die matching its base weapon damage. This has been stored on the weapon and is read by the damage roller.</p>`, { weaponId: weapon.id, extraDamageDie: true });
+    });
   }
 
   static async announceForceTalismanDeferred(actor, greater = false) {
@@ -547,9 +551,12 @@ export class ForceAdeptTalentActions {
     if (choice.recordOnly) {
       return postCard(actor, title, `<p>Recorded <strong>${esc(choice.powerName)}</strong> as the Focused Force Talisman power.</p><p>Creation/equipment state remains manual until talisman UI exists.</p>`, { powerName: choice.powerName, greater, recordedOnly: true });
     }
-    if (!(await spendOneForcePoint(actor, title))) return null;
-    const count = await recoverAllUsesByName(actor, choice.powerName);
-    return postCard(actor, title, `<p>${esc(actor.name)} spends 1 Force Point through ${esc(title)} and recovers all expended uses of <strong>${esc(choice.powerName)}</strong>.</p><p><strong>Recovered item count:</strong> ${count}. ${greater ? 'This Force Point does not count against the one-per-turn restriction.' : ''}</p>`, { powerName: choice.powerName, recoveredCount: count, greater });
+    const fp = await beginContractedForcePoint(actor, `force-adept:${title}`, {}, { label: "Focused Force Talisman" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const count = await recoverAllUsesByName(actor, choice.powerName);
+      return postCard(actor, title, `<p>${esc(actor.name)} spends 1 Force Point through ${esc(title)} and recovers all expended uses of <strong>${esc(choice.powerName)}</strong>.</p><p><strong>Recovered item count:</strong> ${count}. ${greater ? 'This Force Point does not count against the one-per-turn restriction.' : ''}</p>`, { powerName: choice.powerName, recoveredCount: count, greater });
+    });
   }
 
   static async promptForceThrow(actor, options = {}) {
@@ -608,21 +615,24 @@ export class ForceAdeptTalentActions {
 
   static async promptUnsettlingPresence(actor) {
     if (!hasTalent(actor, 'Unsettling Presence')) return postCard(actor, 'Unsettling Presence', '<p>This actor does not have Unsettling Presence.</p>');
-    if (!(await spendOneForcePoint(actor, 'Unsettling Presence'))) return null;
-    const result = await rollUseTheForce(actor, 'Unsettling Presence');
-    const total = Number(result.kept?.total ?? 0) || 0;
-    const enc = encounterId();
-    const targets = selectedTargetActors();
-    const rows = [];
-    for (const target of targets) {
-      const will = defenseTotal(target, 'will');
-      const affected = total >= will;
-      if (affected) {
-        await target.setFlag?.(NS, 'forceAdept.unsettlingPresence', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackPenalty: -2, skillPenalty: -2, useTheForceTotal: total, createdAt: Date.now() });
+    const fp = await beginContractedForcePoint(actor, "force-adept:Unsettling Presence", {}, { label: "Unsettling Presence" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const result = await rollUseTheForce(actor, 'Unsettling Presence');
+      const total = Number(result.kept?.total ?? 0) || 0;
+      const enc = encounterId();
+      const targets = selectedTargetActors();
+      const rows = [];
+      for (const target of targets) {
+        const will = defenseTotal(target, 'will');
+        const affected = total >= will;
+        if (affected) {
+          await target.setFlag?.(NS, 'forceAdept.unsettlingPresence', { encounterId: enc, sourceActorId: actor.id, sourceActorName: actor.name, attackPenalty: -2, skillPenalty: -2, useTheForceTotal: total, createdAt: Date.now() });
+        }
+        rows.push(`<li><strong>${esc(target.name)}</strong>: ${total} vs Will ${will}; ${affected ? 'affected (-2 attack/skill while within 6 squares)' : 'not affected'}.</li>`);
       }
-      rows.push(`<li><strong>${esc(target.name)}</strong>: ${total} vs Will ${will}; ${affected ? 'affected (-2 attack/skill while within 6 squares)' : 'not affected'}.</li>`);
-    }
-    return postCard(actor, 'Unsettling Presence', `<p>${esc(actor.name)} creates an unsettling 6-square aura for the remainder of the encounter.</p><p><strong>Use the Force:</strong> ${total}.</p>${rows.length ? `<ul>${rows.join('')}</ul>` : '<p>No targets were selected. Compare this Use the Force result against each creature that enters the aura.</p>'}<p>Range and line of sight remain GM/player adjudicated.</p>`, { useTheForceTotal: total, targetActorIds: targets.map(t => t.id), forcePointSpent: true });
+      return postCard(actor, 'Unsettling Presence', `<p>${esc(actor.name)} creates an unsettling 6-square aura for the remainder of the encounter.</p><p><strong>Use the Force:</strong> ${total}.</p>${rows.length ? `<ul>${rows.join('')}</ul>` : '<p>No targets were selected. Compare this Use the Force result against each creature that enters the aura.</p>'}<p>Range and line of sight remain GM/player adjudicated.</p>`, { useTheForceTotal: total, targetActorIds: targets.map(t => t.id), forcePointSpent: true });
+    });
   }
 
   static async promptChannelVitality(actor) {

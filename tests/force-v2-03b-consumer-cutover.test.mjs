@@ -58,12 +58,12 @@ try {
   {
     const a = makeActor({ normal: 4, max: 4 });
     globalThis.game.combat = { started: true, id: 'combat-C', round: 1, combatant: { actor: { id: a.id } } };
-    const first = await ActorEngine.spendForcePoints(a, 1, option('consular:promptForceOfWill'));
+    const first = await ActorEngine.spendForcePoints(a, 1, option('sith:Channel Aggression'));
     assert.equal(first.useKind, 'ability-option');
-    assert.equal(first.abilitySourceRef, 'consular:promptForceOfWill');
+    assert.equal(first.abilitySourceRef, 'sith:Channel Aggression');
     // Caller-supplied override flags are proofs of nothing.
     for (const extra of [{ allowOncePerRoundOverride: true }, { ignoreLimit: true }, { ignoreOnePerTurn: true }, { isReaction: true }]) {
-      await assert.rejects(() => ActorEngine.spendForcePoints(a, 1, option('lightsaber-form:djem-so', extra)), /already been spent this round/);
+      await assert.rejects(() => ActorEngine.spendForcePoints(a, 1, option('jedi-prestige:promptForceRevive', extra)), /already been spent this round/);
     }
     assert.equal(a.system.forcePoints.value, 3);
     globalThis.game.combat.round = 2;

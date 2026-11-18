@@ -22,6 +22,7 @@ import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animati
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
 import { TemptationOfTheDarkSide } from "/systems/foundryvtt-swse/scripts/engine/force/temptation-of-the-dark-side.js";
+import { beginContractedForcePoint } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ForcePowerMaintenance, ENHANCEMENT_CONTRACT_REFS, conditionalDefenseBonuses } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-maintenance.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 
@@ -676,11 +677,16 @@ export class ForceExecutor {
     };
   }
 
+  // Certified per-talent contracts (Aversion: CWCG p.53 swift; Illusion: FUCG p.87 standard). The printed action is
+  // debited and the receipt is settled by the caller: finalized after the effect, returned exactly if it throws.
   static async _spendForcePointForTalent(actor, talentName) {
-    const available = this._getAvailableForcePoints(actor);
-    if (available <= 0) throw new Error(`${talentName} requires spending 1 Force Point, but none are available`);
-    const result = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'force-executor-option:_spendForcePointForTalent' });
-    return result;
+    const fp = await beginContractedForcePoint(actor, `force-executor-option:${talentName}`, {}, { label: talentName, notify: false });
+    if (!fp.ok) throw new Error(fp.reason);
+    let finish;
+    const done = new Promise((resolve) => { finish = resolve; });
+    // settle() waits for finish(true|false); the caller signals the outcome.
+    fp.settle(() => done);
+    return { remaining: fp.receipt.remaining, settle: (applied) => finish(applied === true) };
   }
 
   static getForceFlowState(actor) {
@@ -768,10 +774,12 @@ export class ForceExecutor {
   }
 
   static async activateAversion(actor) {
+    let fpSpendAversion = null;
     try {
       if (!actor) throw new Error('Actor not found');
       if (!this._actorHasTalent(actor, 'Aversion')) throw new Error('Aversion talent not found');
       const fpSpend = await this._spendForcePointForTalent(actor, 'Aversion');
+      fpSpendAversion = fpSpend;
       const remainingFP = fpSpend?.remaining ?? SchemaAdapters.getForcePoints(actor);
       const effectData = {
         name: 'Aversion',
@@ -800,8 +808,10 @@ export class ForceExecutor {
           <p><em>Mind-Affecting effect · Force Points remaining: ${remainingFP}</em></p>
         </div>`
       });
+      fpSpend.settle(true);
       return { success: true, forcePointsRemaining: remainingFP };
     } catch (err) {
+      fpSpendAversion?.settle?.(false);
       console.error('Aversion failed:', err);
       ui?.notifications?.error?.(`Aversion failed: ${err.message}`);
       return { success: false, error: err.message };
@@ -876,10 +886,12 @@ export class ForceExecutor {
   }
 
   static async executeIllusion(actor, options = {}) {
+    let fpSpendIllusion = null;
     try {
       if (!actor) throw new Error('Actor not found');
       if (!this._actorHasTalent(actor, 'Illusion')) throw new Error('Illusion talent not found');
       const fpSpend = await this._spendForcePointForTalent(actor, 'Illusion');
+      fpSpendIllusion = fpSpend;
       const remainingFP = fpSpend?.remaining ?? SchemaAdapters.getForcePoints(actor);
       const baseBonus = this._getUseTheForceTotal(actor);
       const sizePenalty = Number(options.sizePenalty ?? 0) || 0;
@@ -967,8 +979,10 @@ export class ForceExecutor {
           }
         }
       });
+      fpSpend.settle(true);
       return { success: true, roll: total, dc: baseDC || null, forcePointsRemaining: remainingFP };
     } catch (err) {
+      fpSpendIllusion?.settle?.(false);
       console.error('Illusion failed:', err);
       ui?.notifications?.error?.(`Illusion failed: ${err.message}`);
       return { success: false, error: err.message };

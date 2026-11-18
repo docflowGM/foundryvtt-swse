@@ -69,3 +69,47 @@ Foundational 03B (shared authorization, ActorEngine receipts, round limit, rollb
 2. Improved Lightsaber Throw checks own-turn eligibility but does not debit the standard action from the action-economy authority.
 3. Stale UI text in `askUseTemporaryPoint` (said temporary points count toward the round limit) - **fixed** in the 03C opening commit.
 4. Live Foundry v13 / two-client verification of every reaction path.
+
+## Batches 2-4 — talent contracts (appended 2026-11-18; Batch 1 and the FREEZE note above preserved)
+
+Evidence method: each contract's Force Point sentence (repository talent pack text) was matched against the repository OCR of the cited book with 9-word windows (`docs` evidence: matches listed). Core Rulebook OCR is partly damaged; where a window failed the text was read directly (Force Haze L3645, Djem So L20828, Juyo L20835 — Juyo's action word is dropped by the OCR; "swift" is taken from the pack text). Shared transaction: `scripts/engine/force/contracted-force-point.js` (`beginContractedForcePoint`/`settle`, `runContractedForcePoint`): debit the printed action (ActionEconomyConsumption), pay through ForcePointsService/ActorEngine (contract re-verified), finalize only after the effect applied, otherwise refund the exact Force Point and the action. Use limits are read from the actor's own receipts (`checkContractLimit`). Tests: `tests/force-v2-03b-talent-contracts.test.mjs`.
+
+Payment status vs effect status are separate: **Payment certified** = ownership, trigger, timing, round limit, settlement verified (`IMPLEMENTED`, `OFFLINE_TESTED`). **Effect** = what the ability actually does in Foundry: *automated* (state/mechanics written), *assisted* (Active Effect / flag + card; the table applies the math), or *card*.
+
+| Ref | Source (book, page) | Action | Trigger / limit | Effect | Status |
+| --- | --- | --- | --- | --- | --- |
+| `consular:applySkilledAdvisor` (FP option) | Core p.40 (9/9 windows) | full-round | — | assisted (skill bonus AE on ally) | payment certified |
+| `consular:promptEntreatAid` | Legacy Era p.26 (25/25) | swift | once per round | assisted (pending aid flag) | payment certified |
+| `consular:promptForceOfWill` | FUCG p.24 (27/27) | swift | — | assisted (Will insight AE flags; range not enforced) | payment certified |
+| `consular:promptBattleMeditation` | Core p.40 (29/29) | full-round | — | assisted (attack insight AE flags) | payment certified |
+| `consular:promptExposingStrike` | Clone Wars p.21 (22/22) | free | own verified lightsaber HIT this round on that target | assisted (flat-footed AE flag) | payment certified; "deal damage" approximated by a hit (FP-RD-015) |
+| `sentinel:promptForceHaze` | Core p.41 (read directly) | standard | — | assisted (UTF roll + card) | payment certified |
+| `lightsaber-form:djem-so` | Core p.218 (read directly) | reaction | verified melee HIT against you this round; once per round | card (the immediate attack is made by the player) | payment certified |
+| `lightsaber-form:promptJuyo` | Core p.218 (read directly) | swift | once per encounter | assisted (designation flag; reroll is manual) | payment certified |
+| `jedi-prestige:promptShareTalent` | JATM p.20 (31/31) | standard | once per day (world clock) | card | payment certified |
+| `force-adept:Attune Weapon` | Core p.214 (3/3) | full-round | — | as existing code (weapon flag) | payment certified |
+| `force-adept:Empower Weapon` | Core p.214 (3/3) | full-round | — | as existing code (weapon flag) | payment certified |
+| `force-adept:Unsettling Presence` | FUCG p.43 (11/11) | standard | — | assisted | payment certified |
+| `force-adept:Force Power Adept` | Core p.214 (10/17 + read) | part of the activation | — | as existing code (two checks, keep better) | payment certified |
+| `force-adept:Long Call` | Unknown Regions p.30 (19/19) | part of the telepathy use | FP mode only | assisted | payment certified |
+| `sith:Dark Healing` | Core p.223 (13/13) | standard | — | automated (attack vs Fort, damage, healing) | payment certified |
+| `sith:Dark Side Master` | Core p.223 (17/17) | part of the reroll | — | automated (keeps better result) | payment certified |
+| `sith:Wicked Strike` | Core p.224 (12/17) | free | own verified lightsaber CRITICAL this round on that target | automated (condition track -2) | payment certified |
+| `sith:Crippling Strike` | Core p.213 (15/25) | free | own verified CRITICAL this round on that target | assisted (speed flag) | payment certified |
+| `sith:Channel Anger` | Core p.213 (27/27) | swift | — | assisted (rage state flag) | payment certified |
+| `sith:Bonded Mount` | JATM p.18 (26/26) | full-round | — | card | payment certified |
+| `force-executor-option:Aversion` | Clone Wars p.53 (15/15) | swift | — | assisted (AE + flag) | payment certified |
+| `force-executor-option:Illusion` | FUCG p.87 (15/15) | standard | — | automated (UTF vs Will roll) | payment certified |
+
+Still uncertified (fail closed: explicit, attributable GM adjudication only), with the reason:
+
+| Ref | Why |
+| --- | --- |
+| `sentinel:promptDarkRetaliation` | trigger "targeted by a [dark side] power" has no verified event producer |
+| `jedi-prestige:promptForceRevive` | trigger "ally affected by your Battle Meditation reduced to 0 HP" has no verified event |
+| `jedi-prestige:promptApprenticeBoon` | trigger "ally's Use the Force check" has no verified event |
+| `jedi-prestige:promptUncloudedJudgement` | trigger "target of a mind-affecting power/talent" has no verified event |
+| `sith:Channel Aggression` | trigger requires a verified flanked / Dex-denied target state |
+| `sith:Dark Healing Field` | action cost not printed in the source text |
+| `force-adept:Focused Force Talisman` / `Greater …` | needs the talisman's selected-power activation event; existing effect recovers ALL copies by name (printed: "regain that spent power") |
+| `guardian-spirit:manifest`, `force-power:resolveNegateEnergy`, `enhanced-rolls:_processEnhancements`, `meta-resource-feat:*`, `reaction:*` | see Batch 5 notes below |
