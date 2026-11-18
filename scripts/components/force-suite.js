@@ -298,25 +298,42 @@ export class ForceSuiteComponent {
   }
 
   static async _fpRegain(actor) {
-    const bonusPool = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
-    const bonusValue = Array.isArray(bonusPool.entries)
-      ? bonusPool.entries.reduce((sum, entry) => sum + Math.max(0, Number(entry?.value ?? 0) || 0), 0)
-      : Math.max(0, Number(bonusPool.value ?? 0) || 0);
-    if (((Number(actor.system.forcePoints?.value) || 0) + bonusValue) < 1) {return ui.notifications.warn('No Force Points left!');}
+    const spent = ActorAbilityBridge.getForcePowers(actor).find(power =>
+      power.system?.spent === true || power.system?.discarded === true
+    );
+    if (!spent) return ui.notifications.info('No spent powers to regain.');
 
-    // Spend force point atomically. Bonus Force Points are consumed before normal Force Points.
-    await ActorEngine.spendForcePoints(actor, 1);
-
-    // Find one spent power
-    const spentPowers = ActorAbilityBridge.getForcePowers(actor).filter(p => p.system.spent);
-    const spent = spentPowers.length > 0 ? spentPowers[0] : null;
-    if (!spent) {return ui.notifications.info('No spent powers to regain.');}
-
-    // Regain it
-    await ActorEngine.updateOwnedItems(actor, [
-      { _id: spent.id, 'system.spent': false }
-    ]);
-
+    let receipt;
+    try {
+      receipt = await ActorEngine.spendForcePoints(actor, 1, {
+        useKind: 'recover-one-force-power',
+        targetItemInstanceId: spent.id
+      });
+    } catch (error) {
+      return ui.notifications.warn(`Force Point recovery denied: ${error.message}`);
+    }
+    try {
+      await ActorEngine.updateOwnedItems(actor, [
+        { _id: spent.id, 'system.spent': false, 'system.discarded': false }
+      ]);
+    } catch (error) {
+      const live = actor.items?.get?.(spent.id);
+      if (live?.system?.spent === true || live?.system?.discarded === true) {
+        try {
+          const rollback = await ActorEngine.rollbackForcePointSpend(actor, receipt);
+          if (!rollback?.rolledBack) console.error('Force Power recovery refund refused', rollback);
+        } catch (refundError) { console.error('Force Power recovery refund indeterminate', refundError); }
+      } else {
+        console.error('Force Power recovery update may have applied; no automatic refund', error);
+      }
+      return ui.notifications.error('Power recovery failed or is indeterminate; inspect the actor.');
+    }
+    try {
+      await ActorEngine.finalizeForcePointSpend(actor, receipt);
+    } catch (error) {
+      console.error('Power recovered but FP receipt finalization failed', error);
+    }
     ui.notifications.info(`Force Point spent → ${escapeHTML(spent.name)} regained.`);
   }
+
 }
