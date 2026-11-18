@@ -252,8 +252,12 @@ export class ForcePointsService {
       if (domain === 'force-power.activation') {
         const item = Array.from(actor.items ?? []).find(i => i.id === context.targetItemInstanceId);
         if (!item || item.type !== 'force-power') return reject('Owned Force Power activation identity required');
-        const descriptors = [ ...(Array.isArray(item.system?.descriptors) ? item.system.descriptors : []),
-          ...(Array.isArray(item.system?.tags) ? item.system.tags : []) ].map(x => String(x).toLowerCase());
+        const descriptors = [
+          item.system?.descriptor,
+          item.system?.descriptors,
+          item.system?.tags,
+          item.system?.keywords
+        ].flat(Infinity).filter(Boolean).map(value => String(value).toLowerCase().replace(/[_-]/g, ' ').trim());
         if (descriptors.includes('dark side')) return reject('Dark-side activation cannot use a Force Point bonus');
         if (descriptors.includes('light side') && DSPEngine.getValue(actor) > 0) {
           return reject('Light-side activation cannot use a Force Point bonus with Dark Side Score');
