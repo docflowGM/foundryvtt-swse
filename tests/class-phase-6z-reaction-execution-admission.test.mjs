@@ -108,6 +108,19 @@ try {
   assert.equal(receipts.length,0);
  });
 
+ await test('weapon-required reactions match a real attacker weapon, never untrusted names',async()=>{
+  clear();register({cost:0,conditions:{requiresWeaponText:['lightsaber']}});
+  const absent=await roll(actor(),{weapon:null});
+  assert.equal(absent.success,false);
+  assert.equal(called,0);
+  const wrong=await roll(actor(),{weapon:{name:'Ranged Blaster',system:{weaponType:'pistol'}}});
+  assert.equal(wrong.success,false);
+  assert.equal(called,0);
+  const good=await roll(actor(),{weapon:{name:'Training Lightsaber',system:{weaponType:'lightsaber'}}});
+  assert.equal(good.success,true);
+  assert.equal(called,1);
+ });
+
  await test('eligible owned paid reaction emits one committed receipt before executing',async()=>{
   clear();register({conditions:{validAttackTypes:['ranged'],validDamageTypes:['energy']}});
   const a=actor();
@@ -151,6 +164,9 @@ try {
   assert.match(bridge,/sonicCannotBeDeflected: button\.dataset\.swseSonicCannotBeDeflected === 'true'/);
   assert.match(template,/data-swse-original-damage-types=/);
   assert.match(fullAttack,/data-swse-original-damage-types=/);
+  assert.match(template,/data-swse-weapon-id=/);
+  assert.match(fullAttack,/data-swse-weapon-id=/);
+  assert.match(bridge,/attacker\\?\\.items\\?\\.get\\?\\./);
  });
 } finally {
  delete ReactionRegistry.registry[key];
