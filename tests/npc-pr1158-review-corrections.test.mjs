@@ -234,7 +234,7 @@ test('B1: the shell wires materialize-before-flush and discard-on-definite-failu
   assert.match(shell, /isTransientProgressionActor\(this\.actor\)/);
   assert.ok(shell.indexOf('materializeTransientProgressionActor(transientActor)') < shell.indexOf('SessionStorage.flushSession(this.actor'), 'world actor exists before the durability flush');
   assert.match(shell, /discardMaterializedProgressionActor\(materializedDraft\.persisted\)/);
-  assert.match(shell, /_lastFinalizeIndeterminate !== true/, 'an indeterminate rollback never deletes the actor');
+  assert.match(shell, /canDiscardMaterializedActor\(finalizeResult\)/, 'cleanup is decided from the finalizer result (never after committed/indeterminate outcomes)');
   assert.match(fin, /persisted world actor/);
 });
 
@@ -541,4 +541,133 @@ test('B5: only this step opts into replacement; the global merge for other consu
   session.commitSelection('a', 'feats', [{ id: 'f1', name: 'One', type: 'feat' }, { id: 'f2', name: 'Two', type: 'feat' }]);
   session.commitSelection('b', 'feats', [{ id: 'f3', name: 'Three', type: 'feat' }]);
   assert.equal(session.draftSelections.feats.length, 3);
+});
+
+// ===========================================================================
+// FOLLOW-UP (re-review of d366b9106)
+// ===========================================================================
+
+// --- 1. classless / level-0 / metadata-free statblock NPCs are still protected -------------
+test('F1: a saved statblock NPC with level 0, no classes, no import data and no pack is guarded for heroic AND nonheroic', () => {
+  for (const profile of [
+    { sourceAuthority: 'statblock' },
+    { mode: 'play' },
+    { mode: 'statblock' },
+    { calculationMode: 'statblock', sourceAuthority: 'progression', mode: 'progression' },
+  ]) {
+    const bare = makeNpc({ system: { level: 0, npcProfile: profile } });          // persisted id, nothing else
+    assert.ok(bare.id);
+    assert.equal(npcMode.npcHasExistingMechanics(bare), false, 'no mechanical history (the previously unguarded shape)');
+    assert.equal(npcMode.npcDeclaresStatblockAuthority(bare), true);
+    for (const subtype of ['heroic', 'nonheroic']) {
+      const g = npcMode.evaluateNpcProgressionGuard(bare, { subtype });
+      assert.equal(g.blocked, true, `${JSON.stringify(profile)} + ${subtype}`);
+      assert.equal(g.reason, 'statblock-conversion-required');
+    }
+    // an authorized, snapshot-backed conversion still works for it
+    assert.equal(npcMode.evaluateNpcProgressionGuard(bare, { subtype: 'heroic', conversion: { target: 'heroic', originSnapshot: 1 }, originSnapshotExists: true }).blocked, false);
+  }
+});
+
+test('F1 controls: freshly materialized progression-controlled drafts, undeclared blanks and unsaved drafts are not blocked', () => {
+  const fresh = makeNpc({ system: { level: 0, npcProfile: { kind: 'nonheroic', legalProfile: 'nonheroic', mode: 'progression', sourceAuthority: 'progression' } } });
+  assert.equal(npcMode.npcDeclaresStatblockAuthority(fresh), false);
+  for (const subtype of ['heroic', 'nonheroic']) assert.equal(npcMode.evaluateNpcProgressionGuard(fresh, { subtype }).blocked, false, subtype);
+  assert.equal(npcMode.evaluateNpcProgressionGuard(makeNpc({ system: { level: 0 } }), { subtype: 'heroic' }).blocked, false, 'persisted blank, no declared authority');
+  const unsavedDeclared = makeNpc({ system: { level: 0, npcProfile: { sourceAuthority: 'statblock' } } }, { persisted: false });
+  assert.equal(npcMode.evaluateNpcProgressionGuard(unsavedDeclared, { subtype: 'heroic' }).blocked, false, 'unsaved draft has no world authority yet');
+  const minion = makeNpc({ system: { level: 0, npcProfile: { kind: 'minion', sourceAuthority: 'statblock', mode: 'owner-sync' } } });
+  assert.equal(npcMode.evaluateNpcProgressionGuard(minion, { subtype: 'nonheroic' }).blocked, false, 'dependents keep their own contract');
+});
+
+test('F1: the real finalize() also refuses the classless statblock NPC', async () => {
+  const world = makeWorld();
+  const actor = makeNpc({ system: { level: 0, npcProfile: { sourceAuthority: 'statblock' } } }, { world });
+  const session = new ProgressionSession({ actor, mode: 'chargen', subtype: 'nonheroic' });
+  const engine = planEngine();
+  const res = await withEngine(engine, () => ProgressionFinalizer.finalize({ mode: 'chargen', actor, progressionSession: session, sessionId: 's' }, actor));
+  assert.equal(res.success, false);
+  assert.match(res.error, /statblock-conversion-required/);
+  assert.equal(engine.counter.calls, 0);
+});
+
+// --- 2. finalizeSingleStep() enforces the same policy ---------------------------------------
+test('F2: finalizeSingleStep refuses statblock-controlled NPCs and never reaches the engine', async () => {
+  const world = makeWorld();
+  const imported = makeNpc({ system: { level: 3, hp: { value: 20, max: 20 }, npcProfile: { sourceAuthority: 'statblock' } }, flags: { swse: { import: { raw: { hp: 20 } } } } }, { world });
+  const classless = makeNpc({ system: { level: 0, npcProfile: { sourceAuthority: 'statblock' } } }, { world });
+  for (const actor of [imported, classless]) {
+    for (const domain of ['feats', 'talents', 'forcePowers', 'skills']) {
+      const session = new ProgressionSession({ actor, mode: 'levelup', subtype: 'heroic' });
+      session.commitSelection('t', 'feats', [{ id: 'f1', name: 'Alertness', type: 'feat' }]);
+      const engine = planEngine();
+      const res = await withEngine(engine, () => ProgressionFinalizer.finalizeSingleStep({ mode: 'levelup', actor, progressionSession: session, steps: [] }, actor, { domain, stepId: domain }));
+      assert.equal(res.success, false, `${domain}`);
+      assert.match(res.error, /NPC progression blocked \(statblock-conversion-required\)/);
+      assert.equal(engine.counter.calls, 0);
+    }
+  }
+  assert.equal(imported.system.hp.max, 20);
+  assert.equal(imported.items.length, 0, 'no item was granted');
+});
+
+test('F2: single-step still works for authorized and unguarded cases; dependents and the Store droid job are exempt', async () => {
+  const world = makeWorld();
+  // authorized conversion token (with a real origin snapshot) passes the guard
+  const actor = makeNpc({ system: { level: 3, npcProfile: { sourceAuthority: 'statblock' } }, flags: { swse: { import: { raw: { hp: 20 } } } } }, { world });
+  const origin = await SnapshotManager.createSnapshot(actor, 'origin', { kind: STATBLOCK_ORIGIN_KIND });
+  const authorized = new ProgressionSession({ actor, mode: 'levelup', subtype: 'heroic', statblockConversion: { target: 'heroic', originSnapshot: origin.timestamp } });
+  const res = await withEngine(planEngine(), () => ProgressionFinalizer.finalizeSingleStep({ mode: 'levelup', actor, progressionSession: authorized, steps: [] }, actor, { domain: 'feats', stepId: 'general-feat' }));
+  assert.doesNotMatch(String(res.error), /NPC progression blocked/, 'authorized conversion passes the guard (it then fails only for the empty pick)');
+
+  // a progression-controlled NPC and a dependent minion are unaffected by the guard
+  const progression = makeNpc({ system: { level: 2, npcProfile: { kind: 'heroic', mode: 'progression', sourceAuthority: 'progression' } }, items: [classItem('Soldier', 2)] }, { world });
+  const minion = makeNpc({ system: { level: 2, isMinion: true, npcProfile: { kind: 'minion', mode: 'owner-sync', sourceAuthority: 'statblock' } } }, { world });
+  for (const a of [progression, minion]) {
+    const s = new ProgressionSession({ actor: a, mode: 'levelup', subtype: 'heroic' });
+    const r = await withEngine(planEngine(), () => ProgressionFinalizer.finalizeSingleStep({ mode: 'levelup', actor: a, progressionSession: s, steps: [] }, a, { domain: 'feats', stepId: 'general-feat' }));
+    assert.doesNotMatch(String(r.error), /NPC progression blocked/);
+  }
+
+  // non-NPC actors are untouched, and the Store droid job returns before the guard (it never mutates the actor)
+  const src = read('scripts/apps/progression-framework/shell/progression-finalizer.js');
+  const single = src.slice(src.indexOf('static async finalizeSingleStep'));
+  assert.ok(single.indexOf("domain === 'droidBuilder'") < single.indexOf('_assertNpcProgressionAuthority(sessionState, actor)'));
+  assert.match(src, /static _assertNpcProgressionAuthority\(sessionState, actor\)/);
+  assert.equal((src.match(/this\._assertNpcProgressionAuthority\(sessionState, actor\)/g) || []).length, 2, 'finalize() and finalizeSingleStep() share one guard');
+});
+
+// --- 3. never delete a materialized actor whose plan committed -------------------------------
+test('F3: canDiscardMaterializedActor never allows deletion after any committed / indeterminate / unverified outcome', () => {
+  const can = persistence.canDiscardMaterializedActor;
+  assert.equal(can({ success: true, committed: true }), false);
+  assert.equal(can({ success: false, committed: true, error: 'Level-up finalization audit failed' }), false, 'committed but unsuccessful: the reviewed gap');
+  assert.equal(can({ success: false, committed: true, audit: { ok: false } }), false);
+  assert.equal(can({ success: false, indeterminate: true, partialMutationPossible: true }), false);
+  assert.equal(can({ success: false, partialMutationPossible: true }), false);
+  assert.equal(can({ success: false, rollbackOutcome: 'FAILED_UNCOMPENSATED' }), false, 'rollback attempted but not verified');
+  assert.equal(can(null), false, 'unknown outcome: keep the actor');
+  assert.equal(can(undefined), false);
+  // definite non-commits
+  assert.equal(can({ success: false, error: 'Mutation plan invalid' }), true);
+  assert.equal(can({ success: false, error: 'boom', rollbackOutcome: 'FAILED_COMPENSATED' }), true);
+});
+
+test('F3: the shell decides cleanup from the finalizer result (committed flag) and discards via the same helper', async () => {
+  const shell = read('scripts/apps/progression-framework/shell/progression-shell.js');
+  assert.match(shell, /finalizeResult = result;/);
+  assert.match(shell, /canDiscardMaterializedActor\(finalizeResult\)/);
+  assert.doesNotMatch(shell, /_lastFinalizeIndeterminate/, 'ad-hoc success/indeterminate flags replaced');
+  // a real finalizer failure that does not commit is discardable; a real committed:true failure shape is not
+  const world = makeWorld();
+  const draft = makeNpc({ system: { level: 0, npcProfile: { kind: 'nonheroic', mode: 'progression', sourceAuthority: 'progression' } } }, { persisted: false });
+  const session = await nonheroicChargenSession(draft);
+  const { actor } = await persistence.materializeTransientProgressionActor(draft, { createActor: async (d) => makeNpc({ ...d, id: `world-${++idSeq}` }, { persisted: true, world }) });
+  const failing = await withEngine({ async applyMutationPlan() { const e = new Error('boom'); e.rollback = { outcome: 'FAILED_COMPENSATED' }; throw e; }, async updateActor() {} },
+    () => ProgressionFinalizer.finalize({ mode: 'chargen', actor, progressionSession: session, sessionId: 'f3' }, actor));
+  assert.equal(failing.success, false);
+  assert.equal(persistence.canDiscardMaterializedActor(failing), true, 'verified-rolled-back failure: safe to remove the draft actor');
+  const unverified = await withEngine({ async applyMutationPlan() { const e = new Error('boom'); e.rollback = { outcome: 'FAILED_UNCOMPENSATED' }; throw e; }, async updateActor() {} },
+    () => ProgressionFinalizer.finalize({ mode: 'chargen', actor, progressionSession: session, sessionId: 'f3b' }, actor));
+  assert.equal(persistence.canDiscardMaterializedActor(unverified), false, 'unverified rollback: actor kept');
 });

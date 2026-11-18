@@ -379,18 +379,7 @@ export class ProgressionFinalizer {
         throw new Error('Finalization requires a persisted world actor; the draft actor has not been created yet');
       }
 
-      // STATBLOCK GUARD (fail closed, defense in depth behind launchProgression):
-      // an existing NPC under statblock authority is never mutated by progression
-      // unless this very session carries an authorized, snapshot-backed conversion.
-      if (actor?.type === 'npc') {
-        const conversion = sessionState.progressionSession?.statblockConversion ?? null;
-        const guard = evaluateNpcProgressionGuard(actor, {
-          subtype: sessionState.progressionSession?.subtype,
-          conversion,
-          originSnapshotExists: conversion ? SnapshotManager.hasStatblockOriginSnapshot(actor, conversion.originSnapshot) : false,
-        });
-        if (guard.blocked) throw new Error(`NPC progression blocked (${guard.reason}): ${guard.message}`);
-      }
+      this._assertNpcProgressionAuthority(sessionState, actor);
 
       // PHASE 1: Validate readiness
       this._validateReadiness(sessionState);
@@ -551,6 +540,23 @@ export class ProgressionFinalizer {
    * @param {Object} options
    * @returns {Promise<{success:boolean,result?:object,error?:string,message?:string,sheetAnchor?:string}>}
    */
+  /**
+   * STATBLOCK GUARD (fail closed, defense in depth behind launchProgression), shared
+   * by finalize() and finalizeSingleStep(): an existing NPC under statblock
+   * authority is never mutated by progression unless this very session carries an
+   * authorized, snapshot-backed conversion. Throws on violation.
+   */
+  static _assertNpcProgressionAuthority(sessionState, actor) {
+    if (actor?.type !== 'npc') return;
+    const conversion = sessionState?.progressionSession?.statblockConversion ?? null;
+    const guard = evaluateNpcProgressionGuard(actor, {
+      subtype: sessionState?.progressionSession?.subtype,
+      conversion,
+      originSnapshotExists: conversion ? SnapshotManager.hasStatblockOriginSnapshot(actor, conversion.originSnapshot) : false,
+    });
+    if (guard.blocked) throw new Error(`NPC progression blocked (${guard.reason}): ${guard.message}`);
+  }
+
   static async finalizeSingleStep(sessionState, actor, options = {}) {
     try {
       if (!actor) throw new Error('No actor provided for single-step progression.');
@@ -574,6 +580,10 @@ export class ProgressionFinalizer {
           : { success: false, error: submitted.error };
       }
       if (!domain) throw new Error(`Unsupported single-step progression job: ${stepId || options.job || '(unknown)'}`);
+
+      // Same NPC authority policy as finalize(). The only exception is the Store
+      // 'droidBuilder' job above, which never mutates the actor.
+      this._assertNpcProgressionAuthority(sessionState, actor);
 
       const mutationPlan = await this._compileSingleStepMutationPlan(sessionState, actor, { ...options, domain, stepId });
       const itemDomains = new Set(['feats', 'talents', 'forcePowers', 'forceRegimens', 'forceTechniques', 'forceSecrets', 'medicalSecrets', 'starshipManeuvers']);

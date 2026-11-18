@@ -72,3 +72,20 @@ export async function discardMaterializedProgressionActor(actor, seams = {}) {
     return false;
   }
 }
+
+/**
+ * May the world actor this attempt created be deleted after `result`? Only when
+ * the finalizer definitely did NOT commit anything: never after success, never
+ * when `committed` is true (even with success:false, e.g. a post-apply audit
+ * failure), never when the outcome is indeterminate / partial, and never when a
+ * rollback was attempted but not verified.
+ * @param {Object|null} result  the finalizer's return value
+ */
+export function canDiscardMaterializedActor(result) {
+  if (!result || typeof result !== 'object') return false;   // unknown outcome: keep the actor
+  if (result.success === true) return false;
+  if (result.committed === true) return false;
+  if (result.indeterminate === true || result.partialMutationPossible === true) return false;
+  if (result.rollbackOutcome && result.rollbackOutcome !== 'FAILED_COMPENSATED') return false;
+  return true;
+}

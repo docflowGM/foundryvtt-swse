@@ -433,3 +433,36 @@ Reviewer recommendations are recorded in `swse-rules-decisions-pending.md` as **
 - An unused conversion-origin snapshot remains if a GM cancels after confirming (harmless, labeled, never trimmed).
 - `ProgressionFinalizer` levelup compilation for a real multiclass plan was not run end to end; Blocker 4 is verified through the pure reconciliation patch applied with the harness engine, plus a source-contract check that the finalizer applies it in the plan.
 - Page citation: reviewer cites the Nonheroic page as p.278; earlier repo entries say p.277.
+
+
+---
+
+# Follow-up to the re-review of `d366b9106` (2026-11-18)
+
+The re-review confirmed B1, B3, B4, B5 and found B2 only partially corrected, plus two contract gaps. All three are fixed in one focused commit; the PR stays a draft. **Offline-tested only; nothing is `FOUNDRY_TESTED`.**
+
+| Finding | Root cause | Fix | Final lines |
+|---|---|---|---|
+| F1 — classless statblock NPC bypasses the guard | `npcHasExistingMechanics()` required level > 0, class items, raw import or a pack id, so a saved NPC that merely *declares* statblock authority was treated as a blank draft and the guard returned early. | New `npcDeclaresStatblockAuthority()` (persisted id + stored `sourceAuthority`/`mode`/`calculationMode` = statblock/play). The guard now protects an NPC with existing mechanics **or** declared statblock authority. Fresh progression-controlled drafts, undeclared blanks, unsaved drafts and dependents are unchanged. | `scripts/actors/npc/npc-mode-adapter.js` 498-513, 526-529 |
+| F2 — `finalizeSingleStep()` unguarded | The guard lived inline in `finalize()` only. | Extracted `_assertNpcProgressionAuthority(sessionState, actor)`; `finalize()` and `finalizeSingleStep()` both call it. The only exception is the Store `droidBuilder` job, which returns before the guard and never mutates the actor. A snapshot-backed conversion token still authorizes maintenance actions; dependents and non-NPC actors are unaffected. | `scripts/apps/progression-framework/shell/progression-finalizer.js` 382, 543-559, 584-587 |
+| F3 — cleanup ignored `committed` | The shell discarded the created actor on `!success && !indeterminate`; a `{success:false, committed:true}` (post-apply audit failure) would have deleted an actor whose plan was already applied. | New pure `canDiscardMaterializedActor(result)`: never after success, `committed:true`, `indeterminate`, `partialMutationPossible`, an unverified rollback outcome, or an unknown result. The shell stores the finalizer's report and decides from it (the ad-hoc `_lastFinalizeIndeterminate` flag is removed). | `progression-actor-persistence.js` 75-91; `progression-shell.js` 26, 4069, 4178, 4222-4223 |
+
+## Tests
+Command: `node --test tests/npc-pr1158-review-corrections.test.mjs` — **27 pass / 0 fail** on the fixed tree; the same file against `d366b9106`: **8 fail** (F1×3, F2×2, F3×2, plus the updated shell-wiring contract).
+| Test | Asserts |
+|---|---|
+| F1: classless/level-0/metadata-free statblock NPC | for `sourceAuthority:'statblock'`, `mode:'play'`, `mode:'statblock'`, and explicit `calculationMode:'statblock'` over progression authority: `npcHasExistingMechanics` is false yet the guard blocks both `heroic` and `nonheroic` (`statblock-conversion-required`); an authorized conversion still passes |
+| F1 controls | a freshly materialized `mode:'progression'` draft, a persisted blank with no profile, an unsaved declared draft and a declared-statblock *minion* are not blocked |
+| F1: real `finalize()` | classless statblock NPC → `success:false`, engine calls = 0 |
+| F2: `finalizeSingleStep` refusal | imported and classless statblock NPCs × domains feats/talents/forcePowers/skills → `NPC progression blocked (statblock-conversion-required)`, engine never called, published HP unchanged, no item granted |
+| F2: authorized/exempt | conversion token + real origin snapshot passes the guard; progression-controlled NPC and minion are not blocked; the `droidBuilder` branch precedes the guard; `finalize()` and `finalizeSingleStep()` call one shared guard |
+| F3: `canDiscardMaterializedActor` | false for `{success:false,committed:true}`, audit-failure shape, indeterminate/partial, unverified rollback, null; true only for `{success:false}` with no commit or a verified `FAILED_COMPENSATED` rollback |
+| F3: shell + real finalizer | shell decides from `finalizeResult`; a real finalizer failure with a verified rollback is discardable, with an unverified rollback is kept |
+
+Suites: see the commit message / PR for the final runner result.
+
+## Remaining limits (unchanged unless noted)
+- `ProgressionShell._onFinalizeProgression` itself is not instantiable in Node; the discard decision is tested through the shared helper plus a source-contract check that the shell uses it. A real `committed:true, success:false` return was not produced end to end (the level-up audit path needs a full level-up plan); the helper is tested on that exact result shape.
+- The single-step guard now also blocks sheet-driven single-step feat/talent adds on a statblock NPC that has not been converted. That is the requested policy; it should be confirmed in the live procedure (statblock NPC → "Add Feat" is refused with the conversion message).
+- RD-001..004 remain `DEFERRED_RULES_REVIEW`; profile-created Nonheroic NPCs still skip the three-starting-feat check (RD-004), so they are **not** mechanically certified.
+- No live Foundry testing was performed.

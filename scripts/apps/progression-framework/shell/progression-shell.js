@@ -23,7 +23,7 @@
 
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
-import { isTransientProgressionActor, materializeTransientProgressionActor, discardMaterializedProgressionActor } from './progression-actor-persistence.js';
+import { isTransientProgressionActor, materializeTransientProgressionActor, discardMaterializedProgressionActor, canDiscardMaterializedActor } from './progression-actor-persistence.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SWSEPerf } from '/systems/foundryvtt-swse/scripts/utils/performance-utils.js';
 import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/recovery-session-dialog.js';
@@ -4066,6 +4066,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     let materializedDraft = null;   // { transientActor, persisted } when THIS attempt created the world actor
     let finalizeCommitted = false;
+    let finalizeResult = null;      // the finalizer's own report; cleanup decisions are made from it, never from success alone
     try {
       this.isProcessing = true;
 
@@ -4174,6 +4175,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
           })
         : await ProgressionFinalizer.finalize(sessionState, this.actor);
 
+      finalizeResult = result;
       if (result.success) {
         finalizeCommitted = true;
         swseLogger.log('[ProgressionShell] Finalization successful');
@@ -4207,7 +4209,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
           }
         }
       } else {
-        this._lastFinalizeIndeterminate = result.indeterminate === true;
         swseLogger.error('[ProgressionShell] Finalization failed', result.error);
         ui.notifications.error(`Progression failed: ${result.error}`);
       }
@@ -4218,13 +4219,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // A plan that did not commit leaves no half-created world actor behind (an
       // indeterminate rollback keeps it: the character may be partially modified
       // and must be inspected, not deleted).
-      if (materializedDraft && !finalizeCommitted && this._lastFinalizeIndeterminate !== true) {
+      // `committed:true` (even with success:false) means the plan was applied: the actor is never deleted.
+      if (materializedDraft && !finalizeCommitted && canDiscardMaterializedActor(finalizeResult)) {
         if (await discardMaterializedProgressionActor(materializedDraft.persisted)) {
           this.actor = materializedDraft.transientActor;
           if (this.progressionSession) this.progressionSession.actorId = null;
         }
       }
-      this._lastFinalizeIndeterminate = false;
       this.isProcessing = false;
     }
   }

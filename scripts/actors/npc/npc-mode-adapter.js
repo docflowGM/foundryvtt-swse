@@ -496,6 +496,22 @@ export function npcHasExistingMechanics(actor) {
 }
 
 /**
+ * An NPC that EXPLICITLY declares statblock authority (stored profile source
+ * authority / mode / calculation mode). This is a declared mechanical authority,
+ * independent of whether class items, a level, import data or a pack id exist -
+ * so a saved, classless, level-0 statblock NPC is still protected.
+ */
+export function npcDeclaresStatblockAuthority(actor) {
+  if (actor?.type !== 'npc' || !actor?.id) return false;
+  const profile = actor?.system?.npcProfile;
+  if (!profile) return false;
+  const authority = normalizeKey(profile.sourceAuthority ?? profile.authority);
+  const mode = normalizeKey(profile.mode ?? profile.importMode);
+  const calc = normalizeKey(profile.calculationMode);
+  return authority === 'statblock' || mode === 'play' || mode === 'statblock' || calc === 'statblock';
+}
+
+/**
  * Fail-closed progression guard for EXISTING NPCs, independent of caller, UI
  * entry point or requested subtype. A requested/declared heroic or nonheroic
  * identity never overrides statblock authority; only an authorized, snapshot
@@ -507,7 +523,10 @@ export function npcHasExistingMechanics(actor) {
  */
 export function evaluateNpcProgressionGuard(actor, ctx = {}) {
   const ok = { blocked: false, reason: null, message: '' };
-  if (actor?.type !== 'npc' || !npcHasExistingMechanics(actor)) return ok;
+  // A fresh creation draft (no id, or a persisted blank with no declared authority
+  // and no mechanical history) is not guarded; an NPC with mechanics OR an explicit
+  // statblock declaration is.
+  if (actor?.type !== 'npc' || !(npcHasExistingMechanics(actor) || npcDeclaresStatblockAuthority(actor))) return ok;
 
   const state = getNpcProfileState(actor);
   if (DEPENDENT_KINDS.has(state.kind) || state.mode === 'owner-sync') return ok;
