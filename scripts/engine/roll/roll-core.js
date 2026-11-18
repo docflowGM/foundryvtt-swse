@@ -57,6 +57,11 @@ export class RollCore {
       const isTakeX = rollOptions.isTakeX || false;
       const takeXValue = rollOptions.takeXValue || 10;
 
+      // A fixed take-X result cannot silently discard a requested paid bonus.
+      if (isTakeX && rollOptions.useForce) {
+        return { success: false, error: 'Force Point use is not supported for take-X checks', domain, breakdown: {}, context };
+      }
+
       if (isTakeX) {
         return this._handleTakeX({ actor, domain, baseDice, baseBonus, takeXValue, modifierTotal, modifierBreakdown, modifierLedger, suppressedModifiers, context });
       }
@@ -78,6 +83,7 @@ export class RollCore {
           forcePointDetails = forceResult;
         } else {
           swseLogger.warn(`[RollCore] Force Point use failed: ${forceResult.reason}`);
+          return { success: false, error: `Force Point use denied: ${forceResult.reason}`, domain, breakdown: {}, context, forcePointDetails: forceResult };
         }
       }
 
