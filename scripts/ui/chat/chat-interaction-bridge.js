@@ -552,6 +552,9 @@ async function handleReactionButton(event, button, message) {
       defenderId: (defender?.id ?? defenderId) || null,
       trigger: button.dataset.swseTrigger || button.dataset.trigger || 'ON_ATTACK_DECLARED',
       attackType: button.dataset.swseAttackType || null,
+      // Resolve a real owned attacker Item; never trust weapon name markup as
+      // the authority for lightsaber/weapon-qualified reaction eligibility.
+      weapon: attacker?.items?.get?.(button.dataset.swseWeaponId ?? '') ?? null,
       damageType: button.dataset.swseDamageType || null,
       damageTypes: typedList(button.dataset.swseDamageTypes),
       originalDamageTypes: typedList(button.dataset.swseOriginalDamageTypes),
