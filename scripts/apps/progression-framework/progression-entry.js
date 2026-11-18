@@ -20,7 +20,8 @@ import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/
 import { ProgressionDocumentTargetPolicy } from "./policies/progression-document-target-policy.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
-import { getNpcProfileState } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { getNpcProfileState, evaluateNpcProgressionGuard } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
 import { evaluateProgressionGuard } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -60,22 +61,45 @@ function _isOwnerSyncedMinion(actor) {
     || profile?.mode === 'owner-sync';
 }
 
+/**
+ * Resolve which progression track an NPC enters. Authority order: explicit
+ * caller subtype, then the NPC mode adapter's profile (explicit npcProfile,
+ * dependent relationships, embedded class records). There is NO silent
+ * fallback: an NPC whose identity is ambiguous, or whose declared identity
+ * contradicts its class records, resolves to `{ subtype: null, reason }` and
+ * the caller must stop and ask the GM (statblock NPCs must be converted
+ * explicitly through the NPC level-up entry, never reinterpreted here).
+ *
+ * @returns {{subtype: string|null, reason: string|null, conflicts: Array}|null} null for non-NPCs
+ */
 function _resolveNpcProgressionSubtype(actor, options = {}) {
   if (actor?.type !== 'npc') return null;
-  if (options?.subtype) return options.subtype;
 
   const profile = _getNpcProgressionProfile(actor);
+  const conflicts = profile?.identityConflicts ?? [];
+  const explicit = options?.subtype && !['imported-statblock', 'standard'].includes(options.subtype)
+    ? options.subtype
+    : null;
+  if (conflicts.length && !explicit) {
+    return { subtype: null, reason: 'identity-conflict', conflicts };
+  }
+  if (explicit) return { subtype: explicit, reason: null, conflicts };
+
   const kind = profile?.kind;
   const legalProfile = profile?.legalProfile;
 
-  if (kind === 'beast' || legalProfile === 'beast') return 'beast';
-  if (kind === 'mount' || legalProfile === 'mount') return 'mount';
-  if (kind === 'follower' || legalProfile === 'follower') return 'follower';
-  if (kind === 'minion' || kind === 'privateer' || legalProfile === 'minion') return kind === 'privateer' ? 'privateer' : 'minion';
-  if (kind === 'nonheroic' || legalProfile === 'nonheroic') return 'nonheroic';
-  if (kind === 'heroic' || legalProfile === 'heroic') return 'heroic';
-  if (profile?.imported || legalProfile === 'imported-statblock') return 'imported-statblock';
-  return 'nonheroic';
+  if (kind === 'beast' || legalProfile === 'beast') return { subtype: 'beast', reason: null, conflicts };
+  if (kind === 'mount' || legalProfile === 'mount') return { subtype: 'mount', reason: null, conflicts };
+  if (kind === 'follower' || legalProfile === 'follower') return { subtype: 'follower', reason: null, conflicts };
+  if (kind === 'minion' || kind === 'privateer' || legalProfile === 'minion') {
+    return { subtype: kind === 'privateer' ? 'privateer' : 'minion', reason: null, conflicts };
+  }
+  if (kind === 'nonheroic' || legalProfile === 'nonheroic') return { subtype: 'nonheroic', reason: null, conflicts };
+  if (kind === 'heroic' || legalProfile === 'heroic') return { subtype: 'heroic', reason: null, conflicts };
+  if (profile?.imported || legalProfile === 'imported-statblock') {
+    return { subtype: null, reason: 'statblock-conversion-required', conflicts };
+  }
+  return { subtype: null, reason: 'identity-ambiguous', conflicts };
 }
 
 function _isStatblockAuthorityNpc(actor) {
@@ -178,6 +202,27 @@ function _createTransientProgressionActor({ actorType = 'character', subtype = n
 }
 
 export async function launchNewProgression(options = {}) {
+  // NPC identity comes from explicit creation data, never inference: a new NPC
+  // must name its track, and that track is written into its npcProfile so the
+  // sheet, progression entry, finalizer and derived calculations all read the
+  // same authority from the start.
+  if (options.actorType === 'npc' && !options.isDroid) {
+    if (!['heroic', 'nonheroic'].includes(options.subtype)) {
+      ui?.notifications?.warn?.('New NPCs must be created as Heroic or Nonheroic.');
+      return null;
+    }
+    options = {
+      ...options,
+      system: foundry.utils.mergeObject({
+        npcProfile: {
+          kind: options.subtype,
+          legalProfile: options.subtype,
+          mode: 'progression',
+          sourceAuthority: 'progression',
+        },
+      }, options.system || {}, { inplace: false, recursive: true }),
+    };
+  }
   const actor = _createTransientProgressionActor(options);
   const launchOptions = { ...options };
   delete launchOptions.actorType;
@@ -224,11 +269,55 @@ export async function launchProgression(actor, options = {}) {
     return;
   }
 
+  // CENTRAL NPC AUTHORITY GUARD (fail closed): evaluated BEFORE any caller-supplied
+  // subtype or declared heroic/nonheroic profile is trusted, for every entry point.
+  if (actor.type === 'npc') {
+    const conversion = options.statblockConversion || null;
+    const npcGuard = evaluateNpcProgressionGuard(actor, {
+      subtype: options.subtype,
+      conversion,
+      originSnapshotExists: conversion ? SnapshotManager.hasStatblockOriginSnapshot(actor, conversion.originSnapshot) : false,
+    });
+    if (npcGuard.blocked) {
+      ui?.notifications?.warn?.(npcGuard.message);
+      SWSELogger.warn('[Progression Entry] NPC progression blocked by authority guard', { actor: actor.id, reason: npcGuard.reason });
+      if (npcGuard.reason === 'statblock-conversion-required' && actor.id) {
+        try {
+          const { SWSENpcLevelUpEntry } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/npc-levelup-entry.js');
+          new SWSENpcLevelUpEntry(actor).render(true);
+        } catch (entryErr) {
+          SWSELogger.warn('[Progression Entry] Could not open NPC level-up entry:', entryErr);
+        }
+      }
+      return;
+    }
+  }
+
   // ROUTING LOGIC: Route to ChargenShell (new actors) or LevelupShell (existing actors)
-  const npcSubtype = _resolveNpcProgressionSubtype(actor, options);
-  if (npcSubtype && !options.subtype) {
-    options = { ...options, subtype: npcSubtype, npcProfileState: _getNpcProgressionProfile(actor) };
-    SWSELogger.debug('[Progression Entry] NPC subtype inferred', { subtype: npcSubtype, npcProfileState: options.npcProfileState });
+  const npcResolution = _resolveNpcProgressionSubtype(actor, options);
+  if (npcResolution && !npcResolution.subtype) {
+    // No silent Nonheroic (or any other) default: stop and route the GM to the
+    // explicit decision point (NPC level-up entry / Legal Review).
+    const message = npcResolution.reason === 'identity-conflict'
+      ? `NPC progression blocked: ${npcResolution.conflicts.map(c => c.message).join(' ')} Resolve this in NPC Legal Review & Repair first.`
+      : npcResolution.reason === 'statblock-conversion-required'
+        ? 'This is an imported statblock NPC. Its published values stay authoritative until you explicitly convert it to calculated progression from the NPC level-up dialog.'
+        : 'This NPC has no established heroic/nonheroic identity. Choose Heroic or Nonheroic from the NPC level-up dialog.';
+    ui?.notifications?.warn?.(message);
+    SWSELogger.warn('[Progression Entry] NPC progression not started: identity unresolved', { actor: actor.id, reason: npcResolution.reason, conflicts: npcResolution.conflicts });
+    if (npcResolution.reason !== 'identity-conflict' && actor.id) {
+      try {
+        const { SWSENpcLevelUpEntry } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/npc-levelup-entry.js');
+        new SWSENpcLevelUpEntry(actor).render(true);
+      } catch (entryErr) {
+        SWSELogger.warn('[Progression Entry] Could not open NPC level-up entry:', entryErr);
+      }
+    }
+    return;
+  }
+  if (npcResolution?.subtype && !options.subtype) {
+    options = { ...options, subtype: npcResolution.subtype, npcProfileState: _getNpcProgressionProfile(actor) };
+    SWSELogger.debug('[Progression Entry] NPC subtype inferred', { subtype: npcResolution.subtype, npcProfileState: options.npcProfileState });
   }
 
   const isChargenIncomplete = _isChargenIncomplete(actor, options);

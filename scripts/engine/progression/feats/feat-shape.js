@@ -342,3 +342,32 @@ export async function loadFeatBucketsMapping() {
 
   return _mappingCache;
 }
+
+/**
+ * Stable scope key for a feat selection's chosen option (skill, weapon group,
+ * etc.). Mirrors FeatChoiceResolver.getSelectedChoiceKey() for the common
+ * string/{group|skill|value|id|label|name} shapes but is import-free so pure
+ * progression-session and rules code can use it. Returns '' when the entry
+ * carries no choice.
+ *
+ * A feat selection's identity is (feat identity + this key): repeatable feats
+ * such as Skill Focus / Skill Training are distinct per scope.
+ */
+export function getFeatSelectionScopeKey(choice) {
+  const entry = Array.isArray(choice) ? choice[0] : choice;
+  if (entry === null || entry === undefined || entry === '') return '';
+  if (typeof entry === 'object') {
+    if (Array.isArray(entry.targets) && entry.targets.length) {
+      return entry.targets.map(v => getFeatSelectionScopeKey(v)).filter(Boolean).join('__');
+    }
+    const inner = entry.group ?? entry.skill ?? entry.skillKey ?? entry.value ?? entry.id ?? entry.key ?? entry.label ?? entry.name;
+    if (inner === null || inner === undefined) return '';
+    return getFeatSelectionScopeKey(inner);
+  }
+  return String(entry)
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}

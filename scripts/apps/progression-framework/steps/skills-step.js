@@ -16,6 +16,8 @@ import { normalizeSkills } from './step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
+import { isNonheroicClassRef, getNonheroicClassModel } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js';
+import { resolveTrainedSkillAllowance } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/trained-skill-allowance.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -100,11 +102,11 @@ export class SkillsStep extends ProgressionStepPlugin {
         pendingSkillSlots: this._resolvePendingSkillTrainingSlots(shell, character),
       });
     } else if (isNonheroic) {
-      // Nonheroic characters get 1 + INT mod (minimum 1) skill slots
-      const intMod = character.abilities?.int?.mod || 0;
-      this._allowedCount = Math.max(1, 1 + intMod);
+      // Nonheroic: the canonical Nonheroic class model supplies the base (1) and
+      // the shared allowance formula applies PENDING (session) INT plus species
+      // modifiers - never the actor's stale stored ability mod (NPC-003).
+      this._allowedCount = this._resolveAllowedSkillCount(shell, character);
       swseLogger.log('[SkillsStep] Nonheroic progression - allowed skills:', {
-        intMod,
         allowedCount: this._allowedCount,
         isBeast: this._isBeast
       });
@@ -123,6 +125,19 @@ export class SkillsStep extends ProgressionStepPlugin {
     this._trainedCount = Array.from(this._trainedSkills.values())
       .filter(s => s.trained)
       .length;
+
+    // Reconcile: if INT (or species) changed upstream and a previously legal
+    // selection now exceeds the entitlement, drop the excess (newest first) and
+    // re-commit so Summary/finalization see only legal picks (NPC-003).
+    if (isNonheroic && !this.isLevelup(shell) && this._trainedCount > this._allowedCount) {
+      const trainedKeys = Array.from(this._trainedSkills.entries()).filter(([, d]) => d.trained).map(([k]) => k);
+      for (const key of trainedKeys.slice(Math.max(0, this._allowedCount))) this._untrainSkill(key);
+      const reconciled = normalizeSkills(Array.from(this._trainedSkills.entries()).filter(([, d]) => d.trained).map(([k]) => k));
+      if (reconciled) await this._commitNormalized(shell, 'skills', reconciled);
+      swseLogger.warn('[SkillsStep] Nonheroic skill selections exceeded the recalculated entitlement; excess removed', {
+        allowedCount: this._allowedCount,
+      });
+    }
 
 
 // Load full skill list from registry
@@ -852,19 +867,19 @@ renderDetailsPanel(focusedItem) {
   }
 
   _resolveAllowedSkillCount(shell, character) {
-    const classModel = resolveSelectedClassFromShell(shell) || this._resolveSelectedClassData(
-      shell?.progressionSession?.getSelection?.('class')
+    const selectedClass = shell?.progressionSession?.getSelection?.('class')
       || shell?.committedSelections?.get?.('class')
-      || null
-    );
+      || null;
 
-    const classTrainedSkills = Number(
-      classModel?.trainedSkills
-      ?? classModel?.skillPoints
-      ?? classModel?.system?.trainedSkills
-      ?? classModel?.system?.skillPoints
-      ?? 0
-    ) || 0;
+    // The synthetic Nonheroic track is not in the classes registry; use its
+    // canonical model so the SAME allowance formula serves heroic and nonheroic.
+    const classModel = isNonheroicClassRef(selectedClass)
+      ? getNonheroicClassModel()
+      : (resolveSelectedClassFromShell(shell) || this._resolveSelectedClassData(
+        shell?.progressionSession?.getSelection?.('class')
+        || shell?.committedSelections?.get?.('class')
+        || null
+      ));
 
     const attributeSelection =
       shell?.progressionSession?.getSelection?.('attributes')
@@ -872,65 +887,24 @@ renderDetailsPanel(focusedItem) {
       || shell?.buildIntent?.toCharacterData?.()?.abilityIncreases
       || null;
 
-    const selectedInt = Number(
-      attributeSelection?.values?.int
-      ?? attributeSelection?.int
-      ?? character?.abilities?.int?.base
-      ?? character?.abilities?.int?.value
-      ?? character?.abilities?.int?.total
-      ?? character?.attributes?.int?.value
-      ?? 10
-    ) || 10;
-
     const speciesSelection =
       shell?.progressionSession?.getSelection?.('species')
       || shell?.committedSelections?.get?.('species')
       || shell?.buildIntent?.toCharacterData?.()?.species
       || null;
 
-    const speciesAbilityScores = speciesSelection?.abilityScores || speciesSelection?.system?.abilityScores || {};
-    const speciesIntBonus = Number(
-      speciesAbilityScores.int
-      ?? speciesAbilityScores.Intelligence
-      ?? speciesAbilityScores.intelligence
-      ?? 0
-    ) || 0;
-
-    const finalIntScore = selectedInt + speciesIntBonus;
-    const intMod = Math.floor((finalIntScore - 10) / 2);
-
-    const speciesName = String(
-      speciesSelection?.name
-      ?? speciesSelection?.label
-      ?? speciesSelection?.id
-      ?? character?.species
-      ?? character?.details?.species
-      ?? ''
-    ).trim().toLowerCase();
-
-    const humanBonus = (
-      speciesName === 'human'
-      || speciesName === 'nearhuman'
-      || speciesName === 'near_human'
-      || speciesName === 'near-human'
-    ) ? 1 : 0;
-
-    // Phase 10A: Detect bonus-trained-skill-choice from species ledger for non-Human species.
-    // Species such as Altiri, Vultan, Republic Clone, and Mandalorian (Human Variant) grant
-    // one extra player-chosen trained skill via a bonus-trained-skill trait (frequency='choice').
-    // Human is already covered by humanBonus above; avoid double-counting.
     const pendingSpeciesContext = shell?.progressionSession?.getSelection?.('pendingSpeciesContext')
       || speciesSelection?.pendingContext
       || shell?.progressionSession?.pendingState?.species
       || null;
-    const hasBonusTrainedSkillChoiceTrait = humanBonus === 0 && (pendingSpeciesContext?.traits || []).some(
-      t => t.classification === 'grant'
-        && t.source === 'bonusTrainedSkill'
-        && (t.grants || []).some(g => g.grantType === 'trainedSkill' && g.frequency === 'choice')
-    );
-    const speciesBonusSkill = hasBonusTrainedSkillChoiceTrait ? 1 : 0;
 
-    return Math.max(1, classTrainedSkills + intMod + humanBonus + speciesBonusSkill);
+    return resolveTrainedSkillAllowance({
+      classModel,
+      attributeSelection,
+      speciesSelection,
+      pendingSpeciesContext,
+      character,
+    });
   }
 
   _countActorTrainedSkills(character) {

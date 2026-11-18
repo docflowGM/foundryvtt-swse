@@ -3550,3 +3550,91 @@ The owner approved the 77 method phrases as player-facing wording ("They are app
 ## MSV-RD-018 — FINAL EDITORIAL APPROVAL (appended 2026-11-17; earlier entries preserved)
 
 Owner wording approval (stated 2026-11-16, recorded 2026-11-17) of: the 77 method phrases in their final wording (including `forceSecret` "refining the use of Force techniques", `brutalForce` "applying overwhelming force", `moraleImpact` "undermining an opponent's morale", `dualistTechnique` "applying specific dueling techniques") and the source-neutral method correction "I recognize that training, but I don't think it necessarily describes how I prefer to approach problems." (stable id `mc.q6.not.method_preference.1`, original text preserved in `originalText`). The shared positive method sentence was already approved. Scope: wording only. Unchanged: the 48 exclusions, canonical keys, evidence requirements, ranking, correction persistence, answer-to-tag mappings (uncertified), the neutral Q6 frame and every Mentor script (draft), and all 42 release scopes (withheld). Phrase wording and correction wording: RESOLVED.
+
+
+---
+
+# NPC Creator & Progression — Rules Decision Register (SWSE-NPC-RD-###)
+
+Appended 2026-11-17 by the NPC V2 convergence pass. Append-only; the species (`SPECIES-RD-###`), modification (`D-###`) and mentor (`MSV-RD-###`) registers above are untouched. Decision authority: project owner. Claude's recommended ruling: none.
+
+## SWSE-NPC-RD-001 — Heroic NPC adding Nonheroic levels
+
+| Field | |
+|---|---|
+| Rules domain | Nonheroic advancement / multiclassing |
+| Feature | Taking a Nonheroic class level after one or more heroic class levels |
+| Source | Saga Edition Core Rulebook, "Nonheroic Characters", p.277 (MULTICLASSING paragraph); Core "Heroic Level", p.38 |
+| Evidence | The Core text states a nonheroic character can multiclass into a heroic class under the normal multiclassing rules. It says nothing about a character with heroic levels taking nonheroic levels. |
+| Confirmed behavior | Nonheroic -> heroic multiclassing is permitted (implemented: Nonheroic 3 -> Soldier 1, Nonheroic 3 / Soldier 2 -> Soldier 3 all allowed). |
+| Unresolved question | Whether a character that already has heroic class levels may take further Nonheroic levels. |
+| Options | None derivable from the sources (silent). |
+| Recommended ruling | None |
+| Implementation impact | Preserved the repository's pre-existing behavior (ClassStep already refused the Nonheroic option once heroic levels existed) and made the NPC level-up entry enforce the same policy via `evaluateNonheroicTransition()` (`nonheroic-class-model.js`). The entry previously offered a route ClassStep could not complete. If the owner rules the reverse direction legal, change only that one function. |
+| Status | `DEFERRED_RULES_REVIEW` (current behavior = blocked, unchanged from before this pass) |
+| Decision authority | Project owner |
+| Resolution | |
+
+## SWSE-NPC-RD-002 — Nonheroic class skill list differs from the printed list ("Ride")
+
+| Field | |
+|---|---|
+| Rules domain | Nonheroic class data |
+| Feature | Nonheroic class skills |
+| Source | Saga Edition Core Rulebook, Nonheroic class skills line following the Nonheroic BAB table, p.277 |
+| Evidence | The printed list is: Acrobatics, Climb, Deception, Endurance, Gather Information, Initiative, Jump, Knowledge (all, individually), Mechanics, Perception, Persuasion, Pilot, Stealth, Survival, Swim, Treat Injury, Use Computer. `NONHEROIC_CLASS_SKILLS` in `nonheroic-class-model.js` additionally lists `ride`. |
+| Confirmed behavior | Trained skills = 1 + Int modifier, minimum 1 (implemented and unchanged). |
+| Unresolved question | Whether `ride` should remain a Nonheroic class skill (it is absent from the printed list; it may be intentional house data). |
+| Options | Remove `ride` to match the printed list; or keep as project data. Both are source-supported readings of "repository is data authority" vs. "printed text is authority". |
+| Recommended ruling | None |
+| Implementation impact | Not changed in this pass (out of the seven scoped issues; changing it alters selectable skills). |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## SWSE-NPC-RD-003 — Level-1 general feat for Nonheroic characters (verification note)
+
+| Field | |
+|---|---|
+| Rules domain | Nonheroic feat entitlement |
+| Feature | Ordinary level-dependent feat at Nonheroic level 1, separate from the three starting feats |
+| Source | Core Rulebook p.277 ("they gain feats normally as they advance in level, as shown in Table 3-1") and Table 3-1 "Feats" column description (p.38): level-dependent feats are in addition to class bonus feats |
+| Evidence | The prose is explicit. The repository's OCR of the Table 3-1 level-1 cell is not legible, so the exact level-1 count was not independently read from the table. |
+| Confirmed behavior | Level-dependent feats exist and are separate from class starting feats. The existing synthetic class model already records one level-dependent feat at level 1. |
+| Unresolved question | None blocking; owner may wish to confirm the level-1 table cell against the printed book. |
+| Options | n/a |
+| Recommended ruling | None |
+| Implementation impact | Nonheroic chargen now keeps the ordinary `general-feat` step (previously suppressed, which silently dropped it) in addition to the three-pick `nonheroic-starting-feats` step. |
+| Status | `SOURCE_VERIFIED` (prose); table cell awaiting visual confirmation |
+| Decision authority | Project owner |
+| Resolution | |
+
+## SWSE-NPC-RD-004 — Galactic Profile Nonheroic profiles vs. the three starting feats
+
+| Field | |
+|---|---|
+| Rules domain | Nonheroic starting feats / Galactic Profiles |
+| Feature | `nonheroic_worker` and the other Nonheroic profiles in `data/galactic-profiles/v3/galactic-profiles.json` |
+| Source | Core Rulebook p.277 (three starting feats from the nine printed options) vs. profile data |
+| Evidence | `nonheroic_worker` supplies a single feat, entered in the legacy name form "Skill Focus (Mechanics)" rather than a scoped Skill Focus selection. A profile-applied session bypasses the starting-feat step. |
+| Confirmed behavior | Profile sessions apply and finalize as before; the Nonheroic adapter does not impose the three-feat check on them (`session.profileStepsComplete`). |
+| Unresolved question | Whether Nonheroic profiles must be completed to three starting feats (and whether the legacy "Skill Focus (X)" form should map to a scoped selection). |
+| Options | None derivable from the sources; profile data is project-authored. |
+| Recommended ruling | None |
+| Implementation impact | Profile data not modified. Manual (non-profile) Nonheroic chargen enforces exactly three starting feats. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+## SWSE-NPC-RD-001..004 — INDEPENDENT REVIEWER RECOMMENDATIONS (appended 2026-11-18; earlier entries preserved)
+
+Recorded from the independent review of PR #1158. **These are reviewer recommendations, not owner-approved rulings.** All four entries above remain `DEFERRED_RULES_REVIEW` with a blank Resolution until the project owner accepts or rejects them. No code or data was changed on the strength of these recommendations.
+
+| Entry | Reviewer recommendation | Reviewer's stated basis | Implementation status |
+|---|---|---|---|
+| RD-001 Heroic -> Nonheroic | Keep blocked unless the owner authorizes a house rule | Core p.278 permits Nonheroic -> heroic multiclassing and does not authorize the reverse | Current behavior already blocks it (unchanged) |
+| RD-002 Ride as a Nonheroic class skill | Remove Ride | The printed Nonheroic class-skill list (p.278) does not include it | **Not changed.** `ride` is still in `NONHEROIC_CLASS_SKILLS` pending an owner ruling |
+| RD-003 Level-1 general feat | One general feat at level 1, separate from the three class starting feats | Table 3-1 (Core p.37) grants the first general feat at 1st level | Already implemented (general-feat step kept for Nonheroic chargen); table cell still to be owner-confirmed |
+| RD-004 Galactic Profile Nonheroic feats | Require mechanically complete profiles: three legal starting class feats with canonical scopes plus the general feat entitlement, with no validation bypass | Profiles should not bypass legality validation | **Not changed.** The starting-feat check is still skipped for profile-applied sessions and `data/galactic-profiles/**` is untouched |
+
+Page numbering note: the reviewer cites the printed Nonheroic page as p.278; this repository's earlier entries cite p.277 from the OCR layer. Both refer to the same Nonheroic class write-up; the owner may wish to normalize the citation when ruling.

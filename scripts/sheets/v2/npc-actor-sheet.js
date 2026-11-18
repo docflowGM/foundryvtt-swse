@@ -9,7 +9,7 @@ import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/n
 import { buildNpcConceptAbilities, buildNpcConceptSheetContext, isNpcSheetWritablePath, isNpcStatblockAuthorityPath, isQuietNpcSheetPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc/npc-sheet-helpers.js";
 import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 import { launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
-import { NpcProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js";
+import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
 
 /**
@@ -311,7 +311,7 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
             defaultYes: false
           });
           if (!ok) return;
-          await NpcProgressionEngine.revertToSnapshot(this.actor);
+          await SnapshotManager.revertToLatestSnapshot(this.actor);
           await this.requestSurfaceRender({ reason: 'npc-progression-revert' });
         } catch (err) {
           ui?.notifications?.error?.(`Could not revert NPC progression: ${err.message}`);

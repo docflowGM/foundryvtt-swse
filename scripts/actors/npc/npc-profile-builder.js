@@ -15,7 +15,7 @@ import {
 } from './npc-mode-adapter.js';
 
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
-import { NpcProgressionEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js';
+import { SnapshotManager } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js';
 import { NpcLegalReviewEngine } from '/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcLegalReviewEngine.js';
 import { NpcReviewRepairEngine } from '/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcReviewRepairEngine.js';
 
@@ -1142,8 +1142,8 @@ export class NpcProfileBuilder {
     // Kept as existing behavior
     const canLaunchLevelUp = true;
 
-    const hasSnapshot = NpcProgressionEngine.hasSnapshot?.(actor) ?? false;
-    const snapshotInfo = NpcProgressionEngine.getSnapshotInfo?.(actor);
+    const hasSnapshot = SnapshotManager.hasSnapshots(actor);
+    const snapshotInfo = SnapshotManager.getLatestSnapshotInfo(actor);
     const snapshotLabel = snapshotInfo?.label ?? null;
     const revertAvailable = hasSnapshot;
 

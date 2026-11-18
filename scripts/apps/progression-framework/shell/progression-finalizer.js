@@ -33,6 +33,9 @@ import {
   persistedOfficerShareTalents, resolveOfficerShareTalentChoice,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/officer-share-talent-authority.js';
 import { ActorEngine as CanonicalActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { evaluateNpcProgressionGuard, buildNpcProfileReconciliationPatch } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
+import { SnapshotManager } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js';
+import { isTransientProgressionActor } from './progression-actor-persistence.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
@@ -370,6 +373,14 @@ export class ProgressionFinalizer {
         actorName: actor.name,
       });
 
+      // PERSISTENCE GUARD (fail closed): never apply a mutation plan to an unsaved
+      // draft actor. The shell materializes the world actor first.
+      if (isTransientProgressionActor(actor)) {
+        throw new Error('Finalization requires a persisted world actor; the draft actor has not been created yet');
+      }
+
+      this._assertNpcProgressionAuthority(sessionState, actor);
+
       // PHASE 1: Validate readiness
       this._validateReadiness(sessionState);
 
@@ -529,6 +540,26 @@ export class ProgressionFinalizer {
    * @param {Object} options
    * @returns {Promise<{success:boolean,result?:object,error?:string,message?:string,sheetAnchor?:string}>}
    */
+  /**
+   * STATBLOCK GUARD (fail closed, defense in depth behind launchProgression), shared
+   * by finalize() and finalizeSingleStep(): an existing NPC under statblock
+   * authority is never mutated by progression unless this very session carries an
+   * authorized, snapshot-backed conversion. Throws on violation.
+   */
+  static _assertNpcProgressionAuthority(sessionState, actor, { allowConversion = true } = {}) {
+    if (actor?.type !== 'npc') return;
+    // Statblock -> progression conversion is a FULL-finalization transaction (the authority
+    // switch is compiled into that plan). A single-step job never carries it, so a
+    // conversion token must not authorize one: `allowConversion:false` ignores the token.
+    const conversion = allowConversion ? (sessionState?.progressionSession?.statblockConversion ?? null) : null;
+    const guard = evaluateNpcProgressionGuard(actor, {
+      subtype: sessionState?.progressionSession?.subtype,
+      conversion,
+      originSnapshotExists: conversion ? SnapshotManager.hasStatblockOriginSnapshot(actor, conversion.originSnapshot) : false,
+    });
+    if (guard.blocked) throw new Error(`NPC progression blocked (${guard.reason}): ${guard.message}`);
+  }
+
   static async finalizeSingleStep(sessionState, actor, options = {}) {
     try {
       if (!actor) throw new Error('No actor provided for single-step progression.');
@@ -552,6 +583,10 @@ export class ProgressionFinalizer {
           : { success: false, error: submitted.error };
       }
       if (!domain) throw new Error(`Unsupported single-step progression job: ${stepId || options.job || '(unknown)'}`);
+
+      // Same NPC authority policy as finalize(). The only exception is the Store
+      // 'droidBuilder' job above, which never mutates the actor.
+      this._assertNpcProgressionAuthority(sessionState, actor, { allowConversion: false });
 
       const mutationPlan = await this._compileSingleStepMutationPlan(sessionState, actor, { ...options, domain, stepId });
       const itemDomains = new Set(['feats', 'talents', 'forcePowers', 'forceRegimens', 'forceTechniques', 'forceSecrets', 'medicalSecrets', 'starshipManeuvers']);
@@ -1365,20 +1400,29 @@ export class ProgressionFinalizer {
           });
         }
       } else {
-        add.items.push({
-          name: clazz.name || clazz.label || String(clazz),
-          type: 'class',
-          system: this._chargenClassItemSystem(classSystemForActor),
-          flags: {
-            swse: {
-              progression: {
-                sourceSession: sessionState.sessionId || 'unknown',
-                selectionKey: 'class',
-                selectionId: clazz.id || clazz.sourceId || clazz.name || null,
+        // Idempotent per progression session: a repeated/retried finalization of the
+        // SAME session must not embed a second copy of the class record (which
+        // would double its level).
+        const progressionSessionId = sessionState.progressionSession?.sessionId || null;
+        const alreadyEmbedded = !!progressionSessionId && actor.items.some(item =>
+          item?.type === 'class' && item.flags?.swse?.progression?.progressionSessionId === progressionSessionId);
+        if (!alreadyEmbedded) {
+          add.items.push({
+            name: clazz.name || clazz.label || String(clazz),
+            type: 'class',
+            system: this._chargenClassItemSystem(classSystemForActor),
+            flags: {
+              swse: {
+                progression: {
+                  sourceSession: sessionState.sessionId || 'unknown',
+                  progressionSessionId,
+                  selectionKey: 'class',
+                  selectionId: clazz.id || clazz.sourceId || clazz.name || null,
+                },
               },
             },
-          },
-        });
+          });
+        }
       }
     }
 
@@ -1833,6 +1877,19 @@ export class ProgressionFinalizer {
     if (sessionState.mode === 'chargen') {
       set['system.progression.chargenComplete'] = true;
       set['flags.foundryvtt-swse.progression.chargen.completedAt'] = completedAt;
+    }
+
+    // NPC identity + authority are reconciled INSIDE this plan so they commit (or
+    // roll back) atomically with the class history: a Nonheroic NPC taking its
+    // first heroic class becomes a 'heroic'-identity NPC with separate level
+    // accounting, and an authorized statblock conversion switches authority only
+    // when the whole progression succeeds.
+    if (actor?.type === 'npc') {
+      Object.assign(set, buildNpcProfileReconciliationPatch(actor, {
+        addedClassItems: (add.items || []).filter(item => item?.type === 'class'),
+        conversion: sessionState.progressionSession?.statblockConversion ?? null,
+        userId: globalThis.game?.user?.id ?? null,
+      }));
     }
 
     return {

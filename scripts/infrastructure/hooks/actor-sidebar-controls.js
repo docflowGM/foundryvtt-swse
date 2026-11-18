@@ -37,8 +37,10 @@ function onClickChargen(app) {
     return;
   }
 
-  if (actor.type !== 'character') {
-    ui?.notifications?.warn?.('Progression is for characters only.');
+  // NPCs route through the same entry point; it resolves their explicit
+  // heroic/nonheroic identity (or sends the GM to the NPC level-up dialog).
+  if (actor.type !== 'character' && actor.type !== 'npc') {
+    ui?.notifications?.warn?.('Progression is for characters and NPCs only.');
     return;
   }
 
