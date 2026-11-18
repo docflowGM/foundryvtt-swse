@@ -1872,7 +1872,7 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
         } else {
           const fp = actor.system.forcePoints?.value || 0;
           if (fp > 0) {
-            await ActorEngine.spendForcePoints(actor, 1);
+            await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'enhanced-rolls:_processEnhancements' });
           }
         }
 

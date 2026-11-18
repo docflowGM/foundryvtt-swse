@@ -241,7 +241,7 @@ export class ForcePointsService {
 
     const useKind = context.useKind;
     const reactionKinds = new Set(['recover-one-force-power', 'recover-one-maneuver', 'avoid-death']);
-    const timing = reactionKinds.has(useKind) ? 'reaction' : useKind === 'reduce-dark-side-score' ? 'swift' : 'free';
+    const timing = reactionKinds.has(useKind) ? 'reaction' : useKind === 'reduce-dark-side-score' ? 'swift' : useKind === 'ability-option' ? 'ability-defined' : 'free';
 
     if (useKind === 'roll-bonus') {
       const domain = String(context.rollDomain ?? context.domain ?? '');
@@ -279,6 +279,16 @@ export class ForcePointsService {
           event?.actorId !== actor.id || event?.state !== 'eligible') {
         return reject('Actor-owned lethal damage event receipt required');
       }
+    } else if (useKind === 'ability-option') {
+      // A talent/feat/Force-power option that costs 1 Force Point. The
+      // ability's own text governs its timing and effect, which this service
+      // cannot verify (FP-RD-003), so only the universal restrictions apply:
+      // helpless guard, exactly one point, the Core p.93 one-per-round limit,
+      // and request replay. An identified source is mandatory; no per-source
+      // exception (FP-RD-004) is granted from a caller-supplied flag.
+      if (typeof context.abilitySourceRef !== 'string' || context.abilitySourceRef.length === 0) {
+        return reject('An identified ability source is required for a Force Point option');
+      }
     } else if (useKind === 'reduce-dark-side-score') {
       const dsp = DSPEngine.getValue(actor);
       if (!(dsp > 0)) return reject('No Dark Side Score to reduce');
@@ -294,7 +304,7 @@ export class ForcePointsService {
       }
       roundKey = `${combat.id}:${combat.round}`;
       const activeId = combat.combatant?.actor?.id ?? combat.combatant?.actorId;
-      if (timing !== 'reaction' && activeId !== actor.id) {
+      if (timing !== 'reaction' && timing !== 'ability-defined' && activeId !== actor.id) {
         // Force Readiness is an owned feat, but does not waive any other FP
         // restriction or round cap.
         const ownsReadiness = Array.from(actor.items ?? []).some(i => i.type === 'feat' &&
@@ -323,7 +333,7 @@ export class ForcePointsService {
     return {
       valid: true, message: 'Authorized Force Point expenditure', allowance: 1,
       normalSpent, bonusEntriesSpent, countsTowardRoundLimit: true, roundKey, useKind,
-      actionTiming: timing
+      actionTiming: timing, abilitySourceRef: context.abilitySourceRef ?? null
     };
   }
 

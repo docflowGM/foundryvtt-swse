@@ -232,8 +232,10 @@ async function promptFields(title, body, fields = []) {
   });
 }
 
-async function spendOneForcePoint(actor, title, options = {}) {
-  const result = await ActorEngine.spendForcePoints(actor, 1, options);
+async function spendOneForcePoint(actor, title) {
+  // No caller-supplied override flag is accepted: no exception is granted by an
+  // unverified flag. See FP-RD-004 (Greater Focused Force Talisman).
+  const result = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: `force-adept:${title}` });
   if (!result?.spent) {
     ui?.notifications?.warn?.(`${title} requires spending 1 Force Point.`);
     return false;
@@ -545,7 +547,7 @@ export class ForceAdeptTalentActions {
     if (choice.recordOnly) {
       return postCard(actor, title, `<p>Recorded <strong>${esc(choice.powerName)}</strong> as the Focused Force Talisman power.</p><p>Creation/equipment state remains manual until talisman UI exists.</p>`, { powerName: choice.powerName, greater, recordedOnly: true });
     }
-    if (!(await spendOneForcePoint(actor, title, greater ? { ignoreOnePerTurn: true } : {}))) return null;
+    if (!(await spendOneForcePoint(actor, title))) return null;
     const count = await recoverAllUsesByName(actor, choice.powerName);
     return postCard(actor, title, `<p>${esc(actor.name)} spends 1 Force Point through ${esc(title)} and recovers all expended uses of <strong>${esc(choice.powerName)}</strong>.</p><p><strong>Recovered item count:</strong> ${count}. ${greater ? 'This Force Point does not count against the one-per-turn restriction.' : ''}</p>`, { powerName: choice.powerName, recoveredCount: count, greater });
   }

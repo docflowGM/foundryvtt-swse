@@ -620,7 +620,7 @@ export class ForceExecutor {
   static async _spendForcePointForTalent(actor, talentName) {
     const available = this._getAvailableForcePoints(actor);
     if (available <= 0) throw new Error(`${talentName} requires spending 1 Force Point, but none are available`);
-    const result = await ActorEngine.spendForcePoints(actor, 1);
+    const result = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'force-executor-option:_spendForcePointForTalent' });
     return result;
   }
 

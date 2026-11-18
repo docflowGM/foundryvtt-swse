@@ -374,7 +374,7 @@ export class ConsularTalentActions {
 
   static async applySkilledAdvisor(actor, ally, { skillKey = 'useTheForce', useForcePoint = false } = {}) {
     if (useForcePoint) {
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'consular:applySkilledAdvisor' });
       if (!spend?.spent) {
         ui?.notifications?.warn?.('No Force Point available for Skilled Advisor +10.');
         return null;
@@ -553,7 +553,7 @@ export class ConsularTalentActions {
       ui?.notifications?.warn?.(`${ally.name} has already aided you since the end of your last turn.`);
       return null;
     }
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'consular:promptEntreatAid' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Entreat Aid requires spending 1 Force Point.');
       return null;
@@ -568,7 +568,7 @@ export class ConsularTalentActions {
       ui?.notifications?.warn?.('Force of Will talent required.');
       return null;
     }
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'consular:promptForceOfWill' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Force of Will requires spending 1 Force Point.');
       return null;
@@ -742,7 +742,7 @@ export class ConsularTalentActions {
       return null;
     }
     const useImproved = improved === true || hasTalent(actor, 'Improved Battle Meditation');
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'consular:promptBattleMeditation' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Battle Meditation requires spending 1 Force Point.');
       return null;
@@ -838,7 +838,7 @@ export class ConsularTalentActions {
     }
     const target = await promptToken(actor, 'Exposing Strike', { relation: 'enemy', fallbackLabel: 'target damaged by your lightsaber', note: 'Use after you deal damage with a lightsaber. Spend 1 Force Point to make that target Flat-Footed until the end of your next turn.' });
     if (!target) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'consular:promptExposingStrike' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Exposing Strike requires spending 1 Force Point.');
       return null;

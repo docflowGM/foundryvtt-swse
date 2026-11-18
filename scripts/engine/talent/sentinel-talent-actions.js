@@ -343,7 +343,7 @@ export class SentinelTalentActions {
 
     const modResult = await showRollModifiersDialog({ title: 'Force Haze — Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
     if (modResult === null) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'sentinel:promptForceHaze' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Force Haze requires spending 1 Force Point.');
       return null;
@@ -424,7 +424,7 @@ export class SentinelTalentActions {
       return { powerId: String(new FormData(form).get('powerId') || 'manual') };
     }});
     if (!choice) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'sentinel:promptDarkRetaliation' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Dark Retaliation requires spending 1 Force Point.');
       return null;

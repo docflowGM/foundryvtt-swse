@@ -250,7 +250,7 @@ export class LightsaberTalentActions {
 
     const shelteringApplies = choice.protectAdjacent && choice.shelteringStance && hasTalent(actor, 'Sheltering Stance');
     if (choice.protectAdjacent && !shelteringApplies) {
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptBlock' });
       if (!spend?.spent) {
         ui?.notifications?.warn?.('Block against an adjacent character requires spending 1 Force Point unless Sheltering Stance applies.');
         return null;
@@ -308,7 +308,7 @@ export class LightsaberTalentActions {
 
     const shelteringApplies = choice.protectAdjacent && choice.shelteringStance && hasTalent(actor, 'Sheltering Stance');
     if (choice.protectAdjacent && !shelteringApplies) {
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptDeflect' });
       if (!spend?.spent) {
         ui?.notifications?.warn?.('Deflect against an adjacent character requires spending 1 Force Point unless Sheltering Stance applies.');
         return null;
@@ -457,7 +457,7 @@ export class LightsaberTalentActions {
       ui?.notifications?.warn?.('Force Fortification talent required.');
       return null;
     }
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptForceFortification' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Force Fortification requires spending 1 Force Point.');
       return null;
@@ -479,7 +479,7 @@ export class LightsaberTalentActions {
       return { targetName: String(fd.get('targetName') || 'targets in a 6-square line').trim() || 'targets in a 6-square line', pullBack: fd.get('pullBack') === 'on' };
     }});
     if (!choice) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptImprovedLightsaberThrow' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Improved Lightsaber Throw requires spending 1 Force Point.');
       return null;

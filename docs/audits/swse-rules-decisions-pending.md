@@ -3550,3 +3550,100 @@ The owner approved the 77 method phrases as player-facing wording ("They are app
 ## MSV-RD-018 — FINAL EDITORIAL APPROVAL (appended 2026-11-17; earlier entries preserved)
 
 Owner wording approval (stated 2026-11-16, recorded 2026-11-17) of: the 77 method phrases in their final wording (including `forceSecret` "refining the use of Force techniques", `brutalForce` "applying overwhelming force", `moraleImpact` "undermining an opponent's morale", `dualistTechnique` "applying specific dueling techniques") and the source-neutral method correction "I recognize that training, but I don't think it necessarily describes how I prefer to approach problems." (stable id `mc.q6.not.method_preference.1`, original text preserved in `originalText`). The shared positive method sentence was already approved. Scope: wording only. Unchanged: the 48 exclusions, canonical keys, evidence requirements, ranking, correction persistence, answer-to-tag mappings (uncertified), the neutral Q6 frame and every Mentor script (draft), and all 42 release scopes (withheld). Phrase wording and correction wording: RESOLVED.
+
+
+---
+
+## FORCE POINT TRANSACTION RULES — Checkpoint 03B implementation batch (appended 2026-11-18; append-only)
+
+Status of every entry: `DEFERRED_RULES_REVIEW`. Decision authority: project owner. Resolution: blank until approved. No recommended ruling is given.
+
+### FP-RD-001 — JATM Sparring Practice, Training Remote, Vo'ren's Third Cadence (Block/Deflect round-limit exemptions and temporary restricted FPs)
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-001 |
+| Rules domain | Force Points / source-restricted bonus points |
+| Feature | JATM Sparring Practice, Training Remote, Vo'ren's Third Cadence (Block/Deflect round-limit exemptions and temporary restricted FPs) |
+| Source | JATM pp.11-13 (per 03B policy; source PDFs local-only, not re-read this batch) |
+| Evidence | Printed exemptions apply only to FP added to the Block (Sparring Practice) or Deflect (Training Remote) activation UTF check, or off-turn Block/Deflect bonus spends (Third Cadence); qualifying tiers grant 1-2 temporary FPs restricted to that use. |
+| Confirmed behavior | The exemptions exist and are use-specific. |
+| Unresolved question | Which runtime event/domain constitutes 'the Block activation UTF check' vs 'Deflect activation UTF check' for entitlement purposes, and how the granting regimen links its restricted entry to that exact event. The current regimen producers write restricted entries with free-text restrictions and no event-linked entitlement receipt. |
+| Options | None derivable without the owner confirming the event mapping. |
+| Recommended ruling | None |
+| Implementation impact | Every restricted bonus entry is refused (fail closed); no Block/Deflect round-limit exemption is granted. Blocks: restricted-entry spending, exemption from the one-per-round ledger. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-002 — Guardian Spirit source-restricted bonus Force Point
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-002 |
+| Rules domain | Force Points / Guardian Spirit |
+| Feature | Guardian Spirit source-restricted bonus Force Point |
+| Source | Source page not re-verified (03B policy caveat) |
+| Evidence | Code creates a restricted bonus FP; the policy audit did not re-verify the talent's printed text. |
+| Confirmed behavior | Only that the code grants a restricted entry. |
+| Unresolved question | Printed restriction, expiry and which uses it may pay for. |
+| Options | None. |
+| Recommended ruling | None |
+| Implementation impact | Entry is refused for every spend (fail closed) until the page is reviewed. Blocks: Guardian Spirit bonus FP spending. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-003 — All talent, feat and Force-power options that cost 1 Force Point (about 28 call sites cut over to use kind 'ability-option')
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-003 |
+| Rules domain | Force Points / ability options |
+| Feature | All talent, feat and Force-power options that cost 1 Force Point (about 28 call sites cut over to use kind 'ability-option') |
+| Source | Each ability's own printed text (not re-verified in this batch) |
+| Evidence | Core p.93: one FP per round unless an exception is printed. The service applies exactly that universal rule, the helpless guard, single point, replay protection. |
+| Confirmed behavior | Round-limit default; helpless guard. |
+| Unresolved question | Whether each ability's own timing (free/swift/reaction, own turn or off turn) must be enforced centrally. The service deliberately enforces NO per-ability timing and grants NO exception, preserving pre-branch behavior for timing. |
+| Options | None. |
+| Recommended ruling | None |
+| Implementation impact | Per-ability timing is not centrally verified. Blocks: certification of any individual ability's FP timing. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-004 — Djem So (reaction, previously passed allowOncePerRoundOverride) and Greater Focused Force Talisman (description claims it does not count against a one-per-turn restriction)
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-004 |
+| Rules domain | Force Points / per-ability round-limit exceptions |
+| Feature | Djem So (reaction, previously passed allowOncePerRoundOverride) and Greater Focused Force Talisman (description claims it does not count against a one-per-turn restriction) |
+| Source | Not re-verified in this batch |
+| Evidence | The code asserted these exceptions through unverified caller flags. |
+| Confirmed behavior | None certified. |
+| Unresolved question | Whether either exception exists in print and whether it exempts the Core p.93 one-FP-per-round limit or a different (ability-local) limit. |
+| Options | None. |
+| Recommended ruling | None |
+| Implementation impact | Both flags were removed; both spends now count against the round limit. Blocks: any exemption for either ability. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-005 — Avoiding death by Force Point (Core p.93: a reaction)
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-005 |
+| Rules domain | Force Points / death avoidance |
+| Feature | Avoiding death by Force Point (Core p.93: a reaction) |
+| Source | Core p.93; 03B policy |
+| Evidence | It is a reaction and may be used off turn while helpless. |
+| Confirmed behavior | Reaction; not blocked by the helpless condition; requires a lethal damage event. |
+| Unresolved question | Whether the rescue reaction counts toward the one-FP-per-round limit. The implementation counts it (the 03B policy states reactions do not waive the round limit). |
+| Options | Count it (implemented per 03B policy default) / do not count it (no printed text located). |
+| Recommended ruling | None |
+| Implementation impact | Implemented as counted. If the owner rules otherwise, flag one countsTowardRoundLimit field for the avoid-death kind. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

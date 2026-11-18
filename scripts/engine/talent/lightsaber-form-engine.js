@@ -278,7 +278,7 @@ export class LightsaberFormEngine {
       ui?.notifications?.warn?.('Djem So has already been used this round.');
       return null;
     }
-    const spend = await ActorEngine.spendForcePoints(actor, 1, { allowOncePerRoundOverride: true, source: 'djem-so' });
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber-form:djem-so' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Djem So requires spending 1 Force Point.');
       return null;
@@ -308,7 +308,7 @@ export class LightsaberFormEngine {
     }});
     if (!choice) return null;
     const targetName = choice.targetName;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber-form:promptJuyo' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Juyo requires spending 1 Force Point.');
       return null;

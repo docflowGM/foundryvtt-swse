@@ -1853,11 +1853,30 @@ export const ActorEngine = {
         return false;
       }
 
-      const spend = await this.spendForcePoints(actor, 1);
+      // This method is the damage owner: it has just verified the lethal hit
+      // (forceRescueEligible + canRescue) and the player's confirmation, so it
+      // persists the event receipt that ForcePointsService.authorizeSpend
+      // requires for 'avoid-death'. Core p.93: the rescue is a reaction.
+      const sourceEventId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
+      if (!sourceEventId) throw new Error('Death-rescue event identity unavailable');
+      await this.updateActor(actor, {
+        'flags.swse.forceDeathRescueEvent': { id: sourceEventId, actorId: actor.id, state: 'eligible', createdAt: Date.now() }
+      });
+      let spend;
+      try {
+        spend = await this.spendForcePoints(actor, 1, { useKind: 'avoid-death', sourceEventId });
+      } catch (spendErr) {
+        ui.notifications?.warn?.(`${actor.name}: Force Point rescue not permitted — ${spendErr.message}`);
+        return false;
+      } finally {
+        // Single-use: the receipt can never authorize a second spend.
+        await this.updateActor(actor, { 'flags.swse.forceDeathRescueEvent': { id: sourceEventId, actorId: actor.id, state: 'consumed' } });
+      }
       if (!spend?.spent) {
         ui.notifications?.warn?.(`${actor.name}: Force Point rescue failed — no Force Points remaining.`);
         return false;
       }
+      await this.finalizeForcePointSpend(actor, spend);
       await actor.setFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
 
       resolution.forceRescueUsed = true;
@@ -2055,7 +2074,7 @@ export const ActorEngine = {
       if (!receiptId) throw new Error('Force Point receipt identity unavailable');
       const receipt = {
         receiptId, requestId, actorId: actor.id,
-        roundKey: decision.roundKey, useKind: decision.useKind,
+        roundKey: decision.roundKey, useKind: decision.useKind, abilitySourceRef: decision.abilitySourceRef ?? null,
         countsTowardRoundLimit: decision.countsTowardRoundLimit,
         normalSpent: decision.normalSpent,
         bonusEntriesSpent: debit.map(({ id, source, amount, entry }) =>
@@ -2100,9 +2119,11 @@ export const ActorEngine = {
       const own = records[index];
       const normal = Number(actor.system?.forcePoints?.value ?? 0);
       const max = Number(actor.system?.forcePoints?.max ?? normal);
-      if (normal + own.normalSpent > max) {
-        return { rolledBack: false, reason: 'Normal Force Point capacity changed; manual reconciliation required' };
-      }
+      // The normal pool can never exceed its maximum. If the actor was refilled
+      // after the debit, only the headroom is restored (nothing is fabricated);
+      // the receipt is still closed so the cancelled use frees its round slot.
+      // Bonus entries are never converted into normal points, nor vice versa.
+      const normalRestored = Math.max(0, Math.min(own.normalSpent, max - normal));
       const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
       const merged = Array.isArray(pool.entries) ? pool.entries.map(e => ({ ...e })) : [];
       for (const used of own.bonusEntriesSpent ?? []) {
@@ -2124,7 +2145,7 @@ export const ActorEngine = {
       const bonusValue = merged.reduce((sum, e) => sum + Number(e.value ?? 0), 0);
       const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'rolled-back' } : r);
       const update = {
-        'system.forcePoints.value': normal + own.normalSpent,
+        'system.forcePoints.value': normal + normalRestored,
         'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords }
       };
       if (own.bonusEntriesSpent?.length) {
@@ -2137,7 +2158,7 @@ export const ActorEngine = {
         };
       }
       await this.updateActor(actor, update);
-      return { rolledBack: true, receiptId: own.receiptId, normalRestored: own.normalSpent,
+      return { rolledBack: true, receiptId: own.receiptId, normalRestored,
         bonusRestored: (own.bonusEntriesSpent ?? []).reduce((sum, e) => sum + e.amount, 0) };
     });
   },

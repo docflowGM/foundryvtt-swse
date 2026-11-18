@@ -250,52 +250,16 @@ export class ForcePointsUtil {
   }
 
   /**
-   * Avoid death by spending a Force Point
-   * Uses ForcePointsService eligibility checks and ActorEngine mutation
-   *
-   * @param {Actor} actor - The actor avoiding death
-   * @param {Object} context - Death context (damage, threshold, etc.)
-   * @returns {Promise<boolean>} Whether death was avoided
+   * @deprecated Death avoidance is owned by the damage owner
+   * (ActorEngine._maybeResolveForcePointRescue), which verifies the lethal
+   * hit, persists the single-use event receipt and pays through the typed
+   * 'avoid-death' transaction. This macro-era entry point has no in-repo
+   * caller and cannot prove a lethal event, so it refuses rather than spend.
+   * (Category E: macro-only global; deletion awaits owner policy.)
+   * @returns {Promise<boolean>} always false
    */
-  static async avoidDeath(actor, context = {}) {
-    // Check eligibility via ForcePointsService
-    const canRescue = ForcePointsService.canRescue(actor, context);
-    if (!canRescue) {
-      ui.notifications.error('Cannot use Force Point to avoid death: requirements not met (HP not at death, already rescued, or no Force Points)');
-      return false;
-    }
-
-    // Validate spend
-    const validation = ForcePointsService.validateSpend(actor, {
-      reason: 'avoiding death',
-      amount: 1
-    });
-
-    if (!validation.valid) {
-      ui.notifications.error(`Cannot avoid death: ${validation.message}`);
-      return false;
-    }
-
-    // Spend the Force Point via ActorEngine (mutation authority)
-    await globalThis.SWSE?.ActorEngine?.spendForcePoints(actor, 1);
-
-    // Mark as rescued this resolution (prevents multiple rescues)
-    // This flag should be cleared at the start of the next damage resolution
-    await actor.setFlag('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
-
-    // Canonical rescue result: remain at 0 HP and move to the bottom of the condition track.
-    await globalThis.SWSE?.ActorEngine?.updateActor(actor, {
-      'system.hp.value': 0,
-      'system.conditionTrack.current': 5
-    });
-
-    // Chat notification
-    createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<p><strong>${actor.name}</strong> spends a Force Point to avoid death and falls unconscious!</p>`
-    });
-
-    ui.notifications.warn(`${actor.name} avoids death but falls unconscious!`);
-    return true;
+  static async avoidDeath(actor) {
+    ui.notifications.warn(`${actor?.name ?? 'Actor'}: Force Point death avoidance is offered automatically when a lethal hit is resolved.`);
+    return false;
   }
 }

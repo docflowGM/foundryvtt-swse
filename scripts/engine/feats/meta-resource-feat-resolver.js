@@ -522,7 +522,7 @@ export class MetaResourceFeatResolver {
 
     if (cost === 'forcePoint') {
       const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'meta-resource-feat:resolveAttackRerollButton' });
       if (!spend?.spent) {
         ui?.notifications?.warn?.(`${sourceName} requires a Force Point.`);
         return null;
@@ -792,7 +792,7 @@ export class MetaResourceFeatResolver {
 
     if (cost === 'forcePoint') {
       const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'meta-resource-feat:resolveFullAttackRerollButton' });
       if (!spend?.spent) {
         ui?.notifications?.warn?.(`${sourceName} requires a Force Point.`);
         return null;
@@ -927,7 +927,7 @@ export class MetaResourceFeatResolver {
 
     const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
     if (rule.cost === 'forcePoint') {
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'meta-resource-feat:applyTemporaryDefenseRule' });
       if (!spend?.spent) return { success: false, reason: `${rule.sourceName} requires a Force Point.` };
     }
 

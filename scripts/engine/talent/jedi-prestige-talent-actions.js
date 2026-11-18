@@ -242,7 +242,7 @@ export class JediPrestigeTalentActions {
   static async promptForceRevive(actor) {
     const target = await chooseTargetActor('Force Revive', 'ally at 0 HP affected by Battle Meditation');
     if (!target) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'jedi-prestige:promptForceRevive' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Force Revive requires spending 1 Force Point.');
       return null;
@@ -293,7 +293,7 @@ export class JediPrestigeTalentActions {
   static async promptApprenticeBoon(actor) {
     const target = await chooseTargetActor('Apprentice Boon', 'ally within 12 squares with lower UTF bonus');
     if (!target) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'jedi-prestige:promptApprenticeBoon' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Apprentice Boon requires spending 1 Force Point.');
       return null;
@@ -323,7 +323,7 @@ export class JediPrestigeTalentActions {
     const target = await chooseTargetActor('Share Talent', 'ally within 12 squares able to see and hear you');
     if (!target) return null;
     const maxAllies = Math.max(1, Math.floor(actorLevel(actor) / 2));
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'jedi-prestige:promptShareTalent' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Share Talent requires spending 1 Force Point.');
       return null;
@@ -424,7 +424,7 @@ export class JediPrestigeTalentActions {
   }
 
   static async promptUncloudedJudgement(actor) {
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'jedi-prestige:promptUncloudedJudgement' });
     if (!spend?.spent) {
       ui?.notifications?.warn?.('Unclouded Judgement requires spending 1 Force Point.');
       return null;

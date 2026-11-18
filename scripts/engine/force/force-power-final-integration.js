@@ -82,7 +82,7 @@ async function resolveNegateEnergy({ actor, power, result, options, ForcePowerEf
       const hp = hpState(actor);
       healed = Math.max(0, Math.min(incomingDamage, hp.max - hp.value));
       try {
-        await ActorEngine.spendForcePoints(actor, 1);
+        await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'force-power:resolveNegateEnergy' });
         healingForcePointSpent = true;
         if (healed > 0) {
           await ActorEngine.updateActor(actor, {

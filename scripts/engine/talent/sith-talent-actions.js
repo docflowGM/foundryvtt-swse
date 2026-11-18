@@ -155,7 +155,7 @@ async function applyHealing(actor, amount) {
 }
 
 async function spendOneForcePoint(actor, title) {
-  const spend = await ActorEngine.spendForcePoints(actor, 1);
+  const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: `sith:${title}` });
   if (!spend?.spent) {
     ui?.notifications?.warn?.(`${title} requires spending 1 Force Point.`);
     return false;
