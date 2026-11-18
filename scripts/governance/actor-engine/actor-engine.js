@@ -2143,6 +2143,25 @@ export const ActorEngine = {
   },
 
   /**
+   * Persist finality after the paid effect actually occurred. Finalized
+   * receipts still count toward the round limit, but are never refundable.
+   */
+  async finalizeForcePointSpend(actor, spentReceipt) {
+    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Force Point finalization requires an actor and receipt');
+    return withForcePointQueue(actor, async () => {
+      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+      const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
+      if (index < 0) return { finalized: false, reason: 'Receipt not found' };
+      if (records[index].state === 'finalized') return { finalized: true, alreadyFinalized: true };
+      if (records[index].state !== 'committed') return { finalized: false, reason: 'Receipt is not pending finalization' };
+      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'finalized' } : r);
+      await this.updateActor(actor, { 'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords } });
+      return { finalized: true, receiptId: spentReceipt.receiptId };
+    });
+  },
+
+  /**
    * spendDestinyPoints() — Reduce actor's destiny points
    *
    * @param {Actor} actor - target actor
