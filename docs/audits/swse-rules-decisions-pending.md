@@ -3819,3 +3819,17 @@ Owner adjudication of ambiguous source wording (not a separately printed sentenc
 ## FP-RD-003 / lightsaber batch 1 — IMPLEMENTATION PROGRESS (appended 2026-11-18)
 
 Four lightsaber contracts implemented (see the contract ledger, Batch 1). Open sub-item (not a rules ruling, a missing runtime): Improved Lightsaber Throw has no canonical thrown-lightsaber area-attack resolution to finalize against; the standard-action cost and ownership are enforced, finalization is at talent-card publication.
+
+
+## FP-RD-008 / FP-RD-009 — Force power suite recovery timing (Checkpoint 03C; appended 2026-11-18)
+
+Source (Core Rulebook, "Regaining Force Powers"): (a) "When combat is over and you have a chance to rest for 1 minute, you regain all of your Force powers"; (b) "If you roll a natural 20 on a Use the Force check, you regain all spent Force powers at the end of your turn."
+
+Implemented from the printed text: natural 20 on any Use the Force check records a pending regain tied to the actor's own combatant and performs it at the end of that actor's turn (never a Force Point); the regain-all authority is `ForceExecutor.regainAllSpentForcePowers` (suite state = `system.discarded`).
+
+| ID | Question | Status |
+| --- | --- | --- |
+| FP-RD-008 | Natural 20 on a Use the Force check OUTSIDE combat: there is no "end of your turn". The pending regain stays recorded and is cleared by the next regain-all (the rest). Does the owner want an immediate regain, or a different trigger? | `DEFERRED_RULES_REVIEW` (implemented conservatively: no automatic out-of-combat regain) |
+| FP-RD-009 | Ending combat (the GM deletes the combat) is treated as "combat is over and you rest 1 minute" (existing behavior kept, now through the single authority). Should regain instead require an explicit rest action? | `DEFERRED_RULES_REVIEW` (existing behavior preserved) |
+
+Both: Decision authority: project owner. Recommended ruling: none. Resolution: blank.

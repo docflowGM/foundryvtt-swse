@@ -12,6 +12,37 @@ import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/for
 import { installFinalForcePowerIntegration } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-final-integration.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
+// Exactly one client acts: the first active GM (mirrors the other combat hooks).
+function isResponsibleGm() {
+  const gms = (globalThis.game?.users ?? []).filter?.(u => u.isGM && u.active) ?? [];
+  return globalThis.game?.user?.isGM === true && (gms.length === 0 || gms[0]?.id === globalThis.game.user.id);
+}
+
+export async function regainSuiteAfterCombat(combat) {
+  const results = [];
+  for (const combatant of combat?.combatants ?? []) {
+    const actor = combatant.actor;
+    if (!actor) continue;
+    const result = await ForceExecutor.regainAllSpentForcePowers(actor, { source: 'force-power-combat-end-regain' });
+    results.push({ actorId: actor.id, ...result });
+    if (result.recovered > 0 && actor.isOwner) ui.notifications.info(`Combat ended. ${actor.name} regained ${result.recovered} Force Power(s)`);
+  }
+  return results;
+}
+
+/** The combatant whose turn just ended (Foundry v13 Combat#previous), if its actor has a pending natural-20 regain. */
+export async function regainSuiteAtEndOfTurn(combat) {
+  const prevId = combat?.previous?.combatantId ?? null;
+  if (!prevId) return null;
+  const combatant = combat.combatants?.get?.(prevId) ?? Array.from(combat.combatants ?? []).find(c => c.id === prevId);
+  const actor = combatant?.actor;
+  const pending = actor?.getFlag?.('swse', 'pendingSuiteRegain') ?? actor?.flags?.swse?.pendingSuiteRegain;
+  if (!pending || pending.combatId !== combat.id || (pending.combatantId && pending.combatantId !== prevId)) return null;
+  const result = await ForceExecutor.regainAllSpentForcePowers(actor, { source: 'force-power-natural-20-regain' });
+  if (result.recovered > 0 && actor.isOwner) ui.notifications.info(`Natural 20: ${actor.name} regained ${result.recovered} Force Power(s) at the end of the turn`);
+  return { actorId: actor.id, ...result };
+}
+
 function isProgressionManagedForceMutation(itemOrActor, options = {}) {
   const source = String(options?.source || options?.meta?.source || '').toLowerCase();
   const guardKey = String(options?.meta?.guardKey || options?.guardKey || '').toLowerCase();
@@ -111,31 +142,17 @@ export function initializeForcePowerHooks() {
     await ForcePowerManager.handleAbilityIncrease(actor, oldAbilities, newAbilities);
   });
 
+  // Combat is over (the rest): every combatant regains all spent Force powers (Core, Regaining Force Powers).
   Hooks.on('deleteCombat', async (combat, options, userId) => {
-    SWSELogger.log('SWSE | Force Powers | Combat ended, regaining Force Powers for all combatants');
+    if (!isResponsibleGm()) return;
+    await regainSuiteAfterCombat(combat);
+  });
 
-    for (const combatant of combat.combatants) {
-      if (!combatant.actor) {continue;}
-
-      const spentPowers = combatant.actor.items.filter(i =>
-        i.type === 'force-power' && i.system.spent
-      );
-
-      if (spentPowers.length > 0) {
-        const updates = spentPowers.map(power => ({
-          _id: power.id,
-          'system.spent': false
-        }));
-
-        await ActorEngine.updateOwnedItems(combatant.actor, updates, {
-          meta: { guardKey: 'force-power-grant' }
-        });
-
-        if (combatant.actor.isOwner) {
-          ui.notifications.info(`Combat ended. ${combatant.actor.name} regained ${spentPowers.length} Force Power(s)`);
-        }
-      }
-    }
+  // Natural 20 on a Use the Force check: regain every spent Force power at the END of that actor's turn.
+  Hooks.on('updateCombat', async (combat, changed, options, userId) => {
+    if (!isResponsibleGm()) return;
+    if (changed?.turn === undefined && changed?.round === undefined) return;
+    await regainSuiteAtEndOfTurn(combat);
   });
 
   Hooks.on('deleteItem', async (item, options, userId) => {

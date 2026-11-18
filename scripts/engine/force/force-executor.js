@@ -308,7 +308,7 @@ export class ForceExecutor {
 
       // Handle natural 20 effects
       if (isCritical) {
-        await ForceEngine.recordNatural20(actor, power.name);
+        // The natural-20 suite regain is recorded once, by RollCore (every Use the Force domain).
         await this.grantTelepathicInfluenceForcePoint(actor);
       }
 
@@ -1047,6 +1047,29 @@ export class ForceExecutor {
       if (Number.isFinite(n) && n > 0) return Math.max(1, Math.floor(n));
     }
     return 1;
+  }
+
+  /**
+   * The single "regain all spent Force powers" authority (Core Rulebook, Regaining Force Powers): used by the
+   * end-of-combat rest and the natural-20 end-of-turn regain. `system.discarded` is the suite state owned by the
+   * executor, the adapter and the sheets. Only the learned Power copy returns to the suite: a maintained effect is an
+   * independent instance owned by ForcePowerEffectsEngine and is never touched here. Clears any pending regain.
+   */
+  static async regainAllSpentForcePowers(actor, { source = 'force-power-regain-all' } = {}) {
+    if (!actor) return { success: false, recovered: 0, error: 'No actor' };
+    const spent = Array.from(actor.items ?? []).filter(item => isForcePowerItem(item) && item.system?.discarded === true);
+    if (spent.length > 0) {
+      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', spent.map(power => ({
+        _id: power.id,
+        'system.discarded': false,
+        'system.spent': false,
+        'system.lastRecovered': Date.now()
+      })), { source, render: false });
+    }
+    if (actor.getFlag?.('swse', 'pendingSuiteRegain') ?? actor.flags?.swse?.pendingSuiteRegain) {
+      await ActorEngine.updateActor(actor, { 'flags.swse.pendingSuiteRegain': null });
+    }
+    return { success: true, recovered: spent.length, powers: spent.map(p => p.name) };
   }
 
   /**

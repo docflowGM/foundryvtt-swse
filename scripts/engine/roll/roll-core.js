@@ -117,6 +117,16 @@ export class RollCore {
       }
 
       const baseRollResult = this._extractBaseRoll(roll, baseDice);
+      // Core "Regaining Force Powers": a natural 20 on a Use the Force check regains every spent Force power at the
+      // end of the actor's turn. One authority for every Use the Force domain (power, regimen, talent, plain skill).
+      if (baseRollResult === 20 && RollCore.isUseTheForceDomain(domain)) {
+        try {
+          const { ForceEngine } = await import("/systems/foundryvtt-swse/scripts/engine/force/force-engine.js");
+          await ForceEngine.recordNatural20(actor, context?.itemName ?? context?.powerName ?? null, { sourceKey: domain });
+        } catch (err) {
+          swseLogger.error('[RollCore] Natural 20 suite regain could not be recorded', err);
+        }
+      }
       const breakdown = {
         baseRoll: baseRollResult,
         baseBonus,
@@ -290,6 +300,11 @@ export class RollCore {
     } catch (err) {
       throw new Error(`Failed to execute formula "${formula}": ${err.message}`);
     }
+  }
+
+  static isUseTheForceDomain(domain) {
+    const d = String(domain ?? '');
+    return d === 'skill.useTheForce' || d.startsWith('force-power.') || d.startsWith('force-regimen.') || d.startsWith('force-talent.');
   }
 
   static _extractBaseRoll(roll, baseDice) {

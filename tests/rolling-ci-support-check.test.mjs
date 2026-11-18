@@ -51,8 +51,9 @@ import { fileURLToPath } from 'node:url';
 // excluded name exists in the repo and hard-fails otherwise — already
 // exercised by the runs above).
 {
-  const { KNOWN_EXCLUDED_TESTS } = await import('../tools/run-rolling-tests.mjs');
-  assert.equal(KNOWN_EXCLUDED_TESTS.length, 5);
+  const { KNOWN_EXCLUDED_TESTS, FOUNDRY_PRELOADED_TESTS } = await import('../tools/run-rolling-tests.mjs');
+  assert.equal(KNOWN_EXCLUDED_TESTS.length, 0, 'no test is excluded: the former five run with the Foundry loader preloaded');
+  assert.equal(FOUNDRY_PRELOADED_TESTS.length, 5);
 
   const syntaxCheck = await import('../tools/run-rolling-syntax-check.mjs');
   assert.equal(

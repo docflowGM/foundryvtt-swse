@@ -17,27 +17,28 @@ export class ForceEngine {
   }
 
   /**
-   * Track natural 20 on Force roll
+   * Natural 20 on a Use the Force check (Core Rulebook, "Regaining Force Powers"): you regain ALL spent Force
+   * powers at the END OF YOUR TURN. It never awards a Force Point. This records the pending regain on the actor;
+   * the combat turn hook (force-power-hooks.js) performs it through ForceExecutor.regainAllSpentForcePowers.
+   * Out of combat there is no "end of turn": the pending regain stays recorded and is cleared by the next
+   * regain-all (FP-RD-008, deferred ruling).
    */
-  static async recordNatural20(actor, powerName) {
+  static async recordNatural20(actor, powerName, { sourceKey = null } = {}) {
     const force = actor.system.force || {};
-    force.natural20Count = (force.natural20Count || 0) + 1;
-
-    // Auto-recover 1 FP on natural 20 (SWSE rule)
-    const fpCurrent = SchemaAdapters.getForcePoints(actor);
-    const fpMax = SchemaAdapters.getMaxForcePoints(actor);
-    const newFp = Math.min(fpMax, fpCurrent + 1);
-
-    await ActorEngine.updateActor(actor, {
-      'system.force': force,
-      ...SchemaAdapters.setForcePointsUpdate(newFp)
-    });
-
-    return {
-      natural20Count: force.natural20Count,
-      fpRecovered: 1,
-      fpCurrent: newFp
+    const natural20Count = (force.natural20Count || 0) + 1;
+    const combat = globalThis.game?.combat;
+    const pending = {
+      combatId: combat?.started ? combat.id ?? null : null,
+      round: combat?.started ? combat.round ?? null : null,
+      // The regain happens at the end of THIS actor's turn: the current one if the check is rolled on its turn, otherwise its next.
+      combatantId: combat?.started ? Array.from(combat.combatants ?? []).find(c => c.actor?.id === actor.id)?.id ?? null : null,
+      source: powerName ?? sourceKey ?? null
     };
+    await ActorEngine.updateActor(actor, {
+      'system.force.natural20Count': natural20Count,
+      'flags.swse.pendingSuiteRegain': pending
+    });
+    return { natural20Count, pendingSuiteRegain: pending, fpRecovered: 0 };
   }
 
   /**

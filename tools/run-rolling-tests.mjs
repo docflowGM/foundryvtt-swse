@@ -27,16 +27,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const TESTS_DIR = path.join(ROOT, 'tests');
 
-// Pre-existing, verified-unrelated Force-power-track failures (environment
-// limitation: absolute Foundry-only imports, not a rolling-system defect).
-// See the Phase 5 audit for the git-history evidence behind each entry.
-export const KNOWN_EXCLUDED_TESTS = [
+// The five Force-power-track tests that used to be excluded ("environment limitation: absolute Foundry-only
+// imports") are NOT defects: they pass once the Foundry path loader and application-API shims are preloaded
+// (tests/helpers/foundry-shim/preload.mjs). They now run, preloaded, as real assertions. The exclusion list is
+// therefore empty and only ever shrinks.
+export const KNOWN_EXCLUDED_TESTS = [];
+
+export const FOUNDRY_PRELOADED_TESTS = [
   'force-power-final-integration.test.mjs',
   'phase3-force-power-corrections.test.mjs',
   'phase4-force-modifier-automation.test.mjs',
@@ -64,7 +67,10 @@ function main() {
   const failures = [];
 
   for (const name of toRun) {
-    const result = spawnSync(process.execPath, [path.join(TESTS_DIR, name)], { encoding: 'utf8' });
+    const args = FOUNDRY_PRELOADED_TESTS.includes(name)
+      ? ['--import', pathToFileURL(path.join(TESTS_DIR, 'helpers', 'foundry-shim', 'preload.mjs')).href, path.join(TESTS_DIR, name)]
+      : [path.join(TESTS_DIR, name)];
+    const result = spawnSync(process.execPath, args, { encoding: 'utf8' });
     if (result.status === 0) {
       pass += 1;
       console.log(`  PASS  ${name}`);
