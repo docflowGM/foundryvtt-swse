@@ -144,6 +144,7 @@ function swseChatBuildReactionContext(actor, context = {}) {
     timerLabel: source.timerLabel ?? context.reactionTimerLabel ?? '',
     reason: source.reason ?? context.reactionReason ?? '',
     attackType: source.attackType ?? context.attackType ?? '',
+    weaponId: source.weaponId ?? context.weaponId ?? '',
     damageType: source.damageType ?? context.damageType ?? '',
     damageTypesCsv: (Array.isArray(source.damageTypes) ? source.damageTypes : source.damageTypes ? [source.damageTypes] : [])
       .join(','),
