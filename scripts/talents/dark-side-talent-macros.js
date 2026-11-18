@@ -37,7 +37,7 @@ export class DarkSideTalentMacros {
     }
 
     const powerOptions = forcePowers
-      .map(p => `<option value="${p.id}">${p.name}${p.system?.spent ? ' (Spent)' : ' (Ready)'}</option>`)
+      .map(p => `<option value="${p.id}">${p.name}${p.system?.discarded ? ' (Spent)' : ' (Ready)'}</option>`)
       .join('');
 
     const dialog = new SWSEDialogV2({

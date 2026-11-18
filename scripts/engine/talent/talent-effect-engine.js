@@ -468,7 +468,7 @@ export class TalentEffectEngine {
       };
     }
 
-    if (power.system?.spent !== true) {
+    if (power.system?.discarded !== true) {
       return {
         success: false,
         reason: "Power is not spent"
@@ -485,7 +485,7 @@ export class TalentEffectEngine {
       type: "updateOwnedItems",
       items: [{
         _id: power.id,
-        "system.spent": false
+        "system.discarded": false
       }]
     });
 
@@ -593,7 +593,7 @@ export class TalentEffectEngine {
       actor: allyActor,
       actorId: allyActor.id,
       type: "updateOwnedItems",
-      items: [{ _id: power.id, "system.spent": false }]
+      items: [{ _id: power.id, "system.discarded": false }]
     });
     if (directUsageFlag) {
       mutations.push({

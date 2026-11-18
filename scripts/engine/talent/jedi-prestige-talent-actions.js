@@ -45,11 +45,11 @@ function forcePowers(actor) {
 }
 
 function isReadyPower(item) {
-  return item?.system?.spent !== true && item?.system?.discarded !== true;
+  return item?.system?.discarded !== true;
 }
 
 function isSpentPower(item) {
-  return item?.system?.spent === true || item?.system?.discarded === true;
+  return item?.system?.discarded === true;
 }
 
 function selectedTargetActors() {
@@ -271,7 +271,7 @@ export class JediPrestigeTalentActions {
     if (!choice) return null;
     const power = spent.find(p => p.id === choice.powerId);
     if (!power) return null;
-    await ActorEngine.updateEmbeddedDocuments(target.actor, 'Item', [{ _id: power.id, 'system.spent': false, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'direct' }], { source: 'direct', render: false });
+    await ActorEngine.updateEmbeddedDocuments(target.actor, 'Item', [{ _id: power.id, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'direct' }], { source: 'direct', render: false });
     return postCard(actor, 'Direct', `<p>${esc(actor.name)} returns <strong>${esc(power.name)}</strong> to <strong>${esc(target.actor.name)}</strong>'s Force Power Suite.</p>`, { targetActorId: target.actor.id, powerId: power.id });
   }
 
@@ -344,7 +344,7 @@ export class JediPrestigeTalentActions {
     if (!choice) return null;
     const power = ready.find(p => p.id === choice.powerId);
     if (!power) return null;
-    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: power.id, 'system.spent': true, 'system.discarded': true, 'flags.swse.lastSpentBy': 'transfer-power' }], { source: 'transfer-power', render: false });
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: power.id, 'system.discarded': true, 'flags.swse.lastSpentBy': 'transfer-power' }], { source: 'transfer-power', render: false });
     const data = power.toObject ? power.toObject() : foundry.utils.deepClone(power);
     delete data._id;
     data.system = foundry.utils.mergeObject(data.system || {}, { spent: false, discarded: false, transferredUse: true, grantedBy: 'Transfer Power' }, { inplace: false, recursive: true });
@@ -407,8 +407,8 @@ export class JediPrestigeTalentActions {
     if (!choice) return null;
     const power = spent.find(p => p.id === choice.powerId);
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [
-      { _id: farseeing.id, 'system.spent': true, 'system.discarded': true, 'flags.swse.lastSpentBy': 'prepared-for-danger' },
-      { _id: power.id, 'system.spent': false, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'prepared-for-danger' }
+      { _id: farseeing.id, 'system.discarded': true, 'flags.swse.lastSpentBy': 'prepared-for-danger' },
+      { _id: power.id, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'prepared-for-danger' }
     ], { source: 'prepared-for-danger', render: false });
     return postCard(actor, 'Prepared for Danger', `<p>${esc(actor.name)} spends <strong>Farseeing</strong> to recover <strong>${esc(power.name)}</strong>.</p>`, { recoveredPowerId: power.id });
   }

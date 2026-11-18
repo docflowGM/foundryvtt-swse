@@ -1040,7 +1040,7 @@ export class MetaResourceFeatResolver {
   }
 
   static getRecoverableForcePowers(actor) {
-    return getForcePowerItems(actor).filter(power => power?.system?.discarded === true || power?.system?.spent === true);
+    return getForcePowerItems(actor).filter(power => power?.system?.discarded === true);
   }
 
   static async recoverForcefulRecoveryPower(actor, powerId) {
@@ -1049,7 +1049,7 @@ export class MetaResourceFeatResolver {
     if (!pending) return { success: false, reason: 'No Forceful Recovery is pending.' };
     const power = actor.items?.get?.(powerId) ?? getForcePowerItems(actor).find(item => item.id === powerId || item._id === powerId);
     if (!power || !isForcePowerItem(power)) return { success: false, reason: 'Force power not found.' };
-    if (power.system?.discarded !== true && power.system?.spent !== true) return { success: false, reason: `${power.name} is not expended.` };
+    if (power?.system?.discarded !== true) return { success: false, reason: `${power.name} is not expended.` };
 
     const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
     const { ForcePowerEffectsEngine } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js');
@@ -1058,7 +1058,7 @@ export class MetaResourceFeatResolver {
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
       _id: power.id,
       'system.discarded': false,
-      'system.spent': false,
+      'system.discarded': false,
       'system.lastRecovered': Date.now(),
       'flags.foundryvtt-swse.lastRecoverySource': 'forceful-recovery'
     }], { source: 'forceful-recovery', render: false });

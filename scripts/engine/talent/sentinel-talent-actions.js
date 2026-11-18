@@ -172,7 +172,7 @@ function isForcePowerItem(item) {
 
 function forcePowerOptions(actor) {
   return Array.from(actor?.items ?? [])
-    .filter(item => isForcePowerItem(item) && item?.system?.spent !== true && item?.system?.discarded !== true)
+    .filter(item => isForcePowerItem(item) && item?.system?.discarded !== true)
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 
@@ -219,7 +219,6 @@ async function spendReadyForcePower(actor, powerId, source) {
   if (!power || !isForcePowerItem(power)) throw new Error('A ready Force Power is required.');
   await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
     _id: power.id,
-    'system.spent': true,
     'system.discarded': true,
     'system.lastSpent': Date.now(),
     'flags.swse.lastSpentBy': source

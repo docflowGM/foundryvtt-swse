@@ -39,8 +39,8 @@ export class ForceSuiteComponent {
     const all = ActorAbilityBridge.getForcePowers(actor);
 
     return {
-      ready: all.filter(p => !p.system.spent),
-      spent: all.filter(p => p.system.spent),
+      ready: all.filter(p => !p.system.discarded),
+      spent: all.filter(p => p.system.discarded),
       known: all.length
     };
   }
@@ -226,7 +226,7 @@ export class ForceSuiteComponent {
     const power = actor.items.get(id);
     if (!power) {return;}
     return await ActorEngine.updateOwnedItems(actor, [
-      { _id: id, 'system.spent': true }
+      { _id: id, 'system.discarded': true }
     ]);
   }
 
@@ -234,7 +234,7 @@ export class ForceSuiteComponent {
     const power = actor.items.get(id);
     if (!power) {return;}
     return await ActorEngine.updateOwnedItems(actor, [
-      { _id: id, 'system.spent': false }
+      { _id: id, 'system.discarded': false }
     ]);
   }
 
@@ -285,13 +285,13 @@ export class ForceSuiteComponent {
   }
 
   static async _restoreAll(actor) {
-    const all = ActorAbilityBridge.getForcePowers(actor).filter(p => p.system.spent);
+    const all = ActorAbilityBridge.getForcePowers(actor).filter(p => p.system.discarded);
     if (all.length === 0) {return;}
 
     // Batch update all spent powers to ready
     const updates = all.map(p => ({
       _id: p.id,
-      'system.spent': false
+      'system.discarded': false
     }));
 
     return await ActorEngine.updateOwnedItems(actor, updates);
@@ -299,7 +299,7 @@ export class ForceSuiteComponent {
 
   static async _fpRegain(actor) {
     const spent = ActorAbilityBridge.getForcePowers(actor).find(power =>
-      power.system?.spent === true || power.system?.discarded === true
+      power?.system?.discarded === true
     );
     if (!spent) return ui.notifications.info('No spent powers to regain.');
 
@@ -314,11 +314,11 @@ export class ForceSuiteComponent {
     }
     try {
       await ActorEngine.updateOwnedItems(actor, [
-        { _id: spent.id, 'system.spent': false, 'system.discarded': false }
+        { _id: spent.id, 'system.discarded': false }
       ]);
     } catch (error) {
       const live = actor.items?.get?.(spent.id);
-      if (live?.system?.spent === true || live?.system?.discarded === true) {
+      if (live?.system?.discarded === true) {
         try {
           const rollback = await ActorEngine.rollbackForcePointSpend(actor, receipt);
           if (!rollback?.rolledBack) console.error('Force Power recovery refund refused', rollback);

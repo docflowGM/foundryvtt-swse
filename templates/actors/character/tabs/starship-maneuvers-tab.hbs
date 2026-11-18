@@ -40,13 +40,13 @@
           <h4>Active Suite ({{activeSuite.length}}/{{system.starshipManeuverSuite.max}})</h4>
           <div class="maneuvers-list drop-zone suite-zone" data-zone="suite">
             {{#each activeSuite as |maneuver|}}
-            <div class="maneuver-card in-suite {{#if maneuver.system.spent}}maneuver-spent{{/if}}"
+            <div class="maneuver-card in-suite {{#if maneuver.system.discarded}}maneuver-spent{{/if}}"
               draggable="true"
               data-item-id="{{maneuver._id}}">
               <img src="{{maneuver.img}}" width="32" height="32" alt="{{maneuver.name}}"/>
-              <span class="maneuver-name">{{maneuver.name}}{{#if maneuver.system.spent}} <span class="spent-indicator">(SPENT)</span>{{/if}}</span>
+              <span class="maneuver-name">{{maneuver.name}}{{#if maneuver.system.discarded}} <span class="spent-indicator">(SPENT)</span>{{/if}}</span>
               <div class="maneuver-controls">
-                {{#if maneuver.system.spent}}
+                {{#if maneuver.system.discarded}}
                 <a class="regain-maneuver" data-action="regainManeuver" data-item-id="{{maneuver._id}}" title="Rest to regain maneuver">
                   <i class="{{getIconClass 'redo'}}"></i>
                 </a>

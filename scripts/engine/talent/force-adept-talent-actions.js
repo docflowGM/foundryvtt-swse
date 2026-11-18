@@ -150,11 +150,11 @@ function forcePowers(actor) {
 }
 
 function spentForcePowers(actor) {
-  return forcePowers(actor).filter(item => item?.system?.spent === true || item?.system?.discarded === true);
+  return forcePowers(actor).filter(item => item?.system?.discarded === true);
 }
 
 function readyForcePowers(actor) {
-  return forcePowers(actor).filter(item => item?.system?.spent !== true && item?.system?.discarded !== true);
+  return forcePowers(actor).filter(item => item?.system?.discarded !== true);
 }
 
 function weaponItems(actor) {
@@ -288,7 +288,7 @@ async function increaseDarkSideScore(actor, amount, reason) {
 async function markPowerReady(power) {
   if (!power) return null;
   const updates = {};
-  if (power.system?.spent === true) updates['system.spent'] = false;
+  if (power.system?.discarded === true) updates['system.discarded'] = false;
   if (power.system?.discarded === true) updates['system.discarded'] = false;
   if (Object.keys(updates).length) await power.update(updates);
   return power;

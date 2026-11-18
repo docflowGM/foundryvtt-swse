@@ -144,7 +144,6 @@ export class ForceRegimenExecutor {
 
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
       _id: regimen.id,
-      'system.spent': true,
       'system.discarded': true,
       'system.active': true,
       'system.activeEffectId': effect.id,
@@ -174,7 +173,7 @@ export class ForceRegimenExecutor {
       if (!actor || !itemId) return { success: false, error: 'Missing actor or regimen.' };
       const regimen = actor.items.get(itemId);
       if (!regimen || regimen.type !== 'force-regimen') return { success: false, error: 'Force Regimen not found.' };
-      if (regimen.system?.discarded || regimen.system?.spent) return { success: false, error: `${regimen.name} is already active/spent.` };
+      if (regimen.system?.discarded) return { success: false, error: `${regimen.name} is already active/spent.` };
 
       const existingEffects = Array.isArray(actor.system?.activeEffects) ? actor.system.activeEffects : [];
       const activeRegimenEffects = existingEffects.filter((effect) => effect?.source === 'forceRegimen' && effect?.enabled !== false);
@@ -243,7 +242,6 @@ export class ForceRegimenExecutor {
       if (!resolvedTier) {
         await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
           _id: itemId,
-          'system.spent': true,
           'system.discarded': true,
           'system.active': false,
           'system.activeEffectId': null,
@@ -374,7 +372,6 @@ export class ForceRegimenExecutor {
       .filter((item) => !target || itemIds.has(item.id) || String(item.system?.activeEffectId || '') === target)
       .map((item) => ({
         _id: item.id,
-        'system.spent': false,
         'system.discarded': false,
         'system.active': false,
         'system.activeEffectId': null,

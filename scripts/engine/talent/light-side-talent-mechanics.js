@@ -450,7 +450,7 @@ export class LightSideTalentMechanics {
 
     // Get available Force Powers (not spent)
     const forcePowers = actor.items.filter(item =>
-      item.type === 'force-power' && item.system?.spent === false
+      item.type === 'force-power' && item.system?.discarded === false
     );
 
     if (forcePowers.length === 0) {
@@ -1377,7 +1377,7 @@ Hooks.on('directTriggered', async (actor) => {
 
             // Get spent Force Powers from ally
             const spentPowers = ally.items.filter(item =>
-              item.type === 'force-power' && item.system?.spent === true
+              item.type === 'force-power' && item.system?.discarded === true
             );
 
             if (spentPowers.length === 0) {
@@ -1512,7 +1512,7 @@ Hooks.on('darkSidePowerTargeted', async (targetActor, darkSidePower, sourceActor
   if (result.requiresSelection) {
     // Show dialog to select Force Power to use as reaction
     const powerOptions = result.powers
-      .map(p => `<option value="${p.id}">${p.name}${p.system?.spent ? ' (Spent)' : ''}</option>`)
+      .map(p => `<option value="${p.id}">${p.name}${p.system?.discarded ? ' (Spent)' : ''}</option>`)
       .join('');
 
     const dialog = new SWSEDialogV2({

@@ -498,7 +498,7 @@ export class ForceExecutor {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
         _id: power.id,
         'system.discarded': false,
-        'system.spent': false,
+        'system.discarded': false,
         'system.lastRecovered': Date.now(),
         'flags.foundryvtt-swse.lastRecoverySource': sourceSlug
       }], { source: `${sourceSlug}-recover`, render: false });
@@ -1050,36 +1050,18 @@ export class ForceExecutor {
   }
 
   /**
-   * The single "regain all spent Force powers" authority (Core Rulebook, Regaining Force Powers): used by the
-   * end-of-combat rest and the natural-20 end-of-turn regain. `system.discarded` is the suite state owned by the
-   * executor, the adapter and the sheets. Only the learned Power copy returns to the suite: a maintained effect is an
-   * independent instance owned by ForcePowerEffectsEngine and is never touched here. Clears any pending regain.
-   */
-  static async regainAllSpentForcePowers(actor, { source = 'force-power-regain-all' } = {}) {
-    if (!actor) return { success: false, recovered: 0, error: 'No actor' };
-    const spent = Array.from(actor.items ?? []).filter(item => isForcePowerItem(item) && item.system?.discarded === true);
-    if (spent.length > 0) {
-      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', spent.map(power => ({
-        _id: power.id,
-        'system.discarded': false,
-        'system.spent': false,
-        'system.lastRecovered': Date.now()
-      })), { source, render: false });
-    }
-    if (actor.getFlag?.('swse', 'pendingSuiteRegain') ?? actor.flags?.swse?.pendingSuiteRegain) {
-      await ActorEngine.updateActor(actor, { 'flags.swse.pendingSuiteRegain': null });
-    }
-    return { success: true, recovered: spent.length, powers: spent.map(p => p.name) };
-  }
-
-  /**
    * Mass recovery of discarded Force powers
    * Typically occurs during a rest or via meditation
    * @param {Actor} actor - Actor recovering powers
    * @param {Array<string>} powerIds - Array of power IDs to recover (or null for all)
    * @returns {Object} Recovery result
    */
-  static async recoverForcePowers(actor, powerIds = null) {
+  static async recoverForcePowers(actor, powerIds = null, { proof = null } = {}) {
+    // "Recover all" is never unconditional: SuiteInstanceRecovery verifies a natural 20, a GM-confirmed rest or GM adjudication.
+    if (!Array.isArray(powerIds) || powerIds.length === 0) {
+      const { SuiteInstanceRecovery } = await import('/systems/foundryvtt-swse/scripts/engine/force/suite-instance-recovery.js');
+      return SuiteInstanceRecovery.regainAllSpent(actor, 'force-power', { proof, source: 'force-power-recover-all' });
+    }
     try {
       let powersToRecover = [];
       let paidReceipt = null;
@@ -1092,7 +1074,7 @@ export class ForceExecutor {
         }
         const selected = actor.items.get(powerIds[0]);
         if (!selected || !isForcePowerItem(selected) ||
-            (selected.system?.discarded !== true && selected.system?.spent !== true)) {
+            (selected?.system?.discarded !== true)) {
           return { success: false, error: 'Selected Force Power instance is not owned and spent' };
         }
         powersToRecover = [selected];
@@ -1114,14 +1096,14 @@ export class ForceExecutor {
         await ActorEngine.updateEmbeddedDocuments(actor, 'Item', powersToRecover.map(power => ({
           _id: power.id,
           'system.discarded': false,
-          'system.spent': false,
+          'system.discarded': false,
           'system.lastRecovered': Date.now()
         })), { source: paidReceipt ? 'force-power-fp-reaction-recover-one' : 'force-power-recover-all', render: false });
       } catch (error) {
         if (paidReceipt) {
           const stillSpent = powersToRecover.every(power => {
             const live = actor.items.get(power.id);
-            return live?.system?.spent === true || live?.system?.discarded === true;
+            return live?.system?.discarded === true;
           });
           if (stillSpent) {
             const compensation = await ActorEngine.rollbackForcePointSpend(actor, paidReceipt);

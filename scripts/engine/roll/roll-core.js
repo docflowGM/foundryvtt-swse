@@ -3,6 +3,7 @@ import ModifierUtils from "/systems/foundryvtt-swse/scripts/engine/effects/modif
 import { buildSourceBreakdown, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { ForcePointSpendCoordinator } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-coordinator.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SuiteInstanceRecovery, suiteKindForActivationDomain } from "/systems/foundryvtt-swse/scripts/engine/force/suite-instance-recovery.js";
 
 export class RollCore {
   static async execute(options = {}) {
@@ -117,12 +118,12 @@ export class RollCore {
       }
 
       const baseRollResult = this._extractBaseRoll(roll, baseDice);
-      // Core "Regaining Force Powers": a natural 20 on a Use the Force check regains every spent Force power at the
-      // end of the actor's turn. One authority for every Use the Force domain (power, regimen, talent, plain skill).
-      if (baseRollResult === 20 && RollCore.isUseTheForceDomain(domain)) {
+      // Natural 20 on a suite ACTIVATION check (Force Power: Use the Force; starship maneuver: Pilot) regains that suite's
+      // spent instances at the end of the actor's turn. Not for unrelated Use the Force / Pilot checks.
+      const suiteKind = suiteKindForActivationDomain(domain);
+      if (baseRollResult === 20 && suiteKind) {
         try {
-          const { ForceEngine } = await import("/systems/foundryvtt-swse/scripts/engine/force/force-engine.js");
-          await ForceEngine.recordNatural20(actor, context?.itemName ?? context?.powerName ?? null, { sourceKey: domain });
+          await SuiteInstanceRecovery.recordNatural20(actor, suiteKind, { source: context?.itemName ?? context?.powerName ?? null });
         } catch (err) {
           swseLogger.error('[RollCore] Natural 20 suite regain could not be recorded', err);
         }
@@ -300,11 +301,6 @@ export class RollCore {
     } catch (err) {
       throw new Error(`Failed to execute formula "${formula}": ${err.message}`);
     }
-  }
-
-  static isUseTheForceDomain(domain) {
-    const d = String(domain ?? '');
-    return d === 'skill.useTheForce' || d.startsWith('force-power.') || d.startsWith('force-regimen.') || d.startsWith('force-talent.');
   }
 
   static _extractBaseRoll(roll, baseDice) {

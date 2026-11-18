@@ -79,7 +79,7 @@ function normalizeManeuver(item, sourceActor, vehicle) {
     system.details,
     item?.description
   );
-  const spent = Boolean(system.spent ?? system.used ?? system.expended ?? false);
+  const spent = system.discarded === true;
   const ownerIsVehicle = sourceActor?.id === vehicle?.id;
   const actorUuid = sourceActor?.uuid || (sourceActor?.id ? `Actor.${sourceActor.id}` : null);
   const itemUuid = item?.uuid || (actorUuid && item?.id ? `${actorUuid}.Item.${item.id}` : null);
@@ -151,7 +151,7 @@ export class StarshipManeuversEngine {
 
     const directItem = vehicle.items?.get?.(ref.itemId || ref.id);
     if (directItem) {
-      await ActorEngine.updateOwnedItems(vehicle, [{ _id: directItem.id, 'system.spent': Boolean(spent) }]);
+      await ActorEngine.updateOwnedItems(vehicle, [{ _id: directItem.id, 'system.discarded': Boolean(spent) }]);
       return true;
     }
 
@@ -160,7 +160,7 @@ export class StarshipManeuversEngine {
     const owner = game?.actors?.get?.(actorId);
     const item = owner?.items?.get?.(itemId);
     if (item) {
-      await ActorEngine.updateOwnedItems(owner, [{ _id: item.id, 'system.spent': Boolean(spent) }]);
+      await ActorEngine.updateOwnedItems(owner, [{ _id: item.id, 'system.discarded': Boolean(spent) }]);
       return true;
     }
 
@@ -182,44 +182,8 @@ export class StarshipManeuversEngine {
     const vehicleItem = vehicle.items?.get?.(ref.itemId || ref.id);
     const pilotActorId = ref.actorId || actorIdFromUuid(ref.uuid || ref.actorUuid);
     const pilot = vehicleItem ? vehicle : game?.actors?.get?.(pilotActorId);
-    const selected = vehicleItem || pilot?.items?.get?.(ref.itemId || itemIdFromUuid(ref.uuid));
-    if (!pilot?.id || !selected || !isManeuverItem(selected) || selected.system?.spent !== true) {
-      ui?.notifications?.warn?.('An owned spent starship maneuver is required.');
-      return false;
-    }
-
-    const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-    let receipt;
-    try {
-      receipt = await ActorEngine.spendForcePoints(pilot, 1, {
-        useKind: 'recover-one-maneuver', targetItemInstanceId: selected.id
-      });
-    } catch (error) {
-      ui?.notifications?.warn?.(`Force Point reaction denied: ${error.message}`);
-      return false;
-    }
-    try {
-      await ActorEngine.updateOwnedItems(pilot, [{ _id: selected.id, 'system.spent': false }]);
-    } catch (error) {
-      const live = pilot.items?.get?.(selected.id);
-      if (live?.system?.spent === true) {
-        try {
-          const rollback = await ActorEngine.rollbackForcePointSpend(pilot, receipt);
-          if (!rollback?.rolledBack) console.error('Maneuver refund refused', rollback);
-        } catch (refundError) { console.error('Maneuver refund indeterminate', refundError); }
-      } else {
-        console.error('Maneuver update may have applied; no automatic Force Point refund', error);
-      }
-      ui?.notifications?.error?.('Maneuver recovery failed or is indeterminate.');
-      return false;
-    }
-    try {
-      const finalized = await ActorEngine.finalizeForcePointSpend(pilot, receipt);
-      if (!finalized?.finalized) console.error('Maneuver recovered, but receipt finality was not persisted', finalized);
-    } catch (error) {
-      console.error('Maneuver recovered but Force Point finalization failed', error);
-    }
-    ui?.notifications?.info?.('Starship maneuver readied using a Force Point reaction.');
-    return true;
+    const { StarshipManeuverSuite } = await import('/systems/foundryvtt-swse/scripts/engine/force/starship-maneuver-suite.js');
+    return StarshipManeuverSuite.regainOwnedManeuver(pilot, vehicleItem?.id ?? ref.itemId ?? itemIdFromUuid(ref.uuid));
   }
+
 }

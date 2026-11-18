@@ -199,7 +199,7 @@ try {
       ForcePowerEffectsEngine.removePowerEffects = async () => { deletedEffects += 1; };
       const mkPowerActor = () => {
         const a = makeActor({ normal: 2 });
-        a.items = [{ id: 'owned-power', name: 'Test Power', type: 'force-power', system: { spent: true, discarded: true } }];
+        a.items = [{ id: 'owned-power', name: 'Test Power', type: 'force-power', system: { discarded: true } }];
         a.items.get = (id) => a.items.find(item => item.id === id);
         return a;
       };
@@ -211,7 +211,7 @@ try {
       result = await ForceExecutor.recoverForcePowers(a, ['owned-power']);
       assert.equal(result.success, true);
       assert.equal(a.system.forcePoints.value, 1);
-      assert.equal(a.items.get('owned-power').system.spent, false);
+      assert.equal(a.items.get('owned-power').system.discarded, false, 'the canonical suite field is readied');
       assert.equal(a.flags.swse.forcePointLedger.receipts[0].state, 'finalized');
       assert.equal(deletedEffects, 0, 'recovery does not delete a maintained effect instance');
       failItemWrite = true;

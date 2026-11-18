@@ -180,11 +180,11 @@ export class ConsularTalentActions {
   }
 
   static _findReadyFarseeing(actor) {
-    return this._forcePowerItems(actor).find(item => this._isFarseeing(item) && item?.system?.spent !== true && item?.system?.discarded !== true) ?? null;
+    return this._forcePowerItems(actor).find(item => this._isFarseeing(item) && item?.system?.discarded !== true) ?? null;
   }
 
   static _findSpentFarseeing(actor) {
-    return this._forcePowerItems(actor).filter(item => this._isFarseeing(item) && (item?.system?.spent === true || item?.system?.discarded === true));
+    return this._forcePowerItems(actor).filter(item => this._isFarseeing(item) && (item?.system?.discarded === true));
   }
 
   static async _spendReadyFarseeing(actor, source = 'farseeing-talent') {
@@ -192,7 +192,6 @@ export class ConsularTalentActions {
     if (!farseeing) throw new Error('A ready use of Farseeing is required.');
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
       _id: farseeing.id,
-      'system.spent': true,
       'system.discarded': true,
       'system.lastSpent': Date.now(),
       'flags.swse.lastSpentBy': source
@@ -638,7 +637,7 @@ export class ConsularTalentActions {
       ui?.notifications?.info?.('No expended uses of Farseeing to recover.');
       return null;
     }
-    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', spent.map(power => ({ _id: power.id, 'system.spent': false, 'system.discarded': false, 'system.lastRecovered': Date.now(), 'flags.swse.lastRecoverySource': 'renew-vision' })), { source: 'renew-vision', render: false });
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', spent.map(power => ({ _id: power.id, 'system.discarded': false, 'system.lastRecovered': Date.now(), 'flags.swse.lastRecoverySource': 'renew-vision' })), { source: 'renew-vision', render: false });
     await actor.setFlag(NS, 'encounterUses.renewVision', { encounterId: this._encounterId(), used: true, recovered: spent.length, usedAt: Date.now() });
     await postCard(actor, 'Renew Vision', `<p>${esc(actor.name)} regains all expended uses of <strong>Farseeing</strong> (${spent.length} recovered).</p><p><strong>Action:</strong> Swift Action · once per encounter.</p>`, { talentName: 'Renew Vision', recovered: spent.length });
     return { success: true, recovered: spent.length };

@@ -62,11 +62,11 @@ function forcePowers(actor) {
 }
 
 function isSpentPower(item) {
-  return item?.system?.spent === true || item?.system?.discarded === true;
+  return item?.system?.discarded === true;
 }
 
 function isReadyPower(item) {
-  return item?.system?.spent !== true && item?.system?.discarded !== true;
+  return item?.system?.discarded !== true;
 }
 
 function hasDarkSideDescriptor(power) {
@@ -494,7 +494,7 @@ export class SithTalentActions {
     if (!powerId) return null;
     const power = spent.find(p => p.id === powerId);
     const targetFp = Number(target?.system?.forcePoints?.value ?? 0) || 0;
-    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: power.id, 'system.spent': false, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'drain-force' }], { source: 'drain-force', render: false });
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: power.id, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'drain-force' }], { source: 'drain-force', render: false });
     await ActorEngine.updateActor(target, { 'system.forcePoints.value': Math.max(0, targetFp - 1) }, { source: 'drain-force' });
     await actor.setFlag?.(NS, 'encounterUses.drainForce', { encounterId: enc, used: true, recoveredPowerId: power.id, recoveredPowerName: power.name, targetActorId: target.id, usedAt: Date.now() });
     return postCard(actor, 'Drain Force', `<p>${esc(actor.name)} reacts after damaging Force-sensitive <strong>${esc(target.name)}</strong>.</p><p><strong>Recovered Force Power:</strong> ${esc(power.name)}.</p><p><strong>${esc(target.name)} Force Points:</strong> ${targetFp} → ${Math.max(0, targetFp - 1)}.</p>`, { targetActorId: target.id, recoveredPowerId: power.id });
