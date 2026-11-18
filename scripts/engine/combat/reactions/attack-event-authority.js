@@ -14,7 +14,7 @@ function combatKeyLocal() { return combatKey(); }
 
 export class AttackEventAuthority {
   /** Mint a pending event for one attack against one defender. Returns null (fail closed) if it cannot be recorded. */
-  static async produce({ attacker, defender, weapon = null, attackType, damageTypes = [], attackTotal, naturalD20 = null, hit = null, rollId = null } = {}) {
+  static async produce({ attacker, defender, weapon = null, attackType, damageTypes = [], attackTotal, naturalD20 = null, hit = null, critical = null, rollId = null } = {}) {
     if (!attacker?.id || !defender?.id || !['melee', 'ranged'].includes(attackType) || !Number.isFinite(Number(attackTotal))) return null;
     const id = globalThis.foundry?.utils?.randomID?.() ?? globalThis.crypto?.randomUUID?.();
     if (!id) return null;
@@ -23,7 +23,7 @@ export class AttackEventAuthority {
         id: `atk-${id}`, attackerId: attacker.id, defenderId: defender.id,
         weaponId: weapon?.id ?? null, weaponName: weapon?.name ?? null,
         attackType, damageTypes: Array.isArray(damageTypes) ? damageTypes : [],
-        attackTotal: Number(attackTotal), naturalD20, hit, rollId,
+        attackTotal: Number(attackTotal), naturalD20, hit, critical, rollId,
         ...combatKeyLocal(), createdAt: Date.now()
       });
     } catch (error) {

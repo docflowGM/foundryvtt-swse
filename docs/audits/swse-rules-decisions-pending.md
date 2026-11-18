@@ -3810,3 +3810,12 @@ Implemented from the printed text (JATM pp.11-13, Core p.41; source text in `ref
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+
+## FP-RD-007 — OWNER ADJUDICATION (appended 2026-11-18; original entry preserved)
+
+Owner adjudication of ambiguous source wording (not a separately printed sentence): the Sparring Practice / Training Remote non-counting exemption attaches to the qualifying Block/Deflect activation expenditure, not to the pool supplying the point. A temporary point spent under a valid DC23/28 grant on the matching talent is therefore non-counting, as is an ordinary point on the same event; unrelated checks and abilities count under the Core default. No two Force Points on one activation check. Status: RESOLVED (owner). Implemented in commit "feat(force): FP-RD-007 owner ruling" with both spending orders tested.
+
+## FP-RD-003 / lightsaber batch 1 — IMPLEMENTATION PROGRESS (appended 2026-11-18)
+
+Four lightsaber contracts implemented (see the contract ledger, Batch 1). Open sub-item (not a rules ruling, a missing runtime): Improved Lightsaber Throw has no canonical thrown-lightsaber area-attack resolution to finalize against; the standard-action cost and ownership are enforced, finalization is at talent-card publication.

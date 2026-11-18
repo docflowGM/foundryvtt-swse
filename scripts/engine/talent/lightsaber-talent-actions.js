@@ -3,6 +3,8 @@ import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/docum
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
+import { ownedAbilityInstance } from "/systems/foundryvtt-swse/scripts/utils/canonical-ability-identity.js";
+import { verifyAdjacentAllyEvent } from "/systems/foundryvtt-swse/scripts/engine/force/ability-option-contracts.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { canonicalFeatSlug } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/ability-selector.js";
 import { accruedPenalty, withRecordedUse, withCreditedBackUse } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/reaction-rules.js";
@@ -202,6 +204,58 @@ async function promptSeveringStrikeDetails(actor) {
   });
 }
 
+// Typed-contract Force Point use (FP-RD-003): authorize+pay at the last cancellable point, run the effect, then
+// finalize at the applied boundary or give back exactly what was paid. A cancelled dialog never charges.
+async function payForcePoint(actor, spendContext) {
+  try {
+    const receipt = await ActorEngine.spendForcePoints(actor, 1, spendContext);
+    return receipt?.spent ? { ok: true, receipt } : { ok: false, message: 'No Force Point was spent' };
+  } catch (error) {
+    return { ok: false, message: error.message };
+  }
+}
+async function settleForcePoint(actor, receipt, applied) {
+  if (!receipt) return;
+  try {
+    if (applied) {
+      const finality = await ActorEngine.finalizeForcePointSpend(actor, receipt);
+      if (!finality?.finalized) console.error('SWSE | Force Point receipt could not be finalized', finality);
+    } else {
+      const outcome = await ActorEngine.rollbackForcePointSpend(actor, receipt);
+      if (!outcome?.rolledBack) console.error('SWSE | Force Point compensation was refused', outcome);
+    }
+  } catch (error) {
+    console.error('SWSE | Force Point settlement failed; manual reconciliation required', error);
+  }
+}
+
+// Pending attacks on ADJACENT allies that this actor could answer with Block/Deflect (verified from the attackers' records).
+function protectableAttackEvents(actor, talent) {
+  const found = [];
+  for (const other of Array.from(game?.actors ?? [])) {
+    const events = other?.getFlag?.(NS, 'outgoingAttackEvents')?.events ?? other?.flags?.swse?.outgoingAttackEvents?.events ?? [];
+    for (const event of events) {
+      if (event.state !== 'pending') continue;
+      const verdict = verifyAdjacentAllyEvent(actor, { talent, claim: { id: event.id, attackerId: other.id } });
+      if (verdict.valid) found.push({ claim: { id: event.id, attackerId: other.id }, event, ally: verdict.ally, attacker: other });
+    }
+  }
+  return found;
+}
+
+async function pickProtectableEvent(actor, talent) {
+  const options = protectableAttackEvents(actor, talent);
+  if (!options.length) return null;
+  if (options.length === 1) return options[0];
+  const list = options.map((o, i) => `<option value="${i}">${esc(o.attacker.name)} attacks ${esc(o.ally.name)} (${o.event.attackTotal})</option>`).join('');
+  const picked = await SWSEDialogV2.prompt({
+    title: `Protect an adjacent ally`, label: 'Protect',
+    content: `<form class="swse-dialog"><div class="form-group"><label>Attack to answer</label><select name="pick">${list}</select></div></form>`,
+    callback: (html) => { const root = html instanceof HTMLElement ? html : html?.[0] ?? html; return Number(new FormData(root?.querySelector?.('form') ?? root).get('pick')); }
+  });
+  return Number.isInteger(picked) ? options[picked] ?? null : null;
+}
+
 // JATM regimen temporary Force Points (typed entries): offer the player the choice. A temporary point's
 // round-limit exemption is not printed, so choosing it counts toward the one-FP-per-round limit (FP-RD-007).
 async function askUseTemporaryPoint(actor, talent, modResult) {
@@ -264,13 +318,18 @@ export class LightsaberTalentActions {
     });
     if (!choice) return null;
 
-    const shelteringApplies = choice.protectAdjacent && choice.shelteringStance && hasTalent(actor, 'Sheltering Stance');
-    if (choice.protectAdjacent && !shelteringApplies) {
-      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptBlock' });
-      if (!spend?.spent) {
-        ui?.notifications?.warn?.('Block against an adjacent character requires spending 1 Force Point unless Sheltering Stance applies.');
+    // Adjacent ally (Core errata p.41): needs a verified attack on an adjacent ally; Sheltering Stance (owned, by
+    // canonical identity) waives the Force Point. Nothing is charged until the check is about to be rolled.
+    let protect = null;
+    let shelteringApplies = false;
+    if (choice.protectAdjacent) {
+      protect = await pickProtectableEvent(actor, 'block');
+      if (!protect) {
+        ui?.notifications?.warn?.('No verified attack on an adjacent ally can be answered with Block (adjacent ally and a real incoming attack are required).');
         return null;
       }
+      choice.dc = protect.event.attackTotal;
+      shelteringApplies = !!ownedAbilityInstance(actor, { type: 'talent', slug: 'sheltering-stance' });
     }
 
     const reactionWeapon = await reactionWeaponFor(actor, 'block', { skip: choice.cortosis === true });
@@ -280,7 +339,17 @@ export class LightsaberTalentActions {
     const penalty = -accruedPenalty(state);
     const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Block - Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
     if (modResult === null) return null;
-    const useTemporaryForcePoint = attackEvent ? await askUseTemporaryPoint(actor, 'block', modResult) : false;
+    const useTemporaryForcePoint = (attackEvent && !protect) ? await askUseTemporaryPoint(actor, 'block', modResult) : false;
+    // Pay for protecting an adjacent ally at the last cancellable point; give it back if the check never happens.
+    let protectReceipt = null;
+    if (protect && !shelteringApplies) {
+      const paid = await payForcePoint(actor, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptBlock', reaction: protect.claim });
+      if (!paid.ok) {
+        ui?.notifications?.warn?.(`Block against an adjacent character requires a Force Point: ${paid.message}`);
+        return null;
+      }
+      protectReceipt = paid.receipt;
+    }
     const roll = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', {
       ...modResult,
       useTemporaryForcePoint,
@@ -289,12 +358,17 @@ export class LightsaberTalentActions {
       source: 'block-talent',
       skillUse: { key: 'block', label: 'Block' },
       // Verified incoming attack (AttackEventAuthority) or an explicitly manual, GM-adjudicated DC that unlocks no regimen entitlement.
-      reactionEvent: attackEvent ? { id: attackEvent.id, attackerId: attackEvent.attackerId, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
-      manualAttackDc: !attackEvent,
+      reactionEvent: (attackEvent && !protect) ? { id: attackEvent.id, attackerId: attackEvent.attackerId, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
+      manualAttackDc: !attackEvent && !protect,
       targetContext: { targetName: 'incoming melee attack', attackRollDc: choice.dc },
       sourceElement
     });
-    if (!roll) return null;
+    if (!roll) {
+      await settleForcePoint(actor, protectReceipt, false);
+      return null;
+    }
+    await settleForcePoint(actor, protectReceipt, true);
+    if (protect) await ActorEngine.consumeAttackEventAsDefender(actor, protect.event.id);
     const success = roll.success === true;
     await this._recordBlockDeflectUse(actor, 'Block', success, weaponMods.increment);
     if (success) {
@@ -328,13 +402,18 @@ export class LightsaberTalentActions {
     });
     if (!choice) return null;
 
-    const shelteringApplies = choice.protectAdjacent && choice.shelteringStance && hasTalent(actor, 'Sheltering Stance');
-    if (choice.protectAdjacent && !shelteringApplies) {
-      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptDeflect' });
-      if (!spend?.spent) {
-        ui?.notifications?.warn?.('Deflect against an adjacent character requires spending 1 Force Point unless Sheltering Stance applies.');
+    // Adjacent ally (Core errata p.41): needs a verified attack on an adjacent ally; Sheltering Stance (owned, by
+    // canonical identity) waives the Force Point. Nothing is charged until the check is about to be rolled.
+    let protect = null;
+    let shelteringApplies = false;
+    if (choice.protectAdjacent) {
+      protect = await pickProtectableEvent(actor, 'deflect');
+      if (!protect) {
+        ui?.notifications?.warn?.('No verified attack on an adjacent ally can be answered with Deflect (adjacent ally and a real incoming attack are required).');
         return null;
       }
+      choice.dc = protect.event.attackTotal;
+      shelteringApplies = !!ownedAbilityInstance(actor, { type: 'talent', slug: 'sheltering-stance' });
     }
 
     const reactionWeapon = await reactionWeaponFor(actor, 'deflect');
@@ -344,7 +423,17 @@ export class LightsaberTalentActions {
     const penalty = -accruedPenalty(state);
     const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Deflect - Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
     if (modResult === null) return null;
-    const useTemporaryForcePoint = attackEvent ? await askUseTemporaryPoint(actor, 'deflect', modResult) : false;
+    const useTemporaryForcePoint = (attackEvent && !protect) ? await askUseTemporaryPoint(actor, 'deflect', modResult) : false;
+    // Pay for protecting an adjacent ally at the last cancellable point; give it back if the check never happens.
+    let protectReceipt = null;
+    if (protect && !shelteringApplies) {
+      const paid = await payForcePoint(actor, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptDeflect', reaction: protect.claim });
+      if (!paid.ok) {
+        ui?.notifications?.warn?.(`Deflect against an adjacent character requires a Force Point: ${paid.message}`);
+        return null;
+      }
+      protectReceipt = paid.receipt;
+    }
     const roll = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', {
       ...modResult,
       useTemporaryForcePoint,
@@ -353,12 +442,17 @@ export class LightsaberTalentActions {
       source: 'deflect-talent',
       skillUse: { key: 'deflect', label: 'Deflect' },
       // Verified incoming attack (AttackEventAuthority) or an explicitly manual, GM-adjudicated DC that unlocks no regimen entitlement.
-      reactionEvent: attackEvent ? { id: attackEvent.id, attackerId: attackEvent.attackerId, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
-      manualAttackDc: !attackEvent,
+      reactionEvent: (attackEvent && !protect) ? { id: attackEvent.id, attackerId: attackEvent.attackerId, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
+      manualAttackDc: !attackEvent && !protect,
       targetContext: { targetName: 'incoming ranged attack', attackRollDc: choice.dc },
       sourceElement
     });
-    if (!roll) return null;
+    if (!roll) {
+      await settleForcePoint(actor, protectReceipt, false);
+      return null;
+    }
+    await settleForcePoint(actor, protectReceipt, true);
+    if (protect) await ActorEngine.consumeAttackEventAsDefender(actor, protect.event.id);
     const success = roll.success === true;
     await this._recordBlockDeflectUse(actor, 'Deflect', success, weaponMods.increment);
     if (success) {
@@ -479,17 +573,32 @@ export class LightsaberTalentActions {
     return { success: true, targetName: target.targetName, improvedRiposte: improved, creditedBack: credited };
   }
 
-  static async promptForceFortification(actor) {
+  /**
+   * Force Fortification (Core Rulebook, Duelist tree): a reaction to a critical hit scored against you. The triggering
+   * critical hit must be a verified attack event (never a typed claim); the Force Point is paid through the typed
+   * contract, which alone waives the check against an EARLIER Force Point spent this round.
+   */
+  static async promptForceFortification(actor, { attackEvent = null } = {}) {
     if (!hasTalent(actor, 'Force Fortification')) {
       ui?.notifications?.warn?.('Force Fortification talent required.');
       return null;
     }
-    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptForceFortification' });
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Force Fortification requires spending 1 Force Point.');
+    if (!attackEvent) {
+      ui?.notifications?.warn?.('Force Fortification answers a critical hit shown on the attack card; no verified critical hit was supplied.');
       return null;
     }
-    await postCard(actor, 'Force Fortification', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction to negate a Critical Hit, taking normal damage instead.</p><p>This Force Point can be spent even if a Force Point has already been spent earlier this round.</p>`, { talentName: 'Force Fortification', forcePointSpent: true });
+    const paid = await payForcePoint(actor, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptForceFortification', reaction: { id: attackEvent.id, attackerId: attackEvent.attackerId } });
+    if (!paid.ok) {
+      ui?.notifications?.warn?.(`Force Fortification could not be paid: ${paid.message}`);
+      return null;
+    }
+    try {
+      await postCard(actor, 'Force Fortification', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction to negate a Critical Hit, taking normal damage instead.</p><p>This Force Point can be spent even if a Force Point has already been spent earlier this round.</p>`, { talentName: 'Force Fortification', forcePointSpent: true, attackEventId: attackEvent.id });
+    } catch (error) {
+      await settleForcePoint(actor, paid.receipt, false);
+      throw error;
+    }
+    await settleForcePoint(actor, paid.receipt, true);
     return { success: true, forcePointSpent: true };
   }
 
@@ -506,19 +615,28 @@ export class LightsaberTalentActions {
       return { targetName: String(fd.get('targetName') || 'targets in a 6-square line').trim() || 'targets in a 6-square line', pullBack: fd.get('pullBack') === 'on' };
     }});
     if (!choice) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptImprovedLightsaberThrow' });
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Improved Lightsaber Throw requires spending 1 Force Point.');
+    // Standard action, own turn, owned canonical talent: all re-verified by the typed contract. Nothing is charged for a cancelled dialog.
+    const paid = await payForcePoint(actor, { useKind: 'ability-option', abilitySourceRef: 'lightsaber:promptImprovedLightsaberThrow' });
+    if (!paid.ok) {
+      ui?.notifications?.warn?.(`Improved Lightsaber Throw could not be paid: ${paid.message}`);
       return null;
     }
     let pullBackResult = null;
-    if (choice.pullBack) {
-      const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Improved Lightsaber Throw Pull-Back - DC 20 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
-      if (modResult !== null) {
-        pullBackResult = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', { ...modResult, dc: 20, source: 'improved-lightsaber-throw-pullback', skillUse: { key: 'improved-lightsaber-throw-pullback', label: 'Improved Lightsaber Throw Pull-Back' }, sourceElement });
+    try {
+      if (choice.pullBack) {
+        const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Improved Lightsaber Throw Pull-Back - DC 20 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
+        if (modResult !== null) {
+          pullBackResult = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', { ...modResult, dc: 20, source: 'improved-lightsaber-throw-pullback', skillUse: { key: 'improved-lightsaber-throw-pullback', label: 'Improved Lightsaber Throw Pull-Back' }, sourceElement });
+        }
       }
+      await postCard(actor, 'Improved Lightsaber Throw', `<p>${esc(actor.name)} throws a lightsaber through <strong>${esc(choice.targetName)}</strong>.</p><p><strong>Area Attack:</strong> make one ranged attack roll and compare it to each target's Reflex Defense. Success deals normal lightsaber damage; failure deals half damage.</p>${hasTalent(actor, 'Thrown Lightsaber Mastery') ? '<p><strong>Thrown Lightsaber Mastery:</strong> targets successfully struck move at half Speed until the beginning of your next turn.</p>' : ''}${choice.pullBack ? `<p><strong>Pull-back:</strong> DC 20 Use the Force ${pullBackResult ? (pullBackResult.success ? 'succeeded' : 'failed') : 'was not rolled'}.</p>` : ''}`, { talentName: 'Improved Lightsaber Throw', forcePointSpent: true, areaAttack: true, targetName: choice.targetName, pullBackSuccess: pullBackResult?.success ?? null });
+    } catch (error) {
+      await settleForcePoint(actor, paid.receipt, false);
+      throw error;
     }
-    await postCard(actor, 'Improved Lightsaber Throw', `<p>${esc(actor.name)} throws a lightsaber through <strong>${esc(choice.targetName)}</strong>.</p><p><strong>Area Attack:</strong> make one ranged attack roll and compare it to each target's Reflex Defense. Success deals normal lightsaber damage; failure deals half damage.</p>${hasTalent(actor, 'Thrown Lightsaber Mastery') ? '<p><strong>Thrown Lightsaber Mastery:</strong> targets successfully struck move at half Speed until the beginning of your next turn.</p>' : ''}${choice.pullBack ? `<p><strong>Pull-back:</strong> DC 20 Use the Force ${pullBackResult ? (pullBackResult.success ? 'succeeded' : 'failed') : 'was not rolled'}.</p>` : ''}`, { talentName: 'Improved Lightsaber Throw', forcePointSpent: true, areaAttack: true, targetName: choice.targetName, pullBackSuccess: pullBackResult?.success ?? null });
+    // NOTE (03B): the area attack itself is not yet resolved by a canonical thrown-lightsaber attack path; the paid use is
+    // finalized when the talent card is published. See the contract ledger (Improved Lightsaber Throw).
+    await settleForcePoint(actor, paid.receipt, true);
     return { success: true, forcePointSpent: true, pullBackResult };
   }
 

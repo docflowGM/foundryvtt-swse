@@ -782,10 +782,10 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
  * into the chat card, but the chat dataset is never the authority
  * (AttackEventAuthority.verify re-reads the attacker-side record).
  */
-async function attachAttackEvent(reactionContext, { actor, target, weapon, attackTotal, naturalD20 = null, hit = null }) {
+async function attachAttackEvent(reactionContext, { actor, target, weapon, attackTotal, naturalD20 = null, hit = null, critical = null }) {
   if (!reactionContext || !actor || !target) return reactionContext;
   const { attackType, damageTypes } = damageContextForReaction({ weapon });
-  const event = await AttackEventAuthority.produce({ attacker: actor, defender: target, weapon, attackType, damageTypes, attackTotal, naturalD20, hit });
+  const event = await AttackEventAuthority.produce({ attacker: actor, defender: target, weapon, attackType, damageTypes, attackTotal, naturalD20, hit, critical });
   if (event) {
     reactionContext.attackEventId = event.id;
     // Provisional attack events can still be cancelled/superseded later by the attack workflow.
@@ -1166,7 +1166,7 @@ export async function rollAttack(actor, weapon, options = {}) {
   const isCritical = outcome.critical;
   // Phase 5D-G: the shot was fired -- record owned fire state (cooldown, reload, reset, preparation) for the next attack
   await FireStateStore.commitFired(actor, weapon, rollOptions.weaponRuntime, rollOptions, temporalSpend.paid);
-  const reactionContext = await attachAttackEvent(buildReactionContextForAttack(actor, target, weapon, roll.total), { actor, target, weapon, attackTotal: roll.total, naturalD20: d20, hit: isHit });
+  const reactionContext = await attachAttackEvent(buildReactionContextForAttack(actor, target, weapon, roll.total), { actor, target, weapon, attackTotal: roll.total, naturalD20: d20, hit: isHit, critical: isCritical });
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
     ...rollOptions,
     formula: rollFormula,
@@ -1592,7 +1592,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
 
   const atkTotal = attackRoll?.total;
   const dmgTotal = damageRoll?.total;
-  const reactionContext = await attachAttackEvent(buildReactionContextForAttack(actor, target, weapon, attackRoll.total), { actor, target, weapon, attackTotal: attackRoll.total, hit: isHit });
+  const reactionContext = await attachAttackEvent(buildReactionContextForAttack(actor, target, weapon, attackRoll.total), { actor, target, weapon, attackTotal: attackRoll.total, hit: isHit, critical: isCritical });
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, attackRoll, {
     ...rollOptions,
     formula: rollFormula,

@@ -27,13 +27,9 @@ import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceR
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { ABILITY_OPTION_CONTRACTS, evaluateAbilityContract } from "/systems/foundryvtt-swse/scripts/engine/force/ability-option-contracts.js";
 import { verifyAttackEventRecord } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-verify.js";
 import { evaluateRegimenEntitlement, worldTimeNow } from "/systems/foundryvtt-swse/scripts/engine/force/regimen-entitlement.js";
-
-// Typed per-ability Force Point contracts (FP-RD-003). Empty by design: no
-// ability's printed timing/trigger has yet been certified for automation.
-// An entry is { itemType, itemName, timing, trigger } and requires the owned item.
-const ABILITY_OPTION_CONTRACTS = Object.freeze({});
 
 const DIE_STEPS = Object.freeze(['d4', 'd6', 'd8', 'd10', 'd12']);
 
@@ -259,8 +255,9 @@ export class ForcePointsService {
     let reactionTalent = null;
     let reactionEventId = null;
     let regimen = { valid: false };
+    let contractEval = null;
     const reactionKinds = new Set(['recover-one-force-power', 'recover-one-maneuver', 'avoid-death']);
-    const timing = reactionKinds.has(useKind) ? 'reaction' : useKind === 'reduce-dark-side-score' ? 'swift' : useKind === 'ability-option' ? 'ability-defined' : 'free';
+    let timing = reactionKinds.has(useKind) ? 'reaction' : useKind === 'reduce-dark-side-score' ? 'swift' : useKind === 'ability-option' ? 'ability-defined' : 'free';
 
     if (useKind === 'roll-bonus') {
       const domain = String(context.rollDomain ?? context.domain ?? '');
@@ -326,9 +323,17 @@ export class ForcePointsService {
       }
       const contract = ABILITY_OPTION_CONTRACTS[context.abilitySourceRef];
       if (contract) {
-        const owned = Array.from(actor.items ?? []).some(i => i.type === contract.itemType &&
-          i.system?.disabled !== true && String(i.name).toLowerCase() === contract.itemName.toLowerCase());
-        if (!owned) return reject(`${contract.itemName} is not owned by this actor`);
+        // Certified contract: owned canonical identity, triggering event and action cost re-verified here.
+        contractEval = evaluateAbilityContract(actor, context.abilitySourceRef, context);
+        if (!contractEval.valid) return reject(contractEval.message);
+        timing = contractEval.actionCost;
+        if (contractEval.eventKey) {
+          const ledger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+          if ((ledger.receipts ?? []).some(r => r.reactionEventId === contractEval.eventKey && ['committed', 'finalized'].includes(r.state))) {
+            return reject('A Force Point was already spent on this triggering event for this ability');
+          }
+          reactionEventId = contractEval.eventKey;
+        }
       } else {
         // Explicit, attributable GM adjudication (owner ruling, 2026-11-18): being
         // a GM is not adjudication. The GM must make a deliberate call carrying a
@@ -373,7 +378,7 @@ export class ForcePointsService {
       // Force Point was already spent this round. It bypasses only the check
       // against PRIOR counted spends; the rescue is still recorded as counted,
       // so it blocks a later ordinary spend in the same round.
-      if (useKind !== 'avoid-death' && !(regimen.noncounting === true) && (journal.receipts ?? []).some(r => r.roundKey === roundKey &&
+      if (useKind !== 'avoid-death' && contractEval?.priorSpendExempt !== true && !(regimen.noncounting === true) && (journal.receipts ?? []).some(r => r.roundKey === roundKey &&
           r.countsTowardRoundLimit && ['committed', 'finalized'].includes(r.state))) {
         return reject('One counted Force Point has already been spent this round');
       }

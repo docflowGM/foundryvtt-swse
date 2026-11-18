@@ -104,6 +104,32 @@ export class ReactionRegistry {
       }
     },
 
+    // Duelist talent (Core Rulebook): reaction to a critical hit scored against you; pays 1 Force Point through
+    // the typed 'lightsaber:promptForceFortification' contract (verified critical-hit event required).
+    forceFortification: {
+      key: 'forceFortification',
+      label: 'Force Fortification',
+      trigger: 'ON_ATTACK_DECLARED',
+      description: 'Spend a Force Point to negate a critical hit scored against you and take normal damage instead.',
+      conditions: {
+        validAttackTypes: null,
+        validDamageTypes: null,
+        requiresWeaponTag: null,
+        requiresTalents: null,
+        requiresDefense: null
+      },
+      usage: { perRound: false, perEncounter: false },
+      cost: { action: 'reaction', forcePoints: 0, talentResources: null },
+      handler: async (context) => {
+        const event = context?.verifiedAttackEvent ?? null;
+        if (!event) return { error: 'No verified critical hit', modifiedDamage: null, resultMessage: null };
+        const { LightsaberTalentActions } = await import('/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js');
+        const outcome = await LightsaberTalentActions.promptForceFortification(context.defender, { attackEvent: event });
+        if (!outcome) return { error: 'Force Fortification was not used', modifiedDamage: null, resultMessage: null };
+        return { modifiedDamage: null, additionalRoll: null, resultMessage: 'Critical hit negated; normal damage applies' };
+      }
+    },
+
     // COUNTERATTACK REACTIONS
     counterattack: {
       key: 'counterattack',

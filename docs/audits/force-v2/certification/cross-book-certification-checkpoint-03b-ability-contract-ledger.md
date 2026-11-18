@@ -47,3 +47,17 @@ Columns to complete per ability: owned canonical source item; book + printed pag
 | `sith:Crippling Strike` | `scripts/engine/talent/sith-talent-actions.js:656` | | | | | | | | | | `DEFERRED_RULES_REVIEW` |
 
 Note: `force-adept:<title>` and `sith:<title>` refs are built from the talent title at run time; one row per distinct title is required (see the `spendOneForcePoint(actor, '<title>')` call sites in those files).
+
+
+## Batch 1 — lightsaber-talent-actions.js (2026-11-18)
+
+Pattern (reusable): `ABILITY_OPTION_CONTRACTS[ref]` in `scripts/engine/force/ability-option-contracts.js` = { kind, itemType, slug, actionCost, priorSpendExempt, source }. `evaluateAbilityContract` re-checks, from live state at authorization time: owned enabled instance by canonical identity (`canonical-ability-identity.js`; name only for items with no canonical identity), the triggering attack event (attacker-side record), action timing, and one payment per (event, ability). The talent action pays at the last cancellable point (`payForcePoint`), runs the effect, then `settleForcePoint` finalizes at the applied boundary or compensates exactly.
+
+| Ref | Source | Owned by | Trigger | Action | Round limit | Finalize at | Compensation | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `lightsaber:promptForceFortification` | Core Rulebook, Duelist tree | canonical `force-fortification` | verified critical hit (hit and critical) scored against the actor | reaction | check against PRIOR spends waived by the printed text; spend still recorded | after the talent card is published | exact receipt rollback if the card fails | `IMPLEMENTED`, `OFFLINE_TESTED` |
+| `lightsaber:promptImprovedLightsaberThrow` | Force Unleashed Campaign Guide, New Duelist Talents | canonical `improved-lightsaber-throw` | none | standard action (own turn only) | counted (no printed exception) | after the card is published | exact rollback if the pull-back/card step throws | `IMPLEMENTED` with a gap: finalization is at card publication, NOT at an executed thrown-lightsaber area attack, because no canonical thrown-lightsaber area-attack path exists (Lightsaber Throw is itself card-only). Open item. |
+| `lightsaber:promptBlock` (adjacent ally) | Core official errata p.41 (text not in the repo; relied on the 03B policy statement and Sheltering Stance, KOTOR p.?) | canonical `block` | verified pending melee attack on an adjacent ally (scene distance <= 1 square) | reaction | counted (default; no exception stated) | after the Use the Force check executes | exact rollback if the check never rolls | `IMPLEMENTED`, `OFFLINE_TESTED`; live scene-distance behavior unverified |
+| `lightsaber:promptDeflect` (adjacent ally) | as above | canonical `deflect` | verified pending ranged attack on an adjacent ally | reaction | counted | as above | as above | as above |
+
+Sheltering Stance: the Force Point is waived only when the actor owns canonical `sheltering-stance` AND the adjacent-ally attack is verified (the former checkbox no longer waives anything). Known limits: a rerolled critical hit supersedes its event, so Force Fortification is not offered after a reroll; the protect-adjacent flow uses the blocker's own consumed list (the ally may still answer separately).

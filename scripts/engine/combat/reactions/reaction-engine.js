@@ -59,7 +59,9 @@ function normalizeReactionKey(value) {
     "feign-harmlessness": "feignHarmlessness",
     feignharmlessness: "feignHarmlessness",
     "uncanny-instincts": "uncannyInstincts",
-    uncannyinstincts: "uncannyInstincts"
+    uncannyinstincts: "uncannyInstincts",
+    "force-fortification": "forceFortification",
+    forcefortification: "forceFortification"
   };
   return aliases[key] ?? raw;
 }
@@ -113,7 +115,7 @@ function collectItemReactionKeys(item) {
   }
 
   const nameKey = normalizeReactionKey(item?.name);
-  if (["unarmedParry", "unarmedCounterstrike", "retaliationJab", "primitiveBlock", "intimidatingDefense", "deepSpaceGambit", "lightsaberEvasion", "preternaturalSenses", "feignHarmlessness", "uncannyInstincts", "block", "deflect"].includes(nameKey)) {
+  if (["unarmedParry", "unarmedCounterstrike", "retaliationJab", "primitiveBlock", "intimidatingDefense", "deepSpaceGambit", "lightsaberEvasion", "preternaturalSenses", "feignHarmlessness", "uncannyInstincts", "block", "deflect", "forceFortification"].includes(nameKey)) {
     keys.push(nameKey);
   }
 
@@ -334,7 +336,7 @@ export class ReactionEngine {
       // DC, total) is only a lookup key. Authority is the attacker-side event record,
       // re-read here; nothing client-supplied about the attack survives into the handler.
       let verifiedAttackEvent = null;
-      if (['block', 'deflect'].includes(resolvedReactionKey)) {
+      if (['block', 'deflect', 'forceFortification'].includes(resolvedReactionKey)) {
         const verdict = AttackEventAuthority.verify({
           defender,
           attackerId: attackContext.attackerId ?? attacker?.id,
@@ -347,6 +349,11 @@ export class ReactionEngine {
           return { success: false, error: verdict.message, modifiedDamage: null, resultMessage: verdict.message };
         }
         verifiedAttackEvent = verdict.event;
+        if (resolvedReactionKey === 'forceFortification' && !(verifiedAttackEvent.hit === true && verifiedAttackEvent.critical === true)) {
+          const message = 'Force Fortification answers a critical hit scored against you';
+          await SWSEChat.postMessage({ flavor: `❌ ${reactionDef.label}`, content: message, actor: defender });
+          return { success: false, error: message, modifiedDamage: null, resultMessage: message };
+        }
       }
 
       // A reaction that costs Force Points is authorized by ForcePointsService and paid
@@ -370,7 +377,7 @@ export class ReactionEngine {
 
       // Single use: claim the event before the (long, interactive) handler runs so a double
       // click or a second client cannot answer the same attack twice.
-      if (verifiedAttackEvent) {
+      if (verifiedAttackEvent && resolvedReactionKey !== 'forceFortification') {
         const claim = await AttackEventAuthority.consume(defender, verifiedAttackEvent.id);
         if (!claim.consumed) {
           if (forcePointReceipt) await ActorEngine.rollbackForcePointSpend(defender, forcePointReceipt);
@@ -402,7 +409,7 @@ export class ReactionEngine {
         };
       }
 
-      if (verifiedAttackEvent && result?.error) {
+      if (verifiedAttackEvent && result?.error && resolvedReactionKey !== 'forceFortification') {
         await ActorEngine.releaseAttackEventAsDefender(defender, verifiedAttackEvent.id);
       }
 
