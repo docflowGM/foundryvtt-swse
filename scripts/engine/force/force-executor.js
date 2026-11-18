@@ -1059,23 +1059,27 @@ export class ForceExecutor {
   static async recoverForcePowers(actor, powerIds = null) {
     try {
       let powersToRecover = [];
+      let paidReceipt = null;
 
-      if (powerIds && powerIds.length > 0) {
-        // Recover specific powers — spend a Force Point through the shared spender so bonus Force Points are consumed first.
-        const spend = await ActorEngine.spendForcePoints(actor, 1);
-        if (!spend?.spent) {
-          ui?.notifications?.warn?.('No Force Points left!');
-          return { success: false, error: 'No Force Points available' };
+      if (Array.isArray(powerIds) && powerIds.length > 0) {
+        // Core p.93 errata: one owned spent Power copy per FP reaction.
+        // Reject multiple selected copies instead of charging once for many.
+        if (powerIds.length !== 1) {
+          return { success: false, error: 'Force Point recovery requires exactly one selected Power instance' };
         }
-        const selected = powerIds.map(id => actor.items.get(id)).filter(p => p && (p.system?.discarded || p.system?.spent));
-        powersToRecover = [...selected];
-        if (this._actorHasTalent(actor, 'Recall')) {
-          const selectedIds = new Set(selected.map(p => p.id));
-          const extra = actor.items.find(item => isForcePowerItem(item) && (item.system?.discarded || item.system?.spent) && !selectedIds.has(item.id));
-          if (extra) powersToRecover.push(extra);
+        const selected = actor.items.get(powerIds[0]);
+        if (!selected || !isForcePowerItem(selected) ||
+            (selected.system?.discarded !== true && selected.system?.spent !== true)) {
+          return { success: false, error: 'Selected Force Power instance is not owned and spent' };
         }
+        powersToRecover = [selected];
+        paidReceipt = await ActorEngine.spendForcePoints(actor, 1, {
+          useKind: 'recover-one-force-power',
+          targetItemInstanceId: selected.id
+        });
       } else {
-        // Recover all discarded force powers (rest / natural 20)
+        // The existing rest/natural-20 mass-recovery branch is a separate
+        // 03C event-provenance cutover. Do not reinterpret it as a paid action.
         powersToRecover = actor.items.filter(item => isForcePowerItem(item) && item.system?.discarded);
       }
 
@@ -1083,17 +1087,39 @@ export class ForceExecutor {
         throw new Error("No force powers to recover");
       }
 
-      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', powersToRecover.map(power => ({
-        _id: power.id,
-        'system.discarded': false,
-        'system.spent': false,
-        'system.lastRecovered': Date.now()
-      })), { source: 'force-power-recover-all', render: false });
-
-      // Remove any active effects from recovered powers
-      for (const power of powersToRecover) {
-        await ForcePowerEffectsEngine.removePowerEffects(actor, power);
+      try {
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', powersToRecover.map(power => ({
+          _id: power.id,
+          'system.discarded': false,
+          'system.spent': false,
+          'system.lastRecovered': Date.now()
+        })), { source: paidReceipt ? 'force-power-fp-reaction-recover-one' : 'force-power-recover-all', render: false });
+      } catch (error) {
+        if (paidReceipt) {
+          const stillSpent = powersToRecover.every(power => {
+            const live = actor.items.get(power.id);
+            return live?.system?.spent === true || live?.system?.discarded === true;
+          });
+          if (stillSpent) {
+            const compensation = await ActorEngine.rollbackForcePointSpend(actor, paidReceipt);
+            if (!compensation?.rolledBack) console.error('Recovery refund refused; manual reconciliation needed', compensation);
+          } else {
+            console.error('Recovery Item write may have applied before failure; no unsafe automatic refund', error);
+          }
+        }
+        throw error;
       }
+
+      if (paidReceipt) {
+        try {
+          const finality = await ActorEngine.finalizeForcePointSpend(actor, paidReceipt);
+          if (!finality?.finalized) console.error('Power recovery completed but FP receipt finality could not be persisted', finality);
+        } catch (error) {
+          console.error('Power recovery completed but FP receipt finalization failed', error);
+        }
+      }
+      // A recovered learned Power copy is not the active effect instance.
+      // Effect duration/maintenance stays owned by ForcePowerEffectsEngine.
 
       // Generate chat message
       await SWSEChat.postHTML({
