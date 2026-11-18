@@ -300,10 +300,18 @@ export class ForcePointsService {
         const owned = Array.from(actor.items ?? []).some(i => i.type === contract.itemType &&
           i.system?.disabled !== true && String(i.name).toLowerCase() === contract.itemName.toLowerCase());
         if (!owned) return reject(`${contract.itemName} is not owned by this actor`);
-      } else if (globalThis.game?.user?.isGM !== true) {
-        return reject('This ability has no certified Force Point contract (FP-RD-003); GM adjudication required');
+      } else {
+        // Explicit, attributable GM adjudication (owner ruling, 2026-11-18): being
+        // a GM is not adjudication. The GM must make a deliberate call carrying a
+        // written reason; the live user is verified, the reason is recorded, and
+        // the actor-ownership, eligible-FP and common-cap checks still apply.
+        const adj = context.gmAdjudication;
+        if (globalThis.game?.user?.isGM !== true || typeof adj?.reason !== 'string' || adj.reason.trim().length === 0) {
+          return reject('This ability has no certified Force Point contract (FP-RD-003); explicit GM adjudication with a recorded reason is required');
+        }
+        const sourceName = String(context.abilitySourceRef).split(':').pop();
+        adjudicatedBy = { userId: globalThis.game.user.id ?? null, reason: adj.reason.trim(), abilitySourceRef: context.abilitySourceRef, sourceName };
       }
-      adjudicatedBy = contract ? null : (globalThis.game.user.id ?? 'gm');
     } else if (useKind === 'reduce-dark-side-score') {
       const dsp = DSPEngine.getValue(actor);
       if (!(dsp > 0)) return reject('No Dark Side Score to reduce');

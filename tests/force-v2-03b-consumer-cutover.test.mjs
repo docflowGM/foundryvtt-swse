@@ -34,7 +34,8 @@ let passed = 0;
 const check = (name) => { passed += 1; console.log(`PASS ${passed}: ${name}`); };
 globalThis.game.user = { id: 'gm-1', isGM: true };
 const rollCtx = (requestId) => ({ useKind: 'roll-bonus', rollDomain: 'skill.acrobatics', requestId });
-const option = (ref = 'test:talent', extra = {}) => ({ useKind: 'ability-option', abilitySourceRef: ref, ...extra });
+const option = (ref = 'test:talent', extra = {}) => ({ useKind: 'ability-option', abilitySourceRef: ref, gmAdjudication: { reason: 'GM ruled for the test table' }, ...extra });
+const unadjudicated = (ref = 'test:talent') => ({ useKind: 'ability-option', abilitySourceRef: ref });
 
 try {
   {
@@ -42,9 +43,12 @@ try {
     assert.equal(ForcePointsService.authorizeSpend(a, { useKind: 'ability-option' }).valid, false, 'identified source required');
     assert.equal(ForcePointsService.authorizeSpend(a, option()).valid, true, 'verified GM adjudication permits an uncertified ability');
     const gmReceipt = await ActorEngine.spendForcePoints(a, 1, option('x:gm'));
-    assert.equal(gmReceipt.adjudicatedBy, 'gm-1');
+    assert.equal(gmReceipt.adjudicatedBy.userId, 'gm-1');
+    assert.equal(gmReceipt.adjudicatedBy.reason, 'GM ruled for the test table');
+    assert.equal(ForcePointsService.authorizeSpend(a, unadjudicated()).valid, false, 'being a GM is not adjudication');
+    assert.equal(ForcePointsService.authorizeSpend(a, option('x', { gmAdjudication: { reason: '  ' } })).valid, false, 'a reason is mandatory');
     globalThis.game.user = { id: 'player-1', isGM: false };
-    assert.equal(ForcePointsService.authorizeSpend(a, option()).valid, false, 'players cannot automate an uncertified ability (FP-RD-003)');
+    assert.equal(ForcePointsService.authorizeSpend(a, option()).valid, false, 'a player cannot adjudicate, even with a reason (FP-RD-003)');
     assert.equal(ForcePointsService.authorizeSpend(a, option('x', { isGMAdjudicated: true })).valid, false, 'a caller-supplied adjudication boolean proves nothing');
     globalThis.game.user = { id: 'gm-1', isGM: true };
     await assert.rejects(() => ActorEngine.spendForcePoints(a, 1), /Unsupported or unclassified/, 'a two-argument spend stays refused');

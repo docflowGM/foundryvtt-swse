@@ -3764,3 +3764,14 @@ Rulings communicated by the project owner after independent source review of PR 
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+
+## FP-RD-001 / 003 / 006 — OWNER FOLLOW-UP RULINGS (appended 2026-11-18; earlier entries preserved)
+
+| ID | Ruling | Implementation state |
+| --- | --- | --- |
+| FP-RD-006 | One GM-controlled campaign-day identity. Read a configured world-calendar day when available; otherwise require an explicit GM Advance Day event; never infer a day from browser wall time or from an individual rest. Rest of at least 6 hours is the acquisition gate, not the expiry gate. One Guardian Spirit grant per campaign day; an unused grant expires at the start of the next campaign day. Store issuedDay, expirationDay, rest evidence, ability source and typed eligible use. A naked `floor(worldTime/86400)` is a chosen convention, not RAW midnight: respect any configured calendar epoch/day boundary; if world time is unavailable, fail closed. No `Date.now` expiry. Eligible uses are exact Force Power enhancement / Technique / Secret activation, not a generic UTF check. | NOT implemented (scheduled last in the owner's sequence). |
+| FP-RD-003 | Implement all per-ability typed contracts in source-certified batches with a mapping ledger. No blanket GM-user bypass: GM adjudication must be a separate, intentional, attributable action; the actor must still own the source, have eligible FP and satisfy common caps unless a printed exception proves otherwise. | Blanket `isGM` bypass REMOVED: adjudication now requires `context.gmAdjudication.reason` from a verified GM, recorded on the receipt. Mapping ledger scaffold created (39 rows); contracts not yet written. |
+| FP-RD-001 | Build the Block/Deflect reaction-event producer next: reuse `LightsaberTalentActions.promptBlock/promptDeflect` -> `rollSkillCheck` (`skillUse.key` block/deflect); attach an authenticated triggering attack/reaction event and owned talent identity; prove an active Sparring Practice / Training Remote (DC18/23/28) or Vo'ren's Third Cadence (DC33) including the 24-hour lifecycle; source-scoped expiring restricted grants for DC23/28; separate behavioral cases for Block-only, Deflect-only, off-turn, counted/non-counting. | NOT implemented (second in the owner's sequence). |
+
+Sequence ordered by the owner: (1) verify rescue finality and shared transaction integrity [done in 22ea28e]; (2) Block/Deflect event + restricted-point tests; (3) per-ability contracts in batches; (4) Guardian Spirit day/use-kind handling and the talisman blocked state. No certification or merge before the real Node suites and Foundry v13 interaction/two-client tests.
