@@ -20,6 +20,15 @@ const forceRegimenExecutor = await readFile(new URL('../scripts/engine/force/for
 assert.match(rollCore, /applyForcePointLogic\(actor, pointsToSpend = 1, options = \{\}\) \{[\s\S]{0,400}ForcePointSpendCoordinator\.rollAndSpend\(/);
 assert.doesNotMatch(rollCore, /ForcePointsService\.canSpend/, 'RollCore must not re-implement Force Point validation inline.');
 
+// Denied paid rolls must fail closed; paid take-X requests must not silently
+// produce an unboosted result. These are source-level guards only; the
+// executable Foundry-shim scenarios are still necessary for certification.
+assert.match(rollCore, /if \(isTakeX && rollOptions\.useForce\)/);
+assert.match(rollCore, /Force Point use denied: \$\{forceResult\.reason\}/);
+assert.match(rollCore, /return \{ success: false, error: `Force Point use denied:/);
+assert.match(forcePointsService, /conditionCurrent >= 5/);
+assert.doesNotMatch(forcePointsService, /conditionCurrent >= 3/);
+
 // 2. RollCore must refund a Force Point already spent if the main check roll
 //    (not just the Force die) subsequently fails to execute.
 assert.match(rollCore, /forcePointDetails\?\.success && forcePointDetails\.spent > 0/);
