@@ -296,11 +296,59 @@ export class ReactionEngine {
 
     const resolvedReactionKey = reactionDef.key ?? normalizeReactionKey(reactionKey);
 
-    // Execution-boundary admission (slice 6Z, re-derived): chat buttons can be stale or replayed by another client, so control of the
-    // defender is rechecked here BEFORE any limit claim, Force Point payment or handler. (Trigger/condition re-evaluation needs the
-    // chat context plumbing of #1159 and is a documented follow-up; it is not enforced here because callers do not yet all pass it.)
+    // Global registry presence is not an actor entitlement. Recheck the
+    // same owned/derived reaction keys used by the offer UI before payment:
+    // chat buttons can be stale and a reaction key can be submitted directly.
+    const ownedKeys = collectActorReactionKeys(defender);
+    if (!ownedKeys.some(key => normalizeReactionKey(key) === normalizeReactionKey(resolvedReactionKey))) {
+      return {
+        success: false,
+        error: 'Defender does not own this reaction',
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
     if (globalThis.game?.user?.isGM !== true && defender.isOwner === false) {
-      return { success: false, error: 'Current user cannot control the defender', modifiedDamage: null, resultMessage: null };
+      return {
+        success: false,
+        error: 'Current user cannot control the defender',
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
+    // The offer UI filters these already, but the execution boundary must
+    // repeat them. A stale/wrong attack type or descriptor is not a paid
+    // reaction; do not invoke the handler or spend Force Points.
+    const refused = attackContext.cannotBeNegatedBy ?? [];
+    const excluded = Array.isArray(refused) && refused.length
+      && ((reactionDef.negationAbility && refused.includes(reactionDef.negationAbility))
+      || (reactionDef.negationFamily && refused.includes(
+        `talents-with-${reactionDef.negationFamily}-as-prerequisite`
+      )));
+    if (reactionDef.trigger !== attackContext.trigger
+      || !this._evaluateConditions(reactionDef.conditions, attackContext)
+      || excluded) {
+      return {
+        success: false,
+        error: 'Reaction is not eligible for the current attack',
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
+
+    // The registered rule is the authoritative reaction cost. The optional
+    // legacy caller cost may increase it, but cannot waive a printed cost.
+    const declaredForceCost = Number(reactionDef.cost?.forcePoints ?? 0);
+    const callerForceCost = Number(forcePointCost ?? 0);
+    if (![declaredForceCost, callerForceCost].every(
+      cost => Number.isSafeInteger(cost) && cost >= 0
+    )) {
+      return {
+        success: false,
+        error: 'Invalid reaction Force Point cost',
+        modifiedDamage: null,
+        resultMessage: null
+      };
     }
 
     try {
