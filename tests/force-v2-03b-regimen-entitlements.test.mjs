@@ -151,7 +151,7 @@ try {
     assert.equal(ForcePointsService.authorizeSpend(defender, { useKind: 'roll-bonus', rollDomain: 'skill.acrobatics', useTemporaryEntry: true }).valid, false);
     const t = await ActorEngine.spendForcePoints(defender, 1, spendCtx(e, 'block', { useTemporaryEntry: true }));
     assert.equal(t.bonusEntriesSpent[0].source, 'Force Regimen: Sparring Practice');
-    assert.equal(t.countsTowardRoundLimit, true, 'a temporary point counts (FP-RD-007)');
+    assert.equal(t.countsTowardRoundLimit, false, 'a temporary point on the qualifying check is non-counting (FP-RD-007 Option B)');
     assert.equal(defender.system.forcePoints.value, 6, 'the ordinary pool was not touched');
     const back = await ActorEngine.rollbackForcePointSpend(defender, t);
     assert.equal(back.rolledBack, true); assert.equal(pool().entries[0].value, 1, 'exact entry restored');
@@ -163,7 +163,35 @@ try {
     globalThis.game.time = undefined;
     assert.equal(ForcePointsService.authorizeSpend(defender, spendCtx(e2, 'block')).countsTowardRoundLimit, true, 'no world clock fails closed');
     globalThis.game.time = { worldTime: 100000 };
-    check('temporary regimen points: Block-only, never for unrelated rolls, counted, exact rollback, 24h expiry, fail closed without a clock');
+    check('temporary regimen points: Block-only, never for unrelated rolls, non-counting, exact rollback, 24h expiry, fail closed without a clock');
+  }
+  {
+    // FP-RD-007: counted -> temporary and temporary -> counted coexist in one round; no double payment on one check.
+    reset(); setCombat();
+    await grant('Sparring Practice', 28);
+    const a = await mint(); const b = await mint('melee', 21); const c = await mint('melee', 18); const d = await mint('melee', 17);
+    const counted = await ActorEngine.spendForcePoints(defender, 1, { useKind: 'roll-bonus', rollDomain: 'skill.acrobatics' });
+    assert.equal(counted.countsTowardRoundLimit, true);
+    const t1 = await ActorEngine.spendForcePoints(defender, 1, spendCtx(a, 'block', { useTemporaryEntry: true }));
+    assert.equal(t1.countsTowardRoundLimit, false, 'counted -> temporary');
+    const t2 = await ActorEngine.spendForcePoints(defender, 1, spendCtx(b, 'block', { useTemporaryEntry: true }));
+    assert.equal(t2.countsTowardRoundLimit, false, 'several distinct attacked events');
+    await assert.rejects(() => ActorEngine.spendForcePoints(defender, 1, spendCtx(c, 'block', { useTemporaryEntry: true })), /No eligible regimen temporary/, 'DC28 grants exactly two');
+    await assert.rejects(() => ActorEngine.spendForcePoints(defender, 1, spendCtx(a, 'block')), /already spent on this attack/, 'no second payment on one check');
+    assert.equal(t1.bonusEntriesSpent[0].id, 'sparringpractice-100000-temp');
+    // Temporary then counted (a new round, so the ordinary counted cap is fresh).
+    const lateCounted = await ActorEngine.spendForcePoints(defender, 1, spendCtx(d, 'block'));
+    assert.equal(lateCounted.countsTowardRoundLimit, false, 'an ordinary point on the qualifying check is also non-counting');
+    await assert.rejects(() => ActorEngine.spendForcePoints(defender, 1, { useKind: 'roll-bonus', rollDomain: 'skill.stealth' }), /already been spent this round/, 'unrelated rolls still count');
+    // Rollback keeps exact provenance.
+    const back = await ActorEngine.rollbackForcePointSpend(defender, t2);
+    assert.equal(back.rolledBack, true);
+    const entry = defender.flags.swse.bonusForcePoints.entries.find(e => e.id === 'sparringpractice-100000-temp');
+    assert.equal(entry.value, 1); assert.equal(entry.entitlement.grantId, 'sparringpractice-100000');
+    // The other regimen's point cannot pay for the other talent.
+    const ranged = await mint('ranged', 30);
+    assert.equal(ForcePointsService.authorizeSpend(defender, spendCtx(ranged, 'deflect', { useTemporaryEntry: true })).valid, false);
+    check('FP-RD-007: temporary points are non-counting on the qualifying check; counted<->temporary coexist; one payment per check; exact provenance on rollback');
   }
   {
     reset(); setCombat();

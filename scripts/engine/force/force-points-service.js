@@ -373,7 +373,7 @@ export class ForcePointsService {
       // Force Point was already spent this round. It bypasses only the check
       // against PRIOR counted spends; the rescue is still recorded as counted,
       // so it blocks a later ordinary spend in the same round.
-      if (useKind !== 'avoid-death' && !(regimen.noncounting === true && context.useTemporaryEntry !== true) && (journal.receipts ?? []).some(r => r.roundKey === roundKey &&
+      if (useKind !== 'avoid-death' && !(regimen.noncounting === true) && (journal.receipts ?? []).some(r => r.roundKey === roundKey &&
           r.countsTowardRoundLimit && ['committed', 'finalized'].includes(r.state))) {
         return reject('One counted Force Point has already been spent this round');
       }
@@ -391,9 +391,9 @@ export class ForcePointsService {
       ? bonusEntries.find(e => e.entitlement && Number(e.value) >= 1)
       : bonusEntries.find(e => !e.entitlement && Number(e.value) >= 1);
     if (wantsTemporary && !chosen) return reject('No eligible regimen temporary Force Point for this reaction');
-    // Counting: the regimen exemption covers the ordinary spend; a temporary point's exemption is not
-    // printed, so it counts (FP-RD-007).
-    const counts = !(regimen.noncounting === true && !chosen?.entitlement);
+    // Counting (owner ruling FP-RD-007, Option B): the printed exemption attaches to the qualified Block/Deflect
+    // activation event, not to whether the point is ordinary or a regimen temporary point. One paid spend per event.
+    const counts = !(regimen.noncounting === true);
     const normalSpent = chosen ? 0 : 1;
     const bonusEntriesSpent = chosen ? [{ id: chosen.id, source: chosen.source ?? '', amount: 1, entry: { ...chosen } }] : [];
     if (normalSpent > this.getRemaining(actor)) return reject('No eligible Force Point available', this.getAvailableTotal(actor, context));
