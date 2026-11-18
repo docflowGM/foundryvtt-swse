@@ -83,10 +83,12 @@ test('production expiry computes plan only after target lock is acquired',()=>{
  const start=src.indexOf('static async expireCombat(');
  const end=src.indexOf('\nlet registered=false;',start);
  const body=src.slice(start,end);
+ const prefilter=body.indexOf("if(!currentTemptations(target).some(entry=>entry?.state==='active'))continue;");
  const lock=body.indexOf('await locked(target,async()=>{');
  const plan=body.indexOf('const plan=expireTemptationEntries(target,combat,{encounterEnd,nextTurn});');
  const mutation=body.indexOf('await ActorEngine.applyMutationPlan(target,{');
- assert.ok(start>0&&end>start&&lock>=0&&plan>lock&&mutation>plan);
+ assert.ok(start>0&&end>start&&prefilter>=0&&prefilter<lock);
+ assert.ok(plan>lock&&mutation>plan);
  const before=body.slice(0,lock);
  assert.doesNotMatch(before,/expireTemptationEntries\(target/);
  assert.match(body,/if\(!plan.changed\)return;/);
