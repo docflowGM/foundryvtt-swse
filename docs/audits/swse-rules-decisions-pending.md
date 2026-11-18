@@ -3625,3 +3625,16 @@ Appended 2026-11-17 by the NPC V2 convergence pass. Append-only; the species (`S
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+## SWSE-NPC-RD-001..004 — INDEPENDENT REVIEWER RECOMMENDATIONS (appended 2026-11-18; earlier entries preserved)
+
+Recorded from the independent review of PR #1158. **These are reviewer recommendations, not owner-approved rulings.** All four entries above remain `DEFERRED_RULES_REVIEW` with a blank Resolution until the project owner accepts or rejects them. No code or data was changed on the strength of these recommendations.
+
+| Entry | Reviewer recommendation | Reviewer's stated basis | Implementation status |
+|---|---|---|---|
+| RD-001 Heroic -> Nonheroic | Keep blocked unless the owner authorizes a house rule | Core p.278 permits Nonheroic -> heroic multiclassing and does not authorize the reverse | Current behavior already blocks it (unchanged) |
+| RD-002 Ride as a Nonheroic class skill | Remove Ride | The printed Nonheroic class-skill list (p.278) does not include it | **Not changed.** `ride` is still in `NONHEROIC_CLASS_SKILLS` pending an owner ruling |
+| RD-003 Level-1 general feat | One general feat at level 1, separate from the three class starting feats | Table 3-1 (Core p.37) grants the first general feat at 1st level | Already implemented (general-feat step kept for Nonheroic chargen); table cell still to be owner-confirmed |
+| RD-004 Galactic Profile Nonheroic feats | Require mechanically complete profiles: three legal starting class feats with canonical scopes plus the general feat entitlement, with no validation bypass | Profiles should not bypass legality validation | **Not changed.** The starting-feat check is still skipped for profile-applied sessions and `data/galactic-profiles/**` is untouched |
+
+Page numbering note: the reviewer cites the printed Nonheroic page as p.278; this repository's earlier entries cite p.277 from the OCR layer. Both refer to the same Nonheroic class write-up; the owner may wish to normalize the citation when ruling.

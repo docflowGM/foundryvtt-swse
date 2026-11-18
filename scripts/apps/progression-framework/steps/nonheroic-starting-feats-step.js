@@ -440,7 +440,10 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
     // level-1 general feat); only the starting-feat slot is replaced here.
     const draftFeats = shell?.progressionSession?.draftSelections?.feats;
     const others = (Array.isArray(draftFeats) ? draftFeats : []).filter(entry => !_isStartingSelection(entry));
-    await this._commitNormalized(shell, 'feats', [...others, ...this._selected]);
+    // `replace: true`: this step owns the COMPLETE feat list it commits (others +
+    // starting picks). Without it the session treats a one-entry array as a
+    // singleton merge and silently resurrects picks the GM just removed.
+    await this._commitNormalized(shell, 'feats', [...others, ...this._selected], { replace: true });
   }
 
   getAutoAdvanceConfig(shell) {

@@ -404,12 +404,14 @@ test('NPC-T18: an imported statblock keeps statblock authority and calculation m
   assert.equal(state.sourceAuthority, 'statblock');
   assert.equal(npcMode.resolveNpcCalculationMode(imported), 'statblock');
   assert.equal(npcMode.isNpcStatblockMode(imported), true);
-  // Entry dialog requires explicit GM authorization before conversion.
+  // Entry dialog requires explicit GM authorization before conversion; the
+  // authority switch itself is committed by the finalizer with the plan (PR #1158
+  // review correction), covered behaviorally in npc-pr1158-review-corrections.test.mjs.
   const entry = read('scripts/apps/levelup/npc-levelup-entry.js');
   assert.match(entry, /_requiresStatblockConversion/);
   assert.match(entry, /Convert Statblock NPC to Calculated Progression\?/);
-  assert.ok(entry.indexOf('createSnapshot(this.actor, `Statblock before conversion') < entry.indexOf("'system.npcProfile.sourceAuthority': 'progression'"), 'snapshot precedes the authority change');
-  assert.match(entry, /source: 'npc-levelup-entry\.statblock-conversion'/, 'authority change is an ActorEngine mutation');
+  assert.match(entry, /STATBLOCK_ORIGIN_KIND/);
+  assert.doesNotMatch(entry, /ActorEngine\.updateActor/, 'no authority write before the progression plan commits');
 });
 
 test('NPC-T17: new NPCs are created with an explicit track and the npc document type', () => {

@@ -80,7 +80,7 @@
   {{#if requiresStatblockConversion}}
     <div class="swse-npc-callout swse-npc-callout--info">
       <strong>Statblock NPC:</strong>
-      Published values stay authoritative. Choosing Heroic or Nonheroic asks you to explicitly convert it to calculated progression (a snapshot is saved first).
+      Published values stay authoritative. Choosing Heroic or Nonheroic asks you to explicitly convert it to calculated progression. The original statblock is saved first and the conversion only takes effect when the level-up is completed.
     </div>
   {{/if}}
 
@@ -121,8 +121,11 @@
   </div>
 
   <footer class="swse-footer">
+    {{#if hasStatblockOrigin}}
+      <button type="button" data-action="revert-statblock" {{#unless isGM}}disabled{{/unless}}>Revert to Statblock</button>
+    {{/if}}
     {{#if hasSnapshot}}
-      <button type="button" data-action="revert" {{#unless isGM}}disabled{{/unless}}>Revert to Statblock</button>
+      <button type="button" data-action="revert" {{#unless isGM}}disabled{{/unless}}>Undo Last Level-Up</button>
     {{/if}}
     <button type="button" data-action="cancel">Cancel</button>
   </footer>

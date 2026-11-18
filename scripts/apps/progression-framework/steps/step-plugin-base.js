@@ -535,7 +535,7 @@ export class ProgressionStepPlugin {
    *   this._commitNormalized(shell, 'species', normalizedSpeciesObject);
    *   this._commitNormalized(shell, 'feats', normalizedFeatsArray);
    */
-  async _commitNormalized(shell, selectionKey, normalizedValue) {
+  async _commitNormalized(shell, selectionKey, normalizedValue, options = {}) {
     if (!shell?.progressionSession) {
       swseLogger.warn(
         `[${this.constructor.name}] No progressionSession available for commit`
@@ -548,7 +548,8 @@ export class ProgressionStepPlugin {
       const success = shell.progressionSession.commitSelection(
         nodeId,
         selectionKey,
-        normalizedValue
+        normalizedValue,
+        options
       );
 
       if (!success) {

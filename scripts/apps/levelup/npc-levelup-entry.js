@@ -5,10 +5,9 @@ import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
-import { getNpcMode, getNpcProfileState } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
-import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
+import { getNpcMode, getNpcProfileState, resolveNpcCalculationMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { SnapshotManager, STATBLOCK_ORIGIN_KIND } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
 import { evaluateNonheroicTransition } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
   static PARTS = {
@@ -45,6 +44,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     const mode = getNpcMode(actor);
     const npcProfileState = getNpcProfileState(actor);
     const hasSnapshot = SnapshotManager.hasSnapshots(actor);
+    const hasStatblockOrigin = !!SnapshotManager.getStatblockOriginSnapshot(actor);
     const isBeast = npcProfileState?.legalProfile === 'beast' || npcProfileState?.kind === 'beast';
     const isMount = npcProfileState?.legalProfile === 'mount' || npcProfileState?.kind === 'mount';
     const isOwnerSynced = npcProfileState?.mode === 'owner-sync' || ['minion', 'privateer'].includes(npcProfileState?.kind);
@@ -87,6 +87,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       isOwnerSynced,
       canManualLevel: !isOwnerSynced,
       hasSnapshot,
+      hasStatblockOrigin,
       isGM: !!game.user?.isGM,
 
       epicOverrideEnabled,
@@ -138,6 +139,9 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
           case 'revert':
             await this._handleRevert();
             break;
+          case 'revert-statblock':
+            await this._handleRevertStatblock();
+            break;
           case 'cancel':
             this.close();
             break;
@@ -158,55 +162,42 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     if (!profile) return false;
     const dependent = ['beast', 'mount', 'follower', 'minion', 'privateer'].includes(profile.kind);
     if (dependent || profile.mode === 'owner-sync') return false;
-    return profile.sourceAuthority === 'statblock' || profile.mode === 'play' || profile.imported === true;
+    // Mirrors evaluateNpcProgressionGuard() so the dialog offers conversion exactly when the guard demands it.
+    return resolveNpcCalculationMode(this.actor) === 'statblock'
+      || profile.sourceAuthority === 'statblock' || profile.mode === 'play';
   }
 
   /**
-   * Gate every manual advancement: contradictory identity blocks; a
-   * statblock NPC needs explicit GM authorization, then (with the pre-level
-   * snapshot already taken by the caller) the authority is switched through
-   * ActorEngine so the decision is persisted and every consumer (sheet,
-   * entry, finalizer, derived calc) reads the same authority.
-   * @returns {Promise<boolean>} true when progression may start
+   * Gate every manual advancement. Contradictory identity blocks. A statblock
+   * NPC needs explicit GM authorization; authorization takes a restorable
+   * conversion-ORIGIN snapshot and returns a conversion token that travels with
+   * the progression session. NOTHING persistent about the NPC's authority is
+   * written here: the finalizer switches authority inside the same transaction
+   * as the progression plan, so cancelling or failing leaves the published
+   * statblock untouched (only a harmless, labeled snapshot remains).
+   * @returns {Promise<{ok: boolean, conversion: ({target: string, originSnapshot: number}|null)}>}
    */
   async _authorizeProgressionStart(target) {
     const profile = getNpcProfileState(this.actor);
     if (profile?.identityConflicts?.length) {
       ui.notifications.warn(`${profile.identityConflicts.map(c => c.message).join(' ')} Resolve this in NPC Legal Review & Repair before advancing.`);
-      return false;
+      return { ok: false, conversion: null };
     }
-    if (!this._requiresStatblockConversion(profile)) return true;
+    if (!this._requiresStatblockConversion(profile)) return { ok: true, conversion: null };
 
     const ok = await SWSEDialogV2.confirm({
       title: 'Convert Statblock NPC to Calculated Progression?',
       content: `<p><strong>${foundry.utils.escapeHTML?.(this.actor?.name ?? 'This NPC') ?? 'This NPC'}</strong> uses its published statblock values as authority.</p>
-        <p>Continuing makes it a <strong>${target}</strong> NPC with <strong>calculated</strong> HP, defenses, BAB and attacks. A snapshot is saved first; use <em>Revert to Statblock</em> to restore the published values.</p>`
+        <p>Continuing makes it a <strong>${target}</strong> NPC with <strong>calculated</strong> HP, defenses, BAB and attacks once the level-up is completed. The original statblock is saved first; <em>Revert to Statblock</em> restores exactly that state. Cancelling the level-up changes nothing.</p>`
     });
-    if (!ok) return false;
+    if (!ok) return { ok: false, conversion: null };
 
-    await SnapshotManager.createSnapshot(this.actor, `Statblock before conversion to ${target} progression`);
-    // Declared identity must agree with the embedded class records: existing
-    // class history wins (a Nonheroic NPC taking its first heroic class stays
-    // 'nonheroic' until that class exists); only a classless NPC takes the target.
-    const identityKind = profile.hasClassItems && ['heroic', 'nonheroic'].includes(profile.kind) ? profile.kind : target;
-    await ActorEngine.updateActor(this.actor, {
-      'system.npcProfile.kind': identityKind,
-      'system.npcProfile.legalProfile': identityKind,
-      'system.npcProfile.mode': 'progression',
-      'system.npcProfile.sourceAuthority': 'progression',
-      'system.npcProfile.legalReview.statblockConversion': {
-        convertedAt: new Date().toISOString(),
-        convertedBy: game.user?.id ?? null,
-        fromAuthority: profile.sourceAuthority,
-        fromMode: profile.mode,
-      },
-    }, {
-      source: 'npc-levelup-entry.statblock-conversion',
-      render: false,
-      suppressAppRefresh: true,
-      meta: { guardKey: `npc-statblock-conversion:${this.actor.id}` },
-    });
-    return true;
+    const origin = await SnapshotManager.createSnapshot(
+      this.actor,
+      `Original statblock (before conversion to ${target} progression)`,
+      { kind: STATBLOCK_ORIGIN_KIND }
+    );
+    return { ok: true, conversion: { target, originSnapshot: origin.timestamp } };
   }
 
   _getNpcProgressionSubtype(preferred = null) {
@@ -253,7 +244,8 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     }
 
     try {
-      if (!(await this._authorizeProgressionStart('heroic'))) return;
+      const auth = await this._authorizeProgressionStart('heroic');
+      if (!auth.ok) return;
       const nextLevel = (Number(this.actor.system?.level) || 1) + 1;
       await SnapshotManager.createSnapshot(this.actor, `Before Heroic Level-Up to ${nextLevel}`);
 
@@ -261,6 +253,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       await launchProgression(this.actor, {
         subtype: this._getNpcProgressionSubtype('heroic'),
         source: 'npc-levelup-entry.heroic',
+        statblockConversion: auth.conversion,
         npcProgression: true
       });
     } catch (err) {
@@ -291,7 +284,8 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     }
 
     try {
-      if (!(await this._authorizeProgressionStart('nonheroic'))) return;
+      const auth = await this._authorizeProgressionStart('nonheroic');
+      if (!auth.ok) return;
       const nextLevel = (Number(this.actor.system?.level) || 1) + 1;
       await SnapshotManager.createSnapshot(this.actor, `Before Nonheroic Level-Up to ${nextLevel}`);
 
@@ -299,6 +293,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       await launchProgression(this.actor, {
         subtype: this._getNpcProgressionSubtype('nonheroic'),
         source: 'npc-levelup-entry.nonheroic',
+        statblockConversion: auth.conversion,
         npcProgression: true
       });
     } catch (err) {
@@ -316,8 +311,8 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     }
 
     const ok = await SWSEDialogV2.confirm({
-      title: 'Revert NPC to Statblock Snapshot',
-      content: `<p>This restores the NPC to: <strong>${snapshotInfo.label}</strong> (${snapshotInfo.date})</p><p>Items, effects, and all attributes will be restored exactly.</p>`
+      title: 'Undo Last NPC Level-Up',
+      content: `<p>This restores the NPC to its most recent snapshot: <strong>${snapshotInfo.label}</strong> (${snapshotInfo.date})</p><p>Items, effects, and all attributes will be restored exactly.</p>`
     });
     if (!ok) {return;}
 
@@ -327,6 +322,30 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     } catch (err) {
       SWSELogger.error('Snapshot revert failed:', err);
       ui.notifications.error('Failed to revert NPC to snapshot.');
+    }
+  }
+
+  /** Restore the ORIGINAL published statblock recorded at conversion (not merely the latest snapshot). */
+  async _handleRevertStatblock() {
+    if (!game.user?.isGM) {return ui.notifications.warn('GM only.');}
+
+    const origin = SnapshotManager.getStatblockOriginSnapshot(this.actor);
+    if (!origin) {
+      return ui.notifications.warn('No original statblock snapshot is recorded for this NPC.');
+    }
+
+    const ok = await SWSEDialogV2.confirm({
+      title: 'Revert to Original Statblock',
+      content: `<p>This restores the NPC to its original published statblock: <strong>${origin.label}</strong> (${new Date(origin.timestamp).toLocaleString()}).</p><p>Everything gained since conversion, including levels and calculated authority, is removed.</p>`
+    });
+    if (!ok) {return;}
+
+    try {
+      await SnapshotManager.revertToStatblockOrigin(this.actor);
+      this.close();
+    } catch (err) {
+      SWSELogger.error('Statblock revert failed:', err);
+      ui.notifications.error('Failed to revert NPC to its original statblock.');
     }
   }
 }

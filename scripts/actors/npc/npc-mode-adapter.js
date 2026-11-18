@@ -8,6 +8,8 @@
  * Phase 2: resolves non-mutating NPC profile/authority context for the sheet.
  */
 
+import { evaluateNonheroicTransition } from '../../engine/progression/utils/nonheroic-class-model.js';
+
 const NPC_KINDS = new Set([
   'heroic',
   'nonheroic',
@@ -105,8 +107,19 @@ function isNonheroicClassItem(item) {
  */
 function classItemKind(actor) {
   const classItems = actor?.items?.filter?.(item => item?.type === 'class') ?? [];
-  if (!classItems.length) return null;
-  return classItems.every(isNonheroicClassItem) ? 'nonheroic' : 'heroic';
+  return classKindFromEntries(classItems);
+}
+
+/**
+ * Identity from a list of class records/entries (anything with `system.isNonheroic`
+ * or a Nonheroic name/classId): all nonheroic -> 'nonheroic', any heroic ->
+ * 'heroic', none -> null. Shared by the live-actor resolver and by the finalizer
+ * when it reconciles the stored profile with the class history a plan will leave.
+ */
+export function classKindFromEntries(entries = []) {
+  const list = Array.from(entries || []).filter(Boolean);
+  if (!list.length) return null;
+  return list.every(isNonheroicClassItem) ? 'nonheroic' : 'heroic';
 }
 
 /** Text/pack-derived kind (descriptive metadata; never outranks class records). */
@@ -454,4 +467,129 @@ export function usesFlatStatblockAttacks(actor, weapon) {
   if (!actor || actor.type !== 'npc') return false;
   if (!isNpcStatblockMode(actor)) return false;
   return weapon?.flags?.swse?.npc?.useFlat === true && Number.isFinite(weapon?.flags?.swse?.npc?.flatAttackBonus);
+}
+
+
+// ---------------------------------------------------------------------------
+// Central progression guard + profile/class identity reconciliation
+// ---------------------------------------------------------------------------
+
+const DEPENDENT_KINDS = new Set(['beast', 'mount', 'follower', 'minion', 'privateer', 'companion']);
+
+function heroicNonheroicLevels(actor) {
+  let heroic = 0;
+  let nonheroic = 0;
+  for (const item of actor?.items?.filter?.(i => i?.type === 'class') ?? []) {
+    const level = Number(item?.system?.level) || 0;
+    if (isNonheroicClassItem(item)) nonheroic += level; else heroic += level;
+  }
+  return { heroic, nonheroic };
+}
+
+/** An NPC that already carries mechanical history (as opposed to a blank draft). */
+export function npcHasExistingMechanics(actor) {
+  if (actor?.type !== 'npc' || !actor?.id) return false;
+  return (Number(actor?.system?.level) || 0) > 0
+    || hasClassItems(actor)
+    || Boolean(getRawImport(actor))
+    || Boolean(getPackKey(actor));
+}
+
+/**
+ * Fail-closed progression guard for EXISTING NPCs, independent of caller, UI
+ * entry point or requested subtype. A requested/declared heroic or nonheroic
+ * identity never overrides statblock authority; only an authorized, snapshot
+ * backed conversion does.
+ *
+ * @param {Actor} actor
+ * @param {{subtype?: string|null, conversion?: {target?: string, originSnapshot?: *}|null, originSnapshotExists?: boolean}} [ctx]
+ * @returns {{blocked: boolean, reason: string|null, message: string, conflicts?: Array}}
+ */
+export function evaluateNpcProgressionGuard(actor, ctx = {}) {
+  const ok = { blocked: false, reason: null, message: '' };
+  if (actor?.type !== 'npc' || !npcHasExistingMechanics(actor)) return ok;
+
+  const state = getNpcProfileState(actor);
+  if (DEPENDENT_KINDS.has(state.kind) || state.mode === 'owner-sync') return ok;
+
+  if (state.identityConflicts?.length) {
+    return {
+      blocked: true,
+      reason: 'identity-conflict',
+      conflicts: state.identityConflicts,
+      message: `${state.identityConflicts.map(c => c.message).join(' ')} Resolve this in NPC Legal Review & Repair before advancing.`
+    };
+  }
+
+  const requested = ctx.subtype === 'heroic' || ctx.subtype === 'nonheroic' ? ctx.subtype : null;
+  if (requested === 'nonheroic') {
+    const { heroic, nonheroic } = heroicNonheroicLevels(actor);
+    const transition = evaluateNonheroicTransition({ heroicLevel: heroic, nonheroicLevel: nonheroic, target: 'nonheroic' });
+    if (!transition.allowed) return { blocked: true, reason: 'transition-not-allowed', message: transition.reason };
+  }
+
+  const statblockControlled = resolveNpcCalculationMode(actor) === 'statblock'
+    || state.sourceAuthority === 'statblock'
+    || state.mode === 'play';
+  if (statblockControlled) {
+    const conv = ctx.conversion;
+    const authorized = Boolean(conv && ['heroic', 'nonheroic'].includes(conv.target) && ctx.originSnapshotExists === true
+      && (!requested || requested === conv.target));
+    if (!authorized) {
+      return {
+        blocked: true,
+        reason: 'statblock-conversion-required',
+        message: 'This NPC uses its published statblock as authority. Convert it to calculated progression from the NPC level-up dialog (which saves a restorable snapshot) before advancing it.'
+      };
+    }
+  }
+  return ok;
+}
+
+/**
+ * Profile fields that must change in the SAME transaction as a progression plan
+ * so the stored NPC identity matches the class history the plan leaves behind
+ * (Nonheroic 3 + first Soldier level => 'heroic' identity with separate level
+ * accounting), plus the explicit statblock-conversion authority switch.
+ * Pure: returns `set` paths only.
+ */
+export function buildNpcProfileReconciliationPatch(actor, { addedClassItems = [], conversion = null, now = new Date().toISOString(), userId = null } = {}) {
+  if (actor?.type !== 'npc') return {};
+  const profile = actor?.system?.npcProfile ?? null;
+  const patch = {};
+
+  const existing = actor?.items?.filter?.(item => item?.type === 'class') ?? [];
+  const derived = classKindFromEntries([...existing, ...addedClassItems]);
+  const storedKind = normalizeKey(profile?.kind ?? profile?.type);
+  const storedLegal = normalizeKey(profile?.legalProfile);
+  const dependent = DEPENDENT_KINDS.has(storedKind) || DEPENDENT_KINDS.has(storedLegal);
+
+  if (derived && !dependent) {
+    const declared = (storedKind === 'heroic' || storedKind === 'nonheroic') ? storedKind
+      : ((storedLegal === 'heroic' || storedLegal === 'nonheroic') ? storedLegal : null);
+    if (declared !== null && (declared !== derived || storedKind !== derived || storedLegal !== derived)) {
+      patch['system.npcProfile.kind'] = derived;
+      patch['system.npcProfile.legalProfile'] = derived;
+    }
+  }
+
+  if (conversion) {
+    const before = getNpcProfileState(actor);
+    const kind = derived ?? conversion.target;
+    patch['system.npcProfile.kind'] = kind;
+    patch['system.npcProfile.legalProfile'] = kind;
+    patch['system.npcProfile.mode'] = 'progression';
+    patch['system.npcProfile.sourceAuthority'] = 'progression';
+    patch['system.npcProfile.calculationMode'] = 'progression';
+    patch['system.npcProfile.legalReview.statblockConversion'] = {
+      convertedAt: now,
+      convertedBy: userId,
+      target: conversion.target,
+      originSnapshot: conversion.originSnapshot ?? null,
+      fromAuthority: before.sourceAuthority,
+      fromMode: before.mode,
+      fromKind: before.kind
+    };
+  }
+  return patch;
 }

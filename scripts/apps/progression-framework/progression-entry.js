@@ -20,7 +20,8 @@ import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/
 import { ProgressionDocumentTargetPolicy } from "./policies/progression-document-target-policy.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
-import { getNpcProfileState } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { getNpcProfileState, evaluateNpcProgressionGuard } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
 import { evaluateProgressionGuard } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -266,6 +267,30 @@ export async function launchProgression(actor, options = {}) {
     ui?.notifications?.error?.(msg);
     SWSELogger.error('[Progression Entry] ' + msg);
     return;
+  }
+
+  // CENTRAL NPC AUTHORITY GUARD (fail closed): evaluated BEFORE any caller-supplied
+  // subtype or declared heroic/nonheroic profile is trusted, for every entry point.
+  if (actor.type === 'npc') {
+    const conversion = options.statblockConversion || null;
+    const npcGuard = evaluateNpcProgressionGuard(actor, {
+      subtype: options.subtype,
+      conversion,
+      originSnapshotExists: conversion ? SnapshotManager.hasStatblockOriginSnapshot(actor, conversion.originSnapshot) : false,
+    });
+    if (npcGuard.blocked) {
+      ui?.notifications?.warn?.(npcGuard.message);
+      SWSELogger.warn('[Progression Entry] NPC progression blocked by authority guard', { actor: actor.id, reason: npcGuard.reason });
+      if (npcGuard.reason === 'statblock-conversion-required' && actor.id) {
+        try {
+          const { SWSENpcLevelUpEntry } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/npc-levelup-entry.js');
+          new SWSENpcLevelUpEntry(actor).render(true);
+        } catch (entryErr) {
+          SWSELogger.warn('[Progression Entry] Could not open NPC level-up entry:', entryErr);
+        }
+      }
+      return;
+    }
   }
 
   // ROUTING LOGIC: Route to ChargenShell (new actors) or LevelupShell (existing actors)

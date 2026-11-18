@@ -23,6 +23,7 @@
 
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
+import { isTransientProgressionActor, materializeTransientProgressionActor, discardMaterializedProgressionActor } from './progression-actor-persistence.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SWSEPerf } from '/systems/foundryvtt-swse/scripts/utils/performance-utils.js';
 import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/recovery-session-dialog.js';
@@ -282,6 +283,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         actor,
         mode,
         subtype,
+        statblockConversion: options.statblockConversion || null,
       });
     }
 
@@ -4062,6 +4064,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async _onFinalizeProgression() {
     if (this.isProcessing) return;
 
+    let materializedDraft = null;   // { transientActor, persisted } when THIS attempt created the world actor
+    let finalizeCommitted = false;
     try {
       this.isProcessing = true;
 
@@ -4096,6 +4100,26 @@ export class ProgressionShell extends SWSEApplicationV2 {
             this.isProcessing = false;
             return;
           }
+        }
+      }
+
+      // PERSISTENCE BOUNDARY: a brand-new creation (launchNewProgression) runs on a
+      // transient, unsaved actor. The world actor is created exactly once here -
+      // after validation, before the mutation plan - so abandoned drafts are never
+      // persisted. The shell and canonical session are re-pointed at it; if the
+      // plan then definitely fails, the actor this attempt created is removed.
+      if (isTransientProgressionActor(this.actor)) {
+        const transientActor = this.actor;
+        try {
+          const { actor: persisted, created } = await materializeTransientProgressionActor(transientActor);
+          this.actor = persisted;
+          if (this.progressionSession) this.progressionSession.actorId = persisted.id;
+          materializedDraft = created ? { transientActor, persisted } : null;
+        } catch (persistErr) {
+          swseLogger.error('[ProgressionShell] Could not create the world actor for this progression', persistErr);
+          ui.notifications.error('Could not create the actor. Nothing was saved; please try again.');
+          this.isProcessing = false;
+          return;
         }
       }
 
@@ -4151,6 +4175,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         : await ProgressionFinalizer.finalize(sessionState, this.actor);
 
       if (result.success) {
+        finalizeCommitted = true;
         swseLogger.log('[ProgressionShell] Finalization successful');
         ui.notifications.info(result.message || (this._singleStepMode === true ? 'Progression choice resolved.' : 'Character progression complete!'));
 
@@ -4182,6 +4207,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
           }
         }
       } else {
+        this._lastFinalizeIndeterminate = result.indeterminate === true;
         swseLogger.error('[ProgressionShell] Finalization failed', result.error);
         ui.notifications.error(`Progression failed: ${result.error}`);
       }
@@ -4189,6 +4215,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
       swseLogger.error('[ProgressionShell._onFinalizeProgression] Unexpected error', error);
       ui.notifications.error('An unexpected error occurred during finalization.');
     } finally {
+      // A plan that did not commit leaves no half-created world actor behind (an
+      // indeterminate rollback keeps it: the character may be partially modified
+      // and must be inspected, not deleted).
+      if (materializedDraft && !finalizeCommitted && this._lastFinalizeIndeterminate !== true) {
+        if (await discardMaterializedProgressionActor(materializedDraft.persisted)) {
+          this.actor = materializedDraft.transientActor;
+          if (this.progressionSession) this.progressionSession.actorId = null;
+        }
+      }
+      this._lastFinalizeIndeterminate = false;
       this.isProcessing = false;
     }
   }

@@ -38,7 +38,12 @@ export class ProgressionSession {
    * @param {Object} options.dependencyContext - For dependent participants (e.g., follower owner/provenance)
    */
   constructor(options = {}) {
-    const { actor, mode = 'chargen', subtype = 'actor', adapter = null, dependencyContext = null } = options;
+    const { actor, mode = 'chargen', subtype = 'actor', adapter = null, dependencyContext = null, statblockConversion = null } = options;
+
+    // Authorized statblock -> calculated-progression conversion ({target, originSnapshot}).
+    // Carried on the session so the authority switch commits atomically WITH the
+    // progression plan (a cancelled/failed session leaves the statblock untouched).
+    this.statblockConversion = statblockConversion || null;
 
     // Immutable mode/type
     this.mode = mode;
