@@ -47,6 +47,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     rollbackAccepted: false,   // a rollback was accepted for execution: nothing may finalize, announce or re-claim the commitment
     spentNormal: 0,
     spendReceipt: null,
+    receiptFinalized: false,
     gaveBonus: [],   // [{ entry, amount }] — what this spend took from each bonus entry
     shown: null,
     chatPosted: false,
@@ -92,6 +93,7 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       // The ActorEngine receipt is the authority for the exact consumed
       // source entries; never infer them from before/after wallet totals.
       tx.spendReceipt = spent;
+      tx.shown = { remaining: spent.remaining, max: pool.max ?? 0 };
       tx.gaveBonus = (spent.bonusEntriesSpent ?? []).map(({ entry, amount }) => ({ entry, amount }));
       tx.spentNormal = spent.normalSpent;
       tx.committed = true;
@@ -150,6 +152,16 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     },
     async _announce() {
       tx.announceError = null;
+      if (!tx.receiptFinalized && tx.spendReceipt?.receiptId) {
+        try {
+          const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+          const finality = await ActorEngine.finalizeForcePointSpend(actor, tx.spendReceipt);
+          tx.receiptFinalized = finality?.finalized === true;
+          if (!tx.receiptFinalized) console.error('Applied Force Point receipt could not be finalized:', finality?.reason);
+        } catch (error) {
+          console.error('Applied Force Point receipt finalization failed:', error);
+        }
+      }
       if (!tx.chatPosted) {
         try {
           const message = await createChatMessage({
