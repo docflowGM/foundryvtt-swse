@@ -154,6 +154,52 @@ try {
     }
     check('denied paid RollCore request never executes unpaid base roll');
   }
+  {
+    const { ForceExecutor } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-executor.js');
+    const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
+    const savedItemWrite = ActorEngine.updateEmbeddedDocuments;
+    const savedPost = SWSEChat.postHTML;
+    let failItemWrite = false;
+    let deletedEffects = 0;
+    try {
+      ActorEngine.updateEmbeddedDocuments = async (actor, _type, changes) => {
+        if (failItemWrite) throw new Error('Item write refused');
+        for (const change of changes) {
+          for (const [path, value] of Object.entries(change)) {
+            if (path !== '_id') setPath(actor.items.get(change._id), path, value);
+          }
+        }
+      };
+      SWSEChat.postHTML = async () => ({});
+      const mkPowerActor = () => {
+        const a = makeActor({ normal: 2 });
+        a.items = [{ id: 'owned-power', name: 'Test Power', type: 'force-power', system: { spent: true, discarded: true } }];
+        a.items.get = (id) => a.items.find(item => item.id === id);
+        return a;
+      };
+      let a = mkPowerActor();
+      let result = await ForceExecutor.recoverForcePowers(a, ['invalid-item']);
+      assert.equal(result.success, false);
+      assert.equal(a.system.forcePoints.value, 2);
+      a = mkPowerActor();
+      result = await ForceExecutor.recoverForcePowers(a, ['owned-power']);
+      assert.equal(result.success, true);
+      assert.equal(a.system.forcePoints.value, 1);
+      assert.equal(a.items.get('owned-power').system.spent, false);
+      assert.equal(a.flags.swse.forcePointLedger.receipts[0].state, 'finalized');
+      assert.equal(deletedEffects, 0, 'recovery does not delete a maintained effect instance');
+      failItemWrite = true;
+      a = mkPowerActor();
+      result = await ForceExecutor.recoverForcePowers(a, ['owned-power']);
+      assert.equal(result.success, false);
+      assert.equal(a.system.forcePoints.value, 2);
+      assert.equal(a.flags.swse.forcePointLedger.receipts[0].state, 'rolled-back');
+      check('recovery validates target before debit, finalizes on success, compensates rejected Item write');
+    } finally {
+      ActorEngine.updateEmbeddedDocuments = savedItemWrite;
+      SWSEChat.postHTML = savedPost;
+    }
+  }
 } finally {
   restore();
   delete globalThis.game.combat;
