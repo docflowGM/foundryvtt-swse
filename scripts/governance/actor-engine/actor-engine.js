@@ -2091,6 +2091,24 @@ export const ActorEngine = {
       const { newValue: newFP, actualSpent: normalSpent } = ForcePointsService.calcSpend(actor, normalToSpend);
       const actualSpent = bonusSpent + normalSpent;
 
+      // Opt-in all-or-nothing spending for action costs. A partial payment
+      // must not consume points or issue a committed Temptation receipt for
+      // an action whose full price was never met. Existing non-strict
+      // callers retain their previous best-effort behavior.
+      if (options?.requireFullAmount === true && (
+        !Number.isSafeInteger(amount) || amount < 1 || actualSpent !== amount
+      )) {
+        return {
+          spent: 0,
+          remaining: Number(actor.system?.forcePoints?.value ?? 0),
+          bonusSpent: 0,
+          normalSpent: 0,
+          bonusRemaining: bonusCurrent,
+          rejected: true,
+          reason: 'full-force-point-payment-required'
+        };
+      }
+
       if (actualSpent === 0) {
         SWSELogger.debug(`${actor.name} has no force points to spend`);
         return { spent: 0, remaining: newFP, bonusSpent: 0, normalSpent: 0, bonusRemaining: bonusCurrent };

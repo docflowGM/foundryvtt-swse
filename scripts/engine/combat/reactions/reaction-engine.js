@@ -407,7 +407,10 @@ export class ReactionEngine {
       if (requiredForcePoints > 0) {
         const payment = await ActorEngine.spendForcePoints(
           defender, requiredForcePoints,
-          { source: 'ReactionEngine.' + resolvedReactionKey }
+          {
+            source: 'ReactionEngine.' + resolvedReactionKey,
+            requireFullAmount: true
+          }
         );
         if (payment?.spent !== requiredForcePoints) {
           const partiallySpent = Number(payment?.spent ?? 0) > 0;
