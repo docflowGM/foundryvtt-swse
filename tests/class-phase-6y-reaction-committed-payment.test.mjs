@@ -37,9 +37,9 @@ const writer=async(actor,set)=>{
 const {restore}=await graftRealForcePointMethods(writer);
 const actor=(normal=2,bonus=0)=>({
  id:'reaction-actor',uuid:'Actor.reaction-actor',name:'Reaction Test',
- items:[],flags:{swse:{bonusForcePoints:{value:bonus,max:bonus,
+ isOwner:true,items:[],flags:{swse:{bonusForcePoints:{value:bonus,max:bonus,
  entries:bonus?[{id:'bonus-1',value:bonus,max:bonus,source:'temporary'}]:[]}}},
- system:{forcePoints:{value:normal,max:5}},
+ system:{forcePoints:{value:normal,max:5},derived:{reactions:[key]}},
  getFlag(scope,key){return this.flags?.[scope]?.[key];}
 });
 const key='testPaidClassReaction6Y';
