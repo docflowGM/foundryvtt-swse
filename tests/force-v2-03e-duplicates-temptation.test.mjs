@@ -69,6 +69,16 @@ const lightPower = { type: 'force-power', name: 'Valor', system: { descriptors: 
   assert.deepEqual(written['system.starshipManeuverSuite.maneuvers'].sort(), ['new0', 'new1'], 'only the copies THIS session created; the older same-name copy is untouched');
   check('suite sync adds exactly the copies a session created, not every same-name maneuver');
 }
+// --- Temptation: refused outside a started combat (no encounter end => it would become a free permanent item)
+{
+  globalThis.game.combat = null;
+  const a = mkActor([fsFeat]);
+  assert.equal((await TemptationOfTheDarkSide.acquirePower(a, darkPower)).reason, 'no-active-encounter');
+  assert.equal((await TemptationOfTheDarkSide.acquireTalent(a, { type: 'talent', name: 'X', system: { tree: 'Sith' }, flags: {} })).reason, 'no-active-encounter');
+  assert.equal(ledger.spent, 0, 'nothing charged');
+  globalThis.game.combat = { started: true, id: 'c1' };
+  console.log('PASS 3b: Temptation is refused (and not charged) outside a started combat');
+}
 // --- Temptation: power pathway
 {
   const a = mkActor([fsFeat]);
@@ -108,7 +118,8 @@ const lightPower = { type: 'force-power', name: 'Valor', system: { descriptors: 
   assert.equal((await TemptationOfTheDarkSide.acquireTalent(a, talent('Blocked', 'Dark Side'))).reason, 'prerequisites-not-met');
   assert.equal((await TemptationOfTheDarkSide.acquireTalent(a, talent('Jedi Thing', 'Jedi Consular'))).reason, 'tree-not-allowed');
   assert.equal((await TemptationOfTheDarkSide.acquireTalent(a, talent('Dev Talent', 'Dark Side Devotee'))).ok, true);
-  const end = await TemptationOfTheDarkSide.endEncounter(a);
+  assert.deepEqual(await TemptationOfTheDarkSide.endEncounter(a, { combatId: 'other-combat' }), { removed: 0, darkSideIncrease: 0 }, 'another combat ending leaves these');
+  const end = await TemptationOfTheDarkSide.endEncounter(a, { combatId: 'c1' });
   assert.deepEqual(end, { removed: 3, darkSideIncrease: 3 });
   assert.equal(a.system.darkSide.value, 6); assert.equal(a.items.length, 1);
   assert.deepEqual(await TemptationOfTheDarkSide.endEncounter(a), { removed: 0, darkSideIncrease: 0 });

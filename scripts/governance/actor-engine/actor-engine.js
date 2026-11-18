@@ -1488,6 +1488,9 @@ export const ActorEngine = {
         throw writeErr;
       }
       if (rescueReceipt) await this._settleForcePointRescue(actor, rescueReceipt, resolution, null);
+      // Notification only (local to the client that applied the damage): consumers such as Force power maintenance
+      // react to damage actually taken; they never alter this resolution.
+      try { globalThis.Hooks?.callAll?.('swse.damageApplied', { actor, damageToHP: resolution.damageToHP ?? 0, source: damagePacket.source ?? null }); } catch (_e) { /* listeners never break damage */ }
 
       SWSELogger.log(`Damage applied to ${actor.name}: ${damagePacket.amount} incoming → ${resolution.damageToHP} HP`, {
         source: damagePacket.source,

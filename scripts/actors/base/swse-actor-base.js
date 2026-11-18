@@ -294,12 +294,21 @@ export class SWSEActorBase extends Actor {
       };
     }
 
-    const newValue = fp.value - amount;
-
-    // PHASE 5: ActorEngine is REQUIRED. No fallback to direct update.
-    // Failure here indicates a critical module loading issue that must be fixed.
+    // Force V2: no untyped balance write. The spend goes through the typed ForcePointsService / ActorEngine transaction
+    // (round limit, receipts, exact rollback); a caller that does not name the use (options.useKind) is refused.
+    if (!options?.useKind) {
+      return { success: false, code: 'UNTYPED_SPEND_REFUSED', message: 'Force Point spends must name their use (useKind).', newValue: fp.value };
+    }
     const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
-    await ActorEngine.updateActor(this, { 'system.forcePoints.value': newValue });
+    let receipt;
+    try {
+      receipt = await ActorEngine.spendForcePoints(this, amount, options);
+    } catch (error) {
+      return { success: false, code: 'SPEND_REFUSED', message: error.message, newValue: fp.value };
+    }
+    if (!receipt?.spent) return { success: false, code: 'SPEND_REFUSED', message: 'No Force Point was spent.', newValue: fp.value };
+    await ActorEngine.finalizeForcePointSpend(this, receipt);
+    const newValue = receipt.remaining;
 
     return {
       success: true,

@@ -374,7 +374,7 @@ async function handleCombatEnd(combat, options, userId) {
             if (actor.isOwner) {await pruneObservations(actor, combat.id); await pruneMarks(actor, combat.id); await pruneMasterOfMovement(actor, combat.id);}
 
             // FUCG p.85 Temptation of the Dark Side: temporary powers/talents end with the encounter (one client acts).
-            if (isResponsibleGmForCombatEnd()) await TemptationOfTheDarkSide.endEncounter(actor);
+            if (isResponsibleGmForCombatEnd()) await TemptationOfTheDarkSide.endEncounter(actor, { combatId: combat?.id ?? null });
 
             // Reset species encounter traits
             await SpeciesRerollHandler.resetEncounterTraits(actor);

@@ -30,6 +30,18 @@ export const ABILITY_OPTION_CONTRACTS = Object.freeze({
     kind: 'adjacent-ally-reaction', itemType: 'talent', slug: 'block', talent: 'block', actionCost: 'reaction', priorSpendExempt: false,
     source: 'Core official errata p.41 (Block); Sheltering Stance, KOTOR Campaign Guide'
   }),
+  // KOTOR Campaign Guide, Resist Force "Special: You can spend a Force Point to apply the bonus provided by this power to
+  // any two Defense scores of your choice." Paid as part of that activation (no separate action is printed).
+  'forcePower:resistForceTwoDefenses': Object.freeze({
+    kind: 'activation-option', itemType: 'force-power', slug: 'resist-force', actionCost: 'part-of-activation', priorSpendExempt: false,
+    source: 'Knights of the Old Republic Campaign Guide, Resist Force (Special)'
+  }),
+  // KOTOR Campaign Guide, Valor "Special: You can spend a Force Point when you activate this power to have the bonus apply
+  // against all effects that target Will Defense".
+  'forcePower:valorAllWill': Object.freeze({
+    kind: 'activation-option', itemType: 'force-power', slug: 'valor', actionCost: 'part-of-activation', priorSpendExempt: false,
+    source: 'Knights of the Old Republic Campaign Guide, Valor (Special)'
+  }),
   'lightsaber:promptDeflect': Object.freeze({
     kind: 'adjacent-ally-reaction', itemType: 'talent', slug: 'deflect', talent: 'deflect', actionCost: 'reaction', priorSpendExempt: false,
     source: 'Core official errata p.41 (Deflect); Sheltering Stance, KOTOR Campaign Guide'
@@ -71,7 +83,7 @@ export function evaluateAbilityContract(actor, ref, context = {}) {
   if (!ownedAbilityInstance(actor, { type: contract.itemType, slug: contract.slug })) return fail(`${contract.slug} is not owned by this actor`);
   const out = { valid: true, message: 'Verified', actionCost: contract.actionCost, priorSpendExempt: contract.priorSpendExempt === true, eventKey: null, contract: ref };
 
-  if (contract.kind === 'standard-action') return out;
+  if (contract.kind === 'standard-action' || contract.kind === 'activation-option') return out;
 
   const claim = context.reaction;
   if (!claim?.id || !claim?.attackerId) return fail('A verified triggering attack event is required');

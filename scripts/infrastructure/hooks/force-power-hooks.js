@@ -9,6 +9,8 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ForcePowerManager } from "/systems/foundryvtt-swse/scripts/utils/force-power-manager.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+import { TemptationOfTheDarkSide } from "/systems/foundryvtt-swse/scripts/engine/force/temptation-of-the-dark-side.js";
+import { ForcePowerMaintenance } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-maintenance.js";
 import { SuiteInstanceRecovery } from "/systems/foundryvtt-swse/scripts/engine/force/suite-instance-recovery.js";
 import { installFinalForcePowerIntegration } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-final-integration.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -47,6 +49,10 @@ function isProgressionManagedForceMutation(itemOrActor, options = {}) {
 
 export function initializeForcePowerHooks() {
   installFinalForcePowerIntegration({ ForcePowerEffectsEngine, ForceExecutor });
+  // GM macro access to the optional FUCG p.85 Temptation rule and to maintained-power instances (no sheet UI yet).
+  globalThis.game.swse = globalThis.game.swse || {};
+  globalThis.game.swse.temptation = TemptationOfTheDarkSide;
+  globalThis.game.swse.forcePowerMaintenance = ForcePowerMaintenance;
 
   Hooks.on('createItem', async (item, options, userId) => {
     if (game.user.id !== userId) {return;}
@@ -130,6 +136,15 @@ export function initializeForcePowerHooks() {
     if (!isResponsibleGm()) return;
     if (changed?.turn === undefined && changed?.round === undefined) return;
     await SuiteInstanceRecovery.regainAtEndOfTurn(combat);
+    // The previous combatant's turn just ended: their unmaintained Force power instances lapse.
+    const prev = combat?.previous;
+    const prevActor = prev?.combatantId ? (combat.combatants?.get?.(prev.combatantId)?.actor ?? null) : null;
+    if (prevActor) await ForcePowerMaintenance.lapseUnmaintained(prevActor, { combat, round: prev.round });
+  });
+
+  // Damage taken while maintaining: prompt the concentration check for each named instance (posted where it was applied).
+  Hooks.on('swse.damageApplied', async ({ actor, damageToHP } = {}) => {
+    await ForcePowerMaintenance.onDamageTaken(actor, damageToHP);
   });
 
   Hooks.on('deleteItem', async (item, options, userId) => {

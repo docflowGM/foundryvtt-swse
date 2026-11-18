@@ -23,6 +23,10 @@ export const TEMPTATION_TALENT_TREES = Object.freeze(['dark side', 'dark side de
 const FLAG = 'temptation';
 const normalize = v => String(v ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
+// Only a STARTED combat has an end-of-encounter signal here (FP-RD-013d). Outside one, acquisition is refused so a
+// temporary power/talent can never become a free permanent item.
+const activeEncounterId = () => (globalThis.game?.combat?.started ? globalThis.game.combat.id ?? null : null);
+
 export const temptationMeta = item => item?.flags?.swse?.[FLAG] ?? null;
 export const isTemptationInstance = item => Boolean(temptationMeta(item));
 
@@ -60,13 +64,14 @@ export const TemptationOfTheDarkSide = {
     if (!actor || !source) return { ok: false, reason: 'missing-input' };
     if (!hasForceSensitivity(actor)) return { ok: false, reason: 'force-sensitivity-required' };
     if (!powerHasDarkSideDescriptor(source)) return { ok: false, reason: 'not-a-dark-side-power' };
+    if (!activeEncounterId()) return { ok: false, reason: 'no-active-encounter' };
     const receipt = await payForcePoint(actor, gmAdjudication, 'fucg:temptation-power');
     if (!receipt) return { ok: false, reason: 'force-point-refused' };
     try {
       const data = source.toObject ? source.toObject() : foundry.utils.deepClone(source);
       delete data._id;
       data.system = { ...(data.system ?? {}), discarded: false, inSuite: true };
-      data.flags = { ...(data.flags ?? {}), swse: { ...(data.flags?.swse ?? {}), [FLAG]: { kind: 'power', combatId: globalThis.game?.combat?.id ?? null } } };
+      data.flags = { ...(data.flags ?? {}), swse: { ...(data.flags?.swse ?? {}), [FLAG]: { kind: 'power', combatId: activeEncounterId() } } };
       const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [data], { source: 'fucg-temptation-power' });
       await settle(actor, receipt, true);
       return { ok: true, itemId: created?.[0]?.id ?? null };
@@ -89,6 +94,7 @@ export const TemptationOfTheDarkSide = {
     if (!actor || !talent) return { ok: false, reason: 'missing-input' };
     if (!hasForceSensitivity(actor)) return { ok: false, reason: 'force-sensitivity-required' };
     if (!TEMPTATION_TALENT_TREES.includes(talentTree(talent))) return { ok: false, reason: 'tree-not-allowed' };
+    if (!activeEncounterId()) return { ok: false, reason: 'no-active-encounter' };
     const temporary = (actor.items ?? []).filter(i => temptationMeta(i)?.kind === 'talent');
     const assessment = AbilityEngine.evaluateAcquisition(actor, talent, {
       selectedTalents: temporary.map(i => ({ id: i.id, name: i.name }))
@@ -99,7 +105,7 @@ export const TemptationOfTheDarkSide = {
     try {
       const data = talent.toObject ? talent.toObject() : foundry.utils.deepClone(talent);
       delete data._id;
-      data.flags = { ...(data.flags ?? {}), swse: { ...(data.flags?.swse ?? {}), [FLAG]: { kind: 'talent', combatId: globalThis.game?.combat?.id ?? null, forcePointReceiptId: receipt.id ?? null } } };
+      data.flags = { ...(data.flags ?? {}), swse: { ...(data.flags?.swse ?? {}), [FLAG]: { kind: 'talent', combatId: activeEncounterId(), forcePointReceiptId: receipt.receiptId ?? null } } };
       const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [data], { source: 'fucg-temptation-talent' });
       await settle(actor, receipt, true);
       return { ok: true, itemId: created?.[0]?.id ?? null };
@@ -114,8 +120,10 @@ export const TemptationOfTheDarkSide = {
    * End of encounter: temporary powers and talents are removed; the Dark Side Score rises by the Force Points spent on
    * temporary TALENTS (one Force Point per talent held). Idempotent: nothing left to remove => nothing changes.
    */
-  async endEncounter(actor) {
-    const temporary = (actor?.items ?? []).filter(isTemptationInstance);
+  async endEncounter(actor, { combatId = null } = {}) {
+    // Only this encounter's temporary items end (an item tied to another, still-running combat is left alone).
+    const temporary = (actor?.items ?? []).filter(i => isTemptationInstance(i)
+      && (combatId === null || !temptationMeta(i).combatId || temptationMeta(i).combatId === combatId));
     if (!temporary.length) return { removed: 0, darkSideIncrease: 0 };
     // The owed increase is made durable BEFORE anything is removed: a `temptationSettled` record (idempotent per item id) is
     // written with the score, so a failed removal can be retried without losing or double-counting the increase, and a

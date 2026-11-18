@@ -111,9 +111,19 @@ try {
     const a = mkActor([inst('p1', 'force-power', true), inst('m1', 'maneuver', true)]);
     globalThis.game.actors = { get: (id) => (id === 'jedi' ? a : null) };
     globalThis.game.combat = null;
-    const event = { triggeredByGM: true, duration: 60, actorIds: ['jedi'] };
+    const event = { triggeredByGM: true, duration: 60, durationUnit: 'minutes', actorIds: ['jedi'] };
     assert.equal(verifyRegainProof(a, 'force-power', { kind: 'rest', event: { ...event, triggeredByGM: false } }).valid, false);
     assert.equal(verifyRegainProof(a, 'force-power', { kind: 'rest', event: { ...event, duration: 0 } }).valid, false, 'no minute of rest');
+    // Units are explicit: 59 seconds is not a minute, 60 seconds is; a bare number with no unit is never guessed.
+    assert.equal(verifyRegainProof(a, 'force-power', { kind: 'rest', event: { ...event, duration: 59, durationUnit: 'seconds' } }).valid, false);
+    assert.equal(verifyRegainProof(a, 'force-power', { kind: 'rest', event: { ...event, duration: 60, durationUnit: 'seconds' } }).valid, true);
+    assert.equal(verifyRegainProof(a, 'force-power', { kind: 'rest', event: { ...event, duration: 0.5 } }).valid, false);
+    assert.equal(verifyRegainProof(a, 'force-power', { kind: 'rest', event: { ...event, durationUnit: undefined } }).valid, false, 'no unit stated');
+    // A player client forging `triggeredByGM: true` is refused: rests are applied only on a GM client.
+    globalThis.game.user = { id: 'player', isGM: false };
+    assert.equal(verifyRegainProof(a, 'force-power', { kind: 'rest', event }).valid, false);
+    assert.equal((await SuiteInstanceRecovery.regainAllSpent(a, 'force-power', { proof: { kind: 'rest', event } })).success, false);
+    globalThis.game.user = { id: 'gm', isGM: true };
     assert.equal(verifyRegainProof(a, 'force-power', { kind: 'rest', event: { ...event, actorIds: ['someone-else'] } }).valid, false);
     globalThis.game.combat = combatWith([a]);
     assert.deepEqual(await SuiteInstanceRecovery.regainAfterRest(event), [], 'combat is not over for this actor');

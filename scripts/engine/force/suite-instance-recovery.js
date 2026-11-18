@@ -7,7 +7,7 @@
  * Canonical instance state: an owned item's `system.discarded` (true = spent). One field for both suites.
  * "Regain all" is NEVER unconditional: it needs a proof, and every proof is re-verified here from live state:
  *   - 'natural-20'  the actor's own pending record, at the end of THAT actor's turn (combat hook);
- *   - 'rest'        a GM-triggered `restCompleted` event naming the actor, at least one minute, actor not in a live combat;
+ *   - 'rest'        a `restCompleted` event applied on a GM client, naming the actor, >= 1 minute (explicit unit), actor not in live combat;
  *   - 'gm'          an explicit GM adjudication with a recorded reason (live user verified).
  * Only owned instances change; a maintained effect is an independent instance (ForcePowerEffectsEngine) and is never touched.
  */
@@ -21,7 +21,17 @@ export const SUITE_KINDS = Object.freeze({
 const PENDING_PATH = 'flags.swse.pendingSuiteRegain';
 const pendingOf = (actor) => actor?.getFlag?.('swse', 'pendingSuiteRegain') ?? actor?.flags?.swse?.pendingSuiteRegain ?? {};
 
-export const isSpentInstance = (item) => item?.system?.discarded === true;
+// A Temptation of the Dark Side power (FUCG p.85) "may not be recovered by any of the normal means": never regainable.
+export const isSpentInstance = (item) => item?.system?.discarded === true && !item?.flags?.swse?.temptation;
+
+/** Rest length in MINUTES from a rest event; null when the event does not state a unit (never guessed). */
+export function restMinutes(event) {
+  const n = Number(event?.duration);
+  if (!Number.isFinite(n)) return null;
+  if (event?.durationUnit === 'minutes') return n;
+  if (event?.durationUnit === 'seconds') return n / 60;
+  return null;
+}
 
 /** Which suite (if any) does this roll domain activate? Only the activation check counts for the natural-20 rule. */
 export function suiteKindForActivationDomain(domain) {
@@ -43,9 +53,14 @@ export function verifyRegainProof(actor, kind, proof) {
   }
   if (proof?.kind === 'rest') {
     const e = proof.event ?? {};
+    // A client-supplied `triggeredByGM` proves nothing: the rest is honored only when THIS code runs on a GM client
+    // (the restCompleted hook handler runs only on the responsible GM; a player calling this directly is refused).
+    if (globalThis.game?.user?.isGM !== true) return fail('A rest is applied only by the GM');
     if (e.triggeredByGM !== true) return fail('A rest must be confirmed by the GM');
     if (!Array.isArray(e.actorIds) || !e.actorIds.includes(actor.id)) return fail('That rest did not include this actor');
-    if (!(Number(e.duration) >= 1)) return fail('A rest of at least one minute is required');
+    const minutes = restMinutes(e);
+    if (minutes === null) return fail('The rest does not state its length in minutes or seconds');
+    if (!(minutes >= 1)) return fail('A rest of at least one minute is required');
     if (inLiveCombat(actor)) return fail('Combat is not over for this actor');
     return { valid: true };
   }

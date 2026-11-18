@@ -29,7 +29,7 @@ ActorEngine.deleteActiveEffects = async (actor, ids) => { actor.effects = actor.
 const world = new Map();
 globalThis.game = globalThis.game ?? {};
 globalThis.game.actors = { get: (id) => world.get(id) };
-const mk = (id) => { const a = { id, name: id, flags: { swse: { forcePointLedger: { receipts: [{ receiptId: `rc-${id}`, actorId: id, state: 'committed' }, { receiptId: 'rc-foreign', actorId: 'someone-else', state: 'committed' }, { receiptId: `rb-${id}`, actorId: id, state: 'rolled-back' }] } } }, effects: [], items: [], system: {} }; world.set(id, a); return a; };
+const mk = (id) => { const a = { id, name: id, flags: { swse: { forcePointLedger: { receipts: [{ receiptId: `rc-${id}`, actorId: id, state: 'committed', useKind: 'ability-option', abilitySourceRef: 'forcePower:resistForceTwoDefenses' }, { receiptId: `rv-${id}`, actorId: id, state: 'finalized', useKind: 'ability-option', abilitySourceRef: 'forcePower:valorAllWill' }, { receiptId: `rr-${id}`, actorId: id, state: 'committed', useKind: 'roll-bonus' }, { receiptId: 'rc-foreign', actorId: 'someone-else', state: 'committed', useKind: 'ability-option', abilitySourceRef: 'forcePower:resistForceTwoDefenses' }, { receiptId: `rb-${id}`, actorId: id, state: 'rolled-back', useKind: 'ability-option', abilitySourceRef: 'forcePower:resistForceTwoDefenses' }] } } }, effects: [], items: [], system: {} }; world.set(id, a); return a; };
 const power = (id, name, dcChart, extra = {}) => ({ id, name, system: { dcChart, duration: 'Until beginning of next turn', ...extra }, img: 'x.png' });
 const RESIST = [{ dc: 15, description: 'You gain +1 to one Defense score of your choice against Force Powers.' }, { dc: 20, description: 'You gain +2 to one Defense score of your choice against Force Powers.' }, { dc: 25, description: 'You gain +3 to one Defense score of your choice against Force Powers.' }];
 const VALOR = [{ dc: 15, description: 'The target gains a +1 bonus to their Will Defense against Mind-Affecting and Fear effects.' }, { dc: 20, description: 'The target gains a +2 bonus to their Will Defense against Mind-Affecting and Fear effects.' }];
@@ -54,7 +54,7 @@ let passed = 0; const check = (n) => console.log(`PASS ${++passed}: ${n}`);
   await ForcePowerMaintenance.begin(a, power('p1', 'Resist Force', RESIST), 22, { resistForceDefenses: ['will', 'reflex'], forcePointReceiptId: `rc-${a.id}` });
   assert.deepEqual(intents(a).map(i => i.target).sort(), ['reflex', 'will']);
   // a client boolean, a foreign receipt, a rolled-back receipt and a reused receipt all fail closed
-  for (const ctx of [{ forcePointSpent: true }, { forcePointReceiptId: 'rc-foreign' }, { forcePointReceiptId: `rb-${a.id}` }, { forcePointReceiptId: `rc-${a.id}` }]) {
+  for (const ctx of [{ forcePointSpent: true }, { forcePointReceiptId: 'rv-chk' }, { forcePointReceiptId: 'rr-chk' }, { forcePointReceiptId: 'rc-foreign' }, { forcePointReceiptId: `rb-${a.id}` }, { forcePointReceiptId: `rc-${a.id}` }]) {
     const b = mk('chk'); if (ctx.forcePointReceiptId === `rc-${a.id}`) { b.id = a.id; b.flags.swse.forcePointLedger.receipts[0].actorId = a.id; b.flags.swse.maintainedForcePowers = { instances: { x: { forcePointReceiptId: `rc-${a.id}` } } }; }
     assert.equal((await ForcePowerMaintenance.begin(b, power('p1', 'Resist Force', RESIST), 22, { resistForceDefenses: ['will', 'reflex'], ...ctx })), null, JSON.stringify(ctx));
   }
@@ -68,7 +68,7 @@ let passed = 0; const check = (n) => console.log(`PASS ${++passed}: ${n}`);
   assert.equal(unverified.forcePointSpent, false, 'client boolean is not proof of payment');
   assert.equal(intents(ally)[0].filterValue, 'against-mind-affecting-and-fear');
   await ForcePowerMaintenance.end(caster, unverified.id, 'test');
-  const paidValor = await ForcePowerMaintenance.begin(caster, power('v1', 'Valor', VALOR), 22, { target: ally, forcePointReceiptId: 'rc-caster' });
+  const paidValor = await ForcePowerMaintenance.begin(caster, power('v1', 'Valor', VALOR), 22, { target: ally, forcePointReceiptId: 'rv-caster' });
   assert.equal(intents(ally)[0].filterValue, 'against-will-targeting');
   await ForcePowerMaintenance.end(caster, paidValor.id, 'test');
   const rec = await ForcePowerMaintenance.begin(caster, power('v1', 'Valor', VALOR), 22, { target: ally });
@@ -123,11 +123,14 @@ let passed = 0; const check = (n) => console.log(`PASS ${++passed}: ${n}`);
   const a = mk('grip');
   const g = power('g1', 'Force Grip', []);
   const r = await ForcePowerMaintenance.begin(a, g, 22, {});
-  assert.equal((await ForcePowerMaintenance.maintain(a, r.id, { total: 20 })).reason, 'deferred');
-  assert.equal((await ForcePowerMaintenance.resolveConcentration(a, r.id, { damage: 3, total: 1 })).held, null);
-  assert.equal(ForcePowerMaintenance.get(a, r.id).status, 'active', 'deferred rules never auto-end or auto-maintain');
+  assert.equal((await ForcePowerMaintenance.maintain(a, r.id, {})).reason, 'fresh-check-required', 'errata: a new Use the Force check each round');
+  assert.equal((await ForcePowerMaintenance.maintain(a, r.id, { total: 20 })).maintained, true);
+  assert.equal(maintenanceContractFor('Force Grip').maintainAction, 'standard');
   assert.equal(maintenanceContractFor('Move Object').maintainAction, 'standard');
+  assert.equal(maintenanceContractFor('Move Object').freshCheckEachRound, true);
+  assert.equal((await ForcePowerMaintenance.resolveConcentration(a, r.id, { damage: 3, total: 1 })).held, null);
+  assert.equal(ForcePowerMaintenance.get(a, r.id).status, 'active', 'damage concentration is not printed for Grip: never auto-ends');
   assert.equal(maintenanceContractFor('Force Slam'), null);
-  check('Force Grip / Move Object maintenance and concentration stay DEFERRED (no speculative automation)');
+  check('Force Grip / Move Object: standard action + fresh check each round (errata per owner); damage concentration stays deferred');
 }
 console.log(`ALL ${passed} PASSED`);

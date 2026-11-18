@@ -66,6 +66,7 @@ export class GMHealingTrigger {
       Hooks.callAll('restCompleted', {
         isFullRest,
         duration: isFullRest ? 480 : 60,
+        durationUnit: 'minutes',
         triggeredByGM: true,
         triggerTime: Date.now(),
         // GMHealingTrigger already applied recovery actor-by-actor. Keep the
