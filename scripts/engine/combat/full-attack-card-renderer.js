@@ -190,6 +190,7 @@ function renderFullAttackRow(actor, entry, rxnCtx = null) {
                 data-swse-attack-total="${total}"
                 data-swse-trigger="ON_ATTACK_DECLARED"
                 data-swse-attack-type="${_reactionAttr(rxnCtx.attackType)}"
+                data-swse-weapon-id="${_reactionAttr(rxnCtx.weaponId)}"
                 data-swse-damage-type="${_reactionAttr(rxnCtx.damageType)}"
                 data-swse-damage-types="${_reactionAttr(rxnCtx.damageTypes)}"
                 data-swse-original-damage-types="${_reactionAttr(rxnCtx.originalDamageTypes)}"
