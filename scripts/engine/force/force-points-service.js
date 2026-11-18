@@ -354,9 +354,11 @@ export class ForcePointsService {
    * @returns {boolean} Whether spending is prevented
    */
   static _isSpendingPrevented(actor) {
-    // Check condition track: if stunned, staggered, or helpless, cannot spend
+    // Core p.149: steps 3 and 4 impose penalties; only step 5 is helpless.
+    // This is the narrow helpless guard, not a substitute for action-timing
+    // adjudication or effect-specific restrictions in authorizeSpend.
     const conditionCurrent = actor.system?.conditionTrack?.current ?? 0;
-    if (conditionCurrent >= 3) { // 3=helpless, 4+=worse
+    if (conditionCurrent >= 5) {
       return true;
     }
 
