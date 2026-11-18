@@ -1,0 +1,239 @@
+{
+  "auditType": "force-v2-seven-book-crossbook-offline-verification",
+  "classification": "structure-and-links-only; not Foundry execution or exhaustiveness",
+  "schemaVersion": "2.9.0",
+  "definitions": 212,
+  "edges": 178,
+  "domains": {
+    "force-power": 65,
+    "force-regimen": 12,
+    "force-secret": 15,
+    "force-technique": 58,
+    "lightsaber-form-power": 24,
+    "starship-maneuver": 27,
+    "unleashed-overlay": 11
+  },
+  "readiness": {
+    "blocked-on-ruling": 4,
+    "design-needs-runtime-validation": 208
+  },
+  "definitionSourceStatus": {
+    "errata-checked": 15,
+    "visually-checked": 197
+  },
+  "shapeChecks": [
+    {
+      "file": "REVALIDATED_Core_Definitions_for_v2.9.json",
+      "schema": "definition-v2.9",
+      "valid": true,
+      "count": 28
+    },
+    {
+      "file": "REVALIDATED_Starships_Definitions_for_v2.9.json",
+      "schema": "definition-v2.9",
+      "valid": true,
+      "count": 27
+    },
+    {
+      "file": "REVALIDATED_KOTOR_Definitions_for_v2.9.json",
+      "schema": "definition-v2.9",
+      "valid": true,
+      "count": 20
+    },
+    {
+      "file": "REVALIDATED_ForceUnleashed_Definitions_for_v2.9.json",
+      "schema": "definition-v2.9",
+      "valid": true,
+      "count": 31
+    },
+    {
+      "file": "REVALIDATED_CloneWars_Definitions_for_v2.9.json",
+      "schema": "definition-v2.9",
+      "valid": true,
+      "count": 19
+    },
+    {
+      "file": "REVALIDATED_JATM_Definitions_for_v2.9.json",
+      "schema": "definition-v2.9",
+      "valid": true,
+      "count": 69
+    },
+    {
+      "file": "SWSE_Force_V2_Legacy_Era_Book_7_Canonical_Definitions_and_DC_Tables_v0.1.json",
+      "schema": "definition-v2.9",
+      "valid": true,
+      "count": 18
+    },
+    {
+      "file": "REVALIDATED_Core_Influences_for_v2.9.json",
+      "schema": "influence-v2.9",
+      "valid": true,
+      "count": 23
+    },
+    {
+      "file": "REVALIDATED_Starships_Influences_for_v2.9.json",
+      "schema": "influence-v2.9",
+      "valid": true,
+      "count": 15
+    },
+    {
+      "file": "REVALIDATED_KOTOR_Influences_for_v2.9.json",
+      "schema": "influence-v2.9",
+      "valid": true,
+      "count": 19
+    },
+    {
+      "file": "REVALIDATED_ForceUnleashed_Influences_for_v2.9.json",
+      "schema": "influence-v2.9",
+      "valid": true,
+      "count": 33
+    },
+    {
+      "file": "REVALIDATED_CloneWars_Influences_for_v2.9.json",
+      "schema": "influence-v2.9",
+      "valid": true,
+      "count": 20
+    },
+    {
+      "file": "REVALIDATED_JATM_Influences_for_v2.9.json",
+      "schema": "influence-v2.9",
+      "valid": true,
+      "count": 52
+    },
+    {
+      "file": "SWSE_Force_V2_Legacy_Era_Book_7_Cross_Domain_Influence_Graph_v0.1.json",
+      "schema": "influence-v2.9",
+      "valid": true,
+      "count": 16
+    }
+  ],
+  "definitionIdsUnique": true,
+  "ruleIdsUnique": true,
+  "expectedPrintedNameCollisions": {
+    "intercept": [
+      "jatm/force-power/intercept",
+      "sotg/starship-maneuver/intercept"
+    ],
+    "force storm": [
+      "fucg/force-power/force-storm",
+      "jatm/force-power/force-storm"
+    ],
+    "improved force storm": [
+      "fucg/force-technique/improved-force-storm",
+      "jatm/force-technique/improved-force-storm"
+    ]
+  },
+  "externalInfluenceSourcesCount": 67,
+  "externalInfluenceSourcesNote": "Cross-domain talent, feat, equipment and rule IDs are not in the seven-book definition registry; these remain unverified against live SSOT.",
+  "forceTrainingSuitePowers": 89,
+  "forceTrainingFalseRepeatableCount": 31,
+  "forceTrainingFalseRepeatableIds": [
+    "core/force-power/battle-strike",
+    "core/force-power/dark-rage",
+    "core/force-power/farseeing",
+    "core/force-power/force-disarm",
+    "core/force-power/force-grip",
+    "core/force-power/force-lightning",
+    "core/force-power/force-slam",
+    "core/force-power/force-stun",
+    "core/force-power/force-thrust",
+    "core/force-power/mind-trick",
+    "core/force-power/move-object",
+    "core/force-power/negate-energy",
+    "core/force-power/rebuke",
+    "core/force-power/sever-force",
+    "core/force-power/surge",
+    "core/force-power/vital-transfer",
+    "kotor/force-power/energy-resistance",
+    "kotor/force-power/fear",
+    "kotor/force-power/force-scream",
+    "kotor/force-power/force-whirlwind",
+    "kotor/force-power/ionize",
+    "kotor/force-power/kinetic-combat",
+    "kotor/force-power/resist-force",
+    "kotor/force-power/slow",
+    "kotor/force-power/valor",
+    "kotor/force-power/wound",
+    "fucg/force-power/corruption",
+    "fucg/force-power/force-blast",
+    "fucg/force-power/force-shield",
+    "fucg/force-power/force-storm",
+    "fucg/force-power/repulse"
+  ],
+  "copyPolicyByBook": [
+    {
+      "book": "swse-clone-wars",
+      "repeatable": true,
+      "count": 8
+    },
+    {
+      "book": "swse-core-rulebook",
+      "repeatable": false,
+      "count": 16
+    },
+    {
+      "book": "swse-force-unleashed",
+      "repeatable": false,
+      "count": 5
+    },
+    {
+      "book": "swse-jedi-academy",
+      "repeatable": true,
+      "count": 41
+    },
+    {
+      "book": "swse-knights-of-the-old-republic",
+      "repeatable": false,
+      "count": 10
+    },
+    {
+      "book": "swse-legacy-era",
+      "repeatable": true,
+      "count": 9
+    }
+  ],
+  "blockingEditorialIssues": 12,
+  "blockingEditorialIds": [
+    "core/secret/devastating-power/odd-dice",
+    "sotg/maneuver/attack-formation-zeta-nine/minimum-dice",
+    "FUCG-ED-01",
+    "FUCG-ED-02",
+    "FUCG-ED-03",
+    "FUCG-ED-04",
+    "FUCG-ED-05",
+    "CW-ED-01",
+    "CW-ED-02",
+    "CW-ED-03",
+    "LEG-001",
+    "LEG-002"
+  ],
+  "totalEditorialIssues": 47,
+  "staleJatmEditorialIssue": true,
+  "findings": [
+    {
+      "id": "FVC-001",
+      "severity": "blocks-implementation-contract",
+      "subject": "31 Force Training power definitions mark acquisition.repeatable false; Core printed p95 allows multiple copies of same Power. Do not use per-item flag as suite-copy legality."
+    },
+    {
+      "id": "FVC-002",
+      "severity": "editorial-drift",
+      "subject": "JATM-RAWPOL-001 still describes a proposed active-form gate even though the rolling v2.8 correction and JATM p29 establish talent ownership only."
+    },
+    {
+      "id": "FVC-003",
+      "severity": "blocks-runtime-certification",
+      "subject": "Live SSOT ownership of external feat/talent/equipment/rule graph sources and targets not certified by this offline package."
+    },
+    {
+      "id": "FVC-004",
+      "severity": "blocks-implementation-contract",
+      "subject": "12 editorial issues across book packages explicitly block full automation, whereas only 4 individual definitions mark blocked-on-ruling. Different granularities must be reconciled into a single truthful release gate."
+    }
+  ],
+  "structuralFailures": [],
+  "structurallyValid": true,
+  "implementationReady": false,
+  "runtimeCertified": false,
+  "sourceCorpusExhaustive": false
+}
