@@ -203,32 +203,50 @@ export class ForcePointsUtil {
    * @returns {Promise<boolean>} Whether the reduction was successful
    */
   static async reduceDarkSide(actor) {
+    const engine = globalThis.SWSE?.ActorEngine;
+    if (!engine) return false;
     const currentDarkSide = DSPEngine.getValue(actor);
-
-    if (currentDarkSide === 0) {
+    if (!(currentDarkSide > 0)) {
       ui.notifications.info('Your Dark Side Score is already 0.');
       return false;
     }
 
-    // Validate Force Point availability via ForcePointsService
-    const validation = ForcePointsService.validateSpend(actor, {
-      reason: 'reducing Dark Side Score',
-      amount: 1
-    });
-
-    if (!validation.valid) {
-      ui.notifications.error(`Cannot reduce Dark Side Score: ${validation.message}`);
+    const context = { useKind: 'reduce-dark-side-score' };
+    const policy = ForcePointsService.authorizeSpend(actor, context);
+    if (!policy.valid) {
+      ui.notifications.error(`Cannot reduce Dark Side Score: ${policy.message}`);
       return false;
     }
 
-    // Spend the Force Point via ActorEngine
-    await globalThis.SWSE?.ActorEngine?.spendForcePoints(actor, 1);
+    let receipt;
+    try {
+      receipt = await engine.spendForcePoints(actor, 1, context);
+    } catch (error) {
+      ui.notifications.error(`Force Point was not authorized or committed: ${error.message}`);
+      return false;
+    }
 
-    // Reduce Dark Side Score in canonical location
-    const nextDarkSide = DSPEngine.getNextValue(actor, -1);
-    await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSide.value': nextDarkSide });
-    ui.notifications.info(`Dark Side Score reduced to ${nextDarkSide}`);
-    return true;
+    try {
+      const nextDarkSide = DSPEngine.getNextValue(actor, -1);
+      await engine.updateActor(actor, { 'system.darkSide.value': nextDarkSide });
+      // No automatic refund after the mechanical benefit succeeds.
+      const finality = await engine.finalizeForcePointSpend(actor, receipt);
+      if (!finality?.finalized) console.error('Dark Side reduction applied but FP receipt finalization failed', finality);
+      ui.notifications.info(`Dark Side Score reduced to ${nextDarkSide}`);
+      return true;
+    } catch (error) {
+      // Compensate only while the consequence has not been applied.
+      if (DSPEngine.getValue(actor) === currentDarkSide) {
+        try {
+          const rollback = await engine.rollbackForcePointSpend(actor, receipt);
+          if (!rollback?.rolledBack) console.error('Force Point rollback refused', rollback);
+        } catch (refundError) { console.error('Force Point rollback indeterminate', refundError); }
+      } else {
+        console.error('Dark Side Score was reduced but transaction completion was not confirmed; no automatic refund', error);
+      }
+      ui.notifications.error('Dark Side Score reduction could not be completed or confirmed. Review the actor resources.');
+      return false;
+    }
   }
 
   /**
