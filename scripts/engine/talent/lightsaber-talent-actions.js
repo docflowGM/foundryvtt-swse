@@ -257,7 +257,7 @@ async function pickProtectableEvent(actor, talent) {
 }
 
 // JATM regimen temporary Force Points (typed entries): offer the player the choice. A temporary point's
-// round-limit exemption is not printed, so choosing it counts toward the one-FP-per-round limit (FP-RD-007).
+// spend is non-counting on the qualifying check (owner ruling FP-RD-007, Option B).
 async function askUseTemporaryPoint(actor, talent, modResult) {
   if (modResult?.useForcePoint !== true) return false;
   const entries = actor?.getFlag?.(NS, 'bonusForcePoints')?.entries ?? actor?.flags?.swse?.bonusForcePoints?.entries ?? [];
@@ -265,7 +265,7 @@ async function askUseTemporaryPoint(actor, talent, modResult) {
   if (!has) return false;
   return await SWSEDialogV2.confirm({
     title: 'Temporary Force Point',
-    content: `<p>Spend a temporary Force Point from your Force regimen on this ${talent === 'block' ? 'Block' : 'Deflect'} check instead of an ordinary Force Point? It counts toward the one Force Point per round limit.</p>`,
+    content: `<p>Spend a temporary Force Point from your Force regimen on this ${talent === 'block' ? 'Block' : 'Deflect'} check instead of an ordinary Force Point? It does not count toward the one Force Point per round limit (a Force Point on this qualifying check is exempt).</p>`,
     defaultYes: false
   }) === true;
 }

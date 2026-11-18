@@ -61,3 +61,11 @@ Pattern (reusable): `ABILITY_OPTION_CONTRACTS[ref]` in `scripts/engine/force/abi
 | `lightsaber:promptDeflect` (adjacent ally) | as above | canonical `deflect` | verified pending ranged attack on an adjacent ally | reaction | counted | as above | as above | as above |
 
 Sheltering Stance: the Force Point is waived only when the actor owns canonical `sheltering-stance` AND the adjacent-ally attack is verified (the former checkbox no longer waives anything). Known limits: a rerolled critical hit supersedes its event, so Force Fortification is not offered after a reroll; the protect-adjacent flow uses the blocker's own consumed list (the ally may still answer separately).
+
+## FREEZE (2026-11-18, owner direction): peripheral 03B consumer work stops here
+
+Foundational 03B (shared authorization, ActorEngine receipts, round limit, rollback, death rescue, reaction events) stays. Further per-ability contracts are **paused**; the 35 uncertified rows in this ledger remain `DEFERRED_RULES_REVIEW` / uncertified and are resumed after 03C-03E, using the batch-1 pattern. Outstanding batch-1 items:
+1. Improved Lightsaber Throw publishes a card without executing the area attack (no canonical thrown-lightsaber attack path).
+2. Improved Lightsaber Throw checks own-turn eligibility but does not debit the standard action from the action-economy authority.
+3. Stale UI text in `askUseTemporaryPoint` (said temporary points count toward the round limit) - **fixed** in the 03C opening commit.
+4. Live Foundry v13 / two-client verification of every reaction path.
