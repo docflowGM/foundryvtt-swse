@@ -157,6 +157,8 @@ try {
   {
     const { ForceExecutor } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-executor.js');
     const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
+    const { ForcePowerEffectsEngine } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js');
+    const savedEffectRemoval = ForcePowerEffectsEngine.removePowerEffects;
     const savedItemWrite = ActorEngine.updateEmbeddedDocuments;
     const savedPost = SWSEChat.postHTML;
     let failItemWrite = false;
@@ -171,6 +173,7 @@ try {
         }
       };
       SWSEChat.postHTML = async () => ({});
+      ForcePowerEffectsEngine.removePowerEffects = async () => { deletedEffects += 1; };
       const mkPowerActor = () => {
         const a = makeActor({ normal: 2 });
         a.items = [{ id: 'owned-power', name: 'Test Power', type: 'force-power', system: { spent: true, discarded: true } }];
@@ -198,6 +201,7 @@ try {
     } finally {
       ActorEngine.updateEmbeddedDocuments = savedItemWrite;
       SWSEChat.postHTML = savedPost;
+      ForcePowerEffectsEngine.removePowerEffects = savedEffectRemoval;
     }
   }
 } finally {
