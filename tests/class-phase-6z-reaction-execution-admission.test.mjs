@@ -166,7 +166,7 @@ try {
   assert.match(fullAttack,/data-swse-original-damage-types=/);
   assert.match(template,/data-swse-weapon-id=/);
   assert.match(fullAttack,/data-swse-weapon-id=/);
-  assert.match(bridge,/attacker\\?\\.items\\?\\.get\\?\\./);
+  assert.match(bridge,/attacker\?\.items\?\.get\?\./);
  });
 } finally {
  delete ReactionRegistry.registry[key];
