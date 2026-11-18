@@ -3734,3 +3734,33 @@ Status of every entry: `DEFERRED_RULES_REVIEW`. Decision authority: project owne
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+
+## FP-RD-001 to FP-RD-005 — OWNER RULINGS (appended 2026-11-18; original entries preserved)
+
+Rulings communicated by the project owner after independent source review of PR #1165 (Core pp.93/146/218, JATM pp.12-13/16, Clone Wars p.40). Implementing commit: the commit that adds this section (see PR #1165 history).
+
+| ID | Ruling | Implementation state |
+| --- | --- | --- |
+| FP-RD-001 | Sparring Practice and Training Remote give specific non-counting Block/Deflect Force Point bonuses on the actual activation UTF check; Vo'ren's Third Cadence additionally permits those spends off turn. Force Readiness independently authorizes off-turn spending without waiving other restrictions. Entitlement must come from a verified reaction event, canonical talent identity, active regimen and achieved tier, never a client string. | NOT implemented. Blocked on a verified Block/Deflect reaction-event producer and typed regimen-tier entitlement receipts. Restricted entries remain refused. |
+| FP-RD-002 | Guardian Spirit: one bonus FP per day after at least six hours' rest, usable only to improve a Force Power or activate a Force Technique or Force Secret; expires at the start of the next day. Must be a typed, independently expiring entry. | NOT implemented. Blocked on (a) a day-boundary authority for "start of the next day" in Foundry time and (b) typed use kinds for power improvement and Technique/Secret activation. Entry remains refused. See FP-RD-006. |
+| FP-RD-003 | Each ability's printed timing must be enforced; a nonempty source string is not authorization. Unsupported abilities stay unavailable to automation; verified GM adjudication is allowed. | Implemented as a gate: `ability-option` needs a typed contract in `ABILITY_OPTION_CONTRACTS` (currently empty) or a live-verified GM user. Contracts for the ~28 sources remain to be written one by one. |
+| FP-RD-004 | Djem So: reaction after a qualifying melee hit, once per round; counts against the round limit. Greater Focused Force Talisman (Clone Wars p.40): its qualifying immediate recovery spend is exempt from the global round cap, scoped to the verified worn talisman and selected power copy. Source-text mismatch ("one per turn" vs Core "one per round") documented; the exemption is interpreted as exempting the global round cap, narrowly. | Djem So: counts against the cap (no exemption), but its hit-event proof is not implemented, so it is GM-adjudicated only. Talisman exemption NOT implemented: equipment state is manual (no worn-talisman data), so it cannot be verified. |
+| FP-RD-005 | Core p.146: death avoidance is allowed even if a Force Point was already spent this round. | Implemented: bypasses the prior-counted-spend check only; recorded as counted; both orders tested. |
+
+### FP-RD-006 — Guardian Spirit day boundary and Power-improvement use kinds (appended 2026-11-18)
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-006 |
+| Rules domain | Force Points / Guardian Spirit expiry |
+| Feature | Guardian Spirit bonus FP expiry ("start of the next day") |
+| Source | JATM p.16 (via FP-RD-002 ruling) |
+| Confirmed behavior | Expires at the start of the next day. |
+| Unresolved question | Which Foundry clock defines a "day" and its start (world calendar time, GM-triggered rest, real time), and which concrete in-system actions count as "improve a Force Power". |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Guardian Spirit bonus entries stay refused. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

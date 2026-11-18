@@ -1478,9 +1478,16 @@ export const ActorEngine = {
       // RENDER SEQUENCING FIX: Suppress intermediate renders. Damage application affects
       // both HP and condition track, which both impact derived values. After updateActor
       // completes recalcAll(), _refreshOpenActorApps() will render with stable data.
-      await this.updateActor(actor, updates, {
-        render: false
-      });
+      const rescueReceipt = resolution.forcePointRescueReceipt ?? null;
+      try {
+        await this.updateActor(actor, updates, {
+          render: false
+        });
+      } catch (writeErr) {
+        if (rescueReceipt) await this._settleForcePointRescue(actor, rescueReceipt, resolution, writeErr);
+        throw writeErr;
+      }
+      if (rescueReceipt) await this._settleForcePointRescue(actor, rescueReceipt, resolution, null);
 
       SWSELogger.log(`Damage applied to ${actor.name}: ${damagePacket.amount} incoming → ${resolution.damageToHP} HP`, {
         source: damagePacket.source,
@@ -1806,6 +1813,30 @@ export const ActorEngine = {
   },
 
   /**
+   * Applied-effect boundary for the Force Point death rescue (Core p.146).
+   * The point is finalized only when the rescued HP state is observably
+   * persisted; otherwise the exact spend is compensated. An applied-then-threw
+   * write is classified by reading the actor, never assumed.
+   * @private
+   */
+  async _settleForcePointRescue(actor, receipt, resolution, writeError) {
+    try {
+      const applied = !writeError || Number(actor.system?.hp?.value) === Number(resolution.hpAfter) &&
+        Number(actor.system?.conditionTrack?.current ?? 0) === Number(resolution.conditionAfter);
+      if (applied) {
+        const finality = await this.finalizeForcePointSpend(actor, receipt);
+        if (!finality?.finalized) SWSELogger.error('Force Point rescue applied but receipt finalization failed', finality);
+        return;
+      }
+      const outcome = await this.rollbackForcePointSpend(actor, receipt);
+      if (!outcome?.rolledBack) SWSELogger.error('Force Point rescue failed and compensation was refused; manual reconciliation required', outcome);
+      await actor.unsetFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution');
+    } catch (settleErr) {
+      SWSELogger.error('Force Point rescue settlement indeterminate; manual reconciliation required', { error: settleErr });
+    }
+  },
+
+  /**
    * Offer Force Point rescue for lethal/destructive threshold hits.
    *
    * Mutation contract — fields written to resolution on success:
@@ -1876,7 +1907,10 @@ export const ActorEngine = {
         ui.notifications?.warn?.(`${actor.name}: Force Point rescue failed — no Force Points remaining.`);
         return false;
       }
-      await this.finalizeForcePointSpend(actor, spend);
+      // Finality is NOT granted here: the rescue is only real once applyDamage
+      // persists the rescued HP/condition state. applyDamage finalizes (or
+      // compensates) the receipt at that boundary.
+      resolution.forcePointRescueReceipt = spend;
       await actor.setFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
 
       resolution.forceRescueUsed = true;
@@ -2074,14 +2108,22 @@ export const ActorEngine = {
       if (!receiptId) throw new Error('Force Point receipt identity unavailable');
       const receipt = {
         receiptId, requestId, actorId: actor.id,
-        roundKey: decision.roundKey, useKind: decision.useKind, abilitySourceRef: decision.abilitySourceRef ?? null,
+        roundKey: decision.roundKey, useKind: decision.useKind, abilitySourceRef: decision.abilitySourceRef ?? null, adjudicatedBy: decision.adjudicatedBy ?? null,
         countsTowardRoundLimit: decision.countsTowardRoundLimit,
         normalSpent: decision.normalSpent,
         bonusEntriesSpent: debit.map(({ id, source, amount, entry }) =>
           ({ id, source, amount, entry: { ...entry } })),
         spent: amount, state: 'committed'
       };
-      const ledger = { receipts: [...entries, receipt] };
+      // Bounded retention: only settled receipts (finalized/rolled-back) older than
+      // the newest 200 are dropped; committed receipts are never dropped, so the
+      // round limit and replay guard for any live use are unaffected.
+      let retained = [...entries, receipt];
+      if (retained.length > 200) {
+        let drop = retained.length - 200;
+        retained = retained.filter(r => !(drop > 0 && r.state !== 'committed' && drop--));
+      }
+      const ledger = { receipts: retained };
       const update = {
         'system.forcePoints.value': normalAfter,
         'flags.swse.forcePointLedger': ledger

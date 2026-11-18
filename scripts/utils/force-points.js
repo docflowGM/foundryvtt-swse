@@ -248,18 +248,4 @@ export class ForcePointsUtil {
       return false;
     }
   }
-
-  /**
-   * @deprecated Death avoidance is owned by the damage owner
-   * (ActorEngine._maybeResolveForcePointRescue), which verifies the lethal
-   * hit, persists the single-use event receipt and pays through the typed
-   * 'avoid-death' transaction. This macro-era entry point has no in-repo
-   * caller and cannot prove a lethal event, so it refuses rather than spend.
-   * (Category E: macro-only global; deletion awaits owner policy.)
-   * @returns {Promise<boolean>} always false
-   */
-  static async avoidDeath(actor) {
-    ui.notifications.warn(`${actor?.name ?? 'Actor'}: Force Point death avoidance is offered automatically when a lethal hit is resolved.`);
-    return false;
-  }
 }

@@ -28,6 +28,11 @@ import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engin
 import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
+// Typed per-ability Force Point contracts (FP-RD-003). Empty by design: no
+// ability's printed timing/trigger has yet been certified for automation.
+// An entry is { itemType, itemName, timing, trigger } and requires the owned item.
+const ABILITY_OPTION_CONTRACTS = Object.freeze({});
+
 const DIE_STEPS = Object.freeze(['d4', 'd6', 'd8', 'd10', 'd12']);
 
 export class ForcePointsService {
@@ -240,6 +245,7 @@ export class ForcePointsService {
     }
 
     const useKind = context.useKind;
+    let adjudicatedBy = null;
     const reactionKinds = new Set(['recover-one-force-power', 'recover-one-maneuver', 'avoid-death']);
     const timing = reactionKinds.has(useKind) ? 'reaction' : useKind === 'reduce-dark-side-score' ? 'swift' : useKind === 'ability-option' ? 'ability-defined' : 'free';
 
@@ -280,15 +286,24 @@ export class ForcePointsService {
         return reject('Actor-owned lethal damage event receipt required');
       }
     } else if (useKind === 'ability-option') {
-      // A talent/feat/Force-power option that costs 1 Force Point. The
-      // ability's own text governs its timing and effect, which this service
-      // cannot verify (FP-RD-003), so only the universal restrictions apply:
-      // helpless guard, exactly one point, the Core p.93 one-per-round limit,
-      // and request replay. An identified source is mandatory; no per-source
-      // exception (FP-RD-004) is granted from a caller-supplied flag.
+      // Owner ruling FP-RD-003: each ability's printed timing/trigger must be
+      // enforced, and a bare source string proves nothing. Until an ability has
+      // a typed contract in ABILITY_OPTION_CONTRACTS (owned item, trigger event,
+      // action timing), automated expenditure is unavailable. Explicit GM
+      // adjudication is a verified live-user fact, never a caller boolean; it
+      // authorizes the ability's own timing, not any waiver of the round cap.
       if (typeof context.abilitySourceRef !== 'string' || context.abilitySourceRef.length === 0) {
         return reject('An identified ability source is required for a Force Point option');
       }
+      const contract = ABILITY_OPTION_CONTRACTS[context.abilitySourceRef];
+      if (contract) {
+        const owned = Array.from(actor.items ?? []).some(i => i.type === contract.itemType &&
+          i.system?.disabled !== true && String(i.name).toLowerCase() === contract.itemName.toLowerCase());
+        if (!owned) return reject(`${contract.itemName} is not owned by this actor`);
+      } else if (globalThis.game?.user?.isGM !== true) {
+        return reject('This ability has no certified Force Point contract (FP-RD-003); GM adjudication required');
+      }
+      adjudicatedBy = contract ? null : (globalThis.game.user.id ?? 'gm');
     } else if (useKind === 'reduce-dark-side-score') {
       const dsp = DSPEngine.getValue(actor);
       if (!(dsp > 0)) return reject('No Dark Side Score to reduce');
@@ -315,7 +330,11 @@ export class ForcePointsService {
         }
       }
       const journal = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
-      if ((journal.receipts ?? []).some(r => r.roundKey === roundKey &&
+      // Core p.146 (owner ruling FP-RD-005): avoiding death is allowed even if a
+      // Force Point was already spent this round. It bypasses only the check
+      // against PRIOR counted spends; the rescue is still recorded as counted,
+      // so it blocks a later ordinary spend in the same round.
+      if (useKind !== 'avoid-death' && (journal.receipts ?? []).some(r => r.roundKey === roundKey &&
           r.countsTowardRoundLimit && ['committed', 'finalized'].includes(r.state))) {
         return reject('One counted Force Point has already been spent this round');
       }
@@ -333,7 +352,7 @@ export class ForcePointsService {
     return {
       valid: true, message: 'Authorized Force Point expenditure', allowance: 1,
       normalSpent, bonusEntriesSpent, countsTowardRoundLimit: true, roundKey, useKind,
-      actionTiming: timing, abilitySourceRef: context.abilitySourceRef ?? null
+      actionTiming: timing, abilitySourceRef: context.abilitySourceRef ?? null, adjudicatedBy
     };
   }
 

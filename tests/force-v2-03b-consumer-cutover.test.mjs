@@ -32,15 +32,23 @@ const writer = async (actor, update) => { for (const [path, value] of Object.ent
 const { fake: ActorEngine, restore } = await graftRealForcePointMethods(writer);
 let passed = 0;
 const check = (name) => { passed += 1; console.log(`PASS ${passed}: ${name}`); };
+globalThis.game.user = { id: 'gm-1', isGM: true };
+const rollCtx = (requestId) => ({ useKind: 'roll-bonus', rollDomain: 'skill.acrobatics', requestId });
 const option = (ref = 'test:talent', extra = {}) => ({ useKind: 'ability-option', abilitySourceRef: ref, ...extra });
 
 try {
   {
     const a = makeActor({ normal: 3 });
     assert.equal(ForcePointsService.authorizeSpend(a, { useKind: 'ability-option' }).valid, false, 'identified source required');
-    assert.equal(ForcePointsService.authorizeSpend(a, option()).valid, true);
+    assert.equal(ForcePointsService.authorizeSpend(a, option()).valid, true, 'verified GM adjudication permits an uncertified ability');
+    const gmReceipt = await ActorEngine.spendForcePoints(a, 1, option('x:gm'));
+    assert.equal(gmReceipt.adjudicatedBy, 'gm-1');
+    globalThis.game.user = { id: 'player-1', isGM: false };
+    assert.equal(ForcePointsService.authorizeSpend(a, option()).valid, false, 'players cannot automate an uncertified ability (FP-RD-003)');
+    assert.equal(ForcePointsService.authorizeSpend(a, option('x', { isGMAdjudicated: true })).valid, false, 'a caller-supplied adjudication boolean proves nothing');
+    globalThis.game.user = { id: 'gm-1', isGM: true };
     await assert.rejects(() => ActorEngine.spendForcePoints(a, 1), /Unsupported or unclassified/, 'a two-argument spend stays refused');
-    assert.equal(a.system.forcePoints.value, 3);
+    assert.equal(a.system.forcePoints.value, 2, 'only the GM-adjudicated spend was debited');
     check('ability option requires an identified source; unclassified spends remain refused');
   }
   {
@@ -99,6 +107,50 @@ try {
     check('rollback at normal max closes the receipt, restores only headroom, frees the round slot');
   }
   {
+    // FP-RD-005 (Core p.146): rescue may follow an ordinary spend in the same round; it still counts afterwards.
+    const mk = () => { const a = makeActor({ normal: 3, max: 3 }); a.flags.swse.forceDeathRescueEvent = { id: 'evt-2', actorId: a.id, state: 'eligible' }; return a; };
+    globalThis.game.combat = { started: true, id: 'combat-H', round: 1, combatant: { actor: { id: 'someone' } } };
+    let a = mk();
+    a.system.forcePoints.value = 3;
+    globalThis.game.combat.combatant.actor.id = a.id;
+    await ActorEngine.spendForcePoints(a, 1, rollCtx('first'));
+    assert.equal(ForcePointsService.authorizeSpend(a, option('x:y2')).valid, false, 'second ordinary spend is capped');
+    const rescue = await ActorEngine.spendForcePoints(a, 1, { useKind: 'avoid-death', sourceEventId: 'evt-2' });
+    assert.equal(rescue.spent, 1, 'rescue after an earlier counted spend is legal');
+    assert.equal(a.system.forcePoints.value, 1);
+    // order 2: rescue first, then ordinary spend is denied (rescue is recorded as counted)
+    a = mk();
+    globalThis.game.combat.combatant.actor.id = a.id;
+    await ActorEngine.spendForcePoints(a, 1, { useKind: 'avoid-death', sourceEventId: 'evt-2' });
+    assert.equal(ForcePointsService.authorizeSpend(a, rollCtx('after')).valid, false, 'ordinary spend after a rescue is denied the same round');
+    globalThis.game.combat = null;
+    check('death rescue bypasses prior-spend eligibility only; it remains a counted expenditure (both orders)');
+  }
+  {
+    // Applied-effect boundary: finality only after the rescued state is persisted.
+    const real = (await import(new URL('../scripts/governance/actor-engine/actor-engine.js', import.meta.url).href)).ActorEngine;
+    const mkRescued = async () => {
+      const a = makeActor({ normal: 3, max: 3 });
+      a.flags.swse.forceDeathRescueEvent = { id: 'evt-3', actorId: a.id, state: 'eligible' };
+      const receipt = await ActorEngine.spendForcePoints(a, 1, { useKind: 'avoid-death', sourceEventId: 'evt-3' });
+      a.system.hp = { value: -5, max: 20 }; a.unsetFlag = async () => {};
+      return { a, receipt };
+    };
+    let { a, receipt } = await mkRescued();
+    assert.equal(a.flags.swse.forcePointLedger.receipts[0].state, 'committed', 'not final before the damage write');
+    await real._settleForcePointRescue.call(ActorEngine, a, receipt, { hpAfter: -5, conditionAfter: 0 }, null);
+    assert.equal(a.flags.swse.forcePointLedger.receipts[0].state, 'finalized');
+    ({ a, receipt } = await mkRescued());
+    await real._settleForcePointRescue.call(ActorEngine, a, receipt, { hpAfter: 0, conditionAfter: 5 }, new Error('write rejected'));
+    assert.equal(a.flags.swse.forcePointLedger.receipts[0].state, 'rolled-back', 'rejected write compensates the exact spend');
+    assert.equal(a.system.forcePoints.value, 3);
+    ({ a, receipt } = await mkRescued());
+    a.system.hp.value = 0; a.system.conditionTrack = { current: 5 };
+    await real._settleForcePointRescue.call(ActorEngine, a, receipt, { hpAfter: 0, conditionAfter: 5 }, new Error('applied then threw'));
+    assert.equal(a.flags.swse.forcePointLedger.receipts[0].state, 'finalized', 'applied-then-threw is classified by reading state');
+    check('rescue finality depends on the persisted HP/condition transition; failed writes compensate; applied-then-threw finalizes');
+  }
+  {
     // End-to-end through the real damage-owner rescue method.
     const { SWSEDialogV2 } = await import('/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js');
     const real = (await import(new URL('../scripts/governance/actor-engine/actor-engine.js', import.meta.url).href)).ActorEngine;
@@ -118,10 +170,11 @@ try {
       assert.equal(a.system.forcePoints.value, 1);
       const receipt = a.flags.swse.forcePointLedger.receipts[0];
       assert.equal(receipt.useKind, 'avoid-death');
-      assert.equal(receipt.state, 'finalized');
+      assert.equal(receipt.state, 'committed', 'finality waits for the persisted rescue state');
+      assert.equal(resolution.forcePointRescueReceipt.receiptId, receipt.receiptId);
       assert.equal(a.flags.swse.forceDeathRescueEvent.state, 'consumed');
       globalThis.game.combat = null;
-      check('real damage-owner rescue persists the event receipt, spends the typed reaction, finalizes and consumes the receipt');
+      check('real damage-owner rescue persists the event receipt, spends the typed reaction, leaves it committed for the applyDamage boundary and consumes the receipt');
     } finally { SWSEDialogV2.confirm = savedConfirm; }
   }
   {

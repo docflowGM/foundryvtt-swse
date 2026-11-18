@@ -38,3 +38,20 @@ Foundry v13 runtime; two-client races (the per-actor queue serializes one client
 2. Compensation for `ability-option` callers whose effect can fail after payment (today they spend and apply with no rollback, as before the branch).
 3. Bounded ledger retention and a cross-client concurrency design validated in live Foundry.
 4. Route `force-point-feat-actions` / `destiny-effects` gain paths through a typed gain receipt if they must interact with the ledger.
+
+
+## Update 2 — after independent review of PR #1165 (2026-11-18)
+
+Merged `origin/main` (7 commits; only conflict was the append-only decisions ledger, resolved by keeping both sides).
+
+| Item | Result |
+| --- | --- |
+| FP-RD-005 | Implemented. `avoid-death` bypasses the prior-counted-spend check, remains a counted spend; both orders tested. |
+| Rescue ordering (P0) | Fixed. The rescue leaves the receipt `committed`; `applyDamage` finalizes it only after the HP/condition write, compensates on a rejected write, and classifies applied-then-threw by reading actor state (`_settleForcePointRescue`). |
+| FP-RD-003 | Implemented as a gate: typed `ABILITY_OPTION_CONTRACTS` (empty) or a live-verified GM. **Behavior change:** until contracts are written, players cannot automate the ~28 ability FP options; GMs can. Caller-supplied adjudication booleans are ignored. |
+| FP-RD-004 | Djem So counts against the round cap; GM-adjudicated only (no hit-event proof). Talisman exemption not implemented (no worn-talisman data). |
+| FP-RD-001 / 002 | Rulings recorded; not implemented (blocked on a reaction-event producer; a day-boundary authority, FP-RD-006). Restricted entries stay refused. |
+| `avoidDeath` | Deleted (no callers in scripts/templates/tests). |
+| Receipt retention | Bounded: settled receipts beyond the newest 200 are dropped; committed receipts are never dropped. |
+
+Still not certified: Foundry v13 runtime; cross-client concurrency; Force Readiness feat identity (hard-coded id); per-ability contracts.
