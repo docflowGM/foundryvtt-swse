@@ -302,7 +302,7 @@ export class ForcePointsService {
       }
       const journal = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
       if ((journal.receipts ?? []).some(r => r.roundKey === roundKey &&
-          r.countsTowardRoundLimit && r.state === 'committed')) {
+          r.countsTowardRoundLimit && ['committed', 'finalized'].includes(r.state))) {
         return reject('One counted Force Point has already been spent this round');
       }
     }
