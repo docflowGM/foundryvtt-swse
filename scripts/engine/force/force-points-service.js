@@ -266,7 +266,7 @@ export class ForcePointsService {
     } else if (useKind === 'recover-one-force-power' || useKind === 'recover-one-maneuver') {
       const item = Array.from(actor.items ?? []).find(i => i.id === context.targetItemInstanceId);
       const power = useKind === 'recover-one-force-power';
-      if (!item || (power ? !['force-power', 'lightsaber-form-power'].includes(item.type) : item.type !== 'starship-maneuver') ||
+      if (!item || (power ? !['force-power', 'lightsaber-form-power'].includes(item.type) : item.type !== 'maneuver') ||
           (item.system?.spent !== true && item.system?.discarded !== true)) {
         return reject('A specific owned spent suite instance is required for recovery');
       }
