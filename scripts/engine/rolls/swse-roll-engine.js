@@ -141,7 +141,17 @@ function swseChatBuildReactionContext(actor, context = {}) {
     ownerUserId,
     defenderName: source.defenderName ?? defender?.name ?? context.targetName ?? '',
     timerLabel: source.timerLabel ?? context.reactionTimerLabel ?? '',
-    reason: source.reason ?? context.reactionReason ?? ''
+    reason: source.reason ?? context.reactionReason ?? '',
+    attackType: source.attackType ?? context.attackType ?? '',
+    weaponId: source.weaponId ?? context.weaponId ?? '',
+    damageType: source.damageType ?? context.damageType ?? '',
+    damageTypesCsv: (Array.isArray(source.damageTypes) ? source.damageTypes : source.damageTypes ? [source.damageTypes] : [])
+      .join(','),
+    originalDamageTypesCsv: (Array.isArray(source.originalDamageTypes) ? source.originalDamageTypes
+      : source.originalDamageTypes ? [source.originalDamageTypes] : []).join(','),
+    cannotBeNegatedByCsv: (Array.isArray(source.cannotBeNegatedBy) ? source.cannotBeNegatedBy
+      : source.cannotBeNegatedBy ? [source.cannotBeNegatedBy] : []).join(','),
+    sonicCannotBeDeflected: source.sonicCannotBeDeflected === true
   };
 }
 

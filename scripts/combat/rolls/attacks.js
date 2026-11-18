@@ -666,6 +666,7 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
     attacker,
     weapon,
     attackType: damageContext.attackType,
+    weaponId: weapon?.id ?? '',
     damageType: damageContext.damageType,
     damageTypes: damageContext.damageTypes,
     originalDamageTypes: damageContext.originalDamageTypes,
@@ -684,9 +685,14 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
     defenderName: defender.name,
     timerLabel: '6.0 s',
     reason: `Incoming ${damageContext.attackType} attack total ${attackTotal}.`,
+    // Carry the original weapon eligibility context to chat. The resolver
+    // independently rechecks these typed fields before charging a reaction.
+    attackType: damageContext.attackType,
     damageType: damageContext.damageType,
     damageTypes: damageContext.damageTypes,
     originalDamageTypes: damageContext.originalDamageTypes,
+    sonicCannotBeDeflected: damageContext.sonicCannotBeDeflected,
+    cannotBeNegatedBy: damageContext.cannotBeNegatedBy,
     reactions: available.map(reaction => ({
       ...reaction,
       available: true,

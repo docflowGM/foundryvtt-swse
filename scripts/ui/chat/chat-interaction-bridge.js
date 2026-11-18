@@ -534,6 +534,7 @@ async function handleReactionButton(event, button, message) {
     }
   }
 
+  const typedList = value => String(value ?? '').split(',').map(x => x.trim()).filter(Boolean);
   const { ReactionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js');
   await ReactionEngine.resolveReaction({
     reactionKey,
@@ -549,7 +550,16 @@ async function handleReactionButton(event, button, message) {
       reactionKey,
       attackerId: (attacker?.id ?? attackerId) || null,
       defenderId: (defender?.id ?? defenderId) || null,
-      trigger: button.dataset.swseTrigger || button.dataset.trigger || 'ON_ATTACK_DECLARED'
+      trigger: button.dataset.swseTrigger || button.dataset.trigger || 'ON_ATTACK_DECLARED',
+      attackType: button.dataset.swseAttackType || null,
+      // Resolve a real owned attacker Item; never trust weapon name markup as
+      // the authority for lightsaber/weapon-qualified reaction eligibility.
+      weapon: attacker?.items?.get?.(button.dataset.swseWeaponId ?? '') ?? null,
+      damageType: button.dataset.swseDamageType || null,
+      damageTypes: typedList(button.dataset.swseDamageTypes),
+      originalDamageTypes: typedList(button.dataset.swseOriginalDamageTypes),
+      cannotBeNegatedBy: typedList(button.dataset.swseCannotBeNegatedBy),
+      sonicCannotBeDeflected: button.dataset.swseSonicCannotBeDeflected === 'true'
     }
   });
 }
