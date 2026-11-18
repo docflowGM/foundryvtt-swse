@@ -220,8 +220,10 @@ export class ForceExecutor {
         }
       }
       if (options.moveMassiveObject === true) {
-        const required = useForce ? 2 : 1;
-        if (this._getAvailableForcePoints(actor) < required) throw new Error(`Move Massive Object requires spending ${required} Force Point${required === 1 ? '' : 's'}`);
+        // The special talent's additional FP payment is not yet a typed,
+        // source-proven transaction. Reject BEFORE any paid UTF roll rather
+        // than charging one FP and failing on the second debit afterwards.
+        throw new Error('Move Massive Object additional Force Point use awaits certified source-specific authorization.');
       }
 
       const dcChart = this._getPowerDcRows(power);
@@ -296,9 +298,7 @@ export class ForceExecutor {
       // (via ForcePointSpendCoordinator/ActorEngine.spendForcePoints) before
       // rolling above. Do not spend it again here — this used to compensate
       // for RollCore not actually paying for its own bonus and now double-spends.
-      if (options.moveMassiveObject === true) {
-        await ActorEngine.spendForcePoints(actor, 1);
-      }
+
 
       if (isFumble) {
         await this.handleForceFlowNaturalOne(actor, { source: power.name, rollType: 'Use the Force' });
