@@ -217,6 +217,10 @@ export class SithLordTemptationService {
       ...Array.from(globalThis.canvas?.tokens?.placeables??[]).map(t=>t.actor).filter(Boolean),
     ];
     for(const target of new Map(actors.filter(x=>x?.id).map(x=>[actorIdentity(x),x])).values()){
+      // Avoid queueing an async lock for every unrelated world Actor on
+      // every combat turn. An active mark is only a prefilter: expiration
+      // must still re-read and replan AFTER entering the target queue.
+      if(!currentTemptations(target).some(entry=>entry?.state==='active'))continue;
       try{
         // The expiration decision must read fresh target state only AFTER
         // entering the same per-actor queue as committed spend receipts.
