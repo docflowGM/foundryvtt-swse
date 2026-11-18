@@ -21,6 +21,7 @@ import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
+import { TemptationOfTheDarkSide } from "/systems/foundryvtt-swse/scripts/engine/force/temptation-of-the-dark-side.js";
 import { ForcePowerMaintenance } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-maintenance.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 
@@ -333,6 +334,9 @@ export class ForceExecutor {
         'system.discarded': true,
         'system.lastUsed': Date.now()
       }], { source: 'force-power-use', render: false });
+
+      // FUCG p.85 Temptation power: "when the power is used ... it goes away entirely" (success or not -- it was used).
+      await TemptationOfTheDarkSide.consumeAfterUse(actor, power);
 
       // Apply force power effects if successful
       let appliedEffects = [];

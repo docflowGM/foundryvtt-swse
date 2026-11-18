@@ -3846,3 +3846,22 @@ Implemented from printed text only (`scripts/engine/force/force-power-maintenanc
 | FP-RD-012 | KOTOR Campaign Guide (Resist Force, Valor) | Not a rules question but a recorded engineering limit: the modifier engine has no defense call site that knows the attacking source (Force power / mind-affecting / fear). The conditional defense bonuses are therefore stored as reminder-only gated effects (effect-intent `filterType: 'custom'`) and do NOT change defense math automatically; previously they were an unconditional all-defense bonus, which over-granted. A defense call site that supplies the attack source is the missing runtime. | Engineering follow-up (no ruling needed) |
 
 FP-RD-010/011: Decision authority: project owner. Recommended ruling: none. Resolution: blank.
+
+
+## FP-RD-013 — Temptation of the Dark Side, Force Unleashed Campaign Guide p.85 (Checkpoint 03E; appended 2026-11-18)
+
+Implemented (`scripts/engine/force/temptation-of-the-dark-side.js`) as two SEPARATE optional pathways, each an explicit GM adjudication (the rule is GM-optional; no standing setting) paid with 1 Force Point through the shared ForcePointsService/ActorEngine transaction (exact rollback if the item cannot be created):
+- Power pathway (printed): Force Sensitivity required; one Force power with the [dark side] descriptor added to the active suite; it goes away entirely when used or at end of encounter; never recoverable.
+- Talent pathway (printed): Force Sensitivity required; talent from the Dark Side, Dark Side Devotee or Sith tree; ALL prerequisites must be met (checked by `AbilityEngine.evaluateAcquisition`, with temporary talents counted as held); several Force Points may buy several talents; at end of encounter the talents are lost and the Dark Side Score rises by the Force Points spent.
+
+| ID | Question the printed text does not answer | Status |
+| --- | --- | --- |
+| FP-RD-013a | Does a Force Point spent on Temptation count toward the one-Force-Point-per-round limit (Core p.93)? Implemented as the default for any Force Point spend (counts) because the text is silent. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-013b | Power pathway: is an unsuccessful activation "used" (power removed)? Implemented: any use attempt removes it. Also: does the existing optional "Dark Side power increases Dark Side Score" house rule apply to a Temptation power? Not changed by this code. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-013c | Does the added power need a free slot in the suite, and does it count against suite capacity? Not enforced. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-013d | "End of the encounter": implemented as combat deletion. Out-of-combat encounters have no end signal here, so GM must end them manually (`endEncounter`). | `DEFERRED_RULES_REVIEW` |
+| FP-RD-013e | Dark Side Score increase counts talents held at the end; the printed "Force Points spent in this manner" could also count points spent on a talent that was later removed or lost. | `DEFERRED_RULES_REVIEW` |
+
+Also in 03E (engineering, no ruling): Core Rulebook, Force Powers ("you can select the same Force power more than once") and Starships of the Galaxy (Starship Tactics: "You can add the same maneuver more than once") are printed rules, so name-based "already known" filters were removed from `ForcePowerEngine.applySelected` and `StarshipManeuverManager.getAvailableManeuvers`; the progression suite sync matches the exact copies a session created (per-copy markers) instead of every same-name maneuver; owned-copy removal accepts an exact `itemId`.
+
+Decision authority: project owner. Recommended ruling: none. Resolution: blank.

@@ -22,18 +22,11 @@ export class StarshipManeuverManager {
    */
   static async getAvailableManeuvers(actor) {
     const allManeuvers = this._getAllManeuverDefinitions();
-    const learned = new Set(
-      actor.items
-        .filter(item => item.type === 'maneuver')
-        .map(item => item.name)
-    );
-
     const available = [];
 
     for (const maneuver of allManeuvers) {
-      // Skip already learned
-      if (learned.has(maneuver.name)) {continue;}
-
+      // Starships of the Galaxy (Starship Tactics): "You can add the same maneuver more than once" -- a known maneuver
+      // stays selectable; every selection becomes its own owned copy.
       // Check prerequisites
       const prerequisiteCheck = await this._checkManeuverPrerequisites(actor, maneuver);
 

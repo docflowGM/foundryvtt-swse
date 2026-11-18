@@ -113,6 +113,9 @@ function normalizePendingForceEntry(entry = {}, fallback = {}) {
 function collectOwnedForcePowerItemIds(actor, rawEntry, removeCount = 0) {
   const count = Math.max(0, Number(removeCount || 0) || 0);
   if (count <= 0) return [];
+  // A caller that names the exact owned copy (itemId) removes exactly that copy; the name match is only the fallback.
+  const exactId = rawEntry?.itemId ?? rawEntry?.ownedItemId ?? null;
+  if (exactId) return (actor?.items || []).some((item) => (item.id || item._id) === exactId) ? [exactId] : [];
   const wanted = normalizeNameKey(rawEntry?.name || rawEntry?.label || rawEntry?.id || rawEntry?.selectionId || rawEntry);
   if (!wanted) return [];
   const matches = (actor?.items || []).filter((item) => {
