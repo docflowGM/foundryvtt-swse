@@ -14,6 +14,7 @@ import {
   TEMPTATION_PATH,TEMPTATION_EVENTS_PATH,actorIdentity,
   currentTemptations,currentTemptationEvents,
   planTemptationMark,planTemptationSpend,expireTemptationEntries,
+  temptationActionTurnStamp,sameTemptationActionTurn,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/sith-lord-temptation-state.js';
 import { createTemptationActorSerializer } from
   '/systems/foundryvtt-swse/scripts/engine/progression/utils/temptation-actor-serializer.js';
@@ -64,6 +65,8 @@ export class SithLordTemptationService {
       if(!combat?.id||globalThis.game?.combat?.id!==combat.id||!isCurrentTurn(sith,combat))
         throw new Error('Temptation requires the Sith Lord current turn');
       if(!confirmedLineOfSight)throw new Error('GM line-of-sight confirmation required');
+      const turnStamp=temptationActionTurnStamp(combat);
+      if(!turnStamp)throw new Error('Temptation action requires a verifiable combat turn');
       const will=targetWill(target);
       if(will===null)throw new Error('Target Will Defense is not verified');
       // Pay action BEFORE the skill check. A failed check consumes the
@@ -91,9 +94,11 @@ export class SithLordTemptationService {
           success:true,applied:false,checkTotal,willDefense:will
         };
         if(!plan.allowed)throw new Error('Temptation mark rejected: '+plan.reason);
-        if(!isCurrentTurn(sith,combat)||!apexClassFeatureAccess(sith,'sith_lord').allowed)
+        if(!sameTemptationActionTurn(turnStamp,activeCombat())
+          ||!isCurrentTurn(sith,activeCombat())
+          ||!apexClassFeatureAccess(sith,'sith_lord').allowed)
           throw new Error('Temptation authority changed after roll');
-        return {readyToMark:true,checkTotal,willDefense:will};
+        return {readyToMark:true,checkTotal,willDefense:will,turnStamp};
       }catch(error){
         // Never refund a completed roll. A post-roll failure requires GM
         // review even if the target mark was not written.
@@ -109,11 +114,15 @@ export class SithLordTemptationService {
       // Replan from CURRENT target state under its own queue. Competing
       // Sith Lords cannot overwrite each other's marks on this client.
       return await locked(target,async()=>{
-        if(globalThis.game?.combat?.id!==combat?.id||!isCurrentTurn(sith,combat)
+        const currentCombat=activeCombat();
+        // The caster could have become the active combatant again after the
+        // old roll was made. Match the exact encounter/round/turn snapshot.
+        if(!sameTemptationActionTurn(attempt.turnStamp,currentCombat)
+          ||!isCurrentTurn(sith,currentCombat)
           ||!apexClassFeatureAccess(sith,'sith_lord').allowed)
-          throw new Error('Temptation authority changed before target mutation');
+          throw new Error('Temptation action turn changed before target mutation');
         const plan=planTemptationMark({
-          caster:sith,target,combat,checkTotal:attempt.checkTotal,
+          caster:sith,target,combat:currentCombat,checkTotal:attempt.checkTotal,
           willDefense:attempt.willDefense,confirmedLineOfSight:true
         });
         if(!plan.allowed)
