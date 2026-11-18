@@ -2225,6 +2225,61 @@ export const ActorEngine = {
   },
 
   /**
+   * Incoming-attack event ledger (03B Block/Deflect). Each side writes ONLY its
+   * own Actor, so no cross-user write permission is needed:
+   *  - the ATTACKER's actor records the events its attack rolls produced
+   *    (state pending -> superseded/cancelled);
+   *  - the DEFENDER's actor records which event ids it has already consumed.
+   * An event is valid for a reaction only if the attacker-side record is pending
+   * AND the defender has not consumed it (see AttackEventAuthority.verify).
+   * Bounded retention; never trusts a caller-supplied event as proof.
+   */
+  async recordOutgoingAttackEvent(attacker, event) {
+    if (!attacker?.id || !event?.id) throw new Error('recordOutgoingAttackEvent requires an attacker and an event id');
+    const current = attacker.getFlag?.('swse', 'outgoingAttackEvents') ?? attacker.flags?.swse?.outgoingAttackEvents ?? {};
+    const events = Array.isArray(current.events) ? current.events : [];
+    if (events.some(e => e.id === event.id)) throw new Error('Duplicate attack event');
+    const kept = [...events, { ...event, state: 'pending' }].slice(-20);
+    await this.updateActor(attacker, { 'flags.swse.outgoingAttackEvents': { events: kept } });
+    return kept[kept.length - 1];
+  },
+
+  async setOutgoingAttackEventState(attacker, eventId, state, extra = {}) {
+    if (!attacker?.id || !eventId) return { updated: false, reason: 'Attacker and event id required' };
+    if (!['superseded', 'cancelled'].includes(state)) throw new Error(`Unsupported attack event state: ${state}`);
+    const current = attacker.getFlag?.('swse', 'outgoingAttackEvents') ?? attacker.flags?.swse?.outgoingAttackEvents ?? {};
+    const events = Array.isArray(current.events) ? current.events : [];
+    if (!events.some(e => e.id === eventId && e.state === 'pending')) return { updated: false, reason: 'No pending event' };
+    await this.updateActor(attacker, { 'flags.swse.outgoingAttackEvents': {
+      events: events.map(e => e.id === eventId && e.state === 'pending' ? { ...e, ...extra, state } : e)
+    } });
+    return { updated: true };
+  },
+
+  /** The reaction did not happen (cancelled/failed): the attack stays answerable. */
+  async releaseAttackEventAsDefender(defender, eventId) {
+    if (!defender?.id || !eventId) return { released: false };
+    return withForcePointQueue(defender, async () => {
+      const current = defender.getFlag?.('swse', 'consumedAttackEvents') ?? defender.flags?.swse?.consumedAttackEvents ?? {};
+      const ids = Array.isArray(current.ids) ? current.ids : [];
+      if (!ids.includes(eventId)) return { released: false };
+      await this.updateActor(defender, { 'flags.swse.consumedAttackEvents': { ids: ids.filter(id => id !== eventId) } });
+      return { released: true };
+    });
+  },
+
+  async consumeAttackEventAsDefender(defender, eventId) {
+    if (!defender?.id || !eventId) throw new Error('consumeAttackEventAsDefender requires a defender and an event id');
+    return withForcePointQueue(defender, async () => {
+      const current = defender.getFlag?.('swse', 'consumedAttackEvents') ?? defender.flags?.swse?.consumedAttackEvents ?? {};
+      const ids = Array.isArray(current.ids) ? current.ids : [];
+      if (ids.includes(eventId)) return { consumed: false, reason: 'Attack event already consumed' };
+      await this.updateActor(defender, { 'flags.swse.consumedAttackEvents': { ids: [...ids, eventId].slice(-50) } });
+      return { consumed: true };
+    });
+  },
+
+  /**
    * spendDestinyPoints() — Reduce actor's destiny points
    *
    * @param {Actor} actor - target actor

@@ -139,6 +139,7 @@ function swseChatBuildReactionContext(actor, context = {}) {
     defenderId,
     attackerId,
     ownerUserId,
+    attackEventId: source.attackEventId ?? '',
     defenderName: source.defenderName ?? defender?.name ?? context.targetName ?? '',
     timerLabel: source.timerLabel ?? context.reactionTimerLabel ?? '',
     reason: source.reason ?? context.reactionReason ?? ''
@@ -146,7 +147,7 @@ function swseChatBuildReactionContext(actor, context = {}) {
 }
 
 function swseChatBuildEventContext(context = {}, category = 'roll', reactionContext = null) {
-  const eventId = context.eventId ?? context.attackEventId ?? (reactionContext?.reactions?.length ? `swse-${globalThis.foundry?.utils?.randomID?.() ?? Date.now()}` : '');
+  const eventId = context.eventId ?? context.attackEventId ?? (reactionContext?.attackEventId || null) ?? (reactionContext?.reactions?.length ? `swse-${globalThis.foundry?.utils?.randomID?.() ?? Date.now()}` : '');
   const hasReactionWindow = Boolean(reactionContext?.reactions?.length);
   return {
     eventId,

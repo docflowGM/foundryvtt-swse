@@ -111,10 +111,10 @@ function weaponOptions(actor) {
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 
-async function promptAttackRollDc(title, { note = '', includeArea = false, includeProtectAdjacent = false, includeCortosis = false, includeShelteringStance = false, includeLightsaberSpecialist = false, includeShotoPin = false } = {}) {
+async function promptAttackRollDc(title, { note = '', includeArea = false, includeProtectAdjacent = false, includeCortosis = false, includeShelteringStance = false, includeLightsaberSpecialist = false, includeShotoPin = false, fixedDc = null } = {}) {
   const content = `<form class="swse-dialog swse-lightsaber-defense-dialog">
     ${note ? `<p>${esc(note)}</p>` : ''}
-    <div class="form-group"><label>Incoming attack roll result / DC</label><input name="dc" type="number" min="1" step="1" value="20" /></div>
+    <div class="form-group"><label>Incoming attack roll result / DC${fixedDc ? ' (from the verified attack)' : ''}</label><input name="dc" type="number" min="1" step="1" value="${fixedDc ?? 20}" ${fixedDc ? 'readonly' : ''} /></div>
     ${includeArea ? '<label class="checkbox"><input type="checkbox" name="area" /> This is an area attack/autofire/Force Lightning-style barrage</label>' : ''}
     ${includeProtectAdjacent ? '<label class="checkbox"><input type="checkbox" name="protectAdjacent" /> Protect an adjacent character instead of yourself</label>' : ''}
     ${includeShelteringStance ? '<label class="checkbox"><input type="checkbox" name="shelteringStance" /> Sheltering Stance applies: adjacent ally protection does not cost a Force Point</label>' : ''}
@@ -132,7 +132,8 @@ async function promptAttackRollDc(title, { note = '', includeArea = false, inclu
       const form = root?.querySelector?.('form') ?? root;
       const fd = new FormData(form);
       return {
-        dc: Math.max(1, Number(fd.get('dc') || 20) || 20),
+        // A verified attack event fixes the DC; the typed field is only for explicit manual adjudication.
+        dc: fixedDc ? Number(fixedDc) : Math.max(1, Number(fd.get('dc') || 20) || 20),
         area: fd.get('area') === 'on',
         protectAdjacent: fd.get('protectAdjacent') === 'on',
         shelteringStance: fd.get('shelteringStance') === 'on',
@@ -231,13 +232,14 @@ export class LightsaberTalentActions {
     return true;
   }
 
-  static async promptBlock(actor, { sourceElement = null } = {}) {
+  static async promptBlock(actor, { sourceElement = null, attackEvent = null } = {}) {
     if (!hasTalent(actor, 'Block')) {
       ui?.notifications?.warn?.('Block talent required.');
       return null;
     }
     const hasCortosis = hasTalent(actor, 'Cortosis Gauntlet Block');
     const choice = await promptAttackRollDc('Block', {
+      fixedDc: attackEvent?.attackTotal ?? null,
       includeArea: true,
       includeProtectAdjacent: true,
       includeShelteringStance: hasTalent(actor, 'Sheltering Stance'),
@@ -270,6 +272,9 @@ export class LightsaberTalentActions {
       dc: choice.dc,
       source: 'block-talent',
       skillUse: { key: 'block', label: 'Block' },
+      // Verified incoming attack (AttackEventAuthority) or an explicitly manual, GM-adjudicated DC that unlocks no regimen entitlement.
+      reactionEvent: attackEvent ? { id: attackEvent.id, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
+      manualAttackDc: !attackEvent,
       targetContext: { targetName: 'incoming melee attack', attackRollDc: choice.dc },
       sourceElement
     });
@@ -292,12 +297,13 @@ export class LightsaberTalentActions {
     return { success, roll: roll.roll, dc: choice.dc, penalty, weaponModifiers: weaponMods, reactionWeapon: reactionWeapon.identityKey ?? null };
   }
 
-  static async promptDeflect(actor, { sourceElement = null } = {}) {
+  static async promptDeflect(actor, { sourceElement = null, attackEvent = null } = {}) {
     if (!hasTalent(actor, 'Deflect')) {
       ui?.notifications?.warn?.('Deflect talent required.');
       return null;
     }
     const choice = await promptAttackRollDc('Deflect', {
+      fixedDc: attackEvent?.attackTotal ?? null,
       includeArea: true,
       includeProtectAdjacent: true,
       includeShelteringStance: hasTalent(actor, 'Sheltering Stance'),
@@ -328,6 +334,9 @@ export class LightsaberTalentActions {
       dc: choice.dc,
       source: 'deflect-talent',
       skillUse: { key: 'deflect', label: 'Deflect' },
+      // Verified incoming attack (AttackEventAuthority) or an explicitly manual, GM-adjudicated DC that unlocks no regimen entitlement.
+      reactionEvent: attackEvent ? { id: attackEvent.id, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
+      manualAttackDc: !attackEvent,
       targetContext: { targetName: 'incoming ranged attack', attackRollDc: choice.dc },
       sourceElement
     });

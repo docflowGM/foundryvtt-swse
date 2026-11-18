@@ -19,6 +19,8 @@ import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scrip
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { AttackEventAuthority } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-authority.js";
 import { damageTypesMatch, expandDamageTypeAliases, uniqueDamageTypes } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 function normalizeReactionKey(value) {
@@ -328,22 +330,51 @@ export class ReactionEngine {
         }
       }
 
-      if (forcePointCost > 0) {
-        const currentForce = defender.system?.forcePoints?.value ?? 0;
-        if (currentForce < forcePointCost) {
-          const reason = `Insufficient Force Points (need ${forcePointCost}, have ${currentForce})`;
+      // Block/Deflect answer a real incoming attack: the chat-button dataset (event id,
+      // DC, total) is only a lookup key. Authority is the attacker-side event record,
+      // re-read here; nothing client-supplied about the attack survives into the handler.
+      let verifiedAttackEvent = null;
+      if (['block', 'deflect'].includes(resolvedReactionKey)) {
+        const verdict = AttackEventAuthority.verify({
+          defender,
+          attackerId: attackContext.attackerId ?? attacker?.id,
+          eventId: attackContext.attackEventId ?? attackContext.eventId,
+          reactionKey: resolvedReactionKey
+        });
+        if (!verdict.valid) {
+          SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${verdict.message}`);
+          await SWSEChat.postMessage({ flavor: `❌ ${reactionDef.label}`, content: verdict.message, actor: defender });
+          return { success: false, error: verdict.message, modifiedDamage: null, resultMessage: verdict.message };
+        }
+        verifiedAttackEvent = verdict.event;
+      }
+
+      // A reaction that costs Force Points is authorized by ForcePointsService and paid
+      // only through ActorEngine's exact receipt (no direct balance write here).
+      let forcePointReceipt = null;
+      if (forcePointCost > 0 && !attackContext.forcePointPaidBy) {
+        const spendContext = { useKind: 'ability-option', abilitySourceRef: `reaction:${resolvedReactionKey}`, gmAdjudication: options.gmAdjudication };
+        const decision = ForcePointsService.authorizeSpend(defender, { ...spendContext, requestedCount: forcePointCost });
+        if (!decision.valid || forcePointCost !== 1) {
+          const reason = decision.valid ? 'Only a single Force Point reaction cost is supported' : decision.message;
           SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${reason}`);
-          await SWSEChat.postMessage({
-            flavor: `❌ ${reactionDef.label}`,
-            content: reason,
-            actor: defender
-          });
-          return {
-            success: false,
-            error: reason,
-            modifiedDamage: null,
-            resultMessage: reason
-          };
+          await SWSEChat.postMessage({ flavor: `❌ ${reactionDef.label}`, content: reason, actor: defender });
+          return { success: false, error: reason, modifiedDamage: null, resultMessage: reason };
+        }
+        try {
+          forcePointReceipt = await ActorEngine.spendForcePoints(defender, forcePointCost, spendContext);
+        } catch (spendError) {
+          return { success: false, error: spendError.message, modifiedDamage: null, resultMessage: spendError.message };
+        }
+      }
+
+      // Single use: claim the event before the (long, interactive) handler runs so a double
+      // click or a second client cannot answer the same attack twice.
+      if (verifiedAttackEvent) {
+        const claim = await AttackEventAuthority.consume(defender, verifiedAttackEvent.id);
+        if (!claim.consumed) {
+          if (forcePointReceipt) await ActorEngine.rollbackForcePointSpend(defender, forcePointReceipt);
+          return { success: false, error: claim.reason, modifiedDamage: null, resultMessage: claim.reason };
         }
       }
 
@@ -352,6 +383,12 @@ export class ReactionEngine {
       try {
         const enrichedContext = {
           ...attackContext,
+          ...(verifiedAttackEvent ? {
+            attackEventId: verifiedAttackEvent.id,
+            verifiedAttackEvent,
+            dc: verifiedAttackEvent.attackTotal,
+            attackTotal: verifiedAttackEvent.attackTotal
+          } : {}),
           defender,
           attacker
         };
@@ -365,13 +402,23 @@ export class ReactionEngine {
         };
       }
 
-      if (forcePointCost > 0) {
-        await ActorEngine.updateActor(defender, {
-          'system.forcePoints.value': Math.max(0, (defender.system?.forcePoints?.value ?? 0) - forcePointCost)
-        });
+      if (verifiedAttackEvent && result?.error) {
+        await ActorEngine.releaseAttackEventAsDefender(defender, verifiedAttackEvent.id);
       }
 
-      if (limitType) {
+      // Exact receipt lifecycle: a handler that failed gives back exactly what was paid;
+      // a handler that completed finalizes the (now non-refundable) spend.
+      if (forcePointReceipt) {
+        if (result?.error) {
+          const outcome = await ActorEngine.rollbackForcePointSpend(defender, forcePointReceipt);
+          if (!outcome?.rolledBack) SWSELogger.error('[ReactionEngine] Force Point compensation refused', outcome);
+        } else {
+          const finality = await ActorEngine.finalizeForcePointSpend(defender, forcePointReceipt);
+          if (!finality?.finalized) SWSELogger.error('[ReactionEngine] Force Point receipt finalization failed', finality);
+        }
+      }
+
+      if (limitType && !result?.error) {
         ActivationLimitEngine.recordActivation(defender, resolvedReactionKey, limitType);
       }
 
@@ -385,8 +432,8 @@ export class ReactionEngine {
       SWSELogger.log(`[ReactionEngine] SUCCESS: "${resolvedReactionKey}" resolved for ${defender.name}`);
 
       return {
-        success: true,
-        error: null,
+        success: !result?.error,
+        error: result?.error ?? null,
         modifiedDamage: result?.modifiedDamage ?? null,
         resultMessage: resultMsg
       };

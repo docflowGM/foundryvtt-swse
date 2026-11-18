@@ -478,6 +478,18 @@ export class MetaResourceFeatResolver {
     return 'keepSecond';
   }
 
+  /** A reroll invalidates the original attack's reaction event (03B): old Block/Deflect buttons must fail verification. */
+  static async _supersedeAttackEvent(actor, message) {
+    try {
+      const eventId = message?.getFlag?.('swse', 'eventId') ?? message?.flags?.swse?.eventId ?? null;
+      if (!eventId) return;
+      const { AttackEventAuthority } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-authority.js');
+      await AttackEventAuthority.supersede(actor, eventId, 'rerolled');
+    } catch (error) {
+      console.error('SWSE | could not supersede the original attack event', error);
+    }
+  }
+
   static async resolveAttackRerollButton(button, { message = null } = {}) {
     if (!(button instanceof HTMLElement)) return null;
     const actor = game.actors?.get?.(button.dataset.actorId);
@@ -585,6 +597,7 @@ export class MetaResourceFeatResolver {
 
     button.disabled = true;
     button.innerHTML = '<i class="fa-solid fa-check"></i> Reroll used';
+    await this._supersedeAttackEvent(actor, message);
 
     const { createChatMessage } = await import('/systems/foundryvtt-swse/scripts/core/document-api-v13.js');
     const rolls = buildRollJson(newRoll) ? [buildRollJson(newRoll)] : [];
@@ -842,6 +855,7 @@ export class MetaResourceFeatResolver {
     };
 
     button.disabled = true;
+    await this._supersedeAttackEvent(actor, { flags: { swse: { eventId: button.dataset.swseEventId || null } } });
 
     let persisted;
     try {
