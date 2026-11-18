@@ -76,6 +76,19 @@ function resolveActor(record) {
   return doc ?? globalThis.game?.actors?.get?.(record.recipientId) ?? null;
 }
 
+/**
+ * An enhanced option (Resist Force's second defense, Valor's all-Will-effects) is honored only when the caller names a
+ * COMMITTED/FINALIZED receipt in THIS actor's own Force Point ledger that no maintained instance has already used.
+ * A client-supplied boolean proves nothing; without a verified receipt the option is simply not applied.
+ */
+export function verifyEnhancementReceipt(actor, receiptId) {
+  if (typeof receiptId !== 'string' || !receiptId) return false;
+  const receipts = actor?.flags?.swse?.forcePointLedger?.receipts ?? actor?.getFlag?.('swse', 'forcePointLedger')?.receipts ?? [];
+  const receipt = receipts.find(r => r.receiptId === receiptId);
+  if (!receipt || receipt.actorId !== actor.id || !['committed', 'finalized'].includes(receipt.state)) return false;
+  return !Object.values(readStore(actor)).some(r => r.forcePointReceiptId === receiptId);
+}
+
 export const ForcePowerMaintenance = {
   contractFor: maintenanceContractFor,
 
@@ -101,6 +114,10 @@ export const ForcePowerMaintenance = {
     }
     const recipient = contract.targetsAlly ? target : actor;
     const instanceId = newId();
+    // Enhanced options need proof of payment; the caller's boolean alone is ignored.
+    const receiptId = context.forcePointReceiptId ?? null;
+    const paid = verifyEnhancementReceipt(actor, receiptId);
+    context = { ...context, forcePointSpent: paid };
     const effectIds = await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total, {
       ...context, recipient, instanceId, target: contract.targetsAlly ? target : null
     });
@@ -112,7 +129,7 @@ export const ForcePowerMaintenance = {
     const record = {
       id: instanceId, powerKey: contract.key, powerName: power.name, powerItemId: power.id ?? null,
       casterId: actor.id ?? null, recipientId: recipient?.id ?? null, recipientUuid: recipient?.uuid ?? null, effectIds,
-      activationTotal: Number(total) || 0, forcePointSpent: context.forcePointSpent === true,
+      activationTotal: Number(total) || 0, forcePointSpent: paid, forcePointReceiptId: paid ? receiptId : null,
       status: 'active', endedReason: null, rounds: 1,
       startedAt: globalThis.game?.combat?.round ?? null
     };

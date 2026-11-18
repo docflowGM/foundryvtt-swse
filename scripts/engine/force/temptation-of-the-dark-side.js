@@ -117,12 +117,21 @@ export const TemptationOfTheDarkSide = {
   async endEncounter(actor) {
     const temporary = (actor?.items ?? []).filter(isTemptationInstance);
     if (!temporary.length) return { removed: 0, darkSideIncrease: 0 };
-    const talents = temporary.filter(i => temptationMeta(i).kind === 'talent').length;
-    // Remove first (a retry then finds nothing and can never double-count), then record the increase; if the score write
-    // fails the error propagates so the table sees it rather than silently losing the printed Dark Side Score increase.
+    // The owed increase is made durable BEFORE anything is removed: a `temptationSettled` record (idempotent per item id) is
+    // written with the score, so a failed removal can be retried without losing or double-counting the increase, and a
+    // failed score write leaves every temporary item in place (nothing removed, nothing lost, nothing refunded).
+    const talentIds = temporary.filter(i => temptationMeta(i).kind === 'talent').map(i => i.id);
+    const settled = new Set(actor.flags?.swse?.temptationSettled ?? []);
+    const owed = talentIds.filter(id => !settled.has(id));
+    if (owed.length > 0) {
+      await ActorEngine.updateActor(actor, {
+        'system.darkSide.value': DSPEngine.getNextValue(actor, owed.length),
+        'flags.swse.temptationSettled': [...settled, ...owed]
+      });
+    }
     await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', temporary.map(i => i.id), { source: 'fucg-temptation-end-encounter' });
-    if (talents > 0) await ActorEngine.updateActor(actor, { 'system.darkSide.value': DSPEngine.getNextValue(actor, talents) });
-    return { removed: temporary.length, darkSideIncrease: talents };
+    if (owed.length > 0 || settled.size) await ActorEngine.updateActor(actor, { 'flags.swse.temptationSettled': [] });
+    return { removed: temporary.length, darkSideIncrease: owed.length };
   }
 };
 

@@ -19,16 +19,20 @@ export class ForceEngine {
   /**
    * Spend Force Point
    */
-  static async spendForcePoint(actor) {
-    const fpCurrent = SchemaAdapters.getForcePoints(actor);
-    if (fpCurrent <= 0) {
-      return { success: false, reason: 'No Force Points available' };
+  static async spendForcePoint(actor, context = null) {
+    // No competing untyped balance write: a Force Point leaves the actor only through the typed ForcePointsService /
+    // ActorEngine transaction. A caller that cannot name the use (useKind and its required fields) is refused.
+    if (!context?.useKind) {
+      return { success: false, reason: 'Untyped Force Point spend refused: supply a typed spend context' };
     }
-
-    const newFp = fpCurrent - 1;
-    await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(newFp));
-
-    return { success: true, fpRemaining: newFp };
+    try {
+      const receipt = await ActorEngine.spendForcePoints(actor, 1, context);
+      if (!receipt?.spent) return { success: false, reason: 'No Force Point was spent' };
+      await ActorEngine.finalizeForcePointSpend(actor, receipt);
+      return { success: true, receiptId: receipt.receiptId, fpRemaining: receipt.remaining };
+    } catch (error) {
+      return { success: false, reason: error.message };
+    }
   }
 
   /**

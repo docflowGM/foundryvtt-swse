@@ -29,7 +29,7 @@ ActorEngine.deleteActiveEffects = async (actor, ids) => { actor.effects = actor.
 const world = new Map();
 globalThis.game = globalThis.game ?? {};
 globalThis.game.actors = { get: (id) => world.get(id) };
-const mk = (id) => { const a = { id, name: id, flags: {}, effects: [], items: [], system: {} }; world.set(id, a); return a; };
+const mk = (id) => { const a = { id, name: id, flags: { swse: { forcePointLedger: { receipts: [{ receiptId: `rc-${id}`, actorId: id, state: 'committed' }, { receiptId: 'rc-foreign', actorId: 'someone-else', state: 'committed' }, { receiptId: `rb-${id}`, actorId: id, state: 'rolled-back' }] } } }, effects: [], items: [], system: {} }; world.set(id, a); return a; };
 const power = (id, name, dcChart, extra = {}) => ({ id, name, system: { dcChart, duration: 'Until beginning of next turn', ...extra }, img: 'x.png' });
 const RESIST = [{ dc: 15, description: 'You gain +1 to one Defense score of your choice against Force Powers.' }, { dc: 20, description: 'You gain +2 to one Defense score of your choice against Force Powers.' }, { dc: 25, description: 'You gain +3 to one Defense score of your choice against Force Powers.' }];
 const VALOR = [{ dc: 15, description: 'The target gains a +1 bonus to their Will Defense against Mind-Affecting and Fear effects.' }, { dc: 20, description: 'The target gains a +2 bonus to their Will Defense against Mind-Affecting and Fear effects.' }];
@@ -51,14 +51,26 @@ let passed = 0; const check = (n) => console.log(`PASS ${++passed}: ${n}`);
   const a = mk('jedi2');
   await ForcePowerMaintenance.begin(a, power('p1', 'Resist Force', RESIST), 22, { resistForceDefenses: ['will', 'reflex'] });
   assert.equal(a.effects.length, 0, 'two defenses without a Force Point is rejected');
-  await ForcePowerMaintenance.begin(a, power('p1', 'Resist Force', RESIST), 22, { resistForceDefenses: ['will', 'reflex'], forcePointSpent: true });
+  await ForcePowerMaintenance.begin(a, power('p1', 'Resist Force', RESIST), 22, { resistForceDefenses: ['will', 'reflex'], forcePointReceiptId: `rc-${a.id}` });
   assert.deepEqual(intents(a).map(i => i.target).sort(), ['reflex', 'will']);
+  // a client boolean, a foreign receipt, a rolled-back receipt and a reused receipt all fail closed
+  for (const ctx of [{ forcePointSpent: true }, { forcePointReceiptId: 'rc-foreign' }, { forcePointReceiptId: `rb-${a.id}` }, { forcePointReceiptId: `rc-${a.id}` }]) {
+    const b = mk('chk'); if (ctx.forcePointReceiptId === `rc-${a.id}`) { b.id = a.id; b.flags.swse.forcePointLedger.receipts[0].actorId = a.id; b.flags.swse.maintainedForcePowers = { instances: { x: { forcePointReceiptId: `rc-${a.id}` } } }; }
+    assert.equal((await ForcePowerMaintenance.begin(b, power('p1', 'Resist Force', RESIST), 22, { resistForceDefenses: ['will', 'reflex'], ...ctx })), null, JSON.stringify(ctx));
+  }
   check('two defenses only when the Force Point option is paid');
 }
 {
   const caster = mk('caster'), ally = mk('ally');
   assert.equal(await ForcePowerMaintenance.begin(caster, power('v1', 'Valor', VALOR), 22, {}), null, 'Valor with no ally target does nothing');
   assert.equal(caster.effects.length, 0);
+  const unverified = await ForcePowerMaintenance.begin(caster, power('v1', 'Valor', VALOR), 22, { target: ally, forcePointSpent: true });
+  assert.equal(unverified.forcePointSpent, false, 'client boolean is not proof of payment');
+  assert.equal(intents(ally)[0].filterValue, 'against-mind-affecting-and-fear');
+  await ForcePowerMaintenance.end(caster, unverified.id, 'test');
+  const paidValor = await ForcePowerMaintenance.begin(caster, power('v1', 'Valor', VALOR), 22, { target: ally, forcePointReceiptId: 'rc-caster' });
+  assert.equal(intents(ally)[0].filterValue, 'against-will-targeting');
+  await ForcePowerMaintenance.end(caster, paidValor.id, 'test');
   const rec = await ForcePowerMaintenance.begin(caster, power('v1', 'Valor', VALOR), 22, { target: ally });
   assert.equal(caster.effects.length, 0, 'the caster is not buffed');
   assert.equal(ally.effects.length, 1);

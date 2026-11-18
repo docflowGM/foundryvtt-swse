@@ -243,7 +243,7 @@ function buildSystemData(type, options = {}) {
         ...baseSystem('', 'Manual'),
         actionType: 'standard',
         talentTree: 'Ace Pilot',
-        spent: false,
+        discarded: false,
         inSuite: false,
         uses: { current: 1, max: 1 },
         prerequisites: [],

@@ -1203,6 +1203,7 @@
         "tests/customization-bay-scroll-responsive-contract.test.mjs",
         "tests/droid-synthetic-token-mutation-targeting.test.mjs",
         "tests/force-targeting-regression.test.mjs",
+        "tests/force-v2-03d-maintained-effects.test.mjs",
         "tests/gm-existing-npc-allies-assignment.test.mjs",
         "tests/gm-generation-phase8d3b-production.test.mjs",
         "tests/gm-locations-library-identity-and-fact-integrity.test.mjs",

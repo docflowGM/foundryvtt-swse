@@ -11,7 +11,7 @@ export class StarshipManeuverSuite {
    */
   static async regainOwnedManeuver(pilot, itemId) {
     const selected = pilot?.items?.get?.(itemId);
-    if (!pilot?.id || !selected || !selected?.type === 'maneuver' || selected.system?.discarded !== true) {
+    if (!pilot?.id || !selected || selected.type !== 'maneuver' || selected.system?.discarded !== true) {
       ui?.notifications?.warn?.('An owned spent starship maneuver is required.');
       return false;
     }
@@ -58,7 +58,7 @@ export class StarshipManeuverSuite {
    */
   static async activateManeuver(pilot, itemId, { customModifier = 0, useForce = false } = {}) {
     const selected = pilot?.items?.get?.(itemId);
-    if (!pilot?.id || !selected || !selected?.type === 'maneuver') return { success: false, error: 'An owned starship maneuver is required.' };
+    if (!pilot?.id || !selected || selected.type !== 'maneuver') return { success: false, error: 'An owned starship maneuver is required.' };
     if (selected.system?.discarded === true) return { success: false, error: `${selected.name} is already spent.` };
     const { RollCore } = await import("/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js");
     const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");

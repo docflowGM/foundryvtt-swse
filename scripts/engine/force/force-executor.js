@@ -344,7 +344,8 @@ export class ForceExecutor {
         const effectContext = {
           target: options.target ?? options.targetActor ?? null,
           resistForceDefenses: options.resistForceDefenses ?? null,
-          forcePointSpent: options.forcePointSpent === true
+          // The boolean is NOT proof of payment: maintenance verifies this receipt id against the actor's own ledger.
+          forcePointReceiptId: options.forcePointReceiptId ?? null
         };
         // Powers with a maintenance contract become an independent maintained instance; all others keep the plain path.
         const maintained = await ForcePowerMaintenance.begin(actor, power, total, effectContext);

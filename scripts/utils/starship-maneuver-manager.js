@@ -100,7 +100,7 @@ export class StarshipManeuverManager {
       name: maneuver.name,
       system: {
         ...maneuver,
-        spent: false,
+        discarded: false,
         inSuite: false,
         uses: {
           current: 1,
