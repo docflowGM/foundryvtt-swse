@@ -26,6 +26,7 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 const DIE_STEPS = Object.freeze(['d4', 'd6', 'd8', 'd10', 'd12']);
 
@@ -232,7 +233,11 @@ export class ForcePointsService {
     if (!actor?.id) return reject('Actor identity required');
     const count = Number(context.requestedCount ?? context.amount ?? 1);
     if (!Number.isInteger(count) || count !== 1) return reject('A standard Force Point expenditure must be exactly one point');
-    if (this._isSpendingPrevented(actor)) return reject('Actor is unable to spend Force Points');
+    // A death-rescue reaction is evaluated against the lethal damage event,
+    // not against an already-unconscious final condition-track snapshot.
+    if (context.useKind !== 'avoid-death' && this._isSpendingPrevented(actor)) {
+      return reject('Actor is unable to spend Force Points');
+    }
 
     const useKind = context.useKind;
     const reactionKinds = new Set(['recover-one-force-power', 'recover-one-maneuver', 'avoid-death']);
@@ -250,7 +255,7 @@ export class ForcePointsService {
         const descriptors = [ ...(Array.isArray(item.system?.descriptors) ? item.system.descriptors : []),
           ...(Array.isArray(item.system?.tags) ? item.system.tags : []) ].map(x => String(x).toLowerCase());
         if (descriptors.includes('dark side')) return reject('Dark-side activation cannot use a Force Point bonus');
-        if (descriptors.includes('light side') && Number(actor.system?.darkSideScore?.value ?? 0) > 0) {
+        if (descriptors.includes('light side') && DSPEngine.getValue(actor) > 0) {
           return reject('Light-side activation cannot use a Force Point bonus with Dark Side Score');
         }
       }
@@ -262,11 +267,16 @@ export class ForcePointsService {
         return reject('A specific owned spent suite instance is required for recovery');
       }
     } else if (useKind === 'avoid-death') {
-      // Full damage-event verification belongs to the damage resolution owner.
-      // It must supply its authoritative event receipt in the consumer cutover.
-      if (!context.verifiedDamageEvent) return reject('Verified damage resolution event required');
+      // Never accept a caller's verifiedDamageEvent boolean as proof.
+      // The damage owner must persist an eligible, matching event receipt.
+      // Until that consumer is cut over, death-rescue spending fails closed.
+      const event = actor.getFlag?.('swse', 'forceDeathRescueEvent');
+      if (!context.sourceEventId || event?.id !== context.sourceEventId ||
+          event?.actorId !== actor.id || event?.state !== 'eligible') {
+        return reject('Actor-owned lethal damage event receipt required');
+      }
     } else if (useKind === 'reduce-dark-side-score') {
-      const dsp = Number(actor.system?.darkSideScore?.value ?? actor.system?.darkSide?.score ?? 0);
+      const dsp = DSPEngine.getValue(actor);
       if (!(dsp > 0)) return reject('No Dark Side Score to reduce');
     } else {
       return reject('Unsupported or unclassified Force Point use');
