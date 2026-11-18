@@ -3,8 +3,16 @@ import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 import { graftRealForcePointMethods, setPath } from './helpers/real-force-point-engine.mjs';
 
+globalThis.window = globalThis.window || { location: { hostname: 'localhost' } };
 registerFoundryPathLoader();
 installFoundryShimGlobals();
+globalThis.foundry.applications = globalThis.foundry.applications ?? {};
+globalThis.foundry.applications.api = globalThis.foundry.applications.api ?? {
+  ApplicationV2: class {}, HandlebarsApplicationV2: class {},
+  HandlebarsApplicationMixin: (Base) => class extends Base {}
+};
+globalThis.Hooks = globalThis.Hooks ?? { callAll: () => {}, on: () => {} };
+globalThis.ChatMessage = globalThis.ChatMessage ?? { getSpeaker: () => ({}), create: async () => ({}) };
 globalThis.foundry.utils.randomID = (() => { let n = 0; return () => `fp-test-${++n}`; })();
 
 const { ForcePointsService } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js');
