@@ -18,6 +18,8 @@ import {
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/sith-lord-temptation-state.js';
 import { createTemptationActorSerializer } from
   '/systems/foundryvtt-swse/scripts/engine/progression/utils/temptation-actor-serializer.js';
+import { shouldAutoPromptTemptationChoice } from
+  '/systems/foundryvtt-swse/scripts/engine/progression/utils/temptation-choice-routing.js';
 
 const serializeActor = createTemptationActorSerializer();
 function key(actor){return actorIdentity(actor);}
@@ -257,7 +259,20 @@ export function registerSithLordTemptationHooks(){
  globalThis.Hooks.on('swse.resourceSpent',async event=>{
    try{
      const report=await SithLordTemptationService.consumeSpendReceipt(event);
-     if(report?.handled)await SithLordTemptationService.resolvePending(event.actor);
+     if(report?.handled){
+       const localOwnerShouldChoose=shouldAutoPromptTemptationChoice(event.actor,{
+         user:globalThis.game?.user,users:globalThis.game?.users
+       });
+       if(localOwnerShouldChoose){
+         await SithLordTemptationService.resolvePending(event.actor);
+       }else{
+         // A GM spending on behalf of a connected player must not silently
+         // choose that player's consequence. The committed ledger persists
+         // on the Actor for the owner or an explicit GM review.
+         globalThis.ui?.notifications?.info?.(
+           'Temptation consequence recorded; awaiting target-owner or GM review');
+       }
+     }
    }catch(error){
      globalThis.ui?.notifications?.error?.(
        'Temptation consequence pending GM review: '+error.message);
