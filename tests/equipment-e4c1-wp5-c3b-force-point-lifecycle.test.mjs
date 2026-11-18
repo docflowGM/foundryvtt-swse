@@ -157,12 +157,12 @@ try {
   {
     reset(); const a = mk(); const t = tx(a); await t.commit(); let release; ctl.gate = new Promise((r) => { release = r; });
     const r1 = t.rollback(); const r2 = t.rollback(); await flush(); release(); const [x, y] = await Promise.all([r1, r2]); ctl.gate = null;
-    assert.deepEqual([x, y], [true, true], 'concurrent rollbacks share one outcome'); assert.deepEqual(ctl.gains, [1], 'the point is given back ONCE'); assert.equal(a.system.forcePoints.value, 3);
-    assert.equal(await t.rollback(), false, 'a later rollback does nothing'); assert.deepEqual(ctl.gains, [1]);
+    assert.deepEqual([x, y], [true, true], 'concurrent rollbacks share one outcome'); assert.deepEqual(ctl.gains, [], 'refund never uses normal-only gainForcePoints'); assert.equal(a.system.forcePoints.value, 3);
+    assert.equal(await t.rollback(), false, 'a later rollback does nothing'); assert.deepEqual(ctl.gains, []);
     // rollback requested while the commit is still in flight waits for it, then refunds exactly once
     reset(); const b = mk(); const t2 = tx(b); let rel2; ctl.gate = new Promise((r) => { rel2 = r; });
-    const c1 = t2.commit(); const rb = t2.rollback(); await flush(); assert.equal(ctl.gains.length, 0, 'nothing is refunded before the commit settles'); rel2(); ctl.gate = null;
-    const [cr, rr] = await Promise.all([c1, rb]); assert.equal(cr, true); assert.equal(rr, true); assert.equal(b.system.forcePoints.value, 3); assert.deepEqual(ctl.gains, [1]);
+    const c1 = t2.commit(); const rb = t2.rollback(); await flush(); assert.equal(b.system.forcePoints.value, 3, 'nothing is refunded before the commit settles'); rel2(); ctl.gate = null;
+    const [cr, rr] = await Promise.all([c1, rb]); assert.equal(cr, true); assert.equal(rr, true); assert.equal(b.system.forcePoints.value, 3); assert.deepEqual(ctl.gains, []);
     assert.equal(await t2.commit(), false, 'a rolled-back transaction cannot be committed again'); assert.equal(ctl.spends, 1);
     ok('C3-R5: concurrent rollbacks refund once; a rollback requested during an in-flight commit waits for it; a rolled-back transaction is finished');
   }
@@ -193,7 +193,7 @@ try {
     assert.equal(t.final, false); assert.equal(present.chats, 0, 'no announcement for a spend that is being refunded'); assert.equal(present.hooks, 0);
     release(); ctl.gate = null; assert.equal(await rb, true);
     assert.equal(a.system.forcePoints.value, 3, 'the refund completed'); assert.equal(t.state, 'rolled-back'); assert.equal(t.closed, true); assert.equal(t.final, false);
-    assert.deepEqual(ctl.gains, [1], 'refunded exactly once'); assert.equal(present.chats, 0); assert.equal(present.hooks, 0); assert.equal(ctl.spends, 1, 'no second spend');
+    assert.deepEqual(ctl.gains, [], 'exact refund never calls normal-only gainForcePoints'); assert.equal(present.chats, 0); assert.equal(present.hooks, 0); assert.equal(ctl.spends, 1, 'no second spend');
     assert.equal(await t.announce(), false); assert.equal(await t.commit(), false); assert.equal(t.finalize(), false);
     // a rollback that FAILS part-way still bars finalization/announcement (the spend is neither cleanly refunded nor cleanly final) and can be retried
     reset(); installPresentation(); const b = mk(); const t2 = tx(b); await t2.commit(); ctl.failWrite = true;
