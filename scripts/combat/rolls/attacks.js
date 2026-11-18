@@ -666,6 +666,7 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
     attacker,
     weapon,
     attackType: damageContext.attackType,
+    weaponId: weapon?.id ?? '',
     damageType: damageContext.damageType,
     damageTypes: damageContext.damageTypes,
     originalDamageTypes: damageContext.originalDamageTypes,
