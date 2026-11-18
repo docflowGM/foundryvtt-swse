@@ -85,7 +85,7 @@ test('production activation releases caster queue before target mark transaction
  assert.ok(replan>targetStart&&update>replan,'replan after target lock');
  assert.match(method,/checkTotal:attempt\.checkTotal/);
  assert.match(method,/willDefense:attempt\.willDefense/);
- assert.match(method,/Temptation authority changed before target mutation/);
+ assert.match(method,/Temptation action turn changed before target mutation/);
  assert.match(method,/Temptation post-roll outcome requires GM review/);
  assert.doesNotMatch(method,/target\.update\(/);
 });
