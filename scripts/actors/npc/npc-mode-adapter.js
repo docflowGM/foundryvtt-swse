@@ -8,6 +8,8 @@
  * Phase 2: resolves non-mutating NPC profile/authority context for the sheet.
  */
 
+import { evaluateNonheroicTransition } from '../../engine/progression/utils/nonheroic-class-model.js';
+
 const NPC_KINDS = new Set([
   'heroic',
   'nonheroic',
@@ -90,6 +92,48 @@ function hasClassItems(actor) {
   return Boolean(actor?.items?.some?.(item => item?.type === 'class'));
 }
 
+function isNonheroicClassItem(item) {
+  if (item?.system?.isNonheroic === true) return true;
+  const key = normalizeKey(item?.system?.classId ?? item?.system?.class_name ?? item?.name);
+  return key === 'nonheroic';
+}
+
+/**
+ * Progression identity established by EMBEDDED CLASS RECORDS (the canonical
+ * class history), not by descriptive text. All class items nonheroic ->
+ * 'nonheroic'; any heroic class item -> 'heroic' (mixed-track NPCs are heroic
+ * by identity and expose both levels through getLevelSplit()); no class items
+ * -> null.
+ */
+function classItemKind(actor) {
+  const classItems = actor?.items?.filter?.(item => item?.type === 'class') ?? [];
+  return classKindFromEntries(classItems);
+}
+
+/**
+ * Identity from a list of class records/entries (anything with `system.isNonheroic`
+ * or a Nonheroic name/classId): all nonheroic -> 'nonheroic', any heroic ->
+ * 'heroic', none -> null. Shared by the live-actor resolver and by the finalizer
+ * when it reconciles the stored profile with the class history a plan will leave.
+ */
+export function classKindFromEntries(entries = []) {
+  const list = Array.from(entries || []).filter(Boolean);
+  if (!list.length) return null;
+  return list.every(isNonheroicClassItem) ? 'nonheroic' : 'heroic';
+}
+
+/** Text/pack-derived kind (descriptive metadata; never outranks class records). */
+function heuristicKind(actor) {
+  const pack = getPackKey(actor);
+  if (pack.includes('nonheroic') || rawContains(actor, ['nonheroic'])) return 'nonheroic';
+  if (pack.includes('heroic')) return 'heroic';
+
+  const classText = normalizeKey(`${actor?.system?.className ?? ''} ${actor?.system?.class ?? ''}`);
+  if (classText.includes('nonheroic')) return 'nonheroic';
+  if (classText) return 'heroic';
+  return null;
+}
+
 function inferKind(actor) {
   const explicit = normalizeKey(actor?.system?.npcProfile?.kind ?? actor?.system?.npcProfile?.type);
   if (NPC_KINDS.has(explicit)) return explicit;
@@ -106,17 +150,64 @@ function inferKind(actor) {
   const creatureType = normalizeKey(actor?.system?.creatureType ?? actor?.system?.type ?? actor?.system?.npcType);
   if (creatureType.includes('mount')) return 'mount';
   if (creatureType.includes('beast') || hasBeastData(actor) || pack.includes('beast')) return 'beast';
-  if (pack.includes('nonheroic') || rawContains(actor, ['nonheroic'])) return 'nonheroic';
-  if (pack.includes('heroic')) return 'heroic';
 
-  const classText = normalizeKey(`${actor?.system?.className ?? ''} ${actor?.system?.class ?? ''}`);
-  if (classText.includes('nonheroic')) return 'nonheroic';
-  if (classText) return 'heroic';
+  // Canonical class history outranks descriptive text.
+  const fromClasses = classItemKind(actor);
+  if (fromClasses) return fromClasses;
 
-  return getRawImport(actor) ? 'imported' : 'standard';
+  return heuristicKind(actor) ?? (getRawImport(actor) ? 'imported' : 'standard');
 }
 
-function inferMode(actor, kind = inferKind(actor)) {
+/**
+ * Report (never silently resolve) disagreements between the NPC's declared
+ * identity and its embedded class records:
+ *  - explicit npcProfile.kind/legalProfile heroic|nonheroic vs class-derived kind
+ *  - descriptive pack/text kind vs class-derived kind
+ * @param {Actor} actor
+ * @returns {Array<{code:string, declared:string, derived:string, message:string}>}
+ */
+export function getNpcIdentityConflicts(actor) {
+  if (actor?.type !== 'npc') return [];
+  const derived = classItemKind(actor);
+  if (!derived) return [];
+  const conflicts = [];
+
+  const declaredExplicit = [
+    normalizeKey(actor?.system?.npcProfile?.kind ?? actor?.system?.npcProfile?.type),
+    normalizeKey(actor?.system?.npcProfile?.legalProfile)
+  ].filter(value => value === 'heroic' || value === 'nonheroic');
+  for (const declared of new Set(declaredExplicit)) {
+    if (declared !== derived) {
+      conflicts.push({
+        code: 'profile-vs-class-items',
+        declared,
+        derived,
+        message: `NPC profile says "${declared}" but its embedded class records are ${derived}.`
+      });
+    }
+  }
+
+  const textual = heuristicKind(actor);
+  if (!declaredExplicit.length && textual && textual !== derived) {
+    conflicts.push({
+      code: 'metadata-vs-class-items',
+      declared: textual,
+      derived,
+      message: `NPC metadata (pack/class text) suggests "${textual}" but its embedded class records are ${derived}.`
+    });
+  }
+  return conflicts;
+}
+
+/**
+ * The mode an NPC EXPLICITLY declares, from every authority input the resolver
+ * supports, in priority order: npcProfile.mode/importMode, system.npcMode, the
+ * canonical and legacy npcLevelUp.mode flags, then system.useProgression.
+ * Returns the canonical mode ('play' = statblock) or null when nothing is declared.
+ * Single reader: inferMode() and the progression guard both use it, so a
+ * declaration recognized by one is recognized by the other.
+ */
+function readExplicitMode(actor) {
   const profileMode = normalizeKey(actor?.system?.npcProfile?.mode ?? actor?.system?.npcProfile?.importMode);
   if (NPC_MODES.has(profileMode)) return profileMode === 'statblock' ? 'play' : profileMode;
 
@@ -135,6 +226,12 @@ function inferMode(actor, kind = inferKind(actor)) {
 
   if (actor?.system?.useProgression === true) return 'progression';
   if (actor?.system?.useProgression === false) return 'play';
+  return null;
+}
+
+function inferMode(actor, kind = inferKind(actor)) {
+  const explicit = readExplicitMode(actor);
+  if (explicit) return explicit;
   if (['minion', 'privateer'].includes(kind) && hasOwnerLink(actor)) return 'owner-sync';
   if (hasClassItems(actor) && !getRawImport(actor)) return 'progression';
   return 'play';
@@ -215,9 +312,15 @@ export function getNpcProfileState(actor) {
   const imported = Boolean(rawImport || packKey);
   const profileMissing = !actor?.system?.npcProfile;
   const classItemCount = actor?.items?.filter?.(item => item?.type === 'class')?.length ?? 0;
+  const identityConflicts = getNpcIdentityConflicts(actor);
 
   return {
     kind,
+    // Contradictory identity data is reported, never silently resolved. An
+    // identity is "ambiguous" when neither an explicit profile, a dependent
+    // relationship nor class records establish what this NPC is.
+    identityConflicts,
+    identityAmbiguous: ['standard', 'imported'].includes(kind) && classItemCount === 0,
     mode,
     sourceAuthority,
     legalProfile,
@@ -378,4 +481,150 @@ export function usesFlatStatblockAttacks(actor, weapon) {
   if (!actor || actor.type !== 'npc') return false;
   if (!isNpcStatblockMode(actor)) return false;
   return weapon?.flags?.swse?.npc?.useFlat === true && Number.isFinite(weapon?.flags?.swse?.npc?.flatAttackBonus);
+}
+
+
+// ---------------------------------------------------------------------------
+// Central progression guard + profile/class identity reconciliation
+// ---------------------------------------------------------------------------
+
+const DEPENDENT_KINDS = new Set(['beast', 'mount', 'follower', 'minion', 'privateer', 'companion']);
+
+function heroicNonheroicLevels(actor) {
+  let heroic = 0;
+  let nonheroic = 0;
+  for (const item of actor?.items?.filter?.(i => i?.type === 'class') ?? []) {
+    const level = Number(item?.system?.level) || 0;
+    if (isNonheroicClassItem(item)) nonheroic += level; else heroic += level;
+  }
+  return { heroic, nonheroic };
+}
+
+/** An NPC that already carries mechanical history (as opposed to a blank draft). */
+export function npcHasExistingMechanics(actor) {
+  if (actor?.type !== 'npc' || !actor?.id) return false;
+  return (Number(actor?.system?.level) || 0) > 0
+    || hasClassItems(actor)
+    || Boolean(getRawImport(actor))
+    || Boolean(getPackKey(actor));
+}
+
+/**
+
+ * An NPC that EXPLICITLY declares statblock authority (any explicit declaration the
+ * canonical resolver reads: profile source authority / mode / calculation mode,
+ * system.npcMode, npcLevelUp flags, system.useProgression=false). This is a declared mechanical authority,
+ * independent of whether class items, a level, import data or a pack id exist -
+ * so a saved, classless, level-0 statblock NPC is still protected.
+ */
+export function npcDeclaresStatblockAuthority(actor) {
+  if (actor?.type !== 'npc' || !actor?.id) return false;
+  const profile = actor?.system?.npcProfile;
+  const authority = normalizeKey(profile?.sourceAuthority ?? profile?.authority);
+  const calc = normalizeKey(profile?.calculationMode);
+  // Same explicit-mode reader the canonical resolver uses (profile mode, system.npcMode,
+  // npcLevelUp flags in both namespaces, system.useProgression): not a second resolver.
+  return readExplicitMode(actor) === 'play' || authority === 'statblock' || calc === 'statblock';
+}
+
+/**
+ * Fail-closed progression guard for EXISTING NPCs, independent of caller, UI
+ * entry point or requested subtype. A requested/declared heroic or nonheroic
+ * identity never overrides statblock authority; only an authorized, snapshot
+ * backed conversion does.
+ *
+ * @param {Actor} actor
+ * @param {{subtype?: string|null, conversion?: {target?: string, originSnapshot?: *}|null, originSnapshotExists?: boolean}} [ctx]
+ * @returns {{blocked: boolean, reason: string|null, message: string, conflicts?: Array}}
+ */
+export function evaluateNpcProgressionGuard(actor, ctx = {}) {
+  const ok = { blocked: false, reason: null, message: '' };
+  // A fresh creation draft (no id, or a persisted blank with no declared authority
+  // and no mechanical history) is not guarded; an NPC with mechanics OR an explicit
+  // statblock declaration is.
+  if (actor?.type !== 'npc' || !(npcHasExistingMechanics(actor) || npcDeclaresStatblockAuthority(actor))) return ok;
+
+  const state = getNpcProfileState(actor);
+  if (DEPENDENT_KINDS.has(state.kind) || state.mode === 'owner-sync') return ok;
+
+  if (state.identityConflicts?.length) {
+    return {
+      blocked: true,
+      reason: 'identity-conflict',
+      conflicts: state.identityConflicts,
+      message: `${state.identityConflicts.map(c => c.message).join(' ')} Resolve this in NPC Legal Review & Repair before advancing.`
+    };
+  }
+
+  const requested = ctx.subtype === 'heroic' || ctx.subtype === 'nonheroic' ? ctx.subtype : null;
+  if (requested === 'nonheroic') {
+    const { heroic, nonheroic } = heroicNonheroicLevels(actor);
+    const transition = evaluateNonheroicTransition({ heroicLevel: heroic, nonheroicLevel: nonheroic, target: 'nonheroic' });
+    if (!transition.allowed) return { blocked: true, reason: 'transition-not-allowed', message: transition.reason };
+  }
+
+  const statblockControlled = resolveNpcCalculationMode(actor) === 'statblock'
+    || state.sourceAuthority === 'statblock'
+    || state.mode === 'play';
+  if (statblockControlled) {
+    const conv = ctx.conversion;
+    const authorized = Boolean(conv && ['heroic', 'nonheroic'].includes(conv.target) && ctx.originSnapshotExists === true
+      && (!requested || requested === conv.target));
+    if (!authorized) {
+      return {
+        blocked: true,
+        reason: 'statblock-conversion-required',
+        message: 'This NPC uses its published statblock as authority. Convert it to calculated progression from the NPC level-up dialog (which saves a restorable snapshot) before advancing it.'
+      };
+    }
+  }
+  return ok;
+}
+
+/**
+ * Profile fields that must change in the SAME transaction as a progression plan
+ * so the stored NPC identity matches the class history the plan leaves behind
+ * (Nonheroic 3 + first Soldier level => 'heroic' identity with separate level
+ * accounting), plus the explicit statblock-conversion authority switch.
+ * Pure: returns `set` paths only.
+ */
+export function buildNpcProfileReconciliationPatch(actor, { addedClassItems = [], conversion = null, now = new Date().toISOString(), userId = null } = {}) {
+  if (actor?.type !== 'npc') return {};
+  const profile = actor?.system?.npcProfile ?? null;
+  const patch = {};
+
+  const existing = actor?.items?.filter?.(item => item?.type === 'class') ?? [];
+  const derived = classKindFromEntries([...existing, ...addedClassItems]);
+  const storedKind = normalizeKey(profile?.kind ?? profile?.type);
+  const storedLegal = normalizeKey(profile?.legalProfile);
+  const dependent = DEPENDENT_KINDS.has(storedKind) || DEPENDENT_KINDS.has(storedLegal);
+
+  if (derived && !dependent) {
+    const declared = (storedKind === 'heroic' || storedKind === 'nonheroic') ? storedKind
+      : ((storedLegal === 'heroic' || storedLegal === 'nonheroic') ? storedLegal : null);
+    if (declared !== null && (declared !== derived || storedKind !== derived || storedLegal !== derived)) {
+      patch['system.npcProfile.kind'] = derived;
+      patch['system.npcProfile.legalProfile'] = derived;
+    }
+  }
+
+  if (conversion) {
+    const before = getNpcProfileState(actor);
+    const kind = derived ?? conversion.target;
+    patch['system.npcProfile.kind'] = kind;
+    patch['system.npcProfile.legalProfile'] = kind;
+    patch['system.npcProfile.mode'] = 'progression';
+    patch['system.npcProfile.sourceAuthority'] = 'progression';
+    patch['system.npcProfile.calculationMode'] = 'progression';
+    patch['system.npcProfile.legalReview.statblockConversion'] = {
+      convertedAt: now,
+      convertedBy: userId,
+      target: conversion.target,
+      originSnapshot: conversion.originSnapshot ?? null,
+      fromAuthority: before.sourceAuthority,
+      fromMode: before.mode,
+      fromKind: before.kind
+    };
+  }
+  return patch;
 }

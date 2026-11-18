@@ -18,6 +18,14 @@
 import { applyInitialInstallationToPlan } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-initial-installation-service.js';
 import { ProgressionSubtypeAdapter, ParticipantKind } from './progression-subtype-adapter.js';
 import { seedNonheroicSession } from './nonheroic-session-seeder.js';
+import {
+  isNonheroicClassRef,
+  getNonheroicClassModel,
+  validateNonheroicStartingFeats,
+  NONHEROIC_STARTING_FEAT_SLOT_TYPE,
+  NONHEROIC_STARTING_FEAT_SOURCE,
+} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js';
+import { resolveTrainedSkillAllowance } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/trained-skill-allowance.js';
 import { shouldSuppressTalentSteps, describeTalentCadence } from './talent-cadence-helper.js';
 import { seedFollowerSession, validateFollowerEntitlement } from './follower-session-seeder.js';
 import { deriveFollowerStats, getFollowerDerivationContext, deriveFollowerStateForApply } from './follower-deriver.js';
@@ -577,7 +585,10 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
   }
 
   handles(subtype) {
-    return subtype === 'nonheroic' || subtype === 'imported-statblock' || subtype === 'standard';
+    // Only the explicit 'nonheroic' track. 'imported-statblock'/'standard' are NOT
+    // calculated Nonheroic progression: statblock NPCs need an explicit GM
+    // conversion to heroic/nonheroic first (progression-entry / NPC level-up entry).
+    return subtype === 'nonheroic';
   }
 
   async seedSession(session, actor, mode) {
@@ -617,10 +628,19 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
     let filteredSteps = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
 
     if (session?.mode === 'chargen') {
-      filteredSteps = filteredSteps.filter(stepId => !['class', 'class-step', 'class-selection', 'base-class', 'general-feat', 'class-feat'].includes(stepId));
+      // The manual class picker is replaced by the canonical Nonheroic class
+      // selection the seeder commits (NPC-001). The three printed starting feats
+      // are their own entitlement (nonheroic-starting-feats); the ordinary
+      // level-1 general feat (Core Rulebook p.277: nonheroics "gain feats
+      // normally as they advance in level") stays as its own general-feat step.
+      // Nonheroic has no class-feat slot, so only 'class-feat' is suppressed.
+      filteredSteps = filteredSteps.filter(stepId => !['class', 'class-step', 'class-selection', 'base-class', 'class-feat'].includes(stepId));
       if (!filteredSteps.includes('nonheroic-starting-feats')) {
+        // Starting feats precede the general feat so general-feat prerequisites
+        // (e.g. Weapon Focus) can see the proficiencies they grant.
+        const generalIndex = filteredSteps.indexOf('general-feat');
         const languagesIndex = filteredSteps.indexOf('languages');
-        const insertAt = languagesIndex >= 0 ? languagesIndex : filteredSteps.length;
+        const insertAt = generalIndex >= 0 ? generalIndex : (languagesIndex >= 0 ? languagesIndex : filteredSteps.length);
         filteredSteps.splice(insertAt, 0, 'nonheroic-starting-feats');
       }
     }
@@ -733,7 +753,48 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
     // During chargen, Nonheroic is implicit and may be materialized at final
     // application. Existing independent nonheroics should still have a class item
     // unless they are dependent owner-synced minions.
-    if (session?.mode === 'chargen') return;
+    // Chargen: the class-selection step is suppressed, so the canonical Nonheroic
+    // class selection MUST already be committed to the session (NPC-001);
+    // Summary and the Finalizer both require selections.class.
+    if (session?.mode === 'chargen') {
+      if (!isNonheroicClassRef(session?.draftSelections?.class)) {
+        throw new Error('[NonheroicAdapter] validateReadiness: canonical Nonheroic class selection missing from chargen session');
+      }
+
+      const draft = session?.draftSelections || {};
+
+      // NPC-003: the trained-skill count must not exceed the entitlement
+      // recomputed NOW from pending INT/species (same formula the step uses).
+      const trainedSkills = Array.isArray(draft.skills?.trained) ? draft.skills.trained
+        : Array.isArray(draft.skills) ? draft.skills : [];
+      if (trainedSkills.length > 0) {
+        const allowance = resolveTrainedSkillAllowance({
+          classModel: getNonheroicClassModel(),
+          attributeSelection: draft.attributes || null,
+          speciesSelection: draft.species || null,
+          pendingSpeciesContext: draft.pendingSpeciesContext || draft.species?.pendingContext || null,
+          character: actor?.system || {},
+        });
+        if (trainedSkills.length > allowance) {
+          throw new Error(`[NonheroicAdapter] validateReadiness: ${trainedSkills.length} trained skills selected but only ${allowance} are allowed`);
+        }
+      }
+
+      // NPC-002: exactly the three printed starting feats, each legal and scoped.
+      const startingFeats = (Array.isArray(draft.feats) ? draft.feats : []).filter(feat =>
+        feat?.slotType === NONHEROIC_STARTING_FEAT_SLOT_TYPE || feat?.source === NONHEROIC_STARTING_FEAT_SOURCE);
+      // A Galactic Profile session supplies its own owner-authored choices and
+      // bypasses the starting-feat step; whether such profiles must satisfy the
+      // three-feat rule is an open rules/data question (SWSE-NPC-RD-004), so the
+      // step-entitlement check is not imposed on them.
+      const featCheck = session?.profileStepsComplete === true
+        ? { valid: true, errors: [] }
+        : validateNonheroicStartingFeats(startingFeats);
+      if (!featCheck.valid) {
+        throw new Error(`[NonheroicAdapter] validateReadiness: ${featCheck.errors.join(' ')}`);
+      }
+      return;
+    }
 
     const isMinion = actor?.system?.isMinion === true
       || actor?.system?.progression?.isMinion === true

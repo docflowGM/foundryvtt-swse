@@ -33,7 +33,7 @@ for (const forbidden of ['vehicle-context-builder', 'vehicle-rules-adapter', 'dr
   assert.doesNotMatch(npcSheet, new RegExp(forbidden), `npc-actor-sheet.js must not import Vehicle/Droid-only subsystem "${forbidden}"`);
 }
 assert.match(npcSheet, /launchFollowerProgression/, 'npc-actor-sheet.js should wire the Phase 5A open-follower-advancement fix');
-assert.match(npcSheet, /NpcProgressionEngine/, 'npc-actor-sheet.js should wire the Phase 5A revert-npc-progression fix');
+assert.match(npcSheet, /SnapshotManager\.revertToLatestSnapshot/, 'npc-actor-sheet.js should wire the Phase 5A revert-npc-progression fix');
 
 // ─── Character-like (Character/NPC/Droid shared): no Vehicle-only imports ──
 for (const forbidden of ['vehicle-context-builder', 'vehicle-rules-adapter', 'vehicle-crew-assignment-controls', 'StarshipManeuversEngine', 'SubsystemEngine']) {

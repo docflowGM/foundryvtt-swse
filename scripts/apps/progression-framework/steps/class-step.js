@@ -25,7 +25,7 @@ import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progre
 import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 import { getClassProfileDescription, getClassProfileQuote } from './class-profile-copy.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
-import { getNonheroicClassModel, isNonheroicClassRef } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js';
+import { getNonheroicClassModel, isNonheroicClassRef, evaluateNonheroicTransition } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js';
 
 export class ClassStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -763,7 +763,12 @@ export class ClassStep extends ProgressionStepPlugin {
     if (this._isDroidProgression) return false;
     if (this._isNonheroicProgression !== true) return false;
     if (shell?.progressionSession?.nonheroicContext?.manualLevelUpAllowed === false) return false;
-    return !this._actorHasHeroicClassLevels(shell?.actor);
+    // Same transition policy the NPC level-up entry applies: it decides whether
+    // Nonheroic may be offered once heroic class levels exist.
+    return evaluateNonheroicTransition({
+      heroicLevel: this._actorHasHeroicClassLevels(shell?.actor) ? 1 : 0,
+      target: 'nonheroic',
+    }).allowed;
   }
 
   _actorHasHeroicClassLevels(actor = null) {

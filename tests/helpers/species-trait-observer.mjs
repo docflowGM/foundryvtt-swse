@@ -27,7 +27,9 @@ export async function observeSpecies(name, variantId = null) {
   };
 }
 
-const SKILLS_STEP = readFileSync(new URL('../../scripts/apps/progression-framework/steps/skills-step.js', import.meta.url), 'utf8');
+// The trained-skill allowance formula (Human bonus skill etc.) is owned by the shared allowance helper that SkillsStep delegates to.
+const SKILLS_STEP = readFileSync(new URL('../../scripts/apps/progression-framework/steps/skills-step.js', import.meta.url), 'utf8')
+  + readFileSync(new URL('../../scripts/engine/progression/utils/trained-skill-allowance.js', import.meta.url), 'utf8');
 
 /** true when the engine currently applies the mechanic described by a fixture `mechanic` spec. */
 export function isApplied(obs, m) {

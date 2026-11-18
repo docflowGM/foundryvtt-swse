@@ -9,6 +9,7 @@
  * the final mutation plan.
  */
 
+import { getFeatSelectionScopeKey } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 import { stampSourceLink, canonicalTalentUuid } from '/systems/foundryvtt-swse/scripts/data/talent-source-identity.js';
@@ -170,7 +171,30 @@ function acquisitionMetaFor(rawEntry, domainKey, sessionId, selectionIdentity, s
     selectionKey: domainKey,
     selectionId: selectionIdentity,
     selectionInstanceKey,
+    // Provenance: class grants (e.g. 'class:nonheroic') stay distinguishable
+    // from character-level selections.
+    grantSource: rawEntry?.grantSource || null,
   };
+}
+
+/**
+ * Choice-bearing feats (Skill Focus, Skill Training, Weapon Proficiency...) are
+ * distinct per chosen scope; a name-only dedupe would silently drop the second
+ * Skill Focus. Returns the scope key of a feat entry ('' when unscoped).
+ */
+function featScopeKeyFor(domainKey, rawEntry) {
+  if (domainKey !== 'feats') return '';
+  return getFeatSelectionScopeKey(rawEntry?.system?.selectedChoice ?? rawEntry?.selectedChoice ?? null);
+}
+
+function ownedScopedFeatKeys(actor) {
+  const keys = new Set();
+  for (const item of actor?.items || []) {
+    if (item?.type !== 'feat') continue;
+    const scope = getFeatSelectionScopeKey(item.system?.selectedChoice ?? null);
+    if (scope) keys.add(`feat::${String(item.name || '').toLowerCase()}::${scope}`);
+  }
+  return keys;
 }
 
 function progressionFlagsFor(domainKey, rawEntry, sessionId, selectionIdentity, selectionInstanceKey, idx, repeatableRank = null) {
@@ -227,6 +251,7 @@ export class FeatTalentPlanBuilder {
     const existingByTypeAndName = existingKeySet(actor);
     const existingMarkers = existingSessionMarkerSets(actor);
     const generatedRepeatableCounts = new Map();
+    const seenScopedFeats = ownedScopedFeatKeys(actor);
 
     const domainConfig = [
       { key: 'feats', type: 'feat', allowDuplicates: false },
@@ -246,7 +271,9 @@ export class FeatTalentPlanBuilder {
         const resolvedDoc = await resolveDomainDocument(domain.key, rawEntry);
         const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
         const resolvedName = resolvedData?.name || rawEntry?.name || rawEntry?.id || String(rawEntry);
-        const selectionIdentity = rawEntry?.selectionId || rawEntry?.id || resolvedName;
+        const entryScope = featScopeKeyFor(domain.key, rawEntry);
+        const baseSelectionIdentity = rawEntry?.selectionId || rawEntry?.id || resolvedName;
+        const selectionIdentity = entryScope && !rawEntry?.selectionId ? `${baseSelectionIdentity}::${entryScope}` : baseSelectionIdentity;
         const selectionInstanceKey = selectionInstanceKeyFor(rawEntry, domain.key, valueIndex);
 
         for (let idx = 0; idx < count; idx += 1) {
@@ -254,12 +281,19 @@ export class FeatTalentPlanBuilder {
           const legacyMarker = `${sessionId}::${domain.key}::${selectionIdentity}::${idx}`;
           const dedupeKey = `${domain.type}::${String(resolvedName || '').toLowerCase()}`;
           const allowDuplicateForEntry = domain.allowDuplicates
-            || (domain.key === 'talents' && isRepeatableTalentEntry(rawEntry, resolvedData));
+            || (domain.key === 'talents' && isRepeatableTalentEntry(rawEntry, resolvedData))
+            || (domain.key === 'feats' && Boolean(entryScope));
           if (existingMarkers.exact.has(sessionMarker)) continue;
           // Legacy acquisitions did not record a slot-instance key. Treat the first
           // rank as already materialized while still allowing later repeatable ranks.
           if (valueIndex === 0 && idx === 0 && existingMarkers.legacy.has(legacyMarker)) continue;
           if (!allowDuplicateForEntry && existingByTypeAndName.has(dedupeKey)) continue;
+          if (entryScope) {
+            // Only an exact repeat of an owned/planned (feat, scope) is a duplicate.
+            const scopedKey = `feat::${String(resolvedName || '').toLowerCase()}::${entryScope}`;
+            if (seenScopedFeats.has(scopedKey)) continue;
+            seenScopedFeats.add(scopedKey);
+          }
 
           const baseItem = resolvedData ? clonePlainObject(resolvedData) : {
             name: resolvedName,

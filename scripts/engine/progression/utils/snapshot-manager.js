@@ -44,6 +44,8 @@ function stripNestedSnapshots(actorData = {}) {
     return data;
 }
 
+export const STATBLOCK_ORIGIN_KIND = 'statblock-conversion-origin';
+
 export class SnapshotManager {
 
     /**
@@ -52,13 +54,16 @@ export class SnapshotManager {
      * @param {string} label - Description of snapshot (e.g. "Before Level-Up")
      * @returns {Promise<Object>} The snapshot object
      */
-    static async createSnapshot(actor, label = 'Character Snapshot') {
+    static async createSnapshot(actor, label = 'Character Snapshot', options = {}) {
         try {
             const snapshot = {
                 schemaVersion: SNAPSHOT_SCHEMA_VERSION,
                 scope: 'full-actor',
                 timestamp: Date.now(),
                 label,
+                // 'statblock-conversion-origin' marks the authoritative pre-conversion
+                // state; it is never trimmed and is the only target of Revert to Statblock.
+                kind: options.kind ?? null,
                 actorId: actor.id,
                 actorName: actor.name,
                 level: actor.system.level || 1,
@@ -69,9 +74,12 @@ export class SnapshotManager {
             const history = (foundry.utils.deepClone(actor.getFlag(SYSTEM_ID, 'snapshots') || []))
                 .map((entry) => entry?.actorData ? { ...entry, actorData: stripNestedSnapshots(entry.actorData) } : entry);
 
-            // Keep only last 10 snapshots to avoid bloat
+            // Keep only last 10 snapshots to avoid bloat - but never drop a
+            // statblock-conversion-origin snapshot (the only way back to the
+            // published statblock); trim the oldest ordinary snapshot instead.
             if (history.length >= 10) {
-                history.shift();
+                const trimAt = history.findIndex((entry) => entry?.kind !== STATBLOCK_ORIGIN_KIND);
+                history.splice(trimAt >= 0 ? trimAt : 0, 1);
             }
 
             history.push(snapshot);
@@ -126,6 +134,96 @@ export class SnapshotManager {
     static getLatestSnapshot(actor) {
         const snapshots = this.getSnapshots(actor);
         return snapshots.length > 0 ? snapshots[snapshots.length - 1] : null;
+    }
+
+    /**
+     * True when the actor has at least one snapshot available for revert.
+     * (Snapshot ownership lives here; the legacy NPC packet engine is retired.)
+     * @param {Actor} actor
+     * @returns {boolean}
+     */
+    static hasSnapshots(actor) {
+        if (!actor) return false;
+        return this.getSnapshots(actor).length > 0;
+    }
+
+    /**
+     * Display info for the latest snapshot, or null.
+     * @param {Actor} actor
+     * @returns {{label: string, timestamp: number, level: *, date: string}|null}
+     */
+    static getLatestSnapshotInfo(actor) {
+        if (!actor) return null;
+        const snapshot = this.getLatestSnapshot(actor);
+        if (!snapshot) return null;
+        return {
+            label: snapshot.label,
+            timestamp: snapshot.timestamp,
+            level: snapshot.level,
+            date: new Date(snapshot.timestamp).toLocaleString()
+        };
+    }
+
+    /**
+     * The conversion-origin snapshot an NPC's recorded statblock conversion points
+     * at (exact timestamp match AND kind), or null. A merely-latest snapshot is
+     * never returned: after conversion, ordinary level-up snapshots exist that hold
+     * progression authority.
+     * @param {Actor} actor
+     * @returns {Object|null}
+     */
+    static getStatblockOriginSnapshot(actor) {
+        const ref = actor?.system?.npcProfile?.legalReview?.statblockConversion?.originSnapshot;
+        if (ref === null || ref === undefined) return null;
+        return this.getSnapshots(actor).find((entry) => entry?.timestamp === ref && entry?.kind === STATBLOCK_ORIGIN_KIND) ?? null;
+    }
+
+    /** True when `ref` names an existing conversion-origin snapshot on the actor (conversion not yet recorded). */
+    static hasStatblockOriginSnapshot(actor, ref) {
+        if (ref === null || ref === undefined) return false;
+        return this.getSnapshots(actor).some((entry) => entry?.timestamp === ref && entry?.kind === STATBLOCK_ORIGIN_KIND);
+    }
+
+    /**
+     * Revert a converted NPC to its ORIGINAL published statblock (the recorded
+     * conversion-origin snapshot), distinct from ordinary level-up undo.
+     * @returns {Promise<boolean>} false when the NPC has no recorded origin snapshot
+     */
+    static async revertToStatblockOrigin(actor) {
+        if (!actor) throw new Error('SnapshotManager.revertToStatblockOrigin: no actor');
+        const snapshot = this.getStatblockOriginSnapshot(actor);
+        if (!snapshot) {
+            ui.notifications?.warn('No original statblock snapshot is recorded for this NPC.');
+            return false;
+        }
+        const restored = await this.restoreSnapshot(actor, snapshot.timestamp);
+        if (!restored) throw new Error('Statblock restoration failed');
+        SWSELogger.log(`Restored ${actor.name} to its original statblock: "${snapshot.label}"`);
+        return true;
+    }
+
+    /**
+     * Revert an actor to its latest snapshot (statblock restoration after NPC
+     * progression). Restoration itself is the existing identity-exact
+     * restoreSnapshot() path; this only selects the latest snapshot.
+     * @param {Actor} actor
+     * @returns {Promise<boolean>} true if restored; false when none existed
+     */
+    static async revertToLatestSnapshot(actor) {
+        if (!actor) throw new Error('SnapshotManager.revertToLatestSnapshot: no actor');
+        const snapshot = this.getLatestSnapshot(actor);
+        if (!snapshot) {
+            SWSELogger.warn(`No snapshot available for ${actor.name}`);
+            ui.notifications?.warn('No previous snapshot found.');
+            return false;
+        }
+        const restored = await this.restoreSnapshot(actor, snapshot.timestamp);
+        if (!restored) {
+            SWSELogger.error('Failed to restore snapshot for', actor.name);
+            throw new Error('Snapshot restoration failed');
+        }
+        SWSELogger.log(`Restored ${actor.name} to snapshot: "${snapshot.label}"`);
+        return true;
     }
 
     /**
