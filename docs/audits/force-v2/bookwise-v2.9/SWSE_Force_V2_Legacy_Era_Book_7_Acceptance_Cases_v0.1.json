@@ -1,0 +1,3296 @@
+{
+  "manifestVersion": "0.1.0",
+  "schemaVersion": "2.9.0",
+  "scope": "Legacy Era book 7; design and regression scenarios",
+  "testExecutionStatus": "specified-not-run",
+  "cases": [
+    {
+      "id": "LEG-B7-ballistakinesis-ID",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Ballistakinesis: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "fp_ballistakinesis"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-power/ballistakinesis",
+        "printedPage": 53
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-ballistakinesis-LEGAL",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Ballistakinesis: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-ballistakinesis-ACT",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Ballistakinesis: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "standard",
+        "target": "all-targets-in-2x2-area"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "defense-per-target"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-ballistakinesis-RES",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Ballistakinesis: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-ballistakinesis-DEF--1",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Ballistakinesis: compare UTF to defense at margin -1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 24
+      },
+      "expected": {
+        "hit": false,
+        "appliesOnHitEffects": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-ballistakinesis-DEF-0",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Ballistakinesis: compare UTF to defense at margin +0",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 25
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-ballistakinesis-DEF-1",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Ballistakinesis: compare UTF to defense at margin +1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 26
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-ballistakinesis-OPT-1",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Ballistakinesis: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-combustion-ID",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Combustion: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "fp_combustion"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-power/combustion",
+        "printedPage": 53
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-combustion-LEGAL",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Combustion: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-combustion-ACT",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Combustion: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "standard",
+        "target": "all-targets-in-2x2-area"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "defense-per-target"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-combustion-RES",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Combustion: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-combustion-DEF--1",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Combustion: compare UTF to defense at margin -1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 24
+      },
+      "expected": {
+        "hit": false,
+        "appliesOnHitEffects": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-combustion-DEF-0",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Combustion: compare UTF to defense at margin +0",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 25
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-combustion-DEF-1",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Combustion: compare UTF to defense at margin +1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 26
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-combustion-OPT-1",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Combustion: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-ID",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "fp_darktransfer"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-power/dark-transfer",
+        "printedPage": 53
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-LEGAL",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-ACT",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "standard",
+        "target": "one-other-living-creature-touched"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "fixed-dc"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-RES",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-DC15-14",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: boundary at 14 near tier DC 15",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 14
+      },
+      "expected": {
+        "highestPublishedDc": null
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-DC15-15",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: boundary at 15 near tier DC 15",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 15
+      },
+      "expected": {
+        "highestPublishedDc": 15
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-DC20-19",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: boundary at 19 near tier DC 20",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 19
+      },
+      "expected": {
+        "highestPublishedDc": 15
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-DC20-20",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: boundary at 20 near tier DC 20",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 20
+      },
+      "expected": {
+        "highestPublishedDc": 20
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-DC25-24",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: boundary at 24 near tier DC 25",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 24
+      },
+      "expected": {
+        "highestPublishedDc": 20
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-DC25-25",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: boundary at 25 near tier DC 25",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 25
+      },
+      "expected": {
+        "highestPublishedDc": 25
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-DC30-29",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: boundary at 29 near tier DC 30",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 29
+      },
+      "expected": {
+        "highestPublishedDc": 25
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-DC30-30",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: boundary at 30 near tier DC 30",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 30
+      },
+      "expected": {
+        "highestPublishedDc": 30
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-dark-transfer-OPT-1",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-ID",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "fp_detonate"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-power/detonate",
+        "printedPage": 53
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-LEGAL",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-ACT",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "standard",
+        "target": "one-unattended-object"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "fixed-dc"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-RES",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-DC20-19",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: boundary at 19 near tier DC 20",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 19
+      },
+      "expected": {
+        "highestPublishedDc": null
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-DC20-20",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: boundary at 20 near tier DC 20",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 20
+      },
+      "expected": {
+        "highestPublishedDc": 20
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-DC25-24",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: boundary at 24 near tier DC 25",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 24
+      },
+      "expected": {
+        "highestPublishedDc": 20
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-DC25-25",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: boundary at 25 near tier DC 25",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 25
+      },
+      "expected": {
+        "highestPublishedDc": 25
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-DC30-29",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: boundary at 29 near tier DC 30",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 29
+      },
+      "expected": {
+        "highestPublishedDc": 25
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-DC30-30",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: boundary at 30 near tier DC 30",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 30
+      },
+      "expected": {
+        "highestPublishedDc": 30
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-DC35-34",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: boundary at 34 near tier DC 35",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 34
+      },
+      "expected": {
+        "highestPublishedDc": 30
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-DC35-35",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: boundary at 35 near tier DC 35",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 35
+      },
+      "expected": {
+        "highestPublishedDc": 35
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detonate-OPT-1",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Detonate: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-enlighten-ID",
+      "definitionId": "legacy/force-power/enlighten",
+      "scenario": "Enlighten: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "fp_enlighten"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-power/enlighten",
+        "printedPage": 54
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-enlighten-LEGAL",
+      "definitionId": "legacy/force-power/enlighten",
+      "scenario": "Enlighten: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-enlighten-ACT",
+      "definitionId": "legacy/force-power/enlighten",
+      "scenario": "Enlighten: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "swift",
+        "target": "one-ally"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "attack-substitution"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-enlighten-RES",
+      "definitionId": "legacy/force-power/enlighten",
+      "scenario": "Enlighten: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-enlighten-OPT-1",
+      "definitionId": "legacy/force-power/enlighten",
+      "scenario": "Enlighten: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-lightning-burst-ID",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Lightning Burst: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "fp_lightningburst"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-power/lightning-burst",
+        "printedPage": 54
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-lightning-burst-LEGAL",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Lightning Burst: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-lightning-burst-ACT",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Lightning Burst: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "standard",
+        "target": "all-adjacent-enemies"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "defense-per-target"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-lightning-burst-RES",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Lightning Burst: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-lightning-burst-DEF--1",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Lightning Burst: compare UTF to defense at margin -1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 24
+      },
+      "expected": {
+        "hit": false,
+        "appliesOnHitEffects": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-lightning-burst-DEF-0",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Lightning Burst: compare UTF to defense at margin +0",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 25
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-lightning-burst-DEF-1",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Lightning Burst: compare UTF to defense at margin +1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 26
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-lightning-burst-OPT-1",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Lightning Burst: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-obscure-ID",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "Obscure: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "fp_obscure"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-power/obscure",
+        "printedPage": 54
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-obscure-LEGAL",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "Obscure: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-obscure-ACT",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "Obscure: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "reaction",
+        "target": "one-enemy-just-made-an-attack-roll"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "defense"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-obscure-RES",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "Obscure: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-obscure-DEF--1",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "Obscure: compare UTF to defense at margin -1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 24
+      },
+      "expected": {
+        "hit": false,
+        "appliesOnHitEffects": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-obscure-DEF-0",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "Obscure: compare UTF to defense at margin +0",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 25
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-obscure-DEF-1",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "Obscure: compare UTF to defense at margin +1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 26
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-obscure-OPT-1",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "Obscure: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-ID",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "fp_prescience"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-power/prescience",
+        "printedPage": 54
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-LEGAL",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-ACT",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "swift",
+        "target": "one-enemy"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "fixed-dc"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-RES",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-DC15-14",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: boundary at 14 near tier DC 15",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 14
+      },
+      "expected": {
+        "highestPublishedDc": null
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-DC15-15",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: boundary at 15 near tier DC 15",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 15
+      },
+      "expected": {
+        "highestPublishedDc": 15
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-DC20-19",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: boundary at 19 near tier DC 20",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 19
+      },
+      "expected": {
+        "highestPublishedDc": 15
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-DC20-20",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: boundary at 20 near tier DC 20",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 20
+      },
+      "expected": {
+        "highestPublishedDc": 20
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-DC25-24",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: boundary at 24 near tier DC 25",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 24
+      },
+      "expected": {
+        "highestPublishedDc": 20
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-DC25-25",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: boundary at 25 near tier DC 25",
+      "category": "dc-boundary",
+      "inputs": {
+        "useTheForceTotal": 25
+      },
+      "expected": {
+        "highestPublishedDc": 25
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-prescience-OPT-1",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-stagger-ID",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Stagger: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "fp_stagger"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-power/stagger",
+        "printedPage": 54
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-stagger-LEGAL",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Stagger: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-stagger-ACT",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Stagger: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "swift",
+        "target": "one-adjacent-enemy"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "defense"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-stagger-RES",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Stagger: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-stagger-DEF--1",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Stagger: compare UTF to defense at margin -1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 24
+      },
+      "expected": {
+        "hit": false,
+        "appliesOnHitEffects": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-stagger-DEF-0",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Stagger: compare UTF to defense at margin +0",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 25
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-stagger-DEF-1",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Stagger: compare UTF to defense at margin +1",
+      "category": "defense-boundary",
+      "inputs": {
+        "targetDefense": 25,
+        "useTheForceTotal": 26
+      },
+      "expected": {
+        "hit": true,
+        "appliesOnHitEffects": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-stagger-OPT-1",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Stagger: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detoxify-poison-ID",
+      "definitionId": "legacy/force-technique/detoxify-poison",
+      "scenario": "Detoxify Poison: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "0e59f5761f3d479c"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-technique/detoxify-poison",
+        "printedPage": 55
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detoxify-poison-LEGAL",
+      "definitionId": "legacy/force-technique/detoxify-poison",
+      "scenario": "Detoxify Poison: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detoxify-poison-ACT",
+      "definitionId": "legacy/force-technique/detoxify-poison",
+      "scenario": "Detoxify Poison: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "none",
+        "target": "modifies-existing-ability"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "none"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-detoxify-poison-RES",
+      "definitionId": "legacy/force-technique/detoxify-poison",
+      "scenario": "Detoxify Poison: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": []
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-ballistakinesis-ID",
+      "definitionId": "legacy/force-technique/improved-ballistakinesis",
+      "scenario": "Improved Ballistakinesis: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "e4a22dc082282bf4"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-technique/improved-ballistakinesis",
+        "printedPage": 55
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-ballistakinesis-LEGAL",
+      "definitionId": "legacy/force-technique/improved-ballistakinesis",
+      "scenario": "Improved Ballistakinesis: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-ballistakinesis-ACT",
+      "definitionId": "legacy/force-technique/improved-ballistakinesis",
+      "scenario": "Improved Ballistakinesis: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "none",
+        "target": "modifies-existing-ability"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "none"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-ballistakinesis-RES",
+      "definitionId": "legacy/force-technique/improved-ballistakinesis",
+      "scenario": "Improved Ballistakinesis: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-ballistakinesis-OPT-1",
+      "definitionId": "legacy/force-technique/improved-ballistakinesis",
+      "scenario": "Improved Ballistakinesis: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-dark-transfer-ID",
+      "definitionId": "legacy/force-technique/improved-dark-transfer",
+      "scenario": "Improved Dark Transfer: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "45b8b39a3225a1b0"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-technique/improved-dark-transfer",
+        "printedPage": 55
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-dark-transfer-LEGAL",
+      "definitionId": "legacy/force-technique/improved-dark-transfer",
+      "scenario": "Improved Dark Transfer: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-dark-transfer-ACT",
+      "definitionId": "legacy/force-technique/improved-dark-transfer",
+      "scenario": "Improved Dark Transfer: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "none",
+        "target": "modifies-existing-ability"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "none"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-dark-transfer-RES",
+      "definitionId": "legacy/force-technique/improved-dark-transfer",
+      "scenario": "Improved Dark Transfer: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-dark-transfer-OPT-1",
+      "definitionId": "legacy/force-technique/improved-dark-transfer",
+      "scenario": "Improved Dark Transfer: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-detonate-ID",
+      "definitionId": "legacy/force-technique/improved-detonate",
+      "scenario": "Improved Detonate: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "2b99e97855e5f320"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-technique/improved-detonate",
+        "printedPage": 56
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-detonate-LEGAL",
+      "definitionId": "legacy/force-technique/improved-detonate",
+      "scenario": "Improved Detonate: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-detonate-ACT",
+      "definitionId": "legacy/force-technique/improved-detonate",
+      "scenario": "Improved Detonate: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "none",
+        "target": "modifies-existing-ability"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "none"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-detonate-RES",
+      "definitionId": "legacy/force-technique/improved-detonate",
+      "scenario": "Improved Detonate: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": []
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-enlighten-ID",
+      "definitionId": "legacy/force-technique/improved-enlighten",
+      "scenario": "Improved Enlighten: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "ff4ddecb458e604c"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-technique/improved-enlighten",
+        "printedPage": 56
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-enlighten-LEGAL",
+      "definitionId": "legacy/force-technique/improved-enlighten",
+      "scenario": "Improved Enlighten: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-enlighten-ACT",
+      "definitionId": "legacy/force-technique/improved-enlighten",
+      "scenario": "Improved Enlighten: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "none",
+        "target": "modifies-existing-ability"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "none"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-enlighten-RES",
+      "definitionId": "legacy/force-technique/improved-enlighten",
+      "scenario": "Improved Enlighten: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-enlighten-OPT-1",
+      "definitionId": "legacy/force-technique/improved-enlighten",
+      "scenario": "Improved Enlighten: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-lightning-burst-ID",
+      "definitionId": "legacy/force-technique/improved-lightning-burst",
+      "scenario": "Improved Lightning Burst: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "2a15d6c28e351f14"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-technique/improved-lightning-burst",
+        "printedPage": 56
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-lightning-burst-LEGAL",
+      "definitionId": "legacy/force-technique/improved-lightning-burst",
+      "scenario": "Improved Lightning Burst: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-lightning-burst-ACT",
+      "definitionId": "legacy/force-technique/improved-lightning-burst",
+      "scenario": "Improved Lightning Burst: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "none",
+        "target": "modifies-existing-ability"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "none"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-lightning-burst-RES",
+      "definitionId": "legacy/force-technique/improved-lightning-burst",
+      "scenario": "Improved Lightning Burst: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": []
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-obscure-ID",
+      "definitionId": "legacy/force-technique/improved-obscure",
+      "scenario": "Improved Obscure: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "aa17a16957b98653"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-technique/improved-obscure",
+        "printedPage": 56
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-obscure-LEGAL",
+      "definitionId": "legacy/force-technique/improved-obscure",
+      "scenario": "Improved Obscure: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-obscure-ACT",
+      "definitionId": "legacy/force-technique/improved-obscure",
+      "scenario": "Improved Obscure: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "none",
+        "target": "modifies-existing-ability"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "none"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-obscure-RES",
+      "definitionId": "legacy/force-technique/improved-obscure",
+      "scenario": "Improved Obscure: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-obscure-OPT-1",
+      "definitionId": "legacy/force-technique/improved-obscure",
+      "scenario": "Improved Obscure: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-force-shield-ID",
+      "definitionId": "legacy/force-technique/improved-force-shield",
+      "scenario": "Improved Force Shield: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "c0439657bb9803f3"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-technique/improved-force-shield",
+        "printedPage": 56
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-force-shield-LEGAL",
+      "definitionId": "legacy/force-technique/improved-force-shield",
+      "scenario": "Improved Force Shield: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-force-shield-ACT",
+      "definitionId": "legacy/force-technique/improved-force-shield",
+      "scenario": "Improved Force Shield: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "none",
+        "target": "modifies-existing-ability"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "none"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-force-shield-RES",
+      "definitionId": "legacy/force-technique/improved-force-shield",
+      "scenario": "Improved Force Shield: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point",
+          "destiny-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-force-shield-OPT-1",
+      "definitionId": "legacy/force-technique/improved-force-shield",
+      "scenario": "Improved Force Shield: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-force-shield-OPT-2",
+      "definitionId": "legacy/force-technique/improved-force-shield",
+      "scenario": "Improved Force Shield: choice 2 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 2,
+        "resource": "destiny-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-stagger-ID",
+      "definitionId": "legacy/force-technique/improved-stagger",
+      "scenario": "Improved Stagger: stable source and identity",
+      "category": "identity",
+      "inputs": {
+        "sourcebook": "swse-legacy-era",
+        "registeredLegacyId": "f0408bd4fe0f3dda"
+      },
+      "expected": {
+        "canonicalId": "legacy/force-technique/improved-stagger",
+        "printedPage": 56
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-stagger-LEGAL",
+      "definitionId": "legacy/force-technique/improved-stagger",
+      "scenario": "Improved Stagger: legal acquisition does not infer technique power-gate",
+      "category": "acquisition",
+      "inputs": {
+        "actorHasSourceEntitlement": true,
+        "ownedRelatedPower": false
+      },
+      "expected": {
+        "legal": true,
+        "noInferredGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-stagger-ACT",
+      "definitionId": "legacy/force-technique/improved-stagger",
+      "scenario": "Improved Stagger: activate via source action and target gate",
+      "category": "activation",
+      "inputs": {
+        "action": "none",
+        "target": "modifies-existing-ability"
+      },
+      "expected": {
+        "usesPrintedAction": true,
+        "checkMode": "none"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-stagger-RES",
+      "definitionId": "legacy/force-technique/improved-stagger",
+      "scenario": "Improved Stagger: effects must follow source-defined targets and cost",
+      "category": "mechanical",
+      "inputs": {
+        "resourceOptions": [
+          "force-point"
+        ]
+      },
+      "expected": {
+        "usesOnlyPrintedEffectVariants": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-improved-stagger-OPT-1",
+      "definitionId": "legacy/force-technique/improved-stagger",
+      "scenario": "Improved Stagger: choice 1 requires its explicit cost",
+      "category": "resource-choice",
+      "inputs": {
+        "choice": 1,
+        "resource": "force-point"
+      },
+      "expected": {
+        "singleAuthorizedSpend": true,
+        "noFreeStacking": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0126",
+      "definitionId": "core/force-power/vital-transfer",
+      "scenario": "Influence: Detoxify Poison applies to {'definitionIds': ['core/force-power/vital-transfer']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0127",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Influence: Improved Ballistakinesis applies to {'definitionIds': ['legacy/force-power/ballistakinesis']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0128",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Influence: Improved Dark Transfer applies to {'definitionIds': ['legacy/force-power/dark-transfer']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0129",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Influence: Improved Detonate applies to {'definitionIds': ['legacy/force-power/detonate']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0130",
+      "definitionId": "legacy/force-power/enlighten",
+      "scenario": "Influence: Improved Enlighten applies to {'definitionIds': ['legacy/force-power/enlighten']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0131",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Influence: Improved Lightning Burst applies to {'definitionIds': ['legacy/force-power/lightning-burst']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0132",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "Influence: Improved Obscure applies to {'definitionIds': ['legacy/force-power/obscure']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0133",
+      "definitionId": "fucg/force-power/force-shield",
+      "scenario": "Influence: Improved Force Shield applies to {'definitionIds': ['fucg/force-power/force-shield']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0134",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Influence: Improved Stagger applies to {'definitionIds': ['legacy/force-power/stagger']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0135",
+      "definitionId": "core/force-power/move-object",
+      "scenario": "Influence: Move Massive Object applies to {'definitionIds': ['core/force-power/move-object']}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0136",
+      "definitionId": "talent/control/telekinetic-stability",
+      "scenario": "Influence: Telekinetic Stability applies to {'targeting': 'any-source-involuntary-movement'}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0137",
+      "definitionId": "talent/dark-side/dark-preservation",
+      "scenario": "Influence: Dark Preservation applies to {'targeting': 'any-source-condition-track-decrement'}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0138",
+      "definitionId": "legacy/equipment/death-sticks",
+      "scenario": "Influence: Death Sticks applies to {'checkSkill': 'use-the-force'}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0139",
+      "definitionId": "legacy/equipment/death-sticks",
+      "scenario": "Influence: Death Sticks applies to {'resourceSpendMode': 'force-point'}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0140",
+      "definitionId": "legacy/equipment/death-sticks",
+      "scenario": "Influence: Death Sticks applies to {'targeting': 'actor-attack-roll'}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-EDGE-0141",
+      "definitionId": "legacy/equipment/death-sticks",
+      "scenario": "Influence: Death Sticks applies to {'targeting': 'actor-personal-defenses'}",
+      "category": "influence",
+      "inputs": {
+        "modifierOwned": true,
+        "baseAbilityLegal": true
+      },
+      "expected": {
+        "modifiesBaseOnlyWhenPublishedConditionsMet": true,
+        "doesNotAddAcquisitionGate": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-BALL-FP-MISS",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Ballistakinesis FP miss-half has no -2 attack penalty",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 17,
+        "Reflex": 22,
+        "FP": true
+      },
+      "expected": {
+        "damageFraction": 0.5,
+        "attackPenalty": 0
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-COMB-MISS",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Combustion misses Fort: half fire damage no ignition",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 19,
+        "Fortitude": 20
+      },
+      "expected": {
+        "damageFraction": 0.5,
+        "burning": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-COMB-FIRE",
+      "definitionId": "legacy/force-power/combustion",
+      "scenario": "Ongoing fire uses recorded initial UTF check as attack bonus",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 24,
+        "Fortitude": 20
+      },
+      "expected": {
+        "fireAttackBonus": 24,
+        "usesCoreFireRules": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-DARK-FAIL",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer failing DC still imposes persistent CT and DSP",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 14,
+        "FP": false
+      },
+      "expected": {
+        "healedHP": 0,
+        "persistentConditionSteps": -1,
+        "darkSidePoints": 1
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-DARK-FP",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Dark Transfer FP prevents only CT cost",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 30,
+        "FP": true
+      },
+      "expected": {
+        "persistentConditionSteps": 0,
+        "darkSidePoints": 1
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-DARK-IMPROVED",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "scenario": "Improved Dark Transfer revives recent death at DC25 without healing",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 25,
+        "techniqueOwned": true,
+        "FP": true,
+        "deadSinceEndLastTurn": true
+      },
+      "expected": {
+        "targetStatus": "unconscious",
+        "healedHP": 0
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-DETONATE-OBJECT",
+      "definitionId": "legacy/force-power/detonate",
+      "scenario": "Improved Detonate splash uses actual object damage and enemy Reflex",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 31,
+        "objectDamageSustained": 17,
+        "enemyReflex": 28,
+        "techniqueOwned": true
+      },
+      "expected": {
+        "damageBasis": 17,
+        "splashDamageFraction": 0.5
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-ENLIGHTEN-NO-DC",
+      "definitionId": "legacy/force-power/enlighten",
+      "scenario": "Enlighten UTF 9 can replace qualifying ally roll without a fixed DC",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 9,
+        "allyInRange": true
+      },
+      "expected": {
+        "storedSubstitutionResult": 9,
+        "fixedDcRequired": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-ENLIGHTEN-REACTION",
+      "definitionId": "legacy/force-power/enlighten",
+      "scenario": "Enlighten activation accepts swift or reaction",
+      "category": "critical-rule",
+      "inputs": {
+        "actions": [
+          "swift",
+          "reaction"
+        ]
+      },
+      "expected": {
+        "bothLegal": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-LIGHTNING-MISS",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Lightning Burst misses Reflex: half damage but no CT",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 17,
+        "Reflex": 24
+      },
+      "expected": {
+        "damageFraction": 0.5,
+        "conditionSteps": 0
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-LIGHTNING-TECH",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Improved Lightning requires BOTH Reflex & Fortitude for push/prone; base hit survives Fort failure",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 25,
+        "Reflex": 20,
+        "Fortitude": 28,
+        "techniqueOwned": true
+      },
+      "expected": {
+        "baseDamageApplies": true,
+        "additionalPush": false,
+        "prone": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-LIGHTNING-MAINT",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Moved since activation prevents maintaining Lightning Burst",
+      "category": "critical-rule",
+      "inputs": {
+        "movedSinceActivation": true
+      },
+      "expected": {
+        "canMaintain": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-OBSCURE-REDIRECT",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "After penalty produces miss, may redirect reroll to creature adjacent to attacker",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 22,
+        "attackerWill": 20,
+        "attackNowMissed": true
+      },
+      "expected": {
+        "rerollAtMinus5": true,
+        "newTargetAdjacentTo": "attacker"
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-OBSCURE-NO-REDIRECT",
+      "definitionId": "legacy/force-power/obscure",
+      "scenario": "No attack miss: Obscure cannot redirect",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 22,
+        "attackerWill": 20,
+        "attackNowMissed": false
+      },
+      "expected": {
+        "rerollAllowed": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-PRESCIENCE-SCOPE",
+      "definitionId": "legacy/force-power/prescience",
+      "scenario": "Prescience bonus only against selected enemy",
+      "category": "critical-rule",
+      "inputs": {
+        "UTF": 25,
+        "chosenEnemy": "A",
+        "otherEnemy": "B"
+      },
+      "expected": {
+        "insightAgainstA": 3,
+        "insightAgainstB": 0
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-STAGGER-MODES",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Stagger base FP all-adjacent versus improved FP two-square push are distinct choices",
+      "category": "critical-rule",
+      "inputs": {
+        "FP": 1,
+        "improvedOwned": true
+      },
+      "expected": {
+        "combineBothEnhancementsWithoutSecondSpend": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-SHIELD-REPRINT",
+      "definitionId": "fucg/force-power/force-shield",
+      "scenario": "Force Shield Legacy print is provenance not duplicate power",
+      "category": "critical-rule",
+      "inputs": {
+        "printedBook": "swse-legacy-era",
+        "page": 54
+      },
+      "expected": {
+        "canonicalId": "fucg/force-power/force-shield",
+        "duplicateNewDefinition": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-SHIELD-VEHICLE",
+      "definitionId": "fucg/force-power/force-shield",
+      "scenario": "Improved Force Shield DP vehicle protection does not stack SR",
+      "category": "critical-rule",
+      "inputs": {
+        "improvedOwned": true,
+        "DP": 1,
+        "vehicleExistingSR": 10,
+        "powerSR": 20
+      },
+      "expected": {
+        "effectiveSR": 20,
+        "stackedSR": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-MASSIVE-OBJ",
+      "definitionId": "core/force-power/move-object",
+      "scenario": "Move Massive Object FP area size and miss-half",
+      "category": "critical-rule",
+      "inputs": {
+        "talentOwned": true,
+        "objectSize": "gargantuan",
+        "FP": 1
+      },
+      "expected": {
+        "areaSquares": "4x4",
+        "missHalfDamage": true
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-STABILITY",
+      "definitionId": "legacy/force-power/stagger",
+      "scenario": "Telekinetic Stability can negate involuntary Stagger displacement with FP",
+      "category": "critical-rule",
+      "inputs": {
+        "talentOwned": true,
+        "FP": 1,
+        "forcedPushSquares": 1
+      },
+      "expected": {
+        "pushSquares": 0
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-DEATH-STICKS-UTF",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Death stick euphoria: actual Use the Force checks at -10",
+      "category": "critical-rule",
+      "inputs": {
+        "deathStickEuphoria": true,
+        "unmodifiedUTF": 25
+      },
+      "expected": {
+        "modifiedUTF": 15
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-DEATH-STICKS-FP",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "scenario": "Death stick euphoria: no FP spending even if balance positive",
+      "category": "critical-rule",
+      "inputs": {
+        "deathStickEuphoria": true,
+        "FPBalance": 2
+      },
+      "expected": {
+        "canSpendFP": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-DEATH-STICKS-PILOT",
+      "definitionId": "sotg/starship-maneuver/target-sense",
+      "scenario": "Pilot check does not become UTF solely due Force Pilot",
+      "category": "critical-rule",
+      "inputs": {
+        "deathStickEuphoria": true,
+        "checkSkill": "pilot"
+      },
+      "expected": {
+        "useTheForcePenaltyAppliedToPilot": false
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-DEATH-STICKS-ATTACK",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Death stick euphoria grants +1 morale on actor attack rolls",
+      "category": "critical-rule",
+      "inputs": {
+        "deathStickEuphoria": true,
+        "actorAttackRoll": true
+      },
+      "expected": {
+        "moraleAttackBonus": 1
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    },
+    {
+      "id": "LEG-B7-DEATH-STICKS-DEFENSE",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "scenario": "Death stick euphoria grants +1 morale on actor defenses, not vehicle defenses",
+      "category": "critical-rule",
+      "inputs": {
+        "deathStickEuphoria": true,
+        "defenseOwner": "actor"
+      },
+      "expected": {
+        "moraleDefenseBonus": 1
+      },
+      "priority": "P0",
+      "evidence": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56
+      },
+      "executionStatus": "not-run"
+    }
+  ],
+  "coverage": {
+    "definitions": 18,
+    "newPowers": 9,
+    "techniques": 9,
+    "fixedDcRows": 11,
+    "influenceEdges": 16,
+    "scenarioCount": 166,
+    "foundryExecuted": false
+  },
+  "nextBook": "Cross-book reconciliation / source-inventory exhaustion"
+}

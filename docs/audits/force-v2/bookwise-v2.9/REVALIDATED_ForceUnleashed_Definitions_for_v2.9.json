@@ -1,0 +1,3405 @@
+{
+  "packageVersion": "0.1.0",
+  "schemaVersion": "2.9.0",
+  "scope": "book-4-force-unleashed-campaign-guide",
+  "purpose": "31 new published FUCG Force-domain identities (five powers, ten techniques including missing Improved Force Storm, five secrets, eleven conditional Unleashed overlays); no game code.",
+  "sourceAuthority": {
+    "book": "The Force Unleashed Campaign Guide",
+    "pdf": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+    "textLookup": "Force Unleashed Campaign Guide_djvu.txt",
+    "pagesReviewed": [
+      35,
+      37,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91
+    ],
+    "officialErrata": {
+      "title": "No verified Force-domain-specific FUCG correction located during this pass",
+      "issuer": "Printed rules primary pending verified official correction",
+      "issued": "not-established",
+      "url": "https://rpg.fandom.com/wiki/Star_Wars_Saga_Edition_Official_Errata",
+      "priority": "Sourcebook pages govern; verified official errata when available overrides sourcebook; forum/wiki content not adopted as authority."
+    }
+  },
+  "mechanicalPrinciples": {
+    "rollType": "Five Force Powers use Use the Force; four have fixed tier ladders, and Repulse uses opposed Strength (no fixed DC). Techniques, Secrets and Unleashed overlays do not roll independently.",
+    "tierSelection": "Choose highest published fixed floor; Corruption also meets modified Fortitude; Force Blast must strictly exceed Reflex; Storm tiers control duration only.",
+    "successPriority": [
+      "actor-feat-and-source-power-entitlement",
+      "power-variant-and-secret-eligibility",
+      "declare-mode-and-resource-receipt",
+      "targeting-and-defense-adjustments",
+      "UTF-check-or-opposed-strength",
+      "select-DC-tier-and-defense-comparator",
+      "resolve-effect-with-additional-modifiers",
+      "apply-periodic-events-or-maintenance",
+      "record-suite-expended-and-resource-state"
+    ],
+    "powerRecovery": [
+      "Normal source Core suite recovery applies",
+      "Active Storm pulses do not grant additional Force Training uses",
+      "Unleashed modes are paid options, not new owned power instances"
+    ],
+    "modifierApplication": "Only source-backed typed influence edges may change mechanics; do not match by display name or tags alone.",
+    "errataPriority": "Printed FUCG p85-90 are authoritative pending verifiable official correction. Unleashed feat p35 gating is mandatory."
+  },
+  "counts": {
+    "force-power": 5,
+    "force-technique": 10,
+    "force-secret": 5,
+    "unleashed-overlay": 11,
+    "total": 31,
+    "fixedDcTierRows": 16,
+    "reprintNotCounted": 1
+  },
+  "definitions": [
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-power/corruption",
+      "legacyPackId": "fp_corruption",
+      "domain": "force-power",
+      "printedName": "Corruption",
+      "displayName": "Corruption",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 85,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Dark Side attack: fixed DC tier plus size-adjusted Fortitude; initial Force damage with delayed half damage.",
+      "descriptors": [
+        "dark-side"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-creature",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc-and-defense",
+          "defense": "fortitude",
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "2d6 initial Force damage; a delayed half-damage event after a successful hit",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "2d6",
+                "damageType": "force"
+              },
+              {
+                "kind": "scheduled-damage",
+                "target": "target",
+                "fraction": 0.5,
+                "trigger": "start-of-target-next-turn",
+                "tickCount": 1,
+                "basedOn": "actual-damage-rolled",
+                "requiresInitialTargetHit": true
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "3d6 initial Force damage; a delayed half-damage event after a successful hit",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "3d6",
+                "damageType": "force"
+              },
+              {
+                "kind": "scheduled-damage",
+                "target": "target",
+                "fraction": 0.5,
+                "trigger": "start-of-target-next-turn",
+                "tickCount": 1,
+                "basedOn": "actual-damage-rolled",
+                "requiresInitialTargetHit": true
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "4d6 initial Force damage; a delayed half-damage event after a successful hit",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "4d6",
+                "damageType": "force"
+              },
+              {
+                "kind": "scheduled-damage",
+                "target": "target",
+                "fraction": 0.5,
+                "trigger": "start-of-target-next-turn",
+                "tickCount": 1,
+                "basedOn": "actual-damage-rolled",
+                "requiresInitialTargetHit": true
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "5d6 initial Force damage; a delayed half-damage event after a successful hit",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "5d6",
+                "damageType": "force"
+              },
+              {
+                "kind": "scheduled-damage",
+                "target": "target",
+                "fraction": 0.5,
+                "trigger": "start-of-target-next-turn",
+                "tickCount": 1,
+                "basedOn": "actual-damage-rolled",
+                "requiresInitialTargetHit": true
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Initial target requires printed fixed DC tier AND UTF at least target size-adjusted Fortitude.",
+          "Secondary splash requires each adjacent target separately meet its Fortitude defense comparison."
+        ],
+        "defenseAdjustments": [
+          {
+            "defense": "fortitude",
+            "reason": "Extra size adjustment to target Fortitude vs Corruption",
+            "bonuses": {
+              "large": 5,
+              "huge": 10,
+              "gargantuan": 20,
+              "colossal": 50
+            }
+          }
+        ]
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "after-successful-damage",
+          "timing": "on-activation",
+          "summary": "Adjacent creatures separately compare UTF against Fortitude for half initial damage, without delayed damage",
+          "operations": [
+            {
+              "kind": "damage-distribution",
+              "target": "adjacent-creatures",
+              "fraction": 0.5,
+              "includeAdjacent": true,
+              "requiresDefense": "fortitude",
+              "noSecondaryTicks": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [
+        "Confirm whether the two adjacent temporal clauses on p86 denote one tick or two; no extra unprinted tick is executable until ruled."
+      ],
+      "interactions": [],
+      "rulesNotes": [
+        "The text has two overlapping phrases for the timing of delayed half damage; default to exactly one next-turn tick, tracked as a ruling candidate."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc-and-defense",
+        "defenseEvaluatedPerTarget": true,
+        "damageTiming": "immediate",
+        "damageSchedule": "one-delayed-half-tick",
+        "defenseComparator": "at-least"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-power/force-blast",
+      "legacyPackId": "fp_forceblast",
+      "domain": "force-power",
+      "printedName": "Force Blast",
+      "displayName": "Force Blast",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 86,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Standard-action blast uses fixed DC damage tier and must strictly exceed target Reflex Defense.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-creature-or-object",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc-and-defense",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "2d6 damage",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "2d6",
+                "damageType": "unspecified-in-printed-entry"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "3d6 damage",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "3d6",
+                "damageType": "unspecified-in-printed-entry"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "4d6 damage",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "4d6",
+                "damageType": "unspecified-in-printed-entry"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "5d6 damage",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "5d6",
+                "damageType": "unspecified-in-printed-entry"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "UTF must strictly EXCEED target Reflex and meet a published damage tier."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-damaging-blast",
+          "timing": "on-activation",
+          "summary": "Add one-half heroic level to the damage",
+          "operations": [
+            {
+              "kind": "damage-bonus-scaling",
+              "target": "force-blast-damage",
+              "formula": "floor(heroicLevel/2)",
+              "when": "on-force-blast-hit"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "FP bonus is floor(heroicLevel/2); do not treat as extra damage dice.",
+        "The printed entry does not explicitly name a damage type; the damage authority must resolve any applicable global rule rather than infer Force damage from the ability name."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc-and-defense",
+        "damageTiming": "immediate",
+        "defenseComparator": "strictly-greater-than"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-power/force-shield",
+      "legacyPackId": "fp_forceshield",
+      "domain": "force-power",
+      "printedName": "Force Shield",
+      "displayName": "Force Shield",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 86,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Reaction creates temporary personal Shield Rating 5/10/15/20; optional FP adds 5 SR.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "SR 5 until start of next turn",
+            "operations": [
+              {
+                "kind": "personal-shield-rating",
+                "target": "self",
+                "rating": 5,
+                "expires": "start-of-caster-next-turn",
+                "rechargeable": false,
+                "endsWhenZero": true
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "SR 10 until start of next turn",
+            "operations": [
+              {
+                "kind": "personal-shield-rating",
+                "target": "self",
+                "rating": 10,
+                "expires": "start-of-caster-next-turn",
+                "rechargeable": false,
+                "endsWhenZero": true
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "SR 15 until start of next turn",
+            "operations": [
+              {
+                "kind": "personal-shield-rating",
+                "target": "self",
+                "rating": 15,
+                "expires": "start-of-caster-next-turn",
+                "rechargeable": false,
+                "endsWhenZero": true
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "SR 20 until start of next turn",
+            "operations": [
+              {
+                "kind": "personal-shield-rating",
+                "target": "self",
+                "rating": 20,
+                "expires": "start-of-caster-next-turn",
+                "rechargeable": false,
+                "endsWhenZero": true
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Shield cannot be recharged; effect immediately ends if SR reaches zero."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Increase granted Shield Rating by 5",
+          "operations": [
+            {
+              "kind": "personal-shield-rating-adjustment",
+              "target": "force-shield-instance",
+              "amount": 5,
+              "when": "on-activation"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The FP +5 modifies the personal SR instance, not a vehicle SR pool; specialized overlay operation is authoritative rather than the vehicle shield primitive."
+      ],
+      "maintenance": {
+        "allowed": true,
+        "action": "standard",
+        "repeatEachRound": true,
+        "repeatCheck": false,
+        "forcedEndTriggers": [
+          "shield-rating-zero"
+        ]
+      },
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc",
+        "damageTiming": "none",
+        "effectEndsOn": [
+          "duration-expiry",
+          "shield-rating-zero"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-power/force-storm",
+      "legacyPackId": "0707cdeac3391953",
+      "domain": "force-power",
+      "printedName": "Force Storm",
+      "displayName": "Force Storm",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 86,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Personal dark-side telekinetic storm, 2d6 each turn to adjacent targets; DC tiers set duration only.",
+      "descriptors": [
+        "dark-side",
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "self-area-adjacent-creatures",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Persists 2 rounds",
+            "operations": [
+              {
+                "kind": "duration-override",
+                "target": "force-storm",
+                "value": "2-rounds"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Persists 4 rounds",
+            "operations": [
+              {
+                "kind": "duration-override",
+                "target": "force-storm",
+                "value": "4-rounds"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Persists 6 rounds",
+            "operations": [
+              {
+                "kind": "duration-override",
+                "target": "force-storm",
+                "value": "6-rounds"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Persists 8 rounds",
+            "operations": [
+              {
+                "kind": "duration-override",
+                "target": "force-storm",
+                "value": "8-rounds"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [
+          {
+            "kind": "periodic-damage",
+            "target": "adjacent-creatures",
+            "dice": "2d6",
+            "damageType": "unspecified-in-printed-entry",
+            "trigger": "end-of-caster-turn",
+            "affectedArea": "adjacent-to-caster",
+            "forDuration": "fixed-dc-duration"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Increase periodic damage by an extra 2d6",
+          "operations": [
+            {
+              "kind": "damage-dice",
+              "target": "each-storm-pulse",
+              "dice": "2d6",
+              "damageType": "unspecified-in-printed-entry",
+              "when": "add-to-base-pulse"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The 2d6 base damage is NOT a DC tier; higher tiers extend duration only.",
+        "Storm follows the caster at the end of each turn; do not substitute the Jedi Academy Force Storm with the same name.",
+        "The printed entry does not explicitly name a damage type; the damage authority must resolve any applicable global rule rather than infer Force damage from the ability name."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc",
+        "damageTiming": "end-of-caster-turn",
+        "effectEndsOn": [
+          "duration-expiry"
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-power/repulse",
+      "legacyPackId": "fp_repulse",
+      "domain": "force-power",
+      "printedName": "Repulse",
+      "displayName": "Repulse",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 87,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Opposed UTF against each adjacent target Strength + BAB + size/stability; push by success margin.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "all-adjacent-creatures",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "opposed",
+          "defense": null,
+          "opposed": "target-strength-plus-base-attack-bonus-plus-size-plus-stability",
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "forced-movement",
+            "target": "each-target-who-loses-opposed-check",
+            "squaresFormula": "1+floor((casterUTF-targetStrengthTotal)/5)",
+            "direction": "away-from-caster"
+          },
+          {
+            "kind": "bonus-damage-on-collision",
+            "target": "pushed-target",
+            "dice": "1d6",
+            "condition": "pushed-into-larger-object"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "All adjacent targets make individual Strength checks adding BAB, size modifier, and +5 if exceptionally stable/more than two legs.",
+          "Force Point -5 resistance penalty applies only when chosen; no invented DC20."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Impose -5 on target resisting Strength check; add 2d6 to impact into larger object",
+          "operations": [
+            {
+              "kind": "opposed-check-penalty",
+              "target": "each-target",
+              "check": "strength-resistance",
+              "amount": -5
+            },
+            {
+              "kind": "bonus-damage-on-collision",
+              "target": "pushed-target",
+              "dice": "2d6",
+              "condition": "pushed-into-larger-object-extra"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Size resistance: Colossal +20, Gargantuan +15, Huge +10, Large +5, Medium 0, Small -5, Tiny -10, Diminutive -15, Fine -20."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "opposed",
+        "damageTiming": "immediate"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-battle-strike",
+      "legacyPackId": "023c5310a099cd41",
+      "domain": "force-technique",
+      "printedName": "Improved Battle Strike",
+      "displayName": "Improved Battle Strike",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 88,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Battle Strike benefits apply to attack and damage of every attack made during a full attack action.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "attack-rolls-in-full-attack",
+            "target": "battle-strike-benefit",
+            "includeDamageBonus": true,
+            "allAttacksInAction": true
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: core/force-power/battle-strike"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/battle-strike"
+      ],
+      "rulesNotes": [
+        "Full-attack only; does not grant extra attacks."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-dark-rage",
+      "legacyPackId": "b10cf49890093fab",
+      "domain": "force-technique",
+      "printedName": "Improved Dark Rage",
+      "displayName": "Improved Dark Rage",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 88,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Remove concentration/patience restriction and permit Dark Rage during surprise even if surprised.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "bypass-concentration-restrictions",
+            "target": "dark-rage",
+            "allowsSkills": true,
+            "allowsSurpriseWhenSurprised": true
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: core/force-power/dark-rage"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/dark-rage"
+      ],
+      "rulesNotes": [
+        "Surprise permission is limited to Dark Rage activation."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-force-disarm",
+      "legacyPackId": "770bbe7f101d98bc",
+      "domain": "force-technique",
+      "printedName": "Improved Force Disarm",
+      "displayName": "Improved Force Disarm",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 88,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Full-round variant removes the target +10 Reflex disarm defense bonus.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "action-override",
+            "target": "force-disarm",
+            "fromAction": "standard",
+            "toAction": "full-round"
+          },
+          {
+            "kind": "modifier",
+            "target": "target-reflex-against-force-disarm",
+            "stat": "disarm-bonus",
+            "amount": -10,
+            "when": "only-counteracts-normal-plus-ten-disarm-defense"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: core/force-power/force-disarm"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/force-disarm"
+      ],
+      "rulesNotes": [
+        "Do not remove other Reflex bonuses or stack with independent disarm features without their own eligibility."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-force-thrust",
+      "legacyPackId": "369b9fc50f50eb03",
+      "domain": "force-technique",
+      "printedName": "Improved Force Thrust",
+      "displayName": "Improved Force Thrust",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 88,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Full-round and Force Point to affect all creatures in a caster-origin 6-square cone.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "action-override",
+            "target": "force-thrust",
+            "fromAction": "standard",
+            "toAction": "full-round"
+          },
+          {
+            "kind": "area-override",
+            "target": "force-thrust",
+            "shape": "cone",
+            "rangeFormula": "6-squares",
+            "origin": "caster"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: core/force-power/force-thrust"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "alternate-full-round-use",
+          "timing": "on-activation",
+          "summary": "Required to use the 6-square-cone variant",
+          "operations": [
+            {
+              "kind": "force-power-activation-resource",
+              "target": "force-thrust",
+              "resource": "force-point",
+              "amount": 1,
+              "purpose": "improved-force-thrust-area-mode"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/force-thrust"
+      ],
+      "rulesNotes": [
+        "Both full-round action and Force Point required for cone alternative."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-force-grip",
+      "legacyPackId": "e854adf7a0029daa",
+      "domain": "force-technique",
+      "printedName": "Improved Force Grip",
+      "displayName": "Improved Force Grip",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 88,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend a Force Point as free action to continue Force Grip one extra round without concentrating; may not resume afterward.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "technique-sustained-exception",
+            "target": "force-grip",
+            "extraRounds": 1,
+            "action": "free",
+            "requiresForcePoint": true,
+            "resumptionAllowed": false
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: core/force-power/force-grip"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "maintaining-active-force-grip",
+          "timing": "on-activation",
+          "summary": "Extend one round without concentration, then end; never resume concentration",
+          "operations": [
+            {
+              "kind": "autonomous-maintenance",
+              "target": "force-grip",
+              "roundsFormula": "1",
+              "minimumRounds": 1,
+              "requiresDamageConcentration": false,
+              "noResumptionAfter": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/force-grip"
+      ],
+      "rulesNotes": [
+        "Free action option applies only while Grip is active; no automatic repeat use."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-force-lightning",
+      "legacyPackId": "ccc959a2d0f81f3d",
+      "domain": "force-technique",
+      "printedName": "Improved Force Lightning",
+      "displayName": "Improved Force Lightning",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 88,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Full-round variant adds resisted Strength push; size, BAB and stability affect resistance.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "action-override",
+            "target": "force-lightning",
+            "fromAction": "standard",
+            "toAction": "full-round"
+          },
+          {
+            "kind": "forced-movement",
+            "target": "target-if-utf-greater-than-strength-check",
+            "squaresFormula": "1+floor((casterUTF-targetStrengthPlusBABSizeStability)/5)",
+            "direction": "away-from-caster"
+          },
+          {
+            "kind": "bonus-damage-on-collision",
+            "target": "pushed-target",
+            "dice": "1d6",
+            "condition": "collision-with-larger-object"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: core/force-power/force-lightning"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/force-lightning"
+      ],
+      "rulesNotes": [
+        "Resisted Strength check is separate from base Force Lightning Reflex hit; size and stability apply only to push."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-force-storm",
+      "legacyPackId": null,
+      "domain": "force-technique",
+      "printedName": "Improved Force Storm",
+      "displayName": "Improved Force Storm",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 88,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Swift action ends the active FUCG Force Storm; all targets within two squares take 4d6.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "burst-on-power-end",
+            "target": "all-creatures-within-2-squares",
+            "action": "swift",
+            "radiusSquares": 2,
+            "dice": "4d6",
+            "endsPower": true
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: fucg/force-power/force-storm"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "fucg/force-power/force-storm"
+      ],
+      "rulesNotes": [
+        "Unique FUCG technique; NOT Jedi Academy Improved Force Storm; requires FUCG storm instance active."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-mind-trick",
+      "legacyPackId": "4f645cbc4babfa9d",
+      "domain": "force-technique",
+      "printedName": "Improved Mind Trick",
+      "displayName": "Improved Mind Trick",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 89,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Full-round cone-six variant; optional FP expands to cone twelve.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "action-override",
+            "target": "mind-trick",
+            "fromAction": "standard",
+            "toAction": "full-round"
+          },
+          {
+            "kind": "area-override",
+            "target": "mind-trick",
+            "shape": "cone",
+            "rangeFormula": "6-squares",
+            "origin": "caster"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: core/force-power/mind-trick"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "improved-mind-trick-full-round",
+          "timing": "on-activation",
+          "summary": "Expand cone from six squares to twelve",
+          "operations": [
+            {
+              "kind": "area-override",
+              "target": "mind-trick",
+              "shape": "cone",
+              "rangeFormula": "12-squares",
+              "origin": "caster"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/mind-trick"
+      ],
+      "rulesNotes": [
+        "All creatures in the cone are potential targets; evaluate mind-affecting and Will defense separately."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-rebuke",
+      "legacyPackId": "eb43970e8b1ccebb",
+      "domain": "force-technique",
+      "printedName": "Improved Rebuke",
+      "displayName": "Improved Rebuke",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 89,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Use Rebuke when an ally within twelve squares and line of sight is targeted; respond as if personally targeted.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "ally-rebuke-substitution",
+            "target": "ally-targeted-by-force-power",
+            "rangeSquares": 12,
+            "lineOfSightRequired": true
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: core/force-power/rebuke"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/rebuke"
+      ],
+      "rulesNotes": [
+        "Retain Rebuke reaction and other base prerequisites."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-technique/improved-repulse",
+      "legacyPackId": "a964958ffb2daa9a",
+      "domain": "force-technique",
+      "printedName": "Improved Repulse",
+      "displayName": "Improved Repulse",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 89,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Full-round radius-two variant; spend FP to increase to radius four.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "action-override",
+            "target": "repulse",
+            "fromAction": "standard",
+            "toAction": "full-round"
+          },
+          {
+            "kind": "area-override",
+            "target": "repulse",
+            "shape": "radius",
+            "radiusSquares": 2,
+            "origin": "caster"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Base power must be known/usable: fucg/force-power/repulse"
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "improved-repulse-full-round",
+          "timing": "on-activation",
+          "summary": "Increase burst radius from 2 to 4 squares",
+          "operations": [
+            {
+              "kind": "area-override",
+              "target": "repulse",
+              "shape": "radius",
+              "radiusSquares": 4,
+              "origin": "caster"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "fucg/force-power/repulse"
+      ],
+      "rulesNotes": [
+        "Keep baseline Repulse opposed Strength checks against each target."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-secret/corrupted-power",
+      "legacyPackId": "46a7fa6fae582cd4",
+      "domain": "force-secret",
+      "printedName": "Corrupted Power",
+      "displayName": "Corrupted Power",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 89,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Add Dark Side descriptor and reduce qualifying opponents defenses by 2 FP or 5 DP.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Actor Dark Side Score must equal its Wisdom score.",
+          "Cannot corrupt a power bearing [light side].",
+          "Targets must have lower Dark Side Score than caster."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-power-activation",
+          "timing": "on-activation",
+          "summary": "Make power Dark Side and impose -2 all defenses on lower-DSS opponents",
+          "operations": [
+            {
+              "kind": "descriptor-injection",
+              "target": "source-power",
+              "descriptor": "dark-side",
+              "expires": "end-of-activation"
+            },
+            {
+              "kind": "defense-penalty-conditional",
+              "target": "eligible-opponents",
+              "amount": -2,
+              "condition": "targetDSS<casterDSS",
+              "duration": "this-power-activation"
+            }
+          ],
+          "exclusiveGroup": "corrupted-power-option"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "on-power-activation",
+          "timing": "on-activation",
+          "summary": "Make power Dark Side and impose -5 all defenses on lower-DSS opponents",
+          "operations": [
+            {
+              "kind": "descriptor-injection",
+              "target": "source-power",
+              "descriptor": "dark-side",
+              "expires": "end-of-activation"
+            },
+            {
+              "kind": "defense-penalty-conditional",
+              "target": "eligible-opponents",
+              "amount": -5,
+              "condition": "targetDSS<casterDSS",
+              "duration": "this-power-activation"
+            }
+          ],
+          "exclusiveGroup": "corrupted-power-option"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Descriptor change is activation-scoped and must be resolved before dark-side descriptor consequences."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-secret/debilitating-power",
+      "legacyPackId": "2d663aa3b9ce2d7d",
+      "domain": "force-secret",
+      "printedName": "Debilitating Power",
+      "displayName": "Debilitating Power",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 89,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "After a damaging Force Power hits, impose extra target condition-track movement if UTF meets damage threshold.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Underlying Force Power must successfully deal damage.",
+          "UTF must equal or exceed target damage threshold under the printed conditional wording."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "damaging-power-success-and-threshold",
+          "timing": "on-activation",
+          "summary": "Move target -1 additional CT step",
+          "operations": [
+            {
+              "kind": "damage-threshold-gate",
+              "target": "target",
+              "threshold": "targetDamageThreshold",
+              "comparison": "gte",
+              "effect": "additional-condition-track"
+            },
+            {
+              "kind": "condition-track-extra-steps",
+              "target": "target",
+              "steps": -1,
+              "ignoreDamageThreshold": false,
+              "when": "power-damage-and-utf>=damage-threshold"
+            }
+          ],
+          "exclusiveGroup": "debilitating-power-option"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "damaging-power-success-and-threshold",
+          "timing": "on-activation",
+          "summary": "Move target -3 additional CT steps",
+          "operations": [
+            {
+              "kind": "damage-threshold-gate",
+              "target": "target",
+              "threshold": "targetDamageThreshold",
+              "comparison": "gte",
+              "effect": "additional-condition-track"
+            },
+            {
+              "kind": "condition-track-extra-steps",
+              "target": "target",
+              "steps": -3,
+              "ignoreDamageThreshold": false,
+              "when": "power-damage-and-utf>=damage-threshold"
+            }
+          ],
+          "exclusiveGroup": "debilitating-power-option"
+        }
+      ],
+      "adjudication": [
+        "Confirm whether the threshold condition grammatically applies to the alternative Destiny Point mode; implementation defaults to applying the published antecedent gate to both pending explicit ruling."
+      ],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-secret/enlarged-power",
+      "legacyPackId": "c4b6636d851bfac0",
+      "domain": "force-secret",
+      "printedName": "Enlarged Power",
+      "displayName": "Enlarged Power",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 89,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Increase caster-origin area extension: Force Point ×2 or Destiny Point ×5.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Power has an area whose distance extends from the caster square (e.g. cone or radius).",
+          "Does not change weapon range, damage, independent target count, or a remote-origin ability without its own modifier."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "area-power-activation",
+          "timing": "on-activation",
+          "summary": "Multiply area extension distance by 2",
+          "operations": [
+            {
+              "kind": "targeting-multiplier",
+              "target": "source-power-area",
+              "distanceFactor": 2,
+              "onlySourceOrigin": true
+            }
+          ],
+          "exclusiveGroup": "enlarged-power-option"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "area-power-activation",
+          "timing": "on-activation",
+          "summary": "Multiply area extension distance by 5",
+          "operations": [
+            {
+              "kind": "targeting-multiplier",
+              "target": "source-power-area",
+              "distanceFactor": 5,
+              "onlySourceOrigin": true
+            }
+          ],
+          "exclusiveGroup": "enlarged-power-option"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-secret/pure-power",
+      "legacyPackId": "77631069d53b2887",
+      "domain": "force-secret",
+      "printedName": "Pure Power",
+      "displayName": "Pure Power",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 89,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Add Light Side descriptor and impose -2 FP or -5 DP to defenses of opponents with DSS>=1.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Actor must have Dark Side Score 0.",
+          "Cannot purify a power bearing [dark side].",
+          "Only opponents with DSS>=1 take penalty."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-power-activation",
+          "timing": "on-activation",
+          "summary": "Make power Light Side; impose -2 defenses on DSS>=1 enemies",
+          "operations": [
+            {
+              "kind": "descriptor-injection",
+              "target": "source-power",
+              "descriptor": "light-side",
+              "expires": "end-of-activation"
+            },
+            {
+              "kind": "defense-penalty-conditional",
+              "target": "eligible-opponents",
+              "amount": -2,
+              "condition": "targetDSS>=1",
+              "duration": "this-power-activation"
+            }
+          ],
+          "exclusiveGroup": "pure-power-option"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "on-power-activation",
+          "timing": "on-activation",
+          "summary": "Make power Light Side; impose -5 defenses on DSS>=1 enemies",
+          "operations": [
+            {
+              "kind": "descriptor-injection",
+              "target": "source-power",
+              "descriptor": "light-side",
+              "expires": "end-of-activation"
+            },
+            {
+              "kind": "defense-penalty-conditional",
+              "target": "eligible-opponents",
+              "amount": -5,
+              "condition": "targetDSS>=1",
+              "duration": "this-power-activation"
+            }
+          ],
+          "exclusiveGroup": "pure-power-option"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Pure Power and Corrupted Power are mutually inapplicable by their actor DSS gates."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/force-secret/remote-power",
+      "legacyPackId": "419f761881a9b7f8",
+      "domain": "force-secret",
+      "printedName": "Remote Power",
+      "displayName": "Remote Power",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 89,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Move the origin of a caster-origin cone, line, or radius: FP within six squares, DP any visible square.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Underlying Force Power has a cone, line or radius effect that originates in caster square.",
+          "Caster still chooses direction as though standing in the new source square."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "area-power-activation",
+          "timing": "on-activation",
+          "summary": "Originate from another square within six squares",
+          "operations": [
+            {
+              "kind": "origin-substitution",
+              "target": "source-power-area",
+              "maxDistanceSquares": 6,
+              "lineOfSightOnly": false,
+              "directionFromNewOrigin": true
+            }
+          ],
+          "exclusiveGroup": "remote-power-option"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "area-power-activation",
+          "timing": "on-activation",
+          "summary": "Originate from any square within line of sight",
+          "operations": [
+            {
+              "kind": "origin-substitution",
+              "target": "source-power-area",
+              "maxDistanceSquares": null,
+              "lineOfSightOnly": true,
+              "directionFromNewOrigin": true
+            }
+          ],
+          "exclusiveGroup": "remote-power-option"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-battle-meditation",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Battle Meditation",
+      "displayName": "Unleashed Battle Meditation",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 89,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Battle Meditation benefits reach allies throughout the same star system.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite core/talent/battle-meditation.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-talent",
+          "timing": "on-activation",
+          "summary": "Battle Meditation benefits reach allies throughout the same star system.",
+          "operations": [
+            {
+              "kind": "space-scale-allies",
+              "target": "all-allies-in-star-system",
+              "scope": "same-star-system",
+              "sourceBonus": "base-battle-meditation-bonuses"
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-battle-meditation-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/talent/battle-meditation"
+      ],
+      "rulesNotes": [
+        "Battle Meditation talent is a prerequisite; it must be present independently."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "core/talent/battle-meditation",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-using-talent",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-battle-strike",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Battle Strike",
+      "displayName": "Unleashed Battle Strike",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 90,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Next successful melee attack also moves target -2 CT steps, even when below threshold.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite core/force-power/battle-strike.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-power",
+          "timing": "on-activation",
+          "summary": "Next successful melee attack also moves target -2 CT steps, even when below threshold.",
+          "operations": [
+            {
+              "kind": "condition-track-extra-steps",
+              "target": "target-of-next-successful-melee-hit",
+              "steps": -2,
+              "ignoreDamageThreshold": true,
+              "when": "next-melee-attack-hit-after-battle-strike"
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-battle-strike-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/battle-strike"
+      ],
+      "rulesNotes": [
+        "Does not replace damage or add extra attacks."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "core/force-power/battle-strike",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-using-power",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-corruption",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Corruption",
+      "displayName": "Unleashed Corruption",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 90,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Delayed half-damage persists for five rounds rather than only one.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite fucg/force-power/corruption.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-power-damages-target",
+          "timing": "on-activation",
+          "summary": "Delayed half-damage persists for five rounds rather than only one.",
+          "operations": [
+            {
+              "kind": "scheduled-damage",
+              "target": "original-corruption-target",
+              "fraction": 0.5,
+              "trigger": "start-of-target-turn",
+              "tickCount": 5,
+              "basedOn": "actual-damage-rolled",
+              "requiresInitialTargetHit": true
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-corruption-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "fucg/force-power/corruption"
+      ],
+      "rulesNotes": [
+        "Do not schedule five ticks on splash targets."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "fucg/force-power/corruption",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-power-damages-target",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-dark-rage",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Dark Rage",
+      "displayName": "Unleashed Dark Rage",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 90,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Gain +10 rage bonus to melee attack and melee damage for encounter.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite core/force-power/dark-rage.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-power",
+          "timing": "on-activation",
+          "summary": "Gain +10 rage bonus to melee attack and melee damage for encounter.",
+          "operations": [
+            {
+              "kind": "modifier",
+              "target": "caster",
+              "stat": "melee-attack",
+              "amount": 10,
+              "bonusType": "rage",
+              "when": "rest-of-encounter"
+            },
+            {
+              "kind": "modifier",
+              "target": "caster",
+              "stat": "melee-damage",
+              "amount": 10,
+              "bonusType": "rage",
+              "when": "rest-of-encounter"
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-dark-rage-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/dark-rage"
+      ],
+      "rulesNotes": [
+        "Replaces the rage option for this activation; do not stack with base rage bonus of same type."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "core/force-power/dark-rage",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-using-power",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-force-blast",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Force Blast",
+      "displayName": "Unleashed Force Blast",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 91,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Double the Force Blast damage total.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite fucg/force-power/force-blast.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-power",
+          "timing": "on-activation",
+          "summary": "Double the Force Blast damage total.",
+          "operations": [
+            {
+              "kind": "damage-total-multiplier",
+              "target": "force-blast-damage",
+              "factor": 2,
+              "onlyIf": "successful-damage"
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-force-blast-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "fucg/force-power/force-blast"
+      ],
+      "rulesNotes": [
+        "Unlike Devastating Power, multiply damage total, not number of dice."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "fucg/force-power/force-blast",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-using-power",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-force-grip",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Force Grip",
+      "displayName": "Unleashed Force Grip",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 91,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Maintain Force Grip without action for half Charisma modifier rounds (min 1); concentration needed if damaged.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite core/force-power/force-grip.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "after-successful-power",
+          "timing": "on-activation",
+          "summary": "Maintain Force Grip without action for half Charisma modifier rounds (min 1); concentration needed if damaged.",
+          "operations": [
+            {
+              "kind": "autonomous-maintenance",
+              "target": "force-grip",
+              "roundsFormula": "max(1,floor(charismaModifier/2))",
+              "minimumRounds": 1,
+              "requiresDamageConcentration": true,
+              "noResumptionAfter": false
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-force-grip-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/force-grip"
+      ],
+      "rulesNotes": [
+        "The power must already have succeeded against the target.",
+        "Resolve overlap with Improved Force Grip no-resumption separately; do not merge modes by name."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "core/force-power/force-grip",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "after-successful-power",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-force-lightning",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Force Lightning",
+      "displayName": "Unleashed Force Lightning",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 91,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Replace single target with all creatures in caster-origin six-square cone.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite core/force-power/force-lightning.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-power",
+          "timing": "on-activation",
+          "summary": "Replace single target with all creatures in caster-origin six-square cone.",
+          "operations": [
+            {
+              "kind": "area-override",
+              "target": "force-lightning",
+              "shape": "cone",
+              "rangeFormula": "6-squares",
+              "origin": "caster"
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-force-lightning-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/force-lightning"
+      ],
+      "rulesNotes": [
+        "Each target checks its own Reflex, receiving Core damage rules."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "core/force-power/force-lightning",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-using-power",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-force-storm",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Force Storm",
+      "displayName": "Unleashed Force Storm",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 91,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Set storm damage to 8d6 on each end-of-turn adjacent pulse for full duration.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite fucg/force-power/force-storm.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-power",
+          "timing": "on-activation",
+          "summary": "Set storm damage to 8d6 on each end-of-turn adjacent pulse for full duration.",
+          "operations": [
+            {
+              "kind": "damage-dice-override",
+              "target": "each-force-storm-pulse",
+              "dice": "8d6",
+              "replacement": true
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-force-storm-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "fucg/force-power/force-storm"
+      ],
+      "rulesNotes": [
+        "Does not merely add 8d6 to the normal 2d6; FUCG storm only."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "fucg/force-power/force-storm",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-using-power",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-force-thrust",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Force Thrust",
+      "displayName": "Unleashed Force Thrust",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 91,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Ignore only positive size modifiers to opposing Strength; double push distance; impact 1d6/square.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite core/force-power/force-thrust.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-power",
+          "timing": "on-activation",
+          "summary": "Ignore only positive size modifiers to opposing Strength; double push distance; impact 1d6/square.",
+          "operations": [
+            {
+              "kind": "size-bonus-suppression",
+              "target": "target-strength-check",
+              "check": "strength",
+              "removePositiveOnly": true,
+              "preservePenalties": true
+            },
+            {
+              "kind": "forced-movement",
+              "target": "affected-target",
+              "squaresFormula": "2*baseForceThrustSquares",
+              "direction": "away-from-caster"
+            },
+            {
+              "kind": "collision-damage-per-square",
+              "target": "pushed-target",
+              "dicePerSquare": "1d6",
+              "condition": "collides-with-larger-object"
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-force-thrust-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/force-thrust"
+      ],
+      "rulesNotes": [
+        "Medium and smaller size penalties remain in force."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "core/force-power/force-thrust",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-using-power",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-move-object",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Move Object",
+      "displayName": "Unleashed Move Object",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 91,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Double damage from throwing object or character into another object or character.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite core/force-power/move-object.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-power",
+          "timing": "on-activation",
+          "summary": "Double damage from throwing object or character into another object or character.",
+          "operations": [
+            {
+              "kind": "damage-total-multiplier",
+              "target": "move-object-collision-damage",
+              "factor": 2,
+              "onlyIf": "one-object-or-creature-thrown-into-another"
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-move-object-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/move-object"
+      ],
+      "rulesNotes": [
+        "Does not double other Move Object consequences."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "core/force-power/move-object",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-using-power",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "fucg/unleashed-overlay/unleashed-repulse",
+      "legacyPackId": null,
+      "domain": "unleashed-overlay",
+      "printedName": "Unleashed Repulse",
+      "displayName": "Unleashed Repulse",
+      "source": {
+        "bookId": "swse-force-unleashed",
+        "printedPage": 91,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Ignore positive target size resistance; double push distance; impact 1d6/square.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "unleashed-feat-conditional-option",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Unleashed feat, Force Sensitivity, chosen destiny, and prerequisite fucg/force-power/repulse.",
+          "Must be activated in conjunction with qualifying underlying power or talent; no separate Use the Force check."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-power",
+          "timing": "on-activation",
+          "summary": "Ignore positive target size resistance; double push distance; impact 1d6/square.",
+          "operations": [
+            {
+              "kind": "size-bonus-suppression",
+              "target": "target-strength-check",
+              "check": "strength",
+              "removePositiveOnly": true,
+              "preservePenalties": true
+            },
+            {
+              "kind": "forced-movement",
+              "target": "affected-target",
+              "squaresFormula": "2*baseRepulseSquares",
+              "direction": "away-from-caster"
+            },
+            {
+              "kind": "collision-damage-per-square",
+              "target": "pushed-target",
+              "dicePerSquare": "1d6",
+              "condition": "collides-with-larger-object"
+            }
+          ],
+          "exclusiveGroup": "unleashed-unleashed-repulse-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "fucg/force-power/repulse"
+      ],
+      "rulesNotes": [
+        "Do not confuse the standard Repulse Force Point impact bonus with this Destiny Point option."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "unleashedRules": {
+        "underlyingDefinitionId": "fucg/force-power/repulse",
+        "unleashedFeatRequired": true,
+        "forceSensitivityRequired": true,
+        "chosenDestinyRequired": true,
+        "destinyPointCost": 1,
+        "benefitTrigger": "when-using-power",
+        "notAnIndependentActivation": true,
+        "resourceExclusivity": "one resource receipt for selected Unleashed mode; no implicit additional spend"
+      }
+    }
+  ],
+  "modifiers": [
+    {
+      "modifierId": "fucg/influence/improved-battle-strike",
+      "sourceName": "Improved Battle Strike",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/improved-dark-rage",
+      "sourceName": "Improved Dark Rage",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/improved-force-disarm",
+      "sourceName": "Improved Force Disarm",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/improved-force-thrust",
+      "sourceName": "Improved Force Thrust",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/improved-force-grip",
+      "sourceName": "Improved Force Grip",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/improved-force-lightning",
+      "sourceName": "Improved Force Lightning",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/improved-force-storm",
+      "sourceName": "Improved Force Storm",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/improved-mind-trick",
+      "sourceName": "Improved Mind Trick",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 89,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/improved-rebuke",
+      "sourceName": "Improved Rebuke",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 89,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/improved-repulse",
+      "sourceName": "Improved Repulse",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 89,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-power-use",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known and its source power is legal/active as required."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/corrupted-power",
+      "sourceName": "Corrupted Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 89,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "source-power-activation",
+      "effect": "modify: apply-source-defined-resource-choice",
+      "constraints": [
+        "The Force Secret is known and its typed resource option is legal."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/debilitating-power",
+      "sourceName": "Debilitating Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 89,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "source-power-activation",
+      "effect": "modify: apply-source-defined-resource-choice",
+      "constraints": [
+        "The Force Secret is known and its typed resource option is legal."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/enlarged-power",
+      "sourceName": "Enlarged Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 89,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "source-power-activation",
+      "effect": "modify: apply-source-defined-resource-choice",
+      "constraints": [
+        "The Force Secret is known and its typed resource option is legal."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/pure-power",
+      "sourceName": "Pure Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 89,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "source-power-activation",
+      "effect": "modify: apply-source-defined-resource-choice",
+      "constraints": [
+        "The Force Secret is known and its typed resource option is legal."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/remote-power",
+      "sourceName": "Remote Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 89,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "source-power-activation",
+      "effect": "modify: apply-source-defined-resource-choice",
+      "constraints": [
+        "The Force Secret is known and its typed resource option is legal."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-battle-meditation",
+      "sourceName": "Unleashed Battle Meditation",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 89,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-talent",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-battle-strike",
+      "sourceName": "Unleashed Battle Strike",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 90,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-power",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-corruption",
+      "sourceName": "Unleashed Corruption",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 90,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-power-damages-target",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-dark-rage",
+      "sourceName": "Unleashed Dark Rage",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 90,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-power",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-force-blast",
+      "sourceName": "Unleashed Force Blast",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 91,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-power",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-force-grip",
+      "sourceName": "Unleashed Force Grip",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 91,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "after-successful-power",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-force-lightning",
+      "sourceName": "Unleashed Force Lightning",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 91,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-power",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-force-storm",
+      "sourceName": "Unleashed Force Storm",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 91,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-power",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-force-thrust",
+      "sourceName": "Unleashed Force Thrust",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 91,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-power",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-move-object",
+      "sourceName": "Unleashed Move Object",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 91,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-power",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-repulse",
+      "sourceName": "Unleashed Repulse",
+      "sourceType": "unleashed-overlay",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 91,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-power",
+      "effect": "modify: apply-unleashed-option",
+      "constraints": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/telekinetic-prodigy",
+      "sourceName": "Telekinetic Prodigy",
+      "sourceType": "talent",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 87,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "force-training-feat-acquisition",
+      "effect": "grant: telekinetic-prodigy-bonus",
+      "constraints": [
+        "Must have Telekinetic Savant.",
+        "Select Move Object in this instance of Force Training."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/force-exertion",
+      "sourceName": "Force Exertion",
+      "sourceType": "talent",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 87,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "active-suite-replacement",
+      "effect": "exchange: force-exertion-extra-copy",
+      "constraints": [
+        "Character knows Force Training.",
+        "One chosen power fixed when talent learned; removing any power from active suite provides a duplicate of chosen power."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/wrath-of-the-dark-side",
+      "sourceName": "Wrath of the Dark Side",
+      "sourceType": "talent",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "natural-20-on-activation",
+      "effect": "replace: wrath-natural20-replace-recovery",
+      "constraints": [
+        "Natural 20 on Use the Force power activation.",
+        "Power directly damages target.",
+        "Prerequisite Power of the Dark Side."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/feel-the-force",
+      "sourceName": "Feel the Force",
+      "sourceType": "talent",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "spend-force-point-as-standard-action",
+      "effect": "conditional-modifier: ignore-concealment-temporarily",
+      "constraints": [
+        "Spend FP on a separate standard action, then ignore concealment for 1 minute."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/illusion",
+      "sourceName": "Illusion",
+      "sourceType": "talent",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 87,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "separate-talent-action",
+      "effect": "independent: scope-check",
+      "constraints": [
+        "Mind Trick is talent prerequisite only; Illusion is separate standard-action FP talent ability, NOT a replacement Mind Trick power."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/unleashed-feat-gating",
+      "sourceName": "Unleashed",
+      "sourceType": "feat",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 35,
+      "targetDomains": [
+        "unleashed-overlay"
+      ],
+      "trigger": "choose-destiny-point-option",
+      "effect": "gate: scope-check",
+      "constraints": [
+        "Actor has a selected destiny (including secret destiny).",
+        "Actor has Unleashed feat and Force Sensitivity.",
+        "Specific overlay prerequisite power or talent also known."
+      ]
+    },
+    {
+      "modifierId": "fucg/influence/temptation-of-dark-side-temporary-talents",
+      "sourceName": "Temptation of the Dark Side",
+      "sourceType": "rule",
+      "sourceBookId": "swse-force-unleashed",
+      "sourcePrintedPage": 85,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "optional-house-rule-activation",
+      "effect": "optional-rule: temporary-talent-with-darkside-cost",
+      "constraints": [
+        "Optional Dark Times rule is enabled by GM.",
+        "Force-sensitive character pays FP for each legal temporary Dark Side, Devotee, or Sith tree talent.",
+        "Requires prerequisite checks, supports chaining of temporary talents until end of encounter, then gains 1 DSS per point used."
+      ]
+    }
+  ],
+  "unresolvedSourceInterpretations": [
+    {
+      "id": "FUCG-ED-01",
+      "severity": "blocks-full-automation",
+      "issue": "Corruption delayed half damage — FUCG p86 repeats next-turn half-damage language after one half-damage clause; ambiguous whether duplicate tick or editorial redundancy. Proposed: One delayed half-damage tick for a hit target, with Unleashed extending to five total ticks."
+    },
+    {
+      "id": "FUCG-ED-02",
+      "severity": "blocks-full-automation",
+      "issue": "Debilitating Power DP threshold — FUCG p89 says UTF >= damage threshold for the FP extra condition step, then Alternative DP to -3. Proposed: Same UTF threshold gate for both resource choices pending editorial confirmation."
+    },
+    {
+      "id": "FUCG-ED-03",
+      "severity": "blocks-full-automation",
+      "issue": "Unleashed Force Grip fractional Charisma modifier — FUCG p90 uses half Charisma modifier (minimum one round); does not explicitly state fractional rounding. Proposed: Math floor for positive odd modifiers; do not claim printed rounding is explicit."
+    },
+    {
+      "id": "FUCG-ED-04",
+      "severity": "blocks-full-automation",
+      "issue": "Unleashed Force Storm with FP damage bonus — FUCG p86 FP +2d6; p90 Unleashed sets storm to 8d6. Proposed: Do not silently stack +2d6 and 8d6 on same pulse; force explicit spend choice and modifier precedence."
+    },
+    {
+      "id": "FUCG-ED-05",
+      "severity": "blocks-full-automation",
+      "issue": "Improved Force Grip plus Unleashed Force Grip — FUCG p88 technique says no resuming concentration after its free one-round extension; p90 Unleashed says no action for half Cha modifier rounds. Proposed: Treat as distinct modes; no automatic chaining."
+    },
+    {
+      "id": "FUCG-ED-06",
+      "severity": "review",
+      "issue": "Power of the Dark Side and Wrath of the Dark Side source behavior — FUCG p88 Wrath changes natural-20 suite recovery, is conditional on directly damaging powers. Proposed: No direct damage => cannot replace natural 20 recovery."
+    },
+    {
+      "id": "FUCG-ED-07",
+      "severity": "review",
+      "issue": "Kinetic Combat origin — KOTOR p51 and FUCG p86 both print same base power. Proposed: Reprint only: identity kotor/force-power/kinetic-combat; do not count as sixth FUCG power."
+    },
+    {
+      "id": "FUCG-ED-08",
+      "severity": "review",
+      "issue": "No independently verified FUCG Force-domain errata found — PDF p85-91 checked; available web errata snippets did not establish a correction for any of these 31 definitions. Proposed: Treat printed book as authority and retain clarification watch; do not assume no errata exists."
+    }
+  ],
+  "reprints": [
+    {
+      "definitionId": "kotor/force-power/kinetic-combat",
+      "reprintPage": 86,
+      "sourceBookId": "swse-force-unleashed",
+      "sameMechanics": true,
+      "countedAsNewDefinition": false,
+      "notes": "Detailed kinetic combat reprint (including +1 FP attack and maintenance) agrees with KOTOR p51; keep KOTOR origin and source lineage."
+    }
+  ],
+  "nextBook": "Clone Wars Campaign Guide"
+}

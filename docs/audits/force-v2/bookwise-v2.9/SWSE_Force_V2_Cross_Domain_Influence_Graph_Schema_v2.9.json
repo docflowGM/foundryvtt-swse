@@ -1,0 +1,1973 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swse.local/schema/force-v2-influences-v2.9.json",
+  "title": "SWSE Force V2 Cross-domain Influence Graph Contract v2.9.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "package",
+    "purpose",
+    "applicationOrder",
+    "eventSemantics",
+    "edges",
+    "excludedScope",
+    "schemaEvolutionPolicy"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "2.9.0"
+    },
+    "package": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "applicationOrder": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "eventSemantics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "edges": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    },
+    "excludedScope": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "schemaEvolutionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "newPublicationMayAdd",
+        "previousRecordsMustRevalidate",
+        "cannotBeAddedAsUntypedFreeText",
+        "ambiguousPublishedEffect"
+      ],
+      "properties": {
+        "newPublicationMayAdd": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "previousRecordsMustRevalidate": {
+          "type": "boolean"
+        },
+        "cannotBeAddedAsUntypedFreeText": {
+          "type": "boolean"
+        },
+        "ambiguousPublishedEffect": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "$defs": {
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ruleId",
+        "sourceDefinitionId",
+        "sourceDomain",
+        "sourceName",
+        "sourcePage",
+        "targetSelector",
+        "event",
+        "phase",
+        "interactionMode",
+        "conditions",
+        "operations",
+        "resourceChoices",
+        "testAssertions"
+      ],
+      "properties": {
+        "ruleId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceDefinitionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceDomain": {
+          "enum": [
+            "feat",
+            "force-secret",
+            "force-technique",
+            "rule",
+            "talent",
+            "equipment",
+            "unleashed-overlay"
+          ]
+        },
+        "sourceName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourcePage": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "targetSelector": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": false,
+          "properties": {
+            "domain": {
+              "type": "string"
+            },
+            "definitionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "targeting": {
+              "type": "string"
+            },
+            "requiredDescriptor": {
+              "type": "string"
+            },
+            "baseActionIn": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "checkSkill": {
+              "type": "string"
+            },
+            "chosenDefinitionId": {
+              "type": "string"
+            },
+            "mustDealDamage": {
+              "type": "boolean"
+            },
+            "numericRangeRequired": {
+              "type": "boolean"
+            },
+            "singleTargetOnly": {
+              "type": "boolean"
+            },
+            "areaShape": {
+              "type": "string"
+            },
+            "checkKinds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "resourceSpendMode": {
+              "type": "string"
+            },
+            "useTheForceSkillApplication": {
+              "type": "string"
+            },
+            "rollFamily": {
+              "enum": [
+                "pilot",
+                "weapon-attack",
+                "use-the-force"
+              ]
+            },
+            "excludedDescriptors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "actorRole": {
+              "enum": [
+                "pilot",
+                "pilot-or-gunner"
+              ]
+            }
+          }
+        },
+        "event": {
+          "type": "string",
+          "minLength": 1
+        },
+        "phase": {
+          "type": "string",
+          "minLength": 1
+        },
+        "interactionMode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/influenceOperation"
+          }
+        },
+        "resourceChoices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "resource",
+              "trigger",
+              "timing",
+              "summary",
+              "operations"
+            ]
+          }
+        },
+        "testAssertions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "influenceOperation": {
+      "oneOf": [
+        {
+          "title": "action-override",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "action-override"
+            },
+            "action": {
+              "type": "string"
+            },
+            "usesPerDay": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "apply-concealment-penalty-to-utf-unless-sense-surroundings-this-turn",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "apply-concealment-penalty-to-utf-unless-sense-surroundings-this-turn"
+            }
+          }
+        },
+        {
+          "title": "apply-cover-to-target-defense-or-opposed",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "apply-cover-to-target-defense-or-opposed"
+            }
+          }
+        },
+        {
+          "title": "apply-source-defined-resource-choice",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "apply-source-defined-resource-choice"
+            },
+            "sourceDefinitionId": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "check-modifier-source-override",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "check-modifier-source-override"
+            },
+            "checkRemains": {
+              "type": "string"
+            },
+            "modifierSource": {
+              "type": "string"
+            },
+            "trainedPilotGlobally": {
+              "type": "boolean"
+            },
+            "trainedPerceptionGlobally": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "exclude-chosen-targets",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "exclude-chosen-targets"
+            },
+            "maxFormula": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "force-point-die-upgrade",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "force-point-die-upgrade"
+            },
+            "fromDie": {
+              "type": "string"
+            },
+            "toDie": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "grant-suite-slots",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "grant-suite-slots"
+            },
+            "formula": {
+              "type": "string"
+            },
+            "repeatable": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "information-time-shift",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "information-time-shift"
+            },
+            "cost": {
+              "type": "string"
+            },
+            "extraAction": {
+              "type": "string"
+            },
+            "targetPastFutureYearsMax": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "modifier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "modifier"
+            },
+            "stat": {
+              "type": "string"
+            },
+            "bonusType": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "permit-take-10",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "permit-take-10"
+            },
+            "evenIfDistracted": {
+              "type": "boolean"
+            },
+            "evenIfThreatened": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "permit-training",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "permit-training"
+            },
+            "skill": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "qualify-as-ranged-attack-for-feat-talent-interactions",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "qualify-as-ranged-attack-for-feat-talent-interactions"
+            }
+          }
+        },
+        {
+          "title": "recover-spent-power",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "recover-spent-power"
+            },
+            "action": {
+              "type": "string"
+            },
+            "costForcePoints": {
+              "type": "integer"
+            },
+            "usesPerEncounterFormula": {
+              "type": "string"
+            },
+            "checkSkill": {
+              "type": "string"
+            },
+            "minDC": {
+              "type": "integer"
+            },
+            "uses": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "resolve-deflect-vs-force-lightning",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "resolve-deflect-vs-force-lightning"
+            },
+            "checkSkill": {
+              "type": "string"
+            },
+            "successDamage": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "resource-max-grant",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "resource-max-grant"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "amountPerLevel": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "schedule-reuse",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "schedule-reuse"
+            },
+            "action": {
+              "type": "string"
+            },
+            "sameDefinition": {
+              "type": "boolean"
+            },
+            "newLegalTargetAllowed": {
+              "type": "boolean"
+            },
+            "ignoreSpentForImmediateGrantedRepeat": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "scope-check",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op"
+          ],
+          "properties": {
+            "op": {
+              "const": "scope-check"
+            },
+            "featGrants": {
+              "type": "string"
+            },
+            "powerUses": {
+              "type": "string"
+            },
+            "doesNotImplyAutomaticBonus": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "maneuver-suite-grant",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "formula",
+            "featInstances",
+            "allowRepeatManeuver",
+            "recalculateOnPermanentWisdomIncrease"
+          ],
+          "properties": {
+            "op": {
+              "const": "maneuver-suite-grant"
+            },
+            "formula": {
+              "const": "max(1,1+wisdomModifier)"
+            },
+            "featInstances": {
+              "const": "per-instance"
+            },
+            "allowRepeatManeuver": {
+              "const": true
+            },
+            "recalculateOnPermanentWisdomIncrease": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "maneuver-recover-all",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "trigger",
+            "when"
+          ],
+          "properties": {
+            "op": {
+              "const": "maneuver-recover-all"
+            },
+            "trigger": {
+              "enum": [
+                "natural-20-on-maneuver-pilot-check",
+                "natural-20-on-attack-roll",
+                "one-minute-rest-after-combat"
+              ]
+            },
+            "when": {
+              "enum": [
+                "end-turn",
+                "end-round",
+                "after-rest"
+              ]
+            }
+          }
+        },
+        {
+          "title": "maneuver-recover-one",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "forcePointCost",
+            "action",
+            "fromPool"
+          ],
+          "properties": {
+            "op": {
+              "const": "maneuver-recover-one"
+            },
+            "forcePointCost": {
+              "const": 1
+            },
+            "action": {
+              "const": "reaction"
+            },
+            "fromPool": {
+              "const": "spent-maneuver-instance"
+            }
+          }
+        },
+        {
+          "title": "maneuver-force-reflexes-reroll",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "forcePointCost",
+            "checkSkill",
+            "keep",
+            "notApplicableTo"
+          ],
+          "properties": {
+            "op": {
+              "const": "maneuver-force-reflexes-reroll"
+            },
+            "forcePointCost": {
+              "const": 1
+            },
+            "checkSkill": {
+              "const": "pilot"
+            },
+            "keep": {
+              "const": "higher"
+            },
+            "notApplicableTo": {
+              "const": [
+                "weapon-attack",
+                "use-the-force"
+              ]
+            }
+          }
+        },
+        {
+          "title": "squadron-share-maneuver",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "oncePerEncounter",
+            "sharedDuration",
+            "requiresDescriptorAbsent",
+            "independentChecks"
+          ],
+          "properties": {
+            "op": {
+              "const": "squadron-share-maneuver"
+            },
+            "oncePerEncounter": {
+              "const": true
+            },
+            "sharedDuration": {
+              "const": "next-turn-once"
+            },
+            "requiresDescriptorAbsent": {
+              "const": "attack-pattern"
+            },
+            "independentChecks": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "combat-thrusters-qualify",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "vehicleCategory",
+            "treatAs",
+            "doesNotChange"
+          ],
+          "properties": {
+            "op": {
+              "const": "combat-thrusters-qualify"
+            },
+            "vehicleCategory": {
+              "const": "space-transport"
+            },
+            "treatAs": {
+              "const": "starfighter-for-dogfights-and-maneuvers"
+            },
+            "doesNotChange": {
+              "const": "reflex-size-modifier"
+            }
+          }
+        },
+        {
+          "title": "maneuver-exclusive-pattern",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "activeLimit",
+            "replacesExisting",
+            "oldInstanceRemainsSpent"
+          ],
+          "properties": {
+            "op": {
+              "const": "maneuver-exclusive-pattern"
+            },
+            "activeLimit": {
+              "const": 1
+            },
+            "replacesExisting": {
+              "const": true
+            },
+            "oldInstanceRemainsSpent": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "fighter-group-joint-maneuver",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "everyMemberMustKnow",
+            "allMembersUse",
+            "joiningEndsIndividualPattern"
+          ],
+          "properties": {
+            "op": {
+              "const": "fighter-group-joint-maneuver"
+            },
+            "everyMemberMustKnow": {
+              "const": true
+            },
+            "allMembersUse": {
+              "const": true
+            },
+            "joiningEndsIndividualPattern": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "battle-strike-target-sense-stacking",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "oneBonusType",
+            "otherBonusType",
+            "noDoubleSourceStat"
+          ],
+          "properties": {
+            "op": {
+              "const": "battle-strike-target-sense-stacking"
+            },
+            "oneBonusType": {
+              "const": "force"
+            },
+            "otherBonusType": {
+              "const": "maneuver"
+            },
+            "noDoubleSourceStat": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "corellian-slip-errata",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "attackAction",
+            "replacesPrintedAction"
+          ],
+          "properties": {
+            "op": {
+              "const": "corellian-slip-errata"
+            },
+            "attackAction": {
+              "const": "free"
+            },
+            "replacesPrintedAction": {
+              "const": "swift"
+            }
+          }
+        },
+        {
+          "title": "attack-substitution-exclusion",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "blockedRollFamily",
+            "explanation"
+          ],
+          "properties": {
+            "op": {
+              "const": "attack-substitution-exclusion"
+            },
+            "blockedRollFamily": {
+              "enum": [
+                "weapon-attack",
+                "use-the-force"
+              ]
+            },
+            "explanation": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "newTarget",
+            "maxRangeSquares",
+            "oldTarget"
+          ],
+          "properties": {
+            "op": {
+              "const": "target-substitution"
+            },
+            "newTarget": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maxRangeSquares": {
+              "type": "integer"
+            },
+            "oldTarget": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "powerId",
+            "effect",
+            "duration"
+          ],
+          "properties": {
+            "op": {
+              "const": "force-power-on-success-extra-effect"
+            },
+            "powerId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "effect": {
+              "type": "string",
+              "minLength": 1
+            },
+            "duration": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "powerId",
+            "action",
+            "radiusSquares",
+            "origin"
+          ],
+          "properties": {
+            "op": {
+              "const": "alter-source-power-area-and-action"
+            },
+            "powerId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "action": {
+              "type": "string",
+              "minLength": 1
+            },
+            "radiusSquares": {
+              "type": "integer"
+            },
+            "origin": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "powerId",
+            "forcePointCost",
+            "replacesHalfDamage"
+          ],
+          "properties": {
+            "op": {
+              "const": "ion-damage-full-after-threshold"
+            },
+            "powerId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "forcePointCost": {
+              "type": "integer"
+            },
+            "replacesHalfDamage": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "maximumWeapons",
+            "attacksPerStandardAction"
+          ],
+          "properties": {
+            "op": {
+              "const": "telekinetic-weapon-count"
+            },
+            "maximumWeapons": {
+              "type": "integer"
+            },
+            "attacksPerStandardAction": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "target",
+            "identicalEffect"
+          ],
+          "properties": {
+            "op": {
+              "const": "add-power-target"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identicalEffect": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "marginAtLeast",
+            "actionControlled",
+            "powerId"
+          ],
+          "properties": {
+            "op": {
+              "const": "conditional-command"
+            },
+            "marginAtLeast": {
+              "type": "integer"
+            },
+            "actionControlled": {
+              "type": "string",
+              "minLength": 1
+            },
+            "powerId": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "rangeSquares",
+            "lineOfSight"
+          ],
+          "properties": {
+            "op": {
+              "const": "substitute-touch-range"
+            },
+            "rangeSquares": {
+              "type": "integer"
+            },
+            "lineOfSight": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "durationHours",
+            "opposedIfUnwilling",
+            "defense"
+          ],
+          "properties": {
+            "op": {
+              "const": "temporary-language"
+            },
+            "durationHours": {
+              "type": "integer"
+            },
+            "opposedIfUnwilling": {
+              "type": "boolean"
+            },
+            "defense": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "amount",
+            "expires",
+            "choiceReplacesRecovery"
+          ],
+          "properties": {
+            "op": {
+              "const": "temp-force-point"
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "expires": {
+              "type": "string",
+              "minLength": 1
+            },
+            "choiceReplacesRecovery": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "usesPerEncounter",
+            "requiresConsent",
+            "maxLinkKilometers",
+            "actionToLink"
+          ],
+          "properties": {
+            "op": {
+              "const": "borrow-ally-force-power"
+            },
+            "usesPerEncounter": {
+              "type": "integer"
+            },
+            "requiresConsent": {
+              "type": "boolean"
+            },
+            "maxLinkKilometers": {
+              "type": "number"
+            },
+            "actionToLink": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "maximumIntelligence",
+            "cannotComprehendComplexCommands"
+          ],
+          "properties": {
+            "op": {
+              "const": "allow-low-intelligence-mind-trick-target"
+            },
+            "maximumIntelligence": {
+              "type": "integer"
+            },
+            "cannotComprehendComplexCommands": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "steps",
+            "onFailedRebuke",
+            "variableTiersOnly"
+          ],
+          "properties": {
+            "op": {
+              "const": "reduce-incoming-power-tier"
+            },
+            "steps": {
+              "type": "integer"
+            },
+            "onFailedRebuke": {
+              "type": "boolean"
+            },
+            "variableTiersOnly": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "powerId",
+            "keep",
+            "opponentDescriptor"
+          ],
+          "properties": {
+            "op": {
+              "const": "rebuke-dark-side-reroll"
+            },
+            "powerId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "keep": {
+              "const": "better"
+            },
+            "opponentDescriptor": {
+              "const": "dark-side"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "resourceChoices"
+          ],
+          "properties": {
+            "op": {
+              "const": "darksidescore-normal-if-spending-fp-dp"
+            },
+            "resourceChoices": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "large",
+            "huge",
+            "gargantuan",
+            "colossal"
+          ],
+          "properties": {
+            "op": {
+              "const": "size-adjusted-fortitude"
+            },
+            "large": {
+              "type": "integer"
+            },
+            "huge": {
+              "type": "integer"
+            },
+            "gargantuan": {
+              "type": "integer"
+            },
+            "colossal": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "formula",
+            "onFailure"
+          ],
+          "properties": {
+            "op": {
+              "const": "maintain-damage-concentration-check"
+            },
+            "formula": {
+              "type": "string",
+              "minLength": 1
+            },
+            "onFailure": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "title": "apply-unleashed-option",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "overlayId",
+            "underlyingDefinitionId",
+            "requiresDestinyPoint"
+          ],
+          "properties": {
+            "op": {
+              "const": "apply-unleashed-option"
+            },
+            "overlayId": {
+              "type": "string"
+            },
+            "underlyingDefinitionId": {
+              "type": "string"
+            },
+            "requiresDestinyPoint": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "activate-technique-variant",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "techniqueId",
+            "powerId"
+          ],
+          "properties": {
+            "op": {
+              "const": "activate-technique-variant"
+            },
+            "techniqueId": {
+              "type": "string"
+            },
+            "powerId": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "add-periodic-damage",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "fraction",
+            "trigger",
+            "onlyIf"
+          ],
+          "properties": {
+            "op": {
+              "const": "add-periodic-damage"
+            },
+            "fraction": {
+              "type": "number"
+            },
+            "trigger": {
+              "type": "string"
+            },
+            "onlyIf": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "restrict-by-descriptor",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "disallowedDescriptor",
+            "sourceDefinitionId"
+          ],
+          "properties": {
+            "op": {
+              "const": "restrict-by-descriptor"
+            },
+            "disallowedDescriptor": {
+              "type": "string"
+            },
+            "sourceDefinitionId": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "temporary-talent-with-darkside-cost",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "duration",
+            "forcePointsPerTalent",
+            "darkSidePerSpentPoint"
+          ],
+          "properties": {
+            "op": {
+              "const": "temporary-talent-with-darkside-cost"
+            },
+            "duration": {
+              "type": "string"
+            },
+            "forcePointsPerTalent": {
+              "type": "integer"
+            },
+            "darkSidePerSpentPoint": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "force-exertion-extra-copy",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "persistentConditionSteps",
+            "restMinutes",
+            "removeSourcePowerCopies"
+          ],
+          "properties": {
+            "op": {
+              "const": "force-exertion-extra-copy"
+            },
+            "persistentConditionSteps": {
+              "type": "integer"
+            },
+            "restMinutes": {
+              "type": "integer"
+            },
+            "removeSourcePowerCopies": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "telekinetic-prodigy-bonus",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "requiredPowerId",
+            "maxPerFeat",
+            "requiredDescriptor"
+          ],
+          "properties": {
+            "op": {
+              "const": "telekinetic-prodigy-bonus"
+            },
+            "requiredPowerId": {
+              "type": "string"
+            },
+            "maxPerFeat": {
+              "type": "integer"
+            },
+            "requiredDescriptor": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "wrath-natural20-replace-recovery",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "requiresDirectDamage",
+            "delayedFraction",
+            "trigger"
+          ],
+          "properties": {
+            "op": {
+              "const": "wrath-natural20-replace-recovery"
+            },
+            "requiresDirectDamage": {
+              "type": "boolean"
+            },
+            "delayedFraction": {
+              "type": "number"
+            },
+            "trigger": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "ignore-concealment-temporarily",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "resource",
+            "durationMinutes"
+          ],
+          "properties": {
+            "op": {
+              "const": "ignore-concealment-temporarily"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "durationMinutes": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "prevent-secret-recovery-on-incompatible-descriptors",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "sourceSecretId",
+            "excludedDescriptor"
+          ],
+          "properties": {
+            "op": {
+              "const": "prevent-secret-recovery-on-incompatible-descriptors"
+            },
+            "sourceSecretId": {
+              "type": "string"
+            },
+            "excludedDescriptor": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "scope-maintenance-action",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "newAction",
+            "scope"
+          ],
+          "properties": {
+            "op": {
+              "const": "scope-maintenance-action"
+            },
+            "newAction": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "reject-linked-modification",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "rejectCategories"
+          ],
+          "properties": {
+            "op": {
+              "const": "reject-linked-modification"
+            },
+            "rejectCategories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 3
+            }
+          }
+        },
+        {
+          "title": "schedule-linked-power",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "activationPhase",
+            "delayRounds"
+          ],
+          "properties": {
+            "op": {
+              "const": "schedule-linked-power"
+            },
+            "activationPhase": {
+              "type": "string"
+            },
+            "delayRounds": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "recover-all-selected-talisman-copies",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "requiresWornTalisman",
+            "forcePointCost",
+            "allSpentCopies",
+            "exemptPerTurnLimit"
+          ],
+          "properties": {
+            "op": {
+              "const": "recover-all-selected-talisman-copies"
+            },
+            "requiresWornTalisman": {
+              "type": "boolean"
+            },
+            "forcePointCost": {
+              "type": "integer"
+            },
+            "allSpentCopies": {
+              "type": "boolean"
+            },
+            "exemptPerTurnLimit": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "conditional-power-recovery",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "resource",
+            "allExpendedCopies"
+          ],
+          "properties": {
+            "op": {
+              "const": "conditional-power-recovery"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "allExpendedCopies": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "substitute-will-defense-with-utf",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "durationOfUtfPenalty",
+            "penalty"
+          ],
+          "properties": {
+            "op": {
+              "const": "substitute-will-defense-with-utf"
+            },
+            "durationOfUtfPenalty": {
+              "type": "string"
+            },
+            "penalty": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "change-force-power-target",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "newTargetKind",
+            "lookbackYearsFormula"
+          ],
+          "properties": {
+            "op": {
+              "const": "change-force-power-target"
+            },
+            "newTargetKind": {
+              "type": "string"
+            },
+            "lookbackYearsFormula": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "allow-light-side-free-activation",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "trigger",
+            "action"
+          ],
+          "properties": {
+            "op": {
+              "const": "allow-light-side-free-activation"
+            },
+            "trigger": {
+              "type": "string"
+            },
+            "action": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "ignore-condition-track-utf-penalty",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "onlySelf"
+          ],
+          "properties": {
+            "op": {
+              "const": "ignore-condition-track-utf-penalty"
+            },
+            "onlySelf": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "source-typed-operation",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "kindSource",
+            "sourceDefinitionId"
+          ],
+          "properties": {
+            "op": {
+              "const": "source-typed-operation"
+            },
+            "kindSource": {
+              "type": "string"
+            },
+            "sourceDefinitionId": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "power-resource-receipt",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "resource",
+            "amount"
+          ],
+          "properties": {
+            "op": {
+              "const": "power-resource-receipt"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "apply-form-rider",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "formPowerId",
+            "talentRef",
+            "requireFormTalentKnown"
+          ],
+          "properties": {
+            "op": {
+              "const": "apply-form-rider"
+            },
+            "formPowerId": {
+              "type": "string"
+            },
+            "talentRef": {
+              "type": "string"
+            },
+            "requireFormTalentKnown": {
+              "const": true
+            }
+          },
+          "description": "Activate the Form Power rider when its associated form talent is known; no persistent active-form state requirement."
+        },
+        {
+          "title": "apply-regimen-specific-effect",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "regimenId",
+            "onlyHighestMetTier"
+          ],
+          "properties": {
+            "op": {
+              "const": "apply-regimen-specific-effect"
+            },
+            "regimenId": {
+              "type": "string"
+            },
+            "onlyHighestMetTier": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "source-technique-modifier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "techniqueId",
+            "powerId",
+            "mechanicalEffect",
+            "separateAcquisitionPrerequisite"
+          ],
+          "properties": {
+            "op": {
+              "const": "source-technique-modifier"
+            },
+            "techniqueId": {
+              "type": "string"
+            },
+            "powerId": {
+              "type": "string"
+            },
+            "mechanicalEffect": {
+              "type": "string"
+            },
+            "separateAcquisitionPrerequisite": {
+              "const": false
+            }
+          }
+        },
+        {
+          "title": "source-talent-modifier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "talentId",
+            "powerId",
+            "mechanicalEffect",
+            "sourcePrerequisites",
+            "spendForcePoint"
+          ],
+          "properties": {
+            "op": {
+              "const": "source-talent-modifier"
+            },
+            "talentId": {
+              "type": "string"
+            },
+            "powerId": {
+              "type": "string"
+            },
+            "mechanicalEffect": {
+              "type": "string"
+            },
+            "sourcePrerequisites": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "spendForcePoint": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "conditional-spend-force-point",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "mechanicalEffect",
+            "forcePointCost",
+            "condition"
+          ],
+          "properties": {
+            "op": {
+              "const": "conditional-spend-force-point"
+            },
+            "mechanicalEffect": {
+              "type": "string"
+            },
+            "forcePointCost": {
+              "const": 1
+            },
+            "condition": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "negative-cross-domain-rule",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "mechanicalEffect",
+            "condition"
+          ],
+          "properties": {
+            "op": {
+              "const": "negative-cross-domain-rule"
+            },
+            "mechanicalEffect": {
+              "type": "string"
+            },
+            "condition": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "equipment-force-interference",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "effectKind",
+            "activeCondition"
+          ],
+          "properties": {
+            "op": {
+              "const": "equipment-force-interference"
+            },
+            "effectKind": {
+              "enum": [
+                "use-the-force-check-penalty",
+                "force-point-spend-prohibition"
+              ]
+            },
+            "penalty": {
+              "type": "integer"
+            },
+            "activeCondition": {
+              "const": "death-stick-euphoria"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
