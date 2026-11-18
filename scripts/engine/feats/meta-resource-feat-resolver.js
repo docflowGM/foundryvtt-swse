@@ -1052,18 +1052,16 @@ export class MetaResourceFeatResolver {
     if (power?.system?.discarded !== true) return { success: false, reason: `${power.name} is not expended.` };
 
     const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
-    const { ForcePowerEffectsEngine } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js');
     const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
 
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
       _id: power.id,
       'system.discarded': false,
-      'system.discarded': false,
       'system.lastRecovered': Date.now(),
       'flags.foundryvtt-swse.lastRecoverySource': 'forceful-recovery'
     }], { source: 'forceful-recovery', render: false });
 
-    await ForcePowerEffectsEngine.removePowerEffects(actor, power);
+      // A maintained effect is an independent instance (ForcePowerMaintenance); recovering the Power copy never ends it.
     await actor.unsetFlag?.('foundryvtt-swse', 'forcefulRecoveryPending');
     await SWSEChat.postHTML({
       actor,

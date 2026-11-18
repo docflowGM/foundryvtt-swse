@@ -21,6 +21,7 @@ import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
+import { ForcePowerMaintenance } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-maintenance.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 
 function forcePowerHasDarkSideDescriptor(power) {
@@ -336,7 +337,16 @@ export class ForceExecutor {
       // Apply force power effects if successful
       let appliedEffects = [];
       if (success) {
-        appliedEffects = await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total, { target: options.target ?? options.targetActor ?? null });
+        const effectContext = {
+          target: options.target ?? options.targetActor ?? null,
+          resistForceDefenses: options.resistForceDefenses ?? null,
+          forcePointSpent: options.forcePointSpent === true
+        };
+        // Powers with a maintenance contract become an independent maintained instance; all others keep the plain path.
+        const maintained = await ForcePowerMaintenance.begin(actor, power, total, effectContext);
+        appliedEffects = maintained
+          ? maintained.effectIds
+          : (ForcePowerMaintenance.contractFor(power) ? [] : await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total, effectContext));
       }
 
       // Generate rich concept chat message
@@ -498,7 +508,6 @@ export class ForceExecutor {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
         _id: power.id,
         'system.discarded': false,
-        'system.discarded': false,
         'system.lastRecovered': Date.now(),
         'flags.foundryvtt-swse.lastRecoverySource': sourceSlug
       }], { source: `${sourceSlug}-recover`, render: false });
@@ -512,7 +521,7 @@ export class ForceExecutor {
         lastUsedAt: Date.now()
       });
 
-      await ForcePowerEffectsEngine.removePowerEffects(actor, power);
+      // A maintained effect is an independent instance (ForcePowerMaintenance); recovering the Power copy never ends it.
 
       await SWSEChat.postHTML({
         actor,
@@ -1095,7 +1104,6 @@ export class ForceExecutor {
       try {
         await ActorEngine.updateEmbeddedDocuments(actor, 'Item', powersToRecover.map(power => ({
           _id: power.id,
-          'system.discarded': false,
           'system.discarded': false,
           'system.lastRecovered': Date.now()
         })), { source: paidReceipt ? 'force-power-fp-reaction-recover-one' : 'force-power-recover-all', render: false });

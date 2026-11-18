@@ -111,9 +111,9 @@ function buildIntentEffect(actor, powerItem, outcome) {
 export function installPhase3ForcePowerCorrections(ForcePowerEffectsEngine) {
   if (!ForcePowerEffectsEngine || ForcePowerEffectsEngine.__phase3CorrectionsInstalled) return;
   const original = ForcePowerEffectsEngine._buildEffectDataForPower.bind(ForcePowerEffectsEngine);
-  ForcePowerEffectsEngine._buildEffectDataForPower = function phase3BuildEffectData(actor, powerItem, rollTotal) {
+  ForcePowerEffectsEngine._buildEffectDataForPower = function phase3BuildEffectData(actor, powerItem, rollTotal, context) {
     const correction = getPhase3ForcePowerCorrection(powerItem);
-    if (!correction) return original(actor, powerItem, rollTotal);
+    if (!correction) return original(actor, powerItem, rollTotal, context);
     if (normalizeName(powerItem.name) !== 'surge') return [];
     const tier = chooseTier(correction.resolution, Number(rollTotal) || 0);
     if (!tier) return [];

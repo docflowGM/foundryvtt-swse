@@ -3833,3 +3833,16 @@ Implemented from the printed text: natural 20 on any Use the Force check records
 | FP-RD-009 | Ending combat (the GM deletes the combat) is treated as "combat is over and you rest 1 minute" (existing behavior kept, now through the single authority). Should regain instead require an explicit rest action? | `DEFERRED_RULES_REVIEW` (existing behavior preserved) |
 
 Both: Decision authority: project owner. Recommended ruling: none. Resolution: blank.
+
+
+## FP-RD-010 / FP-RD-011 / FP-RD-012 — Maintained Force power instances (Checkpoint 03D; appended 2026-11-18)
+
+Implemented from printed text only (`scripts/engine/force/force-power-maintenance.js`, contract table `MAINTENANCE_CONTRACTS`): each activation is an independent instance (own id, own effects, stored on the caster); a recovered/deleted/duplicate Power copy never ends an instance; Resist Force = ONE chosen defense (two only when the Force Point option was paid), bonus against Force powers only; Valor = Will Defense only, target one ally, no attack bonus, against mind-affecting and fear (all Will-targeting effects when the Force Point option was paid); maintenance action types, "fresh Use the Force check each round" (Force Whirlwind), Force Whirlwind and Kinetic Combat special terminations, and "DC = 15 + damage taken" concentration are encoded per the printed text of the power.
+
+| ID | Source | Question | Status |
+| --- | --- | --- | --- |
+| FP-RD-010 | KOTOR Campaign Guide (Energy Resistance, Force Whirlwind, Resist Force, Valor); Force Unleashed Campaign Guide (Kinetic Combat) | Damage taken while the caster maintains MORE THAN ONE instance (Resist Force and Valor explicitly allow several): does each maintained instance require its own Use the Force check (DC 15 + damage), or one check covers all? Printed text states the check per power, not per instance. Implementation only resolves a check for the single instance the caller names and never fans out. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-011 | Core Rulebook (Force Grip, Move Object) | The repository's Core Rulebook scan is OCR-damaged for the maintenance action type of Force Grip, and the damage-concentration rule is not printed for Force Grip / Move Object. Their maintenance action cost and whether the 15 + damage concentration rule applies are not encoded; `maintain`/`resolveConcentration` return `deferred` for both. The official errata PDF is not in the repository. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-012 | KOTOR Campaign Guide (Resist Force, Valor) | Not a rules question but a recorded engineering limit: the modifier engine has no defense call site that knows the attacking source (Force power / mind-affecting / fear). The conditional defense bonuses are therefore stored as reminder-only gated effects (effect-intent `filterType: 'custom'`) and do NOT change defense math automatically; previously they were an unconditional all-defense bonus, which over-granted. A defense call site that supplies the attack source is the missing runtime. | Engineering follow-up (no ruling needed) |
+
+FP-RD-010/011: Decision authority: project owner. Recommended ruling: none. Resolution: blank.

@@ -1170,6 +1170,7 @@
         "scripts/engine/customization/upgrade-catalog.js",
         "scripts/engine/effects/modifiers/ModifierUtils.js",
         "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
+        "scripts/engine/force/force-power-effects-engine.js",
         "scripts/engine/force/force-power-resolution-schema.js",
         "scripts/engine/force/phase3-force-power-corrections.js",
         "scripts/engine/force/phase5-force-healing-mitigation.js",

@@ -65,7 +65,7 @@ export class ForcePowerEffectsEngine {
 
     try {
       // Determine what effect to apply based on the power
-      const effectData = this._buildEffectDataForPower(actor, powerItem, rollTotal);
+      const effectData = this._buildEffectDataForPower(actor, powerItem, rollTotal, options);
 
       if (!effectData || effectData.length === 0) {
         SWSELogger.log(`SWSE | Force Power Effects | No effects to apply for ${powerName}`);
@@ -82,14 +82,19 @@ export class ForcePowerEffectsEngine {
             forcePowerEffect: {
               powerItemId: powerItem.id,
               powerName: powerName,
-              rollTotal: rollTotal
+              rollTotal: rollTotal,
+              // Independent maintained-effect instance (ForcePowerMaintenance); null for non-maintained powers.
+              instanceId: options.instanceId ?? null,
+              casterId: actor.id ?? null
             }
           }
         }
       }));
 
-      // Create the effects on the actor via ActorEngine (SOVEREIGNTY)
-      const createdEffects = await ActorEngine.createActiveEffects(actor, effectsWithProvenance, { source: 'force-power-effects' });
+      // Create the effects on the affected actor via ActorEngine (SOVEREIGNTY). Self-targeted powers affect the caster;
+      // a power whose printed target is another creature (Valor: "One ally") is placed on that target, never the caster.
+      const recipient = options.recipient ?? actor;
+      const createdEffects = await ActorEngine.createActiveEffects(recipient, effectsWithProvenance, { source: 'force-power-effects' });
 
       SWSELogger.log(`SWSE | Force Power Effects | Applied ${createdEffects.length} effect(s) for ${powerName}`);
       return createdEffects.map(e => e.id);
@@ -103,7 +108,7 @@ export class ForcePowerEffectsEngine {
    * Build ActiveEffect data for a specific force power
    * @private
    */
-  static _buildEffectDataForPower(actor, powerItem, rollTotal) {
+  static _buildEffectDataForPower(actor, powerItem, rollTotal, context = {}) {
     const powerName = powerItem.name.toLowerCase();
     const system = powerItem.system;
     const tags = system.tags || [];
@@ -122,7 +127,7 @@ export class ForcePowerEffectsEngine {
     }
 
     if (powerName.includes('resist force')) {
-      return this._buildResistForceEffect(actor, powerItem, rollTotal);
+      return this._buildResistForceEffect(actor, powerItem, rollTotal, context);
     }
 
     if (powerName.includes('force defense')) {
@@ -160,7 +165,7 @@ export class ForcePowerEffectsEngine {
     }
 
     if (powerName.includes('valor')) {
-      return this._buildValorEffect(actor, powerItem, rollTotal);
+      return this._buildValorEffect(actor, powerItem, rollTotal, context);
     }
 
     // === DEBUFF POWERS ===
@@ -369,22 +374,42 @@ export class ForcePowerEffectsEngine {
    * Build Resist Force effect (grants defense bonus against Force Powers)
    * @private
    */
-  static _buildResistForceEffect(actor, powerItem, rollTotal) {
+  static _buildResistForceEffect(actor, powerItem, rollTotal, context = {}) {
     const defenseBonus = this._extractDefenseBonusFromChart(powerItem.system.dcChart, rollTotal);
 
     if (defenseBonus <= 0) {
       return [];
     }
 
-    const duration = this._parseDuration(powerItem.system.duration);
+    // KOTOR Campaign Guide, Resist Force: the bonus is to "the Defense score of your choice" (ONE defense), against Force
+    // powers only. A Force Point (paid by the caller through ForcePointsService) extends it to two chosen defenses.
+    const valid = ['reflex', 'fortitude', 'will'];
+    const chosen = [...new Set((context.resistForceDefenses ?? []).map(d => String(d).toLowerCase()).filter(d => valid.includes(d)))];
+    const allowed = context.forcePointSpent === true ? 2 : 1;
+    if (chosen.length === 0 || chosen.length > allowed) {
+      SWSELogger.warn(`SWSE | Force Power Effects | Resist Force needs ${allowed === 2 ? 'one or two' : 'exactly one'} chosen defense; none applied.`);
+      return [];
+    }
 
-    // Phase 3A: +X to all defenses via ModifierEngine defense intents
-    // (was a dead system.derived.defense.all write).
-    return this._buildAllDefensesIntentEffects(actor, powerItem, {
-      icon: powerItem.img || 'icons/svg/shield.svg',
-      duration,
-      amount: defenseBonus
-    });
+    const duration = this._parseDuration(powerItem.system.duration);
+    const icon = powerItem.img || 'icons/svg/shield.svg';
+    return chosen.map(def => this._withContextGate(this._buildIntentEffect(actor, powerItem, {
+      labelSuffix: `(+${defenseBonus} ${def} vs Force powers)`,
+      icon, duration, category: 'defense', target: def, amount: defenseBonus, effectType: 'defenseBonus'
+    }), 'against-force-powers'));
+  }
+
+  /**
+   * Mark an intent effect as conditional. The repo's effect-intent engine treats filterType 'custom' as a visible,
+   * reminder-only gate (no automatic actor math) -- the engine has no defense call site that knows the attacking
+   * source (Force power / mind-affecting / fear), so an unconditional bonus would over-grant. This is an engineering
+   * limit, not a rules decision; the printed condition is carried in filterValue.
+   * @private
+   */
+  static _withContextGate(effect, gate) {
+    const intent = effect.flags?.['foundryvtt-swse']?.effectIntent;
+    if (intent) { intent.filterType = 'custom'; intent.filterValue = gate; }
+    return effect;
   }
 
   /**
@@ -644,7 +669,9 @@ export class ForcePowerEffectsEngine {
    * Build Valor effect (increases defense and attack rolls)
    * @private
    */
-  static _buildValorEffect(actor, powerItem, rollTotal) {
+  static _buildValorEffect(actor, powerItem, rollTotal, context = {}) {
+    // KOTOR Campaign Guide, Valor: Target = one ally. The printed bonus is to WILL Defense only, against mind-affecting
+    // and fear effects (all Will-targeting effects if a Force Point is spent on activation). It has no attack bonus.
     const bonus = this._extractBonusValue(powerItem.system.dcChart, rollTotal);
 
     if (bonus <= 0) {
@@ -652,22 +679,11 @@ export class ForcePowerEffectsEngine {
     }
 
     const duration = this._parseDuration(powerItem.system.duration);
-    const icon = powerItem.img || 'icons/svg/aura.svg';
-
-    // Phase 3A: +X to all defenses (defense intents) and to attacks (attack intent).
-    // Was dead defense.all + attackBonus derived writes.
-    return [
-      ...this._buildAllDefensesIntentEffects(actor, powerItem, { icon, duration, amount: bonus }),
-      this._buildIntentEffect(actor, powerItem, {
-        labelSuffix: `(+${bonus} attack)`,
-        icon,
-        duration,
-        category: 'attack',
-        target: 'all',
-        amount: bonus,
-        effectType: 'enhancement'
-      })
-    ];
+    return [this._withContextGate(this._buildIntentEffect(actor, powerItem, {
+      labelSuffix: `(+${bonus} Will vs ${context.forcePointSpent === true ? 'all Will-targeting effects' : 'mind-affecting and fear'})`,
+      icon: powerItem.img || 'icons/svg/aura.svg',
+      duration, category: 'defense', target: 'will', amount: bonus, effectType: 'defenseBonus'
+    }), context.forcePointSpent === true ? 'against-will-targeting' : 'against-mind-affecting-and-fear')];
   }
 
   /**
@@ -952,7 +968,8 @@ export class ForcePowerEffectsEngine {
     }
 
     const ids = actor.effects
-      .filter(e => getSwseFlag(e, 'forcePowerEffect')?.powerItemId === powerItem.id)
+      // Maintained instances are independent of the Power copy: only ForcePowerMaintenance.end() removes them.
+      .filter(e => { const p = getSwseFlag(e, 'forcePowerEffect'); return p?.powerItemId === powerItem.id && !p?.instanceId; })
       .map(e => e.id);
 
     if (!ids.length) {
@@ -966,6 +983,25 @@ export class ForcePowerEffectsEngine {
       return ids;
     } catch (err) {
       SWSELogger.warn(`SWSE | Force Power Effects | Failed to remove effects for ${powerItem.name}:`, err);
+      return [];
+    }
+  }
+
+  /**
+   * Remove only the effects of ONE maintained instance (they may live on the caster or on an ally).
+   * @returns {Promise<Array>} deleted effect ids
+   */
+  static async removeInstanceEffects(recipient, instanceId) {
+    if (!recipient || !instanceId) return [];
+    const ids = recipient.effects
+      .filter(e => getSwseFlag(e, 'forcePowerEffect')?.instanceId === instanceId)
+      .map(e => e.id);
+    if (!ids.length) return [];
+    try {
+      await ActorEngine.deleteActiveEffects(recipient, ids, { source: 'force-power-effects' });
+      return ids;
+    } catch (err) {
+      SWSELogger.warn(`SWSE | Force Power Effects | Failed to remove instance ${instanceId}:`, err);
       return [];
     }
   }
