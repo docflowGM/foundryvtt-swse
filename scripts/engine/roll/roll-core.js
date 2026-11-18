@@ -103,6 +103,19 @@ export class RollCore {
         return { success: false, error: `Roll execution failed: ${err.message}`, domain, breakdown: {} };
       }
 
+      // The paid check has executed: it is now final even if subsequent
+      // presentation fails. A failed receipt-finality write is reported but
+      // never causes a refund of an already applied bonus.
+      if (forcePointDetails?.spendReceipt?.receiptId) {
+        try {
+          const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+          const finality = await ActorEngine.finalizeForcePointSpend(actor, forcePointDetails.spendReceipt);
+          if (!finality?.finalized) swseLogger.error(`[RollCore] Force Point applied but finality receipt was not persisted: ${finality?.reason}`);
+        } catch (err) {
+          swseLogger.error('[RollCore] Paid check executed but Force Point receipt finalization failed; manual audit required.', err);
+        }
+      }
+
       const baseRollResult = this._extractBaseRoll(roll, baseDice);
       const breakdown = {
         baseRoll: baseRollResult,
