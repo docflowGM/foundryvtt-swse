@@ -17,6 +17,7 @@ import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-e
 import { RollCore } from '/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js';
 import { SWSEChat } from '/systems/foundryvtt-swse/scripts/chat/swse-chat.js';
 import { SchemaAdapters } from '/systems/foundryvtt-swse/scripts/utils/schema-adapters.js';
+import { buildRegimenEntitlement, regimenKeyFor, worldTimeNow } from '/systems/foundryvtt-swse/scripts/engine/force/regimen-entitlement.js';
 
 function ownedRegimens(actor) {
   return Array.from(actor?.items ?? []).filter((item) => String(item?.type || '') === 'force-regimen');
@@ -152,7 +153,19 @@ export class ForceRegimenExecutor {
       'system.lastUsed': Date.now(),
     }], { source: 'force-regimen-use', render: false });
     await ActorEngine.updateActor(actor, { 'system.activeEffects': effects }, { source: 'force-regimen-use' });
-    return { success: true, regimenName: regimen.name, effect };
+    // Typed Force Point entitlement (Block/Deflect regimens): a completed regimen at its printed DC tier.
+    // Campaign-time lifecycle (24h from completion); nothing is granted without a world clock.
+    let forcePointEntitlement = { granted: false, reason: 'Regimen grants no Force Point entitlement' };
+    const now = worldTimeNow();
+    const built = buildRegimenEntitlement({
+      regimenName: regimen.name, tierFloor: resolvedTier?.floor, worldTime: now,
+      grantId: `${regimenKeyFor(regimen.name)}-${now}`
+    });
+    if (built) {
+      const failedAt = (actor.getFlag?.('swse', 'regimenFailures') ?? actor.flags?.swse?.regimenFailures ?? {})[regimenKeyFor(regimen.name)] ?? null;
+      forcePointEntitlement = await ActorEngine.grantRegimenEntitlement(actor, built, { now, failedAt });
+    }
+    return { success: true, regimenName: regimen.name, effect, forcePointEntitlement };
   }
 
 
@@ -239,6 +252,7 @@ export class ForceRegimenExecutor {
           'system.failedRegimen': true,
           'system.lastUsed': Date.now(),
         }], { source: 'force-regimen-failed-use', render: false });
+        await ActorEngine.recordRegimenFailure(actor, regimenKeyFor(regimen.name), worldTimeNow());
         await this._generateForceRegimenRollMessage(actor, regimen, roll, total, baseDC, false, isCritical, {
           baseBonus,
           customModifier,

@@ -2108,7 +2108,7 @@ export const ActorEngine = {
       if (!receiptId) throw new Error('Force Point receipt identity unavailable');
       const receipt = {
         receiptId, requestId, actorId: actor.id,
-        roundKey: decision.roundKey, useKind: decision.useKind, abilitySourceRef: decision.abilitySourceRef ?? null, adjudicatedBy: decision.adjudicatedBy ?? null,
+        roundKey: decision.roundKey, useKind: decision.useKind, reactionEventId: decision.reactionEventId ?? null, entitlement: decision.entitlement ?? null, abilitySourceRef: decision.abilitySourceRef ?? null, adjudicatedBy: decision.adjudicatedBy ?? null,
         countsTowardRoundLimit: decision.countsTowardRoundLimit,
         normalSpent: decision.normalSpent,
         bonusEntriesSpent: debit.map(({ id, source, amount, entry }) =>
@@ -2254,6 +2254,39 @@ export const ActorEngine = {
       events: events.map(e => e.id === eventId && e.state === 'pending' ? { ...e, ...extra, state } : e)
     } });
     return { updated: true };
+  },
+
+  /**
+   * Record a completed regimen's typed Force Point entitlement (JATM pp.11-13): one grant per 24h
+   * of campaign time, none for a regimen that failed within the last 24h, and the temporary points
+   * it gives (independently expiring, typed). Fail closed without a world clock.
+   */
+  async grantRegimenEntitlement(actor, built, { now, failedAt = null } = {}) {
+    if (!actor?.id || !built?.entitlement) return { granted: false, reason: 'No entitlement to grant' };
+    if (now == null || !Number.isFinite(Number(now))) return { granted: false, reason: 'World time unavailable' };
+    const e = built.entitlement;
+    if (failedAt != null && now - Number(failedAt) < 24 * 60 * 60) return { granted: false, reason: 'That regimen failed within the last 24 hours' };
+    const current = actor.getFlag?.('swse', 'regimenEntitlement') ?? actor.flags?.swse?.regimenEntitlement ?? null;
+    if (current && Number.isFinite(Number(current.expiresWorldTime)) && now < Number(current.expiresWorldTime) && current.grantId !== e.grantId) {
+      return { granted: false, reason: 'Only one Force regimen can be in effect in a 24-hour period' };
+    }
+    const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+    const kept = (Array.isArray(pool.entries) ? pool.entries : []).filter(en => !en?.entitlement || en.entitlement.grantId === e.grantId);
+    const entries = [...kept.filter(en => !built.temporaryEntries.some(t => t.id === en.id)), ...built.temporaryEntries];
+    const value = entries.reduce((n, en) => n + Number(en.value ?? 0), 0);
+    const update = { 'flags.swse.regimenEntitlement': e };
+    if (built.temporaryEntries.length || kept.length !== (pool.entries ?? []).length) {
+      update['flags.swse.bonusForcePoints'] = { ...pool, entries, value, max: Math.max(value, entries.reduce((n, en) => n + Number(en.max ?? en.value ?? 0), 0)), sources: [...new Set(entries.map(en => en.source).filter(Boolean))] };
+    }
+    await this.updateActor(actor, update);
+    return { granted: true, entitlement: e, temporaryGranted: built.temporaryEntries.reduce((n, t) => n + t.value, 0) };
+  },
+
+  async recordRegimenFailure(actor, regimenKey, now) {
+    if (!actor?.id || !regimenKey || now == null || !Number.isFinite(Number(now))) return { recorded: false };
+    const current = actor.getFlag?.('swse', 'regimenFailures') ?? actor.flags?.swse?.regimenFailures ?? {};
+    await this.updateActor(actor, { 'flags.swse.regimenFailures': { ...current, [regimenKey]: Number(now) } });
+    return { recorded: true };
   },
 
   /** The reaction did not happen (cancelled/failed): the attack stays answerable. */

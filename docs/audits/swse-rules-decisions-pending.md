@@ -3782,3 +3782,31 @@ Sequence ordered by the owner: (1) verify rescue finality and shared transaction
 Implemented (offline-tested only): authoritative incoming-attack event minted in `combat/rolls/attacks.js` after the roll outcome is known (single and full-attack paths); attacker-side pending record, defender-side single-use claim (each side writes only its own Actor); verification (`AttackEventAuthority.verify`) re-reads the record at reaction time; reroll supersedes; melee/ranged eligibility; ownership; round expiry; `ReactionEngine.resolveReaction` verifies Block/Deflect, takes the DC from the event, and its direct Force Point debit is replaced by `ForcePointsService.authorizeSpend` + `ActorEngine` receipt lifecycle; the registry Block/Deflect handlers (previously empty placeholders) now call `LightsaberTalentActions.promptBlock/promptDeflect` with the verified event; a manually typed DC is tagged `manualAttackDc` and unlocks nothing.
 
 NOT implemented (still `DEFERRED_RULES_REVIEW` for the entitlement half): Sparring Practice / Training Remote (DC18/23/28) and Vo'ren's Third Cadence (DC33) qualification, their 24-hour lifecycle, source-scoped expiring restricted grants, non-counting and off-turn spends, and the adjacent-ally paid reaction (errata p.41) which needs a verified adjacency/ally event. Restricted bonus entries remain refused.
+
+
+## FP-RD-001 — IMPLEMENTATION PROGRESS: JATM regimen entitlements and Core p.41 Block/Deflect frequency (appended 2026-11-18; earlier entries preserved)
+
+Implemented from the printed text (JATM pp.11-13, Core p.41; source text in `reference/sourcebooks/`), offline-tested only:
+- Sparring Practice (Block) and Training Remote (Deflect), DC18/23/28: Force Point spent on the Use the Force check that activates the talent does not count toward the one-per-round limit; DC23 grants 1 and DC28 2 temporary Force Points usable only on that talent's activation check.
+- Vo'ren's Third Cadence DC33: the same non-counting exemption for Block and Deflect, plus off-turn spending; DC23/28 grant only the Redirect Shot bonus (no Force Point entitlement).
+- Lifecycle in campaign time (`game.time.worldTime`): 24 hours from completion, one regimen in effect per 24 hours, a failed regimen grants nothing for that regimen for 24 hours while another may be attempted. No world clock: nothing is granted. Regimens are keyed by normalized printed name (no fabricated canonical ids).
+- Entitlements apply only to a verified Block/Deflect reaction event (attacker-side record re-read inside `ForcePointsService.authorizeSpend`); a manual DC, a forged claim, or an unrelated roll unlocks nothing; one paid spend per attack event; non-counting and counted spends coexist in a round in either order.
+- Core p.41: the per-round frequency cap on Block/Deflect in the reaction registry is removed; the cumulative -5 (shared by Block and Deflect, accruing only after a roll) and the one-reaction-per-attack-event rule remain.
+
+### FP-RD-007 — Do regimen temporary Force Points count toward the one-per-round limit?
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-007 |
+| Rules domain | Force Points / JATM regimens |
+| Feature | Temporary Force Points from Sparring Practice, Training Remote (DC23/28) |
+| Source | Jedi Academy Training Manual p.12-13 |
+| Evidence | The printed tiers say the ordinary Force Point spent on the check "does not count toward the one Force Point per round limit", then separately say "You also gain 1 (or 2) temporary Force Points, which can only be used to add to the result of a Use the Force check made to activate the Block (Deflect) talent". The non-counting sentence is not repeated for the temporary points. |
+| Confirmed behavior | Temporary points are usable only on the named talent's activation check. |
+| Unresolved question | Whether a temporary point's spend is also exempt from the round limit. |
+| Options | (A) Counts (the exemption sentence attaches to the ordinary spend); (B) does not count. Both are readings of the same printed text. |
+| Recommended ruling | None |
+| Implementation impact | Implemented as Option A (the Core p.93 default) until ruled; one flag (`countsTowardRoundLimit` in the temporary-entry branch of `authorizeSpend`) changes it. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |

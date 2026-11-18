@@ -27,6 +27,8 @@ import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceR
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { verifyAttackEventRecord } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-verify.js";
+import { evaluateRegimenEntitlement, worldTimeNow } from "/systems/foundryvtt-swse/scripts/engine/force/regimen-entitlement.js";
 
 // Typed per-ability Force Point contracts (FP-RD-003). Empty by design: no
 // ability's printed timing/trigger has yet been certified for automation.
@@ -203,6 +205,14 @@ export class ForcePointsService {
     const now = Date.now();
     const combat = globalThis.game?.combat;
     return this._bonusEntries(actor).filter(entry => {
+      // A typed regimen entitlement entry is spendable ONLY on the verified Block/Deflect
+      // activation check its grant names, while that grant is current (JATM pp.11-13).
+      if (entry.entitlement) {
+        const e = entry.entitlement;
+        const worldTime = worldTimeNow();
+        return e.kind === 'regimen-reaction' && context.reactionTalent && Array.isArray(e.talents) && e.talents.includes(context.reactionTalent) &&
+          context.entitlementGrantId === e.grantId && worldTime != null && Number.isFinite(Number(entry.expiresWorldTime)) && worldTime < Number(entry.expiresWorldTime);
+      }
       // The current producers of restricted JATM and Guardian Spirit benefits
       // do not yet provide a certified, event-linked entitlement receipt.
       // Until they do, only explicitly unrestricted and unexpired entries
@@ -246,6 +256,9 @@ export class ForcePointsService {
 
     const useKind = context.useKind;
     let adjudicatedBy = null;
+    let reactionTalent = null;
+    let reactionEventId = null;
+    let regimen = { valid: false };
     const reactionKinds = new Set(['recover-one-force-power', 'recover-one-maneuver', 'avoid-death']);
     const timing = reactionKinds.has(useKind) ? 'reaction' : useKind === 'reduce-dark-side-score' ? 'swift' : useKind === 'ability-option' ? 'ability-defined' : 'free';
 
@@ -253,6 +266,22 @@ export class ForcePointsService {
       const domain = String(context.rollDomain ?? context.domain ?? '');
       if (!/^(attack\.|skill\.|ability\.|force-power\.activation|force-regimen\.activation|initiative\b|pilot\.)/.test(domain)) {
         return reject('A roll-bonus spend requires a supported attack, skill, or ability check domain');
+      }
+      // A verified Block/Deflect reaction (never a client flag, never a typed DC): the
+      // attacker-side event is re-read here; only then can a JATM regimen entitlement apply.
+      const claim = context.reaction;
+      if (claim) {
+        const talent = String(context.skillUseKey ?? '').toLowerCase();
+        if (!['block', 'deflect'].includes(talent) || domain !== 'skill.useTheForce') return reject('A reaction Force Point must enhance the Use the Force check that activates Block or Deflect');
+        const verdict = verifyAttackEventRecord({ defender: actor, attackerId: claim.attackerId, eventId: claim.id, reactionKey: talent, allowConsumed: true });
+        if (!verdict.valid) return reject(`Reaction event not verified: ${verdict.message}`);
+        const priorLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+        if ((priorLedger.receipts ?? []).some(r => r.reactionEventId === claim.id && ['committed', 'finalized'].includes(r.state))) {
+          return reject('A Force Point was already spent on this attack reaction');
+        }
+        reactionTalent = talent;
+        reactionEventId = claim.id;
+        regimen = evaluateRegimenEntitlement(actor, { talent });
       }
       // The Core descriptor rule applies only to a UTF activation check.
       if (domain === 'force-power.activation') {
@@ -333,7 +362,9 @@ export class ForcePointsService {
         const ownsReadiness = Array.from(actor.items ?? []).some(i => i.type === 'feat' &&
           i.system?.disabled !== true &&
           (i.system?.canonicalId === '8a78270d15aa4738' || i.system?.slug === 'force-readiness'));
-        if (useKind !== 'roll-bonus' || timing !== 'free' || !ownsReadiness) {
+        // Force Readiness (feat) or a current Vo'ren's Third Cadence DC33 entitlement on this
+        // verified Block/Deflect reaction permit the off-turn spend; neither waives other limits.
+        if (useKind !== 'roll-bonus' || timing !== 'free' || !(ownsReadiness || regimen.offTurn === true)) {
           return reject('This Force Point use is not permitted off turn');
         }
       }
@@ -342,7 +373,7 @@ export class ForcePointsService {
       // Force Point was already spent this round. It bypasses only the check
       // against PRIOR counted spends; the rescue is still recorded as counted,
       // so it blocks a later ordinary spend in the same round.
-      if (useKind !== 'avoid-death' && (journal.receipts ?? []).some(r => r.roundKey === roundKey &&
+      if (useKind !== 'avoid-death' && !(regimen.noncounting === true && context.useTemporaryEntry !== true) && (journal.receipts ?? []).some(r => r.roundKey === roundKey &&
           r.countsTowardRoundLimit && ['committed', 'finalized'].includes(r.state))) {
         return reject('One counted Force Point has already been spent this round');
       }
@@ -352,14 +383,24 @@ export class ForcePointsService {
     if (context.requestId && (journal.receipts ?? []).some(r => r.requestId === context.requestId)) {
       return reject('Force Point request identifier has already been used');
     }
-    const bonusEntries = this._eligibleBonusEntries(actor, context);
-    const chosen = bonusEntries.find(e => Number(e.value) >= 1);
+    const bonusEntries = this._eligibleBonusEntries(actor, { ...context, reactionTalent, entitlementGrantId: regimen.valid ? regimen.grantId : null });
+    // A regimen temporary point is used only when the caller asks for it; otherwise the spend is an
+    // ordinary/unrestricted point (which, under the regimen, does not count toward the round limit).
+    const wantsTemporary = context.useTemporaryEntry === true;
+    const chosen = wantsTemporary
+      ? bonusEntries.find(e => e.entitlement && Number(e.value) >= 1)
+      : bonusEntries.find(e => !e.entitlement && Number(e.value) >= 1);
+    if (wantsTemporary && !chosen) return reject('No eligible regimen temporary Force Point for this reaction');
+    // Counting: the regimen exemption covers the ordinary spend; a temporary point's exemption is not
+    // printed, so it counts (FP-RD-007).
+    const counts = !(regimen.noncounting === true && !chosen?.entitlement);
     const normalSpent = chosen ? 0 : 1;
     const bonusEntriesSpent = chosen ? [{ id: chosen.id, source: chosen.source ?? '', amount: 1, entry: { ...chosen } }] : [];
     if (normalSpent > this.getRemaining(actor)) return reject('No eligible Force Point available', this.getAvailableTotal(actor, context));
     return {
       valid: true, message: 'Authorized Force Point expenditure', allowance: 1,
-      normalSpent, bonusEntriesSpent, countsTowardRoundLimit: true, roundKey, useKind,
+      normalSpent, bonusEntriesSpent, countsTowardRoundLimit: counts, roundKey, useKind,
+      reactionEventId, entitlement: regimen.valid ? { grantId: regimen.grantId, regimenKey: regimen.regimenKey, tierFloor: regimen.tierFloor, noncounting: regimen.noncounting, offTurn: regimen.offTurn } : null,
       actionTiming: timing, abilitySourceRef: context.abilitySourceRef ?? null, adjudicatedBy
     };
   }

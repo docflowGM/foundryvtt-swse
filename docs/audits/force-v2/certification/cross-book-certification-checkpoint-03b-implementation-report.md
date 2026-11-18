@@ -55,3 +55,10 @@ Merged `origin/main` (7 commits; only conflict was the append-only decisions led
 | Receipt retention | Bounded: settled receipts beyond the newest 200 are dropped; committed receipts are never dropped. |
 
 Still not certified: Foundry v13 runtime; cross-client concurrency; Force Readiness feat identity (hard-coded id); per-ability contracts.
+
+
+## Update 3 — Block/Deflect events and JATM regimen entitlements (2026-11-18)
+
+Implemented (offline-tested only): authoritative attack events from `attacks.js`; verification inside `ReactionEngine` and again inside `ForcePointsService.authorizeSpend`; registry Block/Deflect handlers wired to `promptBlock/promptDeflect`; direct reaction FP debits removed; typed regimen entitlements (Sparring Practice, Training Remote, Vo'ren's Third Cadence DC33) with campaign-time lifecycle, typed temporary points, non-counting and off-turn rules; Core p.41 per-round Block/Deflect cap removed. New suites: `force-v2-03b-block-deflect-events` (8 groups) and `force-v2-03b-regimen-entitlements` (12 groups).
+
+Open: FP-RD-007 (temporary points counting); adjacent-ally paid Block/Deflect (errata p.41) needs a verified adjacency event; player-owned `ability-option` contracts (per-ability batches) not started; Guardian Spirit (FP-RD-002/006) not started; Foundry v13 runtime, permissions and two-client races untested; the event id reaching the real chat card dataset is unconfirmed; `rolling-ci-support-check` takes ~90 s and times out at 120 s under 8-way parallel load.

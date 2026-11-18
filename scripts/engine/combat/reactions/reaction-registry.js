@@ -35,10 +35,12 @@ export class ReactionRegistry {
         requiresDefense: null
       },
 
+      // Core p.41: Block/Deflect may be used repeatedly; each use since the start of your last turn adds a
+      // cumulative -5 to the Use the Force check (tracked by LightsaberTalentActions). No per-round frequency cap.
+      // One reaction per attack event is enforced by AttackEventAuthority, not by a use counter.
       usage: {
-        perRound: true,
-        perEncounter: false,
-        maxPerRound: 1
+        perRound: false,
+        perEncounter: false
       },
 
       cost: {
@@ -76,10 +78,12 @@ export class ReactionRegistry {
         requiresDefense: null
       },
 
+      // Core p.41: Block/Deflect may be used repeatedly; each use since the start of your last turn adds a
+      // cumulative -5 to the Use the Force check (tracked by LightsaberTalentActions). No per-round frequency cap.
+      // One reaction per attack event is enforced by AttackEventAuthority, not by a use counter.
       usage: {
-        perRound: true,
-        perEncounter: false,
-        maxPerRound: 1
+        perRound: false,
+        perEncounter: false
       },
 
       cost: {

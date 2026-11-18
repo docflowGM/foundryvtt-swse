@@ -202,6 +202,20 @@ async function promptSeveringStrikeDetails(actor) {
   });
 }
 
+// JATM regimen temporary Force Points (typed entries): offer the player the choice. A temporary point's
+// round-limit exemption is not printed, so choosing it counts toward the one-FP-per-round limit (FP-RD-007).
+async function askUseTemporaryPoint(actor, talent, modResult) {
+  if (modResult?.useForcePoint !== true) return false;
+  const entries = actor?.getFlag?.(NS, 'bonusForcePoints')?.entries ?? actor?.flags?.swse?.bonusForcePoints?.entries ?? [];
+  const has = Array.isArray(entries) && entries.some(e => e?.entitlement?.kind === 'regimen-reaction' && Number(e.value) >= 1 && (e.entitlement.talents ?? []).includes(talent));
+  if (!has) return false;
+  return await SWSEDialogV2.confirm({
+    title: 'Temporary Force Point',
+    content: `<p>Spend a temporary Force Point from your Force regimen on this ${talent === 'block' ? 'Block' : 'Deflect'} check instead of an ordinary Force Point? It counts toward the one Force Point per round limit.</p>`,
+    defaultYes: false
+  }) === true;
+}
+
 export class LightsaberTalentActions {
   static hasTalent(actor, name) { return hasTalent(actor, name); }
 
@@ -266,14 +280,16 @@ export class LightsaberTalentActions {
     const penalty = -accruedPenalty(state);
     const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Block - Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
     if (modResult === null) return null;
+    const useTemporaryForcePoint = attackEvent ? await askUseTemporaryPoint(actor, 'block', modResult) : false;
     const roll = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', {
       ...modResult,
+      useTemporaryForcePoint,
       customModifier: Number(modResult.customModifier || 0) + penalty + weaponMods.flat + weaponMods.equipmentBonus + ((choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? 2 : 0),
       dc: choice.dc,
       source: 'block-talent',
       skillUse: { key: 'block', label: 'Block' },
       // Verified incoming attack (AttackEventAuthority) or an explicitly manual, GM-adjudicated DC that unlocks no regimen entitlement.
-      reactionEvent: attackEvent ? { id: attackEvent.id, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
+      reactionEvent: attackEvent ? { id: attackEvent.id, attackerId: attackEvent.attackerId, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
       manualAttackDc: !attackEvent,
       targetContext: { targetName: 'incoming melee attack', attackRollDc: choice.dc },
       sourceElement
@@ -328,14 +344,16 @@ export class LightsaberTalentActions {
     const penalty = -accruedPenalty(state);
     const modResult = await LIGHTSABER_TALENT_IO.showRollModifiersDialog({ title: 'Deflect - Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
     if (modResult === null) return null;
+    const useTemporaryForcePoint = attackEvent ? await askUseTemporaryPoint(actor, 'deflect', modResult) : false;
     const roll = await LIGHTSABER_TALENT_IO.rollSkillCheck(actor, 'useTheForce', {
       ...modResult,
+      useTemporaryForcePoint,
       customModifier: Number(modResult.customModifier || 0) + penalty + weaponMods.flat + weaponMods.equipmentBonus + ((choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? 2 : 0),
       dc: choice.dc,
       source: 'deflect-talent',
       skillUse: { key: 'deflect', label: 'Deflect' },
       // Verified incoming attack (AttackEventAuthority) or an explicitly manual, GM-adjudicated DC that unlocks no regimen entitlement.
-      reactionEvent: attackEvent ? { id: attackEvent.id, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
+      reactionEvent: attackEvent ? { id: attackEvent.id, attackerId: attackEvent.attackerId, attackType: attackEvent.attackType, attackTotal: attackEvent.attackTotal, verified: true } : null,
       manualAttackDc: !attackEvent,
       targetContext: { targetName: 'incoming ranged attack', attackRollDc: choice.dc },
       sourceElement

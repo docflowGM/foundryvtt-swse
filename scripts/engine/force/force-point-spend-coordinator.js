@@ -57,6 +57,9 @@ export class ForcePointSpendCoordinator {
       rollDomain: domain,
       targetItemInstanceId: context?.sourceItemId ?? context?.powerId ?? context?.targetItemInstanceId,
       requestId: context?.forcePointRequestId ?? context?.requestId,
+      reaction: context?.reactionEvent ?? null,
+      skillUseKey: context?.skillUse?.key ?? context?.useKey ?? null,
+      useTemporaryEntry: context?.useTemporaryForcePoint === true,
       reason
     };
     const before = ForcePointsService.getAvailableTotal(actor, spendContext);
