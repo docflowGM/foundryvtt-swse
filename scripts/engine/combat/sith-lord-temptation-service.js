@@ -50,9 +50,15 @@ export class SithLordTemptationService {
   /** GM adjudication selects one enemy and confirms LOS; never infer sight. */
   static async activate({sith,target,confirmedLineOfSight=false,combat=activeCombat()}={}){
     if(!sith?.id||!target?.id)throw new Error('Temptation requires Sith Lord and enemy Actors');
+    if(actorIdentity(sith)===actorIdentity(target))
+      throw new Error('Temptation requires a distinct opposing Actor');
     if(globalThis.game?.user?.isGM!==true)
       throw new Error('GM must confirm Temptation target and line of sight');
-    return locked(sith,async()=>{
+
+    // Stage the action cost and roll under the CASTER queue. Release that
+    // queue before entering the TARGET queue to prevent two Sith Lords
+    // targeting one another from deadlocking on nested actor locks.
+    const attempt=await locked(sith,async()=>{
       if(!apexClassFeatureAccess(sith,'sith_lord').allowed)
         throw new Error('Sith Lord class features are unavailable at current Dark Side Score');
       if(!combat?.id||globalThis.game?.combat?.id!==combat.id||!isCurrentTurn(sith,combat))
@@ -76,30 +82,54 @@ export class SithLordTemptationService {
         if(!roll||!Number.isFinite(Number(roll.total)))
           throw new Error('Temptation Persuasion roll was not completed');
         rolled=true;
+        const checkTotal=Number(roll.total);
         const plan=planTemptationMark({
-          caster:sith,target,combat,checkTotal:Number(roll.total),
+          caster:sith,target,combat,checkTotal,
           willDefense:will,confirmedLineOfSight:true
         });
         if(plan.reason==='persuasion-failed')return {
-          success:true,applied:false,checkTotal:Number(roll.total),willDefense:will
+          success:true,applied:false,checkTotal,willDefense:will
         };
         if(!plan.allowed)throw new Error('Temptation mark rejected: '+plan.reason);
         if(!isCurrentTurn(sith,combat)||!apexClassFeatureAccess(sith,'sith_lord').allowed)
           throw new Error('Temptation authority changed after roll');
-        await ActorEngine.applyMutationPlan(target,{
-          set:plan.updates
-        },{source:'SithLordTemptationService.activate',transactional:true});
-        return {success:true,applied:true,checkTotal:Number(roll.total),
-          willDefense:will,targetActorId:actorIdentity(target),encounterId:combat.id};
+        return {readyToMark:true,checkTotal,willDefense:will};
       }catch(error){
-        // Never refund a valid rolled skill failure. If mutation after a
-        // successful check failed, the status requires GM reconciliation.
+        // Never refund a completed roll. A post-roll failure requires GM
+        // review even if the target mark was not written.
         if(rolled)throw new Error('Temptation post-roll outcome requires GM review: '+error.message);
         const rollback=await paid.rollback?.();
         if(rollback!==true)throw new Error('Temptation action INDETERMINATE: '+error.message);
         throw error;
       }
     });
+
+    if(attempt?.readyToMark!==true)return attempt;
+    try{
+      // Replan from CURRENT target state under its own queue. Competing
+      // Sith Lords cannot overwrite each other's marks on this client.
+      return await locked(target,async()=>{
+        if(globalThis.game?.combat?.id!==combat?.id||!isCurrentTurn(sith,combat)
+          ||!apexClassFeatureAccess(sith,'sith_lord').allowed)
+          throw new Error('Temptation authority changed before target mutation');
+        const plan=planTemptationMark({
+          caster:sith,target,combat,checkTotal:attempt.checkTotal,
+          willDefense:attempt.willDefense,confirmedLineOfSight:true
+        });
+        if(!plan.allowed)
+          throw new Error('Temptation mark rejected: '+plan.reason);
+        await ActorEngine.applyMutationPlan(target,{
+          set:plan.updates
+        },{source:'SithLordTemptationService.activate',transactional:true});
+        return {success:true,applied:true,checkTotal:attempt.checkTotal,
+          willDefense:attempt.willDefense,
+          targetActorId:actorIdentity(target),encounterId:combat.id};
+      });
+    }catch(error){
+      // The action and check have already happened. Never refund them
+      // merely because target persistence failed or combat advanced.
+      throw new Error('Temptation post-roll outcome requires GM review: '+error.message);
+    }
   }
 
   /** An authenticated post-spend event is stored before prompting. */
