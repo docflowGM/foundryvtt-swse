@@ -32,15 +32,15 @@ assert.doesNotMatch(forcePointsService, /conditionCurrent >= 3/);
 // 2. RollCore must refund a Force Point already spent if the main check roll
 //    (not just the Force die) subsequently fails to execute.
 assert.match(rollCore, /forcePointDetails\?\.success && forcePointDetails\.spent > 0/);
-assert.match(rollCore, /_refundForcePoints\(actor, forcePointDetails\.spent, 'main-roll-execution-failed'\)/);
+assert.match(rollCore, /_refundForcePoints\(actor, forcePointDetails\.spendReceipt, 'main-roll-execution-failed'\)/);
 
-// 3. The coordinator must validate before spending, spend through
-//    ActorEngine (the sole mutation authority), roll after paying, and roll
-//    back via ActorEngine.gainForcePoints if the die roll fails.
-assert.match(coordinator, /ForcePointsService\.validateSpend\(/);
-assert.match(coordinator, /ActorEngine\.spendForcePoints\(actor, requested\)/);
-assert.match(coordinator, /ActorEngine\.gainForcePoints\(actor, amount\)/);
-assert.match(coordinator, /rolling back spend/);
+// 3. All paid rolls use the typed policy and exact receipt. Normal-only
+//    gainForcePoints() is not a valid refund for a restricted bonus entry.
+assert.match(coordinator, /ForcePointsService\.authorizeSpend\(/);
+assert.match(coordinator, /ActorEngine\.spendForcePoints\(actor, requested, spendContext\)/);
+assert.match(coordinator, /ActorEngine\.rollbackForcePointSpend\(actor, receipt\)/);
+assert.doesNotMatch(coordinator, /ActorEngine\.gainForcePoints\(/);
+assert.doesNotMatch(rollCore, /ActorEngine\.gainForcePoints\(/);
 
 // 4. The receipt must never claim `spent` beyond what was actually deducted;
 //    a failure receipt reports spent: 0, not the requested amount.
