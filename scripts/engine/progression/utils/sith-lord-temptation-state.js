@@ -13,6 +13,30 @@ export const actorIdentity = actor => String(actor?.uuid||actor?.id||'');
 export const hasCurrentCombat = combat =>
   Boolean(combat?.id&&combat.started===true&&Number.isSafeInteger(combat.round)&&combat.round>=0);
 
+/**
+ * Capture a short-lived combat-turn identity for a completed class action.
+ * Not a persistent flag or second combat authority. The same Sith Lord can
+ * be current again in a later round; that does NOT authorize a stale roll.
+ */
+export function temptationActionTurnStamp(combat) {
+  if(!hasCurrentCombat(combat)||!Number.isSafeInteger(combat.turn)
+    ||combat.turn<0||!combat.combatant?.id)return null;
+  return Object.freeze({
+    encounterId:String(combat.id),
+    round:combat.round,
+    turn:combat.turn,
+    combatantId:String(combat.combatant.id)
+  });
+}
+
+export function sameTemptationActionTurn(stamp,combat) {
+  return Boolean(stamp&&hasCurrentCombat(combat)
+    &&Number.isSafeInteger(stamp.round)&&Number.isSafeInteger(stamp.turn)
+    &&stamp.round===combat.round&&stamp.turn===combat.turn
+    &&stamp.encounterId===String(combat.id)
+    &&stamp.combatantId===String(combat.combatant?.id??''));
+}
+
 export function currentTemptations(actor) {
   const rows=actor?.flags?.swse?.classFeatures?.sithLord?.temptation;
   return Array.isArray(rows)?rows:[];
