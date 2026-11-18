@@ -85,6 +85,14 @@
       "book": "Source for Guardian Spirit",
       "section": "Guardian Spirit bonus FP",
       "evidence": "published source must be independently resolved before declaring source RAW; production code contains explicit restrictions"
+    },
+    "CORE41": {
+      "book": "Star Wars Saga Edition Core Rulebook",
+      "pages": [
+        41
+      ],
+      "evidence": "October 2008 official errata adds FP option to Block and Deflect for adjacent ally",
+      "errata": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
     }
   },
   "rawRules": [
@@ -228,6 +236,24 @@
       ],
       "rule": "A source-specific exception must be actually held/active and apply to the requested FP use; a caller-supplied 'allow' boolean alone is not a rule.",
       "implementation": "Re-derive exception from canonical feat/regimen/effect state server-side at the commit boundary; reject undocumented source strings."
+    },
+    {
+      "id": "FP-R16",
+      "topic": "vorens-fourth-cadence",
+      "source": [
+        "JATM13"
+      ],
+      "rule": "At DC38 on Vo'ren's Fourth Cadence, if damaged while maintaining a Force Power, actor may spend one FP as a reaction to avoid the usual fresh UTF concentration check.",
+      "implementation": "Source-scoped reaction authorization tied to an active maintenance/damage receipt, not a generic off-turn waiver; enforce ordinary FP cap unless another source explicitly supersedes it."
+    },
+    {
+      "id": "FP-R17",
+      "topic": "block-deflect-adjacent-ally",
+      "source": [
+        "CORE41"
+      ],
+      "rule": "Official errata allows spending an FP to use Block or Deflect against an attack on an adjacent ally; the Block/Deflect reaction remains subject to all other printed restrictions.",
+      "implementation": "Authorized reaction context includes triggering attack, adjacent target, eligible talent, and exact FP spend. No Force Readiness needed for this source's reaction; count against round limit unless separate exemption."
     }
   ],
   "findings": [
@@ -921,6 +947,34 @@
       "id": "fp-no-combat",
       "expected": "No active Foundry combat requires explicit round/adjudication context, not unbounded bypass or invented timer",
       "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "vorens-fourth-reaction",
+      "expected": "Vo'ren's Fourth Cadence at DC38 allows one paid reaction to waive maintaining-Power concentration check after damage, subject to remaining FP and cap",
+      "source": "JATM13",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "vorens-fourth-no-other",
+      "expected": "Fourth Cadence does not authorize random unrelated off-turn FP spend or waive per-round limit",
+      "source": "JATM13",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "block-adjacent-errata",
+      "expected": "Block against adjacent ally via verified talent and attack trigger can spend FP without Force Readiness",
+      "source": "CORE41",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "deflect-adjacent-errata",
+      "expected": "Deflect against adjacent ally can spend FP, but no extra point if already spent one counted this round unless a source exception applies",
+      "source": "CORE41",
       "priority": "P0",
       "runtimeExecuted": false
     }
