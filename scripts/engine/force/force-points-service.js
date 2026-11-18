@@ -177,8 +177,139 @@ export class ForcePointsService {
    * @param {number} pointsToSpend - How many to spend (default 1)
    * @returns {boolean} Whether actor can spend
    */
-  static canSpend(actor, pointsToSpend = 1) {
-    return this.getRemaining(actor) >= pointsToSpend;
+  static canSpend(actor, pointsToSpend = 1, context = {}) {
+    if (context?.useKind) return this.authorizeSpend(actor, { ...context, requestedCount: pointsToSpend }).valid;
+    // Unclassified availability cannot treat restricted bonus points as cash.
+    return Number.isInteger(pointsToSpend) && pointsToSpend > 0 && this.getRemaining(actor) >= pointsToSpend;
+  }
+
+  static _bonusEntries(actor) {
+    const pool = actor?.getFlag?.('swse', 'bonusForcePoints') ?? actor?.flags?.swse?.bonusForcePoints ?? {};
+    // Entries are the actual wallet. Do not fabricate a freely spendable entry
+    // from a legacy aggregate or pool note.
+    return Array.isArray(pool.entries) ? pool.entries.filter(entry =>
+      entry && typeof entry.id === 'string' && entry.id.length > 0 &&
+      Number.isInteger(Number(entry.value)) && Number(entry.value) > 0
+    ) : [];
+  }
+
+  static _eligibleBonusEntries(actor, context = {}) {
+    const now = Date.now();
+    const combat = globalThis.game?.combat;
+    return this._bonusEntries(actor).filter(entry => {
+      // The current producers of restricted JATM and Guardian Spirit benefits
+      // do not yet provide a certified, event-linked entitlement receipt.
+      // Until they do, only explicitly unrestricted and unexpired entries
+      // can pay a generic spend. In particular, no free-text matching.
+      if (entry.restrictions || entry.restriction) return false;
+      if (entry.encounterId && (!combat?.started || combat.id !== entry.encounterId)) return false;
+      if (entry.round != null && Number(entry.round) !== Number(combat?.round)) return false;
+      if (entry.expires) {
+        if (typeof entry.expires !== 'number' || !Number.isFinite(entry.expires) || now >= entry.expires) return false;
+      }
+      return true;
+    });
+  }
+
+  static getBonusRemaining(actor, context = {}) {
+    return this._eligibleBonusEntries(actor, context).reduce((sum, entry) => sum + Number(entry.value), 0);
+  }
+
+  static getAvailableTotal(actor, context = {}) {
+    return this.getRemaining(actor) + this.getBonusRemaining(actor, context);
+  }
+
+  /**
+   * Pure RAW authorization. ActorEngine invokes this AGAIN under its actor
+   * mutation gate; preflight decisions are never write permits.
+   * Unsupported source-specific exceptions are refused until certified.
+   */
+  static authorizeSpend(actor, context = {}) {
+    const reject = (message, allowance = 0) => ({
+      valid: false, message, allowance, normalSpent: 0, bonusEntriesSpent: [],
+      countsTowardRoundLimit: true, roundKey: null
+    });
+    if (!actor?.id) return reject('Actor identity required');
+    const count = Number(context.requestedCount ?? context.amount ?? 1);
+    if (!Number.isInteger(count) || count !== 1) return reject('A standard Force Point expenditure must be exactly one point');
+    if (this._isSpendingPrevented(actor)) return reject('Actor is unable to spend Force Points');
+
+    const useKind = context.useKind;
+    const reactionKinds = new Set(['recover-one-force-power', 'recover-one-maneuver', 'avoid-death']);
+    const timing = reactionKinds.has(useKind) ? 'reaction' : useKind === 'reduce-dark-side-score' ? 'swift' : 'free';
+
+    if (useKind === 'roll-bonus') {
+      const domain = String(context.rollDomain ?? context.domain ?? '');
+      if (!/^(attack\.|skill\.|ability\.|force-power\.activation|force-regimen\.activation|initiative\b|pilot\.)/.test(domain)) {
+        return reject('A roll-bonus spend requires a supported attack, skill, or ability check domain');
+      }
+      // The Core descriptor rule applies only to a UTF activation check.
+      if (domain === 'force-power.activation') {
+        const item = Array.from(actor.items ?? []).find(i => i.id === context.targetItemInstanceId);
+        if (!item || item.type !== 'force-power') return reject('Owned Force Power activation identity required');
+        const descriptors = [ ...(Array.isArray(item.system?.descriptors) ? item.system.descriptors : []),
+          ...(Array.isArray(item.system?.tags) ? item.system.tags : []) ].map(x => String(x).toLowerCase());
+        if (descriptors.includes('dark side')) return reject('Dark-side activation cannot use a Force Point bonus');
+        if (descriptors.includes('light side') && Number(actor.system?.darkSideScore?.value ?? 0) > 0) {
+          return reject('Light-side activation cannot use a Force Point bonus with Dark Side Score');
+        }
+      }
+    } else if (useKind === 'recover-one-force-power' || useKind === 'recover-one-maneuver') {
+      const item = Array.from(actor.items ?? []).find(i => i.id === context.targetItemInstanceId);
+      const power = useKind === 'recover-one-force-power';
+      if (!item || (power ? !['force-power', 'lightsaber-form-power'].includes(item.type) : item.type !== 'starship-maneuver') ||
+          (item.system?.spent !== true && item.system?.discarded !== true)) {
+        return reject('A specific owned spent suite instance is required for recovery');
+      }
+    } else if (useKind === 'avoid-death') {
+      // Full damage-event verification belongs to the damage resolution owner.
+      // It must supply its authoritative event receipt in the consumer cutover.
+      if (!context.verifiedDamageEvent) return reject('Verified damage resolution event required');
+    } else if (useKind === 'reduce-dark-side-score') {
+      const dsp = Number(actor.system?.darkSideScore?.value ?? actor.system?.darkSide?.score ?? 0);
+      if (!(dsp > 0)) return reject('No Dark Side Score to reduce');
+    } else {
+      return reject('Unsupported or unclassified Force Point use');
+    }
+
+    const combat = globalThis.game?.combat;
+    let roundKey = null;
+    if (combat?.started) {
+      if (!combat.id || !Number.isInteger(Number(combat.round)) || Number(combat.round) < 1) {
+        return reject('Combat round identity unavailable');
+      }
+      roundKey = `${combat.id}:${combat.round}`;
+      const activeId = combat.combatant?.actor?.id ?? combat.combatant?.actorId;
+      if (timing !== 'reaction' && activeId !== actor.id) {
+        // Force Readiness is an owned feat, but does not waive any other FP
+        // restriction or round cap.
+        const ownsReadiness = Array.from(actor.items ?? []).some(i => i.type === 'feat' &&
+          i.system?.disabled !== true &&
+          (i.system?.canonicalId === '8a78270d15aa4738' || i.system?.slug === 'force-readiness'));
+        if (useKind !== 'roll-bonus' || timing !== 'free' || !ownsReadiness) {
+          return reject('This Force Point use is not permitted off turn');
+        }
+      }
+      const usage = actor.getFlag?.('swse', 'forcePointRoundUsage') ?? actor.flags?.swse?.forcePointRoundUsage;
+      if (usage?.roundKey === roundKey && Number(usage.counted ?? 0) >= 1) {
+        return reject('One counted Force Point has already been spent this round');
+      }
+      if (context.requestId && usage?.roundKey === roundKey &&
+          usage?.receipts?.some(r => r.requestId === context.requestId)) {
+        return reject('Force Point request has already been committed');
+      }
+    }
+
+    const bonusEntries = this._eligibleBonusEntries(actor, context);
+    const chosen = bonusEntries.find(e => Number(e.value) >= 1);
+    const normalSpent = chosen ? 0 : 1;
+    const bonusEntriesSpent = chosen ? [{ id: chosen.id, source: chosen.source ?? '', amount: 1, entry: { ...chosen } }] : [];
+    if (normalSpent > this.getRemaining(actor)) return reject('No eligible Force Point available', this.getAvailableTotal(actor, context));
+    return {
+      valid: true, message: 'Authorized Force Point expenditure', allowance: 1,
+      normalSpent, bonusEntriesSpent, countsTowardRoundLimit: true, roundKey, useKind,
+      actionTiming: timing
+    };
   }
 
   /**
@@ -300,49 +431,7 @@ export class ForcePointsService {
    * @returns {Object} { valid: boolean, message: string, allowance: number }
    */
   static validateSpend(actor, context = {}) {
-    const { reason = 'unknown', amount = 1 } = context;
-
-    // Check actor exists
-    if (!actor) {
-      return {
-        valid: false,
-        message: 'No actor provided',
-        allowance: 0
-      };
-    }
-
-    // Check sufficient Force Points
-    const remaining = this.getRemaining(actor);
-    if (remaining < amount) {
-      return {
-        valid: false,
-        message: `Insufficient Force Points: have ${remaining}, need ${amount}`,
-        allowance: remaining
-      };
-    }
-
-    if ((context.offTurn === true || context.isReaction === true) && !ForcePointFeatRules.canSpendOffTurn(actor)) {
-      return {
-        valid: false,
-        message: 'Force Points cannot be spent outside your turn without Force Readiness or another explicit rule.',
-        allowance: 0
-      };
-    }
-
-    // Check not prevented from spending (e.g., by condition or effect)
-    if (this._isSpendingPrevented(actor)) {
-      return {
-        valid: false,
-        message: 'Force Point spending is prevented',
-        allowance: 0
-      };
-    }
-
-    return {
-      valid: true,
-      message: `Can spend ${amount} FP for ${reason}`,
-      allowance: amount
-    };
+    return this.authorizeSpend(actor, context);
   }
 
   /**
