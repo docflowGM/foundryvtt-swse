@@ -23,8 +23,11 @@ critical section, not just protect its eventual write.
 Move the read, pure `expireTemptationEntries` calculation, changed check,
 and `ActorEngine.applyMutationPlan` under one `locked(target, async()=>{})`
 callback. The callback does no update when the current rows are unchanged.
-The actor is read again after previously queued work completes. No
-additional state store, hook, socket, policy engine or character schema.
+The actor is read again after previously queued work completes. A read-only
+`currentTemptations(target).some(active)` prefilter prevents queuing locks
+for unrelated world Actors on every combat turn; it never substitutes for
+the fresh in-lock expiration decision. No additional state store, hook,
+socket, policy engine or character schema.
 
 ## Regression evidence
 
