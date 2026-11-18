@@ -23,7 +23,7 @@
 
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
-import { isTransientProgressionActor, materializeTransientProgressionActor, discardMaterializedProgressionActor, canDiscardMaterializedActor } from './progression-actor-persistence.js';
+import { runFinalizationWithDraftLifecycle } from './progression-actor-persistence.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SWSEPerf } from '/systems/foundryvtt-swse/scripts/utils/performance-utils.js';
 import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/recovery-session-dialog.js';
@@ -4064,9 +4064,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async _onFinalizeProgression() {
     if (this.isProcessing) return;
 
-    let materializedDraft = null;   // { transientActor, persisted } when THIS attempt created the world actor
-    let finalizeCommitted = false;
-    let finalizeResult = null;      // the finalizer's own report; cleanup decisions are made from it, never from success alone
     try {
       this.isProcessing = true;
 
@@ -4104,80 +4101,66 @@ export class ProgressionShell extends SWSEApplicationV2 {
         }
       }
 
-      // PERSISTENCE BOUNDARY: a brand-new creation (launchNewProgression) runs on a
-      // transient, unsaved actor. The world actor is created exactly once here -
-      // after validation, before the mutation plan - so abandoned drafts are never
-      // persisted. The shell and canonical session are re-pointed at it; if the
-      // plan then definitely fails, the actor this attempt created is removed.
-      if (isTransientProgressionActor(this.actor)) {
-        const transientActor = this.actor;
-        try {
-          const { actor: persisted, created } = await materializeTransientProgressionActor(transientActor);
-          this.actor = persisted;
-          if (this.progressionSession) this.progressionSession.actorId = persisted.id;
-          materializedDraft = created ? { transientActor, persisted } : null;
-        } catch (persistErr) {
-          swseLogger.error('[ProgressionShell] Could not create the world actor for this progression', persistErr);
-          ui.notifications.error('Could not create the actor. Nothing was saved; please try again.');
-          this.isProcessing = false;
-          return;
-        }
-      }
-
-      // PHASE 4.1: durability boundary — flush the just-synced canonical
-      // state AFTER sync/validate, BEFORE the irreversible finalizer
-      // mutation. Ordinary commit autosaves are write-behind
-      // (queueSessionSave(), a short debounce), and syncFromDom() above may
-      // itself have just queued one via commitSelection() — flushSession()
-      // drains whatever is now queued, so finalization never begins against
-      // a stale pre-sync draft. If the drain reports the write did not
-      // durably land, finalization MUST NOT proceed: continuing into
-      // ActorEngine mutation after learning the recovery snapshot failed to
-      // persist would leave no durable record of the player's latest state
-      // if that mutation itself then failed or the client crashed.
-      if (this.actor && this.persistenceEnabled) {
-        let flushed = true;
-        try {
-          flushed = await SessionStorage.flushSession(this.actor, this.mode);
-        } catch (err) {
-          swseLogger.warn('[ProgressionShell] Failed to flush session before finalization:', err);
-          flushed = false;
-        }
-        if (!flushed) {
-          swseLogger.error('[ProgressionShell] Aborting finalization: latest progression state could not be durably saved');
-          ui.notifications.error('Could not save your latest progression state. Please try again before finishing.');
-          this.isProcessing = false;
-          return;
-        }
-      }
-
-      // Prepare session state for finalizer
-      // PHASE 1: Pass canonical progressionSession (required, not optional)
-      const sessionState = {
-        mode: this.mode,
+      // PERSISTENCE BOUNDARY + DURABILITY BOUNDARY (see progression-actor-persistence.js):
+      // a brand-new creation runs on a transient, unsaved actor. The world actor is created
+      // exactly once, after validation and before the mutation plan, so abandoned drafts are
+      // never persisted. Then PHASE 4.1: the just-synced canonical state is flushed BEFORE
+      // the irreversible finalizer mutation (write-behind autosaves may still be queued; if
+      // the drain reports the write did not durably land, finalization MUST NOT proceed).
+      // Cleanup of an actor this attempt created is decided from what is known: removed
+      // when the finalizer was never dispatched or definitely did not commit; kept when the
+      // outcome is committed, indeterminate, partial or unknown.
+      const lifecycle = await runFinalizationWithDraftLifecycle({
         actor: this.actor,
-        progressionSession: this.progressionSession,  // CANONICAL — required by finalizer
-        committedSelections: this.committedSelections, // Legacy compat (finalizer ignores)
-        steps: this.steps,
-        stepData: this.stepData,
-        mentor: this.mentor,
-        sessionId: this.element?.dataset.sessionId || 'unknown',
-      };
+        onActorChanged: (next) => {
+          this.actor = next;
+          if (this.progressionSession) this.progressionSession.actorId = next?.id ?? null;
+        },
+        flush: async (activeActor) => {
+          if (!activeActor || !this.persistenceEnabled) return true;
+          return SessionStorage.flushSession(activeActor, this.mode);
+        },
+        dispatch: async (activeActor) => {
+          // Prepare session state for finalizer
+          // PHASE 1: Pass canonical progressionSession (required, not optional)
+          const sessionState = {
+            mode: this.mode,
+            actor: activeActor,
+            progressionSession: this.progressionSession,  // CANONICAL — required by finalizer
+            committedSelections: this.committedSelections, // Legacy compat (finalizer ignores)
+            steps: this.steps,
+            stepData: this.stepData,
+            mentor: this.mentor,
+            sessionId: this.element?.dataset.sessionId || 'unknown',
+          };
 
-      // Hand to finalizer (not direct actor.update()). Single-step mode uses the same
-      // finalizer seam, scoped to the current vertebra instead of the whole spine.
-      const result = this._singleStepMode === true
-        ? await ProgressionFinalizer.finalizeSingleStep(sessionState, this.actor, {
-            domain: this._singleStepDomain || ProgressionFinalizer.singleStepDomainForStep?.(currentDescriptor?.stepId),
-            stepId: currentDescriptor?.stepId || null,
-            job: this._singleStepJob || null,
-            storeConstructionToken: this._storeConstructionToken || null,
-          })
-        : await ProgressionFinalizer.finalize(sessionState, this.actor);
+          // Hand to finalizer (not direct actor.update()). Single-step mode uses the same
+          // finalizer seam, scoped to the current vertebra instead of the whole spine.
+          return this._singleStepMode === true
+            ? await ProgressionFinalizer.finalizeSingleStep(sessionState, activeActor, {
+                domain: this._singleStepDomain || ProgressionFinalizer.singleStepDomainForStep?.(currentDescriptor?.stepId),
+                stepId: currentDescriptor?.stepId || null,
+                job: this._singleStepJob || null,
+                storeConstructionToken: this._storeConstructionToken || null,
+              })
+            : await ProgressionFinalizer.finalize(sessionState, activeActor);
+        },
+      });
 
-      finalizeResult = result;
+      if (lifecycle.phase === 'materialize-failed') {
+        swseLogger.error('[ProgressionShell] Could not create the world actor for this progression', lifecycle.error);
+        ui.notifications.error('Could not create the actor. Nothing was saved; please try again.');
+        return;
+      }
+      if (lifecycle.phase === 'flush-failed') {
+        swseLogger.error('[ProgressionShell] Aborting finalization: latest progression state could not be durably saved');
+        ui.notifications.error('Could not save your latest progression state. Please try again before finishing.');
+        return;
+      }
+      if (lifecycle.phase === 'dispatch-threw') throw lifecycle.error;
+
+      const result = lifecycle.result;
       if (result.success) {
-        finalizeCommitted = true;
         swseLogger.log('[ProgressionShell] Finalization successful');
         ui.notifications.info(result.message || (this._singleStepMode === true ? 'Progression choice resolved.' : 'Character progression complete!'));
 
@@ -4216,16 +4199,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
       swseLogger.error('[ProgressionShell._onFinalizeProgression] Unexpected error', error);
       ui.notifications.error('An unexpected error occurred during finalization.');
     } finally {
-      // A plan that did not commit leaves no half-created world actor behind (an
-      // indeterminate rollback keeps it: the character may be partially modified
-      // and must be inspected, not deleted).
-      // `committed:true` (even with success:false) means the plan was applied: the actor is never deleted.
-      if (materializedDraft && !finalizeCommitted && canDiscardMaterializedActor(finalizeResult)) {
-        if (await discardMaterializedProgressionActor(materializedDraft.persisted)) {
-          this.actor = materializedDraft.transientActor;
-          if (this.progressionSession) this.progressionSession.actorId = null;
-        }
-      }
       this.isProcessing = false;
     }
   }

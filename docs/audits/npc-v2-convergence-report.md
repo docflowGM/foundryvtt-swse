@@ -466,3 +466,31 @@ Suites: see the commit message / PR for the final runner result.
 - The single-step guard now also blocks sheet-driven single-step feat/talent adds on a statblock NPC that has not been converted. That is the requested policy; it should be confirmed in the live procedure (statblock NPC → "Add Feat" is refused with the conversion message).
 - RD-001..004 remain `DEFERRED_RULES_REVIEW`; profile-created Nonheroic NPCs still skip the three-starting-feat check (RD-004), so they are **not** mechanically certified.
 - No live Foundry testing was performed.
+
+
+---
+
+# Final transaction-integrity corrections (re-review of `8a6ead00a`, 2026-11-18)
+
+Three narrowly scoped corrections, one commit, PR stays a draft. **Offline-tested only; nothing is `FOUNDRY_TESTED`.**
+
+| # | Gap | Fix (no second authority introduced) | Code paths (final lines) |
+|---|---|---|---|
+| 1 | Session flush failed *after* the world actor was created; the finalizer was never dispatched, so `finalizeResult` stayed `null` and cleanup refused to delete the actor, leaving a saved level-0 NPC. | New `runFinalizationWithDraftLifecycle()` (materialize → flush → dispatch → cleanup) now owns the sequence and the shell calls it. Cleanup is decided from what is *known*: finalizer never dispatched (materialize/flush failed, flush threw) → discard the actor this attempt created; dispatched with a definite non-commit (`canDiscardMaterializedActor`) → discard; **committed, committed-but-unsuccessful, indeterminate, partial, unverified rollback, or finalizer threw (unknown) → keep**. A pre-existing actor is never created or deleted. | `progression-actor-persistence.js` 92-165 (`runFinalizationWithDraftLifecycle` at 113); `progression-shell.js` 26, 4104-4162 |
+| 2 | `finalizeSingleStep()` accepted a conversion token, but the authority switch is compiled only in the full-finalization plan, so a token-backed single-step could change a statblock NPC without converting it. | Took the preferred correction: **conversion happens only in the full finalization transaction.** `_assertNpcProgressionAuthority(sessionState, actor, { allowConversion })`; `finalizeSingleStep()` passes `allowConversion:false`, so a token never authorizes a single-step job. After the NPC has converted (authority is `progression`) single-step works normally. No conversion code was added to the single-step path. | `progression-finalizer.js` 549-554, 589 |
+| 3 | `npcDeclaresStatblockAuthority()` read only `system.npcProfile`, but the canonical resolver also honors `system.npcMode`, `system.useProgression`, `npcProfile.importMode` and the `npcLevelUp.mode` flags in both namespaces. | Factored the resolver's explicit-declaration logic into one reader, `readExplicitMode(actor)`, used by `inferMode()` (behavior unchanged, regression-tested) **and** by `npcDeclaresStatblockAuthority()`. No new resolver; a declaration recognized by one is recognized by the other. Genuinely blank NPCs (nothing declared) stay unguarded. | `npc-mode-adapter.js` 202-234 (`readExplicitMode` at 210), 513-527 |
+
+## Tests
+`node --test tests/npc-pr1158-review-corrections.test.mjs` — **37 pass / 0 fail**. The same file against `8a6ead00a`: **12 fail** (behavioral: legacy-declaration bypass ×2 for G3, token-authorized single-step ×1; the rest fail because the lifecycle API did not exist).
+| Gap | Tests (assertions) |
+|---|---|
+| 1 | flush returns `false` → phase `flush-failed`, `discarded:true`, **finalizer dispatch count 0**, world has 0 actors, shell re-pointed at the transient draft · flush **throws** → same · materialization failure → nothing created, no flush/dispatch · six result shapes (verified rollback → discard; plain non-commit → discard; `committed:true`+`success:false` → **kept**; indeterminate/partial → **kept**; unverified rollback → **kept**; success → kept) · finalizer **throws** → `dispatch-threw`, actor **kept** · already-persisted actor never created/deleted even when flush fails · real `ProgressionFinalizer`: flush failure never reaches the engine (0 calls, 0 actors); a dispatch that really applied the plan then reported `committed:true, success:false` keeps the actor with its class record |
+| 2 | statblock NPC + valid token + real origin snapshot: full-finalize guard passes, `finalizeSingleStep` returns `NPC progression blocked (statblock-conversion-required)`, engine calls 0, authority and items unchanged · after a completed conversion the same single-step is no longer blocked by the guard · progression-controlled NPC and minion unaffected · droid job precedes the guard · no reconciliation/conversion code in the single-step path |
+| 3 | persisted, classless, level-0 NPCs declaring statblock via `system.npcMode` (play/statblock), `system.useProgression:false`, `npcProfile.importMode`, `flags.foundryvtt-swse.npcLevelUp.mode`, `flags.swse.npcLevelUp.mode`: `npcHasExistingMechanics` is false, the canonical resolver reports `play`, the guard now blocks heroic **and** nonheroic · progression-declaring legacy inputs and a truly blank NPC are not blocked · `readExplicitMode` is shared (no second flag reader) · eight mode-inference shapes unchanged |
+
+## Remaining limits
+- `ProgressionShell._onFinalizeProgression` cannot be instantiated in Node; the lifecycle it now delegates to is tested behaviorally and the shell's use of it is source-checked. A real post-apply-audit `committed:true` failure was reproduced as a *shape* on top of a really-applied plan, not through a full level-up audit.
+- A session-flush failure after materialization now removes the actor; if that *removal* itself fails the actor remains (logged) and the shell is not re-pointed — needs a live check.
+- RD-001..RD-004 remain `DEFERRED_RULES_REVIEW`; **RD-004 means profile-created Nonheroic NPCs are not mechanically certified** (profile sessions still skip the three-starting-feat check).
+- GitHub CI is the reviewer's to confirm independently; the 739/0 figure is a local run of the CI runner.
+- No live Foundry testing was performed.

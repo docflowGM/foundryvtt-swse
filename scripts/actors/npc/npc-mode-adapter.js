@@ -199,7 +199,15 @@ export function getNpcIdentityConflicts(actor) {
   return conflicts;
 }
 
-function inferMode(actor, kind = inferKind(actor)) {
+/**
+ * The mode an NPC EXPLICITLY declares, from every authority input the resolver
+ * supports, in priority order: npcProfile.mode/importMode, system.npcMode, the
+ * canonical and legacy npcLevelUp.mode flags, then system.useProgression.
+ * Returns the canonical mode ('play' = statblock) or null when nothing is declared.
+ * Single reader: inferMode() and the progression guard both use it, so a
+ * declaration recognized by one is recognized by the other.
+ */
+function readExplicitMode(actor) {
   const profileMode = normalizeKey(actor?.system?.npcProfile?.mode ?? actor?.system?.npcProfile?.importMode);
   if (NPC_MODES.has(profileMode)) return profileMode === 'statblock' ? 'play' : profileMode;
 
@@ -218,6 +226,12 @@ function inferMode(actor, kind = inferKind(actor)) {
 
   if (actor?.system?.useProgression === true) return 'progression';
   if (actor?.system?.useProgression === false) return 'play';
+  return null;
+}
+
+function inferMode(actor, kind = inferKind(actor)) {
+  const explicit = readExplicitMode(actor);
+  if (explicit) return explicit;
   if (['minion', 'privateer'].includes(kind) && hasOwnerLink(actor)) return 'owner-sync';
   if (hasClassItems(actor) && !getRawImport(actor)) return 'progression';
   return 'play';
@@ -496,19 +510,21 @@ export function npcHasExistingMechanics(actor) {
 }
 
 /**
- * An NPC that EXPLICITLY declares statblock authority (stored profile source
- * authority / mode / calculation mode). This is a declared mechanical authority,
+
+ * An NPC that EXPLICITLY declares statblock authority (any explicit declaration the
+ * canonical resolver reads: profile source authority / mode / calculation mode,
+ * system.npcMode, npcLevelUp flags, system.useProgression=false). This is a declared mechanical authority,
  * independent of whether class items, a level, import data or a pack id exist -
  * so a saved, classless, level-0 statblock NPC is still protected.
  */
 export function npcDeclaresStatblockAuthority(actor) {
   if (actor?.type !== 'npc' || !actor?.id) return false;
   const profile = actor?.system?.npcProfile;
-  if (!profile) return false;
-  const authority = normalizeKey(profile.sourceAuthority ?? profile.authority);
-  const mode = normalizeKey(profile.mode ?? profile.importMode);
-  const calc = normalizeKey(profile.calculationMode);
-  return authority === 'statblock' || mode === 'play' || mode === 'statblock' || calc === 'statblock';
+  const authority = normalizeKey(profile?.sourceAuthority ?? profile?.authority);
+  const calc = normalizeKey(profile?.calculationMode);
+  // Same explicit-mode reader the canonical resolver uses (profile mode, system.npcMode,
+  // npcLevelUp flags in both namespaces, system.useProgression): not a second resolver.
+  return readExplicitMode(actor) === 'play' || authority === 'statblock' || calc === 'statblock';
 }
 
 /**

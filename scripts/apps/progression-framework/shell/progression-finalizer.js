@@ -546,9 +546,12 @@ export class ProgressionFinalizer {
    * authority is never mutated by progression unless this very session carries an
    * authorized, snapshot-backed conversion. Throws on violation.
    */
-  static _assertNpcProgressionAuthority(sessionState, actor) {
+  static _assertNpcProgressionAuthority(sessionState, actor, { allowConversion = true } = {}) {
     if (actor?.type !== 'npc') return;
-    const conversion = sessionState?.progressionSession?.statblockConversion ?? null;
+    // Statblock -> progression conversion is a FULL-finalization transaction (the authority
+    // switch is compiled into that plan). A single-step job never carries it, so a
+    // conversion token must not authorize one: `allowConversion:false` ignores the token.
+    const conversion = allowConversion ? (sessionState?.progressionSession?.statblockConversion ?? null) : null;
     const guard = evaluateNpcProgressionGuard(actor, {
       subtype: sessionState?.progressionSession?.subtype,
       conversion,
@@ -583,7 +586,7 @@ export class ProgressionFinalizer {
 
       // Same NPC authority policy as finalize(). The only exception is the Store
       // 'droidBuilder' job above, which never mutates the actor.
-      this._assertNpcProgressionAuthority(sessionState, actor);
+      this._assertNpcProgressionAuthority(sessionState, actor, { allowConversion: false });
 
       const mutationPlan = await this._compileSingleStepMutationPlan(sessionState, actor, { ...options, domain, stepId });
       const itemDomains = new Set(['feats', 'talents', 'forcePowers', 'forceRegimens', 'forceTechniques', 'forceSecrets', 'medicalSecrets', 'starshipManeuvers']);

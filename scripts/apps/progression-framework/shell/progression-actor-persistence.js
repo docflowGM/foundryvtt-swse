@@ -89,3 +89,77 @@ export function canDiscardMaterializedActor(result) {
   if (result.rollbackOutcome && result.rollbackOutcome !== 'FAILED_COMPENSATED') return false;
   return true;
 }
+
+/**
+ * The create -> flush -> finalize -> cleanup lifecycle for one finalization attempt.
+ *
+ * Cleanup is decided from WHAT IS KNOWN about the mutation, never from "success":
+ *   - the finalizer was never dispatched (materialize/flush failed first): nothing
+ *     was mutated, so an actor THIS attempt created is discarded;
+ *   - dispatched and the finalizer reported a definite non-commit (see
+ *     canDiscardMaterializedActor): discarded;
+ *   - dispatched and committed / indeterminate / partial / unverified rollback /
+ *     finalizer threw (outcome unknown): the actor is KEPT.
+ *
+ * @param {Object} p
+ * @param {Actor} p.actor                       actor at dispatch time (possibly transient)
+ * @param {(actor)=>Promise<boolean>} p.flush   durability flush; false/throw = not durable
+ * @param {(actor)=>Promise<Object>} p.dispatch calls the finalizer, returns its report
+ * @param {(actor)=>void} [p.onActorChanged]    re-points the caller at the current actor
+ * @param {Object} [p.seams]                    createActor / deleteActor test seams
+ * @returns {Promise<{phase: 'materialize-failed'|'flush-failed'|'dispatched'|'dispatch-threw',
+ *   actor: Actor, result: (Object|null), error: (Error|null), created: boolean, discarded: boolean}>}
+ */
+export async function runFinalizationWithDraftLifecycle({ actor, flush, dispatch, onActorChanged = () => {}, seams = {} }) {
+  const transientActor = actor;
+  let current = actor;
+  let created = false;
+  let discarded = false;
+
+  const discard = async () => {
+    if (!created) return false;
+    if (await discardMaterializedProgressionActor(current, seams)) {
+      current = transientActor;
+      onActorChanged(transientActor);
+      discarded = true;
+      return true;
+    }
+    return false;
+  };
+  const outcome = (phase, extra = {}) => ({ phase, actor: current, result: null, error: null, created, discarded, ...extra });
+
+  if (isTransientProgressionActor(current)) {
+    try {
+      const res = await materializeTransientProgressionActor(current, seams);
+      current = res.actor;
+      created = res.created;
+      onActorChanged(current);
+    } catch (error) {
+      return outcome('materialize-failed', { actor: transientActor, error });
+    }
+  }
+
+  let flushed = false;
+  try {
+    flushed = (await flush(current)) !== false;
+  } catch (error) {
+    swseLogger.warn('[ProgressionActorPersistence] Session flush threw before finalization', error);
+    flushed = false;
+  }
+  if (!flushed) {
+    // The finalizer was never dispatched: no progression mutation started, so the outcome is KNOWN.
+    await discard();
+    return outcome('flush-failed');
+  }
+
+  let result = null;
+  try {
+    result = await dispatch(current);
+  } catch (error) {
+    // Dispatched and threw: the plan may or may not have applied. Unknown outcome => keep the actor.
+    return outcome('dispatch-threw', { error });
+  }
+
+  if (created && canDiscardMaterializedActor(result)) await discard();
+  return outcome('dispatched', { result });
+}
