@@ -138,7 +138,7 @@ try {
     const a = makeActor({ normal: 1 });
     globalThis.game.combat = { started: true, id: 'combat-B', round: 1, combatant: { actor: { id: 'other-actor' } } };
     assert.equal(ForcePointsService.authorizeSpend(a, rollContext('offturn-no-feat')).valid, false);
-    a.items.push({ id: 'p1', type: 'force-power', system: { spent: true } });
+    a.items.push({ id: 'p1', type: 'force-power', system: { discarded: true } }); // canonical suite state (legacy spent is no authority)
     assert.equal(ForcePointsService.authorizeSpend(a, {
       useKind: 'recover-one-force-power', targetItemInstanceId: 'p1', requestId: 'react-recover'
     }).valid, true);
