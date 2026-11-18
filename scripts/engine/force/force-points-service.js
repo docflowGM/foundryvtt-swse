@@ -290,16 +290,17 @@ export class ForcePointsService {
           return reject('This Force Point use is not permitted off turn');
         }
       }
-      const usage = actor.getFlag?.('swse', 'forcePointRoundUsage') ?? actor.flags?.swse?.forcePointRoundUsage;
-      if (usage?.roundKey === roundKey && Number(usage.counted ?? 0) >= 1) {
+      const journal = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+      if ((journal.receipts ?? []).some(r => r.roundKey === roundKey &&
+          r.countsTowardRoundLimit && r.state === 'committed')) {
         return reject('One counted Force Point has already been spent this round');
-      }
-      if (context.requestId && usage?.roundKey === roundKey &&
-          usage?.receipts?.some(r => r.requestId === context.requestId)) {
-        return reject('Force Point request has already been committed');
       }
     }
 
+    const journal = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+    if (context.requestId && (journal.receipts ?? []).some(r => r.requestId === context.requestId)) {
+      return reject('Force Point request identifier has already been used');
+    }
     const bonusEntries = this._eligibleBonusEntries(actor, context);
     const chosen = bonusEntries.find(e => Number(e.value) >= 1);
     const normalSpent = chosen ? 0 : 1;
