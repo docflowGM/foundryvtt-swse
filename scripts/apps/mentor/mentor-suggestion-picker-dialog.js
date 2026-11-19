@@ -7,6 +7,11 @@
 
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
+// Reasons are evidence, not slots that must be filled. The summary is one
+// of the four possible observations and is removed from repeated bullets.
+// Zero through three observations are equally valid.
+const MAX_MENTOR_EVIDENCE_ITEMS = 4;
+
 const GENERIC_REASON_PATTERNS = [
   /fits your current (build|direction)/i,
   /strong fit for your build/i,
@@ -14,6 +19,12 @@ const GENERIC_REASON_PATTERNS = [
   /valid option/i,
   /reasonable option/i,
   /available option/i,
+  // These sound reassuring but give the player no actionable information.
+  // Specific skill access, attribute synergy and named benefits remain visible.
+  /\b(?:patches|fills) a (?:useful |important |meaningful )?gap in (?:your|the) build[.!?]?$/i,
+  /\b(?:has|offers|provides) an? (?:extra |additional )?mechanical hook such as (?:a )?bonus, reroll, language, or class-skill benefit[.!?]?$/i,
+  /^(?:its|the) bonus text lines up with a stated build lane[.!?]?$/i,
+  /^the background is narratively coherent with your species[.!?]?$/i,
 ];
 
 const ABILITY_LABELS = {
@@ -124,7 +135,7 @@ function normalizeReasons(entry = {}) {
   ]);
   const fallbackBullets = uniqTexts(flattenReasonValues(entry.reasonBullets || entry.reasons || entry.reasonText || entry.reason || []))
     .filter(text => !isGenericReason(text));
-  const bullets = (preferredBullets.length ? preferredBullets : fallbackBullets).slice(0, 5).map(decorateText);
+  const bullets = (preferredBullets.length ? preferredBullets : fallbackBullets).slice(0, MAX_MENTOR_EVIDENCE_ITEMS).map(decorateText);
 
   const cautions = collectReasons(entry, ['suggestion.cautions', 'cautionReasons', 'cautions'])
     .slice(0, 3).map(decorateText);
@@ -205,6 +216,11 @@ export class MentorSuggestionPickerDialog extends BaseSWSEAppV2 {
   _prepareContext() {
     const suggestions = this.suggestions.map((entry, index) => {
       const reasons = normalizeReasons(entry);
+      const reasonSummary = pickReasonSummary(entry);
+      const summaryKey = cleanText(reasonSummary)?.replace(/[.!?]+$/, '').toLowerCase();
+      const bullets = summaryKey
+        ? reasons.bullets.filter(bullet => cleanText(bullet.text)?.replace(/[.!?]+$/, '').toLowerCase() !== summaryKey)
+        : reasons.bullets;
       const suggestionMeta = entry?.suggestion ?? {};
       return {
         index,
@@ -214,9 +230,9 @@ export class MentorSuggestionPickerDialog extends BaseSWSEAppV2 {
         tier: suggestionMeta?.tier ?? entry?.tier ?? 0,
         tierLabel: suggestionMeta?.label || entry?.tierLabel || null,
         confidence: suggestionMeta?.confidence ?? entry?.confidence ?? null,
-        reasonSummary: pickReasonSummary(entry),
+        reasonSummary,
         reasonText: entry?.reasonText || suggestionMeta?.reasonText || null,
-        bullets: reasons.bullets,
+        bullets,
         cautions: reasons.cautions,
         forecast: reasons.forecast,
       };

@@ -2132,6 +2132,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
         this.progressionSession.visitedStepIds.push(descriptor.stepId);
       }
 
+      // Step guidance is the mentor's committed opening sentence.
+      // Present it BEFORE launching asynchronous recommendation evaluation:
+      // a late recommendation must never change the line mid-sentence.
       this._syncMentorForStep(descriptor);
       this._presentStepPluginGuidance(plugin, descriptor?.stepId);
       // The introduction is committed before asynchronous advice is evaluated.
