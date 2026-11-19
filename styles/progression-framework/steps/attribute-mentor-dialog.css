@@ -271,3 +271,89 @@
     align-items: stretch;
   }
 }
+
+
+/* ============================================================================
+ * ATTRIBUTE MENTOR — COLLAPSED PREVIEW ONLY
+ *
+ * Preserve the original expanded card layout and visual treatment unchanged:
+ * four ability values, detached Base/Species/Final/Mod legend, and the
+ * original Reasons/Cautions/Forecast cards/hover treatment.
+ *
+ * When a card is minimized, show only final score and signed modifier,
+ * with their labels immediately below. Exactly one card may be expanded.
+ * ========================================================================== */
+
+/* Use the original h3 typography; only add a discoverable title toggle. */
+.attr-mentor-card__toggle {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  line-height: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.attr-mentor-card__toggle i {
+  color: var(--prog-accent, #4cc8ff);
+  font-size: 11px;
+  transition: transform 160ms ease;
+}
+
+.attr-mentor-card.is-expanded .attr-mentor-card__toggle i {
+  transform: rotate(180deg);
+}
+
+.attr-mentor-card__toggle:focus-visible {
+  outline: 2px solid var(--prog-accent, #4cc8ff);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.attr-mentor-stat__compact {
+  display: none;
+}
+
+/* No rules below restyle the expanded four-column score display. */
+.attr-mentor-card:not(.is-expanded) .attr-mentor-stat__numbers,
+.attr-mentor-card:not(.is-expanded) .attr-mentor-card__legend,
+.attr-mentor-card:not(.is-expanded) .attr-mentor-card__details-grid {
+  display: none;
+}
+
+.attr-mentor-card:not(.is-expanded) .attr-mentor-stat__compact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 4px;
+  row-gap: 2px;
+  align-items: center;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.attr-mentor-stat__compact-caption {
+  color: var(--prog-text-dim, #9cb5c7);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.attr-mentor-card__details-grid[hidden] {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attr-mentor-card__toggle i {
+    transition: none;
+  }
+}

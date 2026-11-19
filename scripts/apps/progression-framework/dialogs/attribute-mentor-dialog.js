@@ -56,6 +56,29 @@ export class AttributeMentorDialog extends SWSEApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
 
+    // Build details use the ORIGINAL full four-score display. Collapsed cards
+    // retain the title, final score, modifier and Apply Build. At most one
+    // build is expanded; clicking its title again minimizes it.
+    const toggles = [...root.querySelectorAll('[data-build-toggle]')];
+    const showBuild = (selected, { allowCollapse = true } = {}) => {
+      const collapseSelected = allowCollapse && selected?.getAttribute('aria-expanded') === 'true';
+      for (const toggle of toggles) {
+        const open = toggle === selected && !collapseSelected;
+        const panel = root.querySelector('#' + toggle.getAttribute('aria-controls'));
+        toggle.setAttribute('aria-expanded', String(open));
+        if (panel) panel.hidden = !open;
+        toggle.closest('[data-build-card]')?.classList.toggle('is-expanded', open);
+      }
+    };
+
+    toggles.forEach(toggle => {
+      toggle.addEventListener('click', () => showBuild(toggle));
+    });
+
+    // Open the recommended build by default; keep the others minimized.
+    const recommended = root.querySelector('[data-build-card].is-recommended [data-build-toggle]');
+    if (toggles.length) showBuild(recommended || toggles[0], { allowCollapse: false });
+
     root.querySelectorAll('[data-build-apply]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();

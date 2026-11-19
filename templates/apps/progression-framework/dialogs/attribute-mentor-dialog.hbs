@@ -9,11 +9,19 @@
 
   <div class="attr-mentor-dialog__cards">
     {{#each builds}}
-      <section class="attr-mentor-card {{#if recommended}}is-recommended{{/if}}">
+      <section class="attr-mentor-card {{#if recommended}}is-recommended{{/if}}" data-build-card>
         <div class="attr-mentor-card__head">
           <div>
             <div class="attr-mentor-card__title-row">
-              <h3>{{title}}</h3>
+              <h3><button type="button"
+                          class="attr-mentor-card__toggle"
+                          data-build-toggle
+                          id="attr-mentor-build-tab-{{@index}}"
+                          aria-controls="attr-mentor-build-panel-{{@index}}"
+                          aria-expanded="false"
+                          aria-label="Expand or minimize {{title}}">
+                    <span>{{title}}</span><i class="fas fa-chevron-down" aria-hidden="true"></i>
+                  </button></h3>
               {{#if recommended}}<span class="attr-mentor-card__recommended">Recommended</span>{{/if}}
             </div>
             <p class="attr-mentor-card__subtitle">{{subtitle}}</p>
@@ -39,6 +47,13 @@
                 <span class="attr-mentor-stat__final">{{final}}</span>
                 <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">{{modifier}}</span>
               </div>
+              {{!-- Only collapsed builds use this compact Total / Mod readout. --}}
+              <div class="attr-mentor-stat__compact">
+                <span class="attr-mentor-stat__final">{{final}}</span>
+                <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">({{modifier}})</span>
+                <span class="attr-mentor-stat__compact-caption">Total</span>
+                <span class="attr-mentor-stat__compact-caption">Mod</span>
+              </div>
             </div>
           {{/each}}
         </div>
@@ -50,7 +65,12 @@
           <span>Mod</span>
         </div>
 
-        <div class="attr-mentor-card__details-grid">
+        <div class="attr-mentor-card__details-grid"
+             data-build-panel
+             id="attr-mentor-build-panel-{{@index}}"
+             role="region"
+             aria-labelledby="attr-mentor-build-tab-{{@index}}"
+             hidden>
           <div class="attr-mentor-detail-group">
             <div class="attr-mentor-detail-group__label">Reasons</div>
             <ul>
