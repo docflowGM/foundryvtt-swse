@@ -1471,3 +1471,42 @@
   white-space: nowrap;
 }
 
+
+
+/* Touch-first pooled attribute allocation (Array / Standard / Organic).
+   Desktop HTML drag-and-drop and tap-to-select remain available. */
+.progression-shell .prog-attribute-surface--v2 [data-score-pool-id] {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.progression-shell .prog-attribute-surface--v2 [data-score-pool-id].is-dragging {
+  opacity: 0.45;
+}
+
+.progression-shell .prog-attribute-surface--v2 .prog-attr-v2-cell.is-drop-ready {
+  border-color: #77ffc1;
+  background: rgba(32, 124, 97, 0.22);
+  box-shadow: inset 0 0 0 2px rgba(119, 255, 193, 0.58), 0 0 16px rgba(83, 255, 160, 0.28);
+}
+
+.prog-attr-v2-drag-ghost {
+  position: fixed;
+  z-index: 2147483000;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 2px solid #77ffc1;
+  border-radius: 8px;
+  background: rgba(4, 19, 30, 0.96);
+  color: #edfff4;
+  font: 700 20px/1 var(--font-display, 'Orbitron', sans-serif);
+  box-shadow: 0 0 20px rgba(83, 255, 160, 0.4);
+  pointer-events: none;
+}
