@@ -24,3 +24,8 @@ packs/*.backup
 
 # Release staging (scripts/build/package-system.js)
 build/release/
+
+# Built V13 compendium stores (LevelDB directories compiled from packs/<name>.db by tools/release/build-packs.mjs).
+# Never committed: the committed source of truth is the NeDB file; `packs/vehicles-canonical-ships/` is a tracked source directory.
+packs/*/
+!packs/vehicles-canonical-ships/

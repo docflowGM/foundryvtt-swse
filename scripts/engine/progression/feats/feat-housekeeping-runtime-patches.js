@@ -7,7 +7,7 @@ import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities
 import { FeatRulesAdapter } from '/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js';
 import { FeatRegistry as CompendiumFeatRegistry } from '/systems/foundryvtt-swse/scripts/registries/feat-registry.js';
 import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/talent-registry.js';
-import { HOUSE_RULE_GRANTS, canWriteGrants, isFeatTalentRuleKey, isGrantEnabled } from '/systems/foundryvtt-swse/scripts/houserules/house-rule-grant-table.js';
+import { HOUSE_RULE_GRANTS, canWriteGrants, grantForSetting, isFeatTalentRuleKey, isGrantEnabled } from '/systems/foundryvtt-swse/scripts/houserules/house-rule-grant-table.js';
 import { HouseRuleFeatGrants } from '/systems/foundryvtt-swse/scripts/houserules/houserule-feat-grants.js';
 import { invalidateReconciliationForRuleChange } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 
@@ -474,7 +474,8 @@ function registerHouseRuleCacheInvalidation() {
   if (globalThis[HOOK_FLAG]) return;
   globalThis[HOOK_FLAG] = true;
   const onChange = (key) => {
-    if (HOUSERULE_GRANT_SETTINGS.has(key)) AbilityEngine.clearAcquisitionCache?.();
+    // The canonical grant table is the only list of grant-bearing settings (the former local copy was removed).
+    if (grantForSetting(key)) AbilityEngine.clearAcquisitionCache?.();
     // Any feat/talent house rule can change entitlements: drop reconciliation reports and refresh open sheets.
     if (isFeatTalentRuleKey(key)) invalidateReconciliationForRuleChange();
   };
