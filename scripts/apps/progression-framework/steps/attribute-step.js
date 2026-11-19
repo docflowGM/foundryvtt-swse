@@ -1274,14 +1274,20 @@ export class AttributeStep extends ProgressionStepPlugin {
         ev.stopPropagation();
         if (this._committed) return;
         this._setSelectedPoolItem(btn.dataset.scorePoolId);
-        shell.requestRender({ preserveScroll: true, reason: 'attribute-step:afterRender' });
+        shell.requestRender({ preserveScroll: true, reason: 'attribute-step:pool-select' });
       }, { signal });
 
       btn.addEventListener('dragstart', ev => {
-        if (this._committed) return;
+        if (this._committed || !['array', 'standard', 'organic'].includes(this._method)) {
+          ev.preventDefault();
+          return;
+        }
         const poolId = btn.dataset.scorePoolId;
         this._setSelectedPoolItem(poolId);
-        ev.dataTransfer?.setData('text/plain', poolId);
+        if (ev.dataTransfer) {
+          ev.dataTransfer.effectAllowed = 'move';
+          ev.dataTransfer.setData('text/plain', poolId);
+        }
       }, { signal });
     });
 
@@ -1289,22 +1295,26 @@ export class AttributeStep extends ProgressionStepPlugin {
       row.addEventListener('dragover', ev => {
         if (this._committed || this._method === 'point-buy') return;
         ev.preventDefault();
-        row.classList.add('prog-attribute-row--drop-ready');
+        row.classList.add('is-drop-ready');
       }, { signal });
 
-      row.addEventListener('dragleave', () => {
-        row.classList.remove('prog-attribute-row--drop-ready');
+      row.addEventListener('dragleave', ev => {
+        if (row.contains(ev.relatedTarget)) return;
+        row.classList.remove('is-drop-ready');
       }, { signal });
 
       row.addEventListener('drop', ev => {
         if (this._committed || this._method === 'point-buy') return;
         ev.preventDefault();
-        row.classList.remove('prog-attribute-row--drop-ready');
+        row.classList.remove('is-drop-ready');
         const poolId = ev.dataTransfer?.getData('text/plain') || this._dragPoolId || this._selectedPoolId;
         if (!poolId) return;
         this._setSelectedPoolItem(poolId);
         this._assignSelectedPoolToAbility(row.dataset.abilityRow, shell);
-        shell.requestRender({ preserveScroll: true, reason: 'attribute-step:afterRender' });
+        const ability = String(row.dataset.abilityRow || '').toLowerCase();
+        this._focusedAbility = ability;
+        shell?.setFocusedItem?.(this._buildFocusedAbilityDetail(ability, shell));
+        shell.requestRender({ preserveScroll: true, reason: 'attribute-step:pool-drop' });
       }, { signal });
     });
 
@@ -1325,6 +1335,116 @@ export class AttributeStep extends ProgressionStepPlugin {
       shell.requestRender({ preserveScroll: true, reason: 'attribute-step:afterRender' });
     }, { signal });
 
+    // HTML drag events cover desktop browsers, but not reliably iOS/Android.
+    // Touch/pen gestures below route into the SAME pool assignment authority.
+    this._wirePooledTouchDrag(shell, workSurfaceEl, signal);
+  }
+
+  /**
+   * Drag a generated score/die to an ability on a touchscreen.
+   * A short tap continues to use the existing tap-score, tap-ability flow.
+   * Never duplicate score allocation rules here: all successful drops go
+   * through _assignSelectedPoolToAbility(), including Organic's 3-die cap.
+   */
+  _wirePooledTouchDrag(shell, workSurfaceEl, signal) {
+    let active = null;
+
+    const getTarget = (x, y) => {
+      const hit = document.elementFromPoint(x, y);
+      const row = hit?.closest?.('[data-ability-row]');
+      return row && workSurfaceEl.contains(row) && !row.classList.contains('is-excluded')
+        ? row : null;
+    };
+
+    const cleanup = () => {
+      if (!active) return;
+      active.hover?.classList.remove('is-drop-ready');
+      active.source?.classList.remove('is-dragging');
+      active.ghost?.remove();
+      active = null;
+    };
+
+    signal.addEventListener('abort', cleanup, { once: true });
+
+    workSurfaceEl.querySelectorAll('[data-score-pool-id]').forEach(source => {
+      source.addEventListener('pointerdown', ev => {
+        if (!['touch', 'pen'].includes(ev.pointerType) || ev.button !== 0) return;
+        if (this._committed || !['array', 'standard', 'organic'].includes(this._method) || active) return;
+        const poolId = source.dataset.scorePoolId;
+        if (!this._scorePool.some(item => item.id === poolId)) return;
+
+        active = {
+          source,
+          poolId,
+          pointerId: ev.pointerId,
+          startX: ev.clientX,
+          startY: ev.clientY,
+          dragging: false,
+          hover: null,
+          ghost: null,
+        };
+        try { source.setPointerCapture(ev.pointerId); } catch (_) { /* gesture still supports tap */ }
+      }, { signal });
+
+      source.addEventListener('pointermove', ev => {
+        if (!active || active.source !== source || active.pointerId !== ev.pointerId) return;
+        if (!active.dragging && Math.hypot(ev.clientX - active.startX, ev.clientY - active.startY) < 9) return;
+
+        if (!active.dragging) {
+          active.dragging = true;
+          this._setSelectedPoolItem(active.poolId);
+          active.ghost = document.createElement('div');
+          active.ghost.className = 'prog-attr-v2-drag-ghost';
+          active.ghost.textContent = String(this._scorePool.find(item => item.id === active.poolId)?.value ?? '');
+          active.ghost.setAttribute('aria-hidden', 'true');
+          document.body.appendChild(active.ghost);
+          source.classList.add('is-dragging');
+        }
+
+        ev.preventDefault();
+        active.ghost.style.left = ev.clientX + 'px';
+        active.ghost.style.top = ev.clientY + 'px';
+        const nextHover = getTarget(ev.clientX, ev.clientY);
+        if (active.hover !== nextHover) {
+          active.hover?.classList.remove('is-drop-ready');
+          nextHover?.classList.add('is-drop-ready');
+          active.hover = nextHover;
+        }
+      }, { signal });
+
+      source.addEventListener('pointerup', ev => {
+        if (!active || active.source !== source || active.pointerId !== ev.pointerId) return;
+        const wasDragging = active.dragging;
+        const poolId = active.poolId;
+        const target = wasDragging ? getTarget(ev.clientX, ev.clientY) : null;
+        cleanup();
+        if (!wasDragging) return; // allow the normal pool-chip click to arm a score
+
+        // Prevent the compatibility click emitted after a touch drag from
+        // selecting the source again. The source is replaced by the rerender.
+        source.addEventListener('click', event => {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }, { capture: true, once: true, signal });
+        ev.preventDefault();
+
+        this._setSelectedPoolItem(poolId);
+        if (target) {
+          const ability = String(target.dataset.abilityRow || '').toLowerCase();
+          this._assignSelectedPoolToAbility(ability, shell);
+          this._focusedAbility = ability;
+          shell?.setFocusedItem?.(this._buildFocusedAbilityDetail(ability, shell));
+        }
+        shell.requestRender({ preserveScroll: true, reason: 'attribute-step:touch-pool-drop' });
+      }, { signal });
+
+      source.addEventListener('pointercancel', ev => {
+        if (active?.source === source && active.pointerId === ev.pointerId) cleanup();
+      }, { signal });
+      source.addEventListener('lostpointercapture', ev => {
+        if (active?.source === source && active.pointerId === ev.pointerId) cleanup();
+      }, { signal });
+    });
   }
 
   _handleMethodChange(method, shell) {
