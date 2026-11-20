@@ -22,6 +22,7 @@ import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animati
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
+import { resolveFallenJediForcePowerAccess } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/apex-class-feature-access.js";
 
 function forcePowerHasDarkSideDescriptor(power) {
   const values = [
@@ -106,6 +107,13 @@ export class ForceExecutor {
         throw new Error("Force power not found");
       }
 
+      // Fallen Jedi prohibits use, not recovery/retention, of Light Side powers.
+      // Evaluate before discarding the power or making any ActorEngine mutation.
+      const fallenJedi = !recover && resolveFallenJediForcePowerAccess(actor, power);
+      if (fallenJedi && !fallenJedi.allowed) {
+        throw new Error(`${actor.name} cannot use ${power.name}: Fallen Jedi prohibits Force Powers with the [Light Side] descriptor.`);
+      }
+
       if (!recover && actorHasEmbraceTheDarkSide(actor) && forcePowerHasLightSideDescriptor(power)) {
         throw new Error(`${actor.name} cannot use ${power.name}: Embrace the Dark Side prohibits Force Powers with the [Light Side] descriptor.`);
       }
@@ -186,6 +194,13 @@ export class ForceExecutor {
       const power = actor.items.get(powerId);
       if (!power) throw new Error("Force power not found");
       if (power.type !== "force-power") throw new Error(`${power.name} is not a Force power`);
+      // Reject prohibited power use before RollCore, Force Point spend, or
+      // any discarded-state mutation. Leave the retained power untouched.
+      const fallenJedi = resolveFallenJediForcePowerAccess(actor, power);
+      if (!fallenJedi.allowed) {
+        throw new Error(`${actor.name} cannot use ${power.name}: Fallen Jedi prohibits Force Powers with the [Light Side] descriptor.`);
+      }
+
       if (actorHasEmbraceTheDarkSide(actor) && forcePowerHasLightSideDescriptor(power)) {
         throw new Error(`${actor.name} cannot use ${power.name}: Embrace the Dark Side prohibits Force Powers with the [Light Side] descriptor.`);
       }
