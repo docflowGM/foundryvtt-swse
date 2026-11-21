@@ -1,0 +1,1385 @@
+{
+ "main": "28b7797b54aa532534f7fa8d497e9a94c812b76c",
+ "audit_date": "2026-11-21",
+ "open_prs": [
+  {
+   "pr": 1165,
+   "branch": "claude/keen-sagan-jvkazs",
+   "behind": 50,
+   "ahead": 61,
+   "unique_patches": 60
+  },
+  {
+   "pr": 1164,
+   "branch": "fix/class-force-6ae-temptation-owner-choice-routing",
+   "behind": 258,
+   "ahead": 142,
+   "unique_patches": 142
+  },
+  {
+   "pr": 1163,
+   "branch": "fix/class-force-6ad-temptation-turn-snapshot",
+   "behind": 258,
+   "ahead": 138,
+   "unique_patches": 138
+  },
+  {
+   "pr": 1162,
+   "branch": "fix/class-force-6ac-temptation-target-mark-serialization",
+   "behind": 258,
+   "ahead": 133,
+   "unique_patches": 133
+  },
+  {
+   "pr": 1161,
+   "branch": "fix/class-force-6ab-temptation-expiry-race",
+   "behind": 258,
+   "ahead": 130,
+   "unique_patches": 130
+  },
+  {
+   "pr": 1160,
+   "branch": "fix/class-force-6aa-reaction-full-payment",
+   "behind": 258,
+   "ahead": 124,
+   "unique_patches": 124
+  },
+  {
+   "pr": 1159,
+   "branch": "fix/class-force-6z-reaction-execution-admission",
+   "behind": 258,
+   "ahead": 120,
+   "unique_patches": 120
+  },
+  {
+   "pr": 1156,
+   "branch": "fix/class-force-6y-reaction-paid-spend",
+   "behind": 258,
+   "ahead": 103,
+   "unique_patches": 103
+  },
+  {
+   "pr": 1154,
+   "branch": "fix/class-force-6x-darkside-talent-paid-fp",
+   "behind": 258,
+   "ahead": 95,
+   "unique_patches": 95
+  },
+  {
+   "pr": 1150,
+   "branch": "fix/class-force-6w-temptation-receipt-serialization",
+   "behind": 258,
+   "ahead": 90,
+   "unique_patches": 90
+  },
+  {
+   "pr": 1149,
+   "branch": "fix/class-force-6v-temptation-turn-authority",
+   "behind": 258,
+   "ahead": 86,
+   "unique_patches": 86
+  },
+  {
+   "pr": 1134,
+   "branch": "fix/class-force-6u-divergent-closure",
+   "behind": 258,
+   "ahead": 83,
+   "unique_patches": 83
+  },
+  {
+   "pr": 1133,
+   "branch": "fix/class-force-6t-normal-fp-spend-authority",
+   "behind": 258,
+   "ahead": 69,
+   "unique_patches": 69
+  },
+  {
+   "pr": 1132,
+   "branch": "fix/class-force-6s-indomitable-species-effects",
+   "behind": 258,
+   "ahead": 62,
+   "unique_patches": 62
+  },
+  {
+   "pr": 1131,
+   "branch": "fix/class-force-6r-typed-activeeffect-admission",
+   "behind": 258,
+   "ahead": 56,
+   "unique_patches": 56
+  },
+  {
+   "pr": 1130,
+   "branch": "fix/class-force-6q-indomitable-talent-consumers",
+   "behind": 258,
+   "ahead": 52,
+   "unique_patches": 52
+  },
+  {
+   "pr": 1129,
+   "branch": "feat/class-force-6p-sheet-action-controls",
+   "behind": 258,
+   "ahead": 48,
+   "unique_patches": 48
+  },
+  {
+   "pr": 1128,
+   "branch": "fix/class-force-6o-attack-fp-receipt-finalization",
+   "behind": 258,
+   "ahead": 44,
+   "unique_patches": 44
+  },
+  {
+   "pr": 1127,
+   "branch": "feat/class-force-6p-prophet-gm-vision-review",
+   "behind": 258,
+   "ahead": 50,
+   "unique_patches": 50
+  },
+  {
+   "pr": 1126,
+   "branch": "feat/class-force-6o-typed-effect-ingress",
+   "behind": 258,
+   "ahead": 44,
+   "unique_patches": 44
+  },
+  {
+   "pr": 1125,
+   "branch": "feat/class-force-6n-sith-lord-temptation",
+   "behind": 258,
+   "ahead": 42,
+   "unique_patches": 42
+  },
+  {
+   "pr": 1124,
+   "branch": "feat/class-force-6m-serenity-temporal-roll",
+   "behind": 258,
+   "ahead": 23,
+   "unique_patches": 23
+  },
+  {
+   "pr": 1123,
+   "branch": "feat/class-force-6l-prophet-vision-finalization",
+   "behind": 258,
+   "ahead": 13,
+   "unique_patches": 13
+  },
+  {
+   "pr": 1122,
+   "branch": "feat/class-force-6k-unified-fearless-indomitable-policy",
+   "behind": 258,
+   "ahead": 8,
+   "unique_patches": 8
+  },
+  {
+   "pr": 1120,
+   "branch": "feat/class-force-6j-fallen-jedi-execution-gate",
+   "behind": 258,
+   "ahead": 6,
+   "unique_patches": 6
+  },
+  {
+   "pr": 1106,
+   "branch": "feature/droid-v2-component-quote-gate-a",
+   "behind": 865,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1092,
+   "branch": "audit/universal-vehicles-phase1",
+   "behind": 859,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1086,
+   "branch": "audit/modification-v2-convergence",
+   "behind": 1103,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1085,
+   "branch": "audit/modification-v2-slice",
+   "behind": 1115,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1083,
+   "branch": "audit/equipment-lifecycle-slice",
+   "behind": 1168,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1082,
+   "branch": "audit/equipment-g36-gm-control",
+   "behind": 1170,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1081,
+   "branch": "audit/equipment-wp3b-g18-g36",
+   "behind": 1171,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1080,
+   "branch": "audit/wp3b-gate1-identity-probe",
+   "behind": 1141,
+   "ahead": 3,
+   "unique_patches": 3
+  },
+  {
+   "pr": 1069,
+   "branch": "audit/ti4c0-g21-legacy-dashboard-reversal",
+   "behind": 1192,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1068,
+   "branch": "audit/ti4c0-g20-rollback-replay",
+   "behind": 1193,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1067,
+   "branch": "audit/ti4c0-g16-credit-transfer-evidence",
+   "behind": 1194,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1066,
+   "branch": "audit/ti4c0-g11-follower-rollback",
+   "behind": 1196,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1065,
+   "branch": "audit/ti4c0-g06s1-exact-snapshot",
+   "behind": 1198,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1064,
+   "branch": "audit/ti4c0-g06-rollback-verification",
+   "behind": 1201,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1063,
+   "branch": "audit/ti4a-contract-guards",
+   "behind": 1210,
+   "ahead": 8,
+   "unique_patches": 8
+  },
+  {
+   "pr": 1062,
+   "branch": "audit/ti4-transaction-contract",
+   "behind": 1210,
+   "ahead": 4,
+   "unique_patches": 4
+  },
+  {
+   "pr": 1061,
+   "branch": "audit/ti3-progression-followers-approvals",
+   "behind": 1203,
+   "ahead": 0,
+   "unique_patches": 0
+  },
+  {
+   "pr": 1059,
+   "branch": "audit/ti1-resource-integrity",
+   "behind": 1172,
+   "ahead": 2,
+   "unique_patches": 2
+  },
+  {
+   "pr": 1058,
+   "branch": "audit/transaction-integrity-ti0",
+   "behind": 1210,
+   "ahead": 2,
+   "unique_patches": 2
+  },
+  {
+   "pr": 1057,
+   "branch": "audit/d-005-t2-host-published-facts",
+   "behind": 1210,
+   "ahead": 15,
+   "unique_patches": 15
+  },
+  {
+   "pr": 1053,
+   "branch": "audit/modification-d005-universal-host-source",
+   "behind": 1228,
+   "ahead": 1,
+   "unique_patches": 1
+  },
+  {
+   "pr": 1050,
+   "branch": "audit/modification-q033-atomicity-design",
+   "behind": 1228,
+   "ahead": 1,
+   "unique_patches": 1
+  },
+  {
+   "pr": 1049,
+   "branch": "audit/swse-errata-primary-source-followup",
+   "behind": 1228,
+   "ahead": 3,
+   "unique_patches": 3
+  },
+  {
+   "pr": 1047,
+   "branch": "audit/master-questions",
+   "behind": 1232,
+   "ahead": 4,
+   "unique_patches": 4
+  },
+  {
+   "pr": 1046,
+   "branch": "process/source-authority-protocol",
+   "behind": 1232,
+   "ahead": 1,
+   "unique_patches": 1
+  },
+  {
+   "pr": 984,
+   "branch": "audit/talent-phase-3c-certification-fixes",
+   "behind": 1656,
+   "ahead": 9,
+   "unique_patches": 9
+  }
+ ],
+ "long_tail_review_refs": [
+  {
+   "branch": "audit/droid-two-books-kotor-gaw-2026-11-02",
+   "ahead": 1,
+   "behind": 1007,
+   "files": 3,
+   "identical": 2,
+   "date": "2026-11-02",
+   "cat": "other",
+   "mb": "e39dfa368",
+   "tip": "9d35bd2db"
+  },
+  {
+   "branch": "audit/species-health-phase-0",
+   "ahead": 2,
+   "behind": 1364,
+   "files": 2,
+   "identical": 0,
+   "date": "2026-10-12",
+   "cat": "other",
+   "mb": "3e02e8226",
+   "tip": "ca6521998"
+  },
+  {
+   "branch": "audit/species-book-by-book-canonical",
+   "ahead": 44,
+   "behind": 1364,
+   "files": 13,
+   "identical": 0,
+   "date": "2026-10-13",
+   "cat": "other",
+   "mb": "3e02e8226",
+   "tip": "958738408"
+  },
+  {
+   "branch": "audit/class-canonicalization-phase-6a",
+   "ahead": 4,
+   "behind": 1418,
+   "files": 4,
+   "identical": 2,
+   "date": "2026-10-08",
+   "cat": "other",
+   "mb": "e0717afff",
+   "tip": "8673f5cae"
+  },
+  {
+   "branch": "audit/archetype-phase-12b-scout-semantic-curation",
+   "ahead": 2,
+   "behind": 1511,
+   "files": 2,
+   "identical": 0,
+   "date": "2026-10-04",
+   "cat": "other",
+   "mb": "ef7c9685a",
+   "tip": "d3d5fe885"
+  },
+  {
+   "branch": "audit/talent-phase-3h-semantic-metadata",
+   "ahead": 3,
+   "behind": 1584,
+   "files": 30,
+   "identical": 0,
+   "date": "2026-10-01",
+   "cat": "other",
+   "mb": "7dd0823f5",
+   "tip": "d72573514"
+  },
+  {
+   "branch": "audit/archetype-phase-11-2-mechanical-ontology",
+   "ahead": 9,
+   "behind": 1584,
+   "files": 44,
+   "identical": 7,
+   "date": "2026-10-01",
+   "cat": "other",
+   "mb": "7dd0823f5",
+   "tip": "c81cd8b8d"
+  },
+  {
+   "branch": "audit/feat-sourcebook-metadata-verification",
+   "ahead": 18,
+   "behind": 1855,
+   "files": 1,
+   "identical": 1,
+   "date": "2026-09-26",
+   "cat": "contents_identical"
+  },
+  {
+   "branch": "audit/talent-sourcebook-metadata-verification",
+   "ahead": 18,
+   "behind": 1855,
+   "files": 1,
+   "identical": 1,
+   "date": "2026-09-26",
+   "cat": "contents_identical"
+  },
+  {
+   "branch": "audit/progression-runtime-integrity",
+   "ahead": 3,
+   "behind": 2714,
+   "files": 3,
+   "identical": 0,
+   "date": "2026-07-10",
+   "cat": "other",
+   "mb": "323c48c91",
+   "tip": "e1829406b"
+  },
+  {
+   "branch": "chatgpt/ae-condition-rules",
+   "ahead": 1,
+   "behind": 2672,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-07-11",
+   "cat": "other",
+   "mb": "4ce59b49c",
+   "tip": "6e1d37fce"
+  },
+  {
+   "branch": "claude/actor-sheet-retirement",
+   "ahead": 1,
+   "behind": 3290,
+   "files": 2,
+   "identical": 0,
+   "date": "2026-06-29",
+   "cat": "other",
+   "mb": "0cc4974f9",
+   "tip": "7411fbc48"
+  },
+  {
+   "branch": "claude/audit-swse-dead-code-6hib5",
+   "ahead": 7,
+   "behind": 3907,
+   "files": 161,
+   "identical": 0,
+   "date": "2026-05-05",
+   "cat": "other",
+   "mb": "7b783e143",
+   "tip": "5356c6bc0"
+  },
+  {
+   "branch": "claude/compendium-forensics-audit-exsbrb",
+   "ahead": 2,
+   "behind": 2211,
+   "files": 11,
+   "identical": 10,
+   "date": "2026-08-11",
+   "cat": "other",
+   "mb": "639d4c7cc",
+   "tip": "c965fb934"
+  },
+  {
+   "branch": "claude/add-equipment-affinity-Czscz",
+   "ahead": 2,
+   "behind": 4919,
+   "files": 2,
+   "identical": 0,
+   "date": "2026-03-12",
+   "cat": "other",
+   "mb": "3ca318f76",
+   "tip": "0794b42a6"
+  },
+  {
+   "branch": "claude/d4-typed-resistance-lckwoh",
+   "ahead": 1,
+   "behind": 2194,
+   "files": 7,
+   "identical": 0,
+   "date": "2026-08-25",
+   "cat": "other",
+   "mb": "8b935986a",
+   "tip": "8ffe7748e"
+  },
+  {
+   "branch": "claude/audit-swse-mechanics-H4EDN",
+   "ahead": 1,
+   "behind": 6023,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-02-14",
+   "cat": "other",
+   "mb": "ca76abc7f",
+   "tip": "a34097b0d"
+  },
+  {
+   "branch": "claude/attach-species-images-50fL0",
+   "ahead": 1,
+   "behind": 7144,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-01-09",
+   "cat": "other",
+   "mb": "2120d719a",
+   "tip": "3158b907b"
+  },
+  {
+   "branch": "claude/compare-character-generation-Fq7Fo",
+   "ahead": 1,
+   "behind": 7449,
+   "files": 1,
+   "identical": 0,
+   "date": "2025-12-31",
+   "cat": "other",
+   "mb": "e219a4666",
+   "tip": "f2772c3de"
+  },
+  {
+   "branch": "claude/debug-chargen-getdata-UXgfr",
+   "ahead": 147,
+   "behind": 6631,
+   "files": 317,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "6d5991357"
+  },
+  {
+   "branch": "claude/droid-static-audit-00hajx",
+   "ahead": 1,
+   "behind": 2333,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-07-26",
+   "cat": "other",
+   "mb": "c8280661c",
+   "tip": "37b6bbcbd"
+  },
+  {
+   "branch": "claude/disable-hbs-loading-hljTO",
+   "ahead": 46,
+   "behind": 6631,
+   "files": 59,
+   "identical": 4,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "f53f88b91"
+  },
+  {
+   "branch": "claude/disable-phase-3-enforcement-uVZVc",
+   "ahead": 2,
+   "behind": 6103,
+   "files": 2,
+   "identical": 0,
+   "date": "2026-02-13",
+   "cat": "other",
+   "mb": "732bb46e6",
+   "tip": "26376e30a"
+  },
+  {
+   "branch": "claude/debug-progression-compendium-01MfSWRFC4NxzvX5uw5JUBfh",
+   "ahead": 1,
+   "behind": 7766,
+   "files": 3,
+   "identical": 0,
+   "date": "2025-12-12",
+   "cat": "other",
+   "mb": "4d4508dbd",
+   "tip": "9d58cf3cf"
+  },
+  {
+   "branch": "claude/droid-sheet-phase-1-uJI3L",
+   "ahead": 2,
+   "behind": 4122,
+   "files": 7,
+   "identical": 0,
+   "date": "2026-04-18",
+   "cat": "other",
+   "mb": "2b7c0bdb3",
+   "tip": "0ccdd07bc"
+  },
+  {
+   "branch": "claude/enforce-progression-mutations-BJ3ee",
+   "ahead": 1,
+   "behind": 5624,
+   "files": 3,
+   "identical": 0,
+   "date": "2026-02-24",
+   "cat": "other",
+   "mb": "2b9305ffa",
+   "tip": "5da1a739c"
+  },
+  {
+   "branch": "claude/fix-bugs-from-log-nVs7m",
+   "ahead": 86,
+   "behind": 6631,
+   "files": 105,
+   "identical": 4,
+   "date": "2026-01-26",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "f427b41ce"
+  },
+  {
+   "branch": "claude/fix-character-sheet-window-FA6Wo",
+   "ahead": 53,
+   "behind": 6631,
+   "files": 62,
+   "identical": 4,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "a4452087d"
+  },
+  {
+   "branch": "claude/fix-chargen-syntax-error-Dw54o",
+   "ahead": 102,
+   "behind": 6631,
+   "files": 293,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "037796a87"
+  },
+  {
+   "branch": "claude/fix-chargen-species-selection-r1oQI",
+   "ahead": 138,
+   "behind": 6631,
+   "files": 316,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "176bd8619"
+  },
+  {
+   "branch": "claude/fix-compendium-item-validation-G1SEu",
+   "ahead": 123,
+   "behind": 6631,
+   "files": 306,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "fa7024c82"
+  },
+  {
+   "branch": "claude/fix-defense-calculation-iMo0v",
+   "ahead": 2,
+   "behind": 6937,
+   "files": 2,
+   "identical": 0,
+   "date": "2026-01-18",
+   "cat": "other",
+   "mb": "4268f80e8",
+   "tip": "b6b95e39c"
+  },
+  {
+   "branch": "claude/fix-droid-sheet-error-AfrSG",
+   "ahead": 24,
+   "behind": 6631,
+   "files": 41,
+   "identical": 3,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "3fcdd1992"
+  },
+  {
+   "branch": "claude/fix-droid-diagnostic-partial-qjs59",
+   "ahead": 28,
+   "behind": 6631,
+   "files": 44,
+   "identical": 3,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "5ce111b13"
+  },
+  {
+   "branch": "claude/fix-droid-diagnostic-partial-pzLbh",
+   "ahead": 34,
+   "behind": 6631,
+   "files": 45,
+   "identical": 3,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "b83ab2508"
+  },
+  {
+   "branch": "claude/fix-droid-template-wb92Q",
+   "ahead": 22,
+   "behind": 6631,
+   "files": 41,
+   "identical": 3,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "9d8082bfd"
+  },
+  {
+   "branch": "claude/fix-foundry-config-EKnOG",
+   "ahead": 1,
+   "behind": 6415,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-02-05",
+   "cat": "other",
+   "mb": "8106ae7ca",
+   "tip": "086436908"
+  },
+  {
+   "branch": "claude/fix-foundry-error-OTgnY",
+   "ahead": 104,
+   "behind": 6631,
+   "files": 293,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "8766a0761"
+  },
+  {
+   "branch": "claude/fix-log-bugs-FbUlA",
+   "ahead": 55,
+   "behind": 6631,
+   "files": 65,
+   "identical": 4,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "13e9368c9"
+  },
+  {
+   "branch": "claude/fix-mentor-engine-404-n5FDO",
+   "ahead": 1,
+   "behind": 5361,
+   "files": 562,
+   "identical": 0,
+   "date": "2026-03-01",
+   "cat": "other",
+   "mb": "70fbb34f9",
+   "tip": "91ba383cb"
+  },
+  {
+   "branch": "claude/fix-runtime-errors-2vUVn",
+   "ahead": 99,
+   "behind": 6631,
+   "files": 292,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "7bd8090f4"
+  },
+  {
+   "branch": "claude/fix-sheet-getter-shadowing-QAyWV",
+   "ahead": 1,
+   "behind": 6100,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-02-13",
+   "cat": "other",
+   "mb": "729a8e980",
+   "tip": "1c3eca8fa"
+  },
+  {
+   "branch": "claude/fix-species-selection-xC5eC",
+   "ahead": 149,
+   "behind": 6631,
+   "files": 317,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "8811abf7d"
+  },
+  {
+   "branch": "claude/fix-swse-actor-script-STBw2",
+   "ahead": 1,
+   "behind": 6226,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-02-10",
+   "cat": "other",
+   "mb": "a1db3e05a",
+   "tip": "f7b733c56"
+  },
+  {
+   "branch": "claude/fix-swse-icon-key-9HqI2",
+   "ahead": 1,
+   "behind": 6420,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-02-04",
+   "cat": "other",
+   "mb": "3a32d5788",
+   "tip": "1ec85ab4c"
+  },
+  {
+   "branch": "claude/fix-swse-sheet-error-WI6tc",
+   "ahead": 139,
+   "behind": 6631,
+   "files": 315,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "3e75f9c0e"
+  },
+  {
+   "branch": "claude/fix-talent-pack-loading-KwTGD",
+   "ahead": 108,
+   "behind": 6631,
+   "files": 298,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "d4a067f2b"
+  },
+  {
+   "branch": "claude/fix-token-usage-sjGwm",
+   "ahead": 19,
+   "behind": 6631,
+   "files": 39,
+   "identical": 3,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "5687026a9"
+  },
+  {
+   "branch": "claude/fix-tree-talent-contract-loUAK",
+   "ahead": 1,
+   "behind": 6631,
+   "files": 3,
+   "identical": 0,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "f6c25f4a7"
+  },
+  {
+   "branch": "claude/fix-vehicle-sheet-partials-yHfR9",
+   "ahead": 48,
+   "behind": 6631,
+   "files": 59,
+   "identical": 4,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "b26ed810c"
+  },
+  {
+   "branch": "claude/fix-v1-app-deprecation-GHQgu",
+   "ahead": 131,
+   "behind": 6631,
+   "files": 309,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "36afc4fcd"
+  },
+  {
+   "branch": "claude/fix-vehicle-sheet-errors-tjyhk",
+   "ahead": 132,
+   "behind": 6631,
+   "files": 314,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "e3baa6886"
+  },
+  {
+   "branch": "claude/fix-welcomedialog-null-error-DjNQ9",
+   "ahead": 1,
+   "behind": 5882,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-02-18",
+   "cat": "other",
+   "mb": "c6c35a8c6",
+   "tip": "30e6b0002"
+  },
+  {
+   "branch": "claude/foundry-v13-load-species-rules-iWHOl",
+   "ahead": 6,
+   "behind": 3640,
+   "files": 3,
+   "identical": 1,
+   "date": "2026-05-23",
+   "cat": "other",
+   "mb": "27745ccbb",
+   "tip": "4e553e4d8"
+  },
+  {
+   "branch": "claude/gm-datapad-recovery-nzh4gz",
+   "ahead": 9,
+   "behind": 2185,
+   "files": 13,
+   "identical": 8,
+   "date": "2026-08-29",
+   "cat": "other",
+   "mb": "fe5483943",
+   "tip": "1473ce3ba"
+  },
+  {
+   "branch": "claude/holonet-message-contract-juTtb",
+   "ahead": 4,
+   "behind": 3920,
+   "files": 6,
+   "identical": 0,
+   "date": "2026-04-28",
+   "cat": "other",
+   "mb": "28dac2a05",
+   "tip": "5caf8c0ed"
+  },
+  {
+   "branch": "claude/investigate-foundry-tokens-LCznz",
+   "ahead": 128,
+   "behind": 6631,
+   "files": 308,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "1c8b5ea14"
+  },
+  {
+   "branch": "claude/investigate-header-design-pSGkX",
+   "ahead": 134,
+   "behind": 6631,
+   "files": 314,
+   "identical": 43,
+   "date": "2026-01-28",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "10aaa92e0"
+  },
+  {
+   "branch": "claude/link-species-art-hp2ga",
+   "ahead": 1,
+   "behind": 7146,
+   "files": 2,
+   "identical": 0,
+   "date": "2026-01-09",
+   "cat": "other",
+   "mb": "06b3c710a",
+   "tip": "02a624970"
+  },
+  {
+   "branch": "claude/mentor-goal-feature-NfkLj",
+   "ahead": 1,
+   "behind": 6580,
+   "files": 3,
+   "identical": 0,
+   "date": "2026-01-31",
+   "cat": "other",
+   "mb": "fc2dbf8d7",
+   "tip": "470370c40"
+  },
+  {
+   "branch": "claude/patch-swse-repo-IEh8F",
+   "ahead": 1,
+   "behind": 4040,
+   "files": 7,
+   "identical": 0,
+   "date": "2026-04-20",
+   "cat": "other",
+   "mb": "362c81455",
+   "tip": "2032922f2"
+  },
+  {
+   "branch": "claude/rebuild-architecture-D9A99",
+   "ahead": 4,
+   "behind": 5506,
+   "files": 8,
+   "identical": 0,
+   "date": "2026-02-25",
+   "cat": "other",
+   "mb": "cfc0d4009",
+   "tip": "4ecd19abf"
+  },
+  {
+   "branch": "claude/refactor-talent-reading-YX9J8",
+   "ahead": 10,
+   "behind": 6631,
+   "files": 23,
+   "identical": 0,
+   "date": "2026-01-25",
+   "cat": "other",
+   "mb": "1d0a0caa4",
+   "tip": "d0682ba6b"
+  },
+  {
+   "branch": "claude/swse-combat-display-parity-lcdapp",
+   "ahead": 3,
+   "behind": 2281,
+   "files": 15,
+   "identical": 0,
+   "date": "2026-08-01",
+   "cat": "other",
+   "mb": "50f314e5d",
+   "tip": "c8994e1de"
+  },
+  {
+   "branch": "claude/species-registry-enumeration-ags8n",
+   "ahead": 1,
+   "behind": 5489,
+   "files": 15,
+   "identical": 0,
+   "date": "2026-02-26",
+   "cat": "other",
+   "mb": "e59971f28",
+   "tip": "72f7aea2a"
+  },
+  {
+   "branch": "claude/swse-phase-1-audit-3c9fo8",
+   "ahead": 2,
+   "behind": 2208,
+   "files": 14,
+   "identical": 8,
+   "date": "2026-08-18",
+   "cat": "other",
+   "mb": "b7287a585",
+   "tip": "0fbbd951f"
+  },
+  {
+   "branch": "claude/solve-error-minimal-5WLBc",
+   "ahead": 1,
+   "behind": 6401,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-02-08",
+   "cat": "other",
+   "mb": "06dea34f5",
+   "tip": "81dcfcacd"
+  },
+  {
+   "branch": "claude/static-activation-checklist-c0XIZ",
+   "ahead": 1,
+   "behind": 7628,
+   "files": 2,
+   "identical": 0,
+   "date": "2025-12-20",
+   "cat": "other",
+   "mb": "ae9879f11",
+   "tip": "f5990400c"
+  },
+  {
+   "branch": "claude/swsev2-base-actor-class-pWteK",
+   "ahead": 1,
+   "behind": 6098,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-02-13",
+   "cat": "other",
+   "mb": "27fbd00f8",
+   "tip": "1371e6596"
+  },
+  {
+   "branch": "claude/update-mentor-dialogue-59t3o",
+   "ahead": 1,
+   "behind": 6559,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-02-01",
+   "cat": "other",
+   "mb": "bea7056fa",
+   "tip": "c21c9cf7a"
+  },
+  {
+   "branch": "claude/update-guides-systems-gligV",
+   "ahead": 1,
+   "behind": 7312,
+   "files": 2,
+   "identical": 0,
+   "date": "2026-01-03",
+   "cat": "other",
+   "mb": "4344b37ab",
+   "tip": "1f0d04d30"
+  },
+  {
+   "branch": "feat/app-responsive-contracts-phase2",
+   "ahead": 61,
+   "behind": 2707,
+   "files": 21,
+   "identical": 16,
+   "date": "2026-07-10",
+   "cat": "other",
+   "mb": "2292b5939",
+   "tip": "517598137"
+  },
+  {
+   "branch": "docflowGM-patch-1",
+   "ahead": 4,
+   "behind": 7905,
+   "files": 4,
+   "identical": 0,
+   "date": "2025-12-05",
+   "cat": "other",
+   "mb": "05ca49a7b",
+   "tip": "2bce9dba4"
+  },
+  {
+   "branch": "feat/force-power-final-integration",
+   "ahead": 4,
+   "behind": 2420,
+   "files": 4,
+   "identical": 3,
+   "date": "2026-07-19",
+   "cat": "other",
+   "mb": "025163473",
+   "tip": "47b1d9749"
+  },
+  {
+   "branch": "feat/force-power-phase-1-schema",
+   "ahead": 5,
+   "behind": 2426,
+   "files": 5,
+   "identical": 5,
+   "date": "2026-07-19",
+   "cat": "contents_identical"
+  },
+  {
+   "branch": "feat/force-power-resolution-schema",
+   "ahead": 1,
+   "behind": 2427,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-07-19",
+   "cat": "other",
+   "mb": "a8aceceb7",
+   "tip": "2f256efd8"
+  },
+  {
+   "branch": "feat/force-power-phase-5-healing-mitigation",
+   "ahead": 5,
+   "behind": 2422,
+   "files": 5,
+   "identical": 3,
+   "date": "2026-07-19",
+   "cat": "other",
+   "mb": "3b5ee3979",
+   "tip": "4158d1ae3"
+  },
+  {
+   "branch": "feat/force-power-phase-6-direct-damage",
+   "ahead": 4,
+   "behind": 2421,
+   "files": 4,
+   "identical": 2,
+   "date": "2026-07-19",
+   "cat": "other",
+   "mb": "f8040fb44",
+   "tip": "241eb5b52"
+  },
+  {
+   "branch": "feat/force-power-phase-2-reconciliation",
+   "ahead": 4,
+   "behind": 2425,
+   "files": 4,
+   "identical": 4,
+   "date": "2026-07-19",
+   "cat": "contents_identical"
+  },
+  {
+   "branch": "feat/force-power-phase-3-critical-corrections",
+   "ahead": 5,
+   "behind": 2424,
+   "files": 5,
+   "identical": 4,
+   "date": "2026-07-19",
+   "cat": "other",
+   "mb": "e6080b1a8",
+   "tip": "46ce0e010"
+  },
+  {
+   "branch": "feat/force-power-phase-4-modifier-automation",
+   "ahead": 4,
+   "behind": 2423,
+   "files": 4,
+   "identical": 3,
+   "date": "2026-07-19",
+   "cat": "other",
+   "mb": "ce0c7965e",
+   "tip": "c1fe94813"
+  },
+  {
+   "branch": "feat/npc-exact-item-fallback",
+   "ahead": 4,
+   "behind": 2430,
+   "files": 2,
+   "identical": 1,
+   "date": "2026-07-19",
+   "cat": "other",
+   "mb": "73d994636",
+   "tip": "63551c0eb"
+  },
+  {
+   "branch": "feat/npc-force-and-bespoke-fallbacks",
+   "ahead": 4,
+   "behind": 2429,
+   "files": 2,
+   "identical": 2,
+   "date": "2026-07-19",
+   "cat": "contents_identical"
+  },
+  {
+   "branch": "feat/shell-responsive-contract",
+   "ahead": 7,
+   "behind": 2714,
+   "files": 4,
+   "identical": 2,
+   "date": "2026-07-10",
+   "cat": "other",
+   "mb": "323c48c91",
+   "tip": "224d93081"
+  },
+  {
+   "branch": "feat/npc-world-damage-hydration",
+   "ahead": 4,
+   "behind": 2431,
+   "files": 2,
+   "identical": 0,
+   "date": "2026-07-18",
+   "cat": "other",
+   "mb": "7b2cd6b45",
+   "tip": "a870d9b3c"
+  },
+  {
+   "branch": "feat/wire-npc-bulk-damage",
+   "ahead": 3,
+   "behind": 2432,
+   "files": 2,
+   "identical": 2,
+   "date": "2026-07-18",
+   "cat": "contents_identical"
+  },
+  {
+   "branch": "fix/complete-leveldb-migration",
+   "ahead": 1,
+   "behind": 2364,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-07-20",
+   "cat": "other",
+   "mb": "c024965de",
+   "tip": "70c2ec514"
+  },
+  {
+   "branch": "fix/defer-derived-until-class-registry-ready",
+   "ahead": 2,
+   "behind": 2435,
+   "files": 2,
+   "identical": 1,
+   "date": "2026-07-18",
+   "cat": "other",
+   "mb": "7a89f2156",
+   "tip": "fe348bc3f"
+  },
+  {
+   "branch": "fix/register-recent-styles",
+   "ahead": 3,
+   "behind": 2433,
+   "files": 1,
+   "identical": 0,
+   "date": "2026-07-18",
+   "cat": "other",
+   "mb": "09ff133c3",
+   "tip": "7ec1ac768"
+  },
+  {
+   "branch": "fix/restore-system-manifest-packs",
+   "ahead": 7,
+   "behind": 2436,
+   "files": 5,
+   "identical": 3,
+   "date": "2026-07-18",
+   "cat": "other",
+   "mb": "069ecd5fe",
+   "tip": "741560bc6"
+  },
+  {
+   "branch": "fix/startup-bootstrap-regressions",
+   "ahead": 4,
+   "behind": 2419,
+   "files": 4,
+   "identical": 2,
+   "date": "2026-07-19",
+   "cat": "other",
+   "mb": "d90366a71",
+   "tip": "5306e59e8"
+  },
+  {
+   "branch": "handoff/droid-v2-integration-2026-11-05",
+   "ahead": 1,
+   "behind": 865,
+   "files": 1,
+   "identical": 1,
+   "date": "2026-11-05",
+   "cat": "contents_identical"
+  },
+  {
+   "branch": "fix/v14-system-data-model-manifest",
+   "ahead": 18,
+   "behind": 2361,
+   "files": 14,
+   "identical": 0,
+   "date": "2026-07-20",
+   "cat": "other",
+   "mb": "cc841a8d1",
+   "tip": "0a804c305"
+  },
+  {
+   "branch": "phase3/talent-production-canonicalization",
+   "ahead": 1,
+   "behind": 1775,
+   "files": 6,
+   "identical": 0,
+   "date": "2026-09-27",
+   "cat": "other",
+   "mb": "642cf85ee",
+   "tip": "ca8c56391"
+  }
+ ]
+}
