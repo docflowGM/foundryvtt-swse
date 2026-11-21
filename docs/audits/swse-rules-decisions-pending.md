@@ -3638,3 +3638,27 @@ Recorded from the independent review of PR #1158. **These are reviewer recommend
 | RD-004 Galactic Profile Nonheroic feats | Require mechanically complete profiles: three legal starting class feats with canonical scopes plus the general feat entitlement, with no validation bypass | Profiles should not bypass legality validation | **Not changed.** The starting-feat check is still skipped for profile-applied sessions and `data/galactic-profiles/**` is untouched |
 
 Page numbering note: the reviewer cites the printed Nonheroic page as p.278; this repository's earlier entries cite p.277 from the OCR layer. Both refer to the same Nonheroic class write-up; the owner may wish to normalize the citation when ruling.
+
+
+---
+
+# Transaction-integrity register (TI4)
+
+**A third, independent append-only register.** It records rules rulings that arise from the transaction-integrity (TI-4) work. It is **not** part of the species register (`SPECIES-RD-###`) or the machine-parsed modification register (`D-###`, `tools/lib/modification-runtime.mjs`), edits and renumbers neither, and uses its own `TI4-` identifiers and its own row labels. Entries here carry no ledger scope, no blocker lift and no review-classification row, so they do not participate in the modification ledger. Policy and design decisions that are **not** rules rulings (recovery prerequisites, outcome vocabulary, receipts, reconciliation) are recorded in `docs/audits/transaction-integrity/ti-4/ti4-decision-register.md`, not here.
+
+## TI4-OD-5 — Lightsaber construction: printed sequence, persistence-failure policy, and component expenditure
+
+| Field | |
+|---|---|
+| Rules domain | Lightsaber construction (a Force-sensitive character building a lightsaber) |
+| Feature | "Building a Lightsaber" and "Advanced Lightsaber Construction" |
+| Source | Star Wars Saga Edition Core Rulebook, printed p. 40 ("Building a Lightsaber"); Jedi Academy Training Manual, printed p. 54 ("Advanced Lightsaber Construction"), including Table 3-2. **Supplied by the project owner (2026-10-20); the implementer does not hold these books and has not independently re-read the pages.** |
+| Evidence | As relayed in the owner directive and paraphrased: construction requires at least 7 heroic levels, Force Sensitivity and Weapon Proficiency (lightsabers); the components are acquired first (a standard lightsaber needs 1,500 credits of components and a double-bladed one 3,000, and published modifications may change the requirement); the character then spends 24 uninterrupted hours constructing; then makes a Use the Force check (standard DC 20; taking 20 is prohibited; the Jedi Academy Training Manual gives alternate base DCs and modifiers for specialised sabers, crystals and accessories); a successful check completes the lightsaber, a failed check requires another 24 hours dismantling and rebuilding the flawed weapon before another check; attunement is a separate later step (a Force Point and a full-round action, normal benefit +1 to the creator's attack rolls, subject to the published crystal rules). |
+| Confirmed behavior | **Owner-approved policy (2026-10-20):** preserve the printed sequence — establish eligibility and obtain the components; perform the 24 hours of construction; resolve the Use the Force check with the applicable DC and modifiers; if the check fails, require the published additional 24-hour rebuild before another check; if it succeeds, complete the lightsaber; perform Force Point attunement separately, only after successful construction. Preserve the prohibition on taking 20. **Engineering policy stated by the owner (not a printed rule):** a software persistence failure is not a rules-defined failed construction check; the original roll and transaction identity are preserved through recovery; the system never silently rerolls, recharges, duplicates or grants a weapon after an uncertain commit. |
+| Unresolved question | How to model component ownership and expenditure so that components are treated as obtained before construction, without charging twice, without improperly refunding purchased materials, and without altering the published consequences of a failed check. The construction engine currently rolls first and deducts the component cost only when the roll succeeds, whereas the Core Rulebook places acquisition of components before construction. |
+| Options | None derivable from the sources provided. |
+| Recommended ruling | None |
+| Implementation impact | `LightsaberConstructionEngine.attemptConstruction` (`scripts/engine/crafting/lightsaber-construction-engine.js`) is blocked from any mechanical change until a rules-preserving design for component ownership/expenditure is independently reviewed (transaction-integrity design item DI-1). This entry authorizes the rules policy, **not** a code change. |
+| Status | `DEFERRED_RULES_REVIEW` for the component-expenditure model. The construction sequence and the persistence-failure policy are `OWNER_APPROVED`; nothing is `IMPLEMENTED` or `FOUNDRY_TESTED`. |
+| Decision authority | Project owner |
+| Resolution | Sequence and persistence-failure policy: approved by the project owner on 2026-10-20 (owner directive "TI-4 — All six owner decisions approved"; implementing commit: none). Component-expenditure model: open (DI-1). |
