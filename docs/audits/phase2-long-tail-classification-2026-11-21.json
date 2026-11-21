@@ -1,0 +1,1128 @@
+[
+ {
+  "branch": "audit/droid-two-books-kotor-gaw-2026-11-02",
+  "last_commit": "2026-11-02",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Branch predates main's later fuller gaw.json (main 20:01 vs branch 19:54 on 2026-11-02); its diff removes records main has.",
+  "file_counts": {
+   "identical": 2,
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "audit/species-health-phase-0",
+  "last_commit": "2026-10-12",
+  "ahead": 2,
+  "category": "MISSING_AND_WORTH_PORTING",
+  "evidence": "Its 2 files are part of the 13 recovered in PR #1172.",
+  "file_counts": {
+   "new_file_absent_in_main": 2
+  }
+ },
+ {
+  "branch": "audit/species-book-by-book-canonical",
+  "last_commit": "2026-10-13",
+  "ahead": 44,
+  "category": "MISSING_AND_WORTH_PORTING",
+  "evidence": "13 absent audit files recovered byte-identical: PR #1172.",
+  "file_counts": {
+   "new_file_absent_in_main": 13
+  }
+ },
+ {
+  "branch": "audit/class-canonicalization-phase-6a",
+  "last_commit": "2026-10-08",
+  "ahead": 4,
+  "category": "MISSING_AND_WORTH_PORTING",
+  "evidence": "2 missing reports recovered: PR #1173 (JSON ledgers already in main).",
+  "file_counts": {
+   "identical": 2,
+   "new_file_absent_in_main": 2
+  }
+ },
+ {
+  "branch": "audit/archetype-phase-12b-scout-semantic-curation",
+  "last_commit": "2026-10-04",
+  "ahead": 2,
+  "category": "SUPERSEDED",
+  "evidence": "main holds OWNER_CERTIFIED 297/297 curation; tranche-1 tags differ on all 10 shared ids. Not ported (conflicting authority).",
+  "file_counts": {
+   "new_file_absent_in_main": 2
+  }
+ },
+ {
+  "branch": "audit/talent-phase-3h-semantic-metadata",
+  "last_commit": "2026-10-01",
+  "ahead": 3,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "Strict subset of archetype-11-2; same blocker (PR #1175).",
+  "file_counts": {
+   "new_file_absent_in_main": 28,
+   "present_in_main": 1,
+   "applies_cleanly_MISSING": 1
+  }
+ },
+ {
+  "branch": "audit/archetype-phase-11-2-mechanical-ontology",
+  "last_commit": "2026-10-01",
+  "ahead": 9,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "7 docs recovered (PR #1174, historical). Remainder blocked: 3H test fails on current data; 57-tag vocabulary competes with frozen 190-tag ontology (draft PR #1175).",
+  "file_counts": {
+   "identical": 7,
+   "new_file_absent_in_main": 35,
+   "present_in_main": 1,
+   "applies_cleanly_MISSING": 1
+  }
+ },
+ {
+  "branch": "audit/feat-sourcebook-metadata-verification",
+  "last_commit": "2026-09-26",
+  "ahead": 18,
+  "category": "ALREADY_FUNCTIONALLY_PRESENT",
+  "evidence": "Every changed file is byte-identical in main.",
+  "file_counts": null
+ },
+ {
+  "branch": "audit/talent-sourcebook-metadata-verification",
+  "last_commit": "2026-09-26",
+  "ahead": 18,
+  "category": "ALREADY_FUNCTIONALLY_PRESENT",
+  "evidence": "Every changed file is byte-identical in main.",
+  "file_counts": null
+ },
+ {
+  "branch": "audit/progression-runtime-integrity",
+  "last_commit": "2026-07-10",
+  "ahead": 3,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 3 main_diverged.",
+  "file_counts": {
+   "main_diverged": 3
+  }
+ },
+ {
+  "branch": "chatgpt/ae-condition-rules",
+  "last_commit": "2026-07-11",
+  "ahead": 1,
+  "category": "NEEDS_SOURCE_ADJUDICATION",
+  "evidence": "Condition-track mutation helpers; ConditionTrackRules.js diverged on main. Condition-track interactions need an owner ruling before any port.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/actor-sheet-retirement",
+  "last_commit": "2026-06-29",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 both_absent, 1 main_diverged.",
+  "file_counts": {
+   "both_absent": 1,
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/audit-swse-dead-code-6hib5",
+  "last_commit": "2026-05-05",
+  "ahead": 7,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 129 both_absent, 6 binary_asset, 7 new_file_absent_in_main, 18 branch_deleted_file_still_in_main, 1 main_diverged.",
+  "file_counts": {
+   "both_absent": 129,
+   "binary_asset": 6,
+   "new_file_absent_in_main": 7,
+   "branch_deleted_file_still_in_main": 18,
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/compendium-forensics-audit-exsbrb",
+  "last_commit": "2026-08-11",
+  "ahead": 2,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 10 identical, 1 present_in_main.",
+  "file_counts": {
+   "identical": 10,
+   "present_in_main": 1
+  }
+ },
+ {
+  "branch": "claude/add-equipment-affinity-Czscz",
+  "last_commit": "2026-03-12",
+  "ahead": 2,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "Chargen suggestion-scoring heuristics; SuggestionEngineCoordinator diverged on main; scoring weights are a design choice, not verified here.",
+  "file_counts": {
+   "main_diverged": 1,
+   "applies_cleanly_MISSING": 1
+  }
+ },
+ {
+  "branch": "claude/d4-typed-resistance-lckwoh",
+  "last_commit": "2026-08-25",
+  "ahead": 1,
+  "category": "MISSING_AND_WORTH_PORTING",
+  "evidence": "Reproduced defect on main (grenade multi-tag flattening). Ported 2-line fix + smoke test: PR #1176.",
+  "file_counts": {
+   "applies_cleanly_MISSING": 4,
+   "new_file_absent_in_main": 3
+  }
+ },
+ {
+  "branch": "claude/audit-swse-mechanics-H4EDN",
+  "last_commit": "2026-02-14",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 new_file_absent_in_main.",
+  "file_counts": {
+   "new_file_absent_in_main": 1
+  }
+ },
+ {
+  "branch": "claude/attach-species-images-50fL0",
+  "last_commit": "2026-01-09",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/compare-character-generation-Fq7Fo",
+  "last_commit": "2025-12-31",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 new_file_absent_in_main.",
+  "file_counts": {
+   "new_file_absent_in_main": 1
+  }
+ },
+ {
+  "branch": "claude/debug-chargen-getdata-UXgfr",
+  "last_commit": "2026-01-28",
+  "ahead": 147,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 71,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 111,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 7,
+   "present_in_main": 3,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/droid-static-audit-00hajx",
+  "last_commit": "2026-07-26",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 new_file_absent_in_main.",
+  "file_counts": {
+   "new_file_absent_in_main": 1
+  }
+ },
+ {
+  "branch": "claude/disable-hbs-loading-hljTO",
+  "last_commit": "2026-01-25",
+  "ahead": 46,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 16,
+   "file_removed_by_main": 32,
+   "identical": 4,
+   "both_absent": 3,
+   "new_file_absent_in_main": 2,
+   "present_in_main": 2
+  }
+ },
+ {
+  "branch": "claude/disable-phase-3-enforcement-uVZVc",
+  "last_commit": "2026-02-13",
+  "ahead": 2,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 new_file_absent_in_main, 1 main_diverged.",
+  "file_counts": {
+   "new_file_absent_in_main": 1,
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/debug-progression-compendium-01MfSWRFC4NxzvX5uw5JUBfh",
+  "last_commit": "2025-12-12",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 3 file_removed_by_main.",
+  "file_counts": {
+   "file_removed_by_main": 3
+  }
+ },
+ {
+  "branch": "claude/droid-sheet-phase-1-uJI3L",
+  "last_commit": "2026-04-18",
+  "ahead": 2,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 2 file_removed_by_main, 1 present_in_main, 2 main_diverged, 2 both_absent.",
+  "file_counts": {
+   "file_removed_by_main": 2,
+   "present_in_main": 1,
+   "main_diverged": 2,
+   "both_absent": 2
+  }
+ },
+ {
+  "branch": "claude/enforce-progression-mutations-BJ3ee",
+  "last_commit": "2026-02-24",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 3 new_file_absent_in_main.",
+  "file_counts": {
+   "new_file_absent_in_main": 3
+  }
+ },
+ {
+  "branch": "claude/fix-bugs-from-log-nVs7m",
+  "last_commit": "2026-01-26",
+  "ahead": 86,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 23,
+   "file_removed_by_main": 60,
+   "identical": 4,
+   "both_absent": 14,
+   "new_file_absent_in_main": 1,
+   "present_in_main": 3
+  }
+ },
+ {
+  "branch": "claude/fix-character-sheet-window-FA6Wo",
+  "last_commit": "2026-01-25",
+  "ahead": 53,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 16,
+   "file_removed_by_main": 35,
+   "identical": 4,
+   "both_absent": 3,
+   "new_file_absent_in_main": 2,
+   "present_in_main": 2
+  }
+ },
+ {
+  "branch": "claude/fix-chargen-syntax-error-Dw54o",
+  "last_commit": "2026-01-28",
+  "ahead": 102,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 67,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 96,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 1,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-chargen-species-selection-r1oQI",
+  "last_commit": "2026-01-28",
+  "ahead": 138,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 70,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 110,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 7,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-compendium-item-validation-G1SEu",
+  "last_commit": "2026-01-28",
+  "ahead": 123,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 69,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 104,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 4,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-defense-calculation-iMo0v",
+  "last_commit": "2026-01-18",
+  "ahead": 2,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 2 file_removed_by_main.",
+  "file_counts": {
+   "file_removed_by_main": 2
+  }
+ },
+ {
+  "branch": "claude/fix-droid-sheet-error-AfrSG",
+  "last_commit": "2026-01-25",
+  "ahead": 24,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "file_removed_by_main": 23,
+   "main_diverged": 12,
+   "identical": 3,
+   "both_absent": 3
+  }
+ },
+ {
+  "branch": "claude/fix-droid-diagnostic-partial-qjs59",
+  "last_commit": "2026-01-25",
+  "ahead": 28,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 14,
+   "file_removed_by_main": 24,
+   "identical": 3,
+   "both_absent": 3
+  }
+ },
+ {
+  "branch": "claude/fix-droid-diagnostic-partial-pzLbh",
+  "last_commit": "2026-01-25",
+  "ahead": 34,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 14,
+   "file_removed_by_main": 25,
+   "identical": 3,
+   "both_absent": 3
+  }
+ },
+ {
+  "branch": "claude/fix-droid-template-wb92Q",
+  "last_commit": "2026-01-25",
+  "ahead": 22,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "file_removed_by_main": 23,
+   "main_diverged": 12,
+   "identical": 3,
+   "both_absent": 3
+  }
+ },
+ {
+  "branch": "claude/fix-foundry-config-EKnOG",
+  "last_commit": "2026-02-05",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/fix-foundry-error-OTgnY",
+  "last_commit": "2026-01-28",
+  "ahead": 104,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 67,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 96,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 1,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-log-bugs-FbUlA",
+  "last_commit": "2026-01-25",
+  "ahead": 55,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 16,
+   "file_removed_by_main": 37,
+   "identical": 4,
+   "both_absent": 3,
+   "new_file_absent_in_main": 2,
+   "present_in_main": 3
+  }
+ },
+ {
+  "branch": "claude/fix-mentor-engine-404-n5FDO",
+  "last_commit": "2026-03-01",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 274 main_diverged, 105 file_removed_by_main, 183 applies_cleanly_MISSING.",
+  "file_counts": {
+   "main_diverged": 274,
+   "file_removed_by_main": 105,
+   "applies_cleanly_MISSING": 183
+  }
+ },
+ {
+  "branch": "claude/fix-runtime-errors-2vUVn",
+  "last_commit": "2026-01-28",
+  "ahead": 99,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 66,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 96,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 1,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-sheet-getter-shadowing-QAyWV",
+  "last_commit": "2026-02-13",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/fix-species-selection-xC5eC",
+  "last_commit": "2026-01-28",
+  "ahead": 149,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 71,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 111,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 7,
+   "present_in_main": 3,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-swse-actor-script-STBw2",
+  "last_commit": "2026-02-10",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/fix-swse-icon-key-9HqI2",
+  "last_commit": "2026-02-04",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/fix-swse-sheet-error-WI6tc",
+  "last_commit": "2026-01-28",
+  "ahead": 139,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 71,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 109,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 7,
+   "present_in_main": 3,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-talent-pack-loading-KwTGD",
+  "last_commit": "2026-01-28",
+  "ahead": 108,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 68,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 99,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 2,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-token-usage-sjGwm",
+  "last_commit": "2026-01-25",
+  "ahead": 19,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "file_removed_by_main": 22,
+   "main_diverged": 11,
+   "identical": 3,
+   "both_absent": 3
+  }
+ },
+ {
+  "branch": "claude/fix-tree-talent-contract-loUAK",
+  "last_commit": "2026-01-25",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "file_removed_by_main": 3
+  }
+ },
+ {
+  "branch": "claude/fix-vehicle-sheet-partials-yHfR9",
+  "last_commit": "2026-01-25",
+  "ahead": 48,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 16,
+   "file_removed_by_main": 32,
+   "identical": 4,
+   "both_absent": 3,
+   "new_file_absent_in_main": 2,
+   "present_in_main": 2
+  }
+ },
+ {
+  "branch": "claude/fix-v1-app-deprecation-GHQgu",
+  "last_commit": "2026-01-28",
+  "ahead": 131,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 69,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 106,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 5,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-vehicle-sheet-errors-tjyhk",
+  "last_commit": "2026-01-28",
+  "ahead": 132,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 70,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 108,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 7,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/fix-welcomedialog-null-error-DjNQ9",
+  "last_commit": "2026-02-18",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/foundry-v13-load-species-rules-iWHOl",
+  "last_commit": "2026-05-23",
+  "ahead": 6,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 2 main_diverged, 1 identical.",
+  "file_counts": {
+   "main_diverged": 2,
+   "identical": 1
+  }
+ },
+ {
+  "branch": "claude/gm-datapad-recovery-nzh4gz",
+  "last_commit": "2026-08-29",
+  "ahead": 9,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 8 identical, 1 both_absent, 3 present_in_main, 1 main_diverged.",
+  "file_counts": {
+   "identical": 8,
+   "both_absent": 1,
+   "present_in_main": 3,
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/holonet-message-contract-juTtb",
+  "last_commit": "2026-04-28",
+  "ahead": 4,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "Bulletin CRUD forms; gm-datapad.js/holonet-init/system.json diverged on main.",
+  "file_counts": {
+   "main_diverged": 4,
+   "new_file_absent_in_main": 2
+  }
+ },
+ {
+  "branch": "claude/investigate-foundry-tokens-LCznz",
+  "last_commit": "2026-01-28",
+  "ahead": 128,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 69,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 105,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 5,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/investigate-header-design-pSGkX",
+  "last_commit": "2026-01-28",
+  "ahead": 134,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "main_diverged": 70,
+   "both_absent": 34,
+   "binary_asset": 46,
+   "identical": 7,
+   "file_removed_by_main": 108,
+   "new_file_absent_in_main": 29,
+   "applies_cleanly_MISSING": 7,
+   "present_in_main": 4,
+   "branch_deleted_file_still_in_main": 9
+  }
+ },
+ {
+  "branch": "claude/link-species-art-hp2ga",
+  "last_commit": "2026-01-09",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged, 1 file_removed_by_main.",
+  "file_counts": {
+   "main_diverged": 1,
+   "file_removed_by_main": 1
+  }
+ },
+ {
+  "branch": "claude/mentor-goal-feature-NfkLj",
+  "last_commit": "2026-01-31",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 file_removed_by_main, 2 new_file_absent_in_main.",
+  "file_counts": {
+   "file_removed_by_main": 1,
+   "new_file_absent_in_main": 2
+  }
+ },
+ {
+  "branch": "claude/patch-swse-repo-IEh8F",
+  "last_commit": "2026-04-20",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 6 new_file_absent_in_main, 1 file_removed_by_main.",
+  "file_counts": {
+   "new_file_absent_in_main": 6,
+   "file_removed_by_main": 1
+  }
+ },
+ {
+  "branch": "claude/rebuild-architecture-D9A99",
+  "last_commit": "2026-02-25",
+  "ahead": 4,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 4 new_file_absent_in_main, 1 main_diverged, 2 branch_deleted_file_still_in_main, 1 file_removed_by_main.",
+  "file_counts": {
+   "new_file_absent_in_main": 4,
+   "main_diverged": 1,
+   "branch_deleted_file_still_in_main": 2,
+   "file_removed_by_main": 1
+  }
+ },
+ {
+  "branch": "claude/refactor-talent-reading-YX9J8",
+  "last_commit": "2026-01-25",
+  "ahead": 10,
+  "category": "SUPERSEDED",
+  "evidence": "January fork family (merge base 1d0a0caa4): residual \"missing\" files are .bak files, autofix artifacts, a Python helper, and old custom-item-dialog/mentor/droid hbs; the rest diverged or was removed by main.",
+  "file_counts": {
+   "file_removed_by_main": 11,
+   "main_diverged": 9,
+   "both_absent": 3
+  }
+ },
+ {
+  "branch": "claude/swse-combat-display-parity-lcdapp",
+  "last_commit": "2026-08-01",
+  "ahead": 3,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "Real feature (attack/defense sheet parity, Psychic Citadel/implant rows, derived materialization) but attacks.js, PanelContextBuilder.js, character-actor.js diverged on main; needs dedicated tranche + Foundry runtime check.",
+  "file_counts": {
+   "applies_cleanly_MISSING": 4,
+   "main_diverged": 4,
+   "new_file_absent_in_main": 7
+  }
+ },
+ {
+  "branch": "claude/species-registry-enumeration-ags8n",
+  "last_commit": "2026-02-26",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 7 file_removed_by_main, 8 main_diverged.",
+  "file_counts": {
+   "file_removed_by_main": 7,
+   "main_diverged": 8
+  }
+ },
+ {
+  "branch": "claude/swse-phase-1-audit-3c9fo8",
+  "last_commit": "2026-08-18",
+  "ahead": 2,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 8 identical, 6 main_diverged.",
+  "file_counts": {
+   "identical": 8,
+   "main_diverged": 6
+  }
+ },
+ {
+  "branch": "claude/solve-error-minimal-5WLBc",
+  "last_commit": "2026-02-08",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 file_removed_by_main.",
+  "file_counts": {
+   "file_removed_by_main": 1
+  }
+ },
+ {
+  "branch": "claude/static-activation-checklist-c0XIZ",
+  "last_commit": "2025-12-20",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 new_file_absent_in_main, 1 main_diverged.",
+  "file_counts": {
+   "new_file_absent_in_main": 1,
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/swsev2-base-actor-class-pWteK",
+  "last_commit": "2026-02-13",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/update-mentor-dialogue-59t3o",
+  "last_commit": "2026-02-01",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "claude/update-guides-systems-gligV",
+  "last_commit": "2026-01-03",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 2 file_removed_by_main.",
+  "file_counts": {
+   "file_removed_by_main": 2
+  }
+ },
+ {
+  "branch": "feat/app-responsive-contracts-phase2",
+  "last_commit": "2026-07-10",
+  "ahead": 61,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 16 identical, 3 main_diverged, 2 both_absent.",
+  "file_counts": {
+   "identical": 16,
+   "main_diverged": 3,
+   "both_absent": 2
+  }
+ },
+ {
+  "branch": "docflowGM-patch-1",
+  "last_commit": "2025-12-05",
+  "ahead": 4,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 4 file_removed_by_main.",
+  "file_counts": {
+   "file_removed_by_main": 4
+  }
+ },
+ {
+  "branch": "feat/force-power-final-integration",
+  "last_commit": "2026-07-19",
+  "ahead": 4,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "July Force power track; shared files diverged on main; overlaps Force V2 (#1165) authority. Reconcile only with the Class/Force/Force V2 tranche.",
+  "file_counts": {
+   "identical": 3,
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "feat/force-power-phase-1-schema",
+  "last_commit": "2026-07-19",
+  "ahead": 5,
+  "category": "ALREADY_FUNCTIONALLY_PRESENT",
+  "evidence": "Every changed file is byte-identical in main.",
+  "file_counts": null
+ },
+ {
+  "branch": "feat/force-power-resolution-schema",
+  "last_commit": "2026-07-19",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 file_removed_by_main.",
+  "file_counts": {
+   "file_removed_by_main": 1
+  }
+ },
+ {
+  "branch": "feat/force-power-phase-5-healing-mitigation",
+  "last_commit": "2026-07-19",
+  "ahead": 5,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "July Force power track; shared files diverged on main; overlaps Force V2 (#1165) authority. Reconcile only with the Class/Force/Force V2 tranche.",
+  "file_counts": {
+   "identical": 3,
+   "main_diverged": 2
+  }
+ },
+ {
+  "branch": "feat/force-power-phase-6-direct-damage",
+  "last_commit": "2026-07-19",
+  "ahead": 4,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "July Force power track; shared files diverged on main; overlaps Force V2 (#1165) authority. Reconcile only with the Class/Force/Force V2 tranche.",
+  "file_counts": {
+   "identical": 2,
+   "main_diverged": 2
+  }
+ },
+ {
+  "branch": "feat/force-power-phase-2-reconciliation",
+  "last_commit": "2026-07-19",
+  "ahead": 4,
+  "category": "ALREADY_FUNCTIONALLY_PRESENT",
+  "evidence": "Every changed file is byte-identical in main.",
+  "file_counts": null
+ },
+ {
+  "branch": "feat/force-power-phase-3-critical-corrections",
+  "last_commit": "2026-07-19",
+  "ahead": 5,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "July Force power track; shared files diverged on main; overlaps Force V2 (#1165) authority. Reconcile only with the Class/Force/Force V2 tranche.",
+  "file_counts": {
+   "identical": 4,
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "feat/force-power-phase-4-modifier-automation",
+  "last_commit": "2026-07-19",
+  "ahead": 4,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "July Force power track; shared files diverged on main; overlaps Force V2 (#1165) authority. Reconcile only with the Class/Force/Force V2 tranche.",
+  "file_counts": {
+   "identical": 3,
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "feat/npc-exact-item-fallback",
+  "last_commit": "2026-07-19",
+  "ahead": 4,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged, 1 identical.",
+  "file_counts": {
+   "main_diverged": 1,
+   "identical": 1
+  }
+ },
+ {
+  "branch": "feat/npc-force-and-bespoke-fallbacks",
+  "last_commit": "2026-07-19",
+  "ahead": 4,
+  "category": "ALREADY_FUNCTIONALLY_PRESENT",
+  "evidence": "Every changed file is byte-identical in main.",
+  "file_counts": null
+ },
+ {
+  "branch": "feat/shell-responsive-contract",
+  "last_commit": "2026-07-10",
+  "ahead": 7,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 2 identical, 2 main_diverged.",
+  "file_counts": {
+   "identical": 2,
+   "main_diverged": 2
+  }
+ },
+ {
+  "branch": "feat/npc-world-damage-hydration",
+  "last_commit": "2026-07-18",
+  "ahead": 4,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 2 main_diverged.",
+  "file_counts": {
+   "main_diverged": 2
+  }
+ },
+ {
+  "branch": "feat/wire-npc-bulk-damage",
+  "last_commit": "2026-07-18",
+  "ahead": 3,
+  "category": "ALREADY_FUNCTIONALLY_PRESENT",
+  "evidence": "Every changed file is byte-identical in main.",
+  "file_counts": null
+ },
+ {
+  "branch": "fix/complete-leveldb-migration",
+  "last_commit": "2026-07-20",
+  "ahead": 1,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "fix/defer-derived-until-class-registry-ready",
+  "last_commit": "2026-07-18",
+  "ahead": 2,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged, 1 identical.",
+  "file_counts": {
+   "main_diverged": 1,
+   "identical": 1
+  }
+ },
+ {
+  "branch": "fix/register-recent-styles",
+  "last_commit": "2026-07-18",
+  "ahead": 3,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 1 main_diverged.",
+  "file_counts": {
+   "main_diverged": 1
+  }
+ },
+ {
+  "branch": "fix/restore-system-manifest-packs",
+  "last_commit": "2026-07-18",
+  "ahead": 7,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 3 identical, 2 main_diverged.",
+  "file_counts": {
+   "identical": 3,
+   "main_diverged": 2
+  }
+ },
+ {
+  "branch": "fix/startup-bootstrap-regressions",
+  "last_commit": "2026-07-19",
+  "ahead": 4,
+  "category": "SUPERSEDED",
+  "evidence": "Files changed on main since, or removed by main: 2 identical, 2 main_diverged.",
+  "file_counts": {
+   "identical": 2,
+   "main_diverged": 2
+  }
+ },
+ {
+  "branch": "handoff/droid-v2-integration-2026-11-05",
+  "last_commit": "2026-11-05",
+  "ahead": 1,
+  "category": "ALREADY_FUNCTIONALLY_PRESENT",
+  "evidence": "Every changed file is byte-identical in main.",
+  "file_counts": null
+ },
+ {
+  "branch": "fix/v14-system-data-model-manifest",
+  "last_commit": "2026-07-20",
+  "ahead": 18,
+  "category": "BLOCKED_CONFLICT",
+  "evidence": "Targets Foundry v14 manifest/data models plus mixed Sabacc/chargen hotfixes; outside the v13 baseline; system.json and hotfix init diverged.",
+  "file_counts": {
+   "new_file_absent_in_main": 9,
+   "applies_cleanly_MISSING": 1,
+   "main_diverged": 3,
+   "branch_deleted_file_still_in_main": 1
+  }
+ },
+ {
+  "branch": "phase3/talent-production-canonicalization",
+  "last_commit": "2026-09-27",
+  "ahead": 1,
+  "category": "NEEDS_SOURCE_ADJUDICATION",
+  "evidence": "Only residual: JATM p.14 / KOTOR p.52 Illusion OCR corrections (\"~\"\u2192\"-10\") in audit evidence JSON; needs printed-page check. Builder tooling superseded by Phase 12 finalization.",
+  "file_counts": {
+   "applies_cleanly_MISSING": 2,
+   "new_file_absent_in_main": 3,
+   "main_diverged": 1
+  }
+ }
+]
