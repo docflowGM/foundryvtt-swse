@@ -9,9 +9,9 @@ name: Rolling System Validation
 # What this workflow DOES verify:
 #   - Every file under scripts/, tools/, tests/ (minus 2 documented
 #     pre-existing, unrelated syntax failures) parses as valid JavaScript.
-#   - Every rolling-system test file in tests/ (5 excluded, documented,
-#     pre-existing Force-power-track failures unrelated to this work)
-#     actually passes.
+#   - Every rolling-system test file in tests/ actually passes. (The five
+#     Force-power-track tests formerly excluded run with the Foundry path
+#     loader preloaded: tests/helpers/foundry-shim/preload.mjs.)
 #   - The combat-math single-source-of-truth guard, the attack-outcome
 #     single-source-of-truth guard, the critical-confirmation-removal
 #     guard, the reroll/damage-supersession guard, the vehicle-attack
@@ -41,12 +41,6 @@ name: Rolling System Validation
 #     dice rolls, chat rendering, DOM click handling, live document
 #     mutation). This is a static/Node-only CI; see the Phase 1-5 audits'
 #     "Runtime matrix" sections for what remains runtime-only-verified.
-#   - The 5 Force-power-track tests excluded by
-#     tools/run-rolling-tests.mjs (KNOWN_EXCLUDED_TESTS) — pre-existing,
-#     confirmed via git history to predate the rolling-system-alignment
-#     commits and to import files no rolling-system-alignment commit has
-#     ever touched. Excluding them here is a documented, justified
-#     exclusion, not a silent one.
 #   - Anything outside scripts/, tools/, tests/ (this repo has no
 #     package.json/lockfile and zero npm dependencies in its test suite —
 #     every test imports only Node built-ins or relative source files, so

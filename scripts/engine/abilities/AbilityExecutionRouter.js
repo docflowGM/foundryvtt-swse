@@ -160,7 +160,8 @@ export class AbilityExecutionRouter {
     }
 
     if (typeof ForceEngine?.spendForcePoint === 'function' && payload.spendForcePoint) {
-      await ForceEngine.spendForcePoint(actor);
+      // Typed context required (ForcePointsService); an untyped request is refused, not paid.
+      await ForceEngine.spendForcePoint(actor, payload.forcePointContext ?? null);
     }
 
     return {

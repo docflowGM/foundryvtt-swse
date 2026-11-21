@@ -1,0 +1,808 @@
+{
+  "schemaVersion": "2.9.0",
+  "package": "core-rulebook",
+  "purpose": "Source-backed positive and negative influence relationships, separate from base ability definitions. Deterministic selector and event phases; no name matching during runtime.",
+  "applicationOrder": [
+    "eligibility",
+    "grant",
+    "pre-action",
+    "pre-target",
+    "pre-roll",
+    "after-roll",
+    "pre-damage",
+    "apply-effects",
+    "spend-recovery"
+  ],
+  "eventSemantics": {
+    "pilot-check": "Pilot remains the rolled skill even when the Force Pilot talent substitutes the Use the Force modifier.",
+    "source-scope-restriction": "Official clarification removes the exclusion; unrelated melee-attack bonuses still require explicit permission to affect a UTF skill check. Source-specific later-book overrides are allowed.",
+    "source-defined-resource-choice": "The source ability record contains resource-cost alternatives, typed operations and exclusiveGroup; options are chosen and validated before the correct execution phase.",
+    "catalog-version": "Changing a selector/operation requires a schema version update and full-book revalidation. Official errata takes precedence over first printing."
+  },
+  "edges": [
+    {
+      "ruleId": "core/influence/force-sensitivity",
+      "sourceDefinitionId": "core/feat/force-sensitivity",
+      "sourceDomain": "feat",
+      "sourceName": "Force Sensitivity",
+      "sourcePage": 85,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "acquisition",
+      "phase": "eligibility",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "permit-training",
+          "skill": "use-the-force"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Feat grants skill access, not automatic extra Force Power instances."
+      ]
+    },
+    {
+      "ruleId": "core/influence/force-training",
+      "sourceDefinitionId": "core/feat/force-training",
+      "sourceDomain": "feat",
+      "sourceName": "Force Training",
+      "sourcePage": 85,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "acquisition",
+      "phase": "grant",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "grant-suite-slots",
+          "formula": "max(1,1+wisdomModifier)",
+          "repeatable": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Feat selections stack as distinct grants.",
+        "Temporary effective Wisdom modifiers scoped to Force Training apply only when source grants them."
+      ]
+    },
+    {
+      "ruleId": "core/influence/improved-disarm",
+      "sourceDefinitionId": "core/feat/improved-disarm",
+      "sourceDomain": "feat",
+      "sourceName": "Improved Disarm",
+      "sourcePage": 97,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-disarm"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "pre-check",
+      "interactionMode": "source-scope-restriction",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "scope-check",
+          "featGrants": "melee-attack-roll-bonus",
+          "powerUses": "use-the-force-check",
+          "doesNotImplyAutomaticBonus": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Official clarification removes printed blanket exclusion; it does NOT automatically rewrite melee-attack-only feat into a UTF bonus.",
+        "KOTOR Combined Feat may supply explicit positive override when its own source is certified."
+      ]
+    },
+    {
+      "ruleId": "core/influence/disciplined-strike",
+      "sourceDefinitionId": "core/talent/disciplined-strike",
+      "sourceDomain": "talent",
+      "sourceName": "Disciplined Strike",
+      "sourcePage": 100,
+      "targetSelector": {
+        "domain": "force-power",
+        "targeting": "area"
+      },
+      "event": "target-selection",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "exclude-chosen-targets",
+          "maxFormula": "max(1,wisdomModifier)"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only area Force Powers, including Force Slam."
+      ]
+    },
+    {
+      "ruleId": "core/influence/telekinetic-power",
+      "sourceDefinitionId": "core/talent/telekinetic-power",
+      "sourceDomain": "talent",
+      "sourceName": "Telekinetic Power",
+      "sourcePage": 100,
+      "targetSelector": {
+        "domain": "force-power",
+        "requiredDescriptor": "telekinetic"
+      },
+      "event": "natural-20-activation",
+      "phase": "after-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "schedule-reuse",
+          "action": "free",
+          "sameDefinition": true,
+          "newLegalTargetAllowed": true,
+          "ignoreSpentForImmediateGrantedRepeat": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Natural 20 trigger only; applies to any power with [telekinetic] descriptor, including later books.",
+        "Immediate reuse is specifically allowed despite the first activation having spent that instance; do not grant a permanent extra suite use."
+      ]
+    },
+    {
+      "ruleId": "core/influence/telekinetic-savant",
+      "sourceDefinitionId": "core/talent/telekinetic-savant",
+      "sourceDomain": "talent",
+      "sourceName": "Telekinetic Savant",
+      "sourcePage": 100,
+      "targetSelector": {
+        "domain": "force-power",
+        "requiredDescriptor": "telekinetic"
+      },
+      "event": "recovery-choice",
+      "phase": "spend-recovery",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "recover-spent-power",
+          "action": "swift",
+          "costForcePoints": 0,
+          "usesPerEncounterFormula": "talentInstanceCount"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Any spent [telekinetic] power, including later books, is eligible."
+      ]
+    },
+    {
+      "ruleId": "core/influence/force-focus",
+      "sourceDefinitionId": "core/talent/force-focus",
+      "sourceDomain": "talent",
+      "sourceName": "Force Focus",
+      "sourcePage": 101,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "recovery-choice",
+      "phase": "spend-recovery",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "recover-spent-power",
+          "action": "full-round",
+          "checkSkill": "use-the-force",
+          "minDC": 15,
+          "uses": 1
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Failed check recovers nothing; do not subtract Force Point."
+      ]
+    },
+    {
+      "ruleId": "core/influence/swift-power",
+      "sourceDefinitionId": "core/talent/swift-power",
+      "sourceDomain": "talent",
+      "sourceName": "Swift Power",
+      "sourcePage": 101,
+      "targetSelector": {
+        "domain": "force-power",
+        "baseActionIn": [
+          "standard",
+          "move"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Requires Power of the Dark Side talent."
+      ],
+      "operations": [
+        {
+          "op": "action-override",
+          "action": "swift",
+          "usesPerDay": 1
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Retains same power definition and base mechanics."
+      ]
+    },
+    {
+      "ruleId": "core/influence/visions",
+      "sourceDefinitionId": "core/talent/visions",
+      "sourceDomain": "talent",
+      "sourceName": "Visions",
+      "sourcePage": 101,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/farseeing"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Requires Force Perception talent and Farseeing Force Power."
+      ],
+      "operations": [
+        {
+          "op": "information-time-shift",
+          "cost": "force-point",
+          "extraAction": "swift",
+          "targetPastFutureYearsMax": "characterLevel"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Viewing chosen future may change; display advisory."
+      ]
+    },
+    {
+      "ruleId": "core/influence/force-pilot",
+      "sourceDefinitionId": "core/talent/force-pilot",
+      "sourceDomain": "talent",
+      "sourceName": "Force Pilot",
+      "sourcePage": 101,
+      "targetSelector": {
+        "domain": "starship-maneuver",
+        "checkSkill": "pilot"
+      },
+      "event": "pilot-check",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "check-modifier-source-override",
+          "checkRemains": "pilot",
+          "modifierSource": "use-the-force",
+          "trainedPilotGlobally": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Does NOT turn a maneuver into a Use the Force activation.",
+        "Do not apply to gunner attack rolls.",
+        "Actor counts trained in Pilot generally per official clarification."
+      ]
+    },
+    {
+      "ruleId": "core/influence/force-power-mastery",
+      "sourceDefinitionId": "core/force-technique/force-power-mastery",
+      "sourceDomain": "force-technique",
+      "sourceName": "Force Power Mastery",
+      "sourcePage": 102,
+      "targetSelector": {
+        "chosenDefinitionId": "owned-force-power-selection"
+      },
+      "event": "power-activation",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "permit-take-10",
+          "evenIfDistracted": true,
+          "evenIfThreatened": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Separate power choice per repeatable technique instance."
+      ]
+    },
+    {
+      "ruleId": "core/influence/devastating-power",
+      "sourceDefinitionId": "core/force-secret/devastating-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Devastating Power",
+      "sourcePage": 103,
+      "targetSelector": {
+        "domain": "force-power",
+        "mustDealDamage": true
+      },
+      "event": "power-activation",
+      "phase": "pre-damage",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "core/force-secret/devastating-power"
+        }
+      ],
+      "resourceChoices": [
+        {
+          "resource": "force-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Increase number of power damage dice by 50%",
+          "operations": [
+            {
+              "kind": "damage-dice-multiplier",
+              "target": "source-power",
+              "factor": 1.5
+            }
+          ],
+          "exclusiveGroup": "devastating-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Double the number of power damage dice",
+          "operations": [
+            {
+              "kind": "damage-dice-multiplier",
+              "target": "source-power",
+              "factor": 2
+            }
+          ],
+          "exclusiveGroup": "devastating-cost"
+        }
+      ],
+      "testAssertions": [
+        "Respect global FP/DP spending limits, costs, action economy, and mutually exclusive option group."
+      ]
+    },
+    {
+      "ruleId": "core/influence/distant-power",
+      "sourceDefinitionId": "core/force-secret/distant-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Distant Power",
+      "sourcePage": 103,
+      "targetSelector": {
+        "domain": "force-power",
+        "numericRangeRequired": true
+      },
+      "event": "power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "core/force-secret/distant-power"
+        }
+      ],
+      "resourceChoices": [
+        {
+          "resource": "force-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Multiply numeric range by 10",
+          "operations": [
+            {
+              "kind": "range-multiplier",
+              "target": "source-power",
+              "factor": 10
+            }
+          ],
+          "exclusiveGroup": "distant-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Range anywhere in same star system, line-of-sight unchanged",
+          "operations": [
+            {
+              "kind": "range-override",
+              "target": "source-power",
+              "value": "same-star-system"
+            }
+          ],
+          "exclusiveGroup": "distant-cost"
+        }
+      ],
+      "testAssertions": [
+        "Respect global FP/DP spending limits, costs, action economy, and mutually exclusive option group."
+      ]
+    },
+    {
+      "ruleId": "core/influence/multitarget-power",
+      "sourceDefinitionId": "core/force-secret/multitarget-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Multitarget Power",
+      "sourcePage": 103,
+      "targetSelector": {
+        "domain": "force-power",
+        "singleTargetOnly": true
+      },
+      "event": "power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "core/force-secret/multitarget-power"
+        }
+      ],
+      "resourceChoices": [
+        {
+          "resource": "force-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "One additional target",
+          "operations": [
+            {
+              "kind": "target-count",
+              "target": "source-power",
+              "increase": 1
+            }
+          ],
+          "exclusiveGroup": "multitarget-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "May affect one target per four character levels",
+          "operations": [
+            {
+              "kind": "target-count",
+              "target": "source-power",
+              "formula": "floor(characterLevel/4)",
+              "mode": "set-total"
+            }
+          ],
+          "exclusiveGroup": "multitarget-cost"
+        }
+      ],
+      "testAssertions": [
+        "Respect global FP/DP spending limits, costs, action economy, and mutually exclusive option group."
+      ]
+    },
+    {
+      "ruleId": "core/influence/quicken-power",
+      "sourceDefinitionId": "core/force-secret/quicken-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Quicken Power",
+      "sourcePage": 103,
+      "targetSelector": {
+        "domain": "force-power",
+        "baseActionIn": [
+          "standard",
+          "move"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "core/force-secret/quicken-power"
+        }
+      ],
+      "resourceChoices": [
+        {
+          "resource": "force-point",
+          "trigger": "when-declaring-power-activation",
+          "timing": "on-activation",
+          "summary": "Replace standard/move with swift",
+          "operations": [
+            {
+              "kind": "action-override",
+              "target": "source-power",
+              "fromAction": "standard-or-move",
+              "toAction": "swift"
+            }
+          ],
+          "exclusiveGroup": "quicken-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "when-declaring-power-activation",
+          "timing": "on-activation",
+          "summary": "Replace standard/move with reaction",
+          "operations": [
+            {
+              "kind": "action-override",
+              "target": "source-power",
+              "fromAction": "standard-or-move",
+              "toAction": "reaction"
+            }
+          ],
+          "exclusiveGroup": "quicken-cost"
+        }
+      ],
+      "testAssertions": [
+        "Respect global FP/DP spending limits, costs, action economy, and mutually exclusive option group."
+      ]
+    },
+    {
+      "ruleId": "core/influence/shaped-power",
+      "sourceDefinitionId": "core/force-secret/shaped-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Shaped Power",
+      "sourcePage": 103,
+      "targetSelector": {
+        "domain": "force-power",
+        "areaShape": "cone"
+      },
+      "event": "power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "core/force-secret/shaped-power"
+        }
+      ],
+      "resourceChoices": [
+        {
+          "resource": "force-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Change cone into 1-square-wide line of length five times original cone length",
+          "operations": [
+            {
+              "kind": "area-override",
+              "target": "source-power",
+              "shape": "line",
+              "widthSquares": 1,
+              "lengthFormula": "5*coneLength"
+            }
+          ],
+          "exclusiveGroup": "shaped-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Affect chosen targets within cone-length radius instead of original cone",
+          "operations": [
+            {
+              "kind": "area-override",
+              "target": "source-power",
+              "shape": "chosen-targets",
+              "rangeFormula": "coneLength"
+            }
+          ],
+          "exclusiveGroup": "shaped-cost"
+        }
+      ],
+      "testAssertions": [
+        "Respect global FP/DP spending limits, costs, action economy, and mutually exclusive option group."
+      ]
+    },
+    {
+      "ruleId": "core/influence/strong-in-the-force",
+      "sourceDefinitionId": "core/feat/strong-in-the-force",
+      "sourceDomain": "feat",
+      "sourceName": "Strong in the Force",
+      "sourcePage": 88,
+      "targetSelector": {
+        "checkKinds": [
+          "attack",
+          "skill",
+          "ability"
+        ],
+        "resourceSpendMode": "force-point-roll-bonus"
+      },
+      "event": "force-point-bonus-roll",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "force-point-die-upgrade",
+          "fromDie": "d6",
+          "toDie": "d8"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Does not change scripted FP power-enhancement expenditure."
+      ]
+    },
+    {
+      "ruleId": "core/influence/force-boon",
+      "sourceDefinitionId": "core/feat/force-boon",
+      "sourceDomain": "feat",
+      "sourceName": "Force Boon",
+      "sourcePage": 85,
+      "targetSelector": {
+        "domain": "force-resource"
+      },
+      "event": "character-level-change",
+      "phase": "grant",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "resource-max-grant",
+          "resource": "force-point",
+          "amountPerLevel": 3
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Resource maximum not a roll bonus."
+      ]
+    },
+    {
+      "ruleId": "core/influence/skill-focus-use-the-force",
+      "sourceDefinitionId": "core/feat/skill-focus-use-the-force",
+      "sourceDomain": "feat",
+      "sourceName": "Skill Focus (Use the Force)",
+      "sourcePage": 88,
+      "targetSelector": {
+        "checkSkill": "use-the-force"
+      },
+      "event": "skill-check",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "modifier",
+          "stat": "use-the-force",
+          "bonusType": "competence",
+          "amount": 5
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Applies to UTF checks only when chosen focus is Use the Force."
+      ]
+    },
+    {
+      "ruleId": "core/influence/deflect",
+      "sourceDefinitionId": "core/talent/deflect",
+      "sourceDomain": "talent",
+      "sourceName": "Deflect",
+      "sourcePage": 41,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-lightning"
+        ]
+      },
+      "event": "incoming-force-lightning",
+      "phase": "reaction",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "resolve-deflect-vs-force-lightning",
+          "checkSkill": "use-the-force",
+          "successDamage": "half-if-hit-none-if-missed"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "FP adjacent target permitted by errata.",
+        "Only one reaction to same effect."
+      ]
+    },
+    {
+      "ruleId": "core/influence/telekinetic-descriptor",
+      "sourceDefinitionId": "core/rule/telekinetic-descriptor",
+      "sourceDomain": "rule",
+      "sourceName": "Telekinetic Descriptor",
+      "sourcePage": 96,
+      "targetSelector": {
+        "domain": "force-power",
+        "requiredDescriptor": "telekinetic"
+      },
+      "event": "telekinetic-power-target-check",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "apply-cover-to-target-defense-or-opposed"
+        },
+        {
+          "op": "apply-concealment-penalty-to-utf-unless-sense-surroundings-this-turn"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Cover and concealment rules apply to all telekinetic powers from any book."
+      ]
+    },
+    {
+      "ruleId": "core/influence/force-perception",
+      "sourceDefinitionId": "core/talent/force-perception",
+      "sourceDomain": "talent",
+      "sourceName": "Force Perception",
+      "sourcePage": 101,
+      "targetSelector": {
+        "checkSkill": "perception"
+      },
+      "event": "perception-check",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "check-modifier-source-override",
+          "checkRemains": "perception",
+          "modifierSource": "use-the-force",
+          "trainedPerceptionGlobally": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Official clarification removes limited-purpose trained language."
+      ]
+    },
+    {
+      "ruleId": "core/influence/move-light-object-projectile",
+      "sourceDefinitionId": "core/rule/move-light-object-projectile",
+      "sourceDomain": "rule",
+      "sourceName": "Move Light Object Projectile",
+      "sourcePage": 77,
+      "targetSelector": {
+        "useTheForceSkillApplication": "move-light-object-projectile"
+      },
+      "event": "projectile-attack",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "qualify-as-ranged-attack-for-feat-talent-interactions"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Applies to skill application, not Force Power Move Object."
+      ]
+    }
+  ],
+  "excludedScope": [
+    "Unverified material from later supplements",
+    "Non-Force talents unrelated to any Force/Maneuver operation",
+    "Feat/skill rules already owned by canonical V2 shared authorities"
+  ],
+  "schemaEvolutionPolicy": {
+    "newPublicationMayAdd": [
+      "selector",
+      "event",
+      "phase",
+      "operation-kind",
+      "resource-lifecycle",
+      "target-domain"
+    ],
+    "previousRecordsMustRevalidate": true,
+    "cannotBeAddedAsUntypedFreeText": true,
+    "ambiguousPublishedEffect": "escalate for ruling, do not implement ad hoc"
+  }
+}

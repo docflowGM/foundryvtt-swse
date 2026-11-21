@@ -1,3 +1,4 @@
+import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
@@ -62,11 +63,11 @@ function forcePowers(actor) {
 }
 
 function isSpentPower(item) {
-  return item?.system?.spent === true || item?.system?.discarded === true;
+  return item?.system?.discarded === true;
 }
 
 function isReadyPower(item) {
-  return item?.system?.spent !== true && item?.system?.discarded !== true;
+  return item?.system?.discarded !== true;
 }
 
 function hasDarkSideDescriptor(power) {
@@ -154,14 +155,6 @@ async function applyHealing(actor, amount) {
   return Number(result?.applied ?? 0) || 0;
 }
 
-async function spendOneForcePoint(actor, title) {
-  const spend = await ActorEngine.spendForcePoints(actor, 1);
-  if (!spend?.spent) {
-    ui?.notifications?.warn?.(`${title} requires spending 1 Force Point.`);
-    return false;
-  }
-  return true;
-}
 
 async function findTalentDocumentByName(name) {
   const wanted = normalizedName(name);
@@ -360,25 +353,28 @@ export class SithTalentActions {
     if (!hasTalent(actor, 'Dark Healing')) return postCard(actor, 'Dark Healing', '<p>This actor does not have Dark Healing.</p>');
     const target = await chooseTargetActor('Dark Healing', 'creature');
     if (!target) return null;
-    if (!(await spendOneForcePoint(actor, 'Dark Healing'))) return null;
+    const fp = await beginContractedForcePoint(actor, "sith:Dark Healing", {}, { label: "Dark Healing" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
 
-    const attackBonus = rangedAttackBonus(actor);
-    const attackRoll = await rollAndPost(actor, 'Dark Healing — Ranged Attack vs Fortitude', `1d20 + ${attackBonus}`, { totalLabel: 'Attack vs Fortitude', targetDefense: defenseTotal(target, 'fortitude') });
-    const fortitude = defenseTotal(target, 'fortitude');
-    const hit = Number(attackRoll?.total ?? 0) >= fortitude;
-    if (!hit && !hasTalent(actor, 'Improved Dark Healing')) {
-      return postCard(actor, 'Dark Healing', `<p>${esc(actor.name)} spends 1 Force Point and attacks <strong>${esc(target.name)}</strong>.</p><p><strong>Attack:</strong> ${attackRoll?.total ?? '?'} vs Fortitude ${fortitude}; miss. No effect.</p>`, { targetActorId: target.id, hit: false });
-    }
+      const attackBonus = rangedAttackBonus(actor);
+      const attackRoll = await rollAndPost(actor, 'Dark Healing — Ranged Attack vs Fortitude', `1d20 + ${attackBonus}`, { totalLabel: 'Attack vs Fortitude', targetDefense: defenseTotal(target, 'fortitude') });
+      const fortitude = defenseTotal(target, 'fortitude');
+      const hit = Number(attackRoll?.total ?? 0) >= fortitude;
+      if (!hit && !hasTalent(actor, 'Improved Dark Healing')) {
+        return postCard(actor, 'Dark Healing', `<p>${esc(actor.name)} spends 1 Force Point and attacks <strong>${esc(target.name)}</strong>.</p><p><strong>Attack:</strong> ${attackRoll?.total ?? '?'} vs Fortitude ${fortitude}; miss. No effect.</p>`, { targetActorId: target.id, hit: false });
+      }
 
-    const formula = `${sithClassLevel(actor)}d6`;
-    const damageRoll = await rollAndPost(actor, 'Dark Healing — Damage', formula, { totalLabel: 'Force Damage' });
-    const fullDamage = Number(damageRoll?.total ?? 0) || 0;
-    const damage = hit ? fullDamage : Math.floor(fullDamage / 2);
-    if (damage > 0) {
-      await ActorEngine.applyDamage(target, { amount: damage, type: 'force', source: 'Dark Healing', sourceActor: actor, options: { bypassThreshold: false } });
-    }
-    const healed = await applyHealing(actor, damage);
-    return postCard(actor, hasTalent(actor, 'Improved Dark Healing') ? 'Improved Dark Healing' : 'Dark Healing', `<p>${esc(actor.name)} drains life from <strong>${esc(target.name)}</strong>.</p><p><strong>Attack:</strong> ${attackRoll?.total ?? '?'} vs Fortitude ${fortitude}; ${hit ? 'hit' : 'miss, half damage due to Improved Dark Healing'}.</p><p><strong>Damage:</strong> ${damage}. <strong>Healing applied:</strong> ${healed} HP.</p>`, { targetActorId: target.id, hit, damage, healed });
+      const formula = `${sithClassLevel(actor)}d6`;
+      const damageRoll = await rollAndPost(actor, 'Dark Healing — Damage', formula, { totalLabel: 'Force Damage' });
+      const fullDamage = Number(damageRoll?.total ?? 0) || 0;
+      const damage = hit ? fullDamage : Math.floor(fullDamage / 2);
+      if (damage > 0) {
+        await ActorEngine.applyDamage(target, { amount: damage, type: 'force', source: 'Dark Healing', sourceActor: actor, options: { bypassThreshold: false } });
+      }
+      const healed = await applyHealing(actor, damage);
+      return postCard(actor, hasTalent(actor, 'Improved Dark Healing') ? 'Improved Dark Healing' : 'Dark Healing', `<p>${esc(actor.name)} drains life from <strong>${esc(target.name)}</strong>.</p><p><strong>Attack:</strong> ${attackRoll?.total ?? '?'} vs Fortitude ${fortitude}; ${hit ? 'hit' : 'miss, half damage due to Improved Dark Healing'}.</p><p><strong>Damage:</strong> ${damage}. <strong>Healing applied:</strong> ${healed} HP.</p>`, { targetActorId: target.id, hit, damage, healed });
+    });
   }
 
   static async announceImprovedDarkHealing(actor) {
@@ -398,32 +394,35 @@ export class SithTalentActions {
       ui?.notifications?.warn?.('Dark Healing Field requires one to three targeted creatures.');
       return null;
     }
-    if (!(await spendOneForcePoint(actor, 'Dark Healing Field'))) return null;
+    const fp = await beginContractedForcePoint(actor, "sith:Dark Healing Field", {}, { label: "Dark Healing Field" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
 
-    const utf = useTheForceTotal(actor);
-    const sithLevel = sithClassLevel(actor);
-    const checkRoll = await RollEngine.safeRoll(`1d20 + ${utf}`, actor?.getRollData?.() ?? {}, { actor, domain: 'sith-talent.dark-healing-field' });
-    const checkTotal = Number(checkRoll?.total ?? 0) || 0;
-    const rows = [];
-    let totalDamage = 0;
-    for (const target of targets) {
-      const damageRoll = await RollEngine.safeRoll(`${sithLevel}d6`, actor?.getRollData?.() ?? {}, { actor, domain: 'sith-talent.dark-healing-field.damage' });
-      const fortitude = defenseTotal(target, 'fortitude');
-      const hit = checkTotal >= fortitude;
-      const damage = hit ? Number(damageRoll?.total ?? 0) : Math.floor(Number(damageRoll?.total ?? 0) / 2);
-      totalDamage += damage;
-      if (damage > 0) await ActorEngine.applyDamage(target, { amount: damage, type: 'force', source: 'Dark Healing Field', sourceActor: actor, options: { bypassThreshold: false } });
-      rows.push(`<li><strong>${esc(target.name)}</strong>: UTF ${checkTotal || '?'} vs Fortitude ${fortitude}; ${hit ? 'hit' : 'miss, half damage'}; ${damage} Force damage.</li>`);
-    }
-    await SWSEChat.postRoll({
-      actor,
-      roll: checkRoll,
-      flavor: 'Dark Healing Field — Use the Force',
-      context: { category: 'talent', type: 'sith-talent', itemName: 'Dark Healing Field', totalLabel: 'Use the Force' }
+      const utf = useTheForceTotal(actor);
+      const sithLevel = sithClassLevel(actor);
+      const checkRoll = await RollEngine.safeRoll(`1d20 + ${utf}`, actor?.getRollData?.() ?? {}, { actor, domain: 'sith-talent.dark-healing-field' });
+      const checkTotal = Number(checkRoll?.total ?? 0) || 0;
+      const rows = [];
+      let totalDamage = 0;
+      for (const target of targets) {
+        const damageRoll = await RollEngine.safeRoll(`${sithLevel}d6`, actor?.getRollData?.() ?? {}, { actor, domain: 'sith-talent.dark-healing-field.damage' });
+        const fortitude = defenseTotal(target, 'fortitude');
+        const hit = checkTotal >= fortitude;
+        const damage = hit ? Number(damageRoll?.total ?? 0) : Math.floor(Number(damageRoll?.total ?? 0) / 2);
+        totalDamage += damage;
+        if (damage > 0) await ActorEngine.applyDamage(target, { amount: damage, type: 'force', source: 'Dark Healing Field', sourceActor: actor, options: { bypassThreshold: false } });
+        rows.push(`<li><strong>${esc(target.name)}</strong>: UTF ${checkTotal || '?'} vs Fortitude ${fortitude}; ${hit ? 'hit' : 'miss, half damage'}; ${damage} Force damage.</li>`);
+      }
+      await SWSEChat.postRoll({
+        actor,
+        roll: checkRoll,
+        flavor: 'Dark Healing Field — Use the Force',
+        context: { category: 'talent', type: 'sith-talent', itemName: 'Dark Healing Field', totalLabel: 'Use the Force' }
+      });
+      const healed = await applyHealing(actor, Math.floor(totalDamage / 2));
+      await actor.setFlag?.(NS, 'encounterUses.darkHealingField', { encounterId: enc, used: true, targetCount: targets.length, totalDamage, healed, usedAt: Date.now() });
+      return postCard(actor, 'Dark Healing Field', `<p>${esc(actor.name)} drains life energy from up to three creatures.</p><ul>${rows.join('')}</ul><p><strong>Total damage:</strong> ${totalDamage}. <strong>Healing applied:</strong> ${healed} HP.</p>`, { targetCount: targets.length, totalDamage, healed });
     });
-    const healed = await applyHealing(actor, Math.floor(totalDamage / 2));
-    await actor.setFlag?.(NS, 'encounterUses.darkHealingField', { encounterId: enc, used: true, targetCount: targets.length, totalDamage, healed, usedAt: Date.now() });
-    return postCard(actor, 'Dark Healing Field', `<p>${esc(actor.name)} drains life energy from up to three creatures.</p><ul>${rows.join('')}</ul><p><strong>Total damage:</strong> ${totalDamage}. <strong>Healing applied:</strong> ${healed} HP.</p>`, { targetCount: targets.length, totalDamage, healed });
   }
 
   static async announceDarkScourge(actor) {
@@ -441,9 +440,9 @@ export class SithTalentActions {
     let spent = false;
     if (master && Number(first?.total ?? 0) > Number(second?.total ?? 0)) {
       const spend = await SWSEDialogV2.confirm?.({ title: 'Dark Side Master', content: `<p>Spend 1 Force Point to keep the better result (${first.total}) instead of the reroll (${second.total})?</p>` });
-      if (spend && await spendOneForcePoint(actor, 'Dark Side Master')) {
-        kept = first;
-        spent = true;
+      if (spend) {
+        const fp = await beginContractedForcePoint(actor, 'sith:Dark Side Master', {}, { label: 'Dark Side Master' });
+        if (fp.ok) spent = await fp.settle(async () => { kept = first; return true; });
       }
     }
     return postCard(actor, master ? 'Dark Side Master' : 'Dark Side Adept', `<p>${esc(actor.name)} rerolls a Use the Force check made to activate ${power ? `<strong>${esc(power.name)}</strong>` : 'a [Dark Side] Force Power'}.</p><p><strong>Original:</strong> ${first?.total ?? '?'}. <strong>Reroll:</strong> ${second?.total ?? '?'}. <strong>Kept:</strong> ${kept?.total ?? '?'}${master && spent ? ' after spending 1 Force Point' : ''}.</p><p>${master ? 'Dark Side Master may spend a Force Point to keep the better result.' : 'Dark Side Adept must keep the reroll, even if it is worse.'}</p>`, { powerId: power?.id ?? null, original: first?.total ?? null, reroll: second?.total ?? null, kept: kept?.total ?? null, forcePointSpent: spent });
@@ -457,13 +456,17 @@ export class SithTalentActions {
     if (!hasTalent(actor, 'Wicked Strike')) return postCard(actor, 'Wicked Strike', '<p>This actor does not have Wicked Strike.</p>');
     const target = await chooseTargetActor('Wicked Strike', 'critical-hit target');
     if (!target) return null;
-    const confirmed = await SWSEDialogV2.confirm?.({ title: 'Wicked Strike', content: `<p>Confirm that ${esc(actor.name)} scored a critical hit with a lightsaber against ${esc(target.name)} and will spend 1 Force Point to move the target -2 steps on the Condition Track.</p>` });
-    if (!confirmed) return null;
-    if (!(await spendOneForcePoint(actor, 'Wicked Strike'))) return null;
+    // The triggering critical hit is read from this actor's own verified attack record, never confirmed by the user.
+    const attackEvent = latestOwnAttackEvent(actor, { targetId: target.id, critical: true });
+    if (!attackEvent) { ui?.notifications?.warn?.('Wicked Strike: no verified lightsaber critical hit against that target this round.'); return null; }
+    const fp = await beginContractedForcePoint(actor, 'sith:Wicked Strike', { attackEvent }, { label: 'Wicked Strike' });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
     const current = Math.max(0, Number(target?.system?.conditionTrack?.current ?? 0) || 0);
     const next = Math.min(5, current + 2);
     await ActorEngine.updateActor(target, { 'system.conditionTrack.current': next }, { source: 'wicked-strike' });
     return postCard(actor, 'Wicked Strike', `<p>${esc(actor.name)} spends 1 Force Point after a lightsaber critical hit against <strong>${esc(target.name)}</strong>.</p><p><strong>Condition Track:</strong> ${current} → ${next}.</p>`, { targetActorId: target.id, previousCondition: current, newCondition: next });
+    });
   }
 
   static async promptAffliction(actor) {
@@ -494,7 +497,7 @@ export class SithTalentActions {
     if (!powerId) return null;
     const power = spent.find(p => p.id === powerId);
     const targetFp = Number(target?.system?.forcePoints?.value ?? 0) || 0;
-    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: power.id, 'system.spent': false, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'drain-force' }], { source: 'drain-force', render: false });
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: power.id, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'drain-force' }], { source: 'drain-force', render: false });
     await ActorEngine.updateActor(target, { 'system.forcePoints.value': Math.max(0, targetFp - 1) }, { source: 'drain-force' });
     await actor.setFlag?.(NS, 'encounterUses.drainForce', { encounterId: enc, used: true, recoveredPowerId: power.id, recoveredPowerName: power.name, targetActorId: target.id, usedAt: Date.now() });
     return postCard(actor, 'Drain Force', `<p>${esc(actor.name)} reacts after damaging Force-sensitive <strong>${esc(target.name)}</strong>.</p><p><strong>Recovered Force Power:</strong> ${esc(power.name)}.</p><p><strong>${esc(target.name)} Force Points:</strong> ${targetFp} → ${Math.max(0, targetFp - 1)}.</p>`, { targetActorId: target.id, recoveredPowerId: power.id });
@@ -563,12 +566,15 @@ export class SithTalentActions {
     if (!hasTalent(actor, 'Bonded Mount')) return postCard(actor, 'Bonded Mount', '<p>This actor does not have Bonded Mount.</p>');
     const target = await chooseTargetActor('Bonded Mount', 'domesticated beast mount');
     if (!target) return null;
-    if (!(await spendOneForcePoint(actor, 'Bonded Mount'))) return null;
-    const key = `bondedMounts.${target.id}`;
-    const record = { mountActorId: target.id, mountName: target.name, bondedAt: Date.now(), sourceActorId: actor.id, sourceActorName: actor.name };
-    await actor.setFlag?.(NS, key, record);
-    try { await target.setFlag?.(NS, 'bondedMount', { riderActorId: actor.id, riderName: actor.name, bondedAt: record.bondedAt }); } catch (err) { console.warn('[SWSE] Bonded Mount target flag failed:', err); }
-    return postCard(actor, 'Bonded Mount', `<p>${esc(actor.name)} spends 1 Force Point as a Full-Round Action to bond <strong>${esc(target.name)}</strong> as a mount.</p><p>Recorded the bond on the rider${isBeastActor(target) ? '' : '; GM should verify the target is a domesticated Friendly/Helpful beast'}.</p><p>While riding, the mount uses the rider's Reflex and Will Defenses, and the rider benefits from the mount's special senses. Those mounted-state bonuses remain GM/player adjudicated until the mount/rider UI owns mounted state.</p>`, { targetActorId: target.id, forcePointSpent: true });
+    const fp = await beginContractedForcePoint(actor, "sith:Bonded Mount", {}, { label: "Bonded Mount" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const key = `bondedMounts.${target.id}`;
+      const record = { mountActorId: target.id, mountName: target.name, bondedAt: Date.now(), sourceActorId: actor.id, sourceActorName: actor.name };
+      await actor.setFlag?.(NS, key, record);
+      try { await target.setFlag?.(NS, 'bondedMount', { riderActorId: actor.id, riderName: actor.name, bondedAt: record.bondedAt }); } catch (err) { console.warn('[SWSE] Bonded Mount target flag failed:', err); }
+      return postCard(actor, 'Bonded Mount', `<p>${esc(actor.name)} spends 1 Force Point as a Full-Round Action to bond <strong>${esc(target.name)}</strong> as a mount.</p><p>Recorded the bond on the rider${isBeastActor(target) ? '' : '; GM should verify the target is a domesticated Friendly/Helpful beast'}.</p><p>While riding, the mount uses the rider's Reflex and Will Defenses, and the rider benefits from the mount's special senses. Those mounted-state bonuses remain GM/player adjudicated until the mount/rider UI owns mounted state.</p>`, { targetActorId: target.id, forcePointSpent: true });
+    });
   }
 
   static async promptEntreatBeast(actor) {
@@ -618,25 +624,31 @@ export class SithTalentActions {
     if (!hasTalent(actor, 'Channel Aggression')) return postCard(actor, 'Channel Aggression', '<p>This actor does not have Channel Aggression.</p>');
     const target = await chooseTargetActor('Channel Aggression', 'flanked or no-Dex target');
     if (!target) return null;
-    if (!(await spendOneForcePoint(actor, 'Channel Aggression'))) return null;
-    const dice = Math.min(10, Math.max(1, darkSideDevoteeLevel(actor)));
-    const roll = await RollEngine.safeRoll(`${dice}d6`, actor?.getRollData?.() ?? {}, { actor, domain: 'sith-talent.channel-aggression' });
-    const damage = Number(roll?.total ?? 0) || 0;
-    if (damage > 0) await ActorEngine.applyDamage(target, { amount: damage, type: 'force', source: 'Channel Aggression', sourceActor: actor, options: { bypassThreshold: false } });
-    await SWSEChat.postRoll({ actor, roll, flavor: 'Channel Aggression — Bonus Damage', context: { category: 'talent', type: 'dark-side-devotee-talent', itemName: 'Channel Aggression', totalLabel: 'Bonus Damage' } });
-    return postCard(actor, 'Channel Aggression', `<p>${esc(actor.name)} spends 1 Force Point as a Free Action after a qualifying successful attack against <strong>${esc(target.name)}</strong>.</p><p><strong>Bonus damage:</strong> ${damage} (${dice}d6), applied as Force damage.</p><p>GM/player must verify the target was flanked or denied Dexterity bonus to Reflex Defense.</p>`, { targetActorId: target.id, damage, dice, forcePointSpent: true });
+    const fp = await beginContractedForcePoint(actor, "sith:Channel Aggression", {}, { label: "Channel Aggression" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const dice = Math.min(10, Math.max(1, darkSideDevoteeLevel(actor)));
+      const roll = await RollEngine.safeRoll(`${dice}d6`, actor?.getRollData?.() ?? {}, { actor, domain: 'sith-talent.channel-aggression' });
+      const damage = Number(roll?.total ?? 0) || 0;
+      if (damage > 0) await ActorEngine.applyDamage(target, { amount: damage, type: 'force', source: 'Channel Aggression', sourceActor: actor, options: { bypassThreshold: false } });
+      await SWSEChat.postRoll({ actor, roll, flavor: 'Channel Aggression — Bonus Damage', context: { category: 'talent', type: 'dark-side-devotee-talent', itemName: 'Channel Aggression', totalLabel: 'Bonus Damage' } });
+      return postCard(actor, 'Channel Aggression', `<p>${esc(actor.name)} spends 1 Force Point as a Free Action after a qualifying successful attack against <strong>${esc(target.name)}</strong>.</p><p><strong>Bonus damage:</strong> ${damage} (${dice}d6), applied as Force damage.</p><p>GM/player must verify the target was flanked or denied Dexterity bonus to Reflex Defense.</p>`, { targetActorId: target.id, damage, dice, forcePointSpent: true });
+    });
   }
 
   static async promptChannelAnger(actor) {
     if (!hasTalent(actor, 'Channel Anger')) return postCard(actor, 'Channel Anger', '<p>This actor does not have Channel Anger.</p>');
     const existing = actor.getFlag?.(NS, 'channelAnger') ?? null;
     if (existing?.active === true) return postCard(actor, 'Channel Anger', '<p>Channel Anger is already active on this actor.</p>', { alreadyActive: true });
-    if (!(await spendOneForcePoint(actor, 'Channel Anger'))) return null;
-    const duration = Math.max(1, 5 + abilityMod(actor, 'con'));
-    const round = Number(game?.combat?.round ?? 0) || 0;
-    const state = { active: true, startedRound: round || null, durationRounds: duration, expiresAfterRound: round ? round + duration : null, meleeAttackBonus: 2, meleeDamageBonus: 2, conditionPenaltyPending: true, createdAt: Date.now() };
-    await actor.setFlag?.(NS, 'channelAnger', state);
-    return postCard(actor, 'Channel Anger', `<p>${esc(actor.name)} spends 1 Force Point as a Swift Action and enters a rage.</p><p><strong>Effect:</strong> +2 Rage bonus on melee attack rolls and melee damage rolls for ${duration} rounds.</p><p><strong>Restriction:</strong> cannot use Skills requiring patience and concentration, such as Mechanics, Stealth, or Use the Force.</p><p><strong>End:</strong> moves -1 step on the Condition Track when the rage ends${round ? ` after round ${round + duration}` : '; track duration manually outside combat'}.</p>`, { durationRounds: duration, meleeAttackBonus: 2, meleeDamageBonus: 2, forcePointSpent: true });
+    const fp = await beginContractedForcePoint(actor, "sith:Channel Anger", {}, { label: "Channel Anger" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const duration = Math.max(1, 5 + abilityMod(actor, 'con'));
+      const round = Number(game?.combat?.round ?? 0) || 0;
+      const state = { active: true, startedRound: round || null, durationRounds: duration, expiresAfterRound: round ? round + duration : null, meleeAttackBonus: 2, meleeDamageBonus: 2, conditionPenaltyPending: true, createdAt: Date.now() };
+      await actor.setFlag?.(NS, 'channelAnger', state);
+      return postCard(actor, 'Channel Anger', `<p>${esc(actor.name)} spends 1 Force Point as a Swift Action and enters a rage.</p><p><strong>Effect:</strong> +2 Rage bonus on melee attack rolls and melee damage rolls for ${duration} rounds.</p><p><strong>Restriction:</strong> cannot use Skills requiring patience and concentration, such as Mechanics, Stealth, or Use the Force.</p><p><strong>End:</strong> moves -1 step on the Condition Track when the rage ends${round ? ` after round ${round + duration}` : '; track duration manually outside combat'}.</p>`, { durationRounds: duration, meleeAttackBonus: 2, meleeDamageBonus: 2, forcePointSpent: true });
+    });
   }
 
   static async endChannelAnger(actor) {
@@ -653,12 +665,17 @@ export class SithTalentActions {
     if (!hasTalent(actor, 'Crippling Strike')) return postCard(actor, 'Crippling Strike', '<p>This actor does not have Crippling Strike.</p>');
     const target = await chooseTargetActor('Crippling Strike', 'critical-hit target');
     if (!target) return null;
-    if (!(await spendOneForcePoint(actor, 'Crippling Strike'))) return null;
+    const attackEvent = latestOwnAttackEvent(actor, { targetId: target.id, critical: true });
+    if (!attackEvent) { ui?.notifications?.warn?.('Crippling Strike: no verified critical hit against that target this round.'); return null; }
+    const fp = await beginContractedForcePoint(actor, 'sith:Crippling Strike', { attackEvent }, { label: 'Crippling Strike' });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
     const hpMax = actorHpMax(target);
     const currentSpeed = Number(target?.system?.derived?.speed?.walk ?? target?.system?.derived?.speed?.total ?? target?.system?.speed?.value ?? target?.system?.speed ?? 0) || 0;
     const crippledSpeed = currentSpeed > 0 ? Math.max(1, Math.floor(currentSpeed / 2)) : null;
     await target.setFlag?.(NS, 'cripplingStrike', { sourceActorId: actor.id, sourceActorName: actor.name, originalSpeed: currentSpeed || null, crippledSpeed, maxHpWhenCrippled: hpMax || null, appliedAt: Date.now(), until: 'fully-healed' });
-    return postCard(actor, 'Crippling Strike', `<p>${esc(actor.name)} spends 1 Force Point after a critical hit to cripple <strong>${esc(target.name)}</strong>.</p><p>${crippledSpeed ? `<strong>Speed:</strong> ${currentSpeed} → ${crippledSpeed} until fully healed.` : 'The target is flagged as crippled; adjust speed manually if the actor has no numeric speed path.'}</p><p>GM/player must verify this was triggered by a critical hit.</p>`, { targetActorId: target.id, forcePointSpent: true, originalSpeed: currentSpeed || null, crippledSpeed });
+    return postCard(actor, 'Crippling Strike', `<p>${esc(actor.name)} spends 1 Force Point after a critical hit to cripple <strong>${esc(target.name)}</strong>.</p><p>${crippledSpeed ? `<strong>Speed:</strong> ${currentSpeed} → ${crippledSpeed} until fully healed.` : 'The target is flagged as crippled; adjust speed manually if the actor has no numeric speed path.'}</p><p>Triggered by a verified critical hit this round.</p>`, { targetActorId: target.id, forcePointSpent: true, originalSpeed: currentSpeed || null, crippledSpeed });
+    });
   }
 
   static async promptEmbraceTheDarkSide(actor) {

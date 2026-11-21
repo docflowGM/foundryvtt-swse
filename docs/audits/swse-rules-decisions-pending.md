@@ -3638,3 +3638,260 @@ Recorded from the independent review of PR #1158. **These are reviewer recommend
 | RD-004 Galactic Profile Nonheroic feats | Require mechanically complete profiles: three legal starting class feats with canonical scopes plus the general feat entitlement, with no validation bypass | Profiles should not bypass legality validation | **Not changed.** The starting-feat check is still skipped for profile-applied sessions and `data/galactic-profiles/**` is untouched |
 
 Page numbering note: the reviewer cites the printed Nonheroic page as p.278; this repository's earlier entries cite p.277 from the OCR layer. Both refer to the same Nonheroic class write-up; the owner may wish to normalize the citation when ruling.
+
+---
+
+## FORCE POINT TRANSACTION RULES — Checkpoint 03B implementation batch (appended 2026-11-18; append-only)
+
+Status of every entry: `DEFERRED_RULES_REVIEW`. Decision authority: project owner. Resolution: blank until approved. No recommended ruling is given.
+
+### FP-RD-001 — JATM Sparring Practice, Training Remote, Vo'ren's Third Cadence (Block/Deflect round-limit exemptions and temporary restricted FPs)
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-001 |
+| Rules domain | Force Points / source-restricted bonus points |
+| Feature | JATM Sparring Practice, Training Remote, Vo'ren's Third Cadence (Block/Deflect round-limit exemptions and temporary restricted FPs) |
+| Source | JATM pp.11-13 (per 03B policy; source PDFs local-only, not re-read this batch) |
+| Evidence | Printed exemptions apply only to FP added to the Block (Sparring Practice) or Deflect (Training Remote) activation UTF check, or off-turn Block/Deflect bonus spends (Third Cadence); qualifying tiers grant 1-2 temporary FPs restricted to that use. |
+| Confirmed behavior | The exemptions exist and are use-specific. |
+| Unresolved question | Which runtime event/domain constitutes 'the Block activation UTF check' vs 'Deflect activation UTF check' for entitlement purposes, and how the granting regimen links its restricted entry to that exact event. The current regimen producers write restricted entries with free-text restrictions and no event-linked entitlement receipt. |
+| Options | None derivable without the owner confirming the event mapping. |
+| Recommended ruling | None |
+| Implementation impact | Every restricted bonus entry is refused (fail closed); no Block/Deflect round-limit exemption is granted. Blocks: restricted-entry spending, exemption from the one-per-round ledger. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-002 — Guardian Spirit source-restricted bonus Force Point
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-002 |
+| Rules domain | Force Points / Guardian Spirit |
+| Feature | Guardian Spirit source-restricted bonus Force Point |
+| Source | Source page not re-verified (03B policy caveat) |
+| Evidence | Code creates a restricted bonus FP; the policy audit did not re-verify the talent's printed text. |
+| Confirmed behavior | Only that the code grants a restricted entry. |
+| Unresolved question | Printed restriction, expiry and which uses it may pay for. |
+| Options | None. |
+| Recommended ruling | None |
+| Implementation impact | Entry is refused for every spend (fail closed) until the page is reviewed. Blocks: Guardian Spirit bonus FP spending. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-003 — All talent, feat and Force-power options that cost 1 Force Point (about 28 call sites cut over to use kind 'ability-option')
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-003 |
+| Rules domain | Force Points / ability options |
+| Feature | All talent, feat and Force-power options that cost 1 Force Point (about 28 call sites cut over to use kind 'ability-option') |
+| Source | Each ability's own printed text (not re-verified in this batch) |
+| Evidence | Core p.93: one FP per round unless an exception is printed. The service applies exactly that universal rule, the helpless guard, single point, replay protection. |
+| Confirmed behavior | Round-limit default; helpless guard. |
+| Unresolved question | Whether each ability's own timing (free/swift/reaction, own turn or off turn) must be enforced centrally. The service deliberately enforces NO per-ability timing and grants NO exception, preserving pre-branch behavior for timing. |
+| Options | None. |
+| Recommended ruling | None |
+| Implementation impact | Per-ability timing is not centrally verified. Blocks: certification of any individual ability's FP timing. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-004 — Djem So (reaction, previously passed allowOncePerRoundOverride) and Greater Focused Force Talisman (description claims it does not count against a one-per-turn restriction)
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-004 |
+| Rules domain | Force Points / per-ability round-limit exceptions |
+| Feature | Djem So (reaction, previously passed allowOncePerRoundOverride) and Greater Focused Force Talisman (description claims it does not count against a one-per-turn restriction) |
+| Source | Not re-verified in this batch |
+| Evidence | The code asserted these exceptions through unverified caller flags. |
+| Confirmed behavior | None certified. |
+| Unresolved question | Whether either exception exists in print and whether it exempts the Core p.93 one-FP-per-round limit or a different (ability-local) limit. |
+| Options | None. |
+| Recommended ruling | None |
+| Implementation impact | Both flags were removed; both spends now count against the round limit. Blocks: any exemption for either ability. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-005 — Avoiding death by Force Point (Core p.93: a reaction)
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-005 |
+| Rules domain | Force Points / death avoidance |
+| Feature | Avoiding death by Force Point (Core p.93: a reaction) |
+| Source | Core p.93; 03B policy |
+| Evidence | It is a reaction and may be used off turn while helpless. |
+| Confirmed behavior | Reaction; not blocked by the helpless condition; requires a lethal damage event. |
+| Unresolved question | Whether the rescue reaction counts toward the one-FP-per-round limit. The implementation counts it (the 03B policy states reactions do not waive the round limit). |
+| Options | Count it (implemented per 03B policy default) / do not count it (no printed text located). |
+| Recommended ruling | None |
+| Implementation impact | Implemented as counted. If the owner rules otherwise, flag one countsTowardRoundLimit field for the avoid-death kind. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## FP-RD-001 to FP-RD-005 — OWNER RULINGS (appended 2026-11-18; original entries preserved)
+
+Rulings communicated by the project owner after independent source review of PR #1165 (Core pp.93/146/218, JATM pp.12-13/16, Clone Wars p.40). Implementing commit: the commit that adds this section (see PR #1165 history).
+
+| ID | Ruling | Implementation state |
+| --- | --- | --- |
+| FP-RD-001 | Sparring Practice and Training Remote give specific non-counting Block/Deflect Force Point bonuses on the actual activation UTF check; Vo'ren's Third Cadence additionally permits those spends off turn. Force Readiness independently authorizes off-turn spending without waiving other restrictions. Entitlement must come from a verified reaction event, canonical talent identity, active regimen and achieved tier, never a client string. | NOT implemented. Blocked on a verified Block/Deflect reaction-event producer and typed regimen-tier entitlement receipts. Restricted entries remain refused. |
+| FP-RD-002 | Guardian Spirit: one bonus FP per day after at least six hours' rest, usable only to improve a Force Power or activate a Force Technique or Force Secret; expires at the start of the next day. Must be a typed, independently expiring entry. | NOT implemented. Blocked on (a) a day-boundary authority for "start of the next day" in Foundry time and (b) typed use kinds for power improvement and Technique/Secret activation. Entry remains refused. See FP-RD-006. |
+| FP-RD-003 | Each ability's printed timing must be enforced; a nonempty source string is not authorization. Unsupported abilities stay unavailable to automation; verified GM adjudication is allowed. | Implemented as a gate: `ability-option` needs a typed contract in `ABILITY_OPTION_CONTRACTS` (currently empty) or a live-verified GM user. Contracts for the ~28 sources remain to be written one by one. |
+| FP-RD-004 | Djem So: reaction after a qualifying melee hit, once per round; counts against the round limit. Greater Focused Force Talisman (Clone Wars p.40): its qualifying immediate recovery spend is exempt from the global round cap, scoped to the verified worn talisman and selected power copy. Source-text mismatch ("one per turn" vs Core "one per round") documented; the exemption is interpreted as exempting the global round cap, narrowly. | Djem So: counts against the cap (no exemption), but its hit-event proof is not implemented, so it is GM-adjudicated only. Talisman exemption NOT implemented: equipment state is manual (no worn-talisman data), so it cannot be verified. |
+| FP-RD-005 | Core p.146: death avoidance is allowed even if a Force Point was already spent this round. | Implemented: bypasses the prior-counted-spend check only; recorded as counted; both orders tested. |
+
+### FP-RD-006 — Guardian Spirit day boundary and Power-improvement use kinds (appended 2026-11-18)
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-006 |
+| Rules domain | Force Points / Guardian Spirit expiry |
+| Feature | Guardian Spirit bonus FP expiry ("start of the next day") |
+| Source | JATM p.16 (via FP-RD-002 ruling) |
+| Confirmed behavior | Expires at the start of the next day. |
+| Unresolved question | Which Foundry clock defines a "day" and its start (world calendar time, GM-triggered rest, real time), and which concrete in-system actions count as "improve a Force Power". |
+| Options | None derivable from the sources. |
+| Recommended ruling | None |
+| Implementation impact | Guardian Spirit bonus entries stay refused. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## FP-RD-001 / 003 / 006 — OWNER FOLLOW-UP RULINGS (appended 2026-11-18; earlier entries preserved)
+
+| ID | Ruling | Implementation state |
+| --- | --- | --- |
+| FP-RD-006 | One GM-controlled campaign-day identity. Read a configured world-calendar day when available; otherwise require an explicit GM Advance Day event; never infer a day from browser wall time or from an individual rest. Rest of at least 6 hours is the acquisition gate, not the expiry gate. One Guardian Spirit grant per campaign day; an unused grant expires at the start of the next campaign day. Store issuedDay, expirationDay, rest evidence, ability source and typed eligible use. A naked `floor(worldTime/86400)` is a chosen convention, not RAW midnight: respect any configured calendar epoch/day boundary; if world time is unavailable, fail closed. No `Date.now` expiry. Eligible uses are exact Force Power enhancement / Technique / Secret activation, not a generic UTF check. | NOT implemented (scheduled last in the owner's sequence). |
+| FP-RD-003 | Implement all per-ability typed contracts in source-certified batches with a mapping ledger. No blanket GM-user bypass: GM adjudication must be a separate, intentional, attributable action; the actor must still own the source, have eligible FP and satisfy common caps unless a printed exception proves otherwise. | Blanket `isGM` bypass REMOVED: adjudication now requires `context.gmAdjudication.reason` from a verified GM, recorded on the receipt. Mapping ledger scaffold created (39 rows); contracts not yet written. |
+| FP-RD-001 | Build the Block/Deflect reaction-event producer next: reuse `LightsaberTalentActions.promptBlock/promptDeflect` -> `rollSkillCheck` (`skillUse.key` block/deflect); attach an authenticated triggering attack/reaction event and owned talent identity; prove an active Sparring Practice / Training Remote (DC18/23/28) or Vo'ren's Third Cadence (DC33) including the 24-hour lifecycle; source-scoped expiring restricted grants for DC23/28; separate behavioral cases for Block-only, Deflect-only, off-turn, counted/non-counting. | NOT implemented (second in the owner's sequence). |
+
+Sequence ordered by the owner: (1) verify rescue finality and shared transaction integrity [done in 22ea28e]; (2) Block/Deflect event + restricted-point tests; (3) per-ability contracts in batches; (4) Guardian Spirit day/use-kind handling and the talisman blocked state. No certification or merge before the real Node suites and Foundry v13 interaction/two-client tests.
+
+
+## FP-RD-001 — IMPLEMENTATION PROGRESS: Block/Deflect event producer (appended 2026-11-18; earlier entries preserved)
+
+Implemented (offline-tested only): authoritative incoming-attack event minted in `combat/rolls/attacks.js` after the roll outcome is known (single and full-attack paths); attacker-side pending record, defender-side single-use claim (each side writes only its own Actor); verification (`AttackEventAuthority.verify`) re-reads the record at reaction time; reroll supersedes; melee/ranged eligibility; ownership; round expiry; `ReactionEngine.resolveReaction` verifies Block/Deflect, takes the DC from the event, and its direct Force Point debit is replaced by `ForcePointsService.authorizeSpend` + `ActorEngine` receipt lifecycle; the registry Block/Deflect handlers (previously empty placeholders) now call `LightsaberTalentActions.promptBlock/promptDeflect` with the verified event; a manually typed DC is tagged `manualAttackDc` and unlocks nothing.
+
+NOT implemented (still `DEFERRED_RULES_REVIEW` for the entitlement half): Sparring Practice / Training Remote (DC18/23/28) and Vo'ren's Third Cadence (DC33) qualification, their 24-hour lifecycle, source-scoped expiring restricted grants, non-counting and off-turn spends, and the adjacent-ally paid reaction (errata p.41) which needs a verified adjacency/ally event. Restricted bonus entries remain refused.
+
+
+## FP-RD-001 — IMPLEMENTATION PROGRESS: JATM regimen entitlements and Core p.41 Block/Deflect frequency (appended 2026-11-18; earlier entries preserved)
+
+Implemented from the printed text (JATM pp.11-13, Core p.41; source text in `reference/sourcebooks/`), offline-tested only:
+- Sparring Practice (Block) and Training Remote (Deflect), DC18/23/28: Force Point spent on the Use the Force check that activates the talent does not count toward the one-per-round limit; DC23 grants 1 and DC28 2 temporary Force Points usable only on that talent's activation check.
+- Vo'ren's Third Cadence DC33: the same non-counting exemption for Block and Deflect, plus off-turn spending; DC23/28 grant only the Redirect Shot bonus (no Force Point entitlement).
+- Lifecycle in campaign time (`game.time.worldTime`): 24 hours from completion, one regimen in effect per 24 hours, a failed regimen grants nothing for that regimen for 24 hours while another may be attempted. No world clock: nothing is granted. Regimens are keyed by normalized printed name (no fabricated canonical ids).
+- Entitlements apply only to a verified Block/Deflect reaction event (attacker-side record re-read inside `ForcePointsService.authorizeSpend`); a manual DC, a forged claim, or an unrelated roll unlocks nothing; one paid spend per attack event; non-counting and counted spends coexist in a round in either order.
+- Core p.41: the per-round frequency cap on Block/Deflect in the reaction registry is removed; the cumulative -5 (shared by Block and Deflect, accruing only after a roll) and the one-reaction-per-attack-event rule remain.
+
+### FP-RD-007 — Do regimen temporary Force Points count toward the one-per-round limit?
+
+| Field | Value |
+| --- | --- |
+| Decision ID | FP-RD-007 |
+| Rules domain | Force Points / JATM regimens |
+| Feature | Temporary Force Points from Sparring Practice, Training Remote (DC23/28) |
+| Source | Jedi Academy Training Manual p.12-13 |
+| Evidence | The printed tiers say the ordinary Force Point spent on the check "does not count toward the one Force Point per round limit", then separately say "You also gain 1 (or 2) temporary Force Points, which can only be used to add to the result of a Use the Force check made to activate the Block (Deflect) talent". The non-counting sentence is not repeated for the temporary points. |
+| Confirmed behavior | Temporary points are usable only on the named talent's activation check. |
+| Unresolved question | Whether a temporary point's spend is also exempt from the round limit. |
+| Options | (A) Counts (the exemption sentence attaches to the ordinary spend); (B) does not count. Both are readings of the same printed text. |
+| Recommended ruling | None |
+| Implementation impact | Implemented as Option A (the Core p.93 default) until ruled; one flag (`countsTowardRoundLimit` in the temporary-entry branch of `authorizeSpend`) changes it. |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+
+## FP-RD-007 — OWNER ADJUDICATION (appended 2026-11-18; original entry preserved)
+
+Owner adjudication of ambiguous source wording (not a separately printed sentence): the Sparring Practice / Training Remote non-counting exemption attaches to the qualifying Block/Deflect activation expenditure, not to the pool supplying the point. A temporary point spent under a valid DC23/28 grant on the matching talent is therefore non-counting, as is an ordinary point on the same event; unrelated checks and abilities count under the Core default. No two Force Points on one activation check. Status: RESOLVED (owner). Implemented in commit "feat(force): FP-RD-007 owner ruling" with both spending orders tested.
+
+## FP-RD-003 / lightsaber batch 1 — IMPLEMENTATION PROGRESS (appended 2026-11-18)
+
+Four lightsaber contracts implemented (see the contract ledger, Batch 1). Open sub-item (not a rules ruling, a missing runtime): Improved Lightsaber Throw has no canonical thrown-lightsaber area-attack resolution to finalize against; the standard-action cost and ownership are enforced, finalization is at talent-card publication.
+
+
+## FP-RD-008 / FP-RD-009 — Force power suite recovery timing (Checkpoint 03C; appended 2026-11-18)
+
+Source (Core Rulebook, "Regaining Force Powers"): (a) "When combat is over and you have a chance to rest for 1 minute, you regain all of your Force powers"; (b) "If you roll a natural 20 on a Use the Force check, you regain all spent Force powers at the end of your turn."
+
+Implemented from the printed text: natural 20 on any Use the Force check records a pending regain tied to the actor's own combatant and performs it at the end of that actor's turn (never a Force Point); the regain-all authority is `ForceExecutor.regainAllSpentForcePowers` (suite state = `system.discarded`).
+
+| ID | Question | Status |
+| --- | --- | --- |
+| FP-RD-008 | Natural 20 on a Use the Force check OUTSIDE combat: there is no "end of your turn". The pending regain stays recorded and is cleared by the next regain-all (the rest). Does the owner want an immediate regain, or a different trigger? | `DEFERRED_RULES_REVIEW` (implemented conservatively: no automatic out-of-combat regain) |
+| FP-RD-009 | Ending combat (the GM deletes the combat) is treated as "combat is over and you rest 1 minute" (existing behavior kept, now through the single authority). Should regain instead require an explicit rest action? | `DEFERRED_RULES_REVIEW` (existing behavior preserved) |
+
+Both: Decision authority: project owner. Recommended ruling: none. Resolution: blank.
+
+
+## FP-RD-010 / FP-RD-011 / FP-RD-012 — Maintained Force power instances (Checkpoint 03D; appended 2026-11-18)
+
+Implemented from printed text only (`scripts/engine/force/force-power-maintenance.js`, contract table `MAINTENANCE_CONTRACTS`): each activation is an independent instance (own id, own effects, stored on the caster); a recovered/deleted/duplicate Power copy never ends an instance; Resist Force = ONE chosen defense (two only when the Force Point option was paid), bonus against Force powers only; Valor = Will Defense only, target one ally, no attack bonus, against mind-affecting and fear (all Will-targeting effects when the Force Point option was paid); maintenance action types, "fresh Use the Force check each round" (Force Whirlwind), Force Whirlwind and Kinetic Combat special terminations, and "DC = 15 + damage taken" concentration are encoded per the printed text of the power.
+
+| ID | Source | Question | Status |
+| --- | --- | --- | --- |
+| FP-RD-010 | KOTOR Campaign Guide (Energy Resistance, Force Whirlwind, Resist Force, Valor); Force Unleashed Campaign Guide (Kinetic Combat) | Damage taken while the caster maintains MORE THAN ONE instance (Resist Force and Valor explicitly allow several): does each maintained instance require its own Use the Force check (DC 15 + damage), or one check covers all? Printed text states the check per power, not per instance. Implementation only resolves a check for the single instance the caller names and never fans out. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-011 | Core Rulebook (Force Grip, Move Object) | The repository's Core Rulebook scan is OCR-damaged for the maintenance action type of Force Grip, and the damage-concentration rule is not printed for Force Grip / Move Object. Their maintenance action cost and whether the 15 + damage concentration rule applies are not encoded; `maintain`/`resolveConcentration` return `deferred` for both. The official errata PDF is not in the repository. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-012 | KOTOR Campaign Guide (Resist Force, Valor) | Not a rules question but a recorded engineering limit: the modifier engine has no defense call site that knows the attacking source (Force power / mind-affecting / fear). The conditional defense bonuses are therefore stored as reminder-only gated effects (effect-intent `filterType: 'custom'`) and do NOT change defense math automatically; previously they were an unconditional all-defense bonus, which over-granted. A defense call site that supplies the attack source is the missing runtime. | Engineering follow-up (no ruling needed) |
+
+FP-RD-010/011: Decision authority: project owner. Recommended ruling: none. Resolution: blank.
+
+
+## FP-RD-013 — Temptation of the Dark Side, Force Unleashed Campaign Guide p.85 (Checkpoint 03E; appended 2026-11-18)
+
+Implemented (`scripts/engine/force/temptation-of-the-dark-side.js`) as two SEPARATE optional pathways, each an explicit GM adjudication (the rule is GM-optional; no standing setting) paid with 1 Force Point through the shared ForcePointsService/ActorEngine transaction (exact rollback if the item cannot be created):
+- Power pathway (printed): Force Sensitivity required; one Force power with the [dark side] descriptor added to the active suite; it goes away entirely when used or at end of encounter; never recoverable.
+- Talent pathway (printed): Force Sensitivity required; talent from the Dark Side, Dark Side Devotee or Sith tree; ALL prerequisites must be met (checked by `AbilityEngine.evaluateAcquisition`, with temporary talents counted as held); several Force Points may buy several talents; at end of encounter the talents are lost and the Dark Side Score rises by the Force Points spent.
+
+| ID | Question the printed text does not answer | Status |
+| --- | --- | --- |
+| FP-RD-013a | Does a Force Point spent on Temptation count toward the one-Force-Point-per-round limit (Core p.93)? Implemented as the default for any Force Point spend (counts) because the text is silent. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-013b | Power pathway: is an unsuccessful activation "used" (power removed)? Implemented: any use attempt removes it. Also: does the existing optional "Dark Side power increases Dark Side Score" house rule apply to a Temptation power? Not changed by this code. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-013c | Does the added power need a free slot in the suite, and does it count against suite capacity? Not enforced. | `DEFERRED_RULES_REVIEW` |
+| FP-RD-013d | "End of the encounter": implemented as combat deletion. Out-of-combat encounters have no end signal here, so GM must end them manually (`endEncounter`). | `DEFERRED_RULES_REVIEW` |
+| FP-RD-013e | Dark Side Score increase counts talents held at the end; the printed "Force Points spent in this manner" could also count points spent on a talent that was later removed or lost. | `DEFERRED_RULES_REVIEW` |
+
+Also in 03E (engineering, no ruling): Core Rulebook, Force Powers ("you can select the same Force power more than once") and Starships of the Galaxy (Starship Tactics: "You can add the same maneuver more than once") are printed rules, so name-based "already known" filters were removed from `ForcePowerEngine.applySelected` and `StarshipManeuverManager.getAvailableManeuvers`; the progression suite sync matches the exact copies a session created (per-copy markers) instead of every same-name maneuver; owned-copy removal accepts an exact `itemId`.
+
+Decision authority: project owner. Recommended ruling: none. Resolution: blank.
+
+
+## Game-night hardening (appended 2026-11-18; earlier entries preserved)
+
+### FP-RD-011 — OWNER RULING RECORDED (original question preserved above)
+Resolution: the project owner (PR #1165 owner directive, 2026-11-18) supplied the Core Rulebook errata for **Force Grip and Move Object (Core pp.97-98): maintaining requires a standard action and a fresh Use the Force check each round.** Implemented in `MAINTENANCE_CONTRACTS` (both: `maintainAction: 'standard'`, `freshCheckEachRound: true`). The errata PDF itself is still not in the repository; the owner's statement is the authority. Still open within FP-RD-011: whether damage while maintaining forces a concentration check for these two (not printed) — remains `DEFERRED_RULES_REVIEW`; no automatic concentration prompt is raised for them.
+
+### FP-RD-014 — When does an unmaintained instance end? (new)
+| Field | Value |
+| --- | --- |
+| Feature | Maintenance timing for Energy Resistance, Force Whirlwind, Kinetic Combat, Resist Force, Valor, Force Grip, Move Object |
+| Source | KOTOR Campaign Guide / FUCG / Core: "You can maintain X from round to round, extending the normal duration" (durations "until the beginning of your next turn") |
+| Confirmed | Maintenance costs the printed action on the caster's turn and extends the duration. |
+| Unresolved | Exactly when an unmaintained instance ends: at the START of the caster's next turn (strict reading of the duration) or at the END of that turn (the caster's chance to spend the maintenance action). |
+| Implementation (engineering default, reversible) | Lapse at the END of the caster's turn (`updateCombat` turn change → `lapseUnmaintained`), so the caster always gets the turn in which to maintain; maintenance at most once per round. Out-of-combat instances have no turn clock and never auto-lapse (end them with the End control). One function changes it. |
+| Recommended ruling | None |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
+
+### FP-RD-013d — fail-closed applied (original question preserved above)
+Temptation acquisition is refused (and not charged) unless a combat is started, and end-of-encounter removal is scoped to that combat. Outside combat the optional rule is unavailable until the owner rules on what ends an out-of-combat encounter.
+
+### FP-RD-012 — engineering follow-up progress
+Resist Force / Valor conditional bonuses remain reminder-gated effects (no automatic defense math). New table-facing pathway: when a Force power is activated against a target, the Force power card lists the target's applicable conditional defense bonuses (Resist Force vs any Force power; Valor vs mind-affecting/fear, or all Will-targeting effects when its Force Point option was paid). Force power defense comparison is still adjudicated at the table (the executor has no automated target-defense comparison).
+
+### Defects fixed during the game-night pass (engineering, no ruling needed)
+- `ForceExecutor.executeForcePower` referenced an undefined `telekineticPowerRepeatAction`; every activation threw after rolling, spending and applying effects, then a runtime wrapper restored the power to ready (present on `main` too).
+- Duplicate Force power selections in V2 progression shared ONE item object, so every copy received the last copy's identity (`countIndex`); each copy is now its own object.
+- Rest proofs: honored only on a GM client and only with an explicit unit (GM services emit minutes).

@@ -1,0 +1,385 @@
+{
+  "schemaVersion": "0.2",
+  "audit": "SWSE Force V2 — Checkpoint 02B RAW policy owner decisions",
+  "date": "2026-11-18",
+  "repository": "docflowGM/foundryvtt-swse",
+  "branch": "audit/force-v2-seven-book-packages-v2-9-20261117",
+  "baseline": "462261879bd25eea776e0b73e83982019c40e273",
+  "status": "SOURCE_VERIFIED_OWNER_ROUTE_ASSIGNED_RUNTIME_NOT_CERTIFIED",
+  "sourcePriority": [
+    "printed sourcebook",
+    "authenticated official errata supersedes printed wording",
+    "DJVU transcript for discovery only",
+    "bookwise influence graph for hypothesis only"
+  ],
+  "notImplemented": true,
+  "notRunInFoundry": true,
+  "primarySourceBooks": [
+    "Saga Edition Core Rulebook",
+    "Starships of the Galaxy",
+    "Knights of the Old Republic Campaign Guide",
+    "The Force Unleashed Campaign Guide"
+  ],
+  "certification": {
+    "policyReferences": 12,
+    "ownerBoundariesAssigned": 12,
+    "policyRuntimeCertifications": 0,
+    "observedCriticalGaps": [
+      "Legacy skill Move Light Object lacks target Reflex gate",
+      "deleteCombat prematurely recovers maneuvers",
+      "Resist Force bonus mistakenly applies to all Defenses",
+      "Optional Temptation graph omits temporary Dark Side Power path",
+      "Off-turn reaction FP validation conflicts with printed maneuver recovery"
+    ]
+  },
+  "crosscuttingFindings": [
+    "Modern StarshipManeuverStep stores duplicate copies by counts (scripts/apps/progression-framework/steps/starship-maneuver-step.js lines 1-45). Older StarshipManeuverManager filters already-learned names (lines 23-36) and ManeuverAuthorityEngine.validateManeuverSelection rejects duplicate IDs (lines 153-183): call-path convergence required.",
+    "Official Core errata p96, not original printing, supplies Telekinetic descriptor and corrections.",
+    "SotG official errata p25 and p31 adds Free-action Corellian Slip attack and fighter-group restrictions.",
+    "Do not translate a rules policy ID into Item identity.",
+    "All typed operations must have exact owning service and event receipt; no interpretive fallback."
+  ],
+  "policies": [
+    {
+      "sourceId": "core/rule/telekinetic-descriptor",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPage": 96,
+        "pdfPage": 97,
+        "authority": "OFFICIAL_CORE_ERRATA_OCT_2008",
+        "errataUrl": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+      },
+      "raw": "Official Core errata introduces [telekinetic] descriptor, cover bonus to target Defense or opposed check, concealment penalty to Use the Force unless Sense Surroundings was used this turn, and enumerates five Core Powers to receive the descriptor.",
+      "owner": {
+        "registry": "scripts/engine/registries/force-registry.js",
+        "roll": "scripts/engine/force/force-executor.js",
+        "defense": "scripts/engine/combat/attack-domain-router.js",
+        "mutator": "scripts/governance/actor-engine/actor-engine.js"
+      },
+      "classification": "EXISTING_AUTHORITIES_REQUIRE_TYPED_CONVERGENCE",
+      "findings": [
+        "Printed original Core p96 lacks this paragraph; only official errata establishes it.",
+        "ForceExecutor._isTelekineticPower at lines 1233-1247 infers status by name and free-text regex rather than strict descriptor.",
+        "No cover/concealment/Sense Surroundings modifier is applied in the inspected ForceExecutor activation path."
+      ],
+      "tests": [
+        "A [telekinetic] Power receives target cover to its relevant Defense/opposed check using actual geometry.",
+        "Concealment penalizes its UTF activation check unless Sense Surroundings used during this turn.",
+        "An otherwise similar Power lacking [telekinetic] is unaffected.",
+        "Core corrected five descriptors and all later books use canonical tags, not substring name heuristics."
+      ]
+    },
+    {
+      "sourceId": "core/rule/move-light-object-projectile",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "printedPage": 77,
+        "pdfPage": 78,
+        "authority": "PRINTED_CORE"
+      },
+      "raw": "Trained Use the Force application moves <=5 kg object 6 squares with DC 10 move action; using object as a projectile requires standard action and DC 15, and the UTF result must beat target Reflex Defense; a hit deals 1d6 bludgeoning damage.",
+      "owner": {
+        "skill": "scripts/skills/skill-uses.js",
+        "roll": "scripts/engine/rolls/swse-roll-engine.js",
+        "damage": "scripts/engine/combat/damage-engine.js"
+      },
+      "classification": "EXISTING_SKILL_HANDLER_VERIFIED_INCORRECT",
+      "findings": [
+        "UseTheForceUses.moveLightObject lines 2819-2883 only checks DC15 and does not compare against target Reflex.",
+        "It rolls 1d6 but emits the rolled result as a count of d6 dice in the returned damage field.",
+        "The graph's broad 'ranged-attack-for-feat-talent-interactions' categorization is not explicitly established by printed p77 and must not be propagated indiscriminately."
+      ],
+      "tests": [
+        "Untrained actor rejected; ordinary movement DC10/5kg/6sq and move action.",
+        "Projectile consumes a standard action and requires both fixed DC and target Reflex comparison.",
+        "Successful projectile deals exactly 1d6 bludgeoning, never 1d6 multiplied by rolled result.",
+        "Equality boundary and applicability of individual ranged-attack feats are source-adjudicated before broad automation."
+      ]
+    },
+    {
+      "sourceId": "sotg/rule/one-active-attack-pattern",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 24,
+        "pdfPage": 25,
+        "authority": "PRINTED_SOTG"
+      },
+      "raw": "An activated [attack pattern] lasts through encounter; only one may benefit actor at any moment; new pattern replaces effects of old, without recovering spent maneuver copy.",
+      "owner": {
+        "state": "scripts/engine/StarshipManeuversEngine.js",
+        "turn": "scripts/engine/combat/starship/vehicle-turn-controller.js",
+        "pilot": "scripts/engine/combat/starship/enhanced-pilot.js"
+      },
+      "classification": "AUTHORITIES_IDENTIFIED_EFFECT_STATE_MISSING",
+      "findings": [
+        "Vehicle sheet and StarshipManeuversEngine only toggle system.spent and don't enforce active pattern exclusivity or application duration.",
+        "EnhancedPilot.pilotManeuver is a separate optional per-round pilot-control mode and must not be conflated with published [attack pattern] suite state."
+      ],
+      "tests": [
+        "One pattern active with effect until encounter end.",
+        "Activating a second replaces former effects and former instance remains spent.",
+        "An attack pattern's own printed termination/action provisions still apply."
+      ]
+    },
+    {
+      "sourceId": "sotg/rule/fighter-group",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 31,
+        "pdfPage": 32,
+        "authority": "PRINTED_SOTG_PLUS_OFFICIAL_ERRATA_1_0",
+        "errataUrl": "https://www.theberserker.net/berserker/sw/rule_books/SW_Saga_Starships_of_the_Galaxy.pdf"
+      },
+      "raw": "Printed group composition 2-6 starfighters/airspeeders, trained Pilot join, same-size willing allies, shared square/group initiative, leader controls and group mechanics. Official errata adds join ends round actions, leader change at most once per group turn, every member knowing and using maneuver, and active individual attack pattern ending on join.",
+      "owner": {
+        "encounter": "scripts/engine/combat/starship/vehicle-turn-controller.js",
+        "vehicle": "scripts/engine/combat/subsystems/vehicle/index.js",
+        "maneuver": "scripts/engine/StarshipManeuversEngine.js"
+      },
+      "classification": "VEHICLE_DOMAIN_OWNER_ASSIGNED_FIGHTER_GROUP_OPERATION_NOT_LOCATED",
+      "findings": [
+        "Graph operation covers all-members-know/use and prior pattern termination but omits errata join-action loss and leader change frequency.",
+        "No fighter-group runtime class or group-action contract was located in inspected vehicle/maneuver entrypoints; do not invent an Item."
+      ],
+      "tests": [
+        "Group membership allowed only for 2-6 same-size allied willing vehicles with trained joining pilot.",
+        "Joining consumes remaining actions/readied actions.",
+        "Group leader change at most once per group turn.",
+        "Everyone must know shared maneuver and everyone spends a use.",
+        "Individual attack pattern ends upon joining; group stats and leader initiative follow p31."
+      ]
+    },
+    {
+      "sourceId": "sotg/rule/target-sense-battle-strike",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 30,
+        "pdfPage": 31,
+        "authority": "PRINTED_SOTG_PLUS_CORE_BATTLE_STRIKE_ERRATA",
+        "errataUrl": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+      },
+      "raw": "Target Sense [Force] is Swift action, uses an actual Use the Force check, substitutes attacker's Charisma modifier for ship Intelligence bonus for attack rolls until start next turn; DC25/30 adds +2/+5 maneuver bonus; those bonuses expressly stack with Battle Strike Force Power's Force bonus within overlapping duration.",
+      "owner": {
+        "maneuver": "scripts/engine/StarshipManeuversEngine.js",
+        "attack": "scripts/engine/combat/vehicle-attack-math.js",
+        "force": "scripts/engine/force/force-executor.js"
+      },
+      "classification": "COMPOSE_EXISTING_SERVICES_NO_EXECUTION_CERTIFICATION",
+      "findings": [
+        "Existing graph preserves different bonus types but must also represent Intelligence->Charisma substitution, not additive Charisma.",
+        "Actual UTF activation is not Pilot roll and must not trigger Pilot-natural-20 maneuver recovery.",
+        "Core Battle Strike +1 Force attack benefit uses errata's timing, not stale Core printing."
+      ],
+      "tests": [
+        "Target Sense uses UTF and requires eligible Force maneuver access.",
+        "DC20 Cha replaces vehicle Int with no double count; DC25/30 adds only maneuver +2/+5.",
+        "Battle Strike stacks when separately and legally active; no stacking after either duration expires.",
+        "Target Sense natural 20 UTF does not trigger Pilot-natural-20 maneuver recovery."
+      ]
+    },
+    {
+      "sourceId": "sotg/rule/corellian-slip-errata",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 25,
+        "pdfPage": 26,
+        "authority": "OFFICIAL_SOTG_ERRATA_1_0",
+        "errataUrl": "https://www.theberserker.net/berserker/sw/rule_books/SW_Saga_Starships_of_the_Galaxy.pdf"
+      },
+      "raw": "Corellian Slip remains full-round maneuver; official errata changes its follow-up attack on entering target square to a FREE action rather than printed swift. Failed activation may cause collision under printed special rule; it does not grant an attack.",
+      "owner": {
+        "turn": "scripts/engine/combat/starship/vehicle-turn-controller.js",
+        "attack": "scripts/engine/combat/attack-domain-router.js",
+        "maneuver": "scripts/engine/StarshipManeuversEngine.js"
+      },
+      "classification": "EVENT_EXECUTION_NOT_CERTIFIED",
+      "findings": [
+        "Graph corrects free action but does not specify printed failed-activation and collision consequences.",
+        "Vehicle maneuver sheet marks item spent but does not resolve Corellian Slip movement/attack/collision."
+      ],
+      "tests": [
+        "Successful Slip moves straight up to twice speed, attacks as free action, no extra swift cost.",
+        "Failure before target square makes activation fail; unsuccessful activation with entry follows printed collision clause.",
+        "Correct DC15-35 tiers, no extra attack on failure."
+      ]
+    },
+    {
+      "sourceId": "sotg/rule/pilot-nat20",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 24,
+        "pdfPage": 25,
+        "authority": "PRINTED_SOTG"
+      },
+      "raw": "A natural 20 on Pilot check TO ACTIVATE a starship maneuver restores all spent maneuver copies at the end of character's turn, not immediately and not for other Pilot uses.",
+      "owner": {
+        "roll": "scripts/engine/rolls/swse-roll-engine.js",
+        "turn": "scripts/engine/combat/starship/vehicle-turn-controller.js",
+        "suite": "scripts/engine/StarshipManeuversEngine.js"
+      },
+      "classification": "EVENT_OWNER_ASSIGNED_AUTO_RECOVERY_NOT_EVIDENCED",
+      "findings": [
+        "StarshipManeuversEngine contains per-item use/regain toggles only.",
+        "StarshipManeuverHooks deleteCombat handler is not the natural-20 end-of-turn rule."
+      ],
+      "tests": [
+        "True natural20 on activation Pilot queues recover-all at own end of turn.",
+        "Pilot checks for other purposes, UTF Target Sense, weapon attacks, and Take10 do not trigger.",
+        "Only spent existing suite instances are refreshed."
+      ]
+    },
+    {
+      "sourceId": "sotg/rule/fp-recovery",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 24,
+        "pdfPage": 25,
+        "authority": "PRINTED_SOTG"
+      },
+      "raw": "Spend one Force Point as reaction to recover exactly one already-spent starship maneuver immediately.",
+      "owner": {
+        "validation": "scripts/engine/force/force-points-service.js",
+        "mutator": "scripts/governance/actor-engine/actor-engine.js",
+        "suite": "scripts/engine/StarshipManeuversEngine.js"
+      },
+      "classification": "FP_POLICY_BOUNDARY_CONFLICT_REQUIRES_EXPLICIT_REACTION",
+      "findings": [
+        "ForcePointsService.validateSpend and force-point-service-runtime-patches reject off-turn/reaction spending unless Force Readiness or generic permission, despite this printed reaction authorization.",
+        "StarshipManeuversEngine.regainManeuver toggles spent without any FP receipt.",
+        "Roll-only ForcePointSpendCoordinator cannot simply be reused for a non-roll recovery."
+      ],
+      "tests": [
+        "Valid reaction spends exactly one FP and unspends exactly one selected maneuver copy.",
+        "Explicit SotG reaction exception works without requiring unrelated feat.",
+        "Ineligible/no spent choice fails without spending; no duplicate grant or race/double spend.",
+        "Other generic FP-spend restrictions continue applying where RAW requires."
+      ]
+    },
+    {
+      "sourceId": "sotg/rule/rest-recovery",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "printedPage": 24,
+        "pdfPage": 25,
+        "authority": "PRINTED_SOTG"
+      },
+      "raw": "Regain all spent starship maneuver uses only once battle is over AND character has an opportunity to rest for one minute.",
+      "owner": {
+        "hook": "scripts/infrastructure/hooks/starship-maneuver-hooks.js",
+        "suite": "scripts/engine/StarshipManeuversEngine.js",
+        "mutation": "scripts/governance/actor-engine/actor-engine.js"
+      },
+      "classification": "VERIFIED_ACTIVE_PREMATURE_RECOVERY_DEFECT",
+      "findings": [
+        "Active initialized deleteCombat hook in starship-maneuver-hooks.js lines 91-114 unconditionally restores all actor-owned spent maneuvers when combat deletes.",
+        "ActorHooks.initialize registers this hook; elapsed minute/rest opportunity is never verified.",
+        "Vehicle-owned/crew-linked maneuver ownership across vehicle actor may be incomplete in this handler."
+      ],
+      "tests": [
+        "Deleting combat without one-minute rest does NOT recover suite.",
+        "Confirmed battle conclusion + opportunity for full minute restores all eligible individual spent copies.",
+        "Correct actor/crew ownership, no phantom recovery, repeated rest idempotent."
+      ]
+    },
+    {
+      "sourceId": "kotor/rule/kotor-size-adjusted-fortitude",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "printedPages": [
+          50,
+          51,
+          52
+        ],
+        "pdfPages": [
+          51,
+          52,
+          53
+        ],
+        "authority": "PRINTED_KOTOR"
+      },
+      "raw": "Force Scream, Force Whirlwind, Slow, Wound each add target size modifier to Fortitude: Medium/smaller 0, Large +5, Huge +10, Gargantuan +20, Colossal +50. Only compare for powers whose text states it.",
+      "owner": {
+        "sourceData": "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_KOTOR_Definitions_for_v2.9.json",
+        "roll": "scripts/engine/force/force-executor.js",
+        "defense": "scripts/engine/combat/attack-domain-router.js"
+      },
+      "classification": "TARGET_DEFENSE_GATE_NOT_CERTIFIED",
+      "findings": [
+        "Graph correctly names four affected powers; source pages span 50-52, not just page50.",
+        "ForceExecutor.executeForcePower lines 225-380 computes generic baseDC and force power tier and does not evidence per-target size-adjusted Fortitude gate in that path.",
+        "Never extend size Fortitude to Fear vs Will or Ionize vs Reflex."
+      ],
+      "tests": [
+        "All four affected powers compare target Fortitude plus size modifiers, including Medium0 Large5 Huge10 Garg20 Colossal50.",
+        "Exactly-equal defense comparison succeeds when source says equals or exceeds.",
+        "Failure cannot apply hit-only conditions/damage.",
+        "Other KOTOR Powers outside explicit Fortitude rule remain unchanged."
+      ]
+    },
+    {
+      "sourceId": "kotor/rule/energy-resistance-continuation",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "printedPages": [
+          50,
+          51,
+          52
+        ],
+        "pdfPages": [
+          51,
+          52,
+          53
+        ],
+        "authority": "PRINTED_KOTOR"
+      },
+      "raw": "Maintaining Energy Resistance, Kinetic Combat, Resist Force and Valor costs swift action; Force Whirlwind maintenance costs move action and fresh UTF each round. Damage while maintaining requires UTF DC =15+damage taken or duration ends. Whirlwind ends if caster/allies hurt or move target down CT; Resist Force and Valor may coexist in separate instances with per-instance maintenance action.",
+      "owner": {
+        "activation": "scripts/engine/force/force-executor.js",
+        "effects": "scripts/engine/force/force-power-effects-engine.js",
+        "damage": "scripts/engine/combat/damage-engine.js",
+        "turn": "scripts/engine/combat/action/action-economy-hooks.js"
+      },
+      "classification": "LIFECYCLE_MISSING_AND_RESIST_FORCE_EFFECT_DEFECT",
+      "findings": [
+        "Graph encodes general damage concentration check but omits differing maintenance action, fresh Whirlwind check, early termination, and multiple-instance rules.",
+        "ForcePowerEffectsEngine._buildResistForceEffect lines 372-393 indiscriminately creates all-defenses bonuses; KOTOR p51 grants one chosen defense unless a Force Point is spent to cover TWO chosen defenses.",
+        "No typed per-instance maintenance receipt was found in the inspected ForceExecutor/ForcePowerEffectsEngine paths."
+      ],
+      "tests": [
+        "Each maintained instance consumes source-defined action and checks DC15+actual damage taken; fail expires that instance.",
+        "Force Whirlwind move action + new UTF every round, and ends on printed early-break events.",
+        "Resist Force targets ONE defense, TWO with legal FP; never all three.",
+        "Valor may affect different allies, Resist Force multiple instances, each costs distinct swift action."
+      ]
+    },
+    {
+      "sourceId": "fucg/rule/temptation-of-dark-side",
+      "source": {
+        "book": "The Force Unleashed Campaign Guide",
+        "printedPage": 85,
+        "pdfPage": 86,
+        "authority": "PRINTED_FUCG_OPTIONAL"
+      },
+      "raw": "GM-optional Temptation has TWO separate FP-for-benefit modes. (1) As free action, Force-sensitive user spends one FP to temporarily add one [dark side] Force Power; consumed on first use or end encounter and cannot recover by normal means. (2) As free action spend one FP per temporary Dark Side/Dark Side Devotee/Sith talent; meet every prerequisite, temporary talents can chain; benefits end encounter and DSP rises by number of FP spent on temporary talents at encounter end.",
+      "owner": {
+        "policy": "scripts/engine/force/ForceRules.js",
+        "prerequisites": "scripts/engine/progression/engine/force-authority-engine.js",
+        "force": "scripts/engine/force/force-executor.js",
+        "dsp": "scripts/engine/darkside/dsp-engine.js",
+        "mutation": "scripts/governance/actor-engine/actor-engine.js"
+      },
+      "classification": "GRAPH_OMITS_OPTIONAL_POWER_MODE_RUNTIME_NOT_CERTIFIED",
+      "findings": [
+        "Graph edge covers temporary talents but omits distinct temporary Power mode, which must be added to expanded interaction inventory rather than changing original 178 historical edges.",
+        "ForceRules.getDarkSideTemptationMode / ForceTrainingEngine getter offers strict/lenient/narrative setting, not verified equivalent to this printed opt-in rule.",
+        "No certified end-encounter cleanup, nonrecoverable temporary Power state, acquisition prerequisite chain or DSP settlement exists in inspected execution path."
+      ],
+      "tests": [
+        "Default off; GM opt-in explicitly gates both temp options.",
+        "Temporary dark-side Power only added through real FP cost; expends at use or encounter end; ordinary recovery always disallowed.",
+        "Temporary talents legal via actual prerequisites, including chains; expire at encounter end.",
+        "Exactly one DSP per FP spent on these temporary talents at encounter end; do not automatically assign identical end-encounter DSP rule to unused temporary Powers."
+      ]
+    }
+  ]
+}

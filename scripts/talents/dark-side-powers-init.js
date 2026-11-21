@@ -43,7 +43,7 @@ Hooks.once('ready', () => {
     const powerOptions = powersFromRegistry
       .map(p => {
         const actorItem = actorPowerItems.find(a => a.name === p.name);
-        return `<option value="${actorItem?.id || p.id}">${p.name}${p.system?.spent ? ' (Spent)' : ' (Ready)'}</option>`;
+        return `<option value="${actorItem?.id || p.id}">${p.name}${p.system?.discarded ? ' (Spent)' : ' (Ready)'}</option>`;
       })
       .join('');
 

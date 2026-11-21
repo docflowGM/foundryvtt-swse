@@ -1,0 +1,610 @@
+{
+  "schemaVersion": "2.9.0",
+  "package": "knights-of-the-old-republic-campaign-guide",
+  "purpose": "KOTOR source-backed Force Power, technique, and talent influences layered over canonical earlier-book definitions.",
+  "applicationOrder": [
+    "eligibility",
+    "grant",
+    "pre-action",
+    "pre-target",
+    "pre-roll",
+    "after-roll",
+    "pre-damage",
+    "apply-effects",
+    "spend-recovery"
+  ],
+  "eventSemantics": {
+    "fixed-dc-and-defense": "DC tier selection and adjusted defense comparison are BOTH required; neither supersedes the other.",
+    "technique": "Technique acquisition never creates a power activation; source power remains authority.",
+    "natural-roll-hooks": "Force Flow uses natural 1 on attack or Use the Force; not any roll.",
+    "ion": "Normal ion damage half after threshold unless Improved Ionize FP choice modifies.",
+    "treat-injury": "Wound persistent only when damage from its own execution shifts target condition track."
+  },
+  "edges": [
+    {
+      "ruleId": "kotor/influence/dominate-mind",
+      "sourceDefinitionId": "kotor/force-technique/dominate-mind",
+      "sourceDomain": "force-technique",
+      "sourceName": "Dominate Mind",
+      "sourcePage": 53,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/mind-trick"
+        ]
+      },
+      "event": "power-success",
+      "phase": "apply-effects",
+      "interactionMode": "modify",
+      "conditions": [
+        "UTF meets Will by >= 10."
+      ],
+      "operations": [
+        {
+          "op": "conditional-command",
+          "marginAtLeast": 10,
+          "actionControlled": "target-next-turn-standard",
+          "powerId": "core/force-power/mind-trick"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No Dominate Mind on Mind Trick failed vs Will.",
+        "Requires margin >=10; margin +9 blocked."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/improved-energy-resistance",
+      "sourceDefinitionId": "kotor/force-technique/improved-energy-resistance",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Energy Resistance",
+      "sourcePage": 53,
+      "targetSelector": {
+        "definitionIds": [
+          "kotor/force-power/energy-resistance"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "target-substitution",
+          "oldTarget": "self",
+          "newTarget": "one-ally",
+          "maxRangeSquares": 6
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Ally at square 6 legal; square 7 illegal.",
+        "Selection does not create separate power activation."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/improved-force-stun",
+      "sourceDefinitionId": "kotor/force-technique/improved-force-stun",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Stun",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-stun"
+        ]
+      },
+      "event": "power-success",
+      "phase": "apply-effects",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "force-power-on-success-extra-effect",
+          "powerId": "core/force-power/force-stun",
+          "effect": "immobilized",
+          "duration": "one-round"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No effect if Force Stun fails."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/improved-force-slam",
+      "sourceDefinitionId": "kotor/force-technique/improved-force-slam",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Slam",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-slam"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "alter-source-power-area-and-action",
+          "powerId": "core/force-power/force-slam",
+          "action": "full-round",
+          "radiusSquares": 2,
+          "origin": "caster-square"
+        }
+      ],
+      "resourceChoices": [
+        {
+          "resource": "force-point",
+          "trigger": "alternate-full-round-mode",
+          "timing": "on-activation",
+          "summary": "Increase radius to 4 squares",
+          "operations": [
+            {
+              "kind": "area-override",
+              "target": "force-slam",
+              "shape": "radius",
+              "radiusSquares": 4,
+              "origin": "caster-square"
+            }
+          ]
+        }
+      ],
+      "testAssertions": [
+        "Standard action still uses original cone, not radius.",
+        "At 2-square radius exactly succeeds; 3 squares outside."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/improved-ionize",
+      "sourceDefinitionId": "kotor/force-technique/improved-ionize",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Ionize",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "kotor/force-power/ionize"
+        ]
+      },
+      "event": "resource-choice",
+      "phase": "pre-damage",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "ion-damage-full-after-threshold",
+          "powerId": "kotor/force-power/ionize",
+          "forcePointCost": 1,
+          "replacesHalfDamage": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No modification to threshold comparison.",
+        "Without FP ion damage standard half."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/improved-kinetic-combat",
+      "sourceDefinitionId": "kotor/force-technique/improved-kinetic-combat",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Kinetic Combat",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "kotor/force-power/kinetic-combat"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "apply-effects",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "telekinetic-weapon-count",
+          "maximumWeapons": 3,
+          "attacksPerStandardAction": 1
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Control three, but one attack per standard action."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/improved-resist-force",
+      "sourceDefinitionId": "kotor/force-technique/improved-resist-force",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Resist Force",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "kotor/force-power/resist-force"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "target-substitution",
+          "oldTarget": "self",
+          "newTarget": "one-ally",
+          "maxRangeSquares": 6
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No extra simultaneous caster effect."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/improved-valor",
+      "sourceDefinitionId": "kotor/force-technique/improved-valor",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Valor",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "kotor/force-power/valor"
+        ]
+      },
+      "event": "power-success",
+      "phase": "apply-effects",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "add-power-target",
+          "target": "caster",
+          "identicalEffect": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Caster gets same earned tier, target keeps their own effect."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/improved-vital-transfer",
+      "sourceDefinitionId": "kotor/force-technique/improved-vital-transfer",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Vital Transfer",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/vital-transfer"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "substitute-touch-range",
+          "rangeSquares": 6,
+          "lineOfSight": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Self target remains illegal; six-square LOS allowed."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/language-absorption",
+      "sourceDefinitionId": "kotor/force-technique/language-absorption",
+      "sourceDomain": "force-technique",
+      "sourceName": "Language Absorption",
+      "sourcePage": 54,
+      "targetSelector": {
+        "domain": "use-the-force-skill"
+      },
+      "event": "telepathy-skill-use",
+      "phase": "apply-effects",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "temporary-language",
+          "durationHours": 24,
+          "opposedIfUnwilling": true,
+          "defense": "will"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No extra Force power instance granted.",
+        "Unwilling target gated by UTF vs Will."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/force-flow",
+      "sourceDefinitionId": "kotor/talent/force-flow",
+      "sourceDomain": "talent",
+      "sourceName": "Force Flow",
+      "sourcePage": 52,
+      "targetSelector": {
+        "checkKinds": [
+          "attack-roll",
+          "use-the-force"
+        ]
+      },
+      "event": "natural-one",
+      "phase": "spend-recovery",
+      "interactionMode": "modify",
+      "conditions": [
+        "Natural 1 on attack roll or Use the Force check; not raw Pilot skill check."
+      ],
+      "operations": [
+        {
+          "op": "temp-force-point",
+          "amount": 1,
+          "expires": "end-of-encounter",
+          "choiceReplacesRecovery": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Natural 1 on Pilot check does not grant temp FP."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/telepathic-influence",
+      "sourceDefinitionId": "kotor/talent/telepathic-influence",
+      "sourceDomain": "talent",
+      "sourceName": "Telepathic Influence",
+      "sourcePage": 53,
+      "targetSelector": {
+        "checkKinds": [
+          "attack-roll",
+          "use-the-force"
+        ]
+      },
+      "event": "natural-twenty",
+      "phase": "spend-recovery",
+      "interactionMode": "modify",
+      "conditions": [
+        "Ally within 12 squares",
+        "Forgo normal spent-power recovery"
+      ],
+      "operations": [
+        {
+          "op": "temp-force-point",
+          "amount": 1,
+          "expires": "end-of-encounter",
+          "choiceReplacesRecovery": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No simultaneous full suite recovery and temp FP grant."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/telepathic-link",
+      "sourceDefinitionId": "kotor/talent/telepathic-link",
+      "sourceDomain": "talent",
+      "sourceName": "Telepathic Link",
+      "sourcePage": 53,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "linked-power-borrow",
+      "phase": "eligibility",
+      "interactionMode": "modify",
+      "conditions": [
+        "Willing ally has Force Sensitivity",
+        "Only one active link"
+      ],
+      "operations": [
+        {
+          "op": "borrow-ally-force-power",
+          "usesPerEncounter": 1,
+          "requiresConsent": true,
+          "maxLinkKilometers": 1,
+          "actionToLink": "swift"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Borrowed power does not increase owned suite permanently."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/beast-trick",
+      "sourceDefinitionId": "kotor/talent/beast-trick",
+      "sourceDomain": "talent",
+      "sourceName": "Beast Trick",
+      "sourcePage": 53,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/mind-trick"
+        ]
+      },
+      "event": "target-eligibility",
+      "phase": "eligibility",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "allow-low-intelligence-mind-trick-target",
+          "maximumIntelligence": 2,
+          "cannotComprehendComplexCommands": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Intelligence <=2 targets become eligible without granting complex-command comprehension."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/force-suppression",
+      "sourceDefinitionId": "kotor/talent/force-suppression",
+      "sourceDomain": "talent",
+      "sourceName": "Force Suppression",
+      "sourcePage": 53,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/rebuke"
+        ]
+      },
+      "event": "rebuke-failure",
+      "phase": "apply-effects",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "reduce-incoming-power-tier",
+          "steps": 1,
+          "onFailedRebuke": true,
+          "variableTiersOnly": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Force Lightning static effect unaffected.",
+        "Variable DC power tier decreases by one after failed Rebuke."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/rebuke-the-dark",
+      "sourceDefinitionId": "kotor/talent/rebuke-the-dark",
+      "sourceDomain": "talent",
+      "sourceName": "Rebuke the Dark",
+      "sourcePage": 39,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/rebuke"
+        ]
+      },
+      "event": "rebuke-vs-dark-side",
+      "phase": "after-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "rebuke-dark-side-reroll",
+          "powerId": "core/force-power/rebuke",
+          "keep": "better",
+          "opponentDescriptor": "dark-side"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Reroll allowed only against Force power with [dark side] descriptor; keep better result."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/taint-of-the-dark-side",
+      "sourceDefinitionId": "kotor/talent/taint-of-the-dark-side",
+      "sourceDomain": "talent",
+      "sourceName": "Taint of the Dark Side",
+      "sourcePage": 39,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "fp-or-dp-spend",
+      "phase": "spend-recovery",
+      "interactionMode": "modify",
+      "conditions": [
+        "Taint suppression otherwise applies",
+        "January 2009 official errata"
+      ],
+      "operations": [
+        {
+          "op": "darksidescore-normal-if-spending-fp-dp",
+          "resourceChoices": [
+            "force-point",
+            "destiny-point"
+          ]
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Resource modification of dark-side power is not falsely suppressed."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/kotor-size-adjusted-fortitude",
+      "sourceDefinitionId": "kotor/rule/kotor-size-adjusted-fortitude",
+      "sourceDomain": "rule",
+      "sourceName": "KOTOR Size-Adjusted Fortitude",
+      "sourcePage": 50,
+      "targetSelector": {
+        "definitionIds": [
+          "kotor/force-power/force-scream",
+          "kotor/force-power/force-whirlwind",
+          "kotor/force-power/slow",
+          "kotor/force-power/wound"
+        ]
+      },
+      "event": "target-defense-comparison",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "size-adjusted-fortitude",
+          "large": 5,
+          "huge": 10,
+          "gargantuan": 20,
+          "colossal": 50
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Never apply to Fear versus Will or Ionize versus Reflex."
+      ]
+    },
+    {
+      "ruleId": "kotor/influence/energy-resistance-continuation",
+      "sourceDefinitionId": "kotor/rule/energy-resistance-continuation",
+      "sourceDomain": "rule",
+      "sourceName": "Energy Resistance Continuation",
+      "sourcePage": 50,
+      "targetSelector": {
+        "definitionIds": [
+          "kotor/force-power/energy-resistance",
+          "kotor/force-power/kinetic-combat",
+          "kotor/force-power/resist-force",
+          "kotor/force-power/force-whirlwind",
+          "kotor/force-power/valor"
+        ]
+      },
+      "event": "damage-while-maintaining",
+      "phase": "apply-effects",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "maintain-damage-concentration-check",
+          "formula": "15+damageTaken",
+          "onFailure": "end-effect"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No damage concentration roll when power is not maintained."
+      ]
+    }
+  ],
+  "excludedScope": [
+    "Unverified feats/talents elsewhere in book that do not directly change these powers",
+    "Unreleased supplement material and alternate house rules"
+  ],
+  "schemaEvolutionPolicy": {
+    "newPublicationMayAdd": [
+      "typed-operation",
+      "event",
+      "phase",
+      "selector",
+      "resource-choice"
+    ],
+    "previousRecordsMustRevalidate": true,
+    "cannotBeAddedAsUntypedFreeText": true,
+    "ambiguousPublishedEffect": "Flag as editorial blocker; do not invent a behavior or choose one silently."
+  }
+}

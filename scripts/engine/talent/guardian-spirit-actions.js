@@ -178,7 +178,7 @@ export class GuardianSpiritActions {
       ui?.notifications?.warn?.('No Force Points available to manifest your Guardian Spirit.');
       return null;
     }
-    await ActorEngine.spendForcePoints(actor, 1);
+    await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'guardian-spirit:manifest' });
     await actor.setFlag(NS, GUARDIAN_PATH, {
       manifested: true,
       manifestedAt: Date.now(),

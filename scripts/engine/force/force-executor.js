@@ -21,6 +21,9 @@ import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
+import { TemptationOfTheDarkSide } from "/systems/foundryvtt-swse/scripts/engine/force/temptation-of-the-dark-side.js";
+import { beginContractedForcePoint } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
+import { ForcePowerMaintenance, ENHANCEMENT_CONTRACT_REFS, conditionalDefenseBonuses } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-maintenance.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 
 function forcePowerHasDarkSideDescriptor(power) {
@@ -220,8 +223,10 @@ export class ForceExecutor {
         }
       }
       if (options.moveMassiveObject === true) {
-        const required = useForce ? 2 : 1;
-        if (this._getAvailableForcePoints(actor) < required) throw new Error(`Move Massive Object requires spending ${required} Force Point${required === 1 ? '' : 's'}`);
+        // The special talent's additional FP payment is not yet a typed,
+        // source-proven transaction. Reject BEFORE any paid UTF roll rather
+        // than charging one FP and failing on the second debit afterwards.
+        throw new Error('Move Massive Object additional Force Point use awaits certified source-specific authorization.');
       }
 
       const dcChart = this._getPowerDcRows(power);
@@ -296,9 +301,7 @@ export class ForceExecutor {
       // (via ForcePointSpendCoordinator/ActorEngine.spendForcePoints) before
       // rolling above. Do not spend it again here — this used to compensate
       // for RollCore not actually paying for its own bonus and now double-spends.
-      if (options.moveMassiveObject === true) {
-        await ActorEngine.spendForcePoints(actor, 1);
-      }
+
 
       if (isFumble) {
         await this.handleForceFlowNaturalOne(actor, { source: power.name, rollType: 'Use the Force' });
@@ -308,7 +311,7 @@ export class ForceExecutor {
 
       // Handle natural 20 effects
       if (isCritical) {
-        await ForceEngine.recordNatural20(actor, power.name);
+        // The natural-20 suite regain is recorded once, by RollCore (every Use the Force domain).
         await this.grantTelepathicInfluenceForcePoint(actor);
       }
 
@@ -333,10 +336,58 @@ export class ForceExecutor {
         'system.lastUsed': Date.now()
       }], { source: 'force-power-use', render: false });
 
+      // FUCG p.85 Temptation power: "when the power is used ... it goes away entirely" (success or not -- it was used).
+      await TemptationOfTheDarkSide.consumeAfterUse(actor, power);
+
       // Apply force power effects if successful
       let appliedEffects = [];
       if (success) {
-        appliedEffects = await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total, { target: options.target ?? options.targetActor ?? null });
+        const effectContext = {
+          target: options.target ?? options.targetActor ?? null,
+          resistForceDefenses: options.resistForceDefenses ?? null
+        };
+        // Resist Force / Valor: the choices the printed text requires (defense(s), ally target) and the optional paid
+        // Special. The Force Point for the Special is paid HERE through the typed transaction; maintenance accepts only
+        // that receipt (a client flag is never proof of payment).
+        const enhancementRef = ENHANCEMENT_CONTRACT_REFS[ForcePowerMaintenance.contractFor(power)?.key];
+        let enhancementReceipt = null;
+        if (enhancementRef) {
+          const choice = await this.promptMaintainedPowerOptions(actor, power, { ...options, ...effectContext });
+          if (!choice) {
+            ui?.notifications?.warn?.(`${power.name}: no choice made, so no effect was applied.`);
+          } else {
+            effectContext.target = choice.target ?? effectContext.target;
+            effectContext.resistForceDefenses = choice.defenses ?? effectContext.resistForceDefenses;
+            if (choice.payForcePoint) {
+              try {
+                enhancementReceipt = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: enhancementRef, targetItemInstanceId: power.id });
+                if (!enhancementReceipt?.spent) enhancementReceipt = null;
+              } catch (err) {
+                ui?.notifications?.warn?.(`${power.name}: Force Point option not paid (${err.message}); the basic effect applies.`);
+                enhancementReceipt = null;
+              }
+            }
+            if (!enhancementReceipt && Array.isArray(effectContext.resistForceDefenses) && effectContext.resistForceDefenses.length > 1) {
+              ui?.notifications?.info?.(`${power.name}: without the Force Point only the first chosen Defense receives the bonus.`);
+              effectContext.resistForceDefenses = effectContext.resistForceDefenses.slice(0, 1);
+            }
+          }
+          effectContext.forcePointReceiptId = enhancementReceipt?.receiptId ?? null;
+        }
+        // Powers with a maintenance contract become an independent maintained instance; all others keep the plain path.
+        let maintained = null;
+        try {
+          maintained = await ForcePowerMaintenance.begin(actor, power, total, effectContext);
+        } finally {
+          // Exact settlement: the paid option is finalized only if the instance used it; otherwise the point comes back.
+          if (enhancementReceipt) {
+            if (maintained?.forcePointReceiptId === enhancementReceipt.receiptId) await ActorEngine.finalizeForcePointSpend(actor, enhancementReceipt);
+            else await ActorEngine.rollbackForcePointSpend(actor, enhancementReceipt);
+          }
+        }
+        appliedEffects = maintained
+          ? maintained.effectIds
+          : (ForcePowerMaintenance.contractFor(power) ? [] : await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total, effectContext));
       }
 
       // Generate rich concept chat message
@@ -362,11 +413,21 @@ export class ForceExecutor {
           resolvedEffect,
           appliedEffects,
           forceTalentNotes: talentContext.notes,
-          telekineticPowerRepeatAction,
+          telekineticPowerRepeatAction: telekineticRepeatAction,
           freeActionRepeat: options.freeRepeat === true,
           forceActionLabel: options.freeRepeat === true ? 'Free Action repeat' : null
         }
       );
+
+      // Table-facing notice: conditional defense bonuses the target holds against THIS power (Resist Force / Valor).
+      const targetActor = options.target ?? options.targetActor ?? null;
+      if (targetActor && targetActor !== actor) {
+        const bonuses = conditionalDefenseBonuses(targetActor, { descriptors });
+        if (bonuses.length) {
+          const rows = bonuses.map(b => `<li>+${b.amount} ${b.defense} Defense (${b.label})</li>`).join('');
+          await SWSEChat.postHTML({ actor, content: `<div class="swse-conditional-defense"><strong>${targetActor.name}</strong> adds against ${power.name}:<ul>${rows}</ul></div>` });
+        }
+      }
 
       return {
         success,
@@ -498,7 +559,6 @@ export class ForceExecutor {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
         _id: power.id,
         'system.discarded': false,
-        'system.spent': false,
         'system.lastRecovered': Date.now(),
         'flags.foundryvtt-swse.lastRecoverySource': sourceSlug
       }], { source: `${sourceSlug}-recover`, render: false });
@@ -512,7 +572,7 @@ export class ForceExecutor {
         lastUsedAt: Date.now()
       });
 
-      await ForcePowerEffectsEngine.removePowerEffects(actor, power);
+      // A maintained effect is an independent instance (ForcePowerMaintenance); recovering the Power copy never ends it.
 
       await SWSEChat.postHTML({
         actor,
@@ -617,11 +677,16 @@ export class ForceExecutor {
     };
   }
 
+  // Certified per-talent contracts (Aversion: CWCG p.53 swift; Illusion: FUCG p.87 standard). The printed action is
+  // debited and the receipt is settled by the caller: finalized after the effect, returned exactly if it throws.
   static async _spendForcePointForTalent(actor, talentName) {
-    const available = this._getAvailableForcePoints(actor);
-    if (available <= 0) throw new Error(`${talentName} requires spending 1 Force Point, but none are available`);
-    const result = await ActorEngine.spendForcePoints(actor, 1);
-    return result;
+    const fp = await beginContractedForcePoint(actor, `force-executor-option:${talentName}`, {}, { label: talentName, notify: false });
+    if (!fp.ok) throw new Error(fp.reason);
+    let finish;
+    const done = new Promise((resolve) => { finish = resolve; });
+    // settle() waits for finish(true|false); the caller signals the outcome.
+    fp.settle(() => done);
+    return { remaining: fp.receipt.remaining, settle: (applied) => finish(applied === true) };
   }
 
   static getForceFlowState(actor) {
@@ -709,10 +774,12 @@ export class ForceExecutor {
   }
 
   static async activateAversion(actor) {
+    let fpSpendAversion = null;
     try {
       if (!actor) throw new Error('Actor not found');
       if (!this._actorHasTalent(actor, 'Aversion')) throw new Error('Aversion talent not found');
       const fpSpend = await this._spendForcePointForTalent(actor, 'Aversion');
+      fpSpendAversion = fpSpend;
       const remainingFP = fpSpend?.remaining ?? SchemaAdapters.getForcePoints(actor);
       const effectData = {
         name: 'Aversion',
@@ -741,8 +808,10 @@ export class ForceExecutor {
           <p><em>Mind-Affecting effect · Force Points remaining: ${remainingFP}</em></p>
         </div>`
       });
+      fpSpend.settle(true);
       return { success: true, forcePointsRemaining: remainingFP };
     } catch (err) {
+      fpSpendAversion?.settle?.(false);
       console.error('Aversion failed:', err);
       ui?.notifications?.error?.(`Aversion failed: ${err.message}`);
       return { success: false, error: err.message };
@@ -817,10 +886,12 @@ export class ForceExecutor {
   }
 
   static async executeIllusion(actor, options = {}) {
+    let fpSpendIllusion = null;
     try {
       if (!actor) throw new Error('Actor not found');
       if (!this._actorHasTalent(actor, 'Illusion')) throw new Error('Illusion talent not found');
       const fpSpend = await this._spendForcePointForTalent(actor, 'Illusion');
+      fpSpendIllusion = fpSpend;
       const remainingFP = fpSpend?.remaining ?? SchemaAdapters.getForcePoints(actor);
       const baseBonus = this._getUseTheForceTotal(actor);
       const sizePenalty = Number(options.sizePenalty ?? 0) || 0;
@@ -908,8 +979,10 @@ export class ForceExecutor {
           }
         }
       });
+      fpSpend.settle(true);
       return { success: true, roll: total, dc: baseDC || null, forcePointsRemaining: remainingFP };
     } catch (err) {
+      fpSpendIllusion?.settle?.(false);
       console.error('Illusion failed:', err);
       ui?.notifications?.error?.(`Illusion failed: ${err.message}`);
       return { success: false, error: err.message };
@@ -1056,26 +1129,83 @@ export class ForceExecutor {
    * @param {Array<string>} powerIds - Array of power IDs to recover (or null for all)
    * @returns {Object} Recovery result
    */
-  static async recoverForcePowers(actor, powerIds = null) {
+  /**
+   * Choices printed for Resist Force (the Defense of your choice; a Force Point for any two) and Valor (one ally within
+   * 12 squares and line of sight; a Force Point to apply against all Will-targeting effects). Returns
+   * { defenses?, target?, payForcePoint } or null when cancelled. Callers may pre-supply options to skip the dialog.
+   */
+  static async promptMaintainedPowerOptions(actor, power, options = {}) {
+    const key = ForcePowerMaintenance.contractFor(power)?.key;
+    const presetDefenses = Array.isArray(options.resistForceDefenses) ? options.resistForceDefenses : null;
+    const presetTarget = options.target ?? null;
+    const presetPay = options.payEnhancementForcePoint;
+    if (key === 'resist-force' && presetDefenses && presetPay !== undefined) return { defenses: presetDefenses, payForcePoint: presetPay === true };
+    if (key === 'valor' && presetTarget && presetPay !== undefined) return { target: presetTarget, payForcePoint: presetPay === true };
+
+    const allyTokens = key === 'valor' ? Array.from(globalThis.game?.user?.targets ?? []).filter(t => t?.actor && t.actor.id !== actor.id) : [];
+    const valorTarget = presetTarget ?? allyTokens[0]?.actor ?? null;
+    if (key === 'valor' && !valorTarget) {
+      ui?.notifications?.warn?.('Valor: target one ally (12 squares, line of sight) before activating.');
+      return null;
+    }
+    const DialogV2 = globalThis.foundry?.applications?.api?.DialogV2;
+    if (!DialogV2?.wait) return null;
+    const defenseBoxes = key === 'resist-force'
+      ? ['reflex', 'fortitude', 'will'].map(d => `<label><input type="checkbox" name="def-${d}"> ${d[0].toUpperCase()}${d.slice(1)} Defense</label>`).join('<br>')
+      : `<p>Target: <strong>${valorTarget.name}</strong></p>`;
+    const fpLabel = key === 'resist-force'
+      ? 'Spend a Force Point to apply the bonus to two Defenses'
+      : 'Spend a Force Point: the bonus applies against all effects that target Will Defense';
+    const content = `<form>${defenseBoxes}<hr><label><input type="checkbox" name="payForcePoint"> ${fpLabel}</label></form>`;
+    const result = await DialogV2.wait({
+      window: { title: power.name },
+      content,
+      buttons: [{
+        action: 'ok', label: 'Apply', default: true,
+        callback: (_event, button) => {
+          const form = button.form;
+          const pay = form.elements.payForcePoint?.checked === true;
+          if (key === 'resist-force') {
+            const defenses = ['reflex', 'fortitude', 'will'].filter(d => form.elements[`def-${d}`]?.checked);
+            return { defenses, payForcePoint: pay };
+          }
+          return { target: valorTarget, payForcePoint: pay };
+        }
+      }, { action: 'cancel', label: 'Cancel' }],
+      rejectClose: false
+    }).catch(() => null);
+    return result && result !== 'cancel' ? result : null;
+  }
+
+  static async recoverForcePowers(actor, powerIds = null, { proof = null } = {}) {
+    // "Recover all" is never unconditional: SuiteInstanceRecovery verifies a natural 20, a GM-confirmed rest or GM adjudication.
+    if (!Array.isArray(powerIds) || powerIds.length === 0) {
+      const { SuiteInstanceRecovery } = await import('/systems/foundryvtt-swse/scripts/engine/force/suite-instance-recovery.js');
+      return SuiteInstanceRecovery.regainAllSpent(actor, 'force-power', { proof, source: 'force-power-recover-all' });
+    }
     try {
       let powersToRecover = [];
+      let paidReceipt = null;
 
-      if (powerIds && powerIds.length > 0) {
-        // Recover specific powers — spend a Force Point through the shared spender so bonus Force Points are consumed first.
-        const spend = await ActorEngine.spendForcePoints(actor, 1);
-        if (!spend?.spent) {
-          ui?.notifications?.warn?.('No Force Points left!');
-          return { success: false, error: 'No Force Points available' };
+      if (Array.isArray(powerIds) && powerIds.length > 0) {
+        // Core p.93 errata: one owned spent Power copy per FP reaction.
+        // Reject multiple selected copies instead of charging once for many.
+        if (powerIds.length !== 1) {
+          return { success: false, error: 'Force Point recovery requires exactly one selected Power instance' };
         }
-        const selected = powerIds.map(id => actor.items.get(id)).filter(p => p && (p.system?.discarded || p.system?.spent));
-        powersToRecover = [...selected];
-        if (this._actorHasTalent(actor, 'Recall')) {
-          const selectedIds = new Set(selected.map(p => p.id));
-          const extra = actor.items.find(item => isForcePowerItem(item) && (item.system?.discarded || item.system?.spent) && !selectedIds.has(item.id));
-          if (extra) powersToRecover.push(extra);
+        const selected = actor.items.get(powerIds[0]);
+        if (!selected || !isForcePowerItem(selected) ||
+            (selected?.system?.discarded !== true) || selected?.flags?.swse?.temptation) {
+          return { success: false, error: 'Selected Force Power instance is not owned and spent' };
         }
+        powersToRecover = [selected];
+        paidReceipt = await ActorEngine.spendForcePoints(actor, 1, {
+          useKind: 'recover-one-force-power',
+          targetItemInstanceId: selected.id
+        });
       } else {
-        // Recover all discarded force powers (rest / natural 20)
+        // The existing rest/natural-20 mass-recovery branch is a separate
+        // 03C event-provenance cutover. Do not reinterpret it as a paid action.
         powersToRecover = actor.items.filter(item => isForcePowerItem(item) && item.system?.discarded);
       }
 
@@ -1083,17 +1213,38 @@ export class ForceExecutor {
         throw new Error("No force powers to recover");
       }
 
-      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', powersToRecover.map(power => ({
-        _id: power.id,
-        'system.discarded': false,
-        'system.spent': false,
-        'system.lastRecovered': Date.now()
-      })), { source: 'force-power-recover-all', render: false });
-
-      // Remove any active effects from recovered powers
-      for (const power of powersToRecover) {
-        await ForcePowerEffectsEngine.removePowerEffects(actor, power);
+      try {
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', powersToRecover.map(power => ({
+          _id: power.id,
+          'system.discarded': false,
+          'system.lastRecovered': Date.now()
+        })), { source: paidReceipt ? 'force-power-fp-reaction-recover-one' : 'force-power-recover-all', render: false });
+      } catch (error) {
+        if (paidReceipt) {
+          const stillSpent = powersToRecover.every(power => {
+            const live = actor.items.get(power.id);
+            return live?.system?.discarded === true;
+          });
+          if (stillSpent) {
+            const compensation = await ActorEngine.rollbackForcePointSpend(actor, paidReceipt);
+            if (!compensation?.rolledBack) console.error('Recovery refund refused; manual reconciliation needed', compensation);
+          } else {
+            console.error('Recovery Item write may have applied before failure; no unsafe automatic refund', error);
+          }
+        }
+        throw error;
       }
+
+      if (paidReceipt) {
+        try {
+          const finality = await ActorEngine.finalizeForcePointSpend(actor, paidReceipt);
+          if (!finality?.finalized) console.error('Power recovery completed but FP receipt finality could not be persisted', finality);
+        } catch (error) {
+          console.error('Power recovery completed but FP receipt finalization failed', error);
+        }
+      }
+      // A recovered learned Power copy is not the active effect instance.
+      // Effect duration/maintenance stays owned by ForcePowerEffectsEngine.
 
       // Generate chat message
       await SWSEChat.postHTML({

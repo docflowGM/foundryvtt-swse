@@ -55,8 +55,8 @@ assert.match(modifierEngine, /static async resolveTarget\(actor, target, options
 // sites — not part of this check).
 const singleAttackRerollFn = resolver.slice(resolver.indexOf('static async resolveAttackRerollButton('), resolver.indexOf('static async resolveFullAttackRerollButton('));
 const fullAttackRerollFn = resolver.slice(resolver.indexOf('static async resolveFullAttackRerollButton('));
-assert.match(singleAttackRerollFn, /ActorEngine\.spendForcePoints\(actor, 1\)/);
-assert.match(fullAttackRerollFn, /ActorEngine\.spendForcePoints\(actor, 1\)/);
+assert.match(singleAttackRerollFn, /ActorEngine\.spendForcePoints\(actor, 1, \{ useKind: 'ability-option'/);
+assert.match(fullAttackRerollFn, /ActorEngine\.spendForcePoints\(actor, 1, \{ useKind: 'ability-option'/);
 
 // 5. RollCore/RollEngine: the full-attack reroll handler rolls through the
 // same RollEngine.safeRoll call convention as the single-attack reroll

@@ -1,0 +1,1756 @@
+{
+  "packageVersion": "0.1.0",
+  "schemaVersion": "2.9.0",
+  "scope": "Legacy Era Campaign Guide Book 7: 9 new powers + 9 new techniques; Force Shield reprint not counted",
+  "purpose": "Source-indexed typed Force V2 definition and DC contract; NOT finished Foundry runtime implementation",
+  "sourceAuthority": {
+    "book": "Legacy Era Campaign Guide",
+    "pdf": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+    "textLookup": "Legacy Era Campaign Guide_djvu.txt",
+    "pagesReviewed": [
+      53,
+      54,
+      55,
+      56
+    ],
+    "officialErrata": {
+      "title": "Legacy Era: no authenticated official book-specific errata located in this review",
+      "issuer": "not independently verified",
+      "issued": "unverified",
+      "url": "https://sagaedition.info/wiki/Legacy_Era_Campaign_Guide",
+      "priority": "printed rules control pending official errata"
+    }
+  },
+  "mechanicalPrinciples": {
+    "rollType": "Use the Force for powers; techniques are overlays on a power use.",
+    "tierSelection": "Highest published fixed DC met; only when the ability actually uses fixed DC.",
+    "successPriority": [
+      "acquisition",
+      "target-and-distance",
+      "choose-resource",
+      "roll-check",
+      "per-target-hit-or-tier",
+      "base-effect",
+      "conditional-technique-modifier",
+      "damage-and-resource-receipt"
+    ],
+    "powerRecovery": [
+      "Existing Force Training suite authority; duplicate instances allowed where published."
+    ],
+    "modifierApplication": "Related power links do not add acquisition prerequisite. Matching JATM form talent ownership, not active stance, still grants riders.",
+    "errataPriority": "Independently verified official errata > printed PDF > TXT > legacy compendium"
+  },
+  "counts": {
+    "force-power": 9,
+    "force-technique": 9,
+    "force-secret": 0,
+    "reprints": 1,
+    "total": 18,
+    "fixedDcTierRows": 11,
+    "originalTotalPrintedPowerEntries": 10
+  },
+  "definitions": [
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-power/ballistakinesis",
+      "legacyPackId": "fp_ballistakinesis",
+      "domain": "force-power",
+      "printedName": "Ballistakinesis",
+      "displayName": "Ballistakinesis",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "2x2 area within 12; UTF >= each target Reflex: 3d8 chosen physical type and attack -2 until next turn; FP gives half damage on misses.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "all-targets-in-2x2-area",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense-per-target",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "damage-dice",
+            "target": "each-hit-target",
+            "dice": "3d8",
+            "damageType": "chosen-bludgeoning-piercing-or-slashing"
+          },
+          {
+            "kind": "modifier",
+            "target": "each-hit-target",
+            "stat": "attack-rolls",
+            "amount": -2,
+            "when": "until-start-of-caster-next-turn"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "On a Reflex miss, target takes half of the rolled 3d8 without the attack penalty.",
+          "operations": [
+            {
+              "kind": "area-half-damage-on-miss",
+              "target": "each-missed-target",
+              "fraction": 0.5,
+              "damageSource": "ballistakinesis-3d8-shared-roll",
+              "conditionsExcludedOnMiss": [
+                "attack-roll-penalty"
+              ]
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "defense",
+        "damageTiming": "immediate",
+        "defenseEvaluatedPerTarget": true,
+        "areaRule": {
+          "widthSquares": 2,
+          "heightSquares": 2,
+          "perTargetDefense": "reflex",
+          "halfDamageOnMiss": false,
+          "damageRollReuse": true,
+          "areaAttack": true
+        },
+        "defenseComparator": "at-least"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-power/combustion",
+      "legacyPackId": "fp_combustion",
+      "domain": "force-power",
+      "printedName": "Combustion",
+      "displayName": "Combustion",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "2x2 area; UTF vs each Fortitude: hit 4d6 fire and ignite, miss half damage without ignition; ignite uses UTF total as ongoing fire attack bonus.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "all-targets-in-2x2-area",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense-per-target",
+          "defense": "fortitude",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "damage-dice",
+            "target": "each-hit-target",
+            "dice": "4d6",
+            "damageType": "fire"
+          },
+          {
+            "kind": "ignite-burning",
+            "target": "each-hit-target",
+            "attackBonusSource": "initial-use-the-force-total",
+            "fireRulesOwner": "core-fire-rules",
+            "onlyOnHit": true
+          }
+        ],
+        "onFailure": [
+          {
+            "kind": "area-half-damage-on-miss",
+            "target": "each-missed-target",
+            "fraction": 0.5,
+            "damageSource": "combustion-4d6-shared-roll",
+            "conditionsExcludedOnMiss": [
+              "burning"
+            ]
+          }
+        ],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Move one target hit by Combustion down one CT step.",
+          "operations": [
+            {
+              "kind": "condition-track",
+              "target": "one-target-hit",
+              "steps": -1
+            }
+          ],
+          "requirements": [
+            "Target must have been hit, not merely damaged by the miss-half effect"
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "defense",
+        "damageTiming": "immediate",
+        "areaRule": {
+          "widthSquares": 2,
+          "heightSquares": 2,
+          "perTargetDefense": "fortitude",
+          "halfDamageOnMiss": true,
+          "damageRollReuse": true,
+          "areaAttack": true
+        },
+        "fireRule": {
+          "ignitesOnlyOnHit": true,
+          "burningAttackBonusSource": "initial-use-the-force-total",
+          "burningRulesOwner": "core-fire-rules"
+        },
+        "defenseEvaluatedPerTarget": true,
+        "defenseComparator": "at-least",
+        "missHalfDamageWithoutCondition": true
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-power/dark-transfer",
+      "legacyPackId": "fp_darktransfer",
+      "domain": "force-power",
+      "printedName": "Dark Transfer",
+      "displayName": "Dark Transfer",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Touch a living other creature, heal character level x1/x2/x3/x4 at DC 15/20/25/30; each use costs -1 persistent CT and +1 Dark Side Point.",
+      "descriptors": [
+        "dark-side"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-other-living-creature-touched",
+        "rangeSquares": null,
+        "rangeMode": "touch",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Heal 1 x caster character level HP",
+            "operations": [
+              {
+                "kind": "heal",
+                "target": "living-touched-target",
+                "formula": "1*characterLevel"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Heal 2 x caster character level HP",
+            "operations": [
+              {
+                "kind": "heal",
+                "target": "living-touched-target",
+                "formula": "2*characterLevel"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Heal 3 x caster character level HP",
+            "operations": [
+              {
+                "kind": "heal",
+                "target": "living-touched-target",
+                "formula": "3*characterLevel"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Heal 4 x caster character level HP",
+            "operations": [
+              {
+                "kind": "heal",
+                "target": "living-touched-target",
+                "formula": "4*characterLevel"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "A dead creature is not a valid base Dark Transfer target; Improved Dark Transfer supplies the distinct exception.",
+          "Persistent CT cost and Dark Side Point gain occur each use, not conditional on a successful healing tier."
+        ],
+        "defenseAdjustments": [],
+        "onAttempt": [
+          {
+            "kind": "persistent-force-cost",
+            "target": "caster",
+            "steps": -1,
+            "persistent": true,
+            "recoveryHours": 8,
+            "darkSidePointGain": 1,
+            "trigger": "power-use-attempt"
+          }
+        ]
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Avoid the persistent -1 condition step, but still gain 1 Dark Side Point.",
+          "operations": [
+            {
+              "kind": "suppress-persistent-condition-cost",
+              "target": "caster",
+              "conditionFromDefinition": "legacy/force-power/dark-transfer",
+              "darkSidePointStillApplies": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Persistent cost applies even when no DC tier succeeded; base onSuccess is also modeled as an on-activation cost in powerRules and test manifest."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc",
+        "damageTiming": "none",
+        "persistentExpenditure": {
+          "trigger": "power-use-attempt",
+          "conditionSteps": -1,
+          "conditionPersistent": true,
+          "recoveryRestHours": 8,
+          "darkSidePoints": 1,
+          "forcePointAlternativeAvoidsConditionOnly": true
+        }
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-power/detonate",
+      "legacyPackId": "fp_detonate",
+      "domain": "force-power",
+      "printedName": "Detonate",
+      "displayName": "Detonate",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 53,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "One unattended object within 12/LOS takes 4d6/6d6/8d6/10d6 at DC 20/25/30/35; FP adds 2d6.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-unattended-object",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "4d6 damage to selected unattended object",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "selected-unattended-object",
+                "dice": "4d6",
+                "damageType": "unspecified-in-source"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "6d6 damage to selected unattended object",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "selected-unattended-object",
+                "dice": "6d6",
+                "damageType": "unspecified-in-source"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "8d6 damage to selected unattended object",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "selected-unattended-object",
+                "dice": "8d6",
+                "damageType": "unspecified-in-source"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "10d6 damage to selected unattended object",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "selected-unattended-object",
+                "dice": "10d6",
+                "damageType": "unspecified-in-source"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Add +2d6 damage to the object.",
+          "operations": [
+            {
+              "kind": "damage-dice",
+              "target": "selected-unattended-object",
+              "dice": "2d6",
+              "damageType": "same-as-detonate"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc",
+        "damageTiming": "immediate"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-power/enlighten",
+      "legacyPackId": "fp_enlighten",
+      "domain": "force-power",
+      "printedName": "Enlighten",
+      "displayName": "Enlighten",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Swift action or reaction, ally within 12/LOS substitutes caster UTF total for ONE attack/skill/opposed roll or selected defense before start of caster next turn.",
+      "descriptors": [
+        "light-side",
+        "mind-affecting"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "one-ally",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "attack-substitution",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        },
+        "alternateActions": [
+          "reaction"
+        ]
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "insight-result-substitution",
+            "target": "chosen-ally",
+            "resultSource": "activator-use-the-force-total",
+            "allowedTypes": [
+              "attack-roll",
+              "skill-check",
+              "opposed-check",
+              "defense"
+            ],
+            "uses": 1,
+            "expires": "before-start-of-caster-next-turn",
+            "defenseAppliesUntil": "start-of-caster-next-turn"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Extend substitution availability until the end of your next turn.",
+          "operations": [
+            {
+              "kind": "duration-override",
+              "target": "enlighten-effect",
+              "value": "end-of-caster-next-turn"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "No fixed DC or hostile-defense gate. Receiving ally chooses one published roll/defense mode; activation UTF total is the value."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "none",
+        "damageTiming": "none",
+        "rollSubstitutionRule": {
+          "resultSource": "activator-use-the-force-total",
+          "validRolls": [
+            "attack-roll",
+            "skill-check",
+            "opposed-check",
+            "defense"
+          ],
+          "consumptionLimit": 1,
+          "expires": "before-start-of-caster-next-turn",
+          "defenseSelectionMode": "one-defense-score-until-start-of-next-turn"
+        }
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-power/lightning-burst",
+      "legacyPackId": "fp_lightningburst",
+      "domain": "force-power",
+      "printedName": "Lightning Burst",
+      "displayName": "Lightning Burst",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "All adjacent enemies, UTF vs each Reflex; hit 3d6 Force and -1 CT, miss half Force damage without CT; maintained as standard if unmoved.",
+      "descriptors": [
+        "dark-side"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "all-adjacent-enemies",
+        "rangeSquares": 1,
+        "rangeMode": "within-squares",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense-per-target",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "damage-dice",
+            "target": "each-hit-enemy",
+            "dice": "3d6",
+            "damageType": "force"
+          },
+          {
+            "kind": "condition-track",
+            "target": "each-hit-enemy",
+            "steps": -1
+          }
+        ],
+        "onFailure": [
+          {
+            "kind": "area-half-damage-on-miss",
+            "target": "each-missed-enemy",
+            "fraction": 0.5,
+            "damageSource": "lightning-burst-3d6-shared-roll",
+            "conditionsExcludedOnMiss": [
+              "condition-track-step"
+            ]
+          }
+        ],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Increase base Lightning Burst damage by +2d6; miss still takes half adjusted damage.",
+          "operations": [
+            {
+              "kind": "damage-dice",
+              "target": "lightning-burst-damage",
+              "dice": "2d6",
+              "damageType": "force"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Source: maintain as standard action provided caster has not moved since activating; each maintenance activation rolls UTF anew against each currently adjacent enemy."
+      ],
+      "maintenance": {
+        "allowed": true,
+        "action": "standard",
+        "repeatEachRound": true,
+        "repeatCheck": true,
+        "targetPersistence": "all-current-adjacent-enemies",
+        "forcedEndTriggers": [
+          "caster-has-moved-since-activation"
+        ]
+      },
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "defense",
+        "damageTiming": "immediate",
+        "defenseEvaluatedPerTarget": true,
+        "defenseComparator": "at-least",
+        "missHalfDamageWithoutCondition": true
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-power/obscure",
+      "legacyPackId": "fp_obscure",
+      "domain": "force-power",
+      "printedName": "Obscure",
+      "displayName": "Obscure",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Reaction to a just-rolled enemy attack within 12/LOS; UTF >= attacker Will applies -5 to the attack; if it misses, optional reroll against another creature adjacent to attacker at -5.",
+      "descriptors": [
+        "mind-affecting"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "one-enemy-just-made-an-attack-roll",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense",
+          "defense": "will",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "modifier",
+            "target": "triggering-enemy-attack",
+            "stat": "attack-roll",
+            "amount": -5,
+            "when": "retroactive-reaction"
+          },
+          {
+            "kind": "conditional-attack-redirection",
+            "target": "original-attacker",
+            "afterOriginalMiss": true,
+            "adjacentTo": "original-attacker",
+            "rollAgain": true,
+            "attackPenalty": -5,
+            "newTarget": "another-creature-adjacent-to-attacker"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Apply -5 to all of that enemy’s attacks until start of its next turn.",
+          "operations": [
+            {
+              "kind": "extend-all-target-attacks",
+              "target": "original-attacker",
+              "attackPenalty": -5,
+              "expires": "start-of-target-next-turn",
+              "sourceAttack": "original-triggering-attack"
+            }
+          ]
+        }
+      ],
+      "adjudication": [
+        "The phrase “another creature adjacent to it” refers to the original attacker (the power’s defined target), not the creature originally attacked."
+      ],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "defense",
+        "damageTiming": "none"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-power/prescience",
+      "legacyPackId": "fp_prescience",
+      "domain": "force-power",
+      "printedName": "Prescience",
+      "displayName": "Prescience",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Against one enemy LOS, DC 15/20/25 grants +1/+2/+3 insight to attacks against that enemy and Defenses vs its attacks/effects through end of caster next turn.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "one-enemy",
+        "rangeSquares": null,
+        "rangeMode": "or-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "+1 insight to attacks vs selected foe and defenses vs its effects",
+            "operations": [
+              {
+                "kind": "relative-insight-bonus",
+                "target": "caster",
+                "enemyReference": "chosen-enemy",
+                "amount": 1,
+                "bonusType": "insight",
+                "attackScope": "against-chosen-enemy",
+                "defenseScope": "originating-from-chosen-enemy",
+                "expires": "end-of-caster-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "+2 insight to attacks vs selected foe and defenses vs its effects",
+            "operations": [
+              {
+                "kind": "relative-insight-bonus",
+                "target": "caster",
+                "enemyReference": "chosen-enemy",
+                "amount": 2,
+                "bonusType": "insight",
+                "attackScope": "against-chosen-enemy",
+                "defenseScope": "originating-from-chosen-enemy",
+                "expires": "end-of-caster-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "+3 insight to attacks vs selected foe and defenses vs its effects",
+            "operations": [
+              {
+                "kind": "relative-insight-bonus",
+                "target": "caster",
+                "enemyReference": "chosen-enemy",
+                "amount": 3,
+                "bonusType": "insight",
+                "attackScope": "against-chosen-enemy",
+                "defenseScope": "originating-from-chosen-enemy",
+                "expires": "end-of-caster-next-turn"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Affect one additional enemy within line of sight using the same tier.",
+          "operations": [
+            {
+              "kind": "additional-target",
+              "target": "additional-enemy",
+              "newTarget": "one-additional-enemy-in-line-of-sight",
+              "identicalOutcome": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc",
+        "damageTiming": "none"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-power/stagger",
+      "legacyPackId": "fp_stagger",
+      "domain": "force-power",
+      "printedName": "Stagger",
+      "displayName": "Stagger",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Swift, one adjacent enemy: UTF >= Fortitude deals 2d6 Force damage and pushes 1 square without AoO; FP targets all adjacent enemies.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "one-adjacent-enemy",
+        "rangeSquares": 1,
+        "rangeMode": "within-squares",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense",
+          "defense": "fortitude",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "damage-dice",
+            "target": "each-hit-enemy",
+            "dice": "2d6",
+            "damageType": "force"
+          },
+          {
+            "kind": "forced-movement",
+            "target": "each-hit-enemy",
+            "squaresFormula": "1",
+            "direction": "directly-away-from-caster"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Compare UTF against all adjacent enemies’ Fortitude Defenses and apply base hit effects individually.",
+          "operations": [
+            {
+              "kind": "target-count",
+              "target": "all-adjacent-enemies",
+              "formula": "all-adjacent-enemies",
+              "mode": "replaces-single-target"
+            }
+          ],
+          "exclusiveGroup": "stagger-force-point-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Forced displacement does not provoke attacks of opportunity."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "defense",
+        "damageTiming": "immediate"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-technique/detoxify-poison",
+      "legacyPackId": "0e59f5761f3d479c",
+      "domain": "force-technique",
+      "printedName": "Detoxify Poison",
+      "displayName": "Detoxify Poison",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Replace Vital Transfer healing with UTF vs active poison DC, detoxifying as Treat Injury on success; no ordinary healing.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "prestige-force-technique-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "modifies-existing-ability",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "detoxify-poison",
+            "target": "vital-transfer-target",
+            "checkDcSource": "active-poison-dc",
+            "checkResultSource": "vital-transfer-utf-check",
+            "replacesHealing": true,
+            "successEffect": "treat-injury-detoxify-poison"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Source power activation otherwise valid; no independent acquisition requirement for knowing Vital Transfer unless printed in source."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/vital-transfer"
+      ],
+      "rulesNotes": [
+        "The poison has its own external DC; this is not a new universal DC tier."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "techniqueRules": {
+        "relatedPowerId": "core/force-power/vital-transfer",
+        "relationType": "modify-existing-power-on-use",
+        "requiresRelatedPowerToLearn": false,
+        "sourceBenefit": "Replace Vital Transfer healing with UTF vs active poison DC, detoxifying as Treat Injury on success; no ordinary healing."
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-technique/improved-ballistakinesis",
+      "legacyPackId": "e4a22dc082282bf4",
+      "domain": "force-technique",
+      "printedName": "Improved Ballistakinesis",
+      "displayName": "Improved Ballistakinesis",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend FP on Ballistakinesis to increase 2x2 area to 3x3.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "prestige-force-technique-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "modifies-existing-ability",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "3x3 area replaces 2x2.",
+          "operations": [
+            {
+              "kind": "area-override",
+              "target": "ballistakinesis-area",
+              "shape": "square",
+              "widthSquares": 3
+            }
+          ],
+          "exclusiveGroup": "ballistakinesis-fp-mode"
+        }
+      ],
+      "adjudication": [
+        "Base Ballistakinesis FP gives half damage on miss; this technique spends an FP to enlarge. Do not silently combine both alternatives from one spend."
+      ],
+      "interactions": [
+        "legacy/force-power/ballistakinesis"
+      ],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "techniqueRules": {
+        "relatedPowerId": "legacy/force-power/ballistakinesis",
+        "relationType": "modify-existing-power-on-use",
+        "requiresRelatedPowerToLearn": false,
+        "sourceBenefit": "Spend FP on Ballistakinesis to increase 2x2 area to 3x3."
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-technique/improved-dark-transfer",
+      "legacyPackId": "45b8b39a3225a1b0",
+      "domain": "force-technique",
+      "printedName": "Improved Dark Transfer",
+      "displayName": "Improved Dark Transfer",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 55,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend FP, DC 25 UTF, revive creature deceased since end of last turn: target becomes unconscious, not dead, and gets no HP healing.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "prestige-force-technique-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "modifies-existing-ability",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Replace normal Dark Transfer healing with DC 25 revive.",
+          "operations": [
+            {
+              "kind": "restore-recently-dead",
+              "target": "recently-dead-creature",
+              "deathWindow": "since-end-of-caster-last-turn",
+              "dc": 25,
+              "result": "unconscious-not-dead",
+              "healsHp": false
+            }
+          ],
+          "exclusiveGroup": "dark-transfer-fp-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "legacy/force-power/dark-transfer"
+      ],
+      "rulesNotes": [
+        "Other use-cost consequences are still governed by Dark Transfer source unless a published exception says otherwise."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "techniqueRules": {
+        "relatedPowerId": "legacy/force-power/dark-transfer",
+        "relationType": "modify-existing-power-on-use",
+        "requiresRelatedPowerToLearn": false,
+        "sourceBenefit": "Spend FP, DC 25 UTF, revive creature deceased since end of last turn: target becomes unconscious, not dead, and gets no HP healing."
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-technique/improved-detonate",
+      "legacyPackId": "2b99e97855e5f320",
+      "domain": "force-technique",
+      "printedName": "Improved Detonate",
+      "displayName": "Improved Detonate",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "On Detonate, enemies within 2 squares of the object suffer HALF damage actually sustained by object if UTF >= each Reflex; area attack.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "prestige-force-technique-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "modifies-existing-ability",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "source-object-damage-share",
+            "target": "enemies-within-2-squares-of-object",
+            "damageBasis": "actual-damage-sustained-by-object",
+            "fraction": 0.5,
+            "objectRadiusSquares": 2,
+            "checkPerTargetDefense": "reflex",
+            "attackType": "area"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "legacy/force-power/detonate"
+      ],
+      "rulesNotes": [
+        "No incidental enemy damage on failed per-enemy Reflex comparison; each is separately checked."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "techniqueRules": {
+        "relatedPowerId": "legacy/force-power/detonate",
+        "relationType": "modify-existing-power-on-use",
+        "requiresRelatedPowerToLearn": false,
+        "sourceBenefit": "On Detonate, enemies within 2 squares of the object suffer HALF damage actually sustained by object if UTF >= each Reflex; area attack."
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-technique/improved-enlighten",
+      "legacyPackId": "ff4ddecb458e604c",
+      "domain": "force-technique",
+      "printedName": "Improved Enlighten",
+      "displayName": "Improved Enlighten",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend FP during Enlighten to include one additional ally.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "prestige-force-technique-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "modifies-existing-ability",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Second ally receives its own legal Enlighten option.",
+          "operations": [
+            {
+              "kind": "additional-target",
+              "target": "additional-ally",
+              "newTarget": "one-additional-ally-in-range-and-line-of-sight",
+              "identicalOutcome": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "legacy/force-power/enlighten"
+      ],
+      "rulesNotes": [
+        "Additional ally is separate from original target, must satisfy ability range and LOS."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "techniqueRules": {
+        "relatedPowerId": "legacy/force-power/enlighten",
+        "relationType": "modify-existing-power-on-use",
+        "requiresRelatedPowerToLearn": false,
+        "sourceBenefit": "Spend FP during Enlighten to include one additional ally."
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-technique/improved-lightning-burst",
+      "legacyPackId": "2a15d6c28e351f14",
+      "domain": "force-technique",
+      "printedName": "Improved Lightning Burst",
+      "displayName": "Improved Lightning Burst",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "On Lightning Burst, compare UTF to each target’s Reflex AND Fortitude; if both met, also push 1 square and prone.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "prestige-force-technique-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "modifies-existing-ability",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "multi-defense-required",
+            "target": "each-enemy-hit-by-burst",
+            "requiredDefenses": [
+              "reflex",
+              "fortitude"
+            ],
+            "when": "for-extra-push-and-prone"
+          },
+          {
+            "kind": "forced-movement",
+            "target": "each-enemy-passing-both-defenses",
+            "squaresFormula": "1",
+            "direction": "away-from-caster"
+          },
+          {
+            "kind": "condition",
+            "target": "each-enemy-passing-both-defenses",
+            "value": "prone"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "legacy/force-power/lightning-burst"
+      ],
+      "rulesNotes": [
+        "Failing Fortitude does NOT cancel existing Lightning Burst Reflex damage/CT; it only cancels this technique’s extra push/prone."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "techniqueRules": {
+        "relatedPowerId": "legacy/force-power/lightning-burst",
+        "relationType": "modify-existing-power-on-use",
+        "requiresRelatedPowerToLearn": false,
+        "sourceBenefit": "On Lightning Burst, compare UTF to each target’s Reflex AND Fortitude; if both met, also push 1 square and prone."
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-technique/improved-obscure",
+      "legacyPackId": "aa17a16957b98653",
+      "domain": "force-technique",
+      "printedName": "Improved Obscure",
+      "displayName": "Improved Obscure",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend FP during Obscure to gain +5 Force bonus on its Use the Force check.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "prestige-force-technique-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "modifies-existing-ability",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Add +5 Force bonus to Obscure’s triggering UTF check.",
+          "operations": [
+            {
+              "kind": "modifier",
+              "target": "activator",
+              "stat": "use-the-force-check-for-obscure",
+              "amount": 5,
+              "bonusType": "force",
+              "when": "on-obscure-use"
+            }
+          ],
+          "exclusiveGroup": "obscure-fp-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "legacy/force-power/obscure"
+      ],
+      "rulesNotes": [
+        "This is distinct from the base Obscure FP option that extends attack penalties through next turn."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "techniqueRules": {
+        "relatedPowerId": "legacy/force-power/obscure",
+        "relationType": "modify-existing-power-on-use",
+        "requiresRelatedPowerToLearn": false,
+        "sourceBenefit": "Spend FP during Obscure to gain +5 Force bonus on its Use the Force check."
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-technique/improved-force-shield",
+      "legacyPackId": "c0439657bb9803f3",
+      "domain": "force-technique",
+      "printedName": "Improved Force Shield",
+      "displayName": "Improved Force Shield",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "When using Force Shield, spend FP to include adjacent allies; alternatively spend DP to shield occupied vehicle of any size; non-stacking SR.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "prestige-force-technique-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "modifies-existing-ability",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Shield self plus all adjacent allies, using one shared power activation and source-defined SR.",
+          "operations": [
+            {
+              "kind": "target-count",
+              "target": "caster-and-adjacent-allies",
+              "formula": "self-plus-all-adjacent-allies",
+              "mode": "area-expansion"
+            }
+          ],
+          "exclusiveGroup": "force-shield-technique-resource-mode"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Protect occupied vehicle, regardless of size; existing vehicle SR and granted Force Shield SR do not stack.",
+          "operations": [
+            {
+              "kind": "protect-vehicle-with-force-shield",
+              "target": "occupied-vehicle",
+              "shieldSourceId": "fucg/force-power/force-shield",
+              "occupancyRequired": true,
+              "vehicleSizeLimit": false,
+              "shieldStacking": "non-stacking-higher-applicable-sr"
+            }
+          ],
+          "exclusiveGroup": "force-shield-technique-resource-mode"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "fucg/force-power/force-shield"
+      ],
+      "rulesNotes": [
+        "Do NOT duplicate Legacy Force Shield: the known originating definition is FUCG p86 and is reprinted Legacy p54."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "techniqueRules": {
+        "relatedPowerId": "fucg/force-power/force-shield",
+        "relationType": "modify-existing-power-on-use",
+        "requiresRelatedPowerToLearn": false,
+        "sourceBenefit": "When using Force Shield, spend FP to include adjacent allies; alternatively spend DP to shield occupied vehicle of any size; non-stacking SR."
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "legacy/force-technique/improved-stagger",
+      "legacyPackId": "f0408bd4fe0f3dda",
+      "domain": "force-technique",
+      "printedName": "Improved Stagger",
+      "displayName": "Improved Stagger",
+      "source": {
+        "bookId": "swse-legacy-era",
+        "printedPage": 56,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend FP to push a successful Stagger target 2 squares instead of 1.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "prestige-force-technique-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "modifies-existing-ability",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Replace one-square base push with two squares; does not add one plus two.",
+          "operations": [
+            {
+              "kind": "replace-push-distance",
+              "target": "hit-stagger-target",
+              "fromSquares": 1,
+              "toSquares": 2,
+              "additive": false
+            }
+          ],
+          "exclusiveGroup": "stagger-force-point-mode"
+        }
+      ],
+      "adjudication": [
+        "The base Stagger FP affects all adjacent enemies; this FP improves push. Two competing FP uses are not automatically merged."
+      ],
+      "interactions": [
+        "legacy/force-power/stagger"
+      ],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "techniqueRules": {
+        "relatedPowerId": "legacy/force-power/stagger",
+        "relationType": "modify-existing-power-on-use",
+        "requiresRelatedPowerToLearn": false,
+        "sourceBenefit": "Spend FP to push a successful Stagger target 2 squares instead of 1."
+      }
+    }
+  ],
+  "modifiers": [],
+  "unresolvedSourceInterpretations": [
+    {
+      "id": "LEG-001",
+      "severity": "blocks-full-automation",
+      "issue": "Potential FP stacking: base Ballistakinesis half-on-miss versus Improved Ballistakinesis area-expansion. No text authorizes both from one FP; encode distinct choices until adjudicated."
+    },
+    {
+      "id": "LEG-002",
+      "severity": "blocks-full-automation",
+      "issue": "Competing base/technique FP modes for Obscure, Stagger, and Force Shield. Do not silently combine, double-charge, or treat a single point as paying multiple enhancements."
+    },
+    {
+      "id": "LEG-003",
+      "severity": "review",
+      "issue": "Combustion ongoing fire uses initial UTF check TOTAL as fire attack bonus; confirm how fire attacks are scheduled/resolved by shared Core fire service without a duplicate fire subsystem."
+    },
+    {
+      "id": "LEG-004",
+      "severity": "review",
+      "issue": "Dark Transfer persistent condition cost applies to each use, including a failed healing check. Treatment alongside revival variant and Dark Preservation must respect explicit source costs and resource expenditure timing."
+    },
+    {
+      "id": "LEG-005",
+      "severity": "review",
+      "issue": "Legacy uses `equal or exceeds` for ability hit checks, and Ballistakinesis FP says targets you `fail to exceed`: treat equality as hit based on complete rule, not as half-damage miss."
+    },
+    {
+      "id": "LEG-006",
+      "severity": "review",
+      "issue": "Detonate printed damage type unspecified. Improved Detonate gives nearby targets slashing damage based on actual object damage; object hardness/DR and half rounding owned by shared DamageSystem."
+    },
+    {
+      "id": "LEG-007",
+      "severity": "review",
+      "issue": "Force Shield is a Legacy reprint of FUCG original, not a second learnable definition; repeated text read matches known origin, but verify formal published errata."
+    },
+    {
+      "id": "LEG-008",
+      "severity": "review",
+      "issue": "Official Legacy Era-specific errata was not independently authenticated in this pass. Printed pages 53–56 remain authority pending an official source."
+    },
+    {
+      "id": "LEG-009",
+      "severity": "review",
+      "issue": "Enlighten defense substitution scope: one chosen defense until next turn versus consumed one roll. Store source-specific distinction and do not invent repeated or unrestricted substitution."
+    },
+    {
+      "id": "LEG-010",
+      "severity": "review",
+      "issue": "Original Obscure “another creature adjacent to it” uses “target” for attacking enemy. Explicitly resolve adjacent-to-attacker for implementation; retain review if contradictory official clarification found."
+    }
+  ],
+  "reprints": [
+    {
+      "definitionId": "fucg/force-power/force-shield",
+      "reprintPage": 54,
+      "sourceBookId": "swse-legacy-era",
+      "sameMechanics": true,
+      "countedAsNewDefinition": false,
+      "notes": "Legacy p54 repeats FUCG p86 Force Shield; Improved Force Shield belongs to Legacy as its own technique."
+    }
+  ],
+  "nextBook": "Remaining 212 count is exhausted; conduct publication-wide gap review for missing definitions and cross-domain modifiers before implementation."
+}

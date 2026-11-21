@@ -3,6 +3,7 @@ import ModifierUtils from "/systems/foundryvtt-swse/scripts/engine/effects/modif
 import { buildSourceBreakdown, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { ForcePointSpendCoordinator } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-coordinator.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SuiteInstanceRecovery, suiteKindForActivationDomain } from "/systems/foundryvtt-swse/scripts/engine/force/suite-instance-recovery.js";
 
 export class RollCore {
   static async execute(options = {}) {
@@ -57,6 +58,11 @@ export class RollCore {
       const isTakeX = rollOptions.isTakeX || false;
       const takeXValue = rollOptions.takeXValue || 10;
 
+      // A fixed take-X result cannot silently discard a requested paid bonus.
+      if (isTakeX && rollOptions.useForce) {
+        return { success: false, error: 'Force Point use is not supported for take-X checks', domain, breakdown: {}, context };
+      }
+
       if (isTakeX) {
         return this._handleTakeX({ actor, domain, baseDice, baseBonus, takeXValue, modifierTotal, modifierBreakdown, modifierLedger, suppressedModifiers, context });
       }
@@ -78,6 +84,7 @@ export class RollCore {
           forcePointDetails = forceResult;
         } else {
           swseLogger.warn(`[RollCore] Force Point use failed: ${forceResult.reason}`);
+          return { success: false, error: `Force Point use denied: ${forceResult.reason}`, domain, breakdown: {}, context, forcePointDetails: forceResult };
         }
       }
 
@@ -92,12 +99,35 @@ export class RollCore {
         // above; since this roll never happened, refund it rather than leaving
         // the actor short a point for a bonus they never received.
         if (forcePointDetails?.success && forcePointDetails.spent > 0) {
-          await this._refundForcePoints(actor, forcePointDetails.spent, 'main-roll-execution-failed');
+          await this._refundForcePoints(actor, forcePointDetails.spendReceipt, 'main-roll-execution-failed');
         }
         return { success: false, error: `Roll execution failed: ${err.message}`, domain, breakdown: {} };
       }
 
+      // The paid check has executed: it is now final even if subsequent
+      // presentation fails. A failed receipt-finality write is reported but
+      // never causes a refund of an already applied bonus.
+      if (forcePointDetails?.spendReceipt?.receiptId) {
+        try {
+          const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+          const finality = await ActorEngine.finalizeForcePointSpend(actor, forcePointDetails.spendReceipt);
+          if (!finality?.finalized) swseLogger.error(`[RollCore] Force Point applied but finality receipt was not persisted: ${finality?.reason}`);
+        } catch (err) {
+          swseLogger.error('[RollCore] Paid check executed but Force Point receipt finalization failed; manual audit required.', err);
+        }
+      }
+
       const baseRollResult = this._extractBaseRoll(roll, baseDice);
+      // Natural 20 on a suite ACTIVATION check (Force Power: Use the Force; starship maneuver: Pilot) regains that suite's
+      // spent instances at the end of the actor's turn. Not for unrelated Use the Force / Pilot checks.
+      const suiteKind = suiteKindForActivationDomain(domain);
+      if (baseRollResult === 20 && suiteKind) {
+        try {
+          await SuiteInstanceRecovery.recordNatural20(actor, suiteKind, { source: context?.itemName ?? context?.powerName ?? null });
+        } catch (err) {
+          swseLogger.error('[RollCore] Natural 20 suite regain could not be recorded', err);
+        }
+      }
       const breakdown = {
         baseRoll: baseRollResult,
         baseBonus,
@@ -230,17 +260,28 @@ export class RollCore {
       dieSize: receipt.dieSize,
       dieUpgradeSteps: receipt.dieUpgradeSteps,
       dieUpgradeSource: receipt.dieUpgradeSource,
-      roll: receipt.roll
+      roll: receipt.roll,
+      spendReceipt: receipt.spendReceipt
     };
   }
 
-  /** Refund Force Points already spent when a roll they paid for never completed. */
-  static async _refundForcePoints(actor, amount, refundReason) {
+  /** Compensate an unexecuted paid roll from the persisted source-exact receipt. */
+  static async _refundForcePoints(actor, receipt, refundReason) {
+    if (!receipt?.receiptId) {
+      swseLogger.error(`[RollCore] Cannot compensate ${refundReason}: missing exact Force Point receipt`);
+      return false;
+    }
     try {
       const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-      await ActorEngine.gainForcePoints(actor, amount);
+      const result = await ActorEngine.rollbackForcePointSpend(actor, receipt);
+      if (!result?.rolledBack) {
+        swseLogger.error(`[RollCore] Exact Force Point compensation refused after ${refundReason}: ${result?.reason}`);
+        return false;
+      }
+      return true;
     } catch (err) {
-      swseLogger.error(`[RollCore] Failed to refund ${amount} Force Point(s) after ${refundReason}; actor may be short a point.`, err);
+      swseLogger.error(`[RollCore] Exact Force Point compensation failed after ${refundReason}; manual reconciliation required.`, err);
+      return false;
     }
   }
 

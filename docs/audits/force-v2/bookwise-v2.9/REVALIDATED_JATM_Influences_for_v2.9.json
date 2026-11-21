@@ -1,0 +1,1708 @@
+{
+  "schemaVersion": "2.9.0",
+  "package": "book-6-jedi-academy-training-manual",
+  "purpose": "24 source-RAW form talent ownership riders, 14 technique-to-power links, two temporary Power secrets, and twelve scoped regimen outcome modifiers.",
+  "applicationOrder": [
+    "source-identity",
+    "acquisition",
+    "weapon-activation-and-crew-readiness",
+    "form-talent-known",
+    "optional-fp-dp-choices",
+    "roll",
+    "tier-and-defense",
+    "rider-at-source-trigger",
+    "duration-and-temporary-grants",
+    "recovery"
+  ],
+  "eventSemantics": {
+    "FormRider": "Matching Lightsaber Form talent OWNERSHIP grants the printed rider; an activated lightsaber gates base Form Power use. No active-form stance check applies to Form Power riders.",
+    "ForceTechnique": "Related Power use modification; separate acquisition prerequisite check.",
+    "ForceSecret": "FP grants temporary nonrecoverable power use; optional DP prolongs; time owner/recipient specific.",
+    "Regimen": "One active benefit in 24 hours, failed same-regimen lockout, Wisdom feat entitlement and no long-rest expiration override."
+  },
+  "edges": [
+    {
+      "ruleId": "jatm/influence/form-rider/assured-strike",
+      "sourceDefinitionId": "talent/lightsaber-form/juyo",
+      "sourceDomain": "talent",
+      "sourceName": "Juyo",
+      "sourcePage": 29,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/assured-strike"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/assured-strike",
+          "talentRef": "talent/lightsaber-form/juyo",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/barrier-of-blades",
+      "sourceDefinitionId": "talent/lightsaber-form/shien",
+      "sourceDomain": "talent",
+      "sourceName": "Shien",
+      "sourcePage": 29,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/barrier-of-blades"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/barrier-of-blades",
+          "talentRef": "talent/lightsaber-form/shien",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/circle-of-shelter",
+      "sourceDefinitionId": "talent/lightsaber-form/soresu",
+      "sourceDomain": "talent",
+      "sourceName": "Soresu",
+      "sourcePage": 29,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/circle-of-shelter"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/circle-of-shelter",
+          "talentRef": "talent/lightsaber-form/soresu",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/contentious-opportunity",
+      "sourceDefinitionId": "talent/lightsaber-form/makashi",
+      "sourceDomain": "talent",
+      "sourceName": "Makashi",
+      "sourcePage": 29,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/contentious-opportunity"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/contentious-opportunity",
+          "talentRef": "talent/lightsaber-form/makashi",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/deflecting-slash",
+      "sourceDefinitionId": "talent/lightsaber-form/soresu",
+      "sourceDomain": "talent",
+      "sourceName": "Soresu",
+      "sourcePage": 30,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/deflecting-slash"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/deflecting-slash",
+          "talentRef": "talent/lightsaber-form/soresu",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/disarming-slash",
+      "sourceDefinitionId": "talent/lightsaber-form/shii-cho",
+      "sourceDomain": "talent",
+      "sourceName": "Shii-Cho",
+      "sourcePage": 30,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/disarming-slash"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/disarming-slash",
+          "talentRef": "talent/lightsaber-form/shii-cho",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/draw-closer",
+      "sourceDefinitionId": "talent/lightsaber-form/niman",
+      "sourceDomain": "talent",
+      "sourceName": "Niman",
+      "sourcePage": 30,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/draw-closer"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/draw-closer",
+          "talentRef": "talent/lightsaber-form/niman",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/falling-avalanche",
+      "sourceDefinitionId": "talent/lightsaber-form/djem-so",
+      "sourceDomain": "talent",
+      "sourceName": "Djem So",
+      "sourcePage": 31,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/falling-avalanche"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/falling-avalanche",
+          "talentRef": "talent/lightsaber-form/djem-so",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/fluid-riposte",
+      "sourceDefinitionId": "talent/lightsaber-form/djem-so",
+      "sourceDomain": "talent",
+      "sourceName": "Djem So",
+      "sourcePage": 31,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/fluid-riposte"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/fluid-riposte",
+          "talentRef": "talent/lightsaber-form/djem-so",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/hawk-bat-swoop",
+      "sourceDefinitionId": "talent/lightsaber-form/ataru",
+      "sourceDomain": "talent",
+      "sourceName": "Ataru",
+      "sourcePage": 31,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/hawk-bat-swoop"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/hawk-bat-swoop",
+          "talentRef": "talent/lightsaber-form/ataru",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/high-ground-defense",
+      "sourceDefinitionId": "talent/lightsaber-form/sokan",
+      "sourceDomain": "talent",
+      "sourceName": "Sokan",
+      "sourcePage": 32,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/high-ground-defense"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/high-ground-defense",
+          "talentRef": "talent/lightsaber-form/sokan",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/makashi-riposte",
+      "sourceDefinitionId": "talent/lightsaber-form/makashi",
+      "sourceDomain": "talent",
+      "sourceName": "Makashi",
+      "sourcePage": 32,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/makashi-riposte"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/makashi-riposte",
+          "talentRef": "talent/lightsaber-form/makashi",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/pass-the-blade",
+      "sourceDefinitionId": "talent/lightsaber-form/trakata",
+      "sourceDomain": "talent",
+      "sourceName": "Trakata",
+      "sourcePage": 32,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/pass-the-blade"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/pass-the-blade",
+          "talentRef": "talent/lightsaber-form/trakata",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/pushing-slash",
+      "sourceDefinitionId": "talent/lightsaber-form/niman",
+      "sourceDomain": "talent",
+      "sourceName": "Niman",
+      "sourcePage": 33,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/pushing-slash"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/pushing-slash",
+          "talentRef": "talent/lightsaber-form/niman",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/rising-whirlwind",
+      "sourceDefinitionId": "talent/lightsaber-form/jar-kai",
+      "sourceDomain": "talent",
+      "sourceName": "Jar'Kai",
+      "sourcePage": 33,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/rising-whirlwind"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/rising-whirlwind",
+          "talentRef": "talent/lightsaber-form/jar-kai",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/saber-swarm",
+      "sourceDefinitionId": "talent/lightsaber-form/ataru",
+      "sourceDomain": "talent",
+      "sourceName": "Ataru",
+      "sourcePage": 34,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/saber-swarm"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/saber-swarm",
+          "talentRef": "talent/lightsaber-form/ataru",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/sarlacc-sweep",
+      "sourceDefinitionId": "talent/lightsaber-form/shii-cho",
+      "sourceDomain": "talent",
+      "sourceName": "Shii-Cho",
+      "sourcePage": 34,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/sarlacc-sweep"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/sarlacc-sweep",
+          "talentRef": "talent/lightsaber-form/shii-cho",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/shien-deflection",
+      "sourceDefinitionId": "talent/lightsaber-form/shien",
+      "sourceDomain": "talent",
+      "sourceName": "Shien",
+      "sourcePage": 34,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/shien-deflection"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/shien-deflection",
+          "talentRef": "talent/lightsaber-form/shien",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/swift-flank",
+      "sourceDefinitionId": "talent/lightsaber-form/vaapad",
+      "sourceDomain": "talent",
+      "sourceName": "Vaapad",
+      "sourcePage": 35,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/swift-flank"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/swift-flank",
+          "talentRef": "talent/lightsaber-form/vaapad",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/tempered-aggression",
+      "sourceDefinitionId": "talent/lightsaber-form/vaapad",
+      "sourceDomain": "talent",
+      "sourceName": "Vaapad",
+      "sourcePage": 35,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/tempered-aggression"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/tempered-aggression",
+          "talentRef": "talent/lightsaber-form/vaapad",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/twin-strike",
+      "sourceDefinitionId": "talent/lightsaber-form/jar-kai",
+      "sourceDomain": "talent",
+      "sourceName": "Jar'Kai",
+      "sourcePage": 35,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/twin-strike"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/twin-strike",
+          "talentRef": "talent/lightsaber-form/jar-kai",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/unbalancing-block",
+      "sourceDefinitionId": "talent/lightsaber-form/trakata",
+      "sourceDomain": "talent",
+      "sourceName": "Trakata",
+      "sourcePage": 35,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/unbalancing-block"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/unbalancing-block",
+          "talentRef": "talent/lightsaber-form/trakata",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/unhindered-charge",
+      "sourceDefinitionId": "talent/lightsaber-form/sokan",
+      "sourceDomain": "talent",
+      "sourceName": "Sokan",
+      "sourcePage": 36,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/unhindered-charge"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/unhindered-charge",
+          "talentRef": "talent/lightsaber-form/sokan",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/form-rider/vornskr-s-ferocity",
+      "sourceDefinitionId": "talent/lightsaber-form/juyo",
+      "sourceDomain": "talent",
+      "sourceName": "Juyo",
+      "sourcePage": 36,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/lightsaber-form-power/vornskr-s-ferocity"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "before-or-after-roll-as-printed",
+      "interactionMode": "modify",
+      "conditions": [
+        "Form talent known",
+        "Power base activation valid with correct activated lightsaber count"
+      ],
+      "operations": [
+        {
+          "op": "apply-form-rider",
+          "formPowerId": "jatm/lightsaber-form-power/vornskr-s-ferocity",
+          "talentRef": "talent/lightsaber-form/juyo",
+          "requireFormTalentKnown": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Without matching form talent, rider absent even if another form is active.",
+        "With matching form talent and legal base use, the specific rider applies regardless of activeLightsaberForm state.",
+        "Base Form Power is usable without the rider, subject to wielded activated lightsaber prerequisites."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/awaken-force-sensitivity",
+      "sourceDefinitionId": "jatm/force-regimen/awaken-force-sensitivity",
+      "sourceDomain": "rule",
+      "sourceName": "Awaken Force Sensitivity",
+      "sourcePage": 10,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/awaken-force-sensitivity"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/awaken-force-sensitivity",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/eyes-of-the-force",
+      "sourceDefinitionId": "jatm/force-regimen/eyes-of-the-force",
+      "sourceDomain": "rule",
+      "sourceName": "Eyes of the Force",
+      "sourcePage": 10,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/eyes-of-the-force"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/eyes-of-the-force",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/oxygen-bottle",
+      "sourceDefinitionId": "jatm/force-regimen/oxygen-bottle",
+      "sourceDomain": "rule",
+      "sourceName": "Oxygen Bottle",
+      "sourcePage": 11,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/oxygen-bottle"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/oxygen-bottle",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/quiet-the-mind",
+      "sourceDefinitionId": "jatm/force-regimen/quiet-the-mind",
+      "sourceDomain": "rule",
+      "sourceName": "Quiet the Mind",
+      "sourcePage": 11,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/quiet-the-mind"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/quiet-the-mind",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/telekinetic-practice",
+      "sourceDefinitionId": "jatm/force-regimen/telekinetic-practice",
+      "sourceDomain": "rule",
+      "sourceName": "Telekinetic Practice",
+      "sourcePage": 11,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/telekinetic-practice"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/telekinetic-practice",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/sparring-practice",
+      "sourceDefinitionId": "jatm/force-regimen/sparring-practice",
+      "sourceDomain": "rule",
+      "sourceName": "Sparring Practice",
+      "sourcePage": 11,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/sparring-practice"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/sparring-practice",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/training-remote",
+      "sourceDefinitionId": "jatm/force-regimen/training-remote",
+      "sourceDomain": "rule",
+      "sourceName": "Training Remote",
+      "sourcePage": 12,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/training-remote"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/training-remote",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/vo-ren-s-first-cadence",
+      "sourceDefinitionId": "jatm/force-regimen/vo-ren-s-first-cadence",
+      "sourceDomain": "rule",
+      "sourceName": "Vo'ren's First Cadence",
+      "sourcePage": 12,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/vo-ren-s-first-cadence"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/vo-ren-s-first-cadence",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/vo-ren-s-second-cadence",
+      "sourceDefinitionId": "jatm/force-regimen/vo-ren-s-second-cadence",
+      "sourceDomain": "rule",
+      "sourceName": "Vo'ren's Second Cadence",
+      "sourcePage": 12,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/vo-ren-s-second-cadence"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/vo-ren-s-second-cadence",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/vo-ren-s-third-cadence",
+      "sourceDefinitionId": "jatm/force-regimen/vo-ren-s-third-cadence",
+      "sourceDomain": "rule",
+      "sourceName": "Vo'ren's Third Cadence",
+      "sourcePage": 13,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/vo-ren-s-third-cadence"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/vo-ren-s-third-cadence",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/vo-ren-s-fourth-cadence",
+      "sourceDefinitionId": "jatm/force-regimen/vo-ren-s-fourth-cadence",
+      "sourceDomain": "rule",
+      "sourceName": "Vo'ren's Fourth Cadence",
+      "sourcePage": 13,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/vo-ren-s-fourth-cadence"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/vo-ren-s-fourth-cadence",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/regimen/vo-ren-s-fifth-cadence",
+      "sourceDefinitionId": "jatm/force-regimen/vo-ren-s-fifth-cadence",
+      "sourceDomain": "rule",
+      "sourceName": "Vo'ren's Fifth Cadence",
+      "sourcePage": 13,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-regimen/vo-ren-s-fifth-cadence"
+        ]
+      },
+      "event": "regimen-performance",
+      "phase": "after-performance",
+      "interactionMode": "modify",
+      "conditions": [
+        "Known regimen performed with required equipment, target and time.",
+        "No other regimen benefit in protected 24h window.",
+        "Not failed-locked for this regimen."
+      ],
+      "operations": [
+        {
+          "op": "apply-regimen-specific-effect",
+          "regimenId": "jatm/force-regimen/vo-ren-s-fifth-cadence",
+          "onlyHighestMetTier": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Highest met DC tier applied once.",
+        "Benefit expires 24h from successful grant, not on combat deletion."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/cure-disease",
+      "sourceDefinitionId": "jatm/force-technique/cure-disease",
+      "sourceDomain": "force-technique",
+      "sourceName": "Cure Disease",
+      "sourcePage": 36,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/vital-transfer"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/cure-disease",
+          "powerId": "core/force-power/vital-transfer"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/extended-blind",
+      "sourceDefinitionId": "jatm/force-technique/extended-blind",
+      "sourceDomain": "force-technique",
+      "sourceName": "Extended Blind",
+      "sourcePage": 36,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-power/blind"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/extended-blind",
+          "powerId": "jatm/force-power/blind"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/extended-force-disarm",
+      "sourceDefinitionId": "jatm/force-technique/extended-force-disarm",
+      "sourceDomain": "force-technique",
+      "sourceName": "Extended Force Disarm",
+      "sourcePage": 36,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-disarm"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/extended-force-disarm",
+          "powerId": "core/force-power/force-disarm"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/extended-force-grip",
+      "sourceDefinitionId": "jatm/force-technique/extended-force-grip",
+      "sourceDomain": "force-technique",
+      "sourceName": "Extended Force Grip",
+      "sourcePage": 36,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-grip"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/extended-force-grip",
+          "powerId": "core/force-power/force-grip"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/extended-force-thrust",
+      "sourceDefinitionId": "jatm/force-technique/extended-force-thrust",
+      "sourceDomain": "force-technique",
+      "sourceName": "Extended Force Thrust",
+      "sourcePage": 36,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-thrust"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/extended-force-thrust",
+          "powerId": "core/force-power/force-thrust"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/extended-move-object",
+      "sourceDefinitionId": "jatm/force-technique/extended-move-object",
+      "sourceDomain": "force-technique",
+      "sourceName": "Extended Move Object",
+      "sourcePage": 36,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/move-object"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/extended-move-object",
+          "powerId": "core/force-power/move-object"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/improved-convection",
+      "sourceDefinitionId": "jatm/force-technique/improved-convection",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Convection",
+      "sourcePage": 36,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-power/convection"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/improved-convection",
+          "powerId": "jatm/force-power/convection"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/improved-crucitorn",
+      "sourceDefinitionId": "jatm/force-technique/improved-crucitorn",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Crucitorn",
+      "sourcePage": 37,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-power/crucitorn"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/improved-crucitorn",
+          "powerId": "jatm/force-power/crucitorn"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/improved-cryokinesis",
+      "sourceDefinitionId": "jatm/force-technique/improved-cryokinesis",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Cryokinesis",
+      "sourcePage": 37,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-power/cryokinesis"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/improved-cryokinesis",
+          "powerId": "jatm/force-power/cryokinesis"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/improved-fold-space",
+      "sourceDefinitionId": "jatm/force-technique/improved-fold-space",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Fold Space",
+      "sourcePage": 37,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-power/fold-space"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/improved-fold-space",
+          "powerId": "jatm/force-power/fold-space"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/improved-force-light",
+      "sourceDefinitionId": "jatm/force-technique/improved-force-light",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Light",
+      "sourcePage": 37,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-power/force-light"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/improved-force-light",
+          "powerId": "jatm/force-power/force-light"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/improved-force-storm",
+      "sourceDefinitionId": "jatm/force-technique/improved-force-storm",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Storm",
+      "sourcePage": 37,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-power/force-storm"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/improved-force-storm",
+          "powerId": "jatm/force-power/force-storm"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/improved-plant-surge",
+      "sourceDefinitionId": "jatm/force-technique/improved-plant-surge",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Plant Surge",
+      "sourcePage": 37,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-power/plant-surge"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/improved-plant-surge",
+          "powerId": "jatm/force-power/plant-surge"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/technique/improved-thought-bomb",
+      "sourceDefinitionId": "jatm/force-technique/improved-thought-bomb",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Thought Bomb",
+      "sourcePage": 37,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-power/thought-bomb"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "source-rule-modification",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique learned; referenced base power is being activated.",
+        "No technique acquisition prerequisite inferred from related power."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "jatm/force-technique/improved-thought-bomb",
+          "powerId": "jatm/force-power/thought-bomb"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only linked source Power modified.",
+        "FP and DP choices distinct and receipt-counted."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/secret/holocron-loremaster",
+      "sourceDefinitionId": "jatm/force-secret/holocron-loremaster",
+      "sourceDomain": "force-secret",
+      "sourceName": "Holocron Loremaster",
+      "sourcePage": 37,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-secret/holocron-loremaster"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "after-qualifying-power-activation",
+      "interactionMode": "modify",
+      "conditions": [
+        "Secret known; initial FP is available and paid once; temporary power provenance explicit."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "jatm/force-secret/holocron-loremaster"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Temporary instance expires on correct recipient clock.",
+        "No recovery of temporary power.",
+        "DP extends, not substitutes initial FP payment."
+      ]
+    },
+    {
+      "ruleId": "jatm/influence/secret/mentor",
+      "sourceDefinitionId": "jatm/force-secret/mentor",
+      "sourceDomain": "force-secret",
+      "sourceName": "Mentor",
+      "sourcePage": 37,
+      "targetSelector": {
+        "definitionIds": [
+          "jatm/force-secret/mentor"
+        ]
+      },
+      "event": "power-activation",
+      "phase": "after-qualifying-power-activation",
+      "interactionMode": "modify",
+      "conditions": [
+        "Secret known; initial FP is available and paid once; temporary power provenance explicit."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "jatm/force-secret/mentor"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Temporary instance expires on correct recipient clock.",
+        "No recovery of temporary power.",
+        "DP extends, not substitutes initial FP payment."
+      ]
+    }
+  ],
+  "excludedScope": [
+    "No name-derived form rider or Form talent acquisition gate",
+    "No automatic migration",
+    "No permanent talent or Force Power grants from temporary regimen or secrets"
+  ],
+  "schemaEvolutionPolicy": {
+    "newPublicationMayAdd": [
+      "Finite typed form rider operations only; new mechanics require source and regression evidence."
+    ],
+    "previousRecordsMustRevalidate": true,
+    "cannotBeAddedAsUntypedFreeText": true,
+    "ambiguousPublishedEffect": "Block automation until source/rider semantics are adjudicated."
+  }
+}

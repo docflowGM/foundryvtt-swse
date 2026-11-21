@@ -34,9 +34,9 @@ assert.match(rerollBody, /const finalNaturalD20 = usedNew \? rerollNaturalD20 : 
 
 // 3. Resource spending (Force Point) happens exactly once, before the fresh
 //    outcome/chat card is built, and only on the success path.
-const fpSpendMatches = rerollBody.match(/ActorEngine\.spendForcePoints\(actor, 1\)/g) || [];
+const fpSpendMatches = rerollBody.match(/ActorEngine\.spendForcePoints\(actor, 1, \{ useKind: 'ability-option'/g) || [];
 assert.equal(fpSpendMatches.length, 1, 'Force Point must be spent exactly once per reroll.');
-const spendIndex = rerollBody.indexOf('ActorEngine.spendForcePoints(actor, 1)');
+const spendIndex = rerollBody.indexOf('ActorEngine.spendForcePoints(actor, 1, { useKind');
 const outcomeIndex = rerollBody.indexOf('AttackOutcomeResolver.resolve({');
 assert.ok(spendIndex < outcomeIndex, 'Force Point spend must happen before the fresh outcome is built.');
 

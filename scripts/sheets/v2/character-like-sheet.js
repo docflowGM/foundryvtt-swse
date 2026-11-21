@@ -44,6 +44,8 @@ import { AbilityCombatActionResolver } from "/systems/foundryvtt-swse/scripts/en
 import { createCombatStateWorkflowHandler } from "/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-active-state-service.js";
 import { evaluateCombatActionEligibility, gateCombatActionRequest, isActorCombatActionGrant } from "/systems/foundryvtt-swse/scripts/engine/combat/features/combat-action-eligibility.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+import { StarshipManeuverSuite } from "/systems/foundryvtt-swse/scripts/engine/force/starship-maneuver-suite.js";
+import { SuiteInstanceRecovery } from "/systems/foundryvtt-swse/scripts/engine/force/suite-instance-recovery.js";
 import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/talent/guardian-spirit-actions.js";
 import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/consular-talent-actions.js";
 import { SentinelTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/sentinel-talent-actions.js";
@@ -4845,7 +4847,8 @@ const forcePoints = [];
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         try {
-          const result = await ForceExecutor.recoverForcePowers(this.actor);
+          // Never unconditional: a GM-confirmed rest or natural 20 regains automatically; this button is GM adjudication.
+          const result = await ForceExecutor.recoverForcePowers(this.actor, null, { proof: { kind: 'gm', reason: 'Recover all from the Force suite panel' } });
           if (result?.success) {
             ui?.notifications?.info?.('All spent Force powers recovered.');
             this.render?.(true);
@@ -5197,13 +5200,14 @@ const forcePoints = [];
         if (!itemId) return;
         const maneuver = this.actor.items.get(itemId);
         if (!maneuver || maneuver.type !== 'maneuver') return;
-        if (maneuver.system?.spent === true) {
+        if (maneuver.system?.discarded === true) {
           ui?.notifications?.info?.(`${maneuver.name} is already spent.`);
           return;
         }
         try {
-          await ActorEngine.updateEmbeddedDocuments(this.actor, 'Item', [{ _id: itemId, 'system.spent': true }], { source: 'starship-suite-use' });
-          ui?.notifications?.info?.(`${maneuver.name} spent.`);
+          const used = await StarshipManeuverSuite.activateManeuver(this.actor, itemId);
+          if (!used.success) { ui?.notifications?.warn?.(used.error); return; }
+          ui?.notifications?.info?.(`${maneuver.name} activated (Pilot ${used.total}) and spent.`);
           showHolopadRollCompanion(button, { success: true, spent: true }, {
             kind: 'starship-maneuver',
             title: 'Maneuver Used',
@@ -5222,14 +5226,10 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="starship-suite-recover-all"]').forEach(button => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
-        const spent = this.actor.items.filter((item) => item.type === 'maneuver' && item.system?.spent === true);
-        if (!spent.length) {
-          ui?.notifications?.info?.('No spent Starship Maneuvers to recover.');
-          return;
-        }
         try {
-          await ActorEngine.updateEmbeddedDocuments(this.actor, 'Item', spent.map((item) => ({ _id: item.id, 'system.spent': false })), { source: 'starship-suite-recover-all' });
-          ui?.notifications?.info?.('All spent Starship Maneuvers recovered.');
+          const result = await SuiteInstanceRecovery.regainAllSpent(this.actor, 'maneuver', { proof: { kind: 'gm', reason: 'Recover all from the starship suite panel' } });
+          if (!result.success) { ui?.notifications?.warn?.(result.error); return; }
+          ui?.notifications?.info?.(result.recovered ? 'All spent Starship Maneuvers recovered.' : 'No spent Starship Maneuvers to recover.');
           this.render?.(false);
         } catch (err) {
           ui?.notifications?.error?.(`Starship maneuver recovery failed: ${err.message}`);
@@ -5261,8 +5261,10 @@ const forcePoints = [];
         const root = button.closest('[data-starship-suite-tab]');
         const spendingForcePoint = root?.classList.contains('is-picking-recovery');
         try {
-          await ActorEngine.updateEmbeddedDocuments(this.actor, 'Item', [{ _id: itemId, 'system.spent': false }], { source: 'starship-suite-recover-one' });
-          ui?.notifications?.info?.(`${maneuver.name} recovered${spendingForcePoint ? ' (Force Point spent)' : ''}.`);
+          // Paid recovery is an explicit Force Point reaction for exactly this instance (validated before the debit).
+          if (!spendingForcePoint) { ui?.notifications?.info?.('Choose "Spend Force Point" first: a single maneuver is regained by a Force Point reaction.'); return; }
+          const regained = await StarshipManeuverSuite.regainOwnedManeuver(this.actor, itemId);
+          if (!regained) return;
           root?.classList.remove('is-picking-recovery');
           this.render?.(false);
         } catch (err) {

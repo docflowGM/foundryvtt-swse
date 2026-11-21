@@ -79,7 +79,7 @@ function normalizeManeuver(item, sourceActor, vehicle) {
     system.details,
     item?.description
   );
-  const spent = Boolean(system.spent ?? system.used ?? system.expended ?? false);
+  const spent = system.discarded === true;
   const ownerIsVehicle = sourceActor?.id === vehicle?.id;
   const actorUuid = sourceActor?.uuid || (sourceActor?.id ? `Actor.${sourceActor.id}` : null);
   const itemUuid = item?.uuid || (actorUuid && item?.id ? `${actorUuid}.Item.${item.id}` : null);
@@ -151,7 +151,7 @@ export class StarshipManeuversEngine {
 
     const directItem = vehicle.items?.get?.(ref.itemId || ref.id);
     if (directItem) {
-      await ActorEngine.updateOwnedItems(vehicle, [{ _id: directItem.id, 'system.spent': Boolean(spent) }]);
+      await ActorEngine.updateOwnedItems(vehicle, [{ _id: directItem.id, 'system.discarded': Boolean(spent) }]);
       return true;
     }
 
@@ -160,7 +160,7 @@ export class StarshipManeuversEngine {
     const owner = game?.actors?.get?.(actorId);
     const item = owner?.items?.get?.(itemId);
     if (item) {
-      await ActorEngine.updateOwnedItems(owner, [{ _id: item.id, 'system.spent': Boolean(spent) }]);
+      await ActorEngine.updateOwnedItems(owner, [{ _id: item.id, 'system.discarded': Boolean(spent) }]);
       return true;
     }
 
@@ -175,8 +175,15 @@ export class StarshipManeuversEngine {
   }
 
   static async regainManeuver(vehicle, maneuverRef) {
-    const ok = await this.setManeuverSpent(vehicle, maneuverRef, false);
-    if (ok) ui?.notifications?.info?.('Starship maneuver readied.');
-    return ok;
+    if (!vehicle || vehicle.type !== 'vehicle' || !maneuverRef) return false;
+    const ref = typeof maneuverRef === 'string'
+      ? { id: maneuverRef, itemId: maneuverRef, uuid: maneuverRef }
+      : maneuverRef;
+    const vehicleItem = vehicle.items?.get?.(ref.itemId || ref.id);
+    const pilotActorId = ref.actorId || actorIdFromUuid(ref.uuid || ref.actorUuid);
+    const pilot = vehicleItem ? vehicle : game?.actors?.get?.(pilotActorId);
+    const { StarshipManeuverSuite } = await import('/systems/foundryvtt-swse/scripts/engine/force/starship-maneuver-suite.js');
+    return StarshipManeuverSuite.regainOwnedManeuver(pilot, vehicleItem?.id ?? ref.itemId ?? itemIdFromUuid(ref.uuid));
   }
+
 }

@@ -51,10 +51,22 @@ export class ForcePointSpendCoordinator {
       return this._failure({ requested, before: 0, after: 0, reason: 'No actor', domain });
     }
 
-    const before = ForcePointsService.getRemaining(actor);
+    const spendContext = {
+      useKind: 'roll-bonus',
+      requestedCount: requested,
+      rollDomain: domain,
+      targetItemInstanceId: context?.sourceItemId ?? context?.powerId ?? context?.targetItemInstanceId,
+      requestId: context?.forcePointRequestId ?? context?.requestId,
+      reaction: context?.reactionEvent ?? null,
+      skillUseKey: context?.skillUse?.key ?? context?.useKey ?? null,
+      useTemporaryEntry: context?.useTemporaryForcePoint === true,
+      reason
+    };
+    const before = ForcePointsService.getAvailableTotal(actor, spendContext);
 
-    // Validate the expenditure BEFORE anything is spent or rolled.
-    const validation = ForcePointsService.validateSpend(actor, { reason, amount: requested });
+    // Validate before rolling, then re-authorize from current actor state at
+    // the ActorEngine commit boundary. Never trust the preview as a permit.
+    const validation = ForcePointsService.authorizeSpend(actor, spendContext);
     if (!validation.valid) {
       return this._failure({ requested, before, after: before, reason: validation.message, domain });
     }
@@ -115,7 +127,7 @@ export class ForcePointSpendCoordinator {
     // formula, never a silently-degraded fallback.
     let spendReceipt;
     try {
-      spendReceipt = await ActorEngine.spendForcePoints(actor, requested);
+      spendReceipt = await ActorEngine.spendForcePoints(actor, requested, spendContext);
     } catch (err) {
       swseLogger.error('[ForcePointSpendCoordinator] ActorEngine.spendForcePoints threw', err);
       return this._failure({ requested, before, after: before, reason: `Force Point spend failed: ${err.message}`, domain });
@@ -123,10 +135,9 @@ export class ForcePointSpendCoordinator {
 
     const actuallySpent = Number(spendReceipt?.spent ?? 0) || 0;
     if (actuallySpent < requested) {
-      // Partial spend (e.g. a race against another caller): refund whatever
-      // was taken and fail closed rather than granting a partially-paid bonus.
-      if (actuallySpent > 0) {
-        await this._safeRefund(ActorEngine, actor, actuallySpent, 'partial-spend-rejected');
+      // Incomplete payment must never result in a paid bonus.
+      if (actuallySpent > 0 && spendReceipt?.receiptId) {
+        await this._safeRefund(ActorEngine, actor, spendReceipt, 'partial-spend-rejected');
       }
       return this._failure({
         requested,
@@ -143,14 +154,14 @@ export class ForcePointSpendCoordinator {
       await fpRoll.evaluate();
     } catch (err) {
       swseLogger.error(`[ForcePointSpendCoordinator] Force Point roll failed for die "${forceDice}"; rolling back spend.`, err);
-      await this._safeRefund(ActorEngine, actor, actuallySpent, 'roll-execution-failed');
+      const compensated = await this._safeRefund(ActorEngine, actor, spendReceipt, 'roll-execution-failed');
       return this._failure({
         requested,
         before,
         after: before,
         reason: `Force die roll failed: ${err.message}`,
         domain,
-        rolledBack: true
+        rolledBack: compensated
       });
     }
 
@@ -177,15 +188,22 @@ export class ForcePointSpendCoordinator {
       dieSize: finalDieSize,
       dieUpgradeSteps,
       dieUpgradeSource,
-      rolledBack: false
+      rolledBack: false,
+      spendReceipt
     };
   }
 
-  static async _safeRefund(ActorEngine, actor, amount, refundReason) {
+  static async _safeRefund(ActorEngine, actor, receipt, refundReason) {
     try {
-      await ActorEngine.gainForcePoints(actor, amount);
+      const outcome = await ActorEngine.rollbackForcePointSpend(actor, receipt);
+      if (!outcome?.rolledBack) {
+        swseLogger.error(`[ForcePointSpendCoordinator] Compensation refused (${refundReason}): ${outcome?.reason}`);
+        return false;
+      }
+      return true;
     } catch (err) {
-      swseLogger.error(`[ForcePointSpendCoordinator] Rollback refund of ${amount} FP failed (${refundReason}); actor may be short Force Points.`, err);
+      swseLogger.error(`[ForcePointSpendCoordinator] Exact compensation failed (${refundReason}); manual reconciliation required.`, err);
+      return false;
     }
   }
 

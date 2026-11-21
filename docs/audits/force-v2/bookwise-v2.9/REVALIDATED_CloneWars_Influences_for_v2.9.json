@@ -1,0 +1,639 @@
+{
+  "schemaVersion": "2.9.0",
+  "package": "book-5-clone-wars-campaign-guide",
+  "purpose": "Source-backed Clone Wars relationships among eight powers, eight techniques, three secrets, talents and prior books.",
+  "applicationOrder": [
+    "eligibility",
+    "select-use-and-link",
+    "resolve-target",
+    "resource-choice",
+    "apply-modifier-graph",
+    "UTF-roll",
+    "defense-or-dc-gate",
+    "outcome",
+    "maintenance-and-schedule",
+    "recovery-and-state"
+  ],
+  "eventSemantics": {
+    "LinkedPower": "Two power instances reserved, source FP pays secret, no techniques/secrets/FP modifications to either, next-turn free invocation.",
+    "Maintenance": "Each source power retains its own maintenance action, repeated check and damage concentration unless technique explicitly overrides.",
+    "Savant": "Telekinetic descriptors are source-verified, not inferred via tags.",
+    "Trigger": "Event is strictly scoped to documented source trait and chosen target; modifiers are not global."
+  },
+  "edges": [
+    {
+      "ruleId": "cwcg/influence/advanced-vital-transfer",
+      "sourceDefinitionId": "cwcg/force-technique/advanced-vital-transfer",
+      "sourceDomain": "force-technique",
+      "sourceName": "Advanced Vital Transfer",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/vital-transfer"
+        ]
+      },
+      "event": "power-activation-or-followup",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "cwcg/force-technique/advanced-vital-transfer",
+          "powerId": "core/force-power/vital-transfer"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only intended parent power receives modifier.",
+        "Technique does not add additional Force Power use."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/improved-cloak",
+      "sourceDefinitionId": "cwcg/force-technique/improved-cloak",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Cloak",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "cwcg/force-power/cloak"
+        ]
+      },
+      "event": "power-activation-or-followup",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "cwcg/force-technique/improved-cloak",
+          "powerId": "cwcg/force-power/cloak"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only intended parent power receives modifier.",
+        "Technique does not add additional Force Power use."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/improved-levitate",
+      "sourceDefinitionId": "cwcg/force-technique/improved-levitate",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Levitate",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "cwcg/force-power/levitate"
+        ]
+      },
+      "event": "power-activation-or-followup",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "cwcg/force-technique/improved-levitate",
+          "powerId": "cwcg/force-power/levitate"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only intended parent power receives modifier.",
+        "Technique does not add additional Force Power use."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/improved-malacia",
+      "sourceDefinitionId": "cwcg/force-technique/improved-malacia",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Malacia",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "cwcg/force-power/malacia"
+        ]
+      },
+      "event": "power-activation-or-followup",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "cwcg/force-technique/improved-malacia",
+          "powerId": "cwcg/force-power/malacia"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only intended parent power receives modifier.",
+        "Technique does not add additional Force Power use."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/improved-phase",
+      "sourceDefinitionId": "cwcg/force-technique/improved-phase",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Phase",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "cwcg/force-power/phase"
+        ]
+      },
+      "event": "power-activation-or-followup",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "cwcg/force-technique/improved-phase",
+          "powerId": "cwcg/force-power/phase"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only intended parent power receives modifier.",
+        "Technique does not add additional Force Power use."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/improved-rend",
+      "sourceDefinitionId": "cwcg/force-technique/improved-rend",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Rend",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "cwcg/force-power/rend"
+        ]
+      },
+      "event": "power-activation-or-followup",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "cwcg/force-technique/improved-rend",
+          "powerId": "cwcg/force-power/rend"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only intended parent power receives modifier.",
+        "Technique does not add additional Force Power use."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/improved-shatterpoint",
+      "sourceDefinitionId": "cwcg/force-technique/improved-shatterpoint",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Shatterpoint",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "cwcg/force-power/shatterpoint"
+        ]
+      },
+      "event": "power-activation-or-followup",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "cwcg/force-technique/improved-shatterpoint",
+          "powerId": "cwcg/force-power/shatterpoint"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only intended parent power receives modifier.",
+        "Technique does not add additional Force Power use."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/improved-technometry",
+      "sourceDefinitionId": "cwcg/force-technique/improved-technometry",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Technometry",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "cwcg/force-power/technometry"
+        ]
+      },
+      "event": "power-activation-or-followup",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "cwcg/force-technique/improved-technometry",
+          "powerId": "cwcg/force-power/technometry"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only intended parent power receives modifier.",
+        "Technique does not add additional Force Power use."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/extend-power",
+      "sourceDefinitionId": "cwcg/force-secret/extend-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Extend Power",
+      "sourcePage": 55,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "maintenance-action-declaration",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Underlying power source permits maintenance.",
+        "Maintenance actions originally standard, unless separately ruled."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "cwcg/force-secret/extend-power"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only source-defined activation or upkeep is modified; no second suite instance is granted."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/linked-power",
+      "sourceDefinitionId": "cwcg/force-secret/linked-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Linked Power",
+      "sourcePage": 55,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "select-two-powers-and-schedule",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Two eligible power instances selected and reserved.",
+        "Both powers unmodified beyond the Paid Linked Power scheduling itself."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "cwcg/force-secret/linked-power"
+        },
+        {
+          "op": "reject-linked-modification",
+          "rejectCategories": [
+            "force-technique",
+            "force-secret",
+            "force-point"
+          ]
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Cannot attach Quicken/Extend/Improved to linked power.",
+        "No FP modifier on either power (Secret FP is distinct).",
+        "Second fires at next turn start, not current round."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/unconditional-power",
+      "sourceDefinitionId": "cwcg/force-secret/unconditional-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Unconditional Power",
+      "sourcePage": 55,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "qualifying-self-targeted-power-check",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Selected power targets caster only.",
+        "No global removal of penalties and no assumed point spend."
+      ],
+      "operations": [
+        {
+          "op": "ignore-condition-track-utf-penalty",
+          "onlySelf": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only source-defined activation or upkeep is modified; no second suite instance is granted."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/the-will-to-resist",
+      "sourceDefinitionId": "cwcg/talent/the-will-to-resist",
+      "sourceDomain": "talent",
+      "sourceName": "The Will to Resist",
+      "sourcePage": 53,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "targeted-by-will-ability",
+      "phase": "before-defense-comparison",
+      "interactionMode": "modify",
+      "conditions": [
+        "Reaction once per turn; target Will defense.",
+        "A replacement check is used for this occurrence."
+      ],
+      "operations": [
+        {
+          "op": "substitute-will-defense-with-utf",
+          "durationOfUtfPenalty": "until-end-of-next-turn",
+          "penalty": -5
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Actor suffers -5 subsequent UTF checks through end of next turn."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/attuned",
+      "sourceDefinitionId": "cwcg/talent/attuned",
+      "sourceDomain": "talent",
+      "sourceName": "Attuned",
+      "sourcePage": 53,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "natural20-attack-on-dark-side-target",
+      "phase": "immediately-after-attack",
+      "interactionMode": "modify",
+      "conditions": [
+        "Requires Focused Attack talent; targeted creature DSS>=1.",
+        "Choose owned Light Side power with eligible use."
+      ],
+      "operations": [
+        {
+          "op": "allow-light-side-free-activation",
+          "trigger": "natural20-attack-roll-against-DSS1plus",
+          "action": "free"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "A free activation of one Light Side power is allowed, not every power."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/surge-of-light",
+      "sourceDefinitionId": "cwcg/talent/surge-of-light",
+      "sourceDomain": "talent",
+      "sourceName": "Surge of Light",
+      "sourcePage": 53,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "swift-per-encounter",
+      "phase": "recovery",
+      "interactionMode": "modify",
+      "conditions": [
+        "Only a spent Light Side descriptor power may be returned.",
+        "One use per encounter per talent instance."
+      ],
+      "operations": [
+        {
+          "op": "recover-spent-power",
+          "action": "swift",
+          "costForcePoints": 0,
+          "usesPerEncounterFormula": "talentInstanceCount"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Do not return Dark Side or untagged powers."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/psychometry",
+      "sourceDefinitionId": "cwcg/talent/psychometry",
+      "sourceDomain": "talent",
+      "sourceName": "Psychometry",
+      "sourcePage": 53,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/farseeing"
+        ]
+      },
+      "event": "farseeing-target-selection",
+      "phase": "pre-targeting",
+      "interactionMode": "modify",
+      "conditions": [
+        "Actor has Force Perception and Farseeing prerequisite from talent.",
+        "Object is held; events bound to perceptions of previous holder."
+      ],
+      "operations": [
+        {
+          "op": "change-force-power-target",
+          "newTargetKind": "held-object",
+          "lookbackYearsFormula": "5*characterLevel"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Farseeing ordinary creature targeting otherwise unchanged."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/telekinetic-savant",
+      "sourceDefinitionId": "core/talent/telekinetic-savant",
+      "sourceDomain": "talent",
+      "sourceName": "Telekinetic Savant",
+      "sourcePage": 100,
+      "targetSelector": {
+        "definitionIds": [
+          "cwcg/force-power/levitate"
+        ]
+      },
+      "event": "qualifying-descriptor-recovery",
+      "phase": "recovery",
+      "interactionMode": "modify",
+      "conditions": [
+        "Core talent handles descriptor telekinetic and spent power selection."
+      ],
+      "operations": [
+        {
+          "op": "recover-spent-power",
+          "action": "as-printed",
+          "costForcePoints": 0
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Levitate qualifies as Telekinetic; no extra recovery source is created."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/telekinetic-power",
+      "sourceDefinitionId": "core/talent/telekinetic-power",
+      "sourceDomain": "talent",
+      "sourceName": "Telekinetic Power",
+      "sourcePage": 100,
+      "targetSelector": {
+        "definitionIds": [
+          "cwcg/force-power/levitate"
+        ]
+      },
+      "event": "qualifying-telekinetic-power-check",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Use authoritative Core Telekinetic Power grant, not inferred blanket bonus."
+      ],
+      "operations": [
+        {
+          "op": "source-typed-operation",
+          "kindSource": "core/telekinetic-power",
+          "sourceDefinitionId": "cwcg/force-power/levitate"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Applies only if existing talent is present."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/focused-force-talisman",
+      "sourceDefinitionId": "cwcg/talent/focused-force-talisman",
+      "sourceDomain": "talent",
+      "sourceName": "Focused Force Talisman",
+      "sourcePage": 40,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "selected-power-used-with-worn-talisman",
+      "phase": "recovery",
+      "interactionMode": "modify",
+      "conditions": [
+        "Talisman is worn; creator selected exact ability; spends one FP.",
+        "Official Jan 2009 errata changes recovery to all expended copies."
+      ],
+      "operations": [
+        {
+          "op": "recover-all-selected-talisman-copies",
+          "requiresWornTalisman": true,
+          "forcePointCost": 1,
+          "allSpentCopies": true,
+          "exemptPerTurnLimit": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "One paid recovery can return all expended uses of selected power, not one."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/greater-focused-force-talisman",
+      "sourceDefinitionId": "cwcg/talent/greater-focused-force-talisman",
+      "sourceDomain": "talent",
+      "sourceName": "Greater Focused Force Talisman",
+      "sourcePage": 40,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "talisman-recovery-fp-spend",
+      "phase": "resource-validation",
+      "interactionMode": "modify",
+      "conditions": [
+        "Requires worn talisman and Focused Force Talisman.",
+        "The FP spent for this talent does not count against one-FP-per-turn spending limit."
+      ],
+      "operations": [
+        {
+          "op": "recover-all-selected-talisman-copies",
+          "requiresWornTalisman": true,
+          "forcePointCost": 1,
+          "allSpentCopies": true,
+          "exemptPerTurnLimit": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Do not waive other FP expenditure constraints."
+      ]
+    },
+    {
+      "ruleId": "cwcg/influence/advanced-vital-transfer-destiny-heal",
+      "sourceDefinitionId": "cwcg/force-technique/advanced-vital-transfer",
+      "sourceDomain": "force-technique",
+      "sourceName": "Advanced Vital Transfer",
+      "sourcePage": 54,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/vital-transfer"
+        ]
+      },
+      "event": "when-using-vital-transfer",
+      "phase": "resource-choice",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique Advanced Vital Transfer is known.",
+        "Destiny Point is spent, not Force Point."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "cwcg/force-technique/advanced-vital-transfer"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Heal all damage and remove debilitating conditions; no second UTF roll."
+      ]
+    }
+  ],
+  "excludedScope": [
+    "No Force Power suite grant from knowing a Technique or Secret.",
+    "No duplicated book identities or old name-based fallbacks.",
+    "No implicit TP/Fate modifier without authorized source."
+  ],
+  "schemaEvolutionPolicy": {
+    "newPublicationMayAdd": [
+      "Closed, typed operations with tests; never free-form execution keywords."
+    ],
+    "previousRecordsMustRevalidate": true,
+    "cannotBeAddedAsUntypedFreeText": true,
+    "ambiguousPublishedEffect": "Flag as editorial issue and block impacted automation."
+  }
+}

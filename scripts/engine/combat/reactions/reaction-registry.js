@@ -35,10 +35,12 @@ export class ReactionRegistry {
         requiresDefense: null
       },
 
+      // Core p.41: Block/Deflect may be used repeatedly; each use since the start of your last turn adds a
+      // cumulative -5 to the Use the Force check (tracked by LightsaberTalentActions). No per-round frequency cap.
+      // One reaction per attack event is enforced by AttackEventAuthority, not by a use counter.
       usage: {
-        perRound: true,
-        perEncounter: false,
-        maxPerRound: 1
+        perRound: false,
+        perEncounter: false
       },
 
       cost: {
@@ -47,12 +49,15 @@ export class ReactionRegistry {
         talentResources: null
       },
 
+      // Wired to the real talent action (03B). The verified attack event was attached by
+      // ReactionEngine.resolveReaction; a context without one cannot reach this handler.
       handler: async (context) => {
-        return {
-          modifiedDamage: null,
-          additionalRoll: null,
-          resultMessage: null
-        };
+        const event = context?.verifiedAttackEvent ?? null;
+        if (!event) return { error: 'No verified incoming attack', modifiedDamage: null, resultMessage: null };
+        const { LightsaberTalentActions } = await import('/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js');
+        const outcome = await LightsaberTalentActions.promptBlock(context.defender, { attackEvent: event });
+        if (!outcome) return { error: 'Block was not rolled', modifiedDamage: null, resultMessage: null };
+        return { modifiedDamage: null, additionalRoll: null, resultMessage: outcome.success ? 'Block succeeded' : 'Block failed' };
       }
     },
 
@@ -73,10 +78,12 @@ export class ReactionRegistry {
         requiresDefense: null
       },
 
+      // Core p.41: Block/Deflect may be used repeatedly; each use since the start of your last turn adds a
+      // cumulative -5 to the Use the Force check (tracked by LightsaberTalentActions). No per-round frequency cap.
+      // One reaction per attack event is enforced by AttackEventAuthority, not by a use counter.
       usage: {
-        perRound: true,
-        perEncounter: false,
-        maxPerRound: 1
+        perRound: false,
+        perEncounter: false
       },
 
       cost: {
@@ -85,12 +92,41 @@ export class ReactionRegistry {
         talentResources: null
       },
 
+      // Wired to the real talent action (03B). The verified attack event was attached by
+      // ReactionEngine.resolveReaction; a context without one cannot reach this handler.
       handler: async (context) => {
-        return {
-          modifiedDamage: null,
-          additionalRoll: null,
-          resultMessage: null
-        };
+        const event = context?.verifiedAttackEvent ?? null;
+        if (!event) return { error: 'No verified incoming attack', modifiedDamage: null, resultMessage: null };
+        const { LightsaberTalentActions } = await import('/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js');
+        const outcome = await LightsaberTalentActions.promptDeflect(context.defender, { attackEvent: event });
+        if (!outcome) return { error: 'Deflect was not rolled', modifiedDamage: null, resultMessage: null };
+        return { modifiedDamage: null, additionalRoll: null, resultMessage: outcome.success ? 'Deflect succeeded' : 'Deflect failed' };
+      }
+    },
+
+    // Duelist talent (Core Rulebook): reaction to a critical hit scored against you; pays 1 Force Point through
+    // the typed 'lightsaber:promptForceFortification' contract (verified critical-hit event required).
+    forceFortification: {
+      key: 'forceFortification',
+      label: 'Force Fortification',
+      trigger: 'ON_ATTACK_DECLARED',
+      description: 'Spend a Force Point to negate a critical hit scored against you and take normal damage instead.',
+      conditions: {
+        validAttackTypes: null,
+        validDamageTypes: null,
+        requiresWeaponTag: null,
+        requiresTalents: null,
+        requiresDefense: null
+      },
+      usage: { perRound: false, perEncounter: false },
+      cost: { action: 'reaction', forcePoints: 0, talentResources: null },
+      handler: async (context) => {
+        const event = context?.verifiedAttackEvent ?? null;
+        if (!event) return { error: 'No verified critical hit', modifiedDamage: null, resultMessage: null };
+        const { LightsaberTalentActions } = await import('/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js');
+        const outcome = await LightsaberTalentActions.promptForceFortification(context.defender, { attackEvent: event });
+        if (!outcome) return { error: 'Force Fortification was not used', modifiedDamage: null, resultMessage: null };
+        return { modifiedDamage: null, additionalRoll: null, resultMessage: 'Critical hit negated; normal damage applies' };
       }
     },
 
@@ -1042,18 +1078,11 @@ const SWSE_FIRST_WAVE_REACTION_FALLBACKS = {
   },
 
   async "force-point"({ defender } = {}) {
-    const current = defender?.system?.forcePoints?.value ?? 0;
-    if (current > 0 && typeof ActorEngine?.apply === "function") {
-      await ActorEngine.apply(defender, {
-        update: {
-          "system.forcePoints.value": Math.max(0, current - 1)
-        }
-      });
-    }
+    // No direct balance write: Force Points are spent only through ForcePointsService + ActorEngine receipts.
     return swsePostReactionFallback(swseReactionResultCard({
-      title: "Force Point Spent",
-      subtitle: defender?.name ?? "Actor",
-      state: "success"
+      title: "Force Point Not Spent",
+      subtitle: `${defender?.name ?? "Actor"}: spend Force Points through the roll or ability that uses them`,
+      state: "failure"
     }));
   },
 

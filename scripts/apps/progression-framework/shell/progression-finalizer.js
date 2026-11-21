@@ -3470,7 +3470,7 @@ export class ProgressionFinalizer {
     const sessionId = sessionState.sessionId || 'unknown';
     const itemSpecs = [];
     const deleteItems = [];
-    const postApply = { starshipManeuverNames: [], starshipManeuverRemoveItemIds: [], forceTechniqueEntries: [], forceSecretEntries: [] };
+    const postApply = { starshipManeuverNames: [], starshipManeuverMarkers: [], starshipManeuverRemoveItemIds: [], forceTechniqueEntries: [], forceSecretEntries: [] };
     const domainConfig = [
       { key: 'feats', type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
       { key: 'talents', type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
@@ -3527,7 +3527,8 @@ export class ProgressionFinalizer {
           if (existingBySessionMarker.has(sessionMarker)) continue;
           if (!allowDuplicateForEntry && existingByTypeAndName.has(dedupeKey)) continue;
 
-          const baseItem = resolvedData || {
+          // Each copy is its own item object: sharing one object across count>1 gave every copy the last copy's identity.
+          const baseItem = (resolvedData ? foundry.utils.deepClone(resolvedData) : null) || {
             name: storedName,
             type: domain.type,
             system: rawEntry?.system || {},
@@ -3655,7 +3656,6 @@ export class ProgressionFinalizer {
       const count = Math.max(0, Number(rawEntry?.count ?? 1) || 0);
       if (count <= 0) continue;
       const maneuverName = rawEntry?.name || rawEntry?.id || String(rawEntry);
-      const existingCount = actor.items.filter((item) => item.type === 'maneuver' && String(item.name || '').toLowerCase() === String(maneuverName).toLowerCase()).length;
 
       for (let idx = 0; idx < count; idx += 1) {
         const sessionMarker = `${sessionId}::starshipManeuvers::${rawEntry?.id || maneuverName}::${idx}`;
@@ -3668,7 +3668,7 @@ export class ProgressionFinalizer {
             ...(rawEntry?.system || {}),
             description: rawEntry?.description || rawEntry?.system?.description || '',
             uses: rawEntry?.system?.uses || { current: 1, max: 1 },
-            spent: rawEntry?.system?.spent || false,
+            discarded: rawEntry?.system?.discarded === true,
             inSuite: true,
           },
           img: rawEntry?.img || undefined,
@@ -3687,7 +3687,8 @@ export class ProgressionFinalizer {
         itemSpecs.push(maneuverItem);
         existingBySessionMarker.add(sessionMarker);
         postApply.starshipManeuverNames.push(maneuverName);
-        existingByTypeAndName.add(`maneuver::${String(maneuverName || '').toLowerCase()}::${existingCount + idx}`);
+        // Per-copy identity: the suite sync matches the exact copies this session created, never "every maneuver with that name".
+        postApply.starshipManeuverMarkers.push({ sessionId, selectionId: rawEntry?.id || maneuverName, countIndex: idx });
       }
     }
 
@@ -3695,6 +3696,9 @@ export class ProgressionFinalizer {
   }
 
   static _collectOwnedForcePowerItemIds(actor, rawEntry, count = 0) {
+    // A caller that names the exact owned copy (itemId) removes exactly that copy; the name/slug match below is the fallback.
+    const exactId = rawEntry?.itemId ?? rawEntry?.ownedItemId ?? null;
+    if (exactId) return actor.items.some((item) => (item.id ?? item._id) === exactId) ? [exactId] : [];
     const targetId = this._normalizeNameKey(rawEntry?.id || rawEntry?._id || rawEntry?.slug || rawEntry?.name || rawEntry);
     const targetName = this._normalizeNameKey(rawEntry?.name || rawEntry?.label || rawEntry?.id || rawEntry);
     const matches = actor.items.filter((item) => {
@@ -3715,6 +3719,9 @@ export class ProgressionFinalizer {
   }
 
   static _collectOwnedStarshipManeuverItemIds(actor, rawEntry, count = 0) {
+    // A caller that names the exact owned copy (itemId) removes exactly that copy; the name/slug match below is the fallback.
+    const exactId = rawEntry?.itemId ?? rawEntry?.ownedItemId ?? null;
+    if (exactId) return actor.items.some((item) => (item.id ?? item._id) === exactId) ? [exactId] : [];
     const targetId = this._normalizeNameKey(rawEntry?.id || rawEntry?._id || rawEntry?.slug || rawEntry?.name || rawEntry);
     const targetName = this._normalizeNameKey(rawEntry?.name || rawEntry?.label || rawEntry?.id || rawEntry);
     const suiteIds = new Set(Array.isArray(actor?.system?.starshipManeuverSuite?.maneuvers)
@@ -3750,8 +3757,19 @@ export class ProgressionFinalizer {
     const suite = actor.system?.starshipManeuverSuite || { maneuvers: [] };
     const current = Array.isArray(suite.maneuvers) ? suite.maneuvers.map((id) => String(id)) : [];
     const existing = new Set(current.filter((id) => !removeIds.has(id)));
+    const markers = mutationPlan?.metadata?.postApply?.starshipManeuverMarkers || [];
+    const markerKeys = new Set(markers.map((m) => `${m.sessionId}::${m.selectionId}::${m.countIndex || 0}`));
+    // Marker match = the exact copies this plan created. Name match is only the legacy fallback for a repair payload that
+    // predates markers (it cannot tell two same-name copies apart).
     const matchingIds = actor.items
-      .filter((item) => item.type === 'maneuver' && starshipManeuverNames.includes(item.name))
+      .filter((item) => {
+        if (item.type !== 'maneuver') return false;
+        if (markerKeys.size) {
+          const meta = item.flags?.swse?.progression;
+          return Boolean(meta) && markerKeys.has(`${meta.sourceSession}::${meta.selectionId}::${meta.countIndex || 0}`);
+        }
+        return starshipManeuverNames.includes(item.name);
+      })
       .map((item) => item.id)
       .filter(Boolean);
     for (const id of matchingIds) existing.add(String(id));
@@ -3781,6 +3799,7 @@ export class ProgressionFinalizer {
     try {
       const { changed } = await this._syncPostApplyState(actor, { metadata: { postApply: {
         starshipManeuverNames: repair?.starshipManeuverNames || [],
+        starshipManeuverMarkers: repair?.starshipManeuverMarkers || [],
         starshipManeuverRemoveItemIds: repair?.starshipManeuverRemoveItemIds || [],
       } } });
       return { success: true, changed };

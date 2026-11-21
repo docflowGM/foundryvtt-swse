@@ -1,0 +1,586 @@
+{
+  "schemaVersion": "2.9.0",
+  "package": "book-7-legacy-era-campaign-guide",
+  "purpose": "9 technique power edges, 3 Legacy talent links, 2 printed Telekinetic scope links; all link to immutable definition IDs.",
+  "applicationOrder": [
+    "source-identity",
+    "acquisition-entitlement",
+    "targeting",
+    "resource-choice-preflight",
+    "roll",
+    "per-target-defense",
+    "highest-eligible-fixed-dc-tier",
+    "base-effects",
+    "technique/talent-conditional-modifiers",
+    "damage-and-fire-authority",
+    "resource-receipt-and-duration"
+  ],
+  "eventSemantics": {
+    "Power": "Force roll is compared with explicit defense or highest published DC tier; never invent DC from damage.",
+    "Technique": "Each technique attaches to existing power. Source listing as related power does not imply an acquisition prerequisite.",
+    "Reprint": "Force Shield Legacy p54 references FUCG p86 definition; there is no second registered power.",
+    "Resource": "All spends and alternate modes go through one resource owner with one receipt."
+  },
+  "edges": [
+    {
+      "ruleId": "legacy/force-technique/detoxify-poison/influence",
+      "sourceDefinitionId": "legacy/force-technique/detoxify-poison",
+      "sourceDomain": "force-technique",
+      "sourceName": "Detoxify Poison",
+      "sourcePage": 55,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/vital-transfer"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique known",
+        "Qualifying base Power use"
+      ],
+      "operations": [
+        {
+          "op": "source-technique-modifier",
+          "techniqueId": "legacy/force-technique/detoxify-poison",
+          "powerId": "core/force-power/vital-transfer",
+          "mechanicalEffect": "Replace Vital Transfer healing with UTF vs active poison DC, detoxifying as Treat Injury on success; no ordinary healing.",
+          "separateAcquisitionPrerequisite": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/force-technique/improved-ballistakinesis/influence",
+      "sourceDefinitionId": "legacy/force-technique/improved-ballistakinesis",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Ballistakinesis",
+      "sourcePage": 55,
+      "targetSelector": {
+        "definitionIds": [
+          "legacy/force-power/ballistakinesis"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique known",
+        "Qualifying base Power use",
+        "Required FP/DP path selected and legally spendable",
+        "Explicit resource choice preflight and one spend receipt"
+      ],
+      "operations": [
+        {
+          "op": "source-technique-modifier",
+          "techniqueId": "legacy/force-technique/improved-ballistakinesis",
+          "powerId": "legacy/force-power/ballistakinesis",
+          "mechanicalEffect": "Spend FP on Ballistakinesis to increase 2x2 area to 3x3.",
+          "separateAcquisitionPrerequisite": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/force-technique/improved-dark-transfer/influence",
+      "sourceDefinitionId": "legacy/force-technique/improved-dark-transfer",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Dark Transfer",
+      "sourcePage": 55,
+      "targetSelector": {
+        "definitionIds": [
+          "legacy/force-power/dark-transfer"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique known",
+        "Qualifying base Power use",
+        "Required FP/DP path selected and legally spendable",
+        "Explicit resource choice preflight and one spend receipt"
+      ],
+      "operations": [
+        {
+          "op": "source-technique-modifier",
+          "techniqueId": "legacy/force-technique/improved-dark-transfer",
+          "powerId": "legacy/force-power/dark-transfer",
+          "mechanicalEffect": "Spend FP, DC 25 UTF, revive creature deceased since end of last turn: target becomes unconscious, not dead, and gets no HP healing.",
+          "separateAcquisitionPrerequisite": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/force-technique/improved-detonate/influence",
+      "sourceDefinitionId": "legacy/force-technique/improved-detonate",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Detonate",
+      "sourcePage": 56,
+      "targetSelector": {
+        "definitionIds": [
+          "legacy/force-power/detonate"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique known",
+        "Qualifying base Power use"
+      ],
+      "operations": [
+        {
+          "op": "source-technique-modifier",
+          "techniqueId": "legacy/force-technique/improved-detonate",
+          "powerId": "legacy/force-power/detonate",
+          "mechanicalEffect": "On Detonate, enemies within 2 squares of the object suffer HALF damage actually sustained by object if UTF >= each Reflex; area attack.",
+          "separateAcquisitionPrerequisite": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/force-technique/improved-enlighten/influence",
+      "sourceDefinitionId": "legacy/force-technique/improved-enlighten",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Enlighten",
+      "sourcePage": 56,
+      "targetSelector": {
+        "definitionIds": [
+          "legacy/force-power/enlighten"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique known",
+        "Qualifying base Power use",
+        "Required FP/DP path selected and legally spendable",
+        "Explicit resource choice preflight and one spend receipt"
+      ],
+      "operations": [
+        {
+          "op": "source-technique-modifier",
+          "techniqueId": "legacy/force-technique/improved-enlighten",
+          "powerId": "legacy/force-power/enlighten",
+          "mechanicalEffect": "Spend FP during Enlighten to include one additional ally.",
+          "separateAcquisitionPrerequisite": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/force-technique/improved-lightning-burst/influence",
+      "sourceDefinitionId": "legacy/force-technique/improved-lightning-burst",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Lightning Burst",
+      "sourcePage": 56,
+      "targetSelector": {
+        "definitionIds": [
+          "legacy/force-power/lightning-burst"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique known",
+        "Qualifying base Power use"
+      ],
+      "operations": [
+        {
+          "op": "source-technique-modifier",
+          "techniqueId": "legacy/force-technique/improved-lightning-burst",
+          "powerId": "legacy/force-power/lightning-burst",
+          "mechanicalEffect": "On Lightning Burst, compare UTF to each target’s Reflex AND Fortitude; if both met, also push 1 square and prone.",
+          "separateAcquisitionPrerequisite": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/force-technique/improved-obscure/influence",
+      "sourceDefinitionId": "legacy/force-technique/improved-obscure",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Obscure",
+      "sourcePage": 56,
+      "targetSelector": {
+        "definitionIds": [
+          "legacy/force-power/obscure"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique known",
+        "Qualifying base Power use",
+        "Required FP/DP path selected and legally spendable",
+        "Explicit resource choice preflight and one spend receipt"
+      ],
+      "operations": [
+        {
+          "op": "source-technique-modifier",
+          "techniqueId": "legacy/force-technique/improved-obscure",
+          "powerId": "legacy/force-power/obscure",
+          "mechanicalEffect": "Spend FP during Obscure to gain +5 Force bonus on its Use the Force check.",
+          "separateAcquisitionPrerequisite": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/force-technique/improved-force-shield/influence",
+      "sourceDefinitionId": "legacy/force-technique/improved-force-shield",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Shield",
+      "sourcePage": 56,
+      "targetSelector": {
+        "definitionIds": [
+          "fucg/force-power/force-shield"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique known",
+        "Qualifying base Power use",
+        "Required FP/DP path selected and legally spendable",
+        "Explicit resource choice preflight and one spend receipt"
+      ],
+      "operations": [
+        {
+          "op": "source-technique-modifier",
+          "techniqueId": "legacy/force-technique/improved-force-shield",
+          "powerId": "fucg/force-power/force-shield",
+          "mechanicalEffect": "When using Force Shield, spend FP to include adjacent allies; alternatively spend DP to shield occupied vehicle of any size; non-stacking SR.",
+          "separateAcquisitionPrerequisite": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/force-technique/improved-stagger/influence",
+      "sourceDefinitionId": "legacy/force-technique/improved-stagger",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Stagger",
+      "sourcePage": 56,
+      "targetSelector": {
+        "definitionIds": [
+          "legacy/force-power/stagger"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Source technique known",
+        "Qualifying base Power use",
+        "Required FP/DP path selected and legally spendable",
+        "Explicit resource choice preflight and one spend receipt"
+      ],
+      "operations": [
+        {
+          "op": "source-technique-modifier",
+          "techniqueId": "legacy/force-technique/improved-stagger",
+          "powerId": "legacy/force-power/stagger",
+          "mechanicalEffect": "Spend FP to push a successful Stagger target 2 squares instead of 1.",
+          "separateAcquisitionPrerequisite": false
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/talent/move-massive-object",
+      "sourceDefinitionId": "talent/alter/move-massive-object",
+      "sourceDomain": "talent",
+      "sourceName": "Move Massive Object",
+      "sourcePage": 55,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/move-object"
+        ]
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Talent known",
+        "Telekinetic Power talent and Move Object acquisition prerequisites",
+        "Moved object size >= Large",
+        "FP cost preflight",
+        "Explicit resource choice preflight and one spend receipt"
+      ],
+      "operations": [
+        {
+          "op": "source-talent-modifier",
+          "talentId": "talent/alter/move-massive-object",
+          "powerId": "core/force-power/move-object",
+          "mechanicalEffect": "Prereq Telekinetic Power and Move Object. Spend one FP; if object Large+, area 2x2/3x3/4x4/6x6 by size; UTF vs individual Reflex, half damage on miss.",
+          "sourcePrerequisites": [
+            "Talent known",
+            "Telekinetic Power talent and Move Object acquisition prerequisites",
+            "Moved object size >= Large",
+            "FP cost preflight"
+          ],
+          "spendForcePoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/talent/telekinetic-stability",
+      "sourceDefinitionId": "talent/control/telekinetic-stability",
+      "sourceDomain": "talent",
+      "sourceName": "Telekinetic Stability",
+      "sourcePage": 55,
+      "targetSelector": {
+        "targeting": "any-source-involuntary-movement"
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Talent known",
+        "Effect would move actor against their will",
+        "FP available",
+        "Explicit resource choice preflight and one spend receipt",
+        "Any attack or effect would force movement, not just Stagger"
+      ],
+      "operations": [
+        {
+          "op": "source-talent-modifier",
+          "talentId": "talent/control/telekinetic-stability",
+          "powerId": "legacy/force-power/stagger",
+          "mechanicalEffect": "When involuntarily moved by Stagger (or other source), spend FP to negate forced displacement only.",
+          "sourcePrerequisites": [
+            "Talent known",
+            "Effect would move actor against their will",
+            "FP available"
+          ],
+          "spendForcePoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/talent/dark-preservation",
+      "sourceDefinitionId": "talent/dark-side/dark-preservation",
+      "sourceDomain": "talent",
+      "sourceName": "Dark Preservation",
+      "sourcePage": 55,
+      "targetSelector": {
+        "targeting": "any-source-condition-track-decrement"
+      },
+      "event": "force-ability-use",
+      "phase": "before-roll-or-result-at-printed-trigger",
+      "interactionMode": "modify",
+      "conditions": [
+        "Talent known",
+        "Power of the Dark Side talent prerequisite satisfied",
+        "Condition-track step reduction is imminent",
+        "FP available",
+        "Explicit resource choice preflight and one spend receipt",
+        "Any attack or effect would decrease condition track, not just Dark Transfer"
+      ],
+      "operations": [
+        {
+          "op": "source-talent-modifier",
+          "talentId": "talent/dark-side/dark-preservation",
+          "powerId": "legacy/force-power/dark-transfer",
+          "mechanicalEffect": "Whenever condition track movement down would occur, optionally spend FP and gain +1 Dark Side Point to negate CT movement.",
+          "sourcePrerequisites": [
+            "Talent known",
+            "Power of the Dark Side talent prerequisite satisfied",
+            "Condition-track step reduction is imminent",
+            "FP available"
+          ],
+          "spendForcePoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Base power remains usable without this modifier.",
+        "Requires ownership of influencing source; no power-knowledge acquisition prerequisite inferred from a modifier target."
+      ]
+    },
+    {
+      "ruleId": "legacy/equipment/death-sticks/use-the-force-check-penalty",
+      "sourceDefinitionId": "legacy/equipment/death-sticks",
+      "sourceDomain": "equipment",
+      "sourceName": "Death Sticks",
+      "sourcePage": 56,
+      "targetSelector": {
+        "checkSkill": "use-the-force"
+      },
+      "event": "check-or-resource-preflight",
+      "phase": "before-roll-and-spend",
+      "interactionMode": "restrict",
+      "conditions": [
+        "Death stick euphoria active on actor"
+      ],
+      "operations": [
+        {
+          "op": "equipment-force-interference",
+          "effectKind": "use-the-force-check-penalty",
+          "penalty": -10,
+          "activeCondition": "death-stick-euphoria"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No Force Point spending while euphoric.",
+        "Only actual Use the Force checks receive the -10 skill penalty; ordinary Pilot checks do not."
+      ]
+    },
+    {
+      "ruleId": "legacy/equipment/death-sticks/force-point-spend-prohibition",
+      "sourceDefinitionId": "legacy/equipment/death-sticks",
+      "sourceDomain": "equipment",
+      "sourceName": "Death Sticks",
+      "sourcePage": 56,
+      "targetSelector": {
+        "resourceSpendMode": "force-point"
+      },
+      "event": "check-or-resource-preflight",
+      "phase": "before-roll-and-spend",
+      "interactionMode": "restrict",
+      "conditions": [
+        "Death stick euphoria active on actor"
+      ],
+      "operations": [
+        {
+          "op": "equipment-force-interference",
+          "effectKind": "force-point-spend-prohibition",
+          "penalty": 0,
+          "activeCondition": "death-stick-euphoria"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No Force Point spending while euphoric.",
+        "Only actual Use the Force checks receive the -10 skill penalty; ordinary Pilot checks do not."
+      ]
+    },
+    {
+      "ruleId": "legacy/equipment/death-sticks/morale-attack",
+      "sourceDefinitionId": "legacy/equipment/death-sticks",
+      "sourceDomain": "equipment",
+      "sourceName": "Death Sticks",
+      "sourcePage": 56,
+      "targetSelector": {
+        "targeting": "actor-attack-roll"
+      },
+      "event": "attack-or-defense-resolution",
+      "phase": "before-roll-or-defense-evaluation",
+      "interactionMode": "modify",
+      "conditions": [
+        "Death stick euphoria active on actor"
+      ],
+      "operations": [
+        {
+          "op": "modifier",
+          "stat": "attack-roll",
+          "bonusType": "morale",
+          "amount": 1
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "The +1 morale bonus applies to the actor, not automatically to its ship.",
+        "Stacking uses the shared ModifierEngine bonus-type policy."
+      ]
+    },
+    {
+      "ruleId": "legacy/equipment/death-sticks/morale-defenses",
+      "sourceDefinitionId": "legacy/equipment/death-sticks",
+      "sourceDomain": "equipment",
+      "sourceName": "Death Sticks",
+      "sourcePage": 56,
+      "targetSelector": {
+        "targeting": "actor-personal-defenses"
+      },
+      "event": "attack-or-defense-resolution",
+      "phase": "before-roll-or-defense-evaluation",
+      "interactionMode": "modify",
+      "conditions": [
+        "Death stick euphoria active on actor"
+      ],
+      "operations": [
+        {
+          "op": "modifier",
+          "stat": "all-personal-defense-scores",
+          "bonusType": "morale",
+          "amount": 1
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "The +1 morale bonus applies to the actor, not automatically to its ship.",
+        "Stacking uses the shared ModifierEngine bonus-type policy."
+      ]
+    }
+  ],
+  "excludedScope": [
+    "Do not infer that all attacks count as Force Power activations.",
+    "Do not stack multiple optional enhancements paid by one Force Point without explicit legal basis.",
+    "Do not duplicate Core Force Shield or other shared V2 mechanical owners."
+  ],
+  "schemaEvolutionPolicy": {
+    "newPublicationMayAdd": [
+      "Typed source-certified operations and conditions only; no invented gates."
+    ],
+    "previousRecordsMustRevalidate": true,
+    "cannotBeAddedAsUntypedFreeText": true,
+    "ambiguousPublishedEffect": "Block or mark adjudication rather than let Claude infer."
+  }
+}

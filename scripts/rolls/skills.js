@@ -310,6 +310,9 @@ export async function rollSkill(actor, skillKey, options = {}) {
       trained: isTrained,
       skillUse: skillContext.skillUse,
       useKey: skillContext.useKey,
+      // Verified Block/Deflect reaction evidence and the player's temporary-point choice (never trusted without re-verification in ForcePointsService)
+      reactionEvent: options?.reactionEvent ?? null,
+      useTemporaryForcePoint: options?.useTemporaryForcePoint === true,
       masterSaboteur: masterSaboteurEvidence,
       featSkillBonuses: featSkillBonuses.bonuses,
       equipmentSkillModifiers: equipmentSkill.modifiers,

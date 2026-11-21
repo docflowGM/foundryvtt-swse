@@ -1,0 +1,2207 @@
+{
+  "packageVersion": "0.1.0",
+  "schemaVersion": "2.9.0",
+  "scope": "book-5-clone-wars-campaign-guide",
+  "purpose": "Nineteen source-verified Clone Wars Force Power, Technique and Secret definitions, with explicit tier/defense gates, no implementation code.",
+  "sourceAuthority": {
+    "book": "The Clone Wars Campaign Guide",
+    "pdf": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
+    "textLookup": "Clone Wars Campaign Guide_djvu.txt",
+    "pagesReviewed": [
+      40,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55
+    ],
+    "officialErrata": {
+      "title": "The Clone Wars Campaign Guide — Errata and Clarifications, updated January 2009",
+      "issuer": "Wizards of the Coast RPG Team / compiled archive",
+      "issued": "January 2009",
+      "url": "https://anyflip.com/osliz/ekoo/basic/201-230",
+      "priority": "Official errata supersedes printing; p40 Focused Force Talisman amended. No p50-55 Force definition amendment confirmed in available errata excerpt."
+    }
+  },
+  "mechanicalPrinciples": {
+    "rollType": "All eight Force Powers use UTF; four fixed DC ladder powers, four defense comparisons. Techniques and Secrets modify a qualifying power without a separate UTF check.",
+    "tierSelection": "Highest published tier at or below UTF total; defense checks compare total directly and never invent DC thresholds.",
+    "successPriority": [
+      "validate-owned-powers-and-targets",
+      "apply-source-typed-technique-and-secret-selection",
+      "validate-exclusive-resource-options",
+      "resolve-action-economy-and-UTF-roll",
+      "compare-target-defense-or-fixed-dc",
+      "apply-outcome-and-condition-track",
+      "establish-maintenance-and-damage-concentration",
+      "schedule-linked-powers-and-recovery",
+      "create-one-actor-engine-receipt-per-change"
+    ],
+    "powerRecovery": [
+      "Owned Force Power suite instances remain instance-based; techniques/secrets do not add power copies.",
+      "Focused Force Talisman errata recovers all spent copies of selected power on one eligible FP spend.",
+      "Linked Power reserves two power copies; second does not create a free permanent power."
+    ],
+    "modifierApplication": "Use typed influence graph keyed by published definition identity, not name or generic tags.",
+    "errataPriority": "January 2009 errata p40 Focused Force Talisman applies; p50-55 printed source unless a reliable official correction is found."
+  },
+  "counts": {
+    "force-power": 8,
+    "force-technique": 8,
+    "force-secret": 3,
+    "total": 19,
+    "fixedDcTierRows": 15
+  },
+  "definitions": [
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-power/cloak",
+      "legacyPackId": "18e79be8d48946ba",
+      "domain": "force-power",
+      "printedName": "Cloak",
+      "displayName": "Cloak",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 50,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Personal total concealment; increasing Stealth bonus on UTF fixed DC ladder.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "self",
+        "rangeSquares": 0,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Total concealment until start of next turn",
+            "operations": [
+              {
+                "kind": "total-concealment",
+                "target": "self",
+                "duration": "until-start-of-caster-next-turn",
+                "against": "all-targets"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Total concealment; +2 Force Stealth bonus until start of next turn",
+            "operations": [
+              {
+                "kind": "total-concealment",
+                "target": "self",
+                "duration": "until-start-of-caster-next-turn",
+                "against": "all-targets"
+              },
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "stealth-check",
+                "amount": 2,
+                "bonusType": "force",
+                "when": "until-start-of-caster-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Total concealment; +3 Force Stealth bonus until start of next turn",
+            "operations": [
+              {
+                "kind": "total-concealment",
+                "target": "self",
+                "duration": "until-start-of-caster-next-turn",
+                "against": "all-targets"
+              },
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "stealth-check",
+                "amount": 3,
+                "bonusType": "force",
+                "when": "until-start-of-caster-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Total concealment; +5 Force Stealth bonus until start of next turn",
+            "operations": [
+              {
+                "kind": "total-concealment",
+                "target": "self",
+                "duration": "until-start-of-caster-next-turn",
+                "against": "all-targets"
+              },
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "stealth-check",
+                "amount": 5,
+                "bonusType": "force",
+                "when": "until-start-of-caster-next-turn"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Increase selected Stealth check bonus by +5 (does not grant concealment without successful base DC).",
+          "operations": [
+            {
+              "kind": "increase-existing-force-bonus",
+              "target": "self",
+              "stat": "stealth-check",
+              "amount": 5,
+              "baseBonusFromTier": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "A fresh UTF check selects the new tier each maintenance round; damage concentration DC15+damage.",
+        "Taking damage when maintaining may end cloak on failed concentration check."
+      ],
+      "maintenance": {
+        "allowed": true,
+        "action": "standard",
+        "repeatEachRound": true,
+        "repeatCheck": true,
+        "onDamageConcentrationDC": "15+damageTaken"
+      },
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc",
+        "scope": "self",
+        "damageTiming": "none",
+        "damageConcentrationCheck": {
+          "skill": "use-the-force",
+          "formula": "15+damageTaken",
+          "onFailure": "end-effect"
+        }
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-power/levitate",
+      "legacyPackId": "fp_levitate",
+      "domain": "force-power",
+      "printedName": "Levitate",
+      "displayName": "Levitate",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 50,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Personal vertical-only fly speed of 2, 4 or 6 squares; react to falling by spending 1 FP.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "move",
+        "targetKind": "self",
+        "rangeSquares": 0,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Fly speed 2 squares, vertical-only (capped by no other source).",
+            "operations": [
+              {
+                "kind": "vertical-flight",
+                "target": "self",
+                "speedSquares": 2,
+                "verticalOnly": true,
+                "freeStepOntoAdjacentSurface": true,
+                "fallIfUnsupportedNextTurn": true
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Fly speed 4 squares, vertical-only (capped by no other source).",
+            "operations": [
+              {
+                "kind": "vertical-flight",
+                "target": "self",
+                "speedSquares": 4,
+                "verticalOnly": true,
+                "freeStepOntoAdjacentSurface": true,
+                "fallIfUnsupportedNextTurn": true
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Fly speed 6 squares, vertical-only (capped by no other source).",
+            "operations": [
+              {
+                "kind": "vertical-flight",
+                "target": "self",
+                "speedSquares": 6,
+                "verticalOnly": true,
+                "freeStepOntoAdjacentSurface": true,
+                "fallIfUnsupportedNextTurn": true
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "when-falling",
+          "timing": "reaction",
+          "summary": "Reaction when falling: activate Levitate and reduce fall by selected tier fly speed.",
+          "operations": [
+            {
+              "kind": "safe-fall-by-vertical-speed",
+              "target": "self",
+              "reduceSquaresBySelectedFlySpeed": true,
+              "safeIfDistanceBecomesZero": true,
+              "reactionForcePointCost": 1
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Special falling option spends **one** FP (not two); activation check still establishes vertical speed.",
+        "May step one square onto adjacent horizontal surface as a free action at end of movement.",
+        "Maintaining allows vertical movement; failed damage concentration immediately causes falling."
+      ],
+      "maintenance": {
+        "allowed": true,
+        "action": "move",
+        "repeatEachRound": true,
+        "repeatCheck": true,
+        "onDamageConcentrationDC": "15+damageTaken"
+      },
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc",
+        "scope": "self",
+        "damageTiming": "none",
+        "damageConcentrationCheck": {
+          "skill": "use-the-force",
+          "formula": "15+damageTaken",
+          "onFailure": "end-effect"
+        }
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-power/malacia",
+      "legacyPackId": "68353e70defb7efa",
+      "domain": "force-power",
+      "printedName": "Malacia",
+      "displayName": "Malacia",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 51,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Light Side: living target Fortitude; one CT step and temporary -5 damage threshold.",
+      "descriptors": [
+        "light-side"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-living-creature",
+        "rangeSquares": 6,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense",
+          "defense": "fortitude",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "condition-track",
+            "target": "target",
+            "steps": -1
+          },
+          {
+            "kind": "damage-threshold-adjustment",
+            "target": "target",
+            "amount": -5,
+            "expires": "end-of-target-next-turn"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Replace the target DT penalty -5 with -10; do not stack penalties.",
+          "operations": [
+            {
+              "kind": "replace-threshold-penalty",
+              "target": "target",
+              "originalAmount": -5,
+              "replacementAmount": -10,
+              "expires": "end-of-target-next-turn"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Maintaining extends the damage-threshold penalty; no source authorization to repeat the -1 CT step.",
+        "Each maintenance check is UTF against the normal targeted Fortitude gate (review exact renewed failure handling)."
+      ],
+      "maintenance": {
+        "allowed": true,
+        "action": "standard",
+        "repeatEachRound": true,
+        "repeatCheck": true,
+        "onDamageConcentrationDC": "15+damageTaken",
+        "targetPersistence": "Damage-threshold penalty only; no additional CT movement from maintaining Malacia."
+      },
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "defense",
+        "damageTiming": "none",
+        "defenseComparator": "at-least",
+        "damageConcentrationCheck": {
+          "skill": "use-the-force",
+          "formula": "15+damageTaken",
+          "onFailure": "end-effect"
+        }
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-power/morichro",
+      "legacyPackId": "fp_morichro",
+      "domain": "force-power",
+      "printedName": "Morichro",
+      "displayName": "Morichro",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 51,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Grappled living creature Fortitude; per-round CT reduction, possibly trance or death at bottom.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-grabbed-or-grappled-living-creature",
+        "rangeSquares": 0,
+        "rangeMode": "touch",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense",
+          "defense": "fortitude",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "condition-track",
+            "target": "target",
+            "steps": -1
+          },
+          {
+            "kind": "death-or-trance-at-bottom",
+            "target": "target",
+            "condition": "reached-condition-track-bottom-from-morichro",
+            "livingOnly": true,
+            "ignoreConsentForTrance": true,
+            "options": [
+              "kill",
+              "force-trance"
+            ]
+          },
+          {
+            "kind": "unconscious-target-force-trance-eligibility",
+            "target": "target",
+            "whenAlreadyUnconscious": true,
+            "treatedWilling": true,
+            "requiresLiving": true
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Target must be living and currently grabbed or grappled.",
+          "Initial check must equal or exceed target Fortitude; printed maintenance clause uses STRICTLY exceeds Fortitude for additional CT step."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "If already unconscious, the target may be considered willing for Force trance.",
+        "Initial gate is at-least Fortitude; maintained subsequent gate is strictly greater than Fortitude.",
+        "Source says no maintenance on next turn if grapple ends; implement explicit lifecycle (current-round effect disposition is not redefined)."
+      ],
+      "maintenance": {
+        "allowed": true,
+        "action": "standard",
+        "repeatEachRound": true,
+        "repeatCheck": true,
+        "onDamageConcentrationDC": "15+damageTaken",
+        "targetPersistence": "Target remains grabbed/grappled; escaping ends ability to maintain on following turn.",
+        "forcedEndTriggers": [
+          "grapple-ends",
+          "failed-damage-concentration"
+        ],
+        "repeatEffect": [
+          {
+            "kind": "condition-track",
+            "target": "target",
+            "steps": -1,
+            "when": "maintenance-utf-strictly-exceeds-target-fortitude"
+          }
+        ]
+      },
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "defense",
+        "defenseComparator": "at-least",
+        "damageTiming": "none",
+        "damageConcentrationCheck": {
+          "skill": "use-the-force",
+          "formula": "15+damageTaken",
+          "onFailure": "end-effect"
+        }
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-power/phase",
+      "legacyPackId": "fp_phase",
+      "domain": "force-power",
+      "printedName": "Phase",
+      "displayName": "Phase",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 51,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Personal phasing speed 2/4/6/8 squares at DC 25/30/35/40; cannot exceed base speed.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "move",
+        "targetKind": "self",
+        "rangeSquares": 0,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 25
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 25,
+            "summary": "Phasing speed 2 squares, capped at base speed.",
+            "operations": [
+              {
+                "kind": "phasing-movement",
+                "target": "self",
+                "speedSquares": 2,
+                "capAtBaseSpeed": true,
+                "mayTraverseObstacles": true,
+                "mustEndMovementLegalUnoccupied": true
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Phasing speed 4 squares, capped at base speed.",
+            "operations": [
+              {
+                "kind": "phasing-movement",
+                "target": "self",
+                "speedSquares": 4,
+                "capAtBaseSpeed": true,
+                "mayTraverseObstacles": true,
+                "mustEndMovementLegalUnoccupied": true
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Phasing speed 6 squares, capped at base speed.",
+            "operations": [
+              {
+                "kind": "phasing-movement",
+                "target": "self",
+                "speedSquares": 6,
+                "capAtBaseSpeed": true,
+                "mayTraverseObstacles": true,
+                "mustEndMovementLegalUnoccupied": true
+              }
+            ]
+          },
+          {
+            "dc": 40,
+            "summary": "Phasing speed 8 squares, capped at base speed.",
+            "operations": [
+              {
+                "kind": "phasing-movement",
+                "target": "self",
+                "speedSquares": 8,
+                "capAtBaseSpeed": true,
+                "mayTraverseObstacles": true,
+                "mustEndMovementLegalUnoccupied": true
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Increase phasing speed by two squares, still capped by base speed.",
+          "operations": [
+            {
+              "kind": "increase-phasing-speed",
+              "target": "self",
+              "squares": 2,
+              "capAtBaseSpeed": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The phase speed cap at normal base speed also applies after a Force Point increase.",
+        "May traverse hostile squares and solid obstacles, but cannot normally end a move inside occupied square (Improved Phase exception).",
+        "Maintain using move action and move up to speed; source does not explicitly require a fresh tier roll each round."
+      ],
+      "maintenance": {
+        "allowed": true,
+        "action": "move",
+        "repeatEachRound": true,
+        "repeatCheck": false,
+        "onDamageConcentrationDC": "15+damageTaken",
+        "repeatResultCanChangeTier": false
+      },
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc",
+        "scope": "self",
+        "damageTiming": "none",
+        "damageConcentrationCheck": {
+          "skill": "use-the-force",
+          "formula": "15+damageTaken",
+          "onFailure": "end-effect"
+        }
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-power/rend",
+      "legacyPackId": "fp_rend",
+      "domain": "force-power",
+      "printedName": "Rend",
+      "displayName": "Rend",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 52,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Dark Side force tearing: UTF vs target Reflex; 3d6, natural 20 doubles, zero HP splits target.",
+      "descriptors": [
+        "dark-side"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-object-or-creature",
+        "rangeSquares": 6,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "damage-dice",
+            "target": "target",
+            "dice": "3d6"
+          },
+          {
+            "kind": "critical-double-on-natural20-utf",
+            "target": "target",
+            "rollFamily": "use-the-force",
+            "multiplier": 2,
+            "noAttackRollRequired": true
+          },
+          {
+            "kind": "rend-split-on-zero-hp",
+            "target": "target",
+            "threshold": 0,
+            "livingInstantDeath": true
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "after-successful-utf-versus-reflex",
+          "timing": "on-activation",
+          "summary": "After successfully hitting with Rend, deal +2d6 damage.",
+          "operations": [
+            {
+              "kind": "damage-dice",
+              "target": "target",
+              "dice": "2d6"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Natural 20 on UTF explicitly doubles Rend damage, independent of ordinary attack critical rules.",
+        "Actual HP reduction to zero splits target; a living creature is killed automatically.",
+        "Force Point added dice interact with natural-20 critical multiplication; precedence is not expressly defined."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "defense",
+        "defenseComparator": "at-least",
+        "damageTiming": "immediate"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-power/shatterpoint",
+      "legacyPackId": "fp_shatterpoint",
+      "domain": "force-power",
+      "printedName": "Shatterpoint",
+      "displayName": "Shatterpoint",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 52,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Swift action: DC 25/30/35/40 reduces target DT against next hitting attack by 5/10/15/20.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": 0,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 25
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 25,
+            "summary": "Next hit before encounter end treats target DT as 5 lower.",
+            "operations": [
+              {
+                "kind": "damage-threshold-adjustment",
+                "target": "target-of-next-attack",
+                "amount": -5,
+                "expires": "next-attack-made-before-end-of-encounter"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Next hit before encounter end treats target DT as 10 lower.",
+            "operations": [
+              {
+                "kind": "damage-threshold-adjustment",
+                "target": "target-of-next-attack",
+                "amount": -10,
+                "expires": "next-attack-made-before-end-of-encounter"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Next hit before encounter end treats target DT as 15 lower.",
+            "operations": [
+              {
+                "kind": "damage-threshold-adjustment",
+                "target": "target-of-next-attack",
+                "amount": -15,
+                "expires": "next-attack-made-before-end-of-encounter"
+              }
+            ]
+          },
+          {
+            "dc": 40,
+            "summary": "Next hit before encounter end treats target DT as 20 lower.",
+            "operations": [
+              {
+                "kind": "damage-threshold-adjustment",
+                "target": "target-of-next-attack",
+                "amount": -20,
+                "expires": "next-attack-made-before-end-of-encounter"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Ignore target DR on the attack benefitting from Shatterpoint.",
+          "operations": [
+            {
+              "kind": "ignore-damage-reduction",
+              "target": "target-of-next-attack",
+              "scope": "next-qualifying-attack"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The source specifies the NEXT attack made before encounter end; a miss does not transfer the benefit to a later attack. Additional edge cases remain in editorial review.",
+        "No source rule to apply damage threshold reduction to every attack for the encounter."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "dc",
+        "scope": "self",
+        "damageTiming": "none"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-power/technometry",
+      "legacyPackId": "fp_technometry",
+      "domain": "force-power",
+      "printedName": "Technometry",
+      "displayName": "Technometry",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 52,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Touch droid/device; UTF versus Will to retrieve information or control droid; margin adds more facts.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "touched-droid-or-electronic-device",
+        "rangeSquares": 0,
+        "rangeMode": "touch",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense",
+          "defense": "will",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "exclusive-effect-mode",
+            "target": "target",
+            "selectionRequired": true,
+            "modes": [
+              {
+                "mode": "read-information",
+                "eligibility": "droid-or-electronic-device",
+                "operations": [
+                  {
+                    "kind": "memory-access-will-margin",
+                    "target": "target",
+                    "defense": "will",
+                    "basePieces": 1,
+                    "additionalPerMargin": 5,
+                    "reference": "Core Use Computer access-information table"
+                  }
+                ]
+              },
+              {
+                "mode": "jam-droid-senses",
+                "eligibility": "droid-only",
+                "operations": [
+                  {
+                    "kind": "droid-control-choice",
+                    "target": "target",
+                    "choices": [
+                      {
+                        "mode": "jam-senses",
+                        "effect": "Permits Stealth against aware droid.",
+                        "expires": "end-of-caster-next-turn"
+                      }
+                    ],
+                    "requiresSuccessfulWillComparison": true
+                  }
+                ]
+              },
+              {
+                "mode": "deny-droid-dex",
+                "eligibility": "droid-only",
+                "operations": [
+                  {
+                    "kind": "droid-control-choice",
+                    "target": "target",
+                    "choices": [
+                      {
+                        "mode": "deny-dex",
+                        "effect": "Droid loses Dex bonus to Reflex versus caster next attack.",
+                        "expires": "end-of-caster-next-turn"
+                      }
+                    ],
+                    "requiresSuccessfulWillComparison": true
+                  }
+                ]
+              },
+              {
+                "mode": "compel-droid-flight",
+                "eligibility": "droid-only",
+                "operations": [
+                  {
+                    "kind": "droid-control-choice",
+                    "target": "target",
+                    "choices": [
+                      {
+                        "mode": "forced-flight",
+                        "effect": "On next two turns droid only flees from caster at top speed.",
+                        "expires": "end-of-droid-second-turn"
+                      }
+                    ],
+                    "requiresSuccessfulWillComparison": true
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Must touch one droid or electronic device.",
+          "Droid-specific alternate effects require droid target and a successful Will comparison."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Choose two additional information pieces OR extend one chosen droid-specific effect one round.",
+          "operations": [
+            {
+              "kind": "technometry-fp-exclusive-choice",
+              "target": "target",
+              "selectedModeRequired": true,
+              "choices": [
+                {
+                  "mode": "add-information-pieces",
+                  "eligibility": "read-information-mode",
+                  "amount": 2
+                },
+                {
+                  "mode": "extend-chosen-droid-effect-rounds",
+                  "eligibility": "one-of-three-droid-effect-modes",
+                  "amount": 1
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "One additional fact per complete 5-point success margin beyond Will; choose ONE of four result modes (information, jam, Dex-denial, flee).",
+        "FP extension applies to ONE selected droid effect, not all; FP extra knowledge adds two facts, not +2 to margin."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "powerRules": {
+        "outcomeGate": "defense",
+        "defenseComparator": "at-least",
+        "scope": "droid-or-electronic-device",
+        "damageTiming": "none"
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-technique/advanced-vital-transfer",
+      "legacyPackId": "6541b54a92f4a9ed",
+      "domain": "force-technique",
+      "printedName": "Advanced Vital Transfer",
+      "displayName": "Advanced Vital Transfer",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Fully heal target and remove all debilitating conditions from Vital Transfer on Destiny spend.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Requires a valid use of associated Force Power to confer benefit.",
+          "This chapter does not list a separate acquisition prerequisite in this technique paragraph; do not infer one from its name."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "destiny-point",
+          "trigger": "when-using-vital-transfer",
+          "timing": "on-activation",
+          "summary": "Fully heal target and remove all debilitating conditions when using Vital Transfer.",
+          "operations": [
+            {
+              "kind": "full-healing-condition-clear",
+              "target": "target",
+              "healAllDamage": true,
+              "removeAllDebilitatingConditions": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/vital-transfer"
+      ],
+      "rulesNotes": [
+        "Enhances related power; does not become a Force Power slot or require a separate UTF check.",
+        "Published text specifically uses Destiny Point, not Force Point, for full healing. No printed prerequisite to Improved Vital Transfer is shown in its entry."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-technique/improved-cloak",
+      "legacyPackId": "c3feb409cb7b57bf",
+      "domain": "force-technique",
+      "printedName": "Improved Cloak",
+      "displayName": "Improved Cloak",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Maintain Cloak with move action rather than standard.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "maintain-action-override",
+            "target": "source-power",
+            "fromAction": "standard",
+            "toAction": "move",
+            "scope": "maintain-cloak"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Requires a valid use of associated Force Power to confer benefit.",
+          "This chapter does not list a separate acquisition prerequisite in this technique paragraph; do not infer one from its name."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "cwcg/force-power/cloak"
+      ],
+      "rulesNotes": [
+        "Enhances related power; does not become a Force Power slot or require a separate UTF check."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-technique/improved-levitate",
+      "legacyPackId": "cbe485f3896fe74e",
+      "domain": "force-technique",
+      "printedName": "Improved Levitate",
+      "displayName": "Improved Levitate",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend 1 FP reaction to halt involuntary movement before a precipice.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Requires a valid use of associated Force Power to confer benefit.",
+          "This chapter does not list a separate acquisition prerequisite in this technique paragraph; do not infer one from its name."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "forced-movement-toward-precipice",
+          "timing": "reaction",
+          "summary": "Reaction: end involuntary forced movement in last safe square before ledge.",
+          "operations": [
+            {
+              "kind": "halt-forced-movement-before-precipice",
+              "target": "self",
+              "lastSquareBeforeEdge": true,
+              "requiresInvoluntaryMovement": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "cwcg/force-power/levitate"
+      ],
+      "rulesNotes": [
+        "Enhances related power; does not become a Force Power slot or require a separate UTF check.",
+        "Technique is a reaction to involuntary movement over precipice; distinct from base Levitate falling reaction."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-technique/improved-malacia",
+      "legacyPackId": "76abae492239e38c",
+      "domain": "force-technique",
+      "printedName": "Improved Malacia",
+      "displayName": "Improved Malacia",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Maintain Malacia damage-threshold penalty as swift action.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "maintain-action-override",
+            "target": "source-power",
+            "fromAction": "standard",
+            "toAction": "swift",
+            "scope": "damage-threshold-penalty-only"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Requires a valid use of associated Force Power to confer benefit.",
+          "This chapter does not list a separate acquisition prerequisite in this technique paragraph; do not infer one from its name."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "cwcg/force-power/malacia"
+      ],
+      "rulesNotes": [
+        "Enhances related power; does not become a Force Power slot or require a separate UTF check."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-technique/improved-phase",
+      "legacyPackId": "141ef00eb1ffc34c",
+      "domain": "force-technique",
+      "printedName": "Improved Phase",
+      "displayName": "Improved Phase",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "A single move may end inside occupied square, but end turn in legal unoccupied square.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "end-move-within-occupied-space",
+            "target": "self",
+            "allowedPerActivation": 1,
+            "endTurnMustBeLegalUnoccupied": true
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Requires a valid use of associated Force Power to confer benefit.",
+          "This chapter does not list a separate acquisition prerequisite in this technique paragraph; do not infer one from its name."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "cwcg/force-power/phase"
+      ],
+      "rulesNotes": [
+        "Enhances related power; does not become a Force Power slot or require a separate UTF check."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-technique/improved-rend",
+      "legacyPackId": "cc09cb779cbf91e3",
+      "domain": "force-technique",
+      "printedName": "Improved Rend",
+      "displayName": "Improved Rend",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Rend range becomes 12 squares and target DR is ignored.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "range-override",
+            "target": "source-power",
+            "value": "12-squares"
+          },
+          {
+            "kind": "ignore-damage-reduction",
+            "target": "rend-target",
+            "scope": "this-rend-use"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Requires a valid use of associated Force Power to confer benefit.",
+          "This chapter does not list a separate acquisition prerequisite in this technique paragraph; do not infer one from its name."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "cwcg/force-power/rend"
+      ],
+      "rulesNotes": [
+        "Enhances related power; does not become a Force Power slot or require a separate UTF check."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-technique/improved-shatterpoint",
+      "legacyPackId": "0268b55082ae8253",
+      "domain": "force-technique",
+      "printedName": "Improved Shatterpoint",
+      "displayName": "Improved Shatterpoint",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend 1 FP to make CT step from qualifying Shatterpoint attack persistent.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Requires a valid use of associated Force Power to confer benefit.",
+          "This chapter does not list a separate acquisition prerequisite in this technique paragraph; do not infer one from its name."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-ct-movement-from-shatterpoint-attack",
+          "timing": "on-activation",
+          "summary": "When shatterpoint attack actually moves target down CT, make that condition persistent.",
+          "operations": [
+            {
+              "kind": "persistent-ct-on-shatterpoint-attack",
+              "target": "target",
+              "trigger": "condition-track-movement-caused-by-shatterpoint-attack",
+              "requiresConditionTrackMovement": true,
+              "livingRemoval": "surgery",
+              "nonlivingRemoval": "repairs"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "cwcg/force-power/shatterpoint"
+      ],
+      "rulesNotes": [
+        "Enhances related power; does not become a Force Power slot or require a separate UTF check.",
+        "No persistent condition if attack does not move target down the condition track."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-technique/improved-technometry",
+      "legacyPackId": "956df621e64afd34",
+      "domain": "force-technique",
+      "printedName": "Improved Technometry",
+      "displayName": "Improved Technometry",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 54,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Full-round activation converts Technometry to caster 6-square cone targeting all droids.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "action-override",
+            "target": "source-power",
+            "fromAction": "standard",
+            "toAction": "full-round"
+          },
+          {
+            "kind": "area-override",
+            "target": "source-power",
+            "shape": "cone",
+            "lengthFormula": "6-squares",
+            "origin": "caster"
+          },
+          {
+            "kind": "filter-targets-by-type",
+            "target": "source-power",
+            "allowedTypes": [
+              "droid"
+            ],
+            "otherTypesExcluded": true
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Requires a valid use of associated Force Power to confer benefit.",
+          "This chapter does not list a separate acquisition prerequisite in this technique paragraph; do not infer one from its name."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "cwcg/force-power/technometry"
+      ],
+      "rulesNotes": [
+        "Enhances related power; does not become a Force Power slot or require a separate UTF check.",
+        "Each target is a droid; ordinary electronic device cannot be targeted by the cone. Compare UTF to each Will; special option not forced."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-secret/extend-power",
+      "legacyPackId": "c9fd689c1c451180",
+      "domain": "force-secret",
+      "printedName": "Extend Power",
+      "displayName": "Extend Power",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 55,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend FP to sustain a concentration-maintainable power with swift actions for Cha modifier rounds.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Underlying power has a source rule permitting concentration maintenance.",
+          "Source states a number of rounds equal to caster Charisma modifier; zero/negative values not specified."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-power-maintenance",
+          "timing": "on-activation",
+          "summary": "Maintain eligible Force Power with swift actions instead of standard for CHA modifier rounds.",
+          "operations": [
+            {
+              "kind": "maintain-action-override",
+              "target": "selected-maintainable-force-power",
+              "fromAction": "standard",
+              "toAction": "swift",
+              "scope": "for-cha-modifier-rounds"
+            },
+            {
+              "kind": "duration-override",
+              "target": "modifier-window",
+              "durationFormula": "cha-modifier-rounds"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Does not alter initial power activation action; only maintenance.",
+        "For base power whose maintenance action is not standard (e.g. Phase/Levitate), printed example says instead of standard; broad application requires decision."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "blocked-on-ruling"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-secret/linked-power",
+      "legacyPackId": "70f35597163d5735",
+      "domain": "force-secret",
+      "printedName": "Linked Power",
+      "displayName": "Linked Power",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 55,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Spend FP to link second Force Power to current round power; second fires free at start of next turn without alterations.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Select two available eligible Power uses before activating first.",
+          "Neither selected Power can be altered by a Force Technique, Force Secret, or the use of Force Points.",
+          "Deferred second Power goes off at start of next turn as free action."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "before-first-linked-power-use",
+          "timing": "on-activation",
+          "summary": "Link two available powers; second activates free next turn; both cannot otherwise be modified.",
+          "operations": [
+            {
+              "kind": "deferred-linked-power",
+              "target": "two-selected-force-power-instances",
+              "delayedRounds": 1,
+              "delayedAction": "free",
+              "triggerTime": "start-of-caster-next-turn",
+              "forbidModifiers": [
+                "force-technique",
+                "force-secret",
+                "force-point"
+              ],
+              "requireTwoEligiblePowerUses": true,
+              "rollSecondAtScheduledTime": true
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Linked Power Secret FP payment is distinct from prohibited FP modifications to either selected Power.",
+        "Two power uses are reserved; second has its own check at scheduled time (explicit execution design proposal; published wording does not discuss check timing).",
+        "Conflict with duration, no valid target at next turn, caster unavailable and off-turn incapacity require defined resolution."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "blocked-on-ruling"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "cwcg/force-secret/unconditional-power",
+      "legacyPackId": "9c1474ec2c898ad0",
+      "domain": "force-secret",
+      "printedName": "Unconditional Power",
+      "displayName": "Unconditional Power",
+      "source": {
+        "bookId": "swse-clone-wars",
+        "printedPage": 55,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "A self-only power ignores condition-track penalties to its activating Use the Force check.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "ignore-condition-track-utf-penalty",
+            "target": "source-power",
+            "onlySelfTargetingPower": true,
+            "ignoreOtherPenalties": false
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Underlying Force Power targets only caster.",
+          "Never remove modifiers other than condition-track penalties."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "No FP/DP spending line appears in Unconditional Power entry, while generic Force Secret preface describes spending a point as noted; resource behavior must be ruled before autocharging.",
+        "Passive vs paid activation needs an explicit editorial ruling."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "blocked-on-ruling"
+    }
+  ],
+  "modifiers": [
+    {
+      "modifierId": "cwcg/influence/advanced-vital-transfer",
+      "sourceName": "Advanced Vital Transfer",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 54,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "power-activation-or-followup",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/improved-cloak",
+      "sourceName": "Improved Cloak",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 54,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "power-activation-or-followup",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/improved-levitate",
+      "sourceName": "Improved Levitate",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 54,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "power-activation-or-followup",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/improved-malacia",
+      "sourceName": "Improved Malacia",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 54,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "power-activation-or-followup",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/improved-phase",
+      "sourceName": "Improved Phase",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 54,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "power-activation-or-followup",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/improved-rend",
+      "sourceName": "Improved Rend",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 54,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "power-activation-or-followup",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/improved-shatterpoint",
+      "sourceName": "Improved Shatterpoint",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 54,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "power-activation-or-followup",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/improved-technometry",
+      "sourceName": "Improved Technometry",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 54,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "power-activation-or-followup",
+      "effect": "modify: activate-technique-variant",
+      "constraints": [
+        "Technique is known; matching base Power is used.",
+        "Any optional FP/DP spend must use one canonical receipt."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/extend-power",
+      "sourceName": "Extend Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 55,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "maintenance-action-declaration",
+      "effect": "modify: apply-source-defined-resource-choice",
+      "constraints": [
+        "Underlying power source permits maintenance.",
+        "Maintenance actions originally standard, unless separately ruled."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/linked-power",
+      "sourceName": "Linked Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 55,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "select-two-powers-and-schedule",
+      "effect": "modify: apply-source-defined-resource-choice, reject-linked-modification",
+      "constraints": [
+        "Two eligible power instances selected and reserved.",
+        "Both powers unmodified beyond the Paid Linked Power scheduling itself."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/unconditional-power",
+      "sourceName": "Unconditional Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 55,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "qualifying-self-targeted-power-check",
+      "effect": "modify: ignore-condition-track-utf-penalty",
+      "constraints": [
+        "Selected power targets caster only.",
+        "No global removal of penalties and no assumed point spend."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/the-will-to-resist",
+      "sourceName": "The Will to Resist",
+      "sourceType": "talent",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 53,
+      "targetDomains": [
+        "force-power",
+        "talent"
+      ],
+      "trigger": "targeted-by-will-ability",
+      "effect": "modify: substitute-will-defense-with-utf",
+      "constraints": [
+        "Reaction once per turn; target Will defense.",
+        "A replacement check is used for this occurrence."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/attuned",
+      "sourceName": "Attuned",
+      "sourceType": "talent",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 53,
+      "targetDomains": [
+        "force-power",
+        "talent"
+      ],
+      "trigger": "natural20-attack-on-dark-side-target",
+      "effect": "modify: allow-light-side-free-activation",
+      "constraints": [
+        "Requires Focused Attack talent; targeted creature DSS>=1.",
+        "Choose owned Light Side power with eligible use."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/surge-of-light",
+      "sourceName": "Surge of Light",
+      "sourceType": "talent",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 53,
+      "targetDomains": [
+        "force-power",
+        "talent"
+      ],
+      "trigger": "swift-per-encounter",
+      "effect": "modify: recover-spent-power",
+      "constraints": [
+        "Only a spent Light Side descriptor power may be returned.",
+        "One use per encounter per talent instance."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/psychometry",
+      "sourceName": "Psychometry",
+      "sourceType": "talent",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 53,
+      "targetDomains": [
+        "force-power",
+        "talent"
+      ],
+      "trigger": "farseeing-target-selection",
+      "effect": "modify: change-force-power-target",
+      "constraints": [
+        "Actor has Force Perception and Farseeing prerequisite from talent.",
+        "Object is held; events bound to perceptions of previous holder."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/telekinetic-savant",
+      "sourceName": "Telekinetic Savant",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core",
+      "sourcePrintedPage": 100,
+      "targetDomains": [
+        "force-power",
+        "talent"
+      ],
+      "trigger": "qualifying-descriptor-recovery",
+      "effect": "modify: recover-spent-power",
+      "constraints": [
+        "Core talent handles descriptor telekinetic and spent power selection."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/telekinetic-power",
+      "sourceName": "Telekinetic Power",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core",
+      "sourcePrintedPage": 100,
+      "targetDomains": [
+        "force-power",
+        "talent"
+      ],
+      "trigger": "qualifying-telekinetic-power-check",
+      "effect": "modify: source-typed-operation",
+      "constraints": [
+        "Use authoritative Core Telekinetic Power grant, not inferred blanket bonus."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/focused-force-talisman",
+      "sourceName": "Focused Force Talisman",
+      "sourceType": "talent",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 40,
+      "targetDomains": [
+        "force-power",
+        "talent"
+      ],
+      "trigger": "selected-power-used-with-worn-talisman",
+      "effect": "modify: recover-all-selected-talisman-copies",
+      "constraints": [
+        "Talisman is worn; creator selected exact ability; spends one FP.",
+        "Official Jan 2009 errata changes recovery to all expended copies."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/greater-focused-force-talisman",
+      "sourceName": "Greater Focused Force Talisman",
+      "sourceType": "talent",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 40,
+      "targetDomains": [
+        "force-power",
+        "talent"
+      ],
+      "trigger": "talisman-recovery-fp-spend",
+      "effect": "modify: recover-all-selected-talisman-copies",
+      "constraints": [
+        "Requires worn talisman and Focused Force Talisman.",
+        "The FP spent for this talent does not count against one-FP-per-turn spending limit."
+      ]
+    },
+    {
+      "modifierId": "cwcg/influence/advanced-vital-transfer-destiny-heal",
+      "sourceName": "Advanced Vital Transfer",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-clone-wars",
+      "sourcePrintedPage": 54,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-vital-transfer",
+      "effect": "modify: apply-source-defined-resource-choice",
+      "constraints": [
+        "Source technique Advanced Vital Transfer is known.",
+        "Destiny Point is spent, not Force Point."
+      ]
+    }
+  ],
+  "unresolvedSourceInterpretations": [
+    {
+      "id": "CW-ED-01",
+      "severity": "blocks-full-automation",
+      "issue": "Linked Power delayed second power: roll and target-selection at next-turn-start proposed; printed rule states it goes off then but not how to handle interruption, invalid targets or source deletion."
+    },
+    {
+      "id": "CW-ED-02",
+      "severity": "blocks-full-automation",
+      "issue": "Unconditional Power resource: Secret preface describes cost FP or DP as noted; entry itself provides no spend. Do not assume a cost or autocharge without decision."
+    },
+    {
+      "id": "CW-ED-03",
+      "severity": "blocks-full-automation",
+      "issue": "Extend Power Charisma modifier zero or negative, and whether a nonstandard-maintenance power qualifies despite example standard-action conversion."
+    },
+    {
+      "id": "CW-ED-04",
+      "severity": "review",
+      "issue": "Shatterpoint refers to the next attack made before encounter end; design treats a miss as consuming the one-attack window. Verify expended unused power behavior alongside Core suite rules."
+    },
+    {
+      "id": "CW-ED-05",
+      "severity": "review",
+      "issue": "Morichro strict > on maintained check vs initial >=; delayed loss on broken grab, unconscious consent and kill/trance choice must be GM-visible."
+    },
+    {
+      "id": "CW-ED-06",
+      "severity": "review",
+      "issue": "Technometry FP extension: when droid forced flee for two turns, define whether +1 round means an additional turn of compelled flight vs extended state; keep source mode-specific."
+    },
+    {
+      "id": "CW-ED-07",
+      "severity": "review",
+      "issue": "Rend natural20 double damage plus optional +2d6 FP multiplication/ordering, no automatic reinterpretation as normal weapon crit."
+    },
+    {
+      "id": "CW-ED-08",
+      "severity": "review",
+      "issue": "Malacia maintenance new UTF vs Fortitude vs continuing only DT penalty; source states new UTF each round; preserve CT once unless source explicitly repeats."
+    },
+    {
+      "id": "CW-ED-09",
+      "severity": "review",
+      "issue": "Core feat/technique acquisition prerequisites: Clone Wars technique entries do not individually list base power as an acquisition prerequisite. Current packs add related-power fields; preserve effect relationship without treating it as published acquisition rule."
+    },
+    {
+      "id": "CW-ED-10",
+      "severity": "review",
+      "issue": "Published Source clone wars errata January 2009 p40 Focused Force Talisman: all spent copies recovered; no identified p50-55 Force Power correction in accessible published errata summary."
+    }
+  ],
+  "reprints": [],
+  "nextBook": "Jedi Academy Training Manual"
+}

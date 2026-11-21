@@ -17,6 +17,7 @@ import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-e
 import { RollCore } from '/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js';
 import { SWSEChat } from '/systems/foundryvtt-swse/scripts/chat/swse-chat.js';
 import { SchemaAdapters } from '/systems/foundryvtt-swse/scripts/utils/schema-adapters.js';
+import { buildRegimenEntitlement, regimenKeyFor, worldTimeNow } from '/systems/foundryvtt-swse/scripts/engine/force/regimen-entitlement.js';
 
 function ownedRegimens(actor) {
   return Array.from(actor?.items ?? []).filter((item) => String(item?.type || '') === 'force-regimen');
@@ -143,7 +144,6 @@ export class ForceRegimenExecutor {
 
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
       _id: regimen.id,
-      'system.spent': true,
       'system.discarded': true,
       'system.active': true,
       'system.activeEffectId': effect.id,
@@ -152,7 +152,19 @@ export class ForceRegimenExecutor {
       'system.lastUsed': Date.now(),
     }], { source: 'force-regimen-use', render: false });
     await ActorEngine.updateActor(actor, { 'system.activeEffects': effects }, { source: 'force-regimen-use' });
-    return { success: true, regimenName: regimen.name, effect };
+    // Typed Force Point entitlement (Block/Deflect regimens): a completed regimen at its printed DC tier.
+    // Campaign-time lifecycle (24h from completion); nothing is granted without a world clock.
+    let forcePointEntitlement = { granted: false, reason: 'Regimen grants no Force Point entitlement' };
+    const now = worldTimeNow();
+    const built = buildRegimenEntitlement({
+      regimenName: regimen.name, tierFloor: resolvedTier?.floor, worldTime: now,
+      grantId: `${regimenKeyFor(regimen.name)}-${now}`
+    });
+    if (built) {
+      const failedAt = (actor.getFlag?.('swse', 'regimenFailures') ?? actor.flags?.swse?.regimenFailures ?? {})[regimenKeyFor(regimen.name)] ?? null;
+      forcePointEntitlement = await ActorEngine.grantRegimenEntitlement(actor, built, { now, failedAt });
+    }
+    return { success: true, regimenName: regimen.name, effect, forcePointEntitlement };
   }
 
 
@@ -161,7 +173,7 @@ export class ForceRegimenExecutor {
       if (!actor || !itemId) return { success: false, error: 'Missing actor or regimen.' };
       const regimen = actor.items.get(itemId);
       if (!regimen || regimen.type !== 'force-regimen') return { success: false, error: 'Force Regimen not found.' };
-      if (regimen.system?.discarded || regimen.system?.spent) return { success: false, error: `${regimen.name} is already active/spent.` };
+      if (regimen.system?.discarded) return { success: false, error: `${regimen.name} is already active/spent.` };
 
       const existingEffects = Array.isArray(actor.system?.activeEffects) ? actor.system.activeEffects : [];
       const activeRegimenEffects = existingEffects.filter((effect) => effect?.source === 'forceRegimen' && effect?.enabled !== false);
@@ -230,7 +242,6 @@ export class ForceRegimenExecutor {
       if (!resolvedTier) {
         await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
           _id: itemId,
-          'system.spent': true,
           'system.discarded': true,
           'system.active': false,
           'system.activeEffectId': null,
@@ -239,6 +250,7 @@ export class ForceRegimenExecutor {
           'system.failedRegimen': true,
           'system.lastUsed': Date.now(),
         }], { source: 'force-regimen-failed-use', render: false });
+        await ActorEngine.recordRegimenFailure(actor, regimenKeyFor(regimen.name), worldTimeNow());
         await this._generateForceRegimenRollMessage(actor, regimen, roll, total, baseDC, false, isCritical, {
           baseBonus,
           customModifier,
@@ -360,7 +372,6 @@ export class ForceRegimenExecutor {
       .filter((item) => !target || itemIds.has(item.id) || String(item.system?.activeEffectId || '') === target)
       .map((item) => ({
         _id: item.id,
-        'system.spent': false,
         'system.discarded': false,
         'system.active': false,
         'system.activeEffectId': null,

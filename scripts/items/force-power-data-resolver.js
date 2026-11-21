@@ -99,7 +99,8 @@ export function resolveForcePowerData(itemOrData = {}) {
     dcTierCount: dcChart.length,
     maintainable: system.maintainable === true,
     inSuite: system.inSuite === true,
-    spent: system.spent === true,
+    // `discarded` is the suite state authority (executor, adapter, sheets); the dialog's "Spent" toggle reads and writes it.
+    spent: system.discarded === true,
     discarded: system.discarded === true,
     usesCurrent: toNumber(system.uses?.current, 0),
     usesMax: toNumber(system.uses?.max, 0),

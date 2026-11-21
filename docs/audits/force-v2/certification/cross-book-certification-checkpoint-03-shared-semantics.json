@@ -1,0 +1,827 @@
+{
+  "schemaVersion": "0.1",
+  "project": "SWSE Foundry V13 V2",
+  "checkpoint": "03 — Shared Semantics Certification",
+  "date": "2026-11-18",
+  "branch": "audit/force-v2-seven-book-packages-v2-9-20261117",
+  "headBefore": "2dc255b2799dc7a2cb91b1484d028bc06ff1c341",
+  "sourcePriority": [
+    "printed books",
+    "official published errata supersedes print",
+    "TXT search only for navigation",
+    "runtime files are implementation evidence, not rules authority"
+  ],
+  "scope": "READ_ONLY_AUDIT_NO_PRODUCTION_MUTATION",
+  "sourceDefinitionCountUnchanged": 212,
+  "priorInfluenceEdgeCountUnchanged": 178,
+  "sharedOwners": {
+    "powerInstance": "scripts/engine/force/force-executor.js",
+    "maneuverInstance": "scripts/engine/StarshipManeuversEngine.js",
+    "fp": "scripts/engine/force/force-points-service.js",
+    "actorMutation": "scripts/governance/actor-engine/actor-engine.js",
+    "powerProgression": "scripts/apps/progression-framework/shell/mutation/force-plan-builder.js",
+    "maneuverProgression": "scripts/apps/progression-framework/steps/starship-maneuver-step.js",
+    "turn": "scripts/engine/combat/starship/vehicle-turn-controller.js",
+    "powerEffects": "scripts/engine/force/force-power-effects-engine.js",
+    "actorHooks": "scripts/infrastructure/hooks/actor-hooks.js"
+  },
+  "ruleContracts": [
+    {
+      "id": "suite.power.acquire",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "pages": [
+          95
+        ],
+        "pdf": "Star Wars Saga Edition.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "progression.finalize",
+      "guards": [
+        "Force Training creates 1+Wis modifier copies (minimum one) per feat; repeated feat grants repeat; extra per feat when Wisdom modifier increases.",
+        "Same Power definition may be selected more than once; copies are individually usable.",
+        "Replacements of chosen Force Powers require GM approval unless separately authorized."
+      ],
+      "committedEffects": [
+        "Create distinct owned Force Power instances with unique document IDs and canonical definition provenance per copy.",
+        "Finalization must be idempotent by source session, selection and per-copy index."
+      ],
+      "owner": [
+        "scripts/apps/progression-framework/steps/force-power-step.js",
+        "scripts/apps/progression-framework/shell/mutation/force-plan-builder.js"
+      ],
+      "observedStatus": "PARTIAL_WITH_LEGACY_CONFLICT",
+      "regressionCases": [
+        "Two copies of one Power are created without collapsing, have independent ready/spent state.",
+        "Reapplying same progression session does not create duplicate copies.",
+        "Acquiring same definition in a later legitimate training source creates another copy.",
+        "A normal non-GM 'change selection' is not treated as a free RAW respec."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.maneuver.acquire",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "pages": [
+          23,
+          24
+        ],
+        "pdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "progression.finalize",
+      "guards": [
+        "Starship Tactics provides 1+Wisdom modifier maneuvers, at least one, with each feat copy.",
+        "Maneuver definition may be selected more than once.",
+        "Wisdom modifier rise grants one extra maneuver per Starship Tactics feat."
+      ],
+      "committedEffects": [
+        "Create distinct owned starship maneuver instances, with acquisition session and count index."
+      ],
+      "owner": [
+        "scripts/apps/progression-framework/steps/starship-maneuver-step.js",
+        "scripts/utils/starship-maneuver-manager.js"
+      ],
+      "observedStatus": "PARTIAL_WITH_ACTIVE_LEGACY_COMPETITION",
+      "regressionCases": [
+        "Repeated Corellian Slip creates two usable copies.",
+        "Legacy StarshipManeuverManager must not block a repeat authorized by RAW.",
+        "A Wisdom modifier rise credits every Starship Tactics feat exactly once."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.power.activate",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "pages": [
+          95
+        ],
+        "pdf": "Star Wars Saga Edition.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "force-power.activation.result",
+      "guards": [
+        "Exactly one eligible ready Power instance identified by owned Item ID.",
+        "Use the Force roll belongs to that activation; DC/tier/defense resolved by printed Power rule.",
+        "Attempt must consume Power whether baseline check succeeds or fails."
+      ],
+      "committedEffects": [
+        "Mark only chosen copy expended; distinct copies remain ready.",
+        "Keep activation attempt and resulting effect instance separate for duration/maintenance."
+      ],
+      "owner": [
+        "scripts/engine/force/force-executor.js",
+        "scripts/engine/force/force-power-effects-engine.js"
+      ],
+      "observedStatus": "PARTIAL_SPENT_FIELD_SPLIT",
+      "regressionCases": [
+        "Failed activation spends selected instance.",
+        "Second ready copy remains available after first spent.",
+        "A duplicate click against one spent instance fails without affecting the other."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.maneuver.activate",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "pages": [
+          24
+        ],
+        "pdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "starship-maneuver.activation.result",
+      "guards": [
+        "Pilot check specifically to activate maneuver (except individual maneuver override; Force maneuver still follows stated published activation).",
+        "A failed baseline check wastes action and spends copy."
+      ],
+      "committedEffects": [
+        "Mark only selected maneuver instance spent; activate effects only when legal.",
+        "Attack patterns tracked separately from spent/ready state."
+      ],
+      "owner": [
+        "scripts/engine/StarshipManeuversEngine.js",
+        "scripts/engine/combat/starship/vehicle-turn-controller.js"
+      ],
+      "observedStatus": "NO_VERIFIED_TYPED_ACTIVATION_RESOLVER",
+      "regressionCases": [
+        "Failed Pilot activation consumes selected copy.",
+        "Successful activation applies correct tier and source-specific effects.",
+        "Duplicate maneuver copy remains ready."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.power.natural20",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "pages": [
+          96
+        ],
+        "pdf": "Star Wars Saga Edition.pdf",
+        "status": "PRINTED_INSPECTED_OFFICIAL_ERRATA_REQUIRED",
+        "officialErrata": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+      },
+      "event": "roll.utf.force-power-activation.natural20",
+      "guards": [
+        "Official October 2008 errata replaces broad printed UTF roll wording with natural20 on an actual Use the Force check to activate a Force Power.",
+        "Recovery occurs at END OF ACTOR TURN; no Force Point awarded by this rule.",
+        "Do not treat take-10 or unrelated UTF skill check as triggering recovery."
+      ],
+      "committedEffects": [
+        "Queue one end-turn recover-all of existing spent Force Power instances, including Power used in triggering activation.",
+        "No FP mutation. Receipt identifies roll and turn."
+      ],
+      "owner": [
+        "scripts/engine/force/force-executor.js",
+        "scripts/engine/force/force-engine.js"
+      ],
+      "observedStatus": "VERIFIED_INCORRECT_FP_AWARD_AND_MISSING_END_TURN_RECOVERY",
+      "regressionCases": [
+        "Power activation raw d20 20 recovers all only at actor end turn.",
+        "Unrelated UTF skill use raw d20 20 does not recover.",
+        "Natural 20 never grants 1 FP without a separate printed feat/feature.",
+        "The activating instance is included in end-turn recovery."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.maneuver.natural20",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "pages": [
+          24
+        ],
+        "pdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "roll.pilot.starship-maneuver-activation.natural20",
+      "guards": [
+        "Natural20 on Pilot check ACTUALLY used to activate a starship maneuver.",
+        "Does not apply to other Pilot checks, gunner attack rolls or Target Sense UTF."
+      ],
+      "committedEffects": [
+        "Queue end-turn recover-all of spent maneuver instances; no immediate recovery."
+      ],
+      "owner": [
+        "scripts/engine/StarshipManeuversEngine.js",
+        "scripts/engine/combat/starship/vehicle-turn-controller.js"
+      ],
+      "observedStatus": "END_TURN_TRIGGER_NOT_VERIFIED",
+      "regressionCases": [
+        "Pilot activation nat20 recovers at end of turn only.",
+        "Other Pilot nat20 does not recover maneuvers.",
+        "One target-sense UTF nat20 does not recover maneuvers."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.power.forcepoint-recovery",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "pages": [
+          93,
+          96
+        ],
+        "pdf": "Star Wars Saga Edition.pdf",
+        "status": "PRINTED_AND_OFFICIAL_ERRATA",
+        "officialErrata": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+      },
+      "event": "action.reaction.force-point.power-recover-one",
+      "guards": [
+        "Explicit reaction under official p93 errata and Core p96.",
+        "Exactly one spent owned Power instance selected before FP debit; applicable restrictions and one-FP-per-round rules evaluated.",
+        "A specific source ability may authorize exceptions; generic Force Readiness is not prerequisite for this printed reaction."
+      ],
+      "committedEffects": [
+        "Atomically debit exactly one eligible FP and ready exactly one selected spent Power instance.",
+        "No refundless FP spend if invalid target or mutation fails."
+      ],
+      "owner": [
+        "scripts/engine/force/force-points-service.js",
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/force/force-executor.js"
+      ],
+      "observedStatus": "VERIFIED_SPEND_BEFORE_ELIGIBILITY_AND_UNTYPED_REACTION",
+      "regressionCases": [
+        "Invalid/already ready/missing target costs zero FP.",
+        "One spent copy returns ready; other same-name copy unchanged.",
+        "Actor with no Force Readiness can use explicit printed reaction.",
+        "Concurrent duplicate requests cannot debit twice or recover more than paid."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.maneuver.forcepoint-recovery",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "pages": [
+          24
+        ],
+        "pdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "action.reaction.force-point.maneuver-recover-one",
+      "guards": [
+        "Reaction explicitly allowed by Starships p24, even if not a generic off-turn allowance.",
+        "Exactly one eligible spent maneuver instance selected in advance.",
+        "Normal FP limit and source-specific exception checks apply."
+      ],
+      "committedEffects": [
+        "Debit exactly 1 FP and immediately ready one maneuver instance via ActorEngine."
+      ],
+      "owner": [
+        "scripts/engine/force/force-points-service.js",
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/StarshipManeuversEngine.js"
+      ],
+      "observedStatus": "CURRENT_UI_TOGGLE_WITH_NO_FP",
+      "regressionCases": [
+        "Single spent instance recovery changes exactly one copy.",
+        "No Force Readiness prereq invented for this printed reaction.",
+        "No spent item gives no debit; double submission cannot recover twice."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.power.rest-recovery",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "pages": [
+          95
+        ],
+        "pdf": "Star Wars Saga Edition.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "encounter.end-and-rest-one-minute",
+      "guards": [
+        "Actual combat over and meaningful opportunity to rest for 1 minute; deleting Combat document is not proof.",
+        "Only owned spent Power instances recover, not temporary non-recoverable powers."
+      ],
+      "committedEffects": [
+        "Recover all eligible spent Power copies after validated rest receipt.",
+        "Do not terminate a separately active duration effect solely because the suite copy became ready."
+      ],
+      "owner": [
+        "scripts/engine/force/force-executor.js",
+        "scripts/infrastructure/hooks/force-power-hooks.js"
+      ],
+      "observedStatus": "ACTIVE_DELETECOMBAT_PREMATURE_AND_WRONG_FLAG",
+      "regressionCases": [
+        "deleteCombat alone recovers zero.",
+        "Rest completion recovers spent copies in all aliases only after single canonical-state cutover.",
+        "Non-recoverable temporary Power remains excluded."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.maneuver.rest-recovery",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "pages": [
+          24
+        ],
+        "pdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "encounter.end-and-rest-one-minute",
+      "guards": [
+        "Starship battle ended AND one-minute rest opportunity occurred.",
+        "A GM/admin reset may exist but must be distinctly marked and never mislabelled RAW rest."
+      ],
+      "committedEffects": [
+        "Recover all spent maneuver instances after evidence of full rest."
+      ],
+      "owner": [
+        "scripts/engine/StarshipManeuversEngine.js",
+        "scripts/infrastructure/hooks/starship-maneuver-hooks.js"
+      ],
+      "observedStatus": "ACTIVE_DELETECOMBAT_PREMATURE",
+      "regressionCases": [
+        "deleteCombat alone recovers zero.",
+        "Starship encounter then full rest recovers all copies.",
+        "Crew-linked owned instances correctly recover on actual owning actor."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "resource.forcepoint.spend",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "pages": [
+          93,
+          96
+        ],
+        "pdf": "Star Wars Saga Edition.pdf",
+        "status": "PRINTED_AND_OFFICIAL_ERRATA",
+        "officialErrata": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+      },
+      "event": "force-point.spend.any-reason",
+      "guards": [
+        "Actor and reason identified; sufficient resource available.",
+        "Default no more than one FP per round unless printed specific permission says otherwise.",
+        "Action timing source-specific (roll-mod free on own turn, Power/Maneuver recovery reactions, special activation costs as printed).",
+        "Power [dark side] and [light side] constraints on FP-modified Use the Force checks are enforced before spending."
+      ],
+      "committedEffects": [
+        "Single authorized resource debit receipt carrying source, round, action, amount, relevant exception, paid type and before/after.",
+        "Bonus FP source restrictions evaluated; actor mutation via ActorEngine only."
+      ],
+      "owner": [
+        "scripts/engine/force/force-points-service.js",
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/feats/force-point-service-runtime-patches.js"
+      ],
+      "observedStatus": "PER_ROUND_LEDGER_NOT_EVIDENCED_AND_RAW_REASON_GATE_MISSING",
+      "regressionCases": [
+        "Ordinary second FP same round denied absent specific exception.",
+        "SotG/Core reaction recovery allowed even without Force Readiness.",
+        "An invalid spend cannot mutate bonus or normal FP pool.",
+        "Concurrent spends and rollback preserve exact resource accounting."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "resource.forcepoint.descriptor-policy",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "pages": [
+          96
+        ],
+        "pdf": "Star Wars Saga Edition.pdf",
+        "status": "PRINTED_INSPECTED_OFFICIAL_ERRATA_REQUIRED",
+        "officialErrata": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+      },
+      "event": "force-power.activation.fp-bonus-preflight",
+      "guards": [
+        "[dark side] Power UTF activation check cannot be modified with an FP and using one increases Dark Side Score by one (subject to separately valid published exception).",
+        "[light side] Power UTF check cannot use FP modification when actor Dark Side Score >=1.",
+        "No assumption that all Force Point Power-specific benefits are forbidden; restriction is on modifying that Use the Force check."
+      ],
+      "committedEffects": [
+        "Reject illegal bonus transaction before rolling; settle dark-side consequences on actual use with traceable event receipt."
+      ],
+      "owner": [
+        "scripts/engine/force/force-executor.js",
+        "scripts/engine/force/force-points-service.js",
+        "scripts/engine/darkside/dsp-engine.js"
+      ],
+      "observedStatus": "EXECUTE_ROLL_PATH_NOT_EVIDENCED",
+      "regressionCases": [
+        "Dark-side power cannot spend FP to boost UTF and increments DSS upon use.",
+        "Actor with DSS 1+ cannot FP-boost a light-side Power UTF check.",
+        "Legal unrelated source-specific Force Point option still available when rules permit.",
+        "No double DSP between activateForce() and executeForcePower()."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "effect.force.maintain",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "pages": [
+          50,
+          51,
+          52
+        ],
+        "pdf": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "force-power.effect.maintain-per-instance",
+      "guards": [
+        "Maintained effect instance exists and has not expired.",
+        "Action paid EACH round for EACH maintained instance: Energy Resistance swift; Kinetic Combat swift (plus stated standard action to direct weapon); Resist Force swift; Valor swift; Force Whirlwind move and new UTF check.",
+        "Core errata: Force Grip and Move Object maintenance costs standard action plus new UTF check.",
+        "On damage taken while maintaining one of these, UTF DC 15+damage taken.",
+        "Special break clauses: Force Whirlwind ends if caster/ally damages, attacks or moves target down condition track; Move Object cannot be maintained after dealing damage."
+      ],
+      "committedEffects": [
+        "Store effect-instance identity distinct from learned copy; pay per-instance actions; register any on-damage check and clear only invalidated effect."
+      ],
+      "owner": [
+        "scripts/engine/force/force-power-effects-engine.js",
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/combat/action/action-economy-hooks.js"
+      ],
+      "observedStatus": "UNVERIFIED_GENERIC_MAINTENANCE_NOT_SOURCE_COMPLIANT",
+      "regressionCases": [
+        "Two Resist Force effects require two distinct swift actions.",
+        "Whirlwind maintenance move action rerolls UTF every round.",
+        "Whirlwind ends when printed prohibited interference occurs.",
+        "Core Grip and Move Object need separate standard+UTF checks.",
+        "Check DC equals 15+actual damage, and failure ends that effect only."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "effect.force.end",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "pages": [
+          50,
+          51,
+          52
+        ],
+        "pdf": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "force-power.effect.expire-or-break",
+      "guards": [
+        "Expiry determined by per-effect start and source duration, not power card ready/spent bit.",
+        "Individual maintenance failures, printed break triggers and encounter end can end effects.",
+        "Recovery of a Power instance does not itself cancel unrelated ongoing duration unless explicit rule says so."
+      ],
+      "committedEffects": [
+        "Delete exactly affected effect instance, not every effect sharing Power name.",
+        "Tie persistent effect to owning actor, activation receipt and source item ID."
+      ],
+      "owner": [
+        "scripts/engine/force/force-power-effects-engine.js",
+        "scripts/engine/force/force-executor.js"
+      ],
+      "observedStatus": "RECOVERY_CURRENTLY_DELETES_ORIGIN_EFFECTS",
+      "regressionCases": [
+        "Recovering one spent Power leaves valid maintained effects intact.",
+        "Ending one of two Valor instances leaves other active.",
+        "Rest recovery does not silently erase unrelated active effects."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.power.copy-removal",
+      "source": {
+        "book": "Saga Edition Core Rulebook",
+        "pages": [
+          95
+        ],
+        "pdf": "Star Wars Saga Edition.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "progression.gm-approved-respec",
+      "guards": [
+        "Normal Force Power selections cannot be changed without GM approval (Core p95).",
+        "Authorized removal references explicit owned copy; a definition name alone is insufficient where copies differ."
+      ],
+      "committedEffects": [
+        "Delete only authorized owned Item ID(s); preserve other same-definition copies and their original provenance."
+      ],
+      "owner": [
+        "scripts/apps/progression-framework/shell/mutation/force-plan-builder.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "observedStatus": "CURRENT_REMOVAL_MATCHES_NAME_AND_SLICES_FIRST_N",
+      "regressionCases": [
+        "Respec without GM/source entitlement rejected.",
+        "Removing second of three copies cannot delete first or third.",
+        "Persistence/source provenance remains stable for untouched copies."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "suite.maneuver.copy-removal",
+      "source": {
+        "book": "Starships of the Galaxy",
+        "pages": [
+          23,
+          24
+        ],
+        "pdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "progression.gm-approved-or-explicit-reselection",
+      "guards": [
+        "Do not invent free respec; require GM or a printed separate entitlement.",
+        "Removal targets one explicitly owned instance, not an abstract definition."
+      ],
+      "committedEffects": [
+        "Remove only selected item ID; leave other maneuver copies intact."
+      ],
+      "owner": [
+        "scripts/apps/progression-framework/steps/starship-maneuver-step.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "observedStatus": "INSTANCE_REMOVAL_AUTHORITY_NOT_CERTIFIED",
+      "regressionCases": [
+        "Removing one duplicate leaves other ready/spent copy independent.",
+        "A generic same-name remove never randomly picks an item.",
+        "No phantom free swap from RAW-trained maneuver suite."
+      ],
+      "relatedCheckpoint02BPolicies": [],
+      "runtimeCertified": false
+    },
+    {
+      "id": "effect.force.optional-temptation",
+      "source": {
+        "book": "The Force Unleashed Campaign Guide",
+        "pages": [
+          85
+        ],
+        "pdf": "SAGA EDITION - Force Unleashed Campaign Guide.pdf",
+        "status": "PRINTED_INSPECTED"
+      },
+      "event": "gm-option.temptation.acquire-and-expire",
+      "guards": [
+        "GM explicitly enables printed option; not silently mapped to strict/lenient/narrative setting.",
+        "Power option: FP adds one temporary [dark side] Force Power with special first-use/end-encounter expiration, not normally recoverable.",
+        "Talent option: separate temporary prerequisite-qualified Dark Side/Devotee/Sith talents, may prerequisite-chain; cleanup and final dark-side tally source-specific."
+      ],
+      "committedEffects": [
+        "Temporary entitlements have separate reversible records, acquisition/expiry receipts, FP and DSP ledgers.",
+        "Do not forge permanent learned Force Power copies."
+      ],
+      "owner": [
+        "scripts/engine/force/force-points-service.js",
+        "scripts/engine/force/force-executor.js",
+        "scripts/engine/darkside/dsp-engine.js"
+      ],
+      "observedStatus": "HISTORICAL_GRAPH_ONLY_COVERS_TALENTS",
+      "regressionCases": [
+        "GM opt-in false blocks both temporary routes.",
+        "Temp Power never recovered through generic power suite recovery.",
+        "Valid chained temporary talents expire at encounter end with correct DSS accounting.",
+        "No permanent Power Item persists after expiration."
+      ],
+      "relatedCheckpoint02BPolicies": [
+        "fucg/rule/temptation-of-dark-side"
+      ],
+      "runtimeCertified": false
+    }
+  ],
+  "maintenanceMatrix": [
+    {
+      "name": "Energy Resistance",
+      "source": "KOTOR p50",
+      "action": "swift",
+      "newUtfEachRound": false,
+      "damageConcentration": "15+damage",
+      "instanceMultiplicity": "not expressly specified"
+    },
+    {
+      "name": "Force Whirlwind",
+      "source": "KOTOR p51",
+      "action": "move",
+      "newUtfEachRound": true,
+      "damageConcentration": "15+damage",
+      "terminate": [
+        "caster or allies attack target",
+        "damage target",
+        "move target down condition track"
+      ]
+    },
+    {
+      "name": "Kinetic Combat",
+      "source": "KOTOR p51",
+      "action": "swift",
+      "newUtfEachRound": false,
+      "extraAction": "standard to direct weapon",
+      "damageConcentration": "15+damage"
+    },
+    {
+      "name": "Resist Force",
+      "source": "KOTOR p51",
+      "action": "swift",
+      "newUtfEachRound": false,
+      "damageConcentration": "15+damage",
+      "instanceMultiplicity": "multiple explicit"
+    },
+    {
+      "name": "Valor",
+      "source": "KOTOR p52",
+      "action": "swift",
+      "newUtfEachRound": false,
+      "damageConcentration": "15+damage",
+      "instanceMultiplicity": "multiple affecting different allies"
+    },
+    {
+      "name": "Force Grip",
+      "source": "Core p97 errata",
+      "action": "standard",
+      "newUtfEachRound": true,
+      "damageConcentration": "15+damage",
+      "terminate": [
+        "failed opposed check stops maintenance"
+      ]
+    },
+    {
+      "name": "Move Object",
+      "source": "Core p98 errata",
+      "action": "standard",
+      "newUtfEachRound": true,
+      "damageConcentration": "15+damage",
+      "terminate": [
+        "dealt damage with move object"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "CP03-F01",
+      "severity": "P0",
+      "category": "wrong-RAW-effect",
+      "summary": "Natural20 on rolled Force Power currently grants FP instead of queued Power suite recovery",
+      "where": [
+        "scripts/engine/force/force-engine.js:22-40",
+        "scripts/engine/force/force-executor.js:309-316"
+      ],
+      "evidence": "Core p96 official errata"
+    },
+    {
+      "id": "CP03-F02",
+      "severity": "P0",
+      "category": "premature-recovery",
+      "summary": "Power deleteCombat hook grants no-rest recovery and uses system.spent while executor writes system.discarded",
+      "where": [
+        "scripts/infrastructure/hooks/force-power-hooks.js:114-139",
+        "scripts/engine/force/force-executor.js:336-345"
+      ],
+      "evidence": "Core pp95-96"
+    },
+    {
+      "id": "CP03-F03",
+      "severity": "P0",
+      "category": "premature-recovery",
+      "summary": "Maneuver deleteCombat hook restores spent copies before required one-minute rest",
+      "where": [
+        "scripts/infrastructure/hooks/starship-maneuver-hooks.js:91-114"
+      ],
+      "evidence": "Starships p24"
+    },
+    {
+      "id": "CP03-F04",
+      "severity": "P0",
+      "category": "unqualified-recovery",
+      "summary": "Recover-all UI invokes generic ForceExecutor.recoverForcePowers(actor) without rest/trigger receipt",
+      "where": [
+        "scripts/engine/force/force-suite-runtime-repairs.js:432-446",
+        "scripts/engine/force/force-executor.js:1059-1118"
+      ],
+      "evidence": "Core pp95-96"
+    },
+    {
+      "id": "CP03-F05",
+      "severity": "P0",
+      "category": "spend-before-validate",
+      "summary": "Recover-one spends FP before validating chosen spent Power ID; invalid request can cost FP",
+      "where": [
+        "scripts/engine/force/force-executor.js:1063-1084"
+      ],
+      "evidence": "Core pp93,96 errata"
+    },
+    {
+      "id": "CP03-F06",
+      "severity": "P0",
+      "category": "fp-transaction",
+      "summary": "ActorEngine.spendForcePoints lacks visible per-round one-FP accounting and reason/timing validation while used by direct consumers",
+      "where": [
+        "scripts/governance/actor-engine/actor-engine.js:2007-2088",
+        "scripts/engine/force/force-points-service.js:302-365"
+      ],
+      "evidence": "Core p93"
+    },
+    {
+      "id": "CP03-F07",
+      "severity": "P0",
+      "category": "descriptor-gate",
+      "summary": "Rolled ForceExecutor.executeForcePower path does not explicitly gate FP modification by [dark side] or [light side] descriptors and DSS; DSP update only apparent in alternate activateForce path",
+      "where": [
+        "scripts/engine/force/force-executor.js:102-158",
+        "scripts/engine/force/force-executor.js:184-340"
+      ],
+      "evidence": "Core p96"
+    },
+    {
+      "id": "CP03-F08",
+      "severity": "P1",
+      "category": "effect-coupling",
+      "summary": "Force recovery removes origin-linked active effects; restoration of readiness should not itself terminate a valid maintained effect",
+      "where": [
+        "scripts/engine/force/force-executor.js:1093-1096",
+        "scripts/engine/force/force-power-effects-engine.js:949-978"
+      ],
+      "evidence": "Core p95-96 plus KOTOR pp50-52; engineering inference"
+    },
+    {
+      "id": "CP03-F09",
+      "severity": "P1",
+      "category": "duplicate-identity",
+      "summary": "Modern ForcePowerStep + ForcePlanBuilder allow copies, but legacy ForcePowerEngine and ForceAuthorityEngine reject duplicate selection",
+      "where": [
+        "scripts/apps/progression-framework/shell/mutation/force-plan-builder.js:206-287",
+        "scripts/engine/progression/engine/force-authority-engine.js:122-135",
+        "scripts/engine/progression/engine/force-power-engine.js:231-255"
+      ],
+      "evidence": "Core p95"
+    },
+    {
+      "id": "CP03-F10",
+      "severity": "P1",
+      "category": "duplicate-identity",
+      "summary": "Modern starship maneuver step holds counts, but live starship maneuver createItem hook calls manager whose getAvailableManeuvers excludes already learned names",
+      "where": [
+        "scripts/apps/progression-framework/steps/starship-maneuver-step.js:1-45",
+        "scripts/infrastructure/hooks/starship-maneuver-hooks.js:17-39",
+        "scripts/utils/starship-maneuver-manager.js:23-36"
+      ],
+      "evidence": "Starships pp23-24"
+    },
+    {
+      "id": "CP03-F11",
+      "severity": "P1",
+      "category": "respec-identity",
+      "summary": "ForcePlanBuilder matches by fuzzy name and removes first N owned copies; does not require explicit instance for respec",
+      "where": [
+        "scripts/apps/progression-framework/shell/mutation/force-plan-builder.js:113-125"
+      ],
+      "evidence": "Core p95 selection permanence; instance identity design"
+    },
+    {
+      "id": "CP03-F12",
+      "severity": "P1",
+      "category": "maintained-effect",
+      "summary": "KOTOR and Core errata require distinct per-effect maintenance action/check/expiry state; no complete service was certified in inspected ForcePowerEffectsEngine",
+      "where": [
+        "scripts/engine/force/force-power-effects-engine.js:309-395",
+        "scripts/engine/force/force-executor.js:225-380"
+      ],
+      "evidence": "KOTOR pp50-52 + Core errata pp97-98"
+    }
+  ],
+  "certification": {
+    "contractCount": 17,
+    "sourceInspected": true,
+    "officialErrataInspected": true,
+    "staticCodeInspected": true,
+    "foundryRuntimeExecuted": false,
+    "runtimeContractsCertified": 0,
+    "implementationReady": false
+  },
+  "guardrails": [
+    "RAW/official errata are authoritative, not original printed mistakes.",
+    "No invented Force Point reward on natural20.",
+    "Core errata restricts natural20 recovery to Use the Force activation of a Force Power; unrelated skill checks excluded.",
+    "Power versus maneuver natural20 triggers use different skills, each activation-specific.",
+    "Suite copies are independent, and maintained effects are separate from suite readiness.",
+    "No free automatic recovery on deleteCombat; require rest opportunity or other legal event.",
+    "An explicit recovery reaction is a RAW-specific off-turn permission; generic feat not required.",
+    "Do not add compatibility shims or fake compendium Items.",
+    "Only ActorEngine mutates actor resource/item state; other services validate and orchestrate."
+  ]
+}

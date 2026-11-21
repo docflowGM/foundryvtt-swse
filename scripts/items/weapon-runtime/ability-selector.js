@@ -5,6 +5,7 @@
 //   + selected canonical weapon form (group / exotic identity)  ->  applicability
 // Names are display only for canonical content: a renamed canonical feat still applies, a same-named non-canonical item does not
 // impersonate one. Legacy/homebrew compatibility (name + choice text) remains ONLY for weapons/feats that carry no canonical identity.
+import { canonicalFeatSlug } from '../../utils/canonical-ability-identity.js';
 import { shapeOfWeapon } from './attack-consumer.js';
 import { featChoiceSelectors, featChoiceMatchesShape, canonicalSelectionFromContext, normalizeToken } from './attack-shape.js';
 
@@ -14,13 +15,7 @@ import { featChoiceSelectors, featChoiceMatchesShape, canonicalSelectionFromCont
  *   talents  -> the registry id the pack stamps (`flags.swse.id` = `swse.talent.<slug_with_underscores>`)
  * null when the item carries neither (a legacy/homebrew item).
  */
-export function canonicalFeatSlug(item) {
-  const key = item?.flags?.swse?.canonicalFeat?.identityKey ?? item?.system?.canonicalFeat?.identityKey ?? null;
-  if (typeof key === 'string' && key.startsWith('feat::')) return key.split('::').pop() || null;
-  const id = item?.flags?.swse?.id;
-  const m = typeof id === 'string' ? /^swse\.(?:feat|talent)\.(.+)$/.exec(id) : null;
-  return m ? m[1].replace(/_/g, '-') : null;
-}
+export { canonicalFeatSlug };
 
 const legacyBase = (item) => normalizeToken(String(item?.name || item?.system?.slug || item?.slug || '').replace(/\([^)]*\)/g, '').trim());
 

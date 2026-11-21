@@ -95,7 +95,7 @@ export class DarkSidePowers {
     // Get all Dark Side Force Powers that are spent
     const darkSidePowers = actor.items.filter(item =>
       item.type === 'force-power' &&
-      item.system?.spent === true &&
+      item.system?.discarded === true &&
       (item.system?.discipline === 'dark-side' || item.name.toLowerCase().includes('dark'))
     );
 
@@ -111,7 +111,7 @@ export class DarkSidePowers {
       const power = darkSidePowers[0];
       await ActorEngine.updateOwnedItems(actor, [{
         _id: power.id,
-        'system.spent': false
+        'system.discarded': false
       }]);
 
       await actor.setFlag('foundryvtt-swse', savantUsageFlag, true);
@@ -141,7 +141,7 @@ export class DarkSidePowers {
 
     await ActorEngine.updateOwnedItems(actor, [{
       _id: power.id,
-      'system.spent': false
+      'system.discarded': false
     }]);
 
     await actor.setFlag('foundryvtt-swse', savantUsageFlag, true);
@@ -1297,7 +1297,7 @@ export class DarkSidePowers {
 
     // Find first spent power to regain
     const spentPowers = actor.items.filter(item =>
-      item.type === 'force-power' && item.system?.spent === true
+      item.type === 'force-power' && item.system?.discarded === true
     );
 
     let regainedPowerName = null;
@@ -1308,7 +1308,7 @@ export class DarkSidePowers {
       regainedPowerName = powerToRegain.name;
       regainMutation = {
         _id: powerToRegain.id,
-        'system.spent': false
+        'system.discarded': false
       };
     }
 

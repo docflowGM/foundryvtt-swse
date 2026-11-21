@@ -478,6 +478,18 @@ export class MetaResourceFeatResolver {
     return 'keepSecond';
   }
 
+  /** A reroll invalidates the original attack's reaction event (03B): old Block/Deflect buttons must fail verification. */
+  static async _supersedeAttackEvent(actor, message) {
+    try {
+      const eventId = message?.getFlag?.('swse', 'eventId') ?? message?.flags?.swse?.eventId ?? null;
+      if (!eventId) return;
+      const { AttackEventAuthority } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-authority.js');
+      await AttackEventAuthority.supersede(actor, eventId, 'rerolled');
+    } catch (error) {
+      console.error('SWSE | could not supersede the original attack event', error);
+    }
+  }
+
   static async resolveAttackRerollButton(button, { message = null } = {}) {
     if (!(button instanceof HTMLElement)) return null;
     const actor = game.actors?.get?.(button.dataset.actorId);
@@ -522,7 +534,7 @@ export class MetaResourceFeatResolver {
 
     if (cost === 'forcePoint') {
       const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'meta-resource-feat:resolveAttackRerollButton' });
       if (!spend?.spent) {
         ui?.notifications?.warn?.(`${sourceName} requires a Force Point.`);
         return null;
@@ -585,6 +597,7 @@ export class MetaResourceFeatResolver {
 
     button.disabled = true;
     button.innerHTML = '<i class="fa-solid fa-check"></i> Reroll used';
+    await this._supersedeAttackEvent(actor, message);
 
     const { createChatMessage } = await import('/systems/foundryvtt-swse/scripts/core/document-api-v13.js');
     const rolls = buildRollJson(newRoll) ? [buildRollJson(newRoll)] : [];
@@ -792,7 +805,7 @@ export class MetaResourceFeatResolver {
 
     if (cost === 'forcePoint') {
       const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'meta-resource-feat:resolveFullAttackRerollButton' });
       if (!spend?.spent) {
         ui?.notifications?.warn?.(`${sourceName} requires a Force Point.`);
         return null;
@@ -842,6 +855,7 @@ export class MetaResourceFeatResolver {
     };
 
     button.disabled = true;
+    await this._supersedeAttackEvent(actor, { flags: { swse: { eventId: button.dataset.swseEventId || null } } });
 
     let persisted;
     try {
@@ -927,7 +941,7 @@ export class MetaResourceFeatResolver {
 
     const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
     if (rule.cost === 'forcePoint') {
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'meta-resource-feat:applyTemporaryDefenseRule' });
       if (!spend?.spent) return { success: false, reason: `${rule.sourceName} requires a Force Point.` };
     }
 
@@ -1026,7 +1040,7 @@ export class MetaResourceFeatResolver {
   }
 
   static getRecoverableForcePowers(actor) {
-    return getForcePowerItems(actor).filter(power => power?.system?.discarded === true || power?.system?.spent === true);
+    return getForcePowerItems(actor).filter(power => power?.system?.discarded === true);
   }
 
   static async recoverForcefulRecoveryPower(actor, powerId) {
@@ -1035,21 +1049,19 @@ export class MetaResourceFeatResolver {
     if (!pending) return { success: false, reason: 'No Forceful Recovery is pending.' };
     const power = actor.items?.get?.(powerId) ?? getForcePowerItems(actor).find(item => item.id === powerId || item._id === powerId);
     if (!power || !isForcePowerItem(power)) return { success: false, reason: 'Force power not found.' };
-    if (power.system?.discarded !== true && power.system?.spent !== true) return { success: false, reason: `${power.name} is not expended.` };
+    if (power?.system?.discarded !== true) return { success: false, reason: `${power.name} is not expended.` };
 
     const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
-    const { ForcePowerEffectsEngine } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js');
     const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
 
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
       _id: power.id,
       'system.discarded': false,
-      'system.spent': false,
       'system.lastRecovered': Date.now(),
       'flags.foundryvtt-swse.lastRecoverySource': 'forceful-recovery'
     }], { source: 'forceful-recovery', render: false });
 
-    await ForcePowerEffectsEngine.removePowerEffects(actor, power);
+      // A maintained effect is an independent instance (ForcePowerMaintenance); recovering the Power copy never ends it.
     await actor.unsetFlag?.('foundryvtt-swse', 'forcefulRecoveryPending');
     await SWSEChat.postHTML({
       actor,

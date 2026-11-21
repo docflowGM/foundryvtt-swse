@@ -1,0 +1,3230 @@
+{
+  "packageVersion": "core-0.2.0",
+  "schemaVersion": "2.9.0",
+  "scope": "swse-core-rulebook-force-claims",
+  "purpose": "Official-errata-first Core Force domain source definitions, typed checks/DCs, and modifier relationships; not runtime code.",
+  "sourceAuthority": {
+    "book": "Star Wars Saga Edition Core Rulebook",
+    "pdf": "Star Wars Saga Edition.pdf",
+    "textLookup": "Core Rulebook_djvu.txt",
+    "pagesReviewed": [
+      85,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103
+    ],
+    "officialErrata": {
+      "title": "Star Wars Roleplaying Game Saga Edition Errata and Official Clarifications",
+      "issuer": "Wizards of the Coast",
+      "issued": "2008-10-21",
+      "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf",
+      "priority": "Overrides first printed Core wherever conflicting"
+    }
+  },
+  "mechanicalPrinciples": {
+    "rollType": "Use the Force for Force Power activations unless printed rule explicitly substitutes an attack/opposed check.",
+    "tierSelection": "Highest qualifying DC floor, when the power actually has DC tiers. Do not invent tiers for opposed/defense powers.",
+    "successPriority": [
+      "prerequisites/eligibility",
+      "target visibility and range",
+      "action and resource validity",
+      "skill check",
+      "defense/opposed gate and tier",
+      "resource-enhanced outcomes",
+      "effects and state",
+      "recovery"
+    ],
+    "powerRecovery": [
+      "End of encounter after 1 minute of rest",
+      "Natural 20 Use the Force activation: regain all spent Force Powers at end of turn",
+      "Spend 1 FP as reaction to regain 1 spent Force Power"
+    ],
+    "modifierApplication": "Resolve feat/talent/technique/secret effects by typed source identity, selector, event timing and precedence; not by labels, tags, or string matches.",
+    "errataPriority": "Official October 2008 errata > official clarifications > printed Core book. Later published supplements may introduce explicit modifiers, which do not silently alter the originating ability."
+  },
+  "counts": {
+    "force-power": 16,
+    "force-technique": 7,
+    "force-secret": 5,
+    "total": 28,
+    "cross-domain-influences": 23
+  },
+  "definitions": [
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/battle-strike",
+      "legacyPackId": "f177dc6d65f76de9",
+      "domain": "force-power",
+      "printedName": "Battle Strike",
+      "displayName": "Battle Strike",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 96,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 96,
+            "section": "p96 Battle Strike",
+            "kind": "errata",
+            "change": "Attack must occur before the end of the next turn.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "Swift-action self enhancement; next attack gains +1 Force attack bonus and tiered extra damage.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Next attack +1 Force bonus; on hit add 1d6 damage",
+            "operations": [
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "next-attack",
+                "bonusType": "force",
+                "amount": 1,
+                "when": "next-attack-before-end-of-next-turn"
+              },
+              {
+                "kind": "damage-dice",
+                "target": "next-hit-target",
+                "dice": "1d6",
+                "when": "next-attack-before-end-of-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Next attack +1; on hit add 2d6 damage",
+            "operations": [
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "next-attack",
+                "bonusType": "force",
+                "amount": 1,
+                "when": "next-attack-before-end-of-next-turn"
+              },
+              {
+                "kind": "damage-dice",
+                "target": "next-hit-target",
+                "dice": "2d6",
+                "when": "next-attack-before-end-of-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Next attack +1; on hit add 3d6 damage",
+            "operations": [
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "next-attack",
+                "bonusType": "force",
+                "amount": 1,
+                "when": "next-attack-before-end-of-next-turn"
+              },
+              {
+                "kind": "damage-dice",
+                "target": "next-hit-target",
+                "dice": "3d6",
+                "when": "next-attack-before-end-of-next-turn"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "successful-activation",
+          "timing": "on-activation",
+          "summary": "Additional +2d6 damage on next attack",
+          "operations": [
+            {
+              "kind": "damage-dice",
+              "target": "next-hit-target",
+              "dice": "2d6"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/talent/swift-power",
+        "core/technique/force-power-mastery",
+        "core/secret/devastating-power"
+      ],
+      "rulesNotes": [
+        "Bonus damage only occurs if the next attack hits; the power does not itself make that attack."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/dark-rage",
+      "legacyPackId": "fp_darkrage",
+      "domain": "force-power",
+      "printedName": "Dark Rage",
+      "displayName": "Dark Rage",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 96,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "Dark Side; swift self-buff melee attack/damage +2/+4/+6 rage bonus through end of turn.",
+      "descriptors": [
+        "dark-side"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "+2 rage bonus to melee attack and damage until end of turn",
+            "operations": [
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "melee-attack",
+                "bonusType": "rage",
+                "amount": 2
+              },
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "melee-damage",
+                "bonusType": "rage",
+                "amount": 2
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "+4 rage bonus to melee attack and damage until end of turn",
+            "operations": [
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "melee-attack",
+                "bonusType": "rage",
+                "amount": 4
+              },
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "melee-damage",
+                "bonusType": "rage",
+                "amount": 4
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "+6 rage bonus to melee attack and damage until end of turn",
+            "operations": [
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "melee-attack",
+                "bonusType": "rage",
+                "amount": 6
+              },
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "melee-damage",
+                "bonusType": "rage",
+                "amount": 6
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "During rage cannot use skills or perform tasks requiring patience or concentration.",
+          "Using [dark side] power increases Dark Side Score by 1 and disallows Force Point to modify its activation check (Core p96)."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "successful-activation",
+          "timing": "on-activation",
+          "summary": "Extend rage duration through the end of encounter",
+          "operations": [
+            {
+              "kind": "duration-override",
+              "target": "self",
+              "value": "end-of-encounter"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Cost for extension is distinct from spending a Force Point to improve the activation check; Dark Side descriptor forbids the latter."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/farseeing",
+      "legacyPackId": "0419ecb55f011f81",
+      "domain": "force-power",
+      "printedName": "Farseeing",
+      "displayName": "Farseeing",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 96,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "Full-round distant sensing of known creature; oppose Will Defense (dead target has Will 30).",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "full-round",
+        "targetKind": "known-creature",
+        "rangeSquares": null,
+        "rangeMode": "unlimited",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense",
+          "defense": "will",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "information",
+            "target": "caster",
+            "value": "alive-dead-surroundings-action-emotions"
+          }
+        ],
+        "onFailure": [
+          {
+            "kind": "target-lockout",
+            "target": "caster",
+            "value": "24-hours",
+            "scope": "same-target"
+          }
+        ],
+        "requirements": [
+          "Target creature must be known or previously met.",
+          "If target dead, use Will Defense 30.",
+          "Failure reveals no information, not even life/death."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "after-success",
+          "timing": "on-activation",
+          "summary": "Gain clear mental image of surroundings and creatures/objects within six squares of target",
+          "operations": [
+            {
+              "kind": "information",
+              "target": "caster",
+              "value": "clear-surroundings-6-squares"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/talent/visions",
+        "core/technique/force-power-mastery"
+      ],
+      "rulesNotes": [
+        "Target lockout is 24 hours on failed check against that same creature."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/force-disarm",
+      "legacyPackId": "18f33f87a1ebee74",
+      "domain": "force-power",
+      "printedName": "Force Disarm",
+      "displayName": "Force Disarm",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 97,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 97,
+            "section": "p96 Force Power Descriptors",
+            "kind": "errata",
+            "change": "Adds [telekinetic] descriptor; cover/ concealment consequences apply.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          },
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 97,
+            "section": "p97 Force Disarm",
+            "kind": "errata",
+            "change": "Target within 12 squares AND line of sight; official clarification removes disarm-feat blanket exclusion sentence.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "Use the Force in place of a disarm attempt against a creature within 12 squares and line of sight; catch/drop or optional FP weapon-damage alternative.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "creature-holding-weapon",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "attack-substitution",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "disarm",
+            "target": "target",
+            "value": "drop-in-square-or-catch-with-free-hand"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Use the Force check replaces normal disarm attack roll.",
+          "Need free hand to catch item.",
+          "[Telekinetic] cover bonus applies to target relevant Defense or opposed check.",
+          "[Telekinetic] target concealment penalizes activation UTF unless caster used Sense Surroundings this turn."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "declare-before-check",
+          "timing": "on-activation",
+          "summary": "Instead of normally disarming, on a successful disarm check damage the weapon by UTF check result",
+          "operations": [
+            {
+              "kind": "suppress-operation",
+              "target": "target",
+              "value": "force-disarm-drop-or-catch"
+            },
+            {
+              "kind": "damage-formula",
+              "target": "target-item",
+              "formula": "useTheForceTotal"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/feat/improved-disarm",
+        "core/technique/force-power-mastery",
+        "core/clarification/force-disarm-feat-interaction"
+      ],
+      "rulesNotes": [
+        "The Force Point weapon-damage option explicitly substitutes for the normal drop-or-catch outcome, and must be declared before the check.",
+        "Do not create invented fixed DC tiers; evaluate normal disarm mechanics.",
+        "Official clarification deletes the printed blanket feat exclusion. However Improved Disarm grants +5 to melee ATTACK rolls, while Force Disarm uses a UTF skill check; do not auto-apply feat bonus absent a separate explicit modifier such as KOTOR Combined Feat.",
+        "Official clarification replaces disarm attack wording with disarm attempt in FP damage option."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/force-grip",
+      "legacyPackId": "b318fc3d5dadd9f3",
+      "domain": "force-power",
+      "printedName": "Force Grip",
+      "displayName": "Force Grip",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 97,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 97,
+            "section": "p96 Force Power Descriptors",
+            "kind": "errata",
+            "change": "Adds [telekinetic] descriptor; cover/ concealment consequences apply.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          },
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 97,
+            "section": "p97 Force Grip",
+            "kind": "errata",
+            "change": "Range 12 AND LOS. Full tier damage and action restriction require Fort success; on Fort fail half damage, normal actions, cannot maintain; larger target Fort bonus and concentration checks.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "DC15/20/25 deals 2d6/4d6/6d6; target Fortitude Defense determines full versus half damage, action restriction and sustain eligibility.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "creature",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc-and-defense",
+          "defense": "fortitude",
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "2d6 damage",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "2d6",
+                "when": "meets-tier-and-fortitude-defense"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "4d6 damage",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "4d6",
+                "when": "meets-tier-and-fortitude-defense"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "6d6 damage",
+            "operations": [
+              {
+                "kind": "damage-dice",
+                "target": "target",
+                "dice": "6d6",
+                "when": "meets-tier-and-fortitude-defense"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [
+          {
+            "kind": "action-restriction",
+            "target": "target",
+            "value": "one-swift-action-next-turn",
+            "when": "meets-tier-and-fortitude-defense"
+          }
+        ],
+        "onFailure": [
+          {
+            "kind": "damage-dice",
+            "target": "target",
+            "dice": "selected-dc-tier-damage",
+            "multiplier": "half-rounded-down",
+            "when": "meets-dc-tier-but-fails-fortitude"
+          }
+        ],
+        "requirements": [
+          "[Telekinetic] cover bonus applies to target relevant Defense or opposed check.",
+          "[Telekinetic] target concealment penalizes activation UTF unless caster used Sense Surroundings this turn."
+        ],
+        "defenseAdjustments": [
+          {
+            "defense": "fortitude",
+            "reason": "target-size",
+            "bonuses": {
+              "large": 5,
+              "huge": 10,
+              "gargantuan": 20,
+              "colossal": 50
+            }
+          }
+        ]
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Add 2d6 damage",
+          "operations": [
+            {
+              "kind": "damage-dice",
+              "target": "target",
+              "dice": "2d6"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "A fresh Use the Force check is mandatory each maintenance round.",
+        "On Fort fail after qualifying for fixed tier, target takes half selected tier damage, may act normally, and power cannot be maintained."
+      ],
+      "maintenance": {
+        "allowed": true,
+        "action": "standard",
+        "repeatCheck": true,
+        "repeatEachRound": true,
+        "targetPersistence": "same-target",
+        "onDamageConcentrationDC": "15+damageTaken",
+        "requiresFortitudeSuccess": true
+      },
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/force-lightning",
+      "legacyPackId": "0a422b939edfad56",
+      "domain": "force-power",
+      "printedName": "Force Lightning",
+      "displayName": "Force Lightning",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 97,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 97,
+            "section": "p97 Force Lightning",
+            "kind": "errata",
+            "change": "Source clarification confirms Force damage type, not energy damage; target Reflex rather than invented DC tiers.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "[Dark Side] 8d6 Force damage vs Reflex Defense; on hit target -1 condition step, otherwise half damage. No fixed DC ladder.",
+      "descriptors": [
+        "dark-side"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "single-creature",
+        "rangeSquares": 6,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "damage-dice",
+            "target": "target",
+            "dice": "8d6",
+            "damageType": "force"
+          },
+          {
+            "kind": "condition-track",
+            "target": "target",
+            "steps": -1
+          }
+        ],
+        "onFailure": [
+          {
+            "kind": "damage-dice",
+            "target": "target",
+            "dice": "8d6",
+            "damageType": "force",
+            "multiplier": "half-rounded-down"
+          }
+        ],
+        "requirements": [
+          "[Dark Side] increases Dark Side Score +1 on activation.",
+          "Cannot spend Force Point to modify the Use the Force activation roll for a [Dark Side] power."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-hit",
+          "timing": "on-activation",
+          "summary": "Move hit target an additional -1 condition step",
+          "operations": [
+            {
+              "kind": "condition-track",
+              "target": "target",
+              "steps": -1
+            }
+          ],
+          "requirements": [
+            "attack-hit"
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "No damage DC tiers exist in printed Core; 8d6 is constant on a hit."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/force-slam",
+      "legacyPackId": "462a6c23e00c4dfc",
+      "domain": "force-power",
+      "printedName": "Force Slam",
+      "displayName": "Force Slam",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 97,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 97,
+            "section": "p96 Force Power Descriptors",
+            "kind": "errata",
+            "change": "Adds [telekinetic] descriptor; cover/ concealment consequences apply.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          },
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 97,
+            "section": "p97/98 Large Target Fortitude",
+            "kind": "errata",
+            "change": "Large+5,Huge+10,Gargantuan+20,Colossal+50 to target Fortitude Defense vs power.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "Area cone attack: one UTF roll versus each target Fortitude; 4d6 and prone on hit, half damage on miss.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "all-creatures-in-cone",
+        "rangeSquares": 6,
+        "rangeMode": "cone-and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense-per-target",
+          "defense": "fortitude",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "damage-dice",
+            "target": "target",
+            "dice": "4d6",
+            "damageType": "force"
+          },
+          {
+            "kind": "condition",
+            "target": "target",
+            "value": "prone"
+          }
+        ],
+        "onFailure": [
+          {
+            "kind": "damage-dice",
+            "target": "target",
+            "dice": "4d6",
+            "damageType": "force",
+            "multiplier": "half-rounded-down"
+          }
+        ],
+        "requirements": [
+          "[Telekinetic] cover bonus applies to target relevant Defense or opposed check.",
+          "[Telekinetic] target concealment penalizes activation UTF unless caster used Sense Surroundings this turn."
+        ],
+        "defenseAdjustments": [
+          {
+            "defense": "fortitude",
+            "reason": "target-size",
+            "bonuses": {
+              "large": 5,
+              "huge": 10,
+              "gargantuan": 20,
+              "colossal": 50
+            }
+          }
+        ]
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Add +2d6 damage to all targets in the cone",
+          "operations": [
+            {
+              "kind": "damage-dice",
+              "target": "each-target",
+              "dice": "2d6"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/talent/disciplined-strike",
+        "core/talent/telekinetic-power",
+        "core/talent/telekinetic-savant",
+        "core/secret/shaped-power"
+      ],
+      "rulesNotes": [
+        "Area effect, shared damage roll; different Fortitude comparisons for each target."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/force-stun",
+      "legacyPackId": "a214d4f56b4abe11",
+      "domain": "force-power",
+      "printedName": "Force Stun",
+      "displayName": "Force Stun",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 98,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 98,
+            "section": "p97/98 Large Target Fortitude",
+            "kind": "errata",
+            "change": "Large+5,Huge+10,Gargantuan+20,Colossal+50 to target Fortitude Defense vs power.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          },
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 98,
+            "section": "p98 Force Stun",
+            "kind": "errata",
+            "change": "Use Fortitude Defense, not Will Defense.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "On UTF vs Fortitude success, target moves -1 condition step, with an additional -1 for each five points of margin.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "creature",
+        "rangeSquares": 6,
+        "rangeMode": "or-line-of-sight",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense-margin",
+          "defense": "fortitude",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "condition-track",
+            "target": "target",
+            "stepsFormula": "-1-floor((useTheForceTotal-willDefense)/5)"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": [
+          {
+            "defense": "fortitude",
+            "reason": "target-size",
+            "bonuses": {
+              "large": 5,
+              "huge": 10,
+              "gargantuan": 20,
+              "colossal": 50
+            }
+          }
+        ]
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-hit",
+          "timing": "on-activation",
+          "summary": "Additional -1 step",
+          "operations": [
+            {
+              "kind": "condition-track",
+              "target": "target",
+              "steps": -1
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/force-thrust",
+      "legacyPackId": "d51bf85903366b6b",
+      "domain": "force-power",
+      "printedName": "Force Thrust",
+      "displayName": "Force Thrust",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 98,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 98,
+            "section": "p96 Force Power Descriptors",
+            "kind": "errata",
+            "change": "Adds [telekinetic] descriptor; cover/ concealment consequences apply.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          },
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 98,
+            "section": "p98 Force Thrust",
+            "kind": "errata",
+            "change": "Target adds base attack bonus AND size modifier to Strength resistance, plus printed stability.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "UTF opposed by target Strength check plus base attack bonus, size and stability; push 1 square plus one per five points of winning margin.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "creature-or-object",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "opposed",
+          "defense": null,
+          "opposed": "strength-plus-base-attack-plus-size-stability",
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "forced-movement",
+            "target": "target",
+            "squaresFormula": "1+floor((useTheForceTotal-targetStrengthTotal)/5)",
+            "direction": "away-from-caster"
+          },
+          {
+            "kind": "damage-dice",
+            "target": "target",
+            "dice": "1d6",
+            "when": "collision-with-larger-object"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Size to Strength check: Colossal +20; Gargantuan +15; Huge +10; Large +5; Medium 0; Small -5; Tiny -10; Diminutive -15; Fine -20.",
+          "More than two legs or exceptionally stable grants +5 stability bonus.",
+          "[Telekinetic] cover bonus applies to target relevant Defense or opposed check.",
+          "[Telekinetic] target concealment penalizes activation UTF unless caster used Sense Surroundings this turn.",
+          "Opposing target adds base attack bonus to its Strength check in addition to size/stability modifiers."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "before-opposed-check",
+          "timing": "on-activation",
+          "summary": "Target takes -5 to opposing Strength check; collision adds +2d6 damage",
+          "operations": [
+            {
+              "kind": "modifier",
+              "target": "target",
+              "stat": "opposed-strength",
+              "amount": -5
+            },
+            {
+              "kind": "damage-dice",
+              "target": "target",
+              "dice": "2d6",
+              "when": "collision-with-larger-object"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Comparison says \"beat\" Strength check: ties fail, unlike meets-defense checks."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/mind-trick",
+      "legacyPackId": "e6649f366d6c5737",
+      "domain": "force-power",
+      "printedName": "Mind Trick",
+      "displayName": "Mind Trick",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 98,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "[Mind-Affecting] UTF vs Will enables one hallucination, feint, suggestion, or fear effect.",
+      "descriptors": [
+        "mind-affecting"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "intelligence-3-plus-creature",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "defense",
+          "defense": "will",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "choice",
+            "target": "target",
+            "value": "hallucination-allows-stealth|feint-deny-dex-next-attack|reasonable-suggestion|fear-flee-one-minute"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Mindless and mind-affecting-immune targets unaffected.",
+          "Suggestion requires communication and cannot obviously threaten life.",
+          "Fear variant fails if target level >= user character level, and flee ends on taking damage."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "after-successful-suggestion",
+          "timing": "on-activation",
+          "summary": "Improve target attitude by 1 step plus one extra step per five points UTF exceeds Will",
+          "operations": [
+            {
+              "kind": "attitude",
+              "target": "target",
+              "stepsFormula": "1+floor((useTheForceTotal-willDefense)/5)"
+            }
+          ],
+          "requirements": [
+            "selected-mode:suggestion"
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/move-object",
+      "legacyPackId": "289013a32bd179ad",
+      "domain": "force-power",
+      "printedName": "Move Object",
+      "displayName": "Move Object",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 98,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 98,
+            "section": "p96 Force Power Descriptors",
+            "kind": "errata",
+            "change": "Adds [telekinetic] descriptor; cover/ concealment consequences apply.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          },
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 98,
+            "section": "p98 Move Object",
+            "kind": "errata",
+            "change": "Range 12 AND LOS; repeat UTF check on every maintained round; concentration damage DC15+damage; dealing damage ends sustain.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "Telekinesis size/damage tiers DC 15-35, creature resistance by Will, hurl second target by Reflex, flyers by grapple.",
+      "descriptors": [
+        "telekinetic"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "creature-or-object",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc-with-target-conditions",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Move up to medium object; 2d6 damage if hurled/dropped",
+            "operations": [
+              {
+                "kind": "size-limit",
+                "target": "target",
+                "size": "medium"
+              },
+              {
+                "kind": "damage-dice",
+                "target": "primary-and-secondary-on-hurl",
+                "dice": "2d6"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Move up to large object; 4d6 damage if hurled/dropped",
+            "operations": [
+              {
+                "kind": "size-limit",
+                "target": "target",
+                "size": "large"
+              },
+              {
+                "kind": "damage-dice",
+                "target": "primary-and-secondary-on-hurl",
+                "dice": "4d6"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Move up to huge object; 6d6 damage if hurled/dropped",
+            "operations": [
+              {
+                "kind": "size-limit",
+                "target": "target",
+                "size": "huge"
+              },
+              {
+                "kind": "damage-dice",
+                "target": "primary-and-secondary-on-hurl",
+                "dice": "6d6"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Move up to gargantuan object; 8d6 damage if hurled/dropped",
+            "operations": [
+              {
+                "kind": "size-limit",
+                "target": "target",
+                "size": "gargantuan"
+              },
+              {
+                "kind": "damage-dice",
+                "target": "primary-and-secondary-on-hurl",
+                "dice": "8d6"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Move up to colossal object; 10d6 damage if hurled/dropped",
+            "operations": [
+              {
+                "kind": "size-limit",
+                "target": "target",
+                "size": "colossal"
+              },
+              {
+                "kind": "damage-dice",
+                "target": "primary-and-secondary-on-hurl",
+                "dice": "10d6"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "If unwilling creature, check total must also meet creature Will Defense.",
+          "Hurl/drop onto another target only if UTF result exceeds secondary target Reflex Defense (strictly greater per printed wording).",
+          "If target hovering or flying, it may oppose UTF by grapple check as reaction; if it wins, no movement.",
+          "Move selected target up to six squares per use.",
+          "[Telekinetic] cover bonus applies to target relevant Defense or opposed check.",
+          "[Telekinetic] target concealment penalizes activation UTF unless caster used Sense Surroundings this turn."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Max size +1 category and +2d6 damage; maximum frigate-sized Colossal and 12d6",
+          "operations": [
+            {
+              "kind": "size-step",
+              "target": "target",
+              "steps": 1,
+              "maxSize": "colossal-frigate"
+            },
+            {
+              "kind": "damage-dice",
+              "target": "primary-and-secondary-on-hurl",
+              "dice": "2d6",
+              "cap": "12d6"
+            }
+          ],
+          "exclusiveGroup": "move-object-size-extension"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Max size +3 categories and +6d6 damage; max station-sized Colossal and 16d6",
+          "operations": [
+            {
+              "kind": "size-step",
+              "target": "target",
+              "steps": 3,
+              "maxSize": "colossal-station"
+            },
+            {
+              "kind": "damage-dice",
+              "target": "primary-and-secondary-on-hurl",
+              "dice": "6d6",
+              "cap": "16d6"
+            }
+          ],
+          "exclusiveGroup": "move-object-size-extension"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [
+        "core/talent/telekinetic-power",
+        "core/talent/telekinetic-savant"
+      ],
+      "rulesNotes": [
+        "Contains secondary target defense and conditional opposition in same activation, not one scalar DC.",
+        "PDF p99 continues size extension text from p98.",
+        "Involuntary movement by Move Object does not provoke attacks of opportunity (Core official clarification p156)."
+      ],
+      "maintenance": {
+        "allowed": true,
+        "action": "standard",
+        "repeatCheck": true,
+        "repeatEachRound": true,
+        "onDamageConcentrationDC": "15+damageTaken",
+        "endsOnDealingDamage": true
+      },
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/negate-energy",
+      "legacyPackId": "be1ae263c498af3b",
+      "domain": "force-power",
+      "printedName": "Negate Energy",
+      "displayName": "Negate Energy",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 99,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "Reaction to visible/anticipated energy-weapon hit; UTF >= damage amount negates all damage.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "incoming-energy-weapon-attack",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "damage-threshold",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "negate-damage",
+            "target": "self",
+            "value": "entire-attack-damage"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Must be aware of the attack and not flat-footed.",
+          "On UTF < incoming energy damage, the attack deals full damage."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "after-success",
+          "timing": "on-activation",
+          "summary": "Regain hit points equal to the prevented damage, capped at normal maximum",
+          "operations": [
+            {
+              "kind": "heal",
+              "target": "self",
+              "formula": "min(negatedDamage,maxHP-currentHP)"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Comparison is against attack damage, not target defense or fixed DC."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/rebuke",
+      "legacyPackId": "390074b44aedfa2a",
+      "domain": "force-power",
+      "printedName": "Rebuke",
+      "displayName": "Rebuke",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 100,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 100,
+            "section": "p100 Rebuke",
+            "kind": "errata",
+            "change": "Originator suffers effect based on creator’s ORIGINAL UTF check; rebuking reflected power consumes a Rebuke use, targets prior Rebuke check result.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "Reaction UTF versus hostile Force check: >= harmless cancel; margin >=5 can reflect.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "incoming-force-power",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "opposed",
+          "defense": null,
+          "opposed": "incoming-force-check",
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "negate-force-power",
+            "target": "self",
+            "value": "no-effect"
+          },
+          {
+            "kind": "reflection",
+            "target": "source-caster",
+            "when": "margin-at-least-5"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [
+          "Reflected power can be Rebuked by originator; if returned again both users suffer it.",
+          "Reflected result uses the initiating creator’s original Use the Force check to determine effect.",
+          "Originator rebuking a reflected power spends an available Rebuke power instance and compares against prior Rebuke UTF check as target DC."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "second-reflection-reaction",
+          "timing": "on-activation",
+          "summary": "After a power has been Rebuked twice, avoid its effects on self",
+          "operations": [
+            {
+              "kind": "negate-force-power",
+              "target": "self",
+              "value": "second-reflection-only"
+            }
+          ],
+          "requirements": [
+            "power-rebuked-twice"
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Margin-to-reflect: own UTF - original UTF >=5."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/sever-force",
+      "legacyPackId": "b52769dd11b4e52c",
+      "domain": "force-power",
+      "printedName": "Sever Force",
+      "displayName": "Sever Force",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 100,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 100,
+            "section": "p100 Sever Force",
+            "kind": "errata",
+            "change": "Official clarification corrects DC35 entry to As DC25, not self-reference.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "[Light Side] target with DSS >=1: must meet Will and DC25/30/35 for force-point ban and power-use CT penalty.",
+      "descriptors": [
+        "light-side"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "force-user-with-dark-side-score",
+        "rangeSquares": 12,
+        "rangeMode": "and-line-of-sight",
+        "lineOfSightRequired": true,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc-and-defense",
+          "defense": "will",
+          "opposed": null,
+          "minimumDC": 25
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 25,
+            "summary": "No Force Point spending for DSS hours",
+            "operations": [
+              {
+                "kind": "restrict-resource",
+                "target": "target",
+                "resource": "force-point",
+                "durationFormula": "darkSideScore-hours"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "As DC25; each Force Power use costs -1 condition step",
+            "operations": [
+              {
+                "kind": "restrict-resource",
+                "target": "target",
+                "resource": "force-point",
+                "durationFormula": "darkSideScore-hours"
+              },
+              {
+                "kind": "condition-track",
+                "target": "target",
+                "steps": -1,
+                "when": "each-force-power-use"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "As DC25; each Force Power use costs -2 condition steps",
+            "operations": [
+              {
+                "kind": "restrict-resource",
+                "target": "target",
+                "resource": "force-point",
+                "durationFormula": "darkSideScore-hours"
+              },
+              {
+                "kind": "condition-track",
+                "target": "target",
+                "steps": -2,
+                "when": "each-force-power-use"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Does nothing to target Dark Side Score 0.",
+          "Target must have Force-user status and DSS >=1.",
+          "Also pass target Will Defense.",
+          "If caster has DSS >=1, Core [Light Side] restriction applies to use and Force Point bonus on check.",
+          "Caster must be aware target has Dark Side Score 1+ or GM waives prerequisite per Official Clarification Sensing the Dark Side."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "after-success",
+          "timing": "on-activation",
+          "summary": "Double duration of hours",
+          "operations": [
+            {
+              "kind": "duration-multiplier",
+              "target": "target",
+              "factor": 2
+            }
+          ],
+          "exclusiveGroup": "sever-force-extension"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "after-success",
+          "timing": "on-activation",
+          "summary": "Replace hours with DSS days",
+          "operations": [
+            {
+              "kind": "duration-override",
+              "target": "target",
+              "durationFormula": "darkSideScore-days"
+            }
+          ],
+          "exclusiveGroup": "sever-force-extension"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Official clarification resolves printed DC35 self-reference to the DC25 baseline; this is no longer an open question."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/surge",
+      "legacyPackId": "1ac1084ca8f07114",
+      "domain": "force-power",
+      "printedName": "Surge",
+      "displayName": "Surge",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 100,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 100,
+            "section": "p100 Surge",
+            "kind": "errata",
+            "change": "Free action, counts as Jump running start, optional Destiny Point +4 movement and may use all movement for Jump without Jump check.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "Swift self-buff Jump +10/+20/+30 and speed +2/+4/+6 squares until next turn.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "free",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 10
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 10,
+            "summary": "Jump +10 Force, speed +2 squares until start of next turn",
+            "operations": [
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "jump",
+                "bonusType": "force",
+                "amount": 10
+              },
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "speed-squares",
+                "bonusType": "untyped-increase",
+                "amount": 2
+              }
+            ]
+          },
+          {
+            "dc": 15,
+            "summary": "Jump +20 Force, speed +4 squares until start of next turn",
+            "operations": [
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "jump",
+                "bonusType": "force",
+                "amount": 20
+              },
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "speed-squares",
+                "bonusType": "untyped-increase",
+                "amount": 4
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Jump +30 Force, speed +6 squares until start of next turn",
+            "operations": [
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "jump",
+                "bonusType": "force",
+                "amount": 30
+              },
+              {
+                "kind": "modifier",
+                "target": "self",
+                "stat": "speed-squares",
+                "bonusType": "untyped-increase",
+                "amount": 6
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Using Surge counts as a running start for Jump DC."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "successful-activation",
+          "timing": "on-activation",
+          "summary": "Jump bonus +10 and speed +2 squares beyond tier",
+          "operations": [
+            {
+              "kind": "modifier",
+              "target": "self",
+              "stat": "jump",
+              "bonusType": "force",
+              "amount": 10
+            },
+            {
+              "kind": "modifier",
+              "target": "self",
+              "stat": "speed-squares",
+              "amount": 2
+            }
+          ]
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "on-activation",
+          "timing": "on-activation",
+          "summary": "Add four squares of movement, and any/all movement for the round can be part of a jump without a Jump check",
+          "operations": [
+            {
+              "kind": "modifier",
+              "target": "self",
+              "stat": "speed-squares",
+              "amount": 4
+            },
+            {
+              "kind": "jump-movement-exception",
+              "target": "self",
+              "value": "any-round-movement-may-be-used-for-jump-without-check"
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The printed Jump bonus already includes increased speed adjustment; must not add it again."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-power/vital-transfer",
+      "legacyPackId": "00b65e47a4dd7d76",
+      "domain": "force-power",
+      "printedName": "Vital Transfer",
+      "displayName": "Vital Transfer",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 100,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 100,
+            "section": "p100 Vital Transfer",
+            "kind": "errata",
+            "change": "May voluntarily heal less than tier cap; cannot heal self.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "[Light Side] touch heal 2/3/4 × target level; caster pays floor(actual HP healed / 2) damage.",
+      "descriptors": [
+        "light-side"
+      ],
+      "acquisition": {
+        "method": "force-training-suite",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "touched-living-creature-other-than-self",
+        "rangeSquares": null,
+        "rangeMode": "touch",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Heal target 2 × target character level",
+            "operations": [
+              {
+                "kind": "heal",
+                "target": "target",
+                "formula": "2*targetCharacterLevel"
+              },
+              {
+                "kind": "damage-formula",
+                "target": "caster",
+                "formula": "floor(actualHealing/2)"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Heal target 3 × target character level",
+            "operations": [
+              {
+                "kind": "heal",
+                "target": "target",
+                "formula": "3*targetCharacterLevel"
+              },
+              {
+                "kind": "damage-formula",
+                "target": "caster",
+                "formula": "floor(actualHealing/2)"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Heal target 4 × target character level",
+            "operations": [
+              {
+                "kind": "heal",
+                "target": "target",
+                "formula": "4*targetCharacterLevel"
+              },
+              {
+                "kind": "damage-formula",
+                "target": "caster",
+                "formula": "floor(actualHealing/2)"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Caster may choose any nonnegative healing amount up to tier cap; caster self-damage uses actual healing chosen and applied."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "successful-activation",
+          "timing": "on-activation",
+          "summary": "Avoid caster self-damage",
+          "operations": [
+            {
+              "kind": "suppress-operation",
+              "target": "caster",
+              "value": "vital-transfer-self-damage"
+            }
+          ]
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "successful-activation",
+          "timing": "on-activation",
+          "summary": "In addition to healing, target moves +5 condition steps",
+          "operations": [
+            {
+              "kind": "condition-track",
+              "target": "target",
+              "steps": 5
+            }
+          ]
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "A target must be a living creature other than the caster per healing another.",
+        "Caster self-damage based on amount healed; must distinguish attempted and actual healing."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-technique/force-point-recovery",
+      "legacyPackId": "056ab39b3ab9df10",
+      "domain": "force-technique",
+      "printedName": "Force Point Recovery",
+      "displayName": "Force Point Recovery",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 102,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "WotC Saga Edition Errata and Official Clarifications",
+            "publicationDate": "2008-10-21",
+            "originalPrintedPage": 102,
+            "section": "p102 Force Point Recovery",
+            "kind": "errata",
+            "change": "Errata removes second paragraph: no permission to select this Force Technique multiple times.",
+            "url": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+          }
+        ]
+      },
+      "summary": "At end of encounter automatically recover one Force Point spent in that encounter. Not repeatable under official errata.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "recover-resource",
+            "target": "self",
+            "resource": "force-point",
+            "amount": 1,
+            "when": "end-of-encounter",
+            "limit": "spent-this-encounter"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Once per encounter at encounter end recover one Force Point spent during encounter. The print repetition permission is REMOVED by official errata."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-technique/force-power-mastery",
+      "legacyPackId": "07cea7e3e8b21d69",
+      "domain": "force-technique",
+      "printedName": "Force Power Mastery",
+      "displayName": "Force Power Mastery",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 102,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "Choose a distinct owned Force Power; may Take 10 to activate while threatened or distracted.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "allow-take-ten",
+            "target": "chosen-force-power",
+            "value": "even-when-threatened-or-distracted"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "core/modifier/force-power-mastery"
+      ],
+      "rulesNotes": [
+        "Each selection applies to a DIFFERENT Force Power; separate choice per instance."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-technique/improved-force-trance",
+      "legacyPackId": "93b96db5b560e14a",
+      "domain": "force-technique",
+      "printedName": "Improved Force Trance",
+      "displayName": "Improved Force Trance",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 102,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "While in Force trance, regain hit points equal to 2 × character level per hour.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "heal",
+            "target": "self",
+            "formula": "2*characterLevel",
+            "when": "each-hour-in-force-trance"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-technique/improved-move-light-object",
+      "legacyPackId": "c406600924a7780e",
+      "domain": "force-technique",
+      "printedName": "Improved Move Light Object",
+      "displayName": "Improved Move Light Object",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 103,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "Use the Move Light Object skill ability as swift instead of move; projectile as move instead of standard.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "action-override",
+            "target": "use-the-force:move-light-object",
+            "fromAction": "move",
+            "toAction": "swift"
+          },
+          {
+            "kind": "action-override",
+            "target": "use-the-force:move-light-object-projectile",
+            "fromAction": "standard",
+            "toAction": "move"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "This modifies a Use the Force skill application, NOT the Move Object Force Power."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-technique/improved-sense-force",
+      "legacyPackId": "ad67b8f3959860f2",
+      "domain": "force-technique",
+      "printedName": "Improved Sense Force",
+      "displayName": "Improved Sense Force",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 103,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "Use Sense Force skill application as reaction instead of full-round action.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "action-override",
+            "target": "use-the-force:sense-force",
+            "fromAction": "full-round",
+            "toAction": "reaction"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-technique/improved-sense-surroundings",
+      "legacyPackId": "4955b5076ca5da89",
+      "domain": "force-technique",
+      "printedName": "Improved Sense Surroundings",
+      "displayName": "Improved Sense Surroundings",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 103,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "Use Sense Surroundings skill application as free action instead of swift.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "action-override",
+            "target": "use-the-force:sense-surroundings",
+            "fromAction": "swift",
+            "toAction": "free"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-technique/improved-telepathy",
+      "legacyPackId": "53cfa2d1e4fe25ba",
+      "domain": "force-technique",
+      "printedName": "Improved Telepathy",
+      "displayName": "Improved Telepathy",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 103,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "Reroll a Use the Force check for Telepathy skill application and keep the better result.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-technique-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [
+          {
+            "kind": "reroll",
+            "target": "use-the-force:telepathy",
+            "keep": "better"
+          }
+        ],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-secret/devastating-power",
+      "legacyPackId": "996848a2e0c0ac4f",
+      "domain": "force-secret",
+      "printedName": "Devastating Power",
+      "displayName": "Devastating Power",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 103,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "When using a damaging Force Power, FP +50% damage dice; DP doubles dice.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Source power must deal damage."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Increase number of power damage dice by 50%",
+          "operations": [
+            {
+              "kind": "damage-dice-multiplier",
+              "target": "source-power",
+              "factor": 1.5
+            }
+          ],
+          "exclusiveGroup": "devastating-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Double the number of power damage dice",
+          "operations": [
+            {
+              "kind": "damage-dice-multiplier",
+              "target": "source-power",
+              "factor": 2
+            }
+          ],
+          "exclusiveGroup": "devastating-cost"
+        }
+      ],
+      "adjudication": [
+        "Published text does not specify rounding for odd dice counts when increasing dice by 50%; decide rounding before automating that edge."
+      ],
+      "interactions": [],
+      "rulesNotes": [
+        "This modifies dice count, NOT damage rolled, and must not alter unrelated bonuses."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-secret/distant-power",
+      "legacyPackId": "43f9645eabce838e",
+      "domain": "force-secret",
+      "printedName": "Distant Power",
+      "displayName": "Distant Power",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 103,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "For numerically ranged Force Powers: FP multiplies range 10x; DP anywhere in same star system, but line-of-sight remains.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Power must have numerically expressed range.",
+          "Power line-of-sight requirements remain."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Multiply numeric range by 10",
+          "operations": [
+            {
+              "kind": "range-multiplier",
+              "target": "source-power",
+              "factor": 10
+            }
+          ],
+          "exclusiveGroup": "distant-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Range anywhere in same star system, line-of-sight unchanged",
+          "operations": [
+            {
+              "kind": "range-override",
+              "target": "source-power",
+              "value": "same-star-system"
+            }
+          ],
+          "exclusiveGroup": "distant-cost"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-secret/multitarget-power",
+      "legacyPackId": "af908ace9a361603",
+      "domain": "force-secret",
+      "printedName": "Multitarget Power",
+      "displayName": "Multitarget Power",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 103,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "When using single-target Force Power: FP add one target, DP target count = one per four character levels.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Power affects a single target."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "One additional target",
+          "operations": [
+            {
+              "kind": "target-count",
+              "target": "source-power",
+              "increase": 1
+            }
+          ],
+          "exclusiveGroup": "multitarget-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "May affect one target per four character levels",
+          "operations": [
+            {
+              "kind": "target-count",
+              "target": "source-power",
+              "formula": "floor(characterLevel/4)",
+              "mode": "set-total"
+            }
+          ],
+          "exclusiveGroup": "multitarget-cost"
+        }
+      ],
+      "adjudication": [
+        "Confirm total versus extra target interpretation for DP; Core phrasing implies total but does not explicitly use that word."
+      ],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-secret/quicken-power",
+      "legacyPackId": "52bf7b9a1a41de2b",
+      "domain": "force-secret",
+      "printedName": "Quicken Power",
+      "displayName": "Quicken Power",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 103,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "When activating standard/move Force Power, spend FP to use swift or DP to use reaction.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Original Force Power activation is standard or move action."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "when-declaring-power-activation",
+          "timing": "on-activation",
+          "summary": "Replace standard/move with swift",
+          "operations": [
+            {
+              "kind": "action-override",
+              "target": "source-power",
+              "fromAction": "standard-or-move",
+              "toAction": "swift"
+            }
+          ],
+          "exclusiveGroup": "quicken-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "when-declaring-power-activation",
+          "timing": "on-activation",
+          "summary": "Replace standard/move with reaction",
+          "operations": [
+            {
+              "kind": "action-override",
+              "target": "source-power",
+              "fromAction": "standard-or-move",
+              "toAction": "reaction"
+            }
+          ],
+          "exclusiveGroup": "quicken-cost"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "core/force-secret/shaped-power",
+      "legacyPackId": "d687b624feb2d351",
+      "domain": "force-secret",
+      "printedName": "Shaped Power",
+      "displayName": "Shaped Power",
+      "source": {
+        "bookId": "swse-core-rulebook",
+        "printedPage": 103,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": []
+      },
+      "summary": "When using cone Force Power: FP line 1 square wide and five times cone length; DP chosen targets within cone-length range.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "force-secret-class-entitlement",
+        "repeatable": false
+      },
+      "activation": {
+        "action": "none",
+        "targetKind": "none",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "none",
+          "mode": "none",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [
+          "Source Force Power must use cone area."
+        ],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [
+        {
+          "resource": "force-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Change cone into 1-square-wide line of length five times original cone length",
+          "operations": [
+            {
+              "kind": "area-override",
+              "target": "source-power",
+              "shape": "line",
+              "widthSquares": 1,
+              "lengthFormula": "5*coneLength"
+            }
+          ],
+          "exclusiveGroup": "shaped-cost"
+        },
+        {
+          "resource": "destiny-point",
+          "trigger": "while-using-qualifying-power",
+          "timing": "on-activation",
+          "summary": "Affect chosen targets within cone-length radius instead of original cone",
+          "operations": [
+            {
+              "kind": "area-override",
+              "target": "source-power",
+              "shape": "chosen-targets",
+              "rangeFormula": "coneLength"
+            }
+          ],
+          "exclusiveGroup": "shaped-cost"
+        }
+      ],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation"
+    }
+  ],
+  "modifiers": [
+    {
+      "modifierId": "core/modifier/force-training",
+      "sourceName": "Force Training",
+      "sourceType": "feat",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 85,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "on-acquisition",
+      "effect": "Grant 1 + Wisdom modifier additional Force Power suite choices per feat instance, min 1",
+      "constraints": [
+        "Core standard; future feats may alter effective Wisdom only for these slots."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/force-sensitivity",
+      "sourceName": "Force Sensitivity",
+      "sourceType": "feat",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 85,
+      "targetDomains": [
+        "force-power",
+        "use-the-force-skill"
+      ],
+      "trigger": "character-eligibility",
+      "effect": "Grants ability to train Use the Force and learn Force Powers via applicable feat/entitlement",
+      "constraints": []
+    },
+    {
+      "modifierId": "core/modifier/improved-disarm",
+      "sourceName": "Improved Disarm",
+      "sourceType": "feat",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 97,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-force-disarm",
+      "effect": "Official clarification removes printed blanket exclusion. The feat gives a melee disarm ATTACK-roll bonus, not a UTF-check bonus. Apply only when another rule explicitly says it modifies Force Disarm (e.g., later Combined Feat).",
+      "constraints": [
+        "Do not automatically convert an attack-roll bonus into a skill-check bonus.",
+        "Add later cross-book modifier for KOTOR Combined Feat after verifying its source."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/disciplined-strike",
+      "sourceName": "Disciplined Strike",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 100,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "area-power-target-selection",
+      "effect": "Exclude up to max(1, Wisdom modifier) targets from effect of area Force Power",
+      "constraints": []
+    },
+    {
+      "modifierId": "core/modifier/telekinetic-power",
+      "sourceName": "Telekinetic Power",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 100,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "natural-20-on-power-check",
+      "effect": "On natural 20 activating ANY Force Power with [telekinetic] descriptor, use it again immediately as free action; not restricted to five original Core names.",
+      "constraints": [
+        "Selector must be descriptor-based and include future book powers."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/telekinetic-savant",
+      "sourceName": "Telekinetic Savant",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 100,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "once-per-encounter-swift-action",
+      "effect": "Once per encounter as swift action return one spent Force Power with [telekinetic] descriptor to suite without FP; talent selections as printed.",
+      "constraints": [
+        "Selector must be descriptor-based and include future book powers."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/force-focus",
+      "sourceName": "Force Focus",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 101,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "full-round-action",
+      "effect": "Use the Force DC15 on success regain one spent Force Power without FP",
+      "constraints": []
+    },
+    {
+      "modifierId": "core/modifier/swift-power",
+      "sourceName": "Swift Power",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 101,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "once-per-day",
+      "effect": "Use eligible normally standard/move Force Power as swift action",
+      "constraints": [
+        "Requires Power of the Dark Side talent; is distinct from Quicken Power secret."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/visions",
+      "sourceName": "Visions",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 101,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-farseeing",
+      "effect": "Spend FP as swift action to look into past/future rather than present, max one year per character level",
+      "constraints": [
+        "Requires Force Perception talent and Farseeing power."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/force-pilot",
+      "sourceName": "Force Pilot",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 101,
+      "targetDomains": [
+        "starship-maneuver",
+        "pilot-skill"
+      ],
+      "trigger": "pilot-check",
+      "effect": "Substitute Use the Force modifier for Pilot modifier when making Pilot checks; considered trained in Pilot without restriction to use of this talent (official clarification).",
+      "constraints": [
+        "Applies only where Pilot skill check is being made; not a blanket substitute for a starship gunner attack."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/force-power-mastery",
+      "sourceName": "Force Power Mastery",
+      "sourceType": "force-technique",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 102,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "on-power-activation",
+      "effect": "Allow taking 10 for specifically chosen power even when threatened/distracted",
+      "constraints": []
+    },
+    {
+      "modifierId": "core/modifier/devastating-power",
+      "sourceName": "Devastating Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 103,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-using-damaging-power",
+      "effect": "FP increases damage dice count 50%; DP doubles dice",
+      "constraints": []
+    },
+    {
+      "modifierId": "core/modifier/distant-power",
+      "sourceName": "Distant Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 103,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "numeric-range-power-activation",
+      "effect": "FP range x10; DP same star system; line of sight stays",
+      "constraints": []
+    },
+    {
+      "modifierId": "core/modifier/multitarget-power",
+      "sourceName": "Multitarget Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 103,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "single-target-power-activation",
+      "effect": "FP one extra target; DP total one target/four character levels",
+      "constraints": []
+    },
+    {
+      "modifierId": "core/modifier/quicken-power",
+      "sourceName": "Quicken Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 103,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "standard-or-move-power-activation",
+      "effect": "FP swift action; DP reaction",
+      "constraints": []
+    },
+    {
+      "modifierId": "core/modifier/shaped-power",
+      "sourceName": "Shaped Power",
+      "sourceType": "force-secret",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 103,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "cone-power-activation",
+      "effect": "FP cone to 1-square line x5 length; DP choose targets within cone length",
+      "constraints": []
+    },
+    {
+      "modifierId": "core/modifier/strong-in-the-force",
+      "sourceName": "Strong in the Force",
+      "sourceType": "feat",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power",
+        "force-regimen",
+        "starship-maneuver"
+      ],
+      "trigger": "when-spending-fp-to-modify-attack-skill-ability-check",
+      "effect": "Use d8 instead of d6 for FP modifier dice on qualifying checks",
+      "constraints": [
+        "Do not change FP special-effect expenditure; only FP bonus dice used to adjust roll."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/force-boon",
+      "sourceName": "Force Boon",
+      "sourceType": "feat",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 85,
+      "targetDomains": [
+        "force-resource"
+      ],
+      "trigger": "on-character-level",
+      "effect": "Gain three additional Force Points per level",
+      "constraints": [
+        "Resource maximum authority, not direct Power DC increase."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/skill-focus-use-the-force",
+      "sourceName": "Skill Focus (Use the Force)",
+      "sourceType": "feat",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 88,
+      "targetDomains": [
+        "force-power",
+        "force-regimen",
+        "use-the-force-skill"
+      ],
+      "trigger": "on-use-the-force-check",
+      "effect": "+5 competence bonus on UTF skill checks when this is selected skill",
+      "constraints": [
+        "Only if trained and the chosen skill is Use the Force."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/deflect",
+      "sourceName": "Deflect",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 41,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "reaction-against-force-lightning",
+      "effect": "Official errata permits Deflect against Force Lightning; on successful Deflect vs its UTF check, reduce damage as clarified",
+      "constraints": [
+        "Shares one-reaction-per-trigger limit.",
+        "Use the canonical Deflect talent definition for full damage and reaction semantics."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/telekinetic-descriptor",
+      "sourceName": "Telekinetic Descriptor",
+      "sourceType": "rule",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 96,
+      "targetDomains": [
+        "force-power"
+      ],
+      "trigger": "when-target-has-cover-or-concealment",
+      "effect": "[Telekinetic] cover improves relevant target Defense/opposed check; concealment penalizes UTF activation unless Sense Surroundings this turn",
+      "constraints": [
+        "Applies to future supplements with [telekinetic], not fixed list."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/force-perception",
+      "sourceName": "Force Perception",
+      "sourceType": "talent",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 101,
+      "targetDomains": [
+        "use-the-force-skill",
+        "perception-skill"
+      ],
+      "trigger": "on-perception-substitution",
+      "effect": "Use UTF modifier in place of Perception check and count trained in Perception generally after official clarification",
+      "constraints": [
+        "Official clarification deletes limited purpose phrase."
+      ]
+    },
+    {
+      "modifierId": "core/modifier/move-light-object-projectile",
+      "sourceName": "Move Light Object Projectile",
+      "sourceType": "rule",
+      "sourceBookId": "swse-core-rulebook",
+      "sourcePrintedPage": 77,
+      "targetDomains": [
+        "use-the-force-skill",
+        "ranged-attack"
+      ],
+      "trigger": "when-moving-light-object-as-projectile",
+      "effect": "The projectile use is otherwise treated as a ranged attack for talents/feats that affect ranged attacks (official clarification)",
+      "constraints": [
+        "Relevant to Improved Move Light Object Force Technique; distinct from Move Object power."
+      ]
+    }
+  ],
+  "unresolvedSourceInterpretations": [
+    {
+      "id": "core/secret/devastating-power/odd-dice",
+      "severity": "blocks-full-automation",
+      "issue": "No printed rounding instruction for multiplying odd number of dice by 1.5; do not invent algorithm."
+    },
+    {
+      "id": "core/secret/multitarget-power/dp-total",
+      "severity": "review",
+      "issue": "Whether DP target count floor(CL/4) includes original or counts additional targets requires ruling if ambiguous."
+    },
+    {
+      "id": "core/force-disarm/crossbook-combined-feat",
+      "severity": "review",
+      "issue": "Core clarification deletes blanket exclusion; KOTOR Combined Feat explicitly modifies Force Disarm. Final bonus relationship must be source-certified when KOTOR book is processed."
+    },
+    {
+      "id": "core/force-grip/fp-bonus-damage-on-miss",
+      "severity": "review",
+      "issue": "When target passes Fort vs Grip, damage is half. Check whether optional +2d6 FP damage is included before the half-damage operation under published damage-modification ordering; preserve source wording."
+    }
+  ],
+  "nextBook": "Starships of the Galaxy (starship maneuvers)"
+}

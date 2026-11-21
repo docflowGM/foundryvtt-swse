@@ -1,0 +1,1036 @@
+{
+  "schemaVersion": "2.9.0",
+  "package": "force-unleashed-campaign-guide",
+  "purpose": "Book 4 typed 31-definition influence relationships and source talents/feat; each edge selects the canonical option rather than duplicating rules.",
+  "applicationOrder": [
+    "eligibility",
+    "grant",
+    "pre-action",
+    "pre-target",
+    "pre-roll",
+    "after-roll",
+    "pre-damage",
+    "apply-effects",
+    "spend-recovery"
+  ],
+  "eventSemantics": {
+    "Unleashed": "An Unleashed overlay is a feat- and source-ability-gated 1-DP enhancement; it is never a separate power use.",
+    "Storm": "FUCG Force Storm and Jedi Academy Force Storm have distinct definitionIds and effects.",
+    "Improved Force Storm": "Requires an active FUCG Storm; swift action ends it with a 2-square 4d6 burst.",
+    "Secrets": "FP and DP options are alternative exclusive resource choices and descriptor gates are validated first.",
+    "Strict-defense": "Force Blast check must exceed Reflex, whereas Corruption says equals or exceeds Fortitude.",
+    "Natural20": "Wrath of the Dark Side replaces, not stacks with, natural 20 suite recovery."
+  },
+  "edges": [
+    {
+      "ruleId": "fucg/influence/improved-battle-strike",
+      "sourceDefinitionId": "fucg/force-technique/improved-battle-strike",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Battle Strike",
+      "sourcePage": 88,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/battle-strike"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-battle-strike",
+          "powerId": "core/force-power/battle-strike"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/improved-dark-rage",
+      "sourceDefinitionId": "fucg/force-technique/improved-dark-rage",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Dark Rage",
+      "sourcePage": 88,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/dark-rage"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-dark-rage",
+          "powerId": "core/force-power/dark-rage"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/improved-force-disarm",
+      "sourceDefinitionId": "fucg/force-technique/improved-force-disarm",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Disarm",
+      "sourcePage": 88,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-disarm"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-force-disarm",
+          "powerId": "core/force-power/force-disarm"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/improved-force-thrust",
+      "sourceDefinitionId": "fucg/force-technique/improved-force-thrust",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Thrust",
+      "sourcePage": 88,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-thrust"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-force-thrust",
+          "powerId": "core/force-power/force-thrust"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/improved-force-grip",
+      "sourceDefinitionId": "fucg/force-technique/improved-force-grip",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Grip",
+      "sourcePage": 88,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-grip"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-force-grip",
+          "powerId": "core/force-power/force-grip"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/improved-force-lightning",
+      "sourceDefinitionId": "fucg/force-technique/improved-force-lightning",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Lightning",
+      "sourcePage": 88,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-lightning"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-force-lightning",
+          "powerId": "core/force-power/force-lightning"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/improved-force-storm",
+      "sourceDefinitionId": "fucg/force-technique/improved-force-storm",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Force Storm",
+      "sourcePage": 88,
+      "targetSelector": {
+        "definitionIds": [
+          "fucg/force-power/force-storm"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-force-storm",
+          "powerId": "fucg/force-power/force-storm"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/improved-mind-trick",
+      "sourceDefinitionId": "fucg/force-technique/improved-mind-trick",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Mind Trick",
+      "sourcePage": 89,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/mind-trick"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-mind-trick",
+          "powerId": "core/force-power/mind-trick"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/improved-rebuke",
+      "sourceDefinitionId": "fucg/force-technique/improved-rebuke",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Rebuke",
+      "sourcePage": 89,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/rebuke"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-rebuke",
+          "powerId": "core/force-power/rebuke"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/improved-repulse",
+      "sourceDefinitionId": "fucg/force-technique/improved-repulse",
+      "sourceDomain": "force-technique",
+      "sourceName": "Improved Repulse",
+      "sourcePage": 89,
+      "targetSelector": {
+        "definitionIds": [
+          "fucg/force-power/repulse"
+        ]
+      },
+      "event": "qualifying-power-use",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [
+        "Technique is known and its source power is legal/active as required."
+      ],
+      "operations": [
+        {
+          "op": "activate-technique-variant",
+          "techniqueId": "fucg/force-technique/improved-repulse",
+          "powerId": "fucg/force-power/repulse"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No additional Force power slot is consumed for knowing the technique.",
+        "Activating unrelated similarly named power does not trigger this technique."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/corrupted-power",
+      "sourceDefinitionId": "fucg/force-secret/corrupted-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Corrupted Power",
+      "sourcePage": 89,
+      "targetSelector": {
+        "definitionIds": []
+      },
+      "event": "source-power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [
+        "The Force Secret is known and its typed resource option is legal."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "fucg/force-secret/corrupted-power"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Never spend both FP and DP for the same exclusive secret choice.",
+        "Apply exact source-gated conditions."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/debilitating-power",
+      "sourceDefinitionId": "fucg/force-secret/debilitating-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Debilitating Power",
+      "sourcePage": 89,
+      "targetSelector": {
+        "definitionIds": []
+      },
+      "event": "source-power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [
+        "The Force Secret is known and its typed resource option is legal."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "fucg/force-secret/debilitating-power"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Never spend both FP and DP for the same exclusive secret choice.",
+        "Apply exact source-gated conditions."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/enlarged-power",
+      "sourceDefinitionId": "fucg/force-secret/enlarged-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Enlarged Power",
+      "sourcePage": 89,
+      "targetSelector": {
+        "definitionIds": []
+      },
+      "event": "source-power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [
+        "The Force Secret is known and its typed resource option is legal."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "fucg/force-secret/enlarged-power"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Never spend both FP and DP for the same exclusive secret choice.",
+        "Apply exact source-gated conditions."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/pure-power",
+      "sourceDefinitionId": "fucg/force-secret/pure-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Pure Power",
+      "sourcePage": 89,
+      "targetSelector": {
+        "definitionIds": []
+      },
+      "event": "source-power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [
+        "The Force Secret is known and its typed resource option is legal."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "fucg/force-secret/pure-power"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Never spend both FP and DP for the same exclusive secret choice.",
+        "Apply exact source-gated conditions."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/remote-power",
+      "sourceDefinitionId": "fucg/force-secret/remote-power",
+      "sourceDomain": "force-secret",
+      "sourceName": "Remote Power",
+      "sourcePage": 89,
+      "targetSelector": {
+        "definitionIds": []
+      },
+      "event": "source-power-activation",
+      "phase": "pre-target",
+      "interactionMode": "modify",
+      "conditions": [
+        "The Force Secret is known and its typed resource option is legal."
+      ],
+      "operations": [
+        {
+          "op": "apply-source-defined-resource-choice",
+          "sourceDefinitionId": "fucg/force-secret/remote-power"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Never spend both FP and DP for the same exclusive secret choice.",
+        "Apply exact source-gated conditions."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-battle-meditation",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-battle-meditation",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Battle Meditation",
+      "sourcePage": 89,
+      "targetSelector": {
+        "definitionIds": [
+          "core/talent/battle-meditation"
+        ]
+      },
+      "event": "when-using-talent",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-battle-meditation",
+          "underlyingDefinitionId": "core/talent/battle-meditation",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-battle-strike",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-battle-strike",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Battle Strike",
+      "sourcePage": 90,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/battle-strike"
+        ]
+      },
+      "event": "when-using-power",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-battle-strike",
+          "underlyingDefinitionId": "core/force-power/battle-strike",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-corruption",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-corruption",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Corruption",
+      "sourcePage": 90,
+      "targetSelector": {
+        "definitionIds": [
+          "fucg/force-power/corruption"
+        ]
+      },
+      "event": "when-power-damages-target",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-corruption",
+          "underlyingDefinitionId": "fucg/force-power/corruption",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-dark-rage",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-dark-rage",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Dark Rage",
+      "sourcePage": 90,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/dark-rage"
+        ]
+      },
+      "event": "when-using-power",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-dark-rage",
+          "underlyingDefinitionId": "core/force-power/dark-rage",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-force-blast",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-force-blast",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Force Blast",
+      "sourcePage": 91,
+      "targetSelector": {
+        "definitionIds": [
+          "fucg/force-power/force-blast"
+        ]
+      },
+      "event": "when-using-power",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-force-blast",
+          "underlyingDefinitionId": "fucg/force-power/force-blast",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-force-grip",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-force-grip",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Force Grip",
+      "sourcePage": 91,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-grip"
+        ]
+      },
+      "event": "after-successful-power",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-force-grip",
+          "underlyingDefinitionId": "core/force-power/force-grip",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-force-lightning",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-force-lightning",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Force Lightning",
+      "sourcePage": 91,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-lightning"
+        ]
+      },
+      "event": "when-using-power",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-force-lightning",
+          "underlyingDefinitionId": "core/force-power/force-lightning",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-force-storm",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-force-storm",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Force Storm",
+      "sourcePage": 91,
+      "targetSelector": {
+        "definitionIds": [
+          "fucg/force-power/force-storm"
+        ]
+      },
+      "event": "when-using-power",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-force-storm",
+          "underlyingDefinitionId": "fucg/force-power/force-storm",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-force-thrust",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-force-thrust",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Force Thrust",
+      "sourcePage": 91,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/force-thrust"
+        ]
+      },
+      "event": "when-using-power",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-force-thrust",
+          "underlyingDefinitionId": "core/force-power/force-thrust",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-move-object",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-move-object",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Move Object",
+      "sourcePage": 91,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/move-object"
+        ]
+      },
+      "event": "when-using-power",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-move-object",
+          "underlyingDefinitionId": "core/force-power/move-object",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-repulse",
+      "sourceDefinitionId": "fucg/unleashed-overlay/unleashed-repulse",
+      "sourceDomain": "unleashed-overlay",
+      "sourceName": "Unleashed Repulse",
+      "sourcePage": 91,
+      "targetSelector": {
+        "definitionIds": [
+          "fucg/force-power/repulse"
+        ]
+      },
+      "event": "when-using-power",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Must have Unleashed feat, Force Sensitivity, chosen destiny, and source power/talent."
+      ],
+      "operations": [
+        {
+          "op": "apply-unleashed-option",
+          "overlayId": "fucg/unleashed-overlay/unleashed-repulse",
+          "underlyingDefinitionId": "fucg/force-power/repulse",
+          "requiresDestinyPoint": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No direct Force Training slot consumed.",
+        "One DP receipt for this selected upgrade only; do not auto-upgrade all activations."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/telekinetic-prodigy",
+      "sourceDefinitionId": "fucg/talent/telekinetic-prodigy",
+      "sourceDomain": "talent",
+      "sourceName": "Telekinetic Prodigy",
+      "sourcePage": 87,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/move-object"
+        ],
+        "requiredDescriptor": "telekinetic"
+      },
+      "event": "force-training-feat-acquisition",
+      "phase": "eligibility",
+      "interactionMode": "grant",
+      "conditions": [
+        "Must have Telekinetic Savant.",
+        "Select Move Object in this instance of Force Training."
+      ],
+      "operations": [
+        {
+          "op": "telekinetic-prodigy-bonus",
+          "requiredPowerId": "core/force-power/move-object",
+          "maxPerFeat": 1,
+          "requiredDescriptor": "telekinetic"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Only one bonus power per qualifying Force Training feat instance.",
+        "Selecting multiple Move Object copies does not multiply the free power."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/force-exertion",
+      "sourceDefinitionId": "fucg/talent/force-exertion",
+      "sourceDomain": "talent",
+      "sourceName": "Force Exertion",
+      "sourcePage": 87,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "active-suite-replacement",
+      "phase": "spend-recovery",
+      "interactionMode": "exchange",
+      "conditions": [
+        "Character knows Force Training.",
+        "One chosen power fixed when talent learned; removing any power from active suite provides a duplicate of chosen power."
+      ],
+      "operations": [
+        {
+          "op": "force-exertion-extra-copy",
+          "persistentConditionSteps": -1,
+          "restMinutes": 1,
+          "removeSourcePowerCopies": 1
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "User incurs -1 persistent CT step and source removal.",
+        "Persistent condition removed after one minute rest, not routine encounter expiry."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/wrath-of-the-dark-side",
+      "sourceDefinitionId": "fucg/talent/wrath-of-the-dark-side",
+      "sourceDomain": "talent",
+      "sourceName": "Wrath of the Dark Side",
+      "sourcePage": 88,
+      "targetSelector": {
+        "domain": "force-power",
+        "mustDealDamage": true
+      },
+      "event": "natural-20-on-activation",
+      "phase": "spend-recovery",
+      "interactionMode": "replace",
+      "conditions": [
+        "Natural 20 on Use the Force power activation.",
+        "Power directly damages target.",
+        "Prerequisite Power of the Dark Side."
+      ],
+      "operations": [
+        {
+          "op": "wrath-natural20-replace-recovery",
+          "requiresDirectDamage": true,
+          "delayedFraction": 0.5,
+          "trigger": "start-of-next-target-turn"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Forgo normal natural-20 spent-suite recovery.",
+        "No triggering on indirect effects or non-damaging powers."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/feel-the-force",
+      "sourceDefinitionId": "fucg/talent/feel-the-force",
+      "sourceDomain": "talent",
+      "sourceName": "Feel the Force",
+      "sourcePage": 88,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "spend-force-point-as-standard-action",
+      "phase": "pre-roll",
+      "interactionMode": "conditional-modifier",
+      "conditions": [
+        "Spend FP on a separate standard action, then ignore concealment for 1 minute."
+      ],
+      "operations": [
+        {
+          "op": "ignore-concealment-temporarily",
+          "resource": "force-point",
+          "durationMinutes": 1
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Not automatic on knowing talent.",
+        "No effect after minute expires."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/illusion",
+      "sourceDefinitionId": "fucg/talent/illusion",
+      "sourceDomain": "talent",
+      "sourceName": "Illusion",
+      "sourcePage": 87,
+      "targetSelector": {
+        "definitionIds": [
+          "core/force-power/mind-trick"
+        ]
+      },
+      "event": "separate-talent-action",
+      "phase": "pre-roll",
+      "interactionMode": "independent",
+      "conditions": [
+        "Mind Trick is talent prerequisite only; Illusion is separate standard-action FP talent ability, NOT a replacement Mind Trick power."
+      ],
+      "operations": [
+        {
+          "op": "scope-check",
+          "featGrants": "mind-trick-prerequisite",
+          "powerUses": "separate-illusion-talent-action",
+          "doesNotImplyAutomaticBonus": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Do not consume Mind Trick suite use merely by activating Illusion."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/unleashed-feat-gating",
+      "sourceDefinitionId": "fucg/feat/unleashed",
+      "sourceDomain": "feat",
+      "sourceName": "Unleashed",
+      "sourcePage": 35,
+      "targetSelector": {
+        "domain": "unleashed-overlay"
+      },
+      "event": "choose-destiny-point-option",
+      "phase": "eligibility",
+      "interactionMode": "gate",
+      "conditions": [
+        "Actor has a selected destiny (including secret destiny).",
+        "Actor has Unleashed feat and Force Sensitivity.",
+        "Specific overlay prerequisite power or talent also known."
+      ],
+      "operations": [
+        {
+          "op": "scope-check",
+          "featGrants": "unleashed-dp-activation-permission",
+          "powerUses": "requires-force-sensitivity-and-source-ability",
+          "doesNotImplyAutomaticBonus": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Force Sensitivity alone is insufficient.",
+        "Unleashed without a chosen destiny fails prerequisites."
+      ]
+    },
+    {
+      "ruleId": "fucg/influence/temptation-of-dark-side-temporary-talents",
+      "sourceDefinitionId": "fucg/rule/temptation-of-dark-side",
+      "sourceDomain": "rule",
+      "sourceName": "Temptation of the Dark Side",
+      "sourcePage": 85,
+      "targetSelector": {
+        "domain": "force-power"
+      },
+      "event": "optional-house-rule-activation",
+      "phase": "eligibility",
+      "interactionMode": "optional-rule",
+      "conditions": [
+        "Optional Dark Times rule is enabled by GM.",
+        "Force-sensitive character pays FP for each legal temporary Dark Side, Devotee, or Sith tree talent.",
+        "Requires prerequisite checks, supports chaining of temporary talents until end of encounter, then gains 1 DSS per point used."
+      ],
+      "operations": [
+        {
+          "op": "temporary-talent-with-darkside-cost",
+          "duration": "encounter",
+          "forcePointsPerTalent": 1,
+          "darkSidePerSpentPoint": 1
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Disabled by default unless GM enables optional rule.",
+        "Increase DSS at conclusion, not every round."
+      ]
+    }
+  ],
+  "excludedScope": [
+    "Do not treat FUCG Kinetic Combat reprint as sixth newly originating power.",
+    "Do not add 11 Unleashed options as independent Force Power suite items.",
+    "Do not match FUCG Improved Force Storm to Jedi Academy version by name.",
+    "Do not run optional Dark Times temptation rules by default."
+  ],
+  "schemaEvolutionPolicy": {
+    "newPublicationMayAdd": [
+      "typed-operation",
+      "event",
+      "phase",
+      "selector",
+      "resource-choice",
+      "linked-overlay"
+    ],
+    "previousRecordsMustRevalidate": true,
+    "cannotBeAddedAsUntypedFreeText": true,
+    "ambiguousPublishedEffect": "Flag as editorial blocker; do not infer a definitive ruling from text alone."
+  }
+}
