@@ -1,0 +1,485 @@
+# Phase 11-2A — raw tag pruning pass 1
+
+Status: **OWNER_DESIGN_PASS**. Read-only ontology work. **No production talent or archetype record was changed.**
+
+Source: the Phase 3H census on `d72573514c`, containing **430 unique legacy talent-tag strings**.
+
+## Four-bucket contract
+
+1. **KEEP** — clearly reusable semantic, mechanical, or scope concepts.
+2. **DELETE** — structural/audit/bookkeeping/implementation residue with no ontology value.
+3. **RECONSIDER** — potentially useful, but ambiguous, compound, alias-like, class/category/tree-derived, too broad/narrow, or better decomposed.
+4. **BESPOKE** — current singleton tags. A one-use tag does not enter the shared ontology without explicit review.
+
+Special rules:
+
+- Every `category_*` tag is **RECONSIDER**, not Delete. Its label may be poor, but it can preserve latent mechanics worth decomposing.
+- Every current singleton is **BESPOKE** before any other rule, including obvious junk. This makes the singleton policy auditable rather than exception-driven.
+- Frequency is evidence, not meaning. A broadly reusable concept such as `pistol` can later graduate out of Bespoke even if historical tagging used it once.
+- This pass does **not** normalize aliases or assign tags to archetypes. Those are later 11-2 phases.
+
+## Counts
+
+| Bucket | Count |
+|---|---:|
+| KEEP | 123 |
+| DELETE | 74 |
+| RECONSIDER | 125 |
+| BESPOKE | 108 |
+| **Total** | **430** |
+
+## KEEP
+
+- `force` — 357
+- `mobility` — 314
+- `support` — 255
+- `melee` — 168
+- `action_economy` — 136
+- `ranged` — 133
+- `social` — 123
+- `lightsaber` — 83
+- `reaction` — 63
+- `force_offense` — 62
+- `resource_spend` — 56
+- `control` — 55
+- `force_point_spend` — 55
+- `pursuit` — 53
+- `use_the_force` — 51
+- `stealth` — 50
+- `sustained_damage` — 49
+- `swift_action` — 49
+- `standard_action` — 44
+- `dark_side` — 43
+- `healing` — 42
+- `perception` — 41
+- `force_control` — 36
+- `mechanics` — 36
+- `offense_melee` — 35
+- `force_defense` — 34
+- `force_training` — 34
+- `precision` — 34
+- `survival` — 33
+- `condition_removal` — 32
+- `deception` — 32
+- `exploration` — 32
+- `tech` — 31
+- `armor` — 30
+- `defense` — 30
+- `survivability` — 29
+- `damage_reduction` — 28
+- `evasion` — 27
+- `ambush` — 26
+- `pilot` — 26
+- `vehicle` — 25
+- `crafting` — 24
+- `droid` — 24
+- `fear` — 24
+- `recon` — 24
+- `cover` — 23
+- `offense_ranged` — 23
+- `light_side` — 20
+- `medicine` — 19
+- `persuasion` — 19
+- `target-designation` — 19
+- `initiative` — 18
+- `mind-affecting` — 18
+- `unarmed` — 18
+- `intrigue` — 17
+- `teamwork` — 17
+- `telekinesis` — 17
+- `resource_recovery` — 16
+- `skill_substitution` — 16
+- `telepathy` — 16
+- `will_defense` — 16
+- `investigation` — 15
+- `knowledge` — 14
+- `shields` — 13
+- `ally_support` — 12
+- `precision_damage` — 12
+- `precognition` — 12
+- `targeting` — 12
+- `biotech` — 10
+- `jury_rig` — 10
+- `melee_defense` — 10
+- `move_action` — 10
+- `natural_weapon` — 10
+- `slicing` — 10
+- `intimidation` — 9
+- `poison` — 9
+- `alchemy` — 8
+- `treat_injury` — 8
+- `counterattack` — 7
+- `nonlethal` — 7
+- `self_repair` — 7
+- `skill-mastery` — 7
+- `trap` — 7
+- `anti-force` — 6
+- `force-point` — 6
+- `medical` — 6
+- `once-per-encounter` — 6
+- `visions` — 6
+- `ally-trigger` — 5
+- `awareness` — 5
+- `balance` — 5
+- `block` — 5
+- `implant` — 5
+- `infiltration` — 5
+- `science` — 5
+- `space` — 5
+- `stun` — 5
+- `telepath` — 5
+- `ambush_defense` — 4
+- `beast` — 4
+- `burst_damage` — 4
+- `critical_hit` — 4
+- `deflect` — 4
+- `grapple` — 4
+- `illusion` — 4
+- `nature` — 4
+- `damage` — 3
+- `ranged_defense` — 3
+- `repair` — 3
+- `reroll` — 3
+- `sensors` — 3
+- `concealment` — 2
+- `damage_bonus` — 2
+- `leadership` — 2
+- `morale` — 2
+- `mount` — 2
+- `overwatch` — 2
+- `power_systems` — 2
+- `rider` — 2
+- `tactics` — 2
+- `talisman` — 2
+- `tracking` — 2
+- `weapon_empowerment` — 2
+
+## DELETE
+
+- `feat-chain` — 299
+- `talent-chain` — 299
+- `uncategorized_talent` — 154
+- `feat_chain` — 115
+- `talent_chain` — 115
+- `phase-t27-reviewed` — 96
+- `phase-t31-reviewed` — 69
+- `rules-text-verified` — 46
+- `talent-backcheck-implemented` — 46
+- `phase-t28-reviewed` — 19
+- `backchecked` — 15
+- `talent-action` — 15
+- `tree_6ac3416fb6aada56` — 15
+- `manual_resolution` — 14
+- `no_static_runtime_bonus` — 14
+- `phase-t29-reviewed` — 14
+- `force_adept_backcheck` — 13
+- `phase-force-mystic-telepath` — 13
+- `forecast_value` — 11
+- `phase-darkside-beast-reviewed` — 11
+- `tree_d3661aa9906bdc79` — 11
+- `tree_d6b4331c0e31f7e3` — 11
+- `safe_zone` — 10
+- `tree_383ff8d392488cf8` — 10
+- `tree_de95d37c72b1c4cd` — 10
+- `combat_action` — 9
+- `implemented` — 9
+- `tree_186daeee7bd65a69` — 9
+- `tree_01e443d93e47f9c4` — 8
+- `choice_required` — 7
+- `choice_source_prerequisite` — 7
+- `immediate_choice` — 7
+- `tree_04a6f32128cc4b98` — 7
+- `tree_2d164f62e17bed8c` — 7
+- `tree_9fe73a3703fa45fca628fd43cae6bf7f` — 7
+- `tree_e91cc675fbf9ba6e` — 7
+- `weapon_choice` — 7
+- `contextual` — 6
+- `tree_96ef43a3054dcb58` — 6
+- `tree_d20682671d035cef` — 6
+- `tree_da34105c875650ae` — 6
+- `tree_ea01d740c91888b3` — 6
+- `new_option` — 5
+- `tree_022b31d355c840a9` — 5
+- `tree_089933380b40ce20` — 5
+- `tree_4dc70f924e7794ac` — 5
+- `tree_6629c34384c4ca53` — 5
+- `tree_8048efd85ae61101` — 5
+- `tree_ba726f623e42f849` — 5
+- `tree_d8a71a6c5b2b7581` — 5
+- `tree_e35ee41362604227` — 5
+- `tree_001a438135e03588` — 4
+- `tree_46d03bab0cf74a14` — 4
+- `tree_860fa1a66c837574` — 4
+- `tree_9b06340233eb3cdd` — 4
+- `tree_a67faf2ae089ab5d` — 4
+- `tree_a6ee1a0c534cbc73` — 4
+- `tree_b968ecab63bc4cf4` — 4
+- `tree_d29a7261c1be4b83` — 4
+- `tree_dca33c0215264a02` — 4
+- `tree_ed899f9f41fc1391` — 4
+- `equipped_context` — 3
+- `tree_2a1838832f6146e2` — 3
+- `tree_d203a51d6d0a4c65` — 3
+- `tree_db1b30c2163d0650` — 3
+- `tree_3a785c985eae4d00` — 2
+- `tree_4509306f66d744bf` — 2
+- `tree_9688ed3500084dca` — 2
+- `tree_96c390430d7a4975` — 2
+- `tree_9d826906ad8945b0` — 2
+- `tree_a47ed82a822e3962` — 2
+- `tree_abc3466390fe4050` — 2
+- `tree_cec49bc60d1646b1` — 2
+- `ui_deferred` — 2
+
+## RECONSIDER
+
+- `striker` — 491
+- `positioning` — 316
+- `controller` — 312
+- `defender` — 245
+- `skills` — 202
+- `action-economy` — 169
+- `jedi` — 150
+- `scout` — 123
+- `scoundrel` — 112
+- `soldier` — 108
+- `light-side` — 99
+- `leader` — 93
+- `force_execution` — 88
+- `sustained-damage` — 78
+- `force-offense` — 73
+- `noble` — 65
+- `damage-reduction` — 64
+- `force_capacity` — 63
+- `scaling` — 61
+- `new_action` — 45
+- `combat` — 38
+- `force-control` — 37
+- `force_power_synergy` — 36
+- `category_force_adept` — 34
+- `mystic` — 34
+- `condition-removal` — 33
+- `force-defense` — 30
+- `battlefield-control` — 27
+- `hunter` — 23
+- `force-tradition` — 22
+- `battlefield_control` — 18
+- `bounty-hunter` — 18
+- `category_sith_apprentice` — 18
+- `dark-side` — 18
+- `utility` — 17
+- `duelist` — 16
+- `jedi-guardian` — 16
+- `ranged_support` — 16
+- `gear` — 15
+- `opportunist` — 15
+- `burst-damage` — 14
+- `imperial` — 14
+- `social_control` — 14
+- `heavy-weapons` — 13
+- `martial_arts` — 13
+- `beast_companion` — 12
+- `recovery` — 12
+- `sniping` — 12
+- `imperial-knight` — 11
+- `lightsaber-combat` — 11
+- `piloting` — 11
+- `resilience` — 11
+- `senses` — 11
+- `ability_enhancement` — 10
+- `category_imperial_knight` — 10
+- `category_improviser` — 10
+- `category_pathfinder` — 10
+- `category_shaper` — 10
+- `dark_side_mastery` — 10
+- `dual-wield` — 10
+- `durability` — 10
+- `force_multiplier` — 10
+- `force-hunter` — 10
+- `pathfinder` — 10
+- `category_assassin` — 9
+- `infamy` — 9
+- `martial` — 9
+- `minion` — 9
+- `precision-damage` — 9
+- `category_medic` — 8
+- `category_outlaw` — 8
+- `category_vanguard` — 8
+- `empowerment` — 8
+- `outlaw` — 8
+- `use-computer` — 8
+- `category_corporate_agent` — 7
+- `category_enforcer` — 7
+- `category_independent_droid` — 7
+- `force-adept` — 7
+- `law_enforcement` — 7
+- `law-enforcement` — 7
+- `self-repair` — 7
+- `skill_stealth` — 7
+- `slicer` — 7
+- `superior-skills` — 7
+- `use-the-force` — 7
+- `bothan-spynet` — 6
+- `category_charlatan` — 6
+- `force-support` — 6
+- `intelligence` — 6
+- `resources` — 6
+- `shield` — 6
+- `social_network` — 6
+- `spynet` — 6
+- `ally-support` — 5
+- `believer-disciple` — 5
+- `force_support` — 5
+- `guardian_spirit` — 5
+- `iron-knight` — 5
+- `bando-gora-captain` — 4
+- `elite-droid` — 4
+- `followers` — 4
+- `independent-droid` — 4
+- `inquisitor` — 4
+- `krath` — 4
+- `manipulation` — 4
+- `order-of-shasa` — 4
+- `sith_alchemy` — 4
+- `akk-dog` — 3
+- `follower` — 3
+- `genohardan` — 3
+- `grab` — 3
+- `lightsaber_polearm` — 3
+- `critical-success` — 2
+- `dual_wield` — 2
+- `encounter` — 2
+- `force-item` — 2
+- `immersion` — 2
+- `intel` — 2
+- `network` — 2
+- `setup` — 2
+- `swift-action` — 2
+- `unknown-regions` — 2
+- `veteran` — 2
+- `white_current` — 2
+
+## BESPOKE
+
+- `ally_0hp` — 1
+- `ally_aura` — 1
+- `attack_of_opportunity` — 1
+- `battlefield` — 1
+- `bayonet` — 1
+- `behavioral-inhibitor` — 1
+- `bodyguard` — 1
+- `bonus-force-point` — 1
+- `brigand` — 1
+- `cheap_shot` — 1
+- `combat-action` — 1
+- `command` — 1
+- `commander` — 1
+- `critical_success` — 1
+- `damage_scaling` — 1
+- `damage-threshold` — 1
+- `danger_sense` — 1
+- `dark-side-score` — 1
+- `delay` — 1
+- `detection` — 1
+- `double_weapon` — 1
+- `entangle` — 1
+- `escort` — 1
+- `exotic_weapon` — 1
+- `feint` — 1
+- `fighting_defensively` — 1
+- `flanked` — 1
+- `force_item` — 1
+- `force-power` — 1
+- `freedom` — 1
+- `full_attack` — 1
+- `galactic-lore` — 1
+- `genoharadan` — 1
+- `guidance` — 1
+- `gunslinger` — 1
+- `heavy_weapons` — 1
+- `implemented_derived_calculator` — 1
+- `improvised_weapon` — 1
+- `independent-spirit` — 1
+- `kata` — 1
+- `master-of-intrigue` — 1
+- `meditation` — 1
+- `melee_support` — 1
+- `miss_rider` — 1
+- `modification` — 1
+- `movement` — 1
+- `no_static_defense_bonus` — 1
+- `no_unconditional_static_bonus` — 1
+- `opposed-check` — 1
+- `outsider` — 1
+- `panic` — 1
+- `pistol` — 1
+- `planning` — 1
+- `provocateur` — 1
+- `range` — 1
+- `ranged_control` — 1
+- `reliability` — 1
+- `restrain` — 1
+- `ride` — 1
+- `runtime` — 1
+- `search-your-feelings` — 1
+- `sith-alchemy` — 1
+- `skill_mastery` — 1
+- `social_defense` — 1
+- `spellcasting` — 1
+- `standard-action` — 1
+- `strength_enhancement` — 1
+- `surprise_round` — 1
+- `transfer` — 1
+- `tree_01cb1ca2a10640b3` — 1
+- `tree_0b5857edbcf049a2` — 1
+- `tree_0ffc37dac946477d` — 1
+- `tree_13776eed744d410c` — 1
+- `tree_3e807e87cac844ba` — 1
+- `tree_427213bd55e04e27` — 1
+- `tree_5f355ad4093d2bf8` — 1
+- `tree_67b59e020c1660eb` — 1
+- `tree_67fdd8dce9abd6c1` — 1
+- `tree_73814706c00849c6` — 1
+- `tree_754907ded50d4f46` — 1
+- `tree_798ed0945cbdac1c` — 1
+- `tree_7c6d007b549c4a4a` — 1
+- `tree_899038f739294c81` — 1
+- `tree_8a61bf426391431b` — 1
+- `tree_9253ace716c3e966` — 1
+- `tree_9a5efe5d0e9b43a1` — 1
+- `tree_a212850887fe41da` — 1
+- `tree_a7ad797b01114925` — 1
+- `tree_ad16f3e5f4f7441b` — 1
+- `tree_ad499981ddb8450e` — 1
+- `tree_b15586b9c9554cf8` — 1
+- `tree_c4e48efaad1f49af` — 1
+- `tree_c6eee4889411411b` — 1
+- `tree_c7a4e66f46044c7a` — 1
+- `tree_ca65ba0c33cd4c7d` — 1
+- `tree_da7b731a3e434a7a` — 1
+- `tree_dad3c0da191748c1` — 1
+- `tree_db1964d1e1d14b5a` — 1
+- `tree_e6a9c40b900847bd` — 1
+- `tree_e6e3fc102bb54b20` — 1
+- `tree_f5c62e2e81f648aa` — 1
+- `tree_f8e7edab5f234e27` — 1
+- `tyia` — 1
+- `vahl` — 1
+- `warrior` — 1
+- `weapon_specialization` — 1
+- `weapon_training` — 1
+- `witchcraft` — 1
+
+## Next gate
+
+11-2B should review **RECONSIDER** first, with special attention to:
+
+- `category_*` decomposition;
+- class/role labels such as striker/controller/defender;
+- semantic/mechanical compounds such as force offense/defense/control;
+- alias pairs (hyphen vs underscore and old naming);
+- tree/organization labels that may hide reusable mechanics.
+
+11-2C should then adjudicate **BESPOKE**, defaulting toward broader reusable concepts rather than admitting one-record tags.
+
+Only after those reviews should the controlled mechanical vocabulary be frozen and assigned to archetypes.
