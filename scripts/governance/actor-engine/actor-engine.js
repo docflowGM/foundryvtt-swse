@@ -2,6 +2,7 @@
 import { claimIndependentSkills } from '/systems/foundryvtt-swse/scripts/species/species-grant-reconciliation.js';
 import { getEffectiveRechargeShieldsAmount } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { forcePointTriggerConsumers, hasForcePointTriggerConsumers } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js";
 import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/actor-utils.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
 import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
@@ -56,6 +57,19 @@ async function withForcePointQueue(actor, operation) {
   }
 }
 
+
+// Force Point trigger outbox support (see finalizeForcePointSpend / dispatchForcePointTriggers).
+const _forcePointTriggersInFlight = new Set();
+const FORCE_POINT_TRIGGER_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+function captureForcePointTriggerContext() {
+  const combat = globalThis.game?.combat;
+  return {
+    combatId: combat?.started ? String(combat.id ?? '') || null : null,
+    round: Number.isSafeInteger(combat?.round) ? combat.round : null,
+    turn: Number.isSafeInteger(combat?.turn) ? combat.turn : null,
+    worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null
+  };
+}
 
 export const ActorEngine = {
   // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
@@ -2126,7 +2140,7 @@ export const ActorEngine = {
       let retained = [...entries, receipt];
       if (retained.length > 200) {
         let drop = retained.length - 200;
-        retained = retained.filter(r => !(drop > 0 && r.state !== 'committed' && drop--));
+        retained = retained.filter(r => !(drop > 0 && r.state !== 'committed' && r.trigger?.state !== 'pending' && drop--));
       }
       const ledger = { receipts: retained };
       const update = {
@@ -2216,16 +2230,80 @@ export const ActorEngine = {
    */
   async finalizeForcePointSpend(actor, spentReceipt) {
     if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Force Point finalization requires an actor and receipt');
-    return withForcePointQueue(actor, async () => {
+    let firstFinalization = false;
+    const outcome = await withForcePointQueue(actor, async () => {
       const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
       const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
       const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
       if (index < 0) return { finalized: false, reason: 'Receipt not found' };
       if (records[index].state === 'finalized') return { finalized: true, alreadyFinalized: true };
       if (records[index].state !== 'committed') return { finalized: false, reason: 'Receipt is not pending finalization' };
-      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'finalized' } : r);
+      // Durable outbox: the trigger is recorded in the SAME write that makes the receipt final, so a
+      // listener failure or client disconnect after this point can always be reconciled from the ledger.
+      // Only the first committed->finalized transition records it; an alreadyFinalized retry never does.
+      const trigger = hasForcePointTriggerConsumers()
+        ? { state: 'pending', recordedAt: Date.now(), context: captureForcePointTriggerContext() }
+        : undefined;
+      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'finalized', ...(trigger ? { trigger } : {}) } : r);
       await this.updateActor(actor, { 'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords } });
+      firstFinalization = Boolean(trigger);
       return { finalized: true, receiptId: spentReceipt.receiptId };
+    });
+    // Delivered AFTER the queue lock is released so a consumer may call ActorEngine writers without
+    // re-entering the Force Point queue. A delivery failure never reverses the applied paid effect.
+    if (firstFinalization) {
+      try { await this.dispatchForcePointTriggers(actor, { receiptId: outcome.receiptId }); }
+      catch (error) { SWSELogger.error('[ActorEngine] Force Point trigger delivery failed; receipt stays final, trigger stays pending for reconcile', error); }
+    }
+    return outcome;
+  },
+
+  /**
+   * Deliver pending Force Point triggers from the actor's OWN ledger (never from caller-supplied payloads).
+   * Events are built from the finalized receipt; a consumer that throws leaves the trigger pending.
+   */
+  async dispatchForcePointTriggers(actor, { receiptId = null } = {}) {
+    if (!actor?.id) throw new Error('dispatchForcePointTriggers requires an identified actor');
+    const consumers = forcePointTriggerConsumers();
+    const report = { delivered: 0, pending: 0, stale: 0, invalid: 0 };
+    if (!consumers.length) return report;
+    const ledger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+    const rows = (Array.isArray(ledger.receipts) ? ledger.receipts : []).filter(r =>
+      r.actorId === actor.id && r.state === 'finalized' && r.trigger?.state === 'pending'
+      && (receiptId === null || r.receiptId === receiptId));
+    for (const r of rows) {
+      const key = `${actor.id}:${r.receiptId}`;
+      if (_forcePointTriggersInFlight.has(key)) continue;
+      _forcePointTriggersInFlight.add(key);
+      try {
+        if (!Number.isSafeInteger(r.spent) || r.spent < 1) { await this.ackForcePointTrigger(actor, r.receiptId, 'invalid'); report.invalid++; continue; }
+        if (Date.now() - Number(r.trigger.recordedAt ?? 0) > FORCE_POINT_TRIGGER_MAX_AGE_MS) { await this.ackForcePointTrigger(actor, r.receiptId, 'stale'); report.stale++; continue; }
+        const event = {
+          actor, actorId: String(actor.uuid || actor.id), resource: 'force', spent: r.spent, committed: true,
+          receiptId: r.receiptId, source: 'ActorEngine.finalizeForcePointSpend', context: r.trigger.context ?? null
+        };
+        let allOk = true;
+        for (const consume of consumers) {
+          try { await consume(event); }
+          catch (error) { allOk = false; SWSELogger.error(`[ActorEngine] Force Point trigger consumer failed for receipt ${r.receiptId}; stays pending`, error); }
+        }
+        if (allOk) { await this.ackForcePointTrigger(actor, r.receiptId, 'delivered'); report.delivered++; } else report.pending++;
+      } finally { _forcePointTriggersInFlight.delete(key); }
+    }
+    return report;
+  },
+
+  /** Mark a trigger settled. Only the trigger sub-record changes; the spend/finality state is never touched. */
+  async ackForcePointTrigger(actor, receiptId, outcome = 'delivered') {
+    if (!actor?.id || !receiptId) throw new Error('ackForcePointTrigger requires an actor and receiptId');
+    return withForcePointQueue(actor, async () => {
+      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+      const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === receiptId && r.actorId === actor.id);
+      if (index < 0 || records[index].trigger?.state !== 'pending') return { acked: false };
+      const updated = records.map((r, i) => i === index ? { ...r, trigger: { ...r.trigger, state: outcome, ackedAt: Date.now() } } : r);
+      await this.updateActor(actor, { 'flags.swse.forcePointLedger': { ...currentLedger, receipts: updated } });
+      return { acked: true, outcome };
     });
   },
 

@@ -539,6 +539,8 @@ export class MetaResourceFeatResolver {
         ui?.notifications?.warn?.(`${sourceName} requires a Force Point.`);
         return null;
       }
+      // The paid reroll has already been rolled: settle the receipt exactly.
+      try { await ActorEngine.finalizeForcePointSpend(actor, spend); } catch (error) { console.error('[SWSE] Force Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); }
     }
 
     const rerollTotal = Number(newRoll.total ?? 0);
@@ -810,6 +812,8 @@ export class MetaResourceFeatResolver {
         ui?.notifications?.warn?.(`${sourceName} requires a Force Point.`);
         return null;
       }
+      // The paid reroll has already been rolled: settle the receipt exactly.
+      try { await ActorEngine.finalizeForcePointSpend(actor, spend); } catch (error) { console.error('[SWSE] Force Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); }
     }
 
     const originalTotal = Number(button.dataset.originalTotal ?? activeRevision?.rollResult?.total ?? 0);
@@ -940,9 +944,11 @@ export class MetaResourceFeatResolver {
     }
 
     const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+    let defenseSpend = null;
     if (rule.cost === 'forcePoint') {
       const spend = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'meta-resource-feat:applyTemporaryDefenseRule' });
       if (!spend?.spent) return { success: false, reason: `${rule.sourceName} requires a Force Point.` };
+      defenseSpend = spend;
     }
 
     const existing = Array.isArray(actor.system?.activeEffects) ? actor.system.activeEffects : [];
@@ -962,6 +968,8 @@ export class MetaResourceFeatResolver {
     }));
     const filtered = existing.filter(effect => !String(effect?.id ?? '').startsWith(effectId));
     await ActorEngine.updateActor(actor, { 'system.activeEffects': [...filtered, ...newEffects] });
+    // The paid defense effect is now applied: settle the receipt exactly.
+    if (defenseSpend?.receiptId) { try { await ActorEngine.finalizeForcePointSpend(actor, defenseSpend); } catch (error) { console.error('[SWSE] Force Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); } }
 
     return { success: true, rule, effects: newEffects };
   }

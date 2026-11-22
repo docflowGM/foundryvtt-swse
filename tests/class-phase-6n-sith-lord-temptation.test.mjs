@@ -71,32 +71,37 @@ test('state does not accept character aliases or cosmetic named class',()=>{
  assert.equal(counterfeit.allowed,false);
 });
 
-test('runtime event receipts originate only from post-commit spend authorities',()=>{
+test('Force Point triggers originate only from the finalized V2 receipt; Destiny keeps its post-commit event',()=>{
+ // Integration note (Class/Force x Force V2): 6N's Force Point emitters (ActorEngine.spendForcePoints / RollCore) and
+ // deferResourceEvent are replaced by the durable outbox recorded in ActorEngine.finalizeForcePointSpend. Behavior is
+ // proven in class-force-v2-temptation-trigger.test.mjs; these are structural guards on the same design.
  const ae=read('scripts/governance/actor-engine/actor-engine.js');
- const fp=ae.slice(ae.indexOf('async spendForcePoints('),ae.indexOf('async spendDestinyPoints('));
+ const fp=ae.slice(ae.indexOf('async spendForcePoints('),ae.indexOf('async rollbackForcePointSpend('));
+ assert.doesNotMatch(fp,/swse\.resourceSpent/,'a spend alone never emits a Temptation trigger');
+ const fin=ae.slice(ae.indexOf('async finalizeForcePointSpend('),ae.indexOf('async dispatchForcePointTriggers('));
+ assert.match(fin,/state: 'finalized', \.\.\.\(trigger/,'the trigger is recorded in the same write that finalizes the receipt');
+ assert.ok(fin.indexOf("await this.updateActor(actor, { 'flags.swse.forcePointLedger'")<fin.indexOf('this.dispatchForcePointTriggers('),
+   'finality is persisted before any delivery');
+ assert.match(fin,/firstFinalization/,'only the first committed->finalized transition delivers');
+ assert.doesNotMatch(ae,/deferResourceEvent/);
  const dp=ae.slice(ae.indexOf('async spendDestinyPoints('),ae.indexOf('async applySecondWind('));
- assert.ok(fp.indexOf("await this.updateActor(actor, update)")<fp.indexOf("swse.resourceSpent"));
  assert.ok(dp.indexOf("'system.destinyPoints.value': newDP")<dp.indexOf("swse.resourceSpent"));
- assert.match(fp,/committed: true/);
  assert.match(dp,/committed: true/);
  const base=read('scripts/actors/base/swse-actor-base.js');
  assert.match(base,/ActorEngine.spendDestinyPoints\(this, 1\)/);
- const engine=read('scripts/engine/force/force-engine.js');
- assert.match(engine,/ActorEngine.spendForcePoints\(actor, 1\)/);
+ const svc=read('scripts/engine/combat/sith-lord-temptation-service.js');
+ assert.match(svc,/registerForcePointTriggerConsumer\(/);
+ assert.match(svc,/if\(event\?\.resource!=='destiny'\)return;/,'the legacy hook accepts Destiny events only');
 });
 
-test('paid Force Point roll event happens after successful d20, never on provisional refund',()=>{
+test('paid Force Point roll finalizes through the V2 receipt; no coordinator deferral or RollCore emitter remains',()=>{
  const core=read('scripts/engine/roll/roll-core.js');
  const coordinator=read('scripts/engine/force/force-point-spend-coordinator.js');
- const ae=read('scripts/governance/actor-engine/actor-engine.js');
- assert.match(coordinator,/deferResourceEvent:true/);
- assert.match(ae,/if\(options\?\.deferResourceEvent!==true\)/);
+ assert.doesNotMatch(coordinator,/deferResourceEvent/);
+ assert.doesNotMatch(core,/swse\.resourceSpent/,'RollCore emits no second receipt');
  const roll=core.slice(core.indexOf('static async execute('),core.indexOf('static async _handleTakeX('));
  assert.ok(roll.indexOf('roll = await this._executeRollWithSerenity(') <
-   roll.indexOf("source: 'RollCore.execute'"));
- assert.ok(roll.indexOf("source: 'RollCore.execute'") <
-   roll.indexOf('return {\n        success: true'));
- assert.ok(roll.includes("forcePointDetails?.success===true"));
+   roll.indexOf('ActorEngine.finalizeForcePointSpend('),'finality only after the paid d20 executed');
 });
 
 test('runtime action and target choice remain separate; no fake immediate DSP',()=>{

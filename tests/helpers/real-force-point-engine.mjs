@@ -4,12 +4,14 @@
 export async function graftRealForcePointMethods(updateActor) {
   const fake = (await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js')).ActorEngine;
   const real = (await import(new URL('../../scripts/governance/actor-engine/actor-engine.js', import.meta.url).href)).ActorEngine;
-  const saved = { updateActor: fake.updateActor, spendForcePoints: fake.spendForcePoints, gainForcePoints: fake.gainForcePoints, rollbackForcePointSpend: fake.rollbackForcePointSpend, finalizeForcePointSpend: fake.finalizeForcePointSpend };
+  const saved = { updateActor: fake.updateActor, spendForcePoints: fake.spendForcePoints, gainForcePoints: fake.gainForcePoints, rollbackForcePointSpend: fake.rollbackForcePointSpend, finalizeForcePointSpend: fake.finalizeForcePointSpend, dispatchForcePointTriggers: fake.dispatchForcePointTriggers, ackForcePointTrigger: fake.ackForcePointTrigger };
   fake.updateActor = updateActor;
   fake.spendForcePoints = real.spendForcePoints;
   fake.gainForcePoints = real.gainForcePoints;
   fake.rollbackForcePointSpend = real.rollbackForcePointSpend;
   fake.finalizeForcePointSpend = real.finalizeForcePointSpend;
+  fake.dispatchForcePointTriggers = real.dispatchForcePointTriggers;
+  fake.ackForcePointTrigger = real.ackForcePointTrigger;
   return { fake, real, restore: () => Object.assign(fake, saved) };
 }
 export const setPath = (o, p, v) => { const parts = p.split('.'); let n = o; for (let i = 0; i < parts.length - 1; i++) n = (n[parts[i]] ??= {}); n[parts.at(-1)] = JSON.parse(JSON.stringify(v)); };
