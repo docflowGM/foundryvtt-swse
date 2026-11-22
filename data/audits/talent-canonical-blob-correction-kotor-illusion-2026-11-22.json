@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "recordId": "TCBC-2026-11-22-KOTOR-ILLUSION-1",
+  "kind": "CANONICAL_BLOB_CORRECTION_PROVENANCE",
+  "status": "OWNER_APPROVED_APPLIED",
+  "purpose": "Preserves the previously certified canonical-corpus blob checksum and records the corrected accepted checksum after a verified one-token OCR correction, so the historical certification reports remain auditable. Distinguishes the HISTORICAL RECORDED checksum from the CURRENT ACCEPTED checksum.",
+  "file": "data/canonical/talents.json",
+  "checksums": {
+    "historicalRecordedCertifiedBlobSha": "d0add2069f174cedc9f4a01500477f4dc62b6fb4",
+    "currentAcceptedBlobSha": "ae7fe14adcf8a0eb5ac799d841107851d88b303b",
+    "note": "The historical value is what the 2026-09-29 Phase 3B closeout and the Phase 3F/3G dry-run reports certified at their checkpoints. It is preserved here verbatim, not erased. The four effective guard pins now equal the current accepted value."
+  },
+  "scope": {
+    "oneToken": true,
+    "tokenBefore": "~10",
+    "tokenAfter": "-10",
+    "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Illusion",
+    "publication": "Knights of the Old Republic Campaign Guide",
+    "publicationPrintedPage": 52,
+    "field": "publications[].description (the Knights of the Old Republic Campaign Guide entry only)",
+    "descriptionSha256Before": "1d1f2b76928c72b1dde6a5cf286403527983444759850fe10776bc14b4c83d0d",
+    "descriptionSha256After": "e64ade4af41ffb01f488fae237c36fca2bc1e97e6a74b7756204b249bb5d2d0b",
+    "unchanged": [
+      "the other 1,179 canonical identities",
+      "the top-level Illusion description and benefit",
+      "the Jedi Academy Training Manual and Force Unleashed Campaign Guide publication entries",
+      "packs/talents.db and every other pack"
+    ]
+  },
+  "reason": "VERIFIED_OCR_DEFECT",
+  "reasonDetail": "Printed Knights of the Old Republic Campaign Guide p.52 and Jedi Academy Training Manual p.14-15 (the paragraph runs onto p.15) read -10 for Colossal (frigate) or larger illusions. The generated KOTOR publication mirror still carried the OCR text '~10'. Source evidence was corrected first (PR #1178, merge bd064eea9); this record covers the regenerated canonical mirror.",
+  "verification": {
+    "verifiedFrom": "rendered page images",
+    "verifiedBy": "project owner",
+    "evidenceConfidence": "RENDERED_PAGE_VISUAL"
+  },
+  "authorization": {
+    "ownerAuthorizedOn": "2026-11-21",
+    "authorizedIn": ["PR #1171 owner decision (comment 7073004476)", "PR #1181 owner decision approving the four pin updates with this provenance requirement (comment 7073319994)"]
+  },
+  "correctionDate": "2026-11-22",
+  "generator": "tools/build-talent-canonical-authority.mjs (full output compared with main: exactly one line differed)",
+  "pinsUpdated": [
+    { "file": "data/audits/talent-phase-3b-global-closeout.json", "key": "authority.canonicalTalentBlobSha" },
+    { "file": "data/audits/talent-phase-3b-global-closeout.json", "key": "phase3bSourceTextCorrections.correctedCanonicalTalentBlobSha" },
+    { "file": "data/audits/talent-phase-3f-dry-run-report.json", "key": "untouchedFiles[\"data/canonical/talents.json\"]" },
+    { "file": "data/audits/talent-phase-3g-dry-run-report.json", "key": "untouchedFiles[\"data/canonical/talents.json\"]" }
+  ],
+  "guarantees": {
+    "productionPackMutation": false,
+    "guardsLoosened": false,
+    "otherHistoryRewritten": false,
+    "unrelatedDataChanged": false
+  }
+}
