@@ -35,4 +35,21 @@ const active = (() => {
 assert.equal(active.length, 1, 'one active canonical Illusion talent');
 assert.ok(/-10 for Colossal \(frigate\) or larger illusions/i.test(`${active[0].description} ${active[0].benefit ?? ''}`), 'active canonical Illusion already reads -10');
 
+// Generated per-publication mirror in the canonical corpus must agree with its evidence file (no OCR drift).
+const illusion = active[0];
+const pubs = illusion.publications ?? [];
+for (const book of ['Force Unleashed Campaign Guide', 'Knights of the Old Republic Campaign Guide', 'Jedi Academy Training Manual']) {
+  assert.ok(pubs.some((p) => p.sourcebook === book), `canonical Illusion keeps its ${book} publication entry`);
+}
+const kotorPub = pubs.find((p) => p.sourcebook === 'Knights of the Old Republic Campaign Guide');
+assert.equal(kotorPub.page, 52, 'KOTOR publication page stays printed p.52');
+assert.ok(kotorPub.description.includes(EXPECT), 'KOTOR canonical publication mirror reads -10 for Colossal (frigate) or larger');
+assert.ok(!/~\s?10/.test(JSON.stringify(illusion)), 'no OCR tilde anywhere in the canonical Illusion record');
+const kotorEvidence = find(rd('data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json'))[0];
+assert.equal(kotorPub.description, kotorEvidence.canonicalDescription, 'KOTOR mirror equals its evidence-file description (sourceAuthorityFile)');
+assert.equal(illusion.canonicalIdentity, 'Saga Edition Core Rulebook|Alter|Illusion', 'canonical Illusion identity is stable');
+const all = Array.isArray(rd('data/canonical/talents.json')) ? rd('data/canonical/talents.json') : rd('data/canonical/talents.json').talents ?? rd('data/canonical/talents.json').records ?? [];
+assert.equal(new Set(all.map((r) => r.canonicalIdentity)).size, all.length, 'canonical talent identities are unique');
+assert.ok(!/~\s?10 for/.test(fs.readFileSync('data/canonical/talents.json', 'utf8')), 'no "~10 for" OCR artifact anywhere in the canonical corpus');
+
 console.log('talent-illusion-size-penalty-evidence: ok');

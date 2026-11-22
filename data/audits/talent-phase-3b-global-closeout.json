@@ -6,7 +6,7 @@
   "branch": "audit/talent-phase-3a-canonical-authority",
   "authority": {
     "canonicalTalents": "data/canonical/talents.json",
-    "canonicalTalentBlobSha": "d0add2069f174cedc9f4a01500477f4dc62b6fb4",
+    "canonicalTalentBlobSha": "ae7fe14adcf8a0eb5ac799d841107851d88b303b",
     "productionTalents": "packs/talents.db",
     "productionTalentBlobSha": "c8aae4d198d01b7620558a469332ffb3cfa7deba",
     "productionTrees": "packs/talent_trees.db",
@@ -2871,7 +2871,7 @@
       "threats": "b4d1c30b160783975310bf151781d5b31e4c65c2",
       "unknown": "891843427d297117e9a2ce3f7e62f29b6fe3bd60"
     },
-    "correctedCanonicalTalentBlobSha": "d0add2069f174cedc9f4a01500477f4dc62b6fb4",
+    "correctedCanonicalTalentBlobSha": "ae7fe14adcf8a0eb5ac799d841107851d88b303b",
     "correctedManifestBlobShas": {
       "clone-wars": "84b0d18ecdb9d6b60280603493125f3a22376cf9",
       "core": "e2885b1c5b7ea2c7c02190fe3911853b26289157",
