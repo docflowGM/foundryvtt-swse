@@ -14,6 +14,7 @@
  *   Fortitude = STR only
  */
 
+import { serenityTranceActive } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/serenity-state.js";
 import { actorUsesResolvedSnapshot } from '/systems/foundryvtt-swse/scripts/species/species-variant-profile.js';
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getHeroicLevel, getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
@@ -859,7 +860,15 @@ export class DefenseCalculator {
     // pinnedReflexDexReduction (identical in value) applies so the bonus is
     // not subtracted a second time.
     const shieldReflexDexReduction = (shieldDeniesPositiveDex && pinnedReflexDexReduction === 0) ? Math.max(0, reflexAbilityMod) : 0;
-    const reflexTotal = Math.max(1, reflexTotalBeforePin - pinnedReflexDexReduction - shieldReflexDexReduction);
+    // Serenity (Core p.220) denies the POSITIVE Dexterity bonus only while
+    // in the active trance, using the canonical combat encounter identity.
+    // A non-Dexterity substitute ability bonus is NOT silently stripped.
+    // Multiple effects denying the same Dex bonus never stack reductions.
+    const serenityDexReduction = serenityTranceActive(actor, globalThis.game?.combat)
+      && reflexAbilityKey === 'dex'
+      && pinnedReflexDexReduction === 0 && shieldReflexDexReduction === 0
+      ? Math.max(0, reflexAbilityMod) : 0;
+    const reflexTotal = Math.max(1, reflexTotalBeforePin - pinnedReflexDexReduction - shieldReflexDexReduction - serenityDexReduction);
 
     const fortDefaultAbility = isDroidActor ? 'str' : 'con';
     // SWSE RAW: nonliving targets without Constitution, including Droids, add STR to Fortitude.
@@ -956,6 +965,7 @@ export class DefenseCalculator {
         // active, nonproficient shield is worn.
         shieldReflexPenalty,
         shieldDexReduction: -shieldReflexDexReduction,
+        serenityDexReduction: -serenityDexReduction,
         conditionPenalty
       },
       will: {
