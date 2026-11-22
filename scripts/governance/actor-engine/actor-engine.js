@@ -2346,6 +2346,13 @@ export const ActorEngine = {
         amount: actualSpent
       });
 
+      globalThis.Hooks?.callAll?.('swse.resourceSpent', {
+        actor, actorId: String(actor?.uuid || actor?.id || ''),
+        resource: 'destiny', spent: actualSpent, committed: true,
+        receiptId: globalThis.crypto?.randomUUID?.()
+          ?? String(Date.now())+'-dp-'+String(actor?.id??'')+'-'+String(Math.random()),
+        source: 'ActorEngine.spendDestinyPoints',
+      });
       return { spent: actualSpent, remaining: newDP };
 
     } catch (err) {
