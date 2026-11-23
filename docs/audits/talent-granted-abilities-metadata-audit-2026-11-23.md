@@ -31,3 +31,19 @@ For the seven entries with a canonical record: `description` is now the canonica
 1. ~~Approve replacing the cards' text/effects~~ — applied per the owner's correction-pass direction; confirm the result.
 2. Reclassify "Force Point Recovery" from a Jedi Master talent card to the Force technique it is?
 3. Is `Surge of Power` an intentional house rule or imported/invented metadata?
+
+## Follow-up findings (2026-11-23, after reviewer comment 7110683287) — read-only, nothing here changes data
+**Relayed source evidence (not re-verified by me):** the reviewer reports visually inspecting the Force Unleashed Campaign Guide PDF (printed p.88, PDF p.89), where Improved Dark Rage is listed under Force Techniques and grants only the removal of Dark Rage's skills/patience restriction and surprise-round activation (no Force Point cost, no +2 rider). That agrees with `packs/forcetechniques.db`. Recorded as reviewer-reported; the card's `printedSource` string is unchanged until the owner accepts the relay.
+
+**Card `linkedAction` fields are inert.** `TalentActionLinker` selects talents by `MAPPING.talentToAction[talentName]` from `data/talent-action-links.json`, never by a card's `linkedAction`. So the stale `linkedAction` values on `severing-strike` (`lightsaber-critical`), `shien` (`adopt-lightsaber-form-shien`), `force-haze` (`force-power-aoe`), and the others affect nothing at runtime.
+
+| Talent | `talent-action-links.json` mapping | Assessment |
+| --- | --- | --- |
+| Force Focus | `use-the-force-check` | consistent with its printed Use the Force check |
+| Acrobatic Recovery | `acrobatics-check` | consistent (DC 20 Acrobatics) |
+| Force Haze | `melee-attack` | **suspicious**: a Use the Force concealment talent shows as a linked talent on melee attack cards. Contributes +0 (corrected effects are empty), so display-only. Not changed in this pass. |
+| Severing Strike, Shien, Force Point Recovery, Improved Dark Rage, Surge of Power | none | no mapping, so no card association |
+
+**Consumer reachability:** `TalentActionLinker.getTalentsForAction` filters to `item.type === 'talent'`. A Force technique (Force Point Recovery, Improved Dark Rage) can therefore never be matched through this path, so those two card entries are unreachable dead metadata; they are not misleading the UI today.
+
+**Held for the project owner (not done):** (1) remove or exclude Force Point Recovery and Improved Dark Rage from the talent-only catalog (reachability confirmed above; deletes runtime catalog data); (2) quarantine Surge of Power from the active catalog with its original prose and cost preserved only in this audit (a catalog removal); (3) retarget or remove the Force Haze `melee-attack` mapping (mapping data change). Each is a data deletion/rewrite relayed only via a GitHub comment, so none is applied until you confirm in chat.
