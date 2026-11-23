@@ -14,7 +14,9 @@
 | 3d | Separate durable Destiny Point ledger + outbox (Decision B) | **Implemented, offline-tested** | `e1abed3a7` | — |
 | 4 | 6O typed effect ingress (Fearless / Indomitable at ActorEngine ActiveEffect creation + ConditionEngine; only the 5 ingress commits `8b641be45`..`288361931` of #1126) | **Cherry-picked clean, 0 conflicts**; offline-tested (5 tests; focused matrix 100 of 105, same 5 baseline failures, 0 new) | `6c50343af` (tip) | 0 |
 | 4x | the later #1126 commits `55cbff915`..`619791da0` (Temptation expiry/FP-trigger timing/no-op condition choice) | **Superseded, not merged**: they patch 6N's pre-V2 hook model, which slices 3a–3d replaced with the finalize outbox and spend-time evidence | — | — |
-| 5+ | 6P…6AE (#1127–#1164) | **Not started**; must be re-derived on V2 receipts (see §6) | — | 7–9 files each |
+| 5 | 6P Prophet GM vision review (#1127 chain: `1cfaef5d3`, `45a09b6ff`, `28da0c283`, `fd485d608`, `b8a53d6ca`) | **Cherry-picked clean, 0 conflicts**; GM-only dialog, writes through `ActorEngine.applyMutationPlan`, records the narrated vision and leaves Destiny `GM_ADJUDICATED_SEPARATELY` (no rules decided); 3 tests; focused matrix 101 of 106, same 5 baseline failures, 0 new | `7dad3448b` (tip) | 0 |
+| 5x | the other commits in the #1127 chain (`51447b5ed`..`d26da3543`: Temptation expiry, FP-trigger timing, no-op condition choice, 6J–6P matrix doc) | **Superseded, not merged** (V2 outbox / spend-time evidence replace them) | — | — |
+| 6+ | sheet action controls (6P second branch) and 6Q…6AE (#1128–#1164) | **Not started**; must be re-derived on V2 receipts (see §6) | — | 7–9 files each |
 
 Dry-merge conflict counts of each chain tip against the V2 head: 6J/6K/6L = 0, 6M = 1 (`roll-core.js`), 6N = 6, 6O–6X = 4–7, 6Y–6AE = 9 (adds `reaction-engine.js`, `reaction-registry.js`).
 
