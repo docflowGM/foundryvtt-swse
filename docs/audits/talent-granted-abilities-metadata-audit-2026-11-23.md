@@ -1,6 +1,6 @@
 # Data-quality audit: eight Force Point claims in `data/talent-granted-abilities.json` (2026-11-23)
 
-Read-only. **No data, pack, or code was changed.** Provenance is preserved: every row cites its source. Certification status for all rows: `SOURCE_VERIFIED` only where a repo canonical record **and** the independent reviewer's PDF reading (PR #1171 comment 7108031600, relayed; not re-verified by me against the PDF) agree; nothing here is `MECHANIC_SPECIFIED`, `IMPLEMENTED` or `FOUNDRY_TESTED`.
+**Status update (same day, after the owner's direction to run a targeted correction pass):** the correction below WAS applied to `data/talent-granted-abilities.json` only (no pack, code or contract change). Original metadata remains recoverable from git history (parent of the correction commit) and is summarized in the table. Provenance is preserved: every row cites its source. Certification status for all rows: `SOURCE_VERIFIED` only where a repo canonical record **and** the independent reviewer's PDF reading (PR #1171 comment 7108031600, relayed; not re-verified by me against the PDF) agree; nothing here is `MECHANIC_SPECIFIED`, `IMPLEMENTED` or `FOUNDRY_TESTED`.
 
 ## How the data is used
 `TalentActionLinker` loads the file to build combat-action cards. Nothing reads `cost.forcePoints` as a payment (matrix §13), so none of these entries debits a Force Point. The defect is **player-visible misleading card text**, not a charge.
@@ -24,10 +24,10 @@ States: `CONFIRMED_BAD_METADATA`, `SOURCE_VERIFIED_SPEND_CANDIDATE`, `UNVERIFIED
 - Later canonical implementation candidates (only via proper rules, verified owned identities, typed V2 receipts, tests, GM-authoritative time): generic Core p.96 reaction regain; Force Haze (Core pp.40-41).
 - The other six need corrected identities/rules or owner adjudication first.
 
-## Proposed minimal correction (not applied; owner to approve)
-Mark the eight entries as non-spend, descriptive cards drawn from the canonical pack text, or remove the incorrect `cost`, `alternativeAction`, `effects` and invented triggers. A test would assert that no entry in this file carries a non-zero `cost.forcePoints` unless it is listed in an explicit `SOURCE_VERIFIED_SPEND_CANDIDATE` allow-list. Not implemented, because the correction rewrites player-visible rules text, which needs your approval.
+## Correction applied (2026-11-23)
+For the seven entries with a canonical record: `description` is now the canonical pack text verbatim (HTML stripped); `cost`, `trigger`, `alternativeAction`, `specialAction`, `uses`, `roll`, `modifies`, the Shien form-activation fields and `effects` were removed; `actionType` is `passive`; Force-Point/reaction/swift/standard tags were dropped; each carries `metadataAudit.state = CORRECTED_FROM_CANONICAL` with its canonical record and printed source. `linkedAction` ids are preserved (the action linker's mapping lives in `data/talent-action-links.json`, untouched). Surge of Power has no canonical record: its cost, effects and rules text were removed and the card is `UNVERIFIED_IDENTITY` ("UNVERIFIED ... no automation"). **Talent-tree labels were NOT changed** (see open question 2). Guard: `tests/talent-granted-abilities-metadata-guard.test.mjs` fails if any entry carries a Force Point cost outside an (empty) allow-list, if a corrected card diverges from its canonical record, or if Surge of Power regains a cost/effect; mutation-checked. No bonus previously reached a roll from these entries (`Force Focus` `skillBonus` had a non-numeric value the linker ignores), so no computed value changed.
 
 ## Open questions for the project owner
-1. Approve replacing the eight cards' text/effects with canonical pack text (and removing the invented costs)?
+1. ~~Approve replacing the cards' text/effects~~ — applied per the owner's correction-pass direction; confirm the result.
 2. Reclassify "Force Point Recovery" from a Jedi Master talent card to the Force technique it is?
 3. Is `Surge of Power` an intentional house rule or imported/invented metadata?
