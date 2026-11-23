@@ -147,3 +147,18 @@ Classification uses `NOT_FOUND_STATIC` for "a static search found no caller": th
 | Force Alchemy service | **reachable**: workbench app | subtracts FP with credits/DSS and rolls back by restoring an OLD FP snapshot | never restore a historical balance; exact receipt rollback, or fail closed for that rite |
 
 **Important constraint discovered (V2 owner ruling FP-RD-003):** an `ability-option` Force Point spend requires a typed contract in `ABILITY_OPTION_CONTRACTS` (10 abilities certified today) **or** explicit GM adjudication with a recorded reason. Routing the sites above through V2 therefore makes uncontracted abilities fail closed for players until a certified contract (trigger event, action timing) or a GM-adjudication UI exists. Authoring contracts would invent rules and is out of scope for the implementer; each such site is recorded as blocked-by-contract, not silently weakened.
+
+## 11. Decision A cutover — direct Force Point writers (as built, 2026-11-23)
+
+| Site | Reachability | Result | Test |
+| --- | --- | --- | --- |
+| `CombatExecutor.executeInitiative` fallback debit | reachable (sheet) | deleted; V2 pays via RollCore | `class-force-v2-direct-fp-cutover` |
+| `CombatExecutor.executeAttack` `options.force` | `NOT_FOUND_STATIC` | kept, fails closed | same |
+| `WeaponsEngine.attuneLightsaber` | reachable (workbench) | V2 spend → effect → finalize; exact rollback; applied-but-unacked finalizes | `class-force-v2-attunement-cutover` |
+| `ActiveAdapter.handleEffect` | reachable (`register`) | pay first, effect, finalize; nothing applied ⇒ exact rollback; some applied ⇒ finalize | `class-force-v2-active-adapter-cutover` |
+| `ThresholdEngine.executeLastGrasp` / `attemptEmergencyPatch` | `NOT_FOUND_STATIC` | kept; V2 spend + immediate finalize (charge-regardless preserved, not decided: **FP-RD-015**) | `class-force-v2-threshold-cutover` |
+| Force Alchemy `applyResourceCosts` / `revertResourceCosts` | reachable (workbench app) | FP via V2 spend, exact receipt rollback, finalize after success; no whole-balance snapshot restore | `class-force-v2-alchemy-cutover` |
+
+**Impact (FP-RD-003):** abilities without a certified contract (attunement, active abilities, Last Grasp, Emergency Patch, Force Alchemy rites) now fail closed for players unless a GM supplies a recorded adjudication. This is intended by Decision A; the contract table is the owner's to extend.
+
+**Not changed (follow-up):** Force Alchemy credits and Dark Side Score are still written by the service with snapshot rollback; credits belong under `TransactionEngine` and the multi-resource atomicity needs its own audited design. A failed DSP/credit write after a successful FP spend rolls the FP receipt back exactly; a later failure restores DSP/credits from the snapshot as before.

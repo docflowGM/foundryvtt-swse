@@ -400,8 +400,19 @@ async function applyResourceCosts(actor, detail) {
     darkSideScore: numberFrom(DSPEngine.getValue(actor), actor?.system?.darkSide?.value, actor?.system?.darkSideScore),
     credits: actorCredits(actor)
   };
+  // Decision A: the Force Point cost is paid through the V2 typed spend (authorization, round cap, FP-RD-003 contract or GM
+  // adjudication). A denial throws before anything else changes. Rollback compensates exactly this receipt; the balance is
+  // never restored from a snapshot. Dark Side Score and credits are unchanged here (credits: TransactionEngine follow-up).
+  let fpReceipt = null;
+  if (fpCost > 0) {
+    fpReceipt = await ActorEngine.spendForcePoints(actor, fpCost, {
+      useKind: 'ability-option',
+      abilitySourceRef: `force-alchemy:${rite.id ?? 'rite'}`,
+      ...(detail?.gmAdjudication ? { gmAdjudication: detail.gmAdjudication } : {})
+    });
+    if (!fpReceipt?.receiptId) throw new Error(`Force Point payment for ${rite.name ?? 'the rite'} was not authorized.`);
+  }
   const updates = {};
-  if (fpCost > 0) updates['system.forcePoints.value'] = Math.max(0, before.forcePoints - fpCost);
   if (dspCost > 0) {
     updates['system.darkSide.value'] = before.darkSideScore + dspCost;
   }
@@ -409,21 +420,27 @@ async function applyResourceCosts(actor, detail) {
     updates[creditUpdatePath(actor)] = Math.max(0, before.credits - creditCost);
   }
   if (Object.keys(updates).length) {
-    await ActorEngine.updateActor(actor, updates, { source: 'force-alchemy:resource-costs' });
+    try {
+      await ActorEngine.updateActor(actor, updates, { source: 'force-alchemy:resource-costs' });
+    } catch (error) {
+      if (fpReceipt) await ActorEngine.rollbackForcePointSpend(actor, fpReceipt).catch((e) => console.error('[ForceAlchemy] FP rollback failed', e));
+      throw error;
+    }
   }
   const after = {
     forcePoints: fpCost > 0 ? Math.max(0, before.forcePoints - fpCost) : before.forcePoints,
     darkSideScore: dspCost > 0 ? before.darkSideScore + dspCost : before.darkSideScore,
     credits: creditCost > 0 ? Math.max(0, before.credits - creditCost) : before.credits
   };
-  return { before, after, spent: { forcePoints: fpCost, darkSideScore: dspCost, credits: creditCost } };
+  return { before, after, spent: { forcePoints: fpCost, darkSideScore: dspCost, credits: creditCost }, fpReceipt };
 }
 
 async function revertResourceCosts(actor, resourceChanges) {
   if (!actor || !resourceChanges?.before) return;
   const before = resourceChanges.before;
   const updates = {};
-  if (Object.hasOwn(before, 'forcePoints')) updates['system.forcePoints.value'] = before.forcePoints;
+  // Exact compensation of the one Force Point receipt; never a whole-balance restore (it would erase unrelated regains).
+  if (resourceChanges.fpReceipt) await ActorEngine.rollbackForcePointSpend(actor, resourceChanges.fpReceipt);
   if (Object.hasOwn(before, 'darkSideScore')) {
     updates['system.darkSide.value'] = before.darkSideScore;
   }
@@ -433,10 +450,18 @@ async function revertResourceCosts(actor, resourceChanges) {
   }
 }
 
+async function finalizeResourceCosts(actor, resourceChanges) {
+  if (!resourceChanges?.fpReceipt) return;
+  await ActorEngine.finalizeForcePointSpend(actor, resourceChanges.fpReceipt)
+    .catch((error) => console.error('[ForceAlchemy] Force Point finalize failed (receipt stays committed)', error));
+}
+
 async function withResourceCostRollback(actor, detail, operation) {
   const resourceChanges = await applyResourceCosts(actor, detail);
   try {
-    return await operation(resourceChanges);
+    const result = await operation(resourceChanges);
+    await finalizeResourceCosts(actor, resourceChanges);
+    return result;
   } catch (error) {
     await revertResourceCosts(actor, resourceChanges).catch((rollbackError) => {
       console.error('[ForceAlchemy] Resource rollback failed after ritual error', rollbackError);
@@ -1186,6 +1211,7 @@ export async function applyForceAlchemySelection(actor, detail) {
       pendingEffects: false,
       pendingCosts: false
     });
+    await finalizeResourceCosts(actor, resourceChanges);
     await postRiteChat(actor, detail, { mode: status, resourceChanges, effectCount: effectIds.length }).catch((error) => console.warn('[ForceAlchemy] Chat card failed', error));
     return { mode: 'applied', entry: state?.[stateKey] ?? initial.entry, state, effectIds, resourceChanges, item: instantItemResult?.item ?? null, alchemyFlags: instantItemResult?.alchemyFlags ?? null, mechanical: true };
   } catch (error) {
