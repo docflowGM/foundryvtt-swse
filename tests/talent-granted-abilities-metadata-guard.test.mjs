@@ -36,8 +36,7 @@ const walk = (o, path, out) => {
 {
   const spec = {
     'force-focus': ['packs/talents.db', 'Force Focus'], 'acrobatic-recovery': ['packs/talents.db', 'Acrobatic Recovery'],
-    'force-haze': ['packs/talents.db', 'Force Haze'], 'severing-strike': ['packs/talents.db', 'Severing Strike'], 'shien': ['packs/talents.db', 'Shien'],
-    'force-point-recovery': ['packs/forcetechniques.db', 'Force Point Recovery'], 'improved-dark-rage': ['packs/forcetechniques.db', 'Improved Dark Rage']
+    'force-haze': ['packs/talents.db', 'Force Haze'], 'severing-strike': ['packs/talents.db', 'Severing Strike'], 'shien': ['packs/talents.db', 'Shien']
   };
   for (const [id, [file, name]] of Object.entries(spec)) {
     const a = data.abilities[id]; const canon = packText(file, name);
@@ -47,12 +46,30 @@ const walk = (o, path, out) => {
     for (const f of ['trigger', 'alternativeAction', 'specialAction', 'uses', 'roll']) assert.equal(a[f], undefined, `${id}: no invented ${f}`);
     assert.equal(a.metadataAudit?.state, 'CORRECTED_FROM_CANONICAL');
   }
-  ok('seven cards match their canonical pack records and carry no invented trigger/effect/cost');
+  ok('five talent cards match their canonical pack records and carry no invented trigger/effect/cost');
 }
 {
-  const s = data.abilities['surge-of-power'];
-  assert.equal(s.metadataAudit.state, 'UNVERIFIED_IDENTITY'); assert.deepEqual(s.effects, []); assert.equal(s.cost, undefined);
-  assert.match(s.description, /^UNVERIFIED/);
-  ok('Surge of Power is marked UNVERIFIED_IDENTITY with no cost or effect');
+  // Force techniques are not talents; the talent-only catalog (TalentActionLinker filters item.type === 'talent') must not carry them.
+  const names = new Set(Object.values(data.abilities).map((a) => a.talentName ?? a.name));
+  for (const [id, name] of [['force-point-recovery', 'Force Point Recovery'], ['improved-dark-rage', 'Improved Dark Rage']]) {
+    assert.equal(data.abilities[id], undefined, `${id} is not a talent card`); assert.ok(!names.has(name), `${name} is not in the talent catalog`);
+    assert.ok(packText('packs/forcetechniques.db', name), `${name} keeps its canonical Force technique record`);
+    assert.equal(packText('packs/talents.db', name), null, `${name} is not duplicated as a canonical talent`);
+  }
+  ok('Force Point Recovery and Improved Dark Rage are Force techniques only (canonical record kept, no talent card)');
+}
+{
+  const names = new Set(Object.values(data.abilities).map((a) => a.talentName ?? a.name));
+  assert.equal(data.abilities['surge-of-power'], undefined); assert.ok(!names.has('Surge of Power'));
+  assert.equal(data._meta.totalAbilities, Object.keys(data.abilities).length, '_meta count matches the catalog');
+  ok('Surge of Power cannot reappear without an explicit source/owner decision (and the catalog count is consistent)');
+}
+{
+  const links = JSON.parse(read('data/talent-action-links.json'));
+  assert.equal(links.talentToAction['Force Haze'], undefined, 'Force Haze is not associated with melee-attack');
+  for (const [action, list] of Object.entries(links.actionToTalents)) assert.ok(!list.includes('Force Haze'), `Force Haze not listed under ${action}`);
+  assert.ok(links.unmappedTalents.includes('Force Haze'));
+  assert.equal(links.totalTalents, Object.keys(links.talentToAction).length); assert.equal(links.unmapped, links.unmappedTalents.length);
+  ok('Force Haze has no unsupported action association; link-file counts are consistent');
 }
 console.log(`talent-granted-abilities-metadata-guard: ${n} checks passed`);

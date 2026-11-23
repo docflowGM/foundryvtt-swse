@@ -46,4 +46,110 @@ For the seven entries with a canonical record: `description` is now the canonica
 
 **Consumer reachability:** `TalentActionLinker.getTalentsForAction` filters to `item.type === 'talent'`. A Force technique (Force Point Recovery, Improved Dark Rage) can therefore never be matched through this path, so those two card entries are unreachable dead metadata; they are not misleading the UI today.
 
-**Held for the project owner (not done):** (1) remove or exclude Force Point Recovery and Improved Dark Rage from the talent-only catalog (reachability confirmed above; deletes runtime catalog data); (2) quarantine Surge of Power from the active catalog with its original prose and cost preserved only in this audit (a catalog removal); (3) retarget or remove the Force Haze `melee-attack` mapping (mapping data change). Each is a data deletion/rewrite relayed only via a GitHub comment, so none is applied until you confirm in chat.
+**Previously held; now applied per the owner's chat decisions (see the next section) except as noted there:** (1) remove or exclude Force Point Recovery and Improved Dark Rage from the talent-only catalog (reachability confirmed above; deletes runtime catalog data); (2) quarantine Surge of Power from the active catalog with its original prose and cost preserved only in this audit (a catalog removal); (3) retarget or remove the Force Haze `melee-attack` mapping (mapping data change). Each is a data deletion/rewrite relayed only via a GitHub comment, so none is applied until you confirm in chat.
+
+## Owner decisions applied (2026-11-23, chat) and preserved claims
+Per the owner's chat decisions: **Force Point Recovery** and **Improved Dark Rage** are Force techniques (Core p.102; Force Unleashed Campaign Guide **printed p.88, PDF p.89**, page located by the owner), so both entries were removed from the talent-only `talent-granted-abilities.json` (their canonical records in `packs/forcetechniques.db` are untouched; no reimport, no duplicate identity). **Surge of Power** was removed from the active catalog (no published or approved house-rule identity). `_meta.totalAbilities` is now 500. The Force Haze `melee-attack` association (no source supports it) was removed from `data/talent-action-links.json` (`talentToAction`, `actionToTalents`; Force Haze is now in `unmappedTalents`); no replacement mapping or roll behavior was assigned. `severing-strike`, `shien` and the other cards' `linkedAction` fields are inert (the linker ignores them) and were left as is; the 418+ mapping was not otherwise rewritten.
+
+Discarded metadata, preserved verbatim for provenance (NOT source-verified; Improved Dark Rage and Force Point Recovery text contradicts their printed Force technique rules; Surge of Power has no identified source):
+
+```json
+{
+  "force-point-recovery": {
+    "id": "force-point-recovery",
+    "name": "Force Point Recovery",
+    "talentName": "Force Point Recovery",
+    "talentTree": "Jedi Master",
+    "description": "Once per day, when you spend a Force Point, you may immediately regain 1 Force Point. You may spend a second Force Point to regain 2 Force Points instead.",
+    "actionType": "reaction",
+    "trigger": "After spending a Force Point",
+    "alternativeAction": {
+      "name": "Enhanced Recovery",
+      "cost": {
+        "forcePoints": 1
+      },
+      "effect": "Regain 2 Force Points instead of 1"
+    },
+    "uses": {
+      "max": 1,
+      "perDay": true
+    },
+    "effects": [
+      {
+        "type": "resourceRecovery",
+        "resource": "forcePoints",
+        "value": 1
+      }
+    ],
+    "tags": [
+      "force",
+      "recovery",
+      "force-point",
+      "reaction"
+    ],
+    "icon": "fas fa-sync",
+    "linkedAction": "force-point-recovery"
+  },
+  "improved-dark-rage": {
+    "id": "improved-dark-rage",
+    "name": "Improved Dark Rage",
+    "talentName": "Improved Dark Rage",
+    "talentTree": "Dark Side",
+    "description": "When using Dark Rage, you may spend a Force Point to gain an additional +2 bonus to attack rolls, damage rolls, and Fortitude Defense for the duration.",
+    "actionType": "modifier",
+    "modifies": "dark-rage",
+    "cost": {
+      "forcePoints": 1
+    },
+    "effects": [
+      {
+        "type": "attackBonus",
+        "value": 2
+      },
+      {
+        "type": "damageBonus",
+        "value": 2
+      },
+      {
+        "type": "defenseBonus",
+        "defense": "fortitude",
+        "value": 2
+      }
+    ],
+    "tags": [
+      "dark-side",
+      "force-point",
+      "modifier"
+    ],
+    "icon": "fas fa-angry",
+    "linkedAction": "dark-rage-enhancement"
+  },
+  "surge-of-power": {
+    "id": "surge-of-power",
+    "name": "Surge of Power",
+    "talentName": "Surge of Power",
+    "talentTree": "Force Adept",
+    "description": "Spend a Force Point as a swift action to add your heroic level to the damage dealt by your next Force power used this turn.",
+    "actionType": "swift",
+    "cost": {
+      "forcePoints": 1
+    },
+    "effects": [
+      {
+        "type": "damageBonus",
+        "value": "heroicLevel",
+        "appliesTo": "forcePower",
+        "duration": "turn"
+      }
+    ],
+    "tags": [
+      "force",
+      "damage",
+      "force-point",
+      "swift"
+    ],
+    "icon": "fas fa-bolt",
+    "linkedAction": "force-point-boost"
+  }
+}
+```

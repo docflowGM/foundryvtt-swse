@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0.5",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 503,
+    "totalAbilities": 500,
     "lastModified": "2026-06-12",
     "multiOptionTalents": 9,
     "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced) (27 Starship Maneuvers from Ace Pilot tree) (27 Starship Maneuvers from Ace Pilot tree) Sith/Dark Side pasted talent batch backchecked; Sith Alchemy talisman UI deferred. Dark Side Devotee and Beastwarden pasted talent batch backchecked; Dark Side Talisman automation deferred."
@@ -2151,68 +2151,6 @@
         "automation": "none (descriptive card only; no Force Point spend)",
         "audit": "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md",
         "note": "Cost (1 Force Point, standard action) is part of the printed rule and stays in the description; automation is a later canonical implementation."
-      }
-    },
-    "improved-dark-rage": {
-      "id": "improved-dark-rage",
-      "name": "Improved Dark Rage",
-      "talentName": "Improved Dark Rage",
-      "talentTree": "Dark Side",
-      "description": "When you use the Dark Rage Force Power, you ignore the restriction that prevents you from using Skills or performing tasks that require patience and concentration. Special: Additionally, you can always activate Dark Rage in the Surprise Round, even if you are considered Surprised. Related Power: Dark Rage Prerequisites: Dark Rage",
-      "actionType": "passive",
-      "effects": [],
-      "tags": [
-        "dark-side",
-        "modifier"
-      ],
-      "icon": "fas fa-angry",
-      "linkedAction": "dark-rage-enhancement",
-      "metadataAudit": {
-        "state": "CORRECTED_FROM_CANONICAL",
-        "canonicalRecord": "packs/forcetechniques.db:Improved Dark Rage",
-        "printedSource": "Force Unleashed Campaign Guide (Force technique); exact printed page pending visual verification",
-        "automation": "none (descriptive card only; no Force Point spend)",
-        "audit": "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md"
-      }
-    },
-    "surge-of-power": {
-      "id": "surge-of-power",
-      "name": "Surge of Power",
-      "talentName": "Surge of Power",
-      "talentTree": "Force Adept",
-      "description": "UNVERIFIED: no published source identity has been established for this entry. It carries no automation and no Force Point cost.",
-      "actionType": "passive",
-      "effects": [],
-      "tags": [],
-      "icon": "fas fa-bolt",
-      "linkedAction": "force-point-boost",
-      "metadataAudit": {
-        "state": "UNVERIFIED_IDENTITY",
-        "automation": "none",
-        "audit": "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md",
-        "note": "Original unverified description preserved in the audit record."
-      }
-    },
-    "force-point-recovery": {
-      "id": "force-point-recovery",
-      "name": "Force Point Recovery",
-      "talentName": "Force Point Recovery",
-      "talentTree": "Jedi Master",
-      "description": "At the end of an encounter, you automatically recover 1 Force Point spent during the encounter.",
-      "actionType": "passive",
-      "effects": [],
-      "tags": [
-        "force",
-        "recovery"
-      ],
-      "icon": "fas fa-sync",
-      "linkedAction": "force-point-recovery",
-      "metadataAudit": {
-        "state": "CORRECTED_FROM_CANONICAL",
-        "canonicalRecord": "packs/forcetechniques.db:Force Point Recovery",
-        "printedSource": "Core Rulebook p.102 (Force technique)",
-        "automation": "none (descriptive card only; no Force Point spend)",
-        "audit": "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md"
       }
     },
     "force-fortification": {
