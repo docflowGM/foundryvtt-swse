@@ -2,6 +2,15 @@
 
 **Branch:** `integration/class-force-v2-20261122` (isolated; base = Force V2 head `046f7389c`, PR #1165, pinned game-night line preserved). **Not for `main`. #1165 untouched, no rebase, no force-push.** Owner direction: PR #1171 comment, 2026-11-21. Nothing here is `FOUNDRY_TESTED`; all results are offline (Node + Foundry shim). No rules were decided.
 
+## 0. CURRENT STATUS (consolidated 2026-11-23; read this first — later sections are historical)
+
+- **Slices integrated:** 1, 2, 3a–3d, 4 (6O), 5 (6P Prophet review), 6 (6P sheet controls), 7a–7c (6Q, 6R satisfied by 6O, 6S). **Not started:** 6T–6AE (re-derive on V2 receipts, never a blind merge).
+- **Decision A (direct Force Point writers):** done for initiative, attack (fail closed), attunement, `ActiveAdapter`, Last Grasp, Emergency Patch, Force Alchemy's Force Point part (§11). **Open:** Force Alchemy credits / Dark Side Score snapshot rollback is NOT certified atomic (needs a TransactionEngine-based design).
+- **Superseded statements (kept for history):** §12's "eight ActiveAdapter abilities are gated" claim is **wrong** — corrected in §13: no shipped item has a Force Point `abilityMeta.cost`, and the eight cards' metadata was corrected/removed by the talent-granted-abilities audit (`docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md`).
+- **FP-RD-015 (house rules Last Grasp / Emergency Patch):** `REVIEWER_RECOMMENDED / OWNER_CONFIRMATION_PENDING`. Implemented provisionally (typed `house-rule` contracts; failed Emergency Patch check still charges). Last Grasp timing remains `DEFERRED_RULES_REVIEW`. The Mechanics result is still caller-supplied.
+- **Focused matrix (files, not tests):** 110 files, 105 pass, 5 fail — the same five baseline failures (`force-power-final-integration`, `phase3-force-power-corrections`, `phase4-force-modifier-automation`, `phase5-force-healing-mitigation`, `phase6-force-direct-damage`; unresolved `/systems/...` imports, identical on the V2 head). 0 new failures.
+- **Certification:** everything is offline-tested only. **Nothing is `FOUNDRY_TESTED`.** `main` is untouched; the branch is not authorized for merge.
+
 ## 1. Slice status
 
 | Slice | Chain phases (PR tip) | Result | Integration SHA | Conflicts |
@@ -18,7 +27,10 @@
 | 5x | the other commits in the #1127 chain (`51447b5ed`..`d26da3543`: Temptation expiry, FP-trigger timing, no-op condition choice, 6J–6P matrix doc) | **Superseded, not merged** (V2 outbox / spend-time evidence replace them) | — | — |
 | 6 | 6P sheet action controls (V13 header controls for Serenity, Temptation, pending target choice; `c6a2e2b6b`, `5cfdfa09b`, `0a1c63e66`, `7b2888451`) | **Cherry-picked clean, 0 conflicts**; routes only to the existing `game.swse.classFeatures` API (verified present in `index.js`), no action/roll logic cloned; 5 tests; focused matrix unchanged: 5 baseline failures, 0 new | `de7ef8a32` (tip) | 0 |
 | 6x | the attack-FP receipt commits of the same branch (`3cff5e122`, `5b77139c7`, `cdcc9523a`, `1f5587d7b`, `667bfc76b`, `8f97c3be0`) | **Superseded, not merged**: they emit the Temptation event at attack finalization on the pre-V2 hook; V2's finalize outbox and the cut-over `enhanced-rolls.js` finalize replace them | — | — |
-| 7+ | 6Q…6AE (#1128–#1164) | **Not started**; must be re-derived on V2 receipts (see §6) | — | 7–9 files each |
+| 7a | 6Q Consular Adept/Master Negotiator and Sentinel Dampen Presence Indomitable gates (`f813ccc52`, `9679088c6`, `4833ed6f8`, `7d957fe53`) | **Cherry-picked clean**; immunity checked before any CT/effect write; the chat card reports immunity, not success; 4 tests | `0ceb04c38` | 0 |
+| 7b | 6R typed ActiveEffect admission (#1131) | **`SATISFIED_BY_6O`**: a differential run over 90 actor×descriptor cases found 6O equal or stricter except 6R's extra spellings (`isMindAffecting`, `isFear`, `fear`, comma-separated token strings), which were ported into the 6O ingress; `class-phase-6r-satisfied-by-6o.test.mjs` (4 tests, mutation-checked) | `0ceb04c38` | — |
+| 7c | 6S Yarkora Confusion / Caamasi Pacifism Indomitable gates and retirement of the legacy `system.activeEffects` fallback (`bf394b55d`, `21c16474a`, `ee4fbd838`, `7279bf149`, `a4dfdf875`) | **Cherry-picked clean**; the fallback writer is gone (species effects now go only through `ActorEngine.createActiveEffects`); Pacifism checks immunity BEFORE its CT shift; 5 tests | `b217127b7` | 0 |
+| 7+ | 6T…6AE (#1133–#1164) | **Not started**; must be re-derived on V2 receipts (see §6) | — | 7–9 files each |
 
 Dry-merge conflict counts of each chain tip against the V2 head: 6J/6K/6L = 0, 6M = 1 (`roll-core.js`), 6N = 6, 6O–6X = 4–7, 6Y–6AE = 9 (adds `reaction-engine.js`, `reaction-registry.js`).
 
