@@ -566,8 +566,9 @@ export class ThresholdEngine {
       return { success: false, message: `${engineer.name} has no Force Points remaining.` };
     }
 
-    // Decision A: V2 typed spend. Last Grasp / Emergency Patch are OPTIONAL HOUSE RULES (enableLastGrasp / enableEmergencyPatch, default off), not verified RAW.
-    // The long-standing service behavior (charge regardless of outcome) is preserved here (finalized immediately) and recorded as an open owner-review question (docs/audits/swse-rules-decisions-pending.md).
+    // Decision A: V2 typed spend under a HOUSE_RULE contract (threshold:* in ability-option-contracts.js; authorized while the GM-enabled
+    // setting is on, V2 cap still applies). Last Grasp / Emergency Patch are optional house rules, not RAW. Owner-adopted policy
+    // (2026-11-23, FP-RD-015): Emergency Patch consumes the Force Point even when the Mechanics check fails.
     const receipt = await ThresholdEngine._payForcePoint(engineer, 'threshold:emergencyPatch', options);
     if (!receipt) return { success: false, message: `${engineer.name} cannot spend a Force Point for Emergency Patch.` };
 

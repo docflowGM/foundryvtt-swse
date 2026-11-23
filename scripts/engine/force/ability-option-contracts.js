@@ -13,6 +13,7 @@
  *  - Block / Deflect on an adjacent ally — Core official errata p.41 as summarized in the 03B policy,
  *    with Sheltering Stance (KOTOR Campaign Guide) waiving the cost for an adjacent ally.
  */
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { ownedAbilityInstance } from "/systems/foundryvtt-swse/scripts/utils/canonical-ability-identity.js";
 import { verifyAttackEventRecord, REACTION_ATTACK_TYPE, combatKey } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-verify.js";
 import { bestDistanceSquares } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-legality-engine.js";
@@ -23,6 +24,17 @@ function talentActivation(ref, slug, actionCost, source, limit = null) {
 }
 
 export const ABILITY_OPTION_CONTRACTS = Object.freeze({
+  // HOUSE_RULE contracts (owner ruling 2026-11-23, FP-RD-015): optional vehicle house rules, NOT published SWSE abilities. They
+  // carry no printed-page citation. Once the GM enables the world setting, the typed contract authorizes ordinary use without a
+  // per-activation adjudication; it never waives the V2 round cap, eligible-point or ownership checks, and is re-read live.
+  'threshold:lastGrasp': Object.freeze({
+    kind: 'house-rule', setting: 'enableLastGrasp', actionCost: 'ability-defined', priorSpendExempt: false, limit: null,
+    source: 'HOUSE_RULE enableLastGrasp (scripts/houserules/houserule-settings.js): a PC pilot spends one Force Point for a final Standard Action when the vehicle reaches 0 HP'
+  }),
+  'threshold:emergencyPatch': Object.freeze({
+    kind: 'house-rule', setting: 'enableEmergencyPatch', actionCost: 'ability-defined', priorSpendExempt: false, limit: null,
+    source: 'HOUSE_RULE enableEmergencyPatch (scripts/houserules/houserule-settings.js): engineer spends one Force Point and makes a Mechanics DC 20 check; a failed check still consumes the point (owner-adopted house-rule policy)'
+  }),
   'lightsaber:promptForceFortification': Object.freeze({
     kind: 'critical-hit-reaction', itemType: 'talent', slug: 'force-fortification', actionCost: 'reaction', priorSpendExempt: true,
     source: 'Core Rulebook, Duelist talent tree (Force Fortification)'
@@ -149,6 +161,12 @@ export function evaluateAbilityContract(actor, ref, context = {}) {
   const contract = ABILITY_OPTION_CONTRACTS[ref];
   const fail = (message) => ({ valid: false, message });
   if (!contract) return fail('No certified Force Point contract for this ability');
+  if (contract.kind === 'house-rule') {
+    let on = false;
+    try { on = HouseRuleService.isEnabled(contract.setting) === true; } catch { on = false; }
+    if (!on) return fail(`The ${contract.setting} house rule is not enabled`);
+    return { valid: true, message: 'Verified (house rule)', actionCost: contract.actionCost, priorSpendExempt: false, eventKey: null, contract: ref };
+  }
   if (!ownedAbilityInstance(actor, { type: contract.itemType, slug: contract.slug })) return fail(`${contract.slug} is not owned by this actor`);
   const out = { valid: true, message: 'Verified', actionCost: contract.actionCost, priorSpendExempt: contract.priorSpendExempt === true, eventKey: null, contract: ref };
 

@@ -31,18 +31,29 @@ let flagSets = 0;
 const mkVehicle = () => ({ type: 'vehicle', flags: {}, getFlag() { return false; }, async setFlag() { flagSets += 1; } });
 const ledger = (a) => a.flags?.swse?.forcePointLedger?.receipts ?? [];
 let n = 0; const ok = (l) => { n += 1; console.log(`  [${n}] ${l} OK`); };
+const { HouseRuleService } = await import('/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js');
+const savedEnabled = HouseRuleService.isEnabled; const enabledKeys = new Set();
+HouseRuleService.isEnabled = (k) => enabledKeys.has(k);
 try {
-  { const p = mk('p1'); assert.equal(await ThresholdEngine.executeLastGrasp(p), false); assert.equal(p.system.forcePoints.value, 3); assert.deepEqual(ledger(p), []); ok('Last Grasp: uncontracted spend is denied, nothing charged (fail closed)'); }
-  globalThis.game.user.isGM = true;
-  { const p = mk('p2'); assert.equal(await ThresholdEngine.executeLastGrasp(p, { gmAdjudication: { reason: 'GM allows Last Grasp' } }), true);
-    assert.equal(p.system.forcePoints.value, 2); assert.equal(ledger(p)[0].state, 'finalized'); assert.equal(ledger(p)[0].abilitySourceRef, 'threshold:lastGrasp'); ok('Last Grasp: GM-adjudicated spend is one finalized receipt'); }
-  { const e = mk('e1'); const r = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 25, { gmAdjudication: { reason: 'adjudicated' } });
-    assert.equal(r.success, true); assert.equal(e.system.forcePoints.value, 2); assert.equal(ledger(e)[0].state, 'finalized'); ok('Emergency Patch: success path, one finalized receipt'); }
-  { const e = mk('e2'); const r = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 5, { gmAdjudication: { reason: 'adjudicated' } });
-    assert.equal(r.success, false); assert.equal(e.system.forcePoints.value, 2, 'charged regardless of outcome (long-standing house-rule service behavior; owner review FP-RD-015)'); assert.equal(ledger(e)[0].state, 'finalized'); ok('Emergency Patch: failed check still charges, as before (preserved, not decided)'); }
-  { globalThis.game.user.isGM = false; flagSets = 0; const e = mk('e3'); const r = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 25);
-    assert.equal(r.success, false); assert.equal(e.system.forcePoints.value, 3); assert.deepEqual(ledger(e), []); assert.equal(flagSets, 0); ok('Emergency Patch: denied spend charges nothing and does not mark the patch used'); }
+  // house rule OFF: the typed contract refuses (fail closed), nothing is charged
+  { const p = mk('p1'); assert.equal(await ThresholdEngine.executeLastGrasp(p), false); assert.equal(p.system.forcePoints.value, 3); assert.deepEqual(ledger(p), []); ok('Last Grasp: house rule disabled => denied, nothing charged'); }
+  { flagSets = 0; const e = mk('e3'); const r = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 25);
+    assert.equal(r.success, false); assert.equal(e.system.forcePoints.value, 3); assert.deepEqual(ledger(e), []); assert.equal(flagSets, 0); ok('Emergency Patch: house rule disabled => denied, charges nothing, patch not marked used'); }
+  // house rule ON: the HOUSE_RULE contract authorizes normal use for a NON-GM; no per-activation adjudication
+  enabledKeys.add('enableLastGrasp'); enabledKeys.add('enableEmergencyPatch');
+  { const p = mk('p2'); assert.equal(globalThis.game.user.isGM, false);
+    assert.equal(await ThresholdEngine.executeLastGrasp(p), true);
+    assert.equal(p.system.forcePoints.value, 2); assert.equal(ledger(p)[0].state, 'finalized'); assert.equal(ledger(p)[0].abilitySourceRef, 'threshold:lastGrasp'); assert.equal(ledger(p)[0].adjudicatedBy ?? null, null, 'no manual adjudication needed'); ok('Last Grasp: enabled house rule authorizes a player spend via the typed contract'); }
+  { const e = mk('e1'); const r = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 25);
+    assert.equal(r.success, true); assert.equal(e.system.forcePoints.value, 2); assert.equal(ledger(e)[0].state, 'finalized'); ok('Emergency Patch: success path, one finalized receipt, no GM ruling per use'); }
+  { const e = mk('e2'); const r = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 5);
+    assert.equal(r.success, false); assert.equal(e.system.forcePoints.value, 2, 'a failed Mechanics check consumes the point (owner-adopted house-rule policy 2026-11-23)'); assert.equal(ledger(e)[0].state, 'finalized'); ok('Emergency Patch: failed check still consumes the Force Point (owner-adopted policy)'); }
+  // V2 controls still apply: the per-round cap is not waived by the house-rule contract
+  { const e = mk('e4'); globalThis.game.combat = { started: true, id: 'c1', round: 1, combatant: { actor: { id: 'e4' } } };
+    const r1 = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 25);
+    const r2 = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 25); globalThis.game.combat = null;
+    assert.equal(r1.success, true); assert.equal(r2.success, false, 'second spend in the same round is denied by the V2 cap'); assert.equal(ledger(e).length, 1); ok('the V2 round cap still applies to house-rule contracts'); }
   { const src = readFileSync(new URL('../scripts/engine/combat/threshold-engine.js', import.meta.url), 'utf8');
     assert.doesNotMatch(src, /'system\.forcePoints\.value'\s*:/); ok('structural: no direct balance write remains in threshold-engine.js'); }
-} finally { restore(); }
+} finally { HouseRuleService.isEnabled = savedEnabled; restore(); }
 console.log(`class-force-v2-threshold-cutover: ${n} checks passed`);
