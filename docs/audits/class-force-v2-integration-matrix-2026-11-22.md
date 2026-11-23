@@ -162,3 +162,21 @@ Classification uses `NOT_FOUND_STATIC` for "a static search found no caller": th
 **Impact (FP-RD-003):** abilities without a certified contract (attunement, active abilities, Last Grasp, Emergency Patch, Force Alchemy rites) now fail closed for players unless a GM supplies a recorded adjudication. This is intended by Decision A; the contract table is the owner's to extend.
 
 **Not changed (follow-up):** Force Alchemy credits and Dark Side Score are still written by the service with snapshot rollback; credits belong under `TransactionEngine` and the multi-resource atomicity needs its own audited design. A failed DSP/credit write after a successful FP spend rolls the FP receipt back exactly; a later failure restores DSP/credits from the snapshot as before.
+
+## 12. Reviewer follow-ups (PR #1171 comment, 2026-11-23) — status
+
+**Per-ability map, first pass (the eight `forcePoints`-cost entries in `data/talent-granted-abilities.json`).** `ActiveAdapter` spends under `active-ability:<id>`; **none of the eight has an `ABILITY_OPTION_CONTRACTS` entry under that ref**, so each fails closed for players and runs only under a recorded GM adjudication:
+
+| id | Contract today | Printed source / cost / trigger / action | UI reachability | Next |
+| --- | --- | --- | --- | --- |
+| Regain via Force Point, severing-strike, shien, acrobatic-recovery, force-haze, improved-dark-rage, surge-of-power, Enhanced Recovery | none (denied without GM adjudication) | **not yet verified** (needs book page + trigger + action cost per ability; some may already be covered by differently-keyed contracts such as `talent-activation` entries and should be re-keyed rather than duplicated) | not yet audited | certify published abilities in priority order; owner supplies/approves each contract |
+
+Fail-closed is a safe state, not functional completion; this table is the work list for contract certification.
+
+**Duration audit corrections (done):** `species-activated-ability-engine.js` wrote an inert wall-clock `flags.swse.energySurge.expiresAt` (no reader anywhere); removed. Round-based expiry via `durationRounds` is untouched. `ForcePointsService._eligibleBonusEntries` compares numeric `expires` to `Date.now()`, but every reachable producer writes a *string* expiry (`'encounter'`, `'end_of_turn'`, `'end_next_turn'`), which that branch rejects (fail closed); the comparison is inert and annotated. The earlier "all `Date.now` uses are infrastructure/UI" statement was too broad and is withdrawn.
+
+**FP-RD-015:** reclassified as an optional house rule (both settings default off); the "printed text" wording was wrong and is corrected; the reviewer's policy is recorded as an unadopted owner-review proposal. `NOT_FOUND_STATIC` APIs remain preserved.
+
+**Matrix freshness:** re-run on head after these edits over the focused set (`tests/*force*`, `class-*`, `v2-*`, temptation, serenity, species): **103 test files, 98 pass, 5 fail**. The five are the original baseline failures (`force-power-final-integration`, `phase3-force-power-corrections`, `phase4-force-modifier-automation`, `phase5-force-healing-mitigation`, `phase6-force-direct-damage`); no new failures. "169" in §8 counted individual tests from an earlier selection; this run counts **files**.
+
+**Force Alchemy:** FP is exactly compensated, but credits/DSP still use snapshot rollback, so the multi-resource rite is **not** certified atomic and should not be relied on for partial-failure safety until the TransactionEngine-based design is reviewed.

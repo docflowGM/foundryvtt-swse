@@ -3911,3 +3911,6 @@ Resist Force / Valor conditional bonuses remain reminder-gated effects (no autom
 | Status | `DEFERRED_RULES_REVIEW` |
 | Decision authority | Project owner |
 | Resolution | |
+
+### FP-RD-015 — classification correction (appended 2026-11-23; original entry preserved above)
+Independent review (PR #1171 comment, relayed) notes `enableLastGrasp` and `enableEmergencyPatch` are optional house rules in `scripts/houserules/houserule-settings.js` (both default off); no printed-SWSE source is established. The earlier wording "printed text" was wrong and is corrected in code. Reviewer-proposed policy (NOT adopted, owner-review item): an enabled Emergency Patch costs 1 FP to attempt; a failed check still consumes it; a software/authorization failure that prevents the attempt applies V2 receipt settlement. Open: whether an enabled house-rule setting plus a typed HOUSE_RULE contract may authorize use without per-activation GM adjudication (must not bypass FP-RD-003 or the V2 cap). Status `DEFERRED_RULES_REVIEW`; Resolution blank.

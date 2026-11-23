@@ -39,7 +39,7 @@ try {
   { const e = mk('e1'); const r = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 25, { gmAdjudication: { reason: 'adjudicated' } });
     assert.equal(r.success, true); assert.equal(e.system.forcePoints.value, 2); assert.equal(ledger(e)[0].state, 'finalized'); ok('Emergency Patch: success path, one finalized receipt'); }
   { const e = mk('e2'); const r = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 5, { gmAdjudication: { reason: 'adjudicated' } });
-    assert.equal(r.success, false); assert.equal(e.system.forcePoints.value, 2, 'charged regardless of outcome (printed text; open rules question recorded)'); assert.equal(ledger(e)[0].state, 'finalized'); ok('Emergency Patch: failed check still charges, as before (preserved, not decided)'); }
+    assert.equal(r.success, false); assert.equal(e.system.forcePoints.value, 2, 'charged regardless of outcome (long-standing house-rule service behavior; owner review FP-RD-015)'); assert.equal(ledger(e)[0].state, 'finalized'); ok('Emergency Patch: failed check still charges, as before (preserved, not decided)'); }
   { globalThis.game.user.isGM = false; flagSets = 0; const e = mk('e3'); const r = await ThresholdEngine.attemptEmergencyPatch(mkVehicle(), e, 'engines', 25);
     assert.equal(r.success, false); assert.equal(e.system.forcePoints.value, 3); assert.deepEqual(ledger(e), []); assert.equal(flagSets, 0); ok('Emergency Patch: denied spend charges nothing and does not mark the patch used'); }
   { const src = readFileSync(new URL('../scripts/engine/combat/threshold-engine.js', import.meta.url), 'utf8');

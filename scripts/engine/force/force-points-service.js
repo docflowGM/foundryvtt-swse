@@ -216,6 +216,9 @@ export class ForcePointsService {
       if (entry.restrictions || entry.restriction) return false;
       if (entry.encounterId && (!combat?.started || combat.id !== entry.encounterId)) return false;
       if (entry.round != null && Number(entry.round) !== Number(combat?.round)) return false;
+      // Audit 2026-11-23: no reachable producer writes a numeric `expires`; every current producer writes a string ('encounter',
+      // 'end_of_turn', ...), which this branch rejects (fail closed). The Date.now() comparison is therefore inert; a numeric
+      // wall-clock expiry must not be introduced (GM-authoritative time: use event/worldTime evidence instead).
       if (entry.expires) {
         if (typeof entry.expires !== 'number' || !Number.isFinite(entry.expires) || now >= entry.expires) return false;
       }

@@ -365,8 +365,8 @@ export class SpeciesActivatedAbilityEngine {
     });
     await ActorEngine.updateActor(actor, {
       'flags.swse.energySurge.pendingPersistentCondition': true,
-      'flags.swse.energySurge.rounds': rounds,
-      'flags.swse.energySurge.expiresAt': Date.now() + rounds * 6000
+      'flags.swse.energySurge.rounds': rounds
+      // (a wall-clock `expiresAt` was removed: it had no reader, and a combat-round duration is tracked by the effect's durationRounds)
     });
 
     await ChatMessage.create({
