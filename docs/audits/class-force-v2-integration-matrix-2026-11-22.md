@@ -16,7 +16,9 @@
 | 4x | the later #1126 commits `55cbff915`..`619791da0` (Temptation expiry/FP-trigger timing/no-op condition choice) | **Superseded, not merged**: they patch 6N's pre-V2 hook model, which slices 3a–3d replaced with the finalize outbox and spend-time evidence | — | — |
 | 5 | 6P Prophet GM vision review (#1127 chain: `1cfaef5d3`, `45a09b6ff`, `28da0c283`, `fd485d608`, `b8a53d6ca`) | **Cherry-picked clean, 0 conflicts**; GM-only dialog, writes through `ActorEngine.applyMutationPlan`, records the narrated vision and leaves Destiny `GM_ADJUDICATED_SEPARATELY` (no rules decided); 3 tests; focused matrix 101 of 106, same 5 baseline failures, 0 new | `7dad3448b` (tip) | 0 |
 | 5x | the other commits in the #1127 chain (`51447b5ed`..`d26da3543`: Temptation expiry, FP-trigger timing, no-op condition choice, 6J–6P matrix doc) | **Superseded, not merged** (V2 outbox / spend-time evidence replace them) | — | — |
-| 6+ | sheet action controls (6P second branch) and 6Q…6AE (#1128–#1164) | **Not started**; must be re-derived on V2 receipts (see §6) | — | 7–9 files each |
+| 6 | 6P sheet action controls (V13 header controls for Serenity, Temptation, pending target choice; `c6a2e2b6b`, `5cfdfa09b`, `0a1c63e66`, `7b2888451`) | **Cherry-picked clean, 0 conflicts**; routes only to the existing `game.swse.classFeatures` API (verified present in `index.js`), no action/roll logic cloned; 5 tests; focused matrix unchanged: 5 baseline failures, 0 new | `de7ef8a32` (tip) | 0 |
+| 6x | the attack-FP receipt commits of the same branch (`3cff5e122`, `5b77139c7`, `cdcc9523a`, `1f5587d7b`, `667bfc76b`, `8f97c3be0`) | **Superseded, not merged**: they emit the Temptation event at attack finalization on the pre-V2 hook; V2's finalize outbox and the cut-over `enhanced-rolls.js` finalize replace them | — | — |
+| 7+ | 6Q…6AE (#1128–#1164) | **Not started**; must be re-derived on V2 receipts (see §6) | — | 7–9 files each |
 
 Dry-merge conflict counts of each chain tip against the V2 head: 6J/6K/6L = 0, 6M = 1 (`roll-core.js`), 6N = 6, 6O–6X = 4–7, 6Y–6AE = 9 (adds `reaction-engine.js`, `reaction-registry.js`).
 
