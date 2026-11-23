@@ -41,14 +41,12 @@ export class CombatExecutor {
         throw new Error(`Action not found: ${actionKey}`);
       }
 
-      // Check Force Point expenditure
-      let usedForce = false;
+      // Force Points are spent ONLY through ActorEngine.spendForcePoints (typed context, ForcePointsService.authorizeSpend,
+      // exact finalize/rollback). CombatEngine.rollAttack has no canonical paid-bonus path, so a Force Point request here
+      // fails closed instead of writing the balance directly (Class/Force x Force V2, Decision A). Reachability of this
+      // method is NOT_FOUND_STATIC (no repo caller found); it is kept, not deleted.
       if (options.force) {
-        const fpValue = SchemaAdapters.getForcePoints(actor);
-        if (fpValue <= 0) {
-          throw new Error("No Force Points available");
-        }
-        usedForce = true;
+        throw new Error("Force Point attack bonuses must be paid through the canonical roll engine (ActorEngine Force Point receipts); this executor no longer debits the balance directly");
       }
 
       // Call CombatEngine for actual roll
@@ -57,18 +55,6 @@ export class CombatExecutor {
       // Generate chat message via SWSEChat
       if (result) {
         await this._generateAttackChatMessage(actor, actionData, result, options);
-      }
-
-      // Spend Force Point if used. The SWSEInitiative authority spends it
-      // itself when a Force die is actually applied, so do not double-spend.
-      if (usedForce && result?.usedForce !== true) {
-        const currentFP = SchemaAdapters.getForcePoints(actor);
-        const plan = {
-          update: {
-            "system.forcePoints.value": Math.max(0, currentFP - 1)
-          }
-        };
-        await ActorEngine.apply(actor, plan);
       }
 
       // Apply animations if element available
@@ -102,13 +88,12 @@ export class CombatExecutor {
       // Check Force Point. Take 10 initiative never spends a Force Point;
       // SWSEInitiative also ignores Force Points for the Take 10 execution path.
       const isTake10Initiative = String(options.checkMode ?? options.mode ?? '').toLowerCase() === 'take10';
-      let usedForce = false;
       if (!isTake10Initiative && options.useForce) {
+        // Early, read-only UX check; the authoritative decision is ForcePointsService.authorizeSpend inside RollCore.
         const fpValue = SchemaAdapters.getForcePoints(actor);
         if (fpValue <= 0) {
           throw new Error("No Force Points available");
         }
-        usedForce = true;
       }
 
       // Execute initiative roll via CombatEngine
@@ -121,17 +106,10 @@ export class CombatExecutor {
         await this._generateInitiativeChatMessage(actor, result);
       }
 
-      // Spend Force Point if used. The SWSEInitiative authority spends it
-      // itself when a Force die is actually applied, so do not double-spend.
-      if (usedForce && result?.usedForce !== true) {
-        const currentFP = SchemaAdapters.getForcePoints(actor);
-        const plan = {
-          update: {
-            "system.forcePoints.value": Math.max(0, currentFP - 1)
-          }
-        };
-        await ActorEngine.apply(actor, plan);
-      }
+      // No Force Point is debited here. SWSEInitiative pays through RollCore -> ForcePointSpendCoordinator ->
+      // ActorEngine.spendForcePoints (typed, authorized, round-capped) and finalizes only when the Force die was applied.
+      // The former fallback charged a point whenever that path declined or applied nothing, i.e. a point V2's
+      // authorization had refused (Class/Force x Force V2, Decision A).
 
       // Trigger Sentinel for initiative tracking
       if (game.combat) {

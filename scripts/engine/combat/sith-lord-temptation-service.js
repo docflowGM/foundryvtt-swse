@@ -207,6 +207,39 @@ export class SithLordTemptationService {
     return reports;
   }
 
+  /**
+   * GM control: end a mark early, or correct a mark that was expired incorrectly (rules-aware, GM-controlled time).
+   * The GM is the authority over narrative time; this never invents elapsed time. It changes ONLY the mark's state and
+   * appends an identifiable override record (who, when on the CAMPAIGN clock - never wall-clock - why, from -> to). It never
+   * touches Force/Destiny receipts, stored consequences, or resource pools, so a correction cannot duplicate resource
+   * consumption or re-apply a finalized consequence. Spends already finalized keep the eligibility they had when they were
+   * made (their spend-time evidence is immutable); only FUTURE spends see the corrected state.
+   */
+  static async gmSetMarkState(target,markId,state,{reason}={}){
+    if(globalThis.game?.user?.isGM!==true)throw new Error('Only the GM may override a Temptation mark');
+    if(!['active','expired'].includes(state))throw new Error('A Temptation mark can be set to active or expired');
+    if(typeof reason!=='string'||!reason.trim())throw new Error('A GM override requires a recorded reason');
+    if(!target?.id)throw new Error('GM override requires the marked target actor');
+    return locked(target,async()=>{
+      const marks=currentTemptations(target);
+      const index=marks.findIndex(m=>m.id===markId);
+      if(index<0)throw new Error('Temptation mark not found on this actor');
+      if(marks[index].state===state)return {changed:false,state};
+      const clock=Number(globalThis.game?.time?.worldTime);
+      const override={
+        by:String(globalThis.game?.user?.id??''),
+        // campaign clock only; with no world clock this is null, never a wall-clock stand-in
+        atWorldTime:Number.isFinite(clock)?clock:null,
+        reason:reason.trim(),from:marks[index].state,to:state,
+      };
+      const updated=marks.map((m,i)=>i===index?{...m,state,overrides:[...(Array.isArray(m.overrides)?m.overrides:[]),override]}:m);
+      await ActorEngine.applyMutationPlan(target,{
+        set:{[TEMPTATION_PATH]:updated}
+      },{source:'SithLordTemptationService.gmOverride',transactional:true});
+      return {changed:true,state,override};
+    });
+  }
+
   /** Re-deliver any finalized receipt (Force or Destiny, each from its OWN ledger) whose trigger is still pending. */
   static async reconcileSpendTriggers(){
     const out={actors:0,delivered:0};

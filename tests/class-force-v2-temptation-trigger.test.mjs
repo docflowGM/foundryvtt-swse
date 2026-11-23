@@ -619,6 +619,101 @@ try {
     assert.equal(EVENTS(g).length, 1);
     ok('D9: Destiny permission respected: GM or owner only');
   }
+
+  // ===================== GM-authoritative time (addendum): wall-clock, reload, GM controls =====================
+  const withJump = async (ms, fn) => { const real = Date.now; Date.now = () => real() + ms; try { return await fn(); } finally { Date.now = real; } };
+  const snapshotState = (a) => JSON.stringify({ fp: a.system.forcePoints, dp: a.system.destinyPoints, fl: ledger(a), dl: dledger(a), ev: EVENTS(a) });
+
+  // W7. wall-clock time passing never expires a pending trigger or a mark; only combat events/GM actions do.
+  {
+    const t = makeTarget('w7');
+    const r = await spend(t);
+    failMutation = true;
+    await ActorEngine.finalizeForcePointSpend(t, r);                   // delivery failed: pending
+    assert.equal(ledger(t)[0].trigger.state, 'pending');
+    await withJump(30 * 24 * 60 * 60 * 1000, async () => {
+      assert.equal((await ActorEngine.dispatchForcePointTriggers(t)).delivered, 1, 'a trigger recorded 30 real days ago is still owed');
+    });
+    assert.equal(ledger(t)[0].trigger.state, 'delivered', 'delivered, never auto-staled');
+    assert.equal(EVENTS(t).length, 1);
+    assert.equal(marks(t)[0].state, 'active', 'no combat event occurred, so the mark did not expire however much real time passed');
+    ok('W7: 30 days of real time neither expire a pending trigger nor a mark');
+  }
+
+  // W8. disconnect / reload / pause: a rebuilt actor reconciles from its persisted ledger, once, with no manufactured time.
+  {
+    const rebuild = (src) => {
+      const a = JSON.parse(JSON.stringify({ id: src.id, name: src.name, type: src.type, system: src.system, flags: src.flags, items: [] }));
+      a.getFlag = function (scope, name) { return this.flags?.[scope]?.[name]; };
+      a.testUserPermission = () => true;
+      return a;
+    };
+    for (const kind of ['force', 'destiny']) {
+      const t = makeTarget(`w8-${kind}`);
+      const r = kind === 'force' ? await spend(t) : await dspend(t);
+      failMutation = true;                                             // client dies before the consequence is stored
+      await (kind === 'force' ? ActorEngine.finalizeForcePointSpend(t, r) : ActorEngine.finalizeDestinyPointSpend(t, r));
+      assert.equal((kind === 'force' ? ledger(t) : dledger(t))[0].trigger.state, 'pending');
+      const poolBefore = kind === 'force' ? t.system.forcePoints.value : t.system.destinyPoints.value;
+      const reloaded = rebuild(t);                                     // reload / reconnect: only persisted data survives
+      globalThis.game.actors = [reloaded];
+      const first = await withJump(14 * 24 * 60 * 60 * 1000, () => SithLordTemptationService.reconcileSpendTriggers());
+      assert.equal(first.delivered, 1, `${kind}: reconnect delivers the owed consequence`);
+      assert.equal(EVENTS(reloaded).length, 1);
+      assert.equal(reloaded.flags.swse.classFeatures.sithLord.temptation.every((m) => m.state === 'active'), true, 'reloading manufactured no elapsed game time');
+      assert.equal(kind === 'force' ? reloaded.system.forcePoints.value : reloaded.system.destinyPoints.value, poolBefore, 'no re-charge');
+      const again = await SithLordTemptationService.reconcileSpendTriggers();
+      assert.equal(again.delivered, 0, 'a second reconcile does nothing');
+      assert.equal(EVENTS(reloaded).length, 1);
+    }
+    globalThis.game.actors = [];
+    ok('W8: disconnect/reload/pause: reconcile from the persisted ledger delivers once, re-charges nothing, expires nothing (Force and Destiny)');
+  }
+
+  // W9. GM controls: end/correct a mark with a recorded override; never duplicates consumption or finalized consequences.
+  {
+    const t = makeTarget('w9');
+    const r = await spend(t); await ActorEngine.finalizeForcePointSpend(t, r);      // qualified while the mark was active
+    assert.equal(EVENTS(t).length, 1);
+    const markId = marks(t)[0].id;
+
+    globalThis.game.user.isGM = false;
+    await assert.rejects(() => SithLordTemptationService.gmSetMarkState(t, markId, 'expired', { reason: 'x' }), /Only the GM/);
+    globalThis.game.user.isGM = true;
+    await assert.rejects(() => SithLordTemptationService.gmSetMarkState(t, markId, 'expired', {}), /recorded reason/);
+    await assert.rejects(() => SithLordTemptationService.gmSetMarkState(t, 'nope', 'expired', { reason: 'x' }), /not found/);
+    await assert.rejects(() => SithLordTemptationService.gmSetMarkState(t, markId, 'paused', { reason: 'x' }), /active or expired/);
+
+    const before = snapshotState(t);
+    globalThis.game.time = { worldTime: 777 };
+    const ended = await SithLordTemptationService.gmSetMarkState(t, markId, 'expired', { reason: 'Sith Lord left the scene' });
+    assert.equal(ended.changed, true);
+    const rec = marks(t)[0];
+    assert.equal(rec.state, 'expired');
+    assert.deepEqual({ ...rec.overrides[0], by: 'x' }, { by: 'x', atWorldTime: 777, reason: 'Sith Lord left the scene', from: 'active', to: 'expired' }, 'override is identifiable and stamped with the CAMPAIGN clock');
+    assert.equal(snapshotState(t), before, 'the override touched no receipt, consequence or resource pool');
+    assert.equal((await SithLordTemptationService.gmSetMarkState(t, markId, 'expired', { reason: 'again' })).changed, false, 'idempotent');
+
+    globalThis.game.time = undefined;                                              // no campaign clock
+    await SithLordTemptationService.gmSetMarkState(t, markId, 'active', { reason: 'ended by mistake' });
+    assert.equal(marks(t)[0].overrides[1].atWorldTime, null, 'with no campaign clock the stamp is null, never wall-clock time');
+    assert.equal(snapshotState(t), before, 'correcting it back changed no receipt, consequence or pool either');
+    assert.equal((await ActorEngine.dispatchForcePointTriggers(t)).delivered, 0, 'nothing is re-delivered after a correction');
+    assert.equal(EVENTS(t).length, 1, 'the finalized consequence is neither duplicated nor re-applied');
+
+    // a spend made while the mark was (incorrectly) expired did not qualify, and a later correction does not retro-qualify it
+    await SithLordTemptationService.gmSetMarkState(t, markId, 'expired', { reason: 'GM ended it' });
+    live.round = 3;
+    const missed = await spend(t); await ActorEngine.finalizeForcePointSpend(t, missed);
+    assert.equal(EVENTS(t).length, 1, 'a spend while expired does not qualify');
+    await SithLordTemptationService.gmSetMarkState(t, markId, 'active', { reason: 'ended by mistake' });
+    await ActorEngine.dispatchForcePointTriggers(t);
+    assert.equal(EVENTS(t).length, 1, 'correcting the mark does not retroactively qualify the earlier spend');
+    const later = await dspend(t); await ActorEngine.finalizeDestinyPointSpend(t, later);   // Destiny: not subject to the Force Point round cap
+    assert.equal(EVENTS(t).length, 2, 'a NEW spend while the corrected mark is active qualifies normally');
+    live.round = 2; globalThis.game.time = { worldTime: 0 };
+    ok('W9: GM override is GM-only, reasoned, campaign-clock stamped, idempotent; it never duplicates consumption or re-applies/retro-qualifies consequences');
+  }
 } finally {
   restore();
 }
