@@ -10,6 +10,8 @@
 | 2 | 6M Jedi Master Serenity (#1124 tip `ba1c52256`) | **Merged, 1 file / 2 hunks resolved** | `b890deeda` | `roll-core.js` |
 | 3a | 6N Sith Lord Temptation (#1125 tip `4c6803c23`), V2 authority wins | **Merged, 6 files / 7 hunks resolved to V2** | `49ee4b70d` | `force-engine`, `spend-coordinator`, `roll-core`, `actor-engine` (2), 2 tests |
 | 3b | Temptation Force Point trigger re-keyed to V2's finalize outbox (owner-approved design) | **Implemented, offline-tested** | `95928930a` | — |
+| 3c | Temptation eligibility judged at the SPEND commit (Decision C) | **Implemented, offline-tested** | `ccd024b3a` | — |
+| 3d | Separate durable Destiny Point ledger + outbox (Decision B) | **Implemented, offline-tested** | `e1abed3a7` | — |
 | 4+ | 6O…6AE (#1126–#1164) | **Not started**; must be re-derived on V2 receipts (see §6) | — | 7–9 files each |
 
 Dry-merge conflict counts of each chain tip against the V2 head: 6J/6K/6L = 0, 6M = 1 (`roll-core.js`), 6N = 6, 6O–6X = 4–7, 6Y–6AE = 9 (adds `reaction-engine.js`, `reaction-registry.js`).
@@ -111,3 +113,37 @@ Routing these through `ActorEngine.spendForcePoints` would start enforcing V2's 
 - **Late delivery never erases a qualified consequence.** A spend that qualified when made still yields its target-owned choice after the mark expires, the encounter ends, or a client reconnects. An expired mark is never reactivated, and nothing applies until the target owner or GM chooses.
 - **No wall-clock expiry anywhere in the trigger path.** The earlier 24-hour "stale trigger" timeout was removed for exactly this reason; `recordedAt` is informational only.
 - **Open follow-up (not changed):** other V2 effects that expire on a wall-clock or `worldTime` basis should be audited against this rule (Force Powers, regimens, rests, equipment effects, temporary bonuses). Out of scope for this slice; recorded so it is not lost.
+
+
+## 9. Decision B as built — separate durable Destiny Point ledger (slice 3d)
+
+| Requirement | Implementation |
+| --- | --- |
+| Separate typed ledger; never mixed with Force Points | `flags.swse.destinyPointLedger`, its own queue and outbox; a Destiny spend never touches `forcePointLedger` (asserted structurally and by behavior) |
+| Authenticated amount/owner, unique request id | receipt `{receiptId, requestId, actorId, spent}`; duplicate `requestId` rejected, no re-charge |
+| Atomic debit | the pool write and the receipt are ONE `updateActor` call |
+| Commit / finalize / rollback | `spendDestinyPoints` → `finalizeDestinyPointSpend` or `rollbackDestinyPointSpend` (exact, one-shot, only that receipt; an intervening grant survives; a finalized spend is never refundable) |
+| Durable pending trigger, recoverable delivery | trigger recorded in the same write as finality, delivered after the lock; `dispatchDestinyPointTriggers`; reconciled on `ready` |
+| Decision C parity | `spendEvidence` captured on the Destiny receipt at the spend; late replay after GM expiry / encounter end / reconnect yields exactly one choice; before-mark, after-expiry and after-window spends never qualify |
+| Printed magnitude and owner choice preserved | Destiny consequence is 2 steps; every consequence stays `pending-target-choice` |
+| No forged ids across ledgers | a Force receipt id cannot satisfy a Destiny event and vice versa; wrong-source events rejected |
+| Never backfill fabricated history | no migration; actors without a Destiny ledger simply start one on their next spend |
+
+**Destiny spenders cut over (3):** `swse-actor-base.useDestinyPoint`, the `enhanced-rolls` Destiny option, and the `reaction-registry` `destiny-point` fallback. The fallback never imported `ActorEngine` (so it could not have spent); it now spends through the ledger, and its card reports "Not Spent" when no point was spent instead of always claiming success. Other writes to `system.destinyPoints.value` are grants/resets (`force-disciple-features`, `follower-species-materialization-hotfix`), not spends, and are unchanged.
+
+**Correction to the slice-3d commit message:** it states "Focused matrix 172 tests". The run reported **169 tests, 164 pass, 5 fail** (the same 5 documented pre-existing failures: unresolved `/systems/...` imports, identical cause on the V2 head). The conclusion is unchanged; the count in that message is wrong.
+
+## 10. Decision A — reachability classification and cutover plan (nothing changed yet)
+
+Classification uses `NOT_FOUND_STATIC` for "a static search found no caller": that is **not** proof of dead code and not authority to delete. Runtime dispatch (templates, `game.swse`, string registrations, dynamic imports, hooks, macros) has not been ruled out.
+
+| Site | Static reachability | Finding | Planned cutover |
+| --- | --- | --- | --- |
+| `combat-executor.executeInitiative` (130) | **reachable**: character sheet 6689/6720 | `SWSEInitiative` already pays through `RollCore` (V2 spend + finalize) and reports `usedForce` only when a Force die applied; the executor's fallback debit fires when V2 declined or applied nothing, so it can charge a point V2's authorization refused | delete the fallback debit; V2 `RollCore` is the sole authority |
+| `combat-executor.executeAttack` (68) | `NOT_FOUND_STATIC` (no sheet caller) | same fallback; `CombatEngine.rollAttack` has no canonical paid-bonus path | keep the API; **fail closed** when `options.force` is passed (no unauthorized debit) |
+| `threshold-engine.executeLastGrasp` / `attemptEmergencyPatch` | `NOT_FOUND_STATIC` | direct debit; Emergency Patch charges "regardless of outcome" | keep the APIs; route through V2 `ability-option`; preserve the existing charge-regardless behavior and record it as an open rules question |
+| `weapons-engine.attuneLightsaber` | **reachable**: workbench → `MirajAttunementApp` | writes both `system.forcePoints.value` and `system.resources.forcePoints.value`, then the item flag | one canonical pool; V2 spend → flag write → finalize; exact rollback if the flag write fails |
+| `active-adapter.handleEffect` | **reachable**: ability coordinator `register` | applies the effect before charging and reads `forcePoints.available` | spend first; denial means no effect; finalize after; exact rollback on failure |
+| Force Alchemy service | **reachable**: workbench app | subtracts FP with credits/DSS and rolls back by restoring an OLD FP snapshot | never restore a historical balance; exact receipt rollback, or fail closed for that rite |
+
+**Important constraint discovered (V2 owner ruling FP-RD-003):** an `ability-option` Force Point spend requires a typed contract in `ABILITY_OPTION_CONTRACTS` (10 abilities certified today) **or** explicit GM adjudication with a recorded reason. Routing the sites above through V2 therefore makes uncontracted abilities fail closed for players until a certified contract (trigger event, action timing) or a GM-adjudication UI exists. Authoring contracts would invent rules and is out of scope for the implementer; each such site is recorded as blocked-by-contract, not silently weakened.
