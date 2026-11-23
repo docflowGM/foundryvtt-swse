@@ -346,15 +346,18 @@ export class WeaponsEngine {
    * Attempt to attune a self-built lightsaber
    * - Verifies builder ownership
    * - Verifies not already attuned
-   * - Verifies actor has Force Point
-   * - Deducts Force Point via ActorEngine
-   * - Sets flags.swse.attunedBy
+   * - Spends ONE Force Point through ActorEngine.spendForcePoints (typed ability-option context; authorization,
+   *   round cap and the FP-RD-003 contract / GM-adjudication requirement are decided by ForcePointsService)
+   * - Sets flags.swse.attunedBy, then finalizes the receipt; if the flag was NOT written the exact receipt is rolled back
+   *   (never a historical balance snapshot). There is a single canonical resource: system.forcePoints / bonus entries.
    *
    * @param {Actor} actor - Actor attempting attunement
    * @param {Item} weapon - The lightsaber to attune
-   * @returns {Promise<Object>} { success, reason? }
+   * @param {Object} [options]
+   * @param {{reason:string}} [options.gmAdjudication] - explicit GM adjudication (verified against the live user by V2)
+   * @returns {Promise<Object>} { success, reason?, message? }
    */
-  static async attuneLightsaber(actor, weapon) {
+  static async attuneLightsaber(actor, weapon, options = {}) {
     if (!weapon || weapon.type !== 'weapon') {
       return { success: false, reason: 'invalid_weapon' };
     }
@@ -380,25 +383,42 @@ export class WeaponsEngine {
       // Import ActorEngine dynamically to avoid circular dependencies
       const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
-      const currentFP = actor.system?.forcePoints?.value ?? actor.system?.resources?.forcePoints?.value ?? 0;
-      if (currentFP < 1) {
+      // Step 1: pay through the canonical V2 transaction. ForcePointsService.authorizeSpend is the authority (eligible
+      // points, round cap, ability contract or explicit GM adjudication); a denial means NO attunement and NO charge.
+      let receipt;
+      try {
+        receipt = await ActorEngine.spendForcePoints(actor, 1, {
+          useKind: 'ability-option',
+          abilitySourceRef: 'weapons:attuneLightsaber',
+          ...(options?.gmAdjudication ? { gmAdjudication: options.gmAdjudication } : {})
+        });
+      } catch (denied) {
+        return { success: false, reason: 'force_point_denied', message: denied?.message ?? 'Force Point spend was not authorized' };
+      }
+      if (!receipt?.receiptId) {
         return { success: false, reason: 'no_force_points' };
       }
 
-      // Step 1: Deduct Force Point via ActorEngine mutation plan
-      await ActorEngine.applyMutationPlan(actor, {
-        set: {
-          'system.forcePoints.value': currentFP - 1,
-          'system.resources.forcePoints.value': currentFP - 1
+      // Step 2: the paid effect - set attunedBy on the weapon via ActorEngine
+      try {
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
+          _id: weapon.id,
+          'flags.swse.attunedBy': actor.id
+        }]);
+      } catch (writeError) {
+        // An uncertain write may have applied: re-read the document before deciding. If the attunement exists the point is
+        // finalized (never refund an applied effect); if it does not, compensate ONLY this receipt, exactly.
+        const current = actor.items?.get?.(weapon.id) ?? weapon;
+        if (current?.flags?.swse?.attunedBy === actor.id) {
+          await ActorEngine.finalizeForcePointSpend(actor, receipt);
+          return { success: true, note: 'attunement applied; write acknowledgement failed' };
         }
-      });
+        await ActorEngine.rollbackForcePointSpend(actor, receipt);
+        throw writeError;
+      }
 
-      // Step 2: Set attunedBy flag on weapon via ActorEngine
-      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
-        _id: weapon.id,
-        'flags.swse.attunedBy': actor.id
-      }]);
-
+      // Step 3: the attunement exists - settle the receipt exactly
+      await ActorEngine.finalizeForcePointSpend(actor, receipt);
       return { success: true };
 
     } catch (err) {
