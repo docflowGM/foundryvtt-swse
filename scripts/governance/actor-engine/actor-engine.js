@@ -2,7 +2,7 @@
 import { claimIndependentSkills } from '/systems/foundryvtt-swse/scripts/species/species-grant-reconciliation.js';
 import { getEffectiveRechargeShieldsAmount } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
-import { forcePointTriggerConsumers, hasForcePointTriggerConsumers } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js";
+import { forcePointTriggerConsumers, hasForcePointTriggerConsumers, captureSpendEvidence } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js";
 import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/actor-utils.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
 import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
@@ -60,16 +60,6 @@ async function withForcePointQueue(actor, operation) {
 
 // Force Point trigger outbox support (see finalizeForcePointSpend / dispatchForcePointTriggers).
 const _forcePointTriggersInFlight = new Set();
-const FORCE_POINT_TRIGGER_MAX_AGE_MS = 24 * 60 * 60 * 1000;
-function captureForcePointTriggerContext() {
-  const combat = globalThis.game?.combat;
-  return {
-    combatId: combat?.started ? String(combat.id ?? '') || null : null,
-    round: Number.isSafeInteger(combat?.round) ? combat.round : null,
-    turn: Number.isSafeInteger(combat?.turn) ? combat.turn : null,
-    worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null
-  };
-}
 
 export const ActorEngine = {
   // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
@@ -2132,7 +2122,10 @@ export const ActorEngine = {
         normalSpent: decision.normalSpent,
         bonusEntriesSpent: debit.map(({ id, source, amount, entry }) =>
           ({ id, source, amount, entry: { ...entry } })),
-        spent: amount, state: 'committed'
+        spent: amount, state: 'committed',
+        // Immutable spend-time evidence for delayed, feature-defined consequences. Captured from authoritative state HERE (the
+        // commit), never from a caller flag and never re-derived at finalization/delivery time.
+        spendEvidence: captureSpendEvidence(actor, 'force')
       };
       // Bounded retention: only settled receipts (finalized/rolled-back) older than
       // the newest 200 are dropped; committed receipts are never dropped, so the
@@ -2242,7 +2235,7 @@ export const ActorEngine = {
       // listener failure or client disconnect after this point can always be reconciled from the ledger.
       // Only the first committed->finalized transition records it; an alreadyFinalized retry never does.
       const trigger = hasForcePointTriggerConsumers()
-        ? { state: 'pending', recordedAt: Date.now(), context: captureForcePointTriggerContext() }
+        ? { state: 'pending', recordedAt: Date.now() }
         : undefined;
       const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'finalized', ...(trigger ? { trigger } : {}) } : r);
       await this.updateActor(actor, { 'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords } });
@@ -2265,7 +2258,7 @@ export const ActorEngine = {
   async dispatchForcePointTriggers(actor, { receiptId = null } = {}) {
     if (!actor?.id) throw new Error('dispatchForcePointTriggers requires an identified actor');
     const consumers = forcePointTriggerConsumers();
-    const report = { delivered: 0, pending: 0, stale: 0, invalid: 0 };
+    const report = { delivered: 0, pending: 0, invalid: 0 };
     if (!consumers.length) return report;
     const ledger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
     const rows = (Array.isArray(ledger.receipts) ? ledger.receipts : []).filter(r =>
@@ -2277,10 +2270,9 @@ export const ActorEngine = {
       _forcePointTriggersInFlight.add(key);
       try {
         if (!Number.isSafeInteger(r.spent) || r.spent < 1) { await this.ackForcePointTrigger(actor, r.receiptId, 'invalid'); report.invalid++; continue; }
-        if (Date.now() - Number(r.trigger.recordedAt ?? 0) > FORCE_POINT_TRIGGER_MAX_AGE_MS) { await this.ackForcePointTrigger(actor, r.receiptId, 'stale'); report.stale++; continue; }
         const event = {
           actor, actorId: String(actor.uuid || actor.id), resource: 'force', spent: r.spent, committed: true,
-          receiptId: r.receiptId, source: 'ActorEngine.finalizeForcePointSpend', context: r.trigger.context ?? null
+          receiptId: r.receiptId, source: 'ActorEngine.finalizeForcePointSpend'
         };
         let allOk = true;
         for (const consume of consumers) {

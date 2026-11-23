@@ -9,12 +9,12 @@ import { rollSkill } from '/systems/foundryvtt-swse/scripts/rolls/skills.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { DSPEngine } from '/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js';
 import { ConditionTrackRules } from '/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js';
-import { registerForcePointTriggerConsumer } from '/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js';
+import { registerForcePointTriggerConsumer, registerSpendEvidenceProvider } from '/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js';
 import { apexClassFeatureAccess } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/apex-class-feature-access.js';
 import {
   TEMPTATION_PATH,TEMPTATION_EVENTS_PATH,actorIdentity,
   currentTemptations,currentTemptationEvents,
-  planTemptationMark,planTemptationSpend,expireTemptationEntries,
+  planTemptationMark,planTemptationSpend,planTemptationSpendFromEvidence,temptationSpendEvidence,expireTemptationEntries,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/sith-lord-temptation-state.js';
 
 const locks=new Set();
@@ -56,12 +56,6 @@ export function verifyFinalizedForceReceipt(target,event){
    return {ok:false,reason:'receipt-amount-mismatch'};
  if(event.source!=='ActorEngine.finalizeForcePointSpend')return {ok:false,reason:'untrusted-event-source'};
  return {ok:true,receipt};
-}
-/** The timing window is judged as of the SPEND (captured at finalization), so a reconciled replay is equivalent. */
-function eventCombat(event){
- const c=event?.context;
- if(!c?.combatId||!Number.isSafeInteger(c.round))return null;
- return {id:String(c.combatId),started:true,round:c.round,turn:Number.isSafeInteger(c.turn)?c.turn:0};
 }
 function readActorPool(target,resource){
  return Number(resource==='force'?target?.system?.forcePoints?.value:
@@ -128,14 +122,19 @@ export class SithLordTemptationService {
   static async consumeSpendReceipt(event){
     const target=event?.actor;
     if(!target?.id||!permission(target))return {handled:false};
-    if(event?.resource==='force'){
-      const verified=verifyFinalizedForceReceipt(target,event);
-      if(!verified.ok)return {handled:false,reason:verified.reason};
-    }
-    const combat=eventCombat(event)??activeCombat();
-    if(!combat?.id)return {handled:false};
     return locked(target,async()=>{
-      const plan=planTemptationSpend({target,combat,event});
+      let plan;
+      if(event?.resource==='force'){
+        // Trust only the target's own FINALIZED ledger receipt and the SPEND-TIME evidence persisted on it (Decision C):
+        // never the event payload, never live combat state at delivery time.
+        const verified=verifyFinalizedForceReceipt(target,event);
+        if(!verified.ok)return {handled:false,reason:verified.reason};
+        plan=planTemptationSpendFromEvidence({target,evidence:verified.receipt.spendEvidence?.temptation,event});
+      }else{
+        const combat=activeCombat();
+        if(!combat?.id)return {handled:false};
+        plan=planTemptationSpend({target,combat,event});
+      }
       if(!plan.eligible)return {handled:false,reason:plan.reason};
       const prior=currentTemptationEvents(target);
       const pending=plan.consequences.map(x=>({
@@ -247,6 +246,9 @@ let registered=false;
 export function registerSithLordTemptationHooks(){
  if(registered||!globalThis.Hooks?.on)return;
  registered=true;
+ // Spend-time evidence: ActorEngine snapshots the active marks, encounter and round/turn onto the spending actor's OWN
+ // receipt at the spend commit, so eligibility never depends on when finalization or delivery later runs.
+ registerSpendEvidenceProvider('temptation',actor=>temptationSpendEvidence(actor,activeCombat()));
  // Force Point triggers arrive ONLY from V2's finalized-receipt outbox (ActorEngine.finalizeForcePointSpend).
  registerForcePointTriggerConsumer(async event=>{
    const report=await SithLordTemptationService.consumeSpendReceipt(event);

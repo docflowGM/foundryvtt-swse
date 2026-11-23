@@ -94,3 +94,20 @@ Routing these through `ActorEngine.spendForcePoints` would start enforcing V2's 
 3. **Direct decrement writers (§6B)** and **Destiny durability (§6C)** need owner decisions.
 4. **Slices 4+ (6O–6AE)** — typed Fearless/Indomitable ingress (6O/6Q/6R/6S), Prophet GM review (6P), sheet controls (6P), receipt/reaction work (6T–6AE) — are not merged. Several overlap work V2 already did (reaction finalization) and must be re-derived on V2's receipts.
 5. Combined focused matrix: 145 tests, 140 pass, the same 5 documented pre-existing failures (unresolved `/systems/...` imports; identical cause on the V2 head).
+
+
+## 8. Architectural rule: rules-aware, GM-controlled time (project owner, 2026-11-23)
+
+> SWSE V2 recognizes and tracks published durations, but the GM controls the advancement and adjudication of game time. Automatic expiration is permitted when supported by authoritative combat or game-clock events, and the GM retains final control. Duration determines whether an action qualifies **when it happens**; it must not retroactively invalidate an action that already qualified.
+
+| Duration type | Examples | System | GM |
+| --- | --- | --- | --- |
+| Combat-event | until the start of your next turn; until the end of the encounter | may automate from combat turn/round events when unambiguous | can override |
+| Measured | 1 minute, 10 minutes, 1 hour | records the duration; may compute expiry against the campaign clock; never equates real-world time with game time | authoritative |
+| Narrative | until a rest ends; until the GM judges a task done | tracks status only; invents no completion event | adjudicates |
+
+**Applied to this branch**
+- **Temptation window** = a combat-event duration (until the Sith Lord's next turn). It is automated from combat state, captured **at the spend** on the actor's own receipt (Decision C), and the GM can still end or edit a mark.
+- **Late delivery never erases a qualified consequence.** A spend that qualified when made still yields its target-owned choice after the mark expires, the encounter ends, or a client reconnects. An expired mark is never reactivated, and nothing applies until the target owner or GM chooses.
+- **No wall-clock expiry anywhere in the trigger path.** The earlier 24-hour "stale trigger" timeout was removed for exactly this reason; `recordedAt` is informational only.
+- **Open follow-up (not changed):** other V2 effects that expire on a wall-clock or `worldTime` basis should be audited against this rule (Force Powers, regimens, rests, equipment effects, temporary bonuses). Out of scope for this slice; recorded so it is not lost.

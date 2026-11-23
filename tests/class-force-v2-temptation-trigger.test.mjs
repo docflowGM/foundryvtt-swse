@@ -45,7 +45,11 @@ const writer = async (actor, update) => {
   return actor;
 };
 const { fake: ActorEngine, restore } = await graftRealForcePointMethods(writer);
-ActorEngine.applyMutationPlan = async (actor, plan) => writer(actor, plan.set);
+let failMutation = false;
+ActorEngine.applyMutationPlan = async (actor, plan) => {
+  if (failMutation) { failMutation = false; throw new Error('mutation write failed'); }
+  return writer(actor, plan.set);
+};
 
 const TEMPT = 'flags.swse.classFeatures.sithLord.temptation';
 const EVENTS = (a) => a.flags?.swse?.classFeatures?.sithLord?.temptationEvents ?? [];
@@ -187,7 +191,8 @@ try {
     const unregister = registerForcePointTriggerConsumer(async () => { if (fail) throw new Error('offline'); });
     const r = await spend(t);
     await ActorEngine.finalizeForcePointSpend(t, r);          // finalized in round 2
-    assert.equal(ledger(t)[0].trigger.context.round, 2);
+    assert.equal(ledger(t)[0].spendEvidence.temptation.round, 2, 'evidence captured at the SPEND, on the receipt');
+    assert.equal(ledger(t)[0].trigger.context, undefined, 'finalize-time context is gone');
     live.round = 5;                                          // live combat has since moved well past the window
     fail = false;
     const rep = await ActorEngine.dispatchForcePointTriggers(t);
@@ -195,7 +200,7 @@ try {
     assert.equal(EVENTS(t).length, 1, 'a spend made inside the window still applies when delivered late');
     live.round = 2;
     unregister();
-    ok('replayed trigger uses the captured spend-time context, not the live combat clock');
+    ok('replayed trigger uses the spend-time evidence on the receipt, not the live combat clock');
   }
 
   // 9. Concurrent finalization of one receipt yields exactly one consequence.
@@ -258,6 +263,174 @@ try {
     assert.ok(ledger(t).some((r) => r.receiptId === first.receiptId && r.trigger?.state === 'pending'), 'pending-trigger receipt survives retention');
     assert.ok(ledger(t).length <= 232, 'retention still bounds the ledger');
     ok('retention keeps a receipt whose trigger is still pending delivery');
+  }
+
+  // ===================== Decision C: eligibility is judged at the SPEND commit =====================
+  const marks = (t) => t.flags.swse.classFeatures.sithLord.temptation;
+  const expireMarks = (t) => setPath(t, TEMPT, marks(t).map((m) => ({ ...m, state: 'expired' })));
+  const withMark = (t, over = {}) => setPath(t, TEMPT, [...marks(t), {
+    id: `sithX:${live.id}:${over.createdRound ?? 2}:${over.createdTurn ?? 5}`, sourceActorId: 'sithX', sourceCombatantId: 'cb-sithX',
+    targetActorId: t.id, encounterId: live.id, createdRound: 2, createdTurn: 5, checkTotal: 30, willDefense: 10, state: 'active', ...over
+  }]);
+  const bareTarget = (id) => { const t = makeTarget(id); setPath(t, TEMPT, []); return t; };
+  const setClock = (round, turn) => { live.round = round; live.turn = turn; };
+
+  // 13. valid spend -> listener fails -> mark expires -> recovery creates exactly one pending choice.
+  {
+    const t = makeTarget('c13');
+    const r = await spend(t);
+    failMutation = true;                                         // the Temptation consumer's own write fails
+    await ActorEngine.finalizeForcePointSpend(t, r);
+    assert.equal(ledger(t)[0].trigger.state, 'pending');
+    assert.equal(EVENTS(t).length, 0, 'nothing recorded yet');
+    expireMarks(t);                                              // GM cleanup runs before recovery
+    live.round = 9;                                              // and the encounter has moved on
+    const rep = await ActorEngine.dispatchForcePointTriggers(t);
+    assert.equal(rep.delivered, 1);
+    assert.equal(EVENTS(t).length, 1, 'exactly one pending choice, from the spend-time evidence');
+    assert.equal(EVENTS(t)[0].state, 'pending-target-choice');
+    assert.equal(marks(t).every((m) => m.state === 'expired'), true, 'the expired mark was NOT reactivated');
+    setClock(2, 1);
+    ok('C1: spend -> listener fails -> mark expires -> recovery yields exactly one pending choice; mark stays expired');
+  }
+
+  // 14. finalize long after the round/turn advanced (and even after combat ended) still qualifies from the spend snapshot.
+  {
+    const t = makeTarget('c14');
+    const r = await spend(t);
+    setClock(7, 0);
+    const savedCombat = globalThis.game.combat; globalThis.game.combat = null;     // encounter over
+    await ActorEngine.finalizeForcePointSpend(t, r);
+    globalThis.game.combat = savedCombat; setClock(2, 1);
+    assert.equal(EVENTS(t).length, 1, 'late finalization qualifies from the spend-time snapshot');
+    ok('C2: finalization after the turn/round advanced and combat ended still qualifies from the spend snapshot');
+  }
+
+  // 15. mark created AFTER the spend but BEFORE finalization is NOT eligible.
+  {
+    const t = bareTarget('c15');
+    const r = await spend(t);                                    // no mark exists yet
+    withMark(t);                                                 // mark appears afterwards
+    await ActorEngine.finalizeForcePointSpend(t, r);
+    assert.equal(EVENTS(t).length, 0, 'a spend made before the mark began never qualifies');
+    ok('C3: mark-then-spend ordering: a mark created after the spend does not qualify it');
+  }
+
+  // 16. spend AFTER the mark expired, or after the Sith Lord\'s next turn began, is NOT eligible.
+  {
+    const a = makeTarget('c16a'); expireMarks(a);
+    const ra = await spend(a); await ActorEngine.finalizeForcePointSpend(a, ra);
+    assert.equal(EVENTS(a).length, 0, 'spend after expiration never qualifies');
+    const b = makeTarget('c16b'); setClock(3, 5);                // round createdRound+1 and turn >= createdTurn: window closed
+    const rb = await spend(b); await ActorEngine.finalizeForcePointSpend(b, rb);
+    setClock(2, 1);
+    assert.equal(EVENTS(b).length, 0, "spend once the source's next turn has begun never qualifies");
+    ok('C4: spend after expiry, or after the window closed, never qualifies');
+  }
+
+  // 17. same-round / next-round / initiative-order boundaries (createdRound 2, createdTurn 5).
+  {
+    const cases = [[2, 0, 1], [2, 5, 1], [2, 9, 1], [3, 4, 1], [3, 5, 0], [3, 9, 0], [4, 0, 0], [1, 9, 0]];
+    for (const [round, turn, expected] of cases) {
+      const t = makeTarget(`c17-${round}-${turn}`);
+      setClock(round, turn);
+      const r = await spend(t); await ActorEngine.finalizeForcePointSpend(t, r);
+      assert.equal(EVENTS(t).length, expected, `round ${round} turn ${turn} => ${expected ? 'qualifies' : 'does not qualify'}`);
+    }
+    setClock(2, 1);
+    ok('C5: round/turn/initiative-order boundary: window closes exactly when the source\'s next turn begins');
+  }
+
+  // 18. multiple marks: only marks valid at the spend produce choices; one choice per mark.
+  {
+    const t = makeTarget('c18');
+    withMark(t, { sourceActorId: 'sithB', sourceCombatantId: 'cb-sithB', id: `sithB:${live.id}:2:5` });
+    withMark(t, { sourceActorId: 'sithOld', sourceCombatantId: 'cb-old', id: `sithOld:${live.id}:1:0`, createdRound: 1, createdTurn: 0 }); // window ended
+    const r = await spend(t); await ActorEngine.finalizeForcePointSpend(t, r);
+    assert.deepEqual(EVENTS(t).map((e) => e.sourceActorId).sort(), ['sith', 'sithB'], 'the out-of-window mark yields no choice');
+    expireMarks(t);
+    assert.equal(marks(t).length, 3, 'historical marks are retained');
+    ok('C6: multiple marks: one choice per mark valid at the spend; stale marks excluded; history retained');
+  }
+
+  // 19. exact receipt-id replay creates no duplicate; dispatching again is a no-op.
+  {
+    const t = makeTarget('c19');
+    const r = await spend(t); await ActorEngine.finalizeForcePointSpend(t, r);
+    const again = await SithLordTemptationService.consumeSpendReceipt({
+      actor: t, actorId: t.id, resource: 'force', spent: 1, committed: true, receiptId: r.receiptId, source: 'ActorEngine.finalizeForcePointSpend'
+    });
+    assert.equal(again.handled, false);
+    assert.equal(again.reason, 'duplicate-spend-receipt');
+    assert.equal(EVENTS(t).length, 1);
+    ok('C7: exact receipt-id replay produces no duplicate consequence');
+  }
+
+  // 20. adversarial payloads and tampered evidence.
+  {
+    const base = (t, r) => ({ actor: t, actorId: t.id, resource: 'force', spent: 1, committed: true, receiptId: r.receiptId, source: 'ActorEngine.finalizeForcePointSpend' });
+    // (a) payload-supplied evidence/context is ignored: a bare actor with a forged event context gets nothing
+    const t1 = bareTarget('c20a'); const r1 = await spend(t1);
+    await ActorEngine.finalizeForcePointSpend(t1, r1);
+    const forged = { ...base(t1, r1), receiptId: r1.receiptId + '-x', spendEvidence: { temptation: { version: 1, combatId: live.id, round: 2, turn: 1, marks: [{ id: 'x', sourceActorId: 'x' }] } }, context: { combatId: live.id, round: 2, turn: 1 } };
+    assert.equal((await SithLordTemptationService.consumeSpendReceipt(forged)).handled, false);
+    // (b) tampered evidence on a real receipt: invented mark id / out-of-window mark / wrong encounter are all ignored
+    const t2 = bareTarget('c20b'); const r2 = await spend(t2);
+    const rec = ledger(t2).find((x) => x.receiptId === r2.receiptId);
+    rec.spendEvidence.temptation = { version: 1, combatId: live.id, round: 2, turn: 1, marks: [
+      { id: 'forged-id', sourceActorId: 'sithZ', sourceCombatantId: 'c', encounterId: live.id, createdRound: 2, createdTurn: 5 },
+      { id: `sithZ:${live.id}:0:0`, sourceActorId: 'sithZ', sourceCombatantId: 'c', encounterId: live.id, createdRound: 0, createdTurn: 0 },
+      { id: 'sithZ:other-combat:2:5', sourceActorId: 'sithZ', sourceCombatantId: 'c', encounterId: 'other-combat', createdRound: 2, createdTurn: 5 },
+      { id: `${t2.id}:${live.id}:2:5`, sourceActorId: t2.id, sourceCombatantId: 'c', encounterId: live.id, createdRound: 2, createdTurn: 5 }
+    ] };
+    await ActorEngine.finalizeForcePointSpend(t2, r2);
+    assert.equal(EVENTS(t2).length, 0, 'forged id, out-of-window, wrong-encounter and self-sourced marks all rejected');
+    // (c) no spend-time evidence at all (spent outside combat) fails closed
+    const t3 = makeTarget('c20c'); const savedC = globalThis.game.combat; globalThis.game.combat = null;
+    const r3 = await spend(t3); globalThis.game.combat = savedC;
+    await ActorEngine.finalizeForcePointSpend(t3, r3);
+    assert.equal(ledger(t3).find((x) => x.receiptId === r3.receiptId).spendEvidence.temptation, undefined);
+    assert.equal(EVENTS(t3).length, 0, 'a spend made outside combat never qualifies');
+    ok('C8: adversarial payloads and tampered evidence are rejected; no evidence fails closed');
+  }
+
+  // 21. a mutation that cannot be persisted never loses the trigger or re-charges (uncertain write).
+  {
+    const t = makeTarget('c21');
+    const r = await spend(t);
+    const poolBefore = t.system.forcePoints.value;
+    failMutation = true;
+    await ActorEngine.finalizeForcePointSpend(t, r);
+    assert.equal(t.system.forcePoints.value, poolBefore, 'no re-charge or refund on a failed consequence write');
+    assert.equal(ledger(t)[0].trigger.state, 'pending');
+    await ActorEngine.dispatchForcePointTriggers(t);
+    assert.equal(EVENTS(t).length, 1);
+    assert.equal(t.system.forcePoints.value, poolBefore);
+    ok('C9: a failed consequence write keeps the trigger pending; recovery succeeds without re-charging');
+  }
+
+  // 22. Adding a NEW mark must not prune historical (expired) marks: retention is real, bounded, and never reactivates them.
+  {
+    const { planTemptationMark } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/sith-lord-temptation-state.js');
+    const t = makeTarget('c22');
+    expireMarks(t);
+    const caster = { id: 'sithNew' };
+    const plan = planTemptationMark({
+      caster, target: t, combat: { id: live.id, started: true, round: 4, turn: 2, combatant: { id: 'cb-new' } },
+      checkTotal: 30, willDefense: 10, confirmedLineOfSight: true
+    });
+    assert.equal(plan.allowed, true);
+    const stored = plan.updates[TEMPT];
+    assert.equal(stored.filter((m) => m.state === 'expired').length, 1, 'the expired mark survives a new mark being added');
+    assert.equal(stored.filter((m) => m.state === 'active').length, 1, 'only the new mark is active; the old one is not reactivated');
+    const many = Array.from({ length: 40 }, (_, i) => ({ id: `old${i}`, state: 'expired', sourceActorId: 'x', targetActorId: t.id, encounterId: 'e', createdRound: 1, createdTurn: i }));
+    setPath(t, TEMPT, many);
+    const bounded = planTemptationMark({
+      caster, target: t, combat: { id: live.id, started: true, round: 4, turn: 2, combatant: { id: 'cb-new' } },
+      checkTotal: 30, willDefense: 10, confirmedLineOfSight: true
+    }).updates[TEMPT];
+    assert.ok(bounded.length <= 26, 'historical marks are retained but bounded');
+    ok('C10: a new mark does not prune expired marks (bounded history), and never reactivates them');
   }
 } finally {
   restore();
