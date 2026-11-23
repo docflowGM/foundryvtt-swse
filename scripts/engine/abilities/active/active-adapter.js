@@ -87,7 +87,7 @@ export class ActiveAdapter {
    * @param {Object} ability - ACTIVE/EFFECT ability item
    * @returns {Promise<Object>} Result { success, reason, targetCount, duration }
    */
-  static async handleEffect(actor, ability) {
+  static async handleEffect(actor, ability, options = {}) {
     try {
       const meta = ability.system?.abilityMeta;
       const activation = meta?.activation;
@@ -129,20 +129,9 @@ export class ActiveAdapter {
         return { success: false, reason: limitCheck.reason };
       }
 
-      // ─── 3. Verify cost ─────────────────────────────────────────────────────
+      // ─── 3. Cost (described here; PAID in step 4b through the canonical V2 Force Point transaction) ──────
       let costDetails = '';
       if (cost?.forcePoints > 0) {
-        const currentForce = actor.system?.forcePoints?.available ?? 0;
-        if (currentForce < cost.forcePoints) {
-          const reason = `Insufficient Force Points (need ${cost.forcePoints}, have ${currentForce})`;
-          SWSELogger.log(`[ActiveAdapter] EFFECT blocked (cost): ${ability.name} — ${reason}`);
-          await SWSEChat.postMessage({
-            flavor: `❌ ${ability.name}`,
-            content: reason,
-            actor
-          });
-          return { success: false, reason };
-        }
         costDetails = `${cost.forcePoints} Force Point${cost.forcePoints !== 1 ? 's' : ''}`;
       }
 
@@ -161,25 +150,61 @@ export class ActiveAdapter {
 
       const effectTargets = targets.length > 0 ? targets : [actor];
 
+      // ─── 4b. Pay (Class/Force x Force V2, Decision A) ────────────────────────────────────────────────
+      // Spend through ActorEngine.spendForcePoints BEFORE any effect exists. ForcePointsService.authorizeSpend decides
+      // (eligible points, round cap, certified ability contract FP-RD-003 or explicit GM adjudication). A denial means the
+      // effect is NOT applied and nothing is charged. The former code applied the effect first and then wrote
+      // system.forcePoints.value from a non-canonical `forcePoints.available` field.
+      let fpReceipt = null;
+      if (cost?.forcePoints > 0) {
+        try {
+          fpReceipt = await ActorEngine.spendForcePoints(actor, cost.forcePoints, {
+            useKind: 'ability-option',
+            abilitySourceRef: `active-ability:${ability.id}`,
+            ...(options?.gmAdjudication ? { gmAdjudication: options.gmAdjudication } : {})
+          });
+        } catch (denied) {
+          const reason = denied?.message ?? 'Force Point spend was not authorized';
+          SWSELogger.log(`[ActiveAdapter] EFFECT blocked (cost): ${ability.name} — ${reason}`);
+          await SWSEChat.postMessage({ flavor: `❌ ${ability.name}`, content: reason, actor });
+          return { success: false, reason };
+        }
+        if (!fpReceipt?.receiptId) {
+          const reason = `Insufficient Force Points (need ${cost.forcePoints})`;
+          await SWSEChat.postMessage({ flavor: `❌ ${ability.name}`, content: reason, actor });
+          return { success: false, reason };
+        }
+      }
+
       // ─── 5. Apply effect to each target ──────────────────────────────────────
       const duration = effect?.duration;
       const durationRounds = this._parseDuration(duration);
 
-      for (const target of effectTargets) {
-        await this._applyEffect(target, ability, effect);
+      let appliedTargets = 0;
+      try {
+        for (const target of effectTargets) {
+          await this._applyEffect(target, ability, effect);
+          appliedTargets += 1;
 
-        // Track duration if applicable
-        if (durationRounds > 0) {
-          const currentRound = game?.combat?.round ?? 0;
-          DurationEngine.trackEffect(target, ability.id, durationRounds, currentRound);
+          // Track duration if applicable
+          if (durationRounds > 0) {
+            const currentRound = game?.combat?.round ?? 0;
+            DurationEngine.trackEffect(target, ability.id, durationRounds, currentRound);
+          }
         }
+      } catch (applyError) {
+        if (fpReceipt) {
+          // Nothing took effect: compensate ONLY this receipt, exactly. Some targets already carry the paid effect: it
+          // exists, so the point is finalized (never refund an applied effect).
+          if (appliedTargets === 0) await ActorEngine.rollbackForcePointSpend(actor, fpReceipt);
+          else await ActorEngine.finalizeForcePointSpend(actor, fpReceipt);
+        }
+        throw applyError;
       }
 
-      // ─── 6. Deduct cost ─────────────────────────────────────────────────────
-      if (cost?.forcePoints > 0) {
-        await ActorEngine.updateActor(actor, {
-          'system.forcePoints.value': Math.max(0, (actor.system?.forcePoints?.available ?? 0) - cost.forcePoints)
-        });
+      // ─── 6. Settle the cost: the paid effect now exists, so finalize the receipt exactly ─────────────────
+      if (fpReceipt) {
+        await ActorEngine.finalizeForcePointSpend(actor, fpReceipt);
       }
 
       // ─── 7. Record activation ─────────────────────────────────────────────────
