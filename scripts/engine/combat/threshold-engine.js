@@ -482,7 +482,7 @@ export class ThresholdEngine {
   }
 
   /**
-   * Pay one Force Point through V2 and finalize it. Returns the receipt, or null when V2 denies (nothing charged).
+   * Pay one Force Point through V2 (committed, NOT finalized). Returns the receipt, or null when V2 denies (nothing charged).
    * @private
    */
   static async _payForcePoint(actor, abilitySourceRef, options = {}) {
@@ -496,8 +496,7 @@ export class ThresholdEngine {
       return null;
     }
     if (!receipt?.receiptId) return null;
-    await ActorEngine.finalizeForcePointSpend(actor, receipt);
-    return receipt;
+    return receipt; // caller finalizes after the guarded effect exists, or rolls back this exact receipt
   }
 
   /**
@@ -509,11 +508,18 @@ export class ThresholdEngine {
   static async executeLastGrasp(pilot, options = {}) {
     if (!pilot) return false;
 
+    // Contract-on is not proof the trigger occurred: bind a trusted event context BEFORE paying. The vehicle must be supplied,
+    // be at 0 hull, and have this actor as its crewed pilot (checkLastGrasp re-checks setting, PC, and an available point).
+    const vehicle = options.vehicle;
+    const hull = Number(vehicle?.system?.hull?.value);
+    if (!vehicle || !Number.isFinite(hull) || hull > 0) return false;
+    const eligible = ThresholdEngine.checkLastGrasp(vehicle);
+    if (!eligible.eligible || eligible.pilot?.id !== pilot.id) return false;
+
     // Decision A: pay through the V2 typed Force Point spend (authorization, round cap, receipt) instead of a direct decrement.
-    // Fails closed (no Last Grasp) when V2 denies; a caller-supplied GM adjudication is the only bypass.
     const receipt = await ThresholdEngine._payForcePoint(pilot, 'threshold:lastGrasp', options);
     if (!receipt) return false;
-
+    // The paid effect is the final action this grants (a chat announcement); finalize once it is posted.
     // Post chat message
     await SWSEChat.postHTML({
       content: `<div class="swse-threshold-msg">
@@ -522,7 +528,8 @@ export class ThresholdEngine {
         <br><em>One Standard Action allowed. Then vehicle enters disabled state.</em>
       </div>`,
       actor: pilot
-    });
+    }).catch((e) => console.warn('SWSE | Last Grasp chat card failed', e));
+    await ActorEngine.finalizeForcePointSpend(pilot, receipt);
 
     return true;
   }
@@ -561,19 +568,43 @@ export class ThresholdEngine {
       return { success: false, message: 'Emergency Patch not available.' };
     }
 
+    // Validate BEFORE payment: a finite Mechanics result, and the engineer is this vehicle's crewed engineer. An absent or
+    // non-numeric result must never read as a success (undefined < 20 is false).
+    if (!Number.isFinite(Number(mechanicsCheck)) || mechanicsCheck === null || mechanicsCheck === '' || typeof mechanicsCheck === 'boolean') {
+      return { success: false, message: 'A valid Mechanics check result is required.' };
+    }
+    mechanicsCheck = Number(mechanicsCheck);
+    const engData = vehicle.system?.crewPositions?.engineer;
+    const engName = typeof engData === 'string' ? engData : engData?.name;
+    if (!engineer?.id || !engName || engName !== engineer.name) {
+      return { success: false, message: `${engineer?.name ?? 'Actor'} is not this vehicle's crewed engineer.` };
+    }
+
     const engineerFP = engineer.system.forcePoints?.value ?? 0;
     if (engineerFP < 1) {
       return { success: false, message: `${engineer.name} has no Force Points remaining.` };
     }
 
     // Decision A: V2 typed spend under a HOUSE_RULE contract (threshold:* in ability-option-contracts.js; authorized while the GM-enabled
-    // setting is on, V2 cap still applies). Last Grasp / Emergency Patch are optional house rules, not RAW. Owner-adopted policy
-    // (2026-11-23, FP-RD-015): Emergency Patch consumes the Force Point even when the Mechanics check fails.
+    // setting is on, V2 cap still applies). Optional house rule, not RAW. Provisional policy (FP-RD-015): a failed Mechanics check
+    // still consumes the Force Point.
     const receipt = await ThresholdEngine._payForcePoint(engineer, 'threshold:emergencyPatch', options);
     if (!receipt) return { success: false, message: `${engineer.name} cannot spend a Force Point for Emergency Patch.` };
 
-    // Mark as used for this encounter
-    await vehicle.setFlag('foundryvtt-swse', 'emergencyPatchUsed', true);
+    // Mark used for this encounter. If the write rejects, re-read the document: when the mark did not land the attempt never
+    // began, so exactly this receipt is returned; when it did land the attempt stands and the point is finalized (no double charge).
+    let marked = false;
+    try {
+      await vehicle.setFlag('foundryvtt-swse', 'emergencyPatchUsed', true);
+      marked = true;
+    } catch (err) {
+      marked = vehicle.getFlag?.('foundryvtt-swse', 'emergencyPatchUsed') === true;
+      if (!marked) {
+        await ActorEngine.rollbackForcePointSpend(engineer, receipt).catch((e) => console.error('SWSE | Emergency Patch rollback failed', e));
+        return { success: false, message: `Emergency Patch could not begin (${err?.message ?? err}); no Force Point was spent.` };
+      }
+    }
+    await ActorEngine.finalizeForcePointSpend(engineer, receipt);
 
     const dc = 20;
     if (mechanicsCheck < dc) {
