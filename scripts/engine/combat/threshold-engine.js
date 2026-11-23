@@ -586,7 +586,7 @@ export class ThresholdEngine {
     }
 
     // Decision A: V2 typed spend under a HOUSE_RULE contract (threshold:* in ability-option-contracts.js; authorized while the GM-enabled
-    // setting is on, V2 cap still applies). Optional house rule, not RAW. Provisional policy (FP-RD-015): a failed Mechanics check
+    // setting is on, V2 cap still applies). Optional house rule, not RAW. Provisional policy awaiting owner confirmation (FP-RD-015): a failed Mechanics check
     // still consumes the Force Point.
     const receipt = await ThresholdEngine._payForcePoint(engineer, 'threshold:emergencyPatch', options);
     if (!receipt) return { success: false, message: `${engineer.name} cannot spend a Force Point for Emergency Patch.` };

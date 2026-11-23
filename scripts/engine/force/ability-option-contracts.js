@@ -24,7 +24,7 @@ function talentActivation(ref, slug, actionCost, source, limit = null) {
 }
 
 export const ABILITY_OPTION_CONTRACTS = Object.freeze({
-  // HOUSE_RULE contracts (owner ruling 2026-11-23, FP-RD-015): optional vehicle house rules, NOT published SWSE abilities. They
+  // HOUSE_RULE contracts (provisional, FP-RD-015 awaiting owner confirmation): optional vehicle house rules, NOT published SWSE abilities. They
   // carry no printed-page citation. Once the GM enables the world setting, the typed contract authorizes ordinary use without a
   // per-activation adjudication; it never waives the V2 round cap, eligible-point or ownership checks, and is re-read live.
   'threshold:lastGrasp': Object.freeze({
@@ -33,7 +33,7 @@ export const ABILITY_OPTION_CONTRACTS = Object.freeze({
   }),
   'threshold:emergencyPatch': Object.freeze({
     kind: 'house-rule', setting: 'enableEmergencyPatch', actionCost: 'ability-defined', priorSpendExempt: false, limit: null,
-    source: 'HOUSE_RULE enableEmergencyPatch (scripts/houserules/houserule-settings.js): engineer spends one Force Point and makes a Mechanics DC 20 check; a failed check still consumes the point (owner-adopted house-rule policy)'
+    source: 'HOUSE_RULE enableEmergencyPatch (scripts/houserules/houserule-settings.js): engineer spends one Force Point and makes a Mechanics DC 20 check; a failed check still consumes the point (provisional house-rule policy, FP-RD-015 awaiting owner confirmation)'
   }),
   'lightsaber:promptForceFortification': Object.freeze({
     kind: 'critical-hit-reaction', itemType: 'talent', slug: 'force-fortification', actionCost: 'reaction', priorSpendExempt: true,
