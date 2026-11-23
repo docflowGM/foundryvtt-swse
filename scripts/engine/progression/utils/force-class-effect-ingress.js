@@ -20,10 +20,13 @@ export function typedEffectContext(effect={}) {
     ...array(system.descriptor),...array(system.descriptors),...array(system.effectTags),...array(system.tags),
     ...array(direct.descriptor),...array(direct.descriptors),...array(direct.tags),
   ];
+  // Accept comma-separated descriptor strings (e.g. 'fear,other') as explicit tokens; never free prose.
+  const tokens=descriptors.flatMap(value=>typeof value==='string'?value.split(','):[value]);
+  const flag=(...keys)=>[swse,system,direct,effect].some(src=>src&&typeof src==='object'&&keys.some(key=>src[key]===true));
   return {
-    effectTags:descriptors,
-    fearEffect: swse.fearEffect===true||system.fearEffect===true||effect?.fearEffect===true,
-    mindAffecting: swse.mindAffecting===true||system.mindAffecting===true||effect?.mindAffecting===true,
+    effectTags:tokens,
+    fearEffect: flag('fearEffect','isFear','fear'),
+    mindAffecting: flag('mindAffecting','isMindAffecting'),
     sourceItem: effect?.sourceItem??null,
   };
 }
