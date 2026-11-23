@@ -482,21 +482,37 @@ export class ThresholdEngine {
   }
 
   /**
+   * Pay one Force Point through V2 and finalize it. Returns the receipt, or null when V2 denies (nothing charged).
+   * @private
+   */
+  static async _payForcePoint(actor, abilitySourceRef, options = {}) {
+    let receipt;
+    try {
+      receipt = await ActorEngine.spendForcePoints(actor, 1, {
+        useKind: 'ability-option', abilitySourceRef, ...(options.gmAdjudication ? { gmAdjudication: options.gmAdjudication } : {})
+      });
+    } catch (err) {
+      console.warn(`SWSE | ${abilitySourceRef}: Force Point spend denied: ${err?.message ?? err}`);
+      return null;
+    }
+    if (!receipt?.receiptId) return null;
+    await ActorEngine.finalizeForcePointSpend(actor, receipt);
+    return receipt;
+  }
+
+  /**
    * Execute Last Grasp: deduct Force Point and return action info.
    *
    * @param {Actor} pilot
    * @returns {Promise<boolean>}
    */
-  static async executeLastGrasp(pilot) {
+  static async executeLastGrasp(pilot, options = {}) {
     if (!pilot) return false;
 
-    const currentFP = pilot.system.forcePoints?.value ?? 0;
-    if (currentFP < 1) return false;
-
-    // PHASE 2B: Route through ActorEngine
-    await ActorEngine.updateActor(pilot, {
-      'system.forcePoints.value': currentFP - 1
-    });
+    // Decision A: pay through the V2 typed Force Point spend (authorization, round cap, receipt) instead of a direct decrement.
+    // Fails closed (no Last Grasp) when V2 denies; a caller-supplied GM adjudication is the only bypass.
+    const receipt = await ThresholdEngine._payForcePoint(pilot, 'threshold:lastGrasp', options);
+    if (!receipt) return false;
 
     // Post chat message
     await SWSEChat.postHTML({
@@ -540,7 +556,7 @@ export class ThresholdEngine {
    * @param {number} mechanicsCheck - Result of Mechanics check
    * @returns {Promise<{success: boolean, message: string}>}
    */
-  static async attemptEmergencyPatch(vehicle, engineer, subsystem, mechanicsCheck) {
+  static async attemptEmergencyPatch(vehicle, engineer, subsystem, mechanicsCheck, options = {}) {
     if (!this.canEmergencyPatch(vehicle)) {
       return { success: false, message: 'Emergency Patch not available.' };
     }
@@ -550,11 +566,10 @@ export class ThresholdEngine {
       return { success: false, message: `${engineer.name} has no Force Points remaining.` };
     }
 
-    // PHASE 2B: Route through ActorEngine
-    // Deduct Force Point regardless of outcome
-    await ActorEngine.updateActor(engineer, {
-      'system.forcePoints.value': engineerFP - 1
-    });
+    // Decision A: V2 typed spend. The printed text charges the point regardless of outcome; that is preserved here
+    // (finalized immediately) and recorded as an open rules question (docs/audits/swse-rules-decisions-pending.md).
+    const receipt = await ThresholdEngine._payForcePoint(engineer, 'threshold:emergencyPatch', options);
+    if (!receipt) return { success: false, message: `${engineer.name} cannot spend a Force Point for Emergency Patch.` };
 
     // Mark as used for this encounter
     await vehicle.setFlag('foundryvtt-swse', 'emergencyPatchUsed', true);

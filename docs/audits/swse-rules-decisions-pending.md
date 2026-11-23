@@ -3895,3 +3895,19 @@ Resist Force / Valor conditional bonuses remain reminder-gated effects (no autom
 - `ForceExecutor.executeForcePower` referenced an undefined `telekineticPowerRepeatAction`; every activation threw after rolling, spending and applying effects, then a runtime wrapper restored the power to ready (present on `main` too).
 - Duplicate Force power selections in V2 progression shared ONE item object, so every copy received the last copy's identity (`countIndex`); each copy is now its own object.
 - Rest proofs: honored only on a GM client and only with an explicit unit (GM services emit minutes).
+
+## Decision A cutover (appended 2026-11-23; earlier entries preserved)
+
+### FP-RD-015 — Vehicle Emergency Patch / Last Grasp: Force Point charge when the effect does not occur (new)
+| Field | Value |
+| --- | --- |
+| Feature | `ThresholdEngine.attemptEmergencyPatch` (Force Point charged "regardless of outcome") and `ThresholdEngine.executeLastGrasp` |
+| Source | Pre-existing engine behavior and comments; no printed page has been verified for either option in this pass |
+| Confirmed | The engine has charged one Force Point on a failed Emergency Patch check since before the V2 cutover. That is an implementation fact, not rules authority. |
+| Unresolved | (a) Whether a failed Mechanics check consumes the Force Point at all; (b) whether either option has a certified V2 `ability-option` contract (FP-RD-003). Until (b) is ruled, non-GM spends fail closed. |
+| Options | None source-supported yet |
+| Implementation | Both now pay via `ActorEngine.spendForcePoints` (`threshold:lastGrasp`, `threshold:emergencyPatch`) and finalize immediately, preserving the prior charge-regardless behavior without deciding it. A denial charges nothing and does not mark the patch used. Both APIs are `NOT_FOUND_STATIC` (no textual caller) and are retained, not deleted. |
+| Recommended ruling | None |
+| Status | `DEFERRED_RULES_REVIEW` |
+| Decision authority | Project owner |
+| Resolution | |
