@@ -2,7 +2,7 @@
 import { claimIndependentSkills } from '/systems/foundryvtt-swse/scripts/species/species-grant-reconciliation.js';
 import { getEffectiveRechargeShieldsAmount } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
-import { forcePointTriggerConsumers, hasForcePointTriggerConsumers, captureSpendEvidence } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js";
+import { forcePointTriggerConsumers, hasForcePointTriggerConsumers, spendTriggerConsumers, hasSpendTriggerConsumers, captureSpendEvidence } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js";
 import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/actor-utils.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
 import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
@@ -60,6 +60,25 @@ async function withForcePointQueue(actor, operation) {
 
 // Force Point trigger outbox support (see finalizeForcePointSpend / dispatchForcePointTriggers).
 const _forcePointTriggersInFlight = new Set();
+
+// Destiny Point ledger support: a SEPARATE actor-owned ledger (flags.swse.destinyPointLedger), queue and outbox. Destiny is
+// never treated as a Force Point and its entries are never written to the Force Point ledger.
+const _destinyPointQueues = new WeakMap();
+const _destinyTriggersInFlight = new Set();
+async function withDestinyPointQueue(actor, operation) {
+  const prior = _destinyPointQueues.get(actor) ?? Promise.resolve();
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  const tail = prior.then(() => pending);
+  _destinyPointQueues.set(actor, tail);
+  await prior;
+  try { return await operation(); }
+  finally {
+    release();
+    if (_destinyPointQueues.get(actor) === tail) _destinyPointQueues.delete(actor);
+  }
+}
+const destinyLedgerOf = (actor) => actor.getFlag?.('swse', 'destinyPointLedger') ?? actor.flags?.swse?.destinyPointLedger ?? {};
 
 export const ActorEngine = {
   // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
@@ -2393,38 +2412,53 @@ export const ActorEngine = {
    * @param {Actor} actor - target actor
    * @param {number} amount - number of points to spend
    */
-  async spendDestinyPoints(actor, amount = 1) {
+  async spendDestinyPoints(actor, amount = 1, context = {}) {
     try {
       if (!actor) {throw new Error('spendDestinyPoints() called with no actor');}
       if (typeof amount !== 'number' || amount < 0) {
         throw new Error(`Invalid destiny point amount: ${amount}`);
       }
+      if (!actor.id) {throw new Error('spendDestinyPoints requires an identified actor');}
 
-      // Delegate calculation to ForcePointsService; mutation stays here
-      const { newValue: newDP, actualSpent } = ForcePointsService.calcDestinySpend(actor, amount);
+      return await withDestinyPointQueue(actor, async () => {
+        // Delegate calculation to ForcePointsService; mutation stays here
+        const { newValue: newDP, actualSpent } = ForcePointsService.calcDestinySpend(actor, amount);
 
-      if (actualSpent === 0) {
-        SWSELogger.debug(`${actor.name} has no destiny points to spend`);
-        return { spent: 0, remaining: newDP };
-      }
+        if (actualSpent === 0) {
+          SWSELogger.debug(`${actor.name} has no destiny points to spend`);
+          return { spent: 0, remaining: newDP };
+        }
 
-      await this.updateActor(actor, {
-        'system.destinyPoints.value': newDP
+        const ledger = destinyLedgerOf(actor);
+        const entries = Array.isArray(ledger.receipts) ? ledger.receipts : [];
+        const requestId = String(context?.requestId ||
+          globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.() || '');
+        const receiptId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
+        if (!requestId || !receiptId) throw new Error('Destiny Point transaction identity unavailable');
+        if (entries.some(entry => entry.requestId === requestId)) throw new Error('Duplicate Destiny Point transaction');
+        const receipt = {
+          receiptId, requestId, actorId: actor.id, spent: actualSpent, state: 'committed',
+          worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null,
+          // Immutable spend-time evidence (Decision C), persisted with the debit; never a caller flag.
+          spendEvidence: captureSpendEvidence(actor, 'destiny')
+        };
+        // Bounded retention: only settled receipts with no pending trigger are ever dropped.
+        let retained = [...entries, receipt];
+        if (retained.length > 200) {
+          let drop = retained.length - 200;
+          retained = retained.filter(r => !(drop > 0 && r.state !== 'committed' && r.trigger?.state !== 'pending' && drop--));
+        }
+        // The debit and its receipt are ONE write: there is never a spend without a receipt or a receipt without a spend.
+        await this.updateActor(actor, {
+          'system.destinyPoints.value': newDP,
+          'flags.swse.destinyPointLedger': { receipts: retained }
+        });
+
+        SWSELogger.log(`Destiny points spent: ${actor.name} used ${actualSpent}DP (now: ${newDP})`, {
+          amount: actualSpent
+        });
+        return { ...receipt, remaining: newDP };
       });
-
-      SWSELogger.log(`Destiny points spent: ${actor.name} used ${actualSpent}DP (now: ${newDP})`, {
-        amount: actualSpent
-      });
-
-      globalThis.Hooks?.callAll?.('swse.resourceSpent', {
-        actor, actorId: String(actor?.uuid || actor?.id || ''),
-        resource: 'destiny', spent: actualSpent, committed: true,
-        receiptId: globalThis.crypto?.randomUUID?.()
-          ?? String(Date.now())+'-dp-'+String(actor?.id??'')+'-'+String(Math.random()),
-        source: 'ActorEngine.spendDestinyPoints',
-      });
-      return { spent: actualSpent, remaining: newDP };
-
     } catch (err) {
       SWSELogger.error(`ActorEngine.spendDestinyPoints failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
@@ -2432,6 +2466,96 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  /** Exact compensation of ONE committed, not-yet-finalized Destiny spend. Never restores a historical balance. */
+  async rollbackDestinyPointSpend(actor, spentReceipt) {
+    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Identified actor and Destiny Point receipt required');
+    return withDestinyPointQueue(actor, async () => {
+      const ledger = destinyLedgerOf(actor);
+      const records = Array.isArray(ledger.receipts) ? ledger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
+      if (index < 0 || records[index].state !== 'committed') return { rolledBack: false, reason: 'Receipt missing or already settled' };
+      const own = records[index];
+      const current = Number(actor.system?.destinyPoints?.value ?? 0);
+      const updated = records.map((r, i) => i === index ? { ...r, state: 'rolled-back' } : r);
+      await this.updateActor(actor, {
+        'system.destinyPoints.value': current + own.spent,
+        'flags.swse.destinyPointLedger': { ...ledger, receipts: updated }
+      });
+      return { rolledBack: true, receiptId: own.receiptId, restored: own.spent };
+    });
+  },
+
+  /**
+   * Persist finality after the paid Destiny effect actually occurred. The durable trigger is recorded in the SAME write on
+   * the first committed->finalized transition and delivered after the queue lock is released.
+   */
+  async finalizeDestinyPointSpend(actor, spentReceipt) {
+    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Destiny Point finalization requires an actor and receipt');
+    let firstFinalization = false;
+    const outcome = await withDestinyPointQueue(actor, async () => {
+      const ledger = destinyLedgerOf(actor);
+      const records = Array.isArray(ledger.receipts) ? ledger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
+      if (index < 0) return { finalized: false, reason: 'Receipt not found' };
+      if (records[index].state === 'finalized') return { finalized: true, alreadyFinalized: true };
+      if (records[index].state !== 'committed') return { finalized: false, reason: 'Receipt is not pending finalization' };
+      const trigger = hasSpendTriggerConsumers('destiny') ? { state: 'pending', recordedAt: Date.now() } : undefined;
+      const updated = records.map((r, i) => i === index ? { ...r, state: 'finalized', ...(trigger ? { trigger } : {}) } : r);
+      await this.updateActor(actor, { 'flags.swse.destinyPointLedger': { ...ledger, receipts: updated } });
+      firstFinalization = Boolean(trigger);
+      return { finalized: true, receiptId: spentReceipt.receiptId };
+    });
+    if (firstFinalization) {
+      try { await this.dispatchDestinyPointTriggers(actor, { receiptId: outcome.receiptId }); }
+      catch (error) { SWSELogger.error('[ActorEngine] Destiny Point trigger delivery failed; receipt stays final, trigger stays pending for reconcile', error); }
+    }
+    return outcome;
+  },
+
+  /** Deliver pending Destiny triggers built from the actor's OWN Destiny ledger (never from a caller payload). */
+  async dispatchDestinyPointTriggers(actor, { receiptId = null } = {}) {
+    if (!actor?.id) throw new Error('dispatchDestinyPointTriggers requires an identified actor');
+    const consumers = spendTriggerConsumers('destiny');
+    const report = { delivered: 0, pending: 0, invalid: 0 };
+    if (!consumers.length) return report;
+    const rows = (Array.isArray(destinyLedgerOf(actor).receipts) ? destinyLedgerOf(actor).receipts : []).filter(r =>
+      r.actorId === actor.id && r.state === 'finalized' && r.trigger?.state === 'pending'
+      && (receiptId === null || r.receiptId === receiptId));
+    for (const r of rows) {
+      const key = `${actor.id}:${r.receiptId}`;
+      if (_destinyTriggersInFlight.has(key)) continue;
+      _destinyTriggersInFlight.add(key);
+      try {
+        if (!Number.isSafeInteger(r.spent) || r.spent < 1) { await this.ackDestinyPointTrigger(actor, r.receiptId, 'invalid'); report.invalid++; continue; }
+        const event = {
+          actor, actorId: String(actor.uuid || actor.id), resource: 'destiny', spent: r.spent, committed: true,
+          receiptId: r.receiptId, source: 'ActorEngine.finalizeDestinyPointSpend'
+        };
+        let allOk = true;
+        for (const consume of consumers) {
+          try { await consume(event); }
+          catch (error) { allOk = false; SWSELogger.error(`[ActorEngine] Destiny Point trigger consumer failed for receipt ${r.receiptId}; stays pending`, error); }
+        }
+        if (allOk) { await this.ackDestinyPointTrigger(actor, r.receiptId, 'delivered'); report.delivered++; } else report.pending++;
+      } finally { _destinyTriggersInFlight.delete(key); }
+    }
+    return report;
+  },
+
+  /** Mark a Destiny trigger settled. Only the trigger sub-record changes; spend/finality is never touched. */
+  async ackDestinyPointTrigger(actor, receiptId, outcome = 'delivered') {
+    if (!actor?.id || !receiptId) throw new Error('ackDestinyPointTrigger requires an actor and receiptId');
+    return withDestinyPointQueue(actor, async () => {
+      const ledger = destinyLedgerOf(actor);
+      const records = Array.isArray(ledger.receipts) ? ledger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === receiptId && r.actorId === actor.id);
+      if (index < 0 || records[index].trigger?.state !== 'pending') return { acked: false };
+      const updated = records.map((r, i) => i === index ? { ...r, trigger: { ...r.trigger, state: outcome, ackedAt: Date.now() } } : r);
+      await this.updateActor(actor, { 'flags.swse.destinyPointLedger': { ...ledger, receipts: updated } });
+      return { acked: true, outcome };
+    });
   },
 
   /**

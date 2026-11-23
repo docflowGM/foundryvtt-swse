@@ -4,7 +4,7 @@
 export async function graftRealForcePointMethods(updateActor) {
   const fake = (await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js')).ActorEngine;
   const real = (await import(new URL('../../scripts/governance/actor-engine/actor-engine.js', import.meta.url).href)).ActorEngine;
-  const saved = { updateActor: fake.updateActor, spendForcePoints: fake.spendForcePoints, gainForcePoints: fake.gainForcePoints, rollbackForcePointSpend: fake.rollbackForcePointSpend, finalizeForcePointSpend: fake.finalizeForcePointSpend, dispatchForcePointTriggers: fake.dispatchForcePointTriggers, ackForcePointTrigger: fake.ackForcePointTrigger };
+  const saved = { updateActor: fake.updateActor, spendForcePoints: fake.spendForcePoints, gainForcePoints: fake.gainForcePoints, rollbackForcePointSpend: fake.rollbackForcePointSpend, finalizeForcePointSpend: fake.finalizeForcePointSpend, dispatchForcePointTriggers: fake.dispatchForcePointTriggers, ackForcePointTrigger: fake.ackForcePointTrigger, spendDestinyPoints: fake.spendDestinyPoints, rollbackDestinyPointSpend: fake.rollbackDestinyPointSpend, finalizeDestinyPointSpend: fake.finalizeDestinyPointSpend, dispatchDestinyPointTriggers: fake.dispatchDestinyPointTriggers, ackDestinyPointTrigger: fake.ackDestinyPointTrigger };
   fake.updateActor = updateActor;
   fake.spendForcePoints = real.spendForcePoints;
   fake.gainForcePoints = real.gainForcePoints;
@@ -12,6 +12,11 @@ export async function graftRealForcePointMethods(updateActor) {
   fake.finalizeForcePointSpend = real.finalizeForcePointSpend;
   fake.dispatchForcePointTriggers = real.dispatchForcePointTriggers;
   fake.ackForcePointTrigger = real.ackForcePointTrigger;
+  fake.spendDestinyPoints = real.spendDestinyPoints;
+  fake.rollbackDestinyPointSpend = real.rollbackDestinyPointSpend;
+  fake.finalizeDestinyPointSpend = real.finalizeDestinyPointSpend;
+  fake.dispatchDestinyPointTriggers = real.dispatchDestinyPointTriggers;
+  fake.ackDestinyPointTrigger = real.ackDestinyPointTrigger;
   return { fake, real, restore: () => Object.assign(fake, saved) };
 }
 export const setPath = (o, p, v) => { const parts = p.split('.'); let n = o; for (let i = 0; i < parts.length - 1; i++) n = (n[parts[i]] ??= {}); n[parts.at(-1)] = JSON.parse(JSON.stringify(v)); };

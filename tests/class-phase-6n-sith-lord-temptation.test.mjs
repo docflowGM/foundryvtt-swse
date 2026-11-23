@@ -71,27 +71,35 @@ test('state does not accept character aliases or cosmetic named class',()=>{
  assert.equal(counterfeit.allowed,false);
 });
 
-test('Force Point triggers originate only from the finalized V2 receipt; Destiny keeps its post-commit event',()=>{
- // Integration note (Class/Force x Force V2): 6N's Force Point emitters (ActorEngine.spendForcePoints / RollCore) and
- // deferResourceEvent are replaced by the durable outbox recorded in ActorEngine.finalizeForcePointSpend. Behavior is
+test('Force and Destiny triggers originate only from their own finalized receipts (separate ledgers, no legacy hook)',()=>{
+ // Integration note (Class/Force x Force V2): 6N's swse.resourceSpent emitters (ActorEngine Force/Destiny, RollCore) and
+ // deferResourceEvent are replaced by durable outboxes recorded in ActorEngine.finalize{Force,Destiny}PointSpend. Behavior is
  // proven in class-force-v2-temptation-trigger.test.mjs; these are structural guards on the same design.
  const ae=read('scripts/governance/actor-engine/actor-engine.js');
+ assert.doesNotMatch(ae,/swse\.resourceSpent/,'no ad-hoc spend event exists anywhere in ActorEngine');
+ assert.doesNotMatch(ae,/deferResourceEvent/);
  const fp=ae.slice(ae.indexOf('async spendForcePoints('),ae.indexOf('async rollbackForcePointSpend('));
- assert.doesNotMatch(fp,/swse\.resourceSpent/,'a spend alone never emits a Temptation trigger');
+ assert.match(fp,/spendEvidence: captureSpendEvidence\(actor, 'force'\)/,'spend-time evidence is captured on the receipt');
  const fin=ae.slice(ae.indexOf('async finalizeForcePointSpend('),ae.indexOf('async dispatchForcePointTriggers('));
  assert.match(fin,/state: 'finalized', \.\.\.\(trigger/,'the trigger is recorded in the same write that finalizes the receipt');
  assert.ok(fin.indexOf("await this.updateActor(actor, { 'flags.swse.forcePointLedger'")<fin.indexOf('this.dispatchForcePointTriggers('),
    'finality is persisted before any delivery');
  assert.match(fin,/firstFinalization/,'only the first committed->finalized transition delivers');
- assert.doesNotMatch(ae,/deferResourceEvent/);
- const dp=ae.slice(ae.indexOf('async spendDestinyPoints('),ae.indexOf('async applySecondWind('));
- assert.ok(dp.indexOf("'system.destinyPoints.value': newDP")<dp.indexOf("swse.resourceSpent"));
- assert.match(dp,/committed: true/);
+ // Destiny: its OWN ledger, atomic with the debit, its own finalize/outbox; never the Force Point ledger.
+ const dp=ae.slice(ae.indexOf('async spendDestinyPoints('),ae.indexOf('async rollbackDestinyPointSpend('));
+ assert.match(dp,/'system\.destinyPoints\.value': newDP,\s*'flags\.swse\.destinyPointLedger'/,'pool debit and Destiny receipt are ONE write');
+ assert.doesNotMatch(dp,/forcePointLedger/,'a Destiny spend never touches the Force Point ledger');
+ assert.match(dp,/spendEvidence: captureSpendEvidence\(actor, 'destiny'\)/);
+ const dfin=ae.slice(ae.indexOf('async finalizeDestinyPointSpend('),ae.indexOf('async dispatchDestinyPointTriggers('));
+ assert.match(dfin,/state: 'finalized', \.\.\.\(trigger/);
+ assert.doesNotMatch(dfin,/forcePointLedger/);
  const base=read('scripts/actors/base/swse-actor-base.js');
  assert.match(base,/ActorEngine.spendDestinyPoints\(this, 1\)/);
+ assert.match(base,/finalizeDestinyPointSpend\(this, receipt\)/,'the Destiny spend is settled after its use');
  const svc=read('scripts/engine/combat/sith-lord-temptation-service.js');
- assert.match(svc,/registerForcePointTriggerConsumer\(/);
- assert.match(svc,/if\(event\?\.resource!=='destiny'\)return;/,'the legacy hook accepts Destiny events only');
+ assert.match(svc,/registerSpendTriggerConsumer\('force'/);
+ assert.match(svc,/registerSpendTriggerConsumer\('destiny'/);
+ assert.doesNotMatch(svc,/swse\.resourceSpent/,'the legacy hook listener is gone');
 });
 
 test('paid Force Point roll finalizes through the V2 receipt; no coordinator deferral or RollCore emitter remains',()=>{
@@ -110,7 +118,7 @@ test('runtime action and target choice remain separate; no fake immediate DSP',(
  assert.match(service,/ActionEconomyConsumption.spend\(sith,'standard'/);
  assert.match(service,/rollSkill\(sith,'persuasion'/);
  assert.match(service,/planTemptationMark\(/);
- assert.match(service,/planTemptationSpend\(/);
+ assert.match(service,/planTemptationSpendFromEvidence\(/);
  assert.match(service,/DSPEngine.getNextValue\(target,event.steps\)/);
  assert.match(service,/ConditionTrackRules.resolveConditionShift\(target,event.steps\)/);
  assert.match(service,/eventKey:x.receiptId\+':'\+x.id/);

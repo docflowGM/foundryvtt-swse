@@ -57,7 +57,7 @@ const ledger = (a) => a.flags?.swse?.forcePointLedger?.receipts ?? [];
 const makeTarget = (id = 'target-1', { owner = true } = {}) => {
   const a = {
     id, name: `Target ${id}`, type: 'character',
-    system: { forcePoints: { value: 5, max: 5 }, conditionTrack: { current: 0 }, darkSideScore: { value: 0 }, level: { heroic: 1 } },
+    system: { forcePoints: { value: 5, max: 5 }, destinyPoints: { value: 3 }, conditionTrack: { current: 0 }, darkSideScore: { value: 0 }, level: { heroic: 1 } },
     flags: { swse: { bonusForcePoints: { value: 0, entries: [] } } }, items: [],
     getFlag(scope, name) { return this.flags?.[scope]?.[name]; },
     testUserPermission() { return owner; }
@@ -70,6 +70,9 @@ const makeTarget = (id = 'target-1', { owner = true } = {}) => {
 };
 let req = 0;
 const spend = (actor) => { live.combatant = { id: `cb-${actor.id}`, actor }; return ActorEngine.spendForcePoints(actor, 1, { useKind: 'roll-bonus', rollDomain: 'skill.acrobatics', requestId: `r${++req}` }); };
+const dledger = (a) => a.flags?.swse?.destinyPointLedger?.receipts ?? [];
+let dreq = 0;
+const dspend = (actor, amount = 1) => { live.combatant = { id: `cb-${actor.id}`, actor }; return ActorEngine.spendDestinyPoints(actor, amount, { requestId: `d${++dreq}` }); };
 let n = 0;
 const ok = (label) => { n += 1; console.log(`  [${n}] ${label} OK`); };
 
@@ -144,9 +147,9 @@ try {
     assert.equal((await SithLordTemptationService.consumeSpendReceipt({ ...base, receiptId: good.receiptId, source: 'RollCore.execute' })).reason, 'untrusted-event-source');
     assert.equal(verifyFinalizedForceReceipt(makeTarget('other'), { ...base, receiptId: good.receiptId }).ok, false, 'another actor cannot claim this receipt');
     assert.equal(EVENTS(t).length, before, 'no spoofed payload created a consequence');
-    // the legacy hook path no longer accepts Force Point events at all
+    // the legacy hook path no longer exists: a forged hook event is simply ignored
     await globalThis.Hooks.callAll('swse.resourceSpent', { ...base, receiptId: 'forged-hook', actor: t });
-    assert.equal(EVENTS(t).length, before, 'swse.resourceSpent is Destiny-only; a forged Force event is ignored');
+    assert.equal(EVENTS(t).length, before, 'swse.resourceSpent has no listener anymore; a forged event is ignored');
     ok('forged, pending, mismatched-amount, wrong-source, wrong-actor and hook-injected Force events are all rejected');
   }
 
@@ -431,6 +434,190 @@ try {
     }).updates[TEMPT];
     assert.ok(bounded.length <= 26, 'historical marks are retained but bounded');
     ok('C10: a new mark does not prune expired marks (bounded history), and never reactivates them');
+  }
+
+  // 23. Late replay never depends on a stored mark record: it survives >25 intervening marks (bounded history pruning).
+  {
+    const { planTemptationMark } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/sith-lord-temptation-state.js');
+    const t = makeTarget('c23');
+    const r = await spend(t);                                  // qualifies at the spend (receipt carries the evidence)
+    failMutation = true;
+    await ActorEngine.finalizeForcePointSpend(t, r);           // delivery fails; trigger stays pending
+    assert.equal(ledger(t)[0].trigger.state, 'pending');
+    // 40 further marks come and go, pruning the original mark record out of the bounded history
+    for (let i = 0; i < 40; i++) {
+      expireMarks(t);
+      const plan = planTemptationMark({ caster: { id: `churn${i}` }, target: t,
+        combat: { id: live.id, started: true, round: 10 + i, turn: 0, combatant: { id: `cb${i}` } },
+        checkTotal: 30, willDefense: 10, confirmedLineOfSight: true });
+      setPath(t, TEMPT, plan.updates[TEMPT]);
+    }
+    assert.ok(!marks(t).some((m) => m.id === `sith:${live.id}:2:5`), 'the original mark record has been pruned from history');
+    setClock(40, 0);
+    const rep = await ActorEngine.dispatchForcePointTriggers(t);
+    assert.equal(rep.delivered, 1);
+    assert.equal(EVENTS(t).length, 1, 'the consequence is recovered from the receipt evidence alone');
+    assert.equal(EVENTS(t)[0].sourceActorId, 'sith');
+    setClock(2, 1);
+    ok('C11: late replay needs no stored mark record: it survives >25 intervening marks (no implicit count-based expiry)');
+  }
+
+  // ===================== Decision B: separate, durable Destiny Point ledger =====================
+  // D1. a Destiny spend writes ONLY the Destiny ledger, atomically with the pool debit; never the Force Point ledger.
+  {
+    const t = makeTarget('d1');
+    const fpBefore = JSON.stringify(t.system.forcePoints);
+    const r = await dspend(t);
+    assert.equal(r.spent, 1); assert.equal(r.remaining, 2); assert.equal(t.system.destinyPoints.value, 2);
+    assert.equal(dledger(t).length, 1);
+    assert.equal(dledger(t)[0].state, 'committed');
+    assert.equal(dledger(t)[0].actorId, t.id, 'receipt is owned by the spending actor');
+    assert.deepEqual(ledger(t), [], 'Destiny never touches the Force Point ledger');
+    assert.equal(JSON.stringify(t.system.forcePoints), fpBefore);
+    assert.equal(dledger(t)[0].spendEvidence.temptation.round, 2, 'spend-time evidence persisted on the Destiny receipt');
+    await assert.rejects(() => ActorEngine.spendDestinyPoints(t, 1, { requestId: dledger(t)[0].requestId }), /Duplicate Destiny Point transaction/);
+    assert.equal(t.system.destinyPoints.value, 2, 'a duplicate request neither re-charges nor adds a receipt');
+    assert.equal(dledger(t).length, 1);
+    const none = makeTarget('d1-empty'); none.system.destinyPoints.value = 0;
+    assert.deepEqual(await ActorEngine.spendDestinyPoints(none, 1), { spent: 0, remaining: 0 }, 'no points => no receipt');
+    assert.deepEqual(dledger(none), []);
+    ok('D1: Destiny spend is atomic with its own receipt in its own ledger; duplicate request rejected; Force ledger untouched');
+  }
+
+  // D2. finalization triggers exactly once, with the Destiny receipt id and the printed Destiny magnitude (2 steps).
+  {
+    const t = makeTarget('d2');
+    const r = await dspend(t);
+    assert.equal(EVENTS(t).length, 0, 'a committed Destiny receipt never triggers');
+    assert.deepEqual(await ActorEngine.finalizeDestinyPointSpend(t, r), { finalized: true, receiptId: r.receiptId });
+    assert.equal(EVENTS(t).length, 1);
+    assert.equal(EVENTS(t)[0].receiptId, r.receiptId);
+    assert.equal(EVENTS(t)[0].resource, 'destiny');
+    assert.equal(EVENTS(t)[0].steps, 2, 'printed Destiny Point consequence magnitude is preserved');
+    assert.equal(EVENTS(t)[0].state, 'pending-target-choice', 'owner choice preserved; nothing applied automatically');
+    assert.equal(dledger(t)[0].trigger.state, 'delivered');
+    assert.deepEqual(await ActorEngine.finalizeDestinyPointSpend(t, r), { finalized: true, alreadyFinalized: true });
+    assert.equal(EVENTS(t).length, 1, 'alreadyFinalized retry never duplicates');
+    ok('D2: Destiny finalization triggers once with the Destiny receipt id and 2-step magnitude; retry creates no duplicate');
+  }
+
+  // D3. rollback restores EXACTLY that receipt (never a historical balance) and never triggers.
+  {
+    const t = makeTarget('d3');
+    const first = await dspend(t);                                     // 3 -> 2
+    t.system.destinyPoints.value = 5;                                  // legitimate unrelated activity in between (e.g. a GM grant)
+    const second = await dspend(t);                                    // 5 -> 4
+    const rb = await ActorEngine.rollbackDestinyPointSpend(t, first);
+    assert.deepEqual({ rolledBack: rb.rolledBack, restored: rb.restored }, { rolledBack: true, restored: 1 });
+    assert.equal(t.system.destinyPoints.value, 5, 'only that receipt is compensated; the intervening grant survives (4 + 1)');
+    assert.equal(dledger(t).find((x) => x.receiptId === first.receiptId).state, 'rolled-back');
+    assert.equal((await ActorEngine.rollbackDestinyPointSpend(t, first)).rolledBack, false, 'a rollback cannot be replayed');
+    assert.equal((await ActorEngine.finalizeDestinyPointSpend(t, first)).finalized, false, 'a rolled-back receipt can never finalize');
+    assert.equal(EVENTS(t).length, 0, 'rollback never triggers');
+    await ActorEngine.finalizeDestinyPointSpend(t, second);
+    assert.equal((await ActorEngine.rollbackDestinyPointSpend(t, second)).rolledBack, false, 'a finalized spend is never refundable');
+    ok('D3: Destiny rollback is exact and one-shot; finalized spends are not refundable; rollback never triggers');
+  }
+
+  // D4. delayed Destiny delivery after GM expiry / encounter end / reconnect (Decision C parity, separate ledger).
+  {
+    const t = makeTarget('d4');
+    const r = await dspend(t);
+    failMutation = true;                                               // consumer write fails: listener down
+    await ActorEngine.finalizeDestinyPointSpend(t, r);
+    assert.equal(dledger(t)[0].trigger.state, 'pending');
+    assert.equal(t.system.destinyPoints.value, 2, 'not re-charged');
+    expireMarks(t); setClock(9, 0);
+    const savedCombat = globalThis.game.combat; globalThis.game.combat = null;      // encounter over, client reconnected
+    const rep = await ActorEngine.dispatchDestinyPointTriggers(t);
+    globalThis.game.combat = savedCombat; setClock(2, 1);
+    assert.equal(rep.delivered, 1);
+    assert.equal(EVENTS(t).length, 1, 'exactly one pending choice recovered from the Destiny receipt evidence');
+    assert.equal(EVENTS(t)[0].steps, 2);
+    assert.equal(marks(t).every((m) => m.state === 'expired'), true, 'expired mark not reactivated');
+    assert.equal(t.system.destinyPoints.value, 2);
+    ok('D4: delayed Destiny delivery after expiry/encounter end/reconnect yields exactly one choice, no re-charge');
+  }
+
+  // D5. before-mark / after-mark / out-of-window negatives for Destiny.
+  {
+    const a = bareTarget('d5a'); const ra = await dspend(a);          // spent before any mark
+    withMark(a); await ActorEngine.finalizeDestinyPointSpend(a, ra);
+    assert.equal(EVENTS(a).length, 0, 'a mark created after the Destiny spend never qualifies it');
+    const b = makeTarget('d5b'); expireMarks(b);
+    const rb = await dspend(b); await ActorEngine.finalizeDestinyPointSpend(b, rb);
+    assert.equal(EVENTS(b).length, 0, 'a Destiny spend after expiry never qualifies');
+    const c = makeTarget('d5c'); setClock(3, 5);
+    const rc = await dspend(c); await ActorEngine.finalizeDestinyPointSpend(c, rc); setClock(2, 1);
+    assert.equal(EVENTS(c).length, 0, "a Destiny spend once the source's next turn began never qualifies");
+    ok('D5: Destiny negatives: before-mark, after-expiry and after-window spends never qualify');
+  }
+
+  // D6. adversarial Destiny payloads and cross-ledger isolation.
+  {
+    const t = makeTarget('d6');
+    const fp = await spend(t);                                          // a real, finalized FORCE receipt
+    live.round = 3; const dp = await dspend(t); live.round = 2;
+    await ActorEngine.finalizeForcePointSpend(t, fp);
+    const baseline = EVENTS(t).length;
+    const dbase = { actor: t, actorId: t.id, resource: 'destiny', spent: 1, committed: true, source: 'ActorEngine.finalizeDestinyPointSpend' };
+    const reason = async (over) => (await SithLordTemptationService.consumeSpendReceipt({ ...dbase, ...over })).reason;
+    assert.equal(await reason({ receiptId: 'forged' }), 'receipt-not-in-actor-ledger');
+    assert.equal(await reason({ receiptId: fp.receiptId }), 'receipt-not-in-actor-ledger', 'a FORCE receipt id cannot satisfy a DESTINY event');
+    assert.equal(await reason({ receiptId: dp.receiptId }), 'receipt-not-finalized', 'a committed Destiny receipt does not qualify');
+    await ActorEngine.finalizeDestinyPointSpend(t, dp);
+    const after = EVENTS(t).length;
+    assert.equal(await reason({ receiptId: dp.receiptId, spent: 2 }), 'receipt-amount-mismatch');
+    assert.equal(await reason({ receiptId: dp.receiptId, source: 'ActorEngine.finalizeForcePointSpend' }), 'untrusted-event-source', 'a Force source cannot vouch for Destiny');
+    assert.equal(await reason({ receiptId: dp.receiptId }), 'duplicate-spend-receipt');
+    const forcedAsDestiny = await SithLordTemptationService.consumeSpendReceipt({ ...dbase, resource: 'force', receiptId: dp.receiptId });
+    assert.equal(forcedAsDestiny.reason, 'receipt-not-in-actor-ledger', 'a Destiny receipt id cannot satisfy a FORCE event');
+    assert.equal(EVENTS(t).length, after);
+    assert.ok(after >= baseline);
+    ok('D6: forged/mismatched/wrong-source Destiny events rejected; Force and Destiny ledgers are mutually isolated');
+  }
+
+  // D7. uncertain write on finalize is reconcilable once; concurrent finalization has one transition.
+  {
+    const t = makeTarget('d7');
+    const r = await dspend(t);
+    throwAfterWrite = true;
+    await assert.rejects(() => ActorEngine.finalizeDestinyPointSpend(t, r), /acknowledgement failed/);
+    assert.equal(dledger(t)[0].state, 'finalized'); assert.equal(dledger(t)[0].trigger.state, 'pending');
+    assert.equal((await ActorEngine.dispatchDestinyPointTriggers(t)).delivered, 1);
+    assert.equal(EVENTS(t).length, 1);
+    const u = makeTarget('d7b'); const ru = await dspend(u);
+    const [x, y] = await Promise.all([ActorEngine.finalizeDestinyPointSpend(u, ru), ActorEngine.finalizeDestinyPointSpend(u, ru)]);
+    assert.equal([x, y].filter((v) => v.alreadyFinalized).length, 1);
+    assert.equal(EVENTS(u).length, 1);
+    ok('D7: Destiny uncertain write is reconciled once; concurrent finalization has one transition and one consequence');
+  }
+
+  // D8. consumers are per-resource: a Force consumer never sees a Destiny spend and vice versa.
+  {
+    const { registerSpendTriggerConsumer } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js');
+    const seen = { force: 0, destiny: 0 };
+    const u1 = registerSpendTriggerConsumer('force', async () => { seen.force += 1; });
+    const u2 = registerSpendTriggerConsumer('destiny', async () => { seen.destiny += 1; });
+    const t = bareTarget('d8');
+    const f = await spend(t); await ActorEngine.finalizeForcePointSpend(t, f);
+    live.round = 3; const d = await dspend(t); await ActorEngine.finalizeDestinyPointSpend(t, d); live.round = 2;
+    assert.deepEqual(seen, { force: 1, destiny: 1 }, 'each resource delivers only to its own consumers');
+    u1(); u2();
+    ok('D8: trigger consumers are registered and delivered per resource');
+  }
+
+  // D9. permission: a non-owner, non-GM client creates no Destiny consequence; a GM on a player-owned actor does.
+  {
+    globalThis.game.user.isGM = false;
+    const t = makeTarget('d9', { owner: false }); const r = await dspend(t);
+    await ActorEngine.finalizeDestinyPointSpend(t, r);
+    assert.equal(EVENTS(t).length, 0);
+    globalThis.game.user.isGM = true;
+    const g = makeTarget('d9b', { owner: false }); const rg = await dspend(g);
+    await ActorEngine.finalizeDestinyPointSpend(g, rg);
+    assert.equal(EVENTS(g).length, 1);
+    ok('D9: Destiny permission respected: GM or owner only');
   }
 } finally {
   restore();

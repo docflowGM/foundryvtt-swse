@@ -9,12 +9,12 @@ import { rollSkill } from '/systems/foundryvtt-swse/scripts/rolls/skills.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { DSPEngine } from '/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js';
 import { ConditionTrackRules } from '/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js';
-import { registerForcePointTriggerConsumer, registerSpendEvidenceProvider } from '/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js';
+import { registerSpendTriggerConsumer, registerSpendEvidenceProvider } from '/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js';
 import { apexClassFeatureAccess } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/apex-class-feature-access.js';
 import {
   TEMPTATION_PATH,TEMPTATION_EVENTS_PATH,actorIdentity,
   currentTemptations,currentTemptationEvents,
-  planTemptationMark,planTemptationSpend,planTemptationSpendFromEvidence,temptationSpendEvidence,expireTemptationEntries,
+  planTemptationMark,planTemptationSpendFromEvidence,temptationSpendEvidence,expireTemptationEntries,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/sith-lord-temptation-state.js';
 
 const locks=new Set();
@@ -42,21 +42,29 @@ function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({
  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
 })[c]);}
 /**
- * A Force Point trigger is trusted ONLY when it matches the target's own finalized ledger receipt: same receipt id,
- * same owner, FINALIZED state, same positive amount, and it came from the finalize outbox. A caller-supplied
- * `committed:true` payload is never enough on its own.
+ * A spend trigger is trusted ONLY when it matches the target's own FINALIZED receipt in that RESOURCE's OWN ledger: same
+ * receipt id, same owner, FINALIZED state, same positive amount, and it came from that resource's finalize outbox. A
+ * caller-supplied `committed:true` payload is never enough on its own. Force Point and Destiny Point receipts live in
+ * separate ledgers and are never interchangeable.
  */
-export function verifyFinalizedForceReceipt(target,event){
- const ledger=target?.getFlag?.('swse','forcePointLedger')??target?.flags?.swse?.forcePointLedger;
+const SPEND_LEDGERS={
+  force:{flag:'forcePointLedger',source:'ActorEngine.finalizeForcePointSpend'},
+  destiny:{flag:'destinyPointLedger',source:'ActorEngine.finalizeDestinyPointSpend'},
+};
+export function verifyFinalizedSpendReceipt(target,event){
+ const spec=SPEND_LEDGERS[event?.resource];
+ if(!spec)return {ok:false,reason:'unsupported-resource'};
+ const ledger=target?.getFlag?.('swse',spec.flag)??target?.flags?.swse?.[spec.flag];
  const rows=Array.isArray(ledger?.receipts)?ledger.receipts:[];
  const receipt=rows.find(r=>r.receiptId===event?.receiptId&&r.actorId===target?.id);
  if(!receipt)return {ok:false,reason:'receipt-not-in-actor-ledger'};
  if(receipt.state!=='finalized')return {ok:false,reason:'receipt-not-finalized'};
  if(!Number.isSafeInteger(receipt.spent)||receipt.spent<1||receipt.spent!==event.spent)
    return {ok:false,reason:'receipt-amount-mismatch'};
- if(event.source!=='ActorEngine.finalizeForcePointSpend')return {ok:false,reason:'untrusted-event-source'};
+ if(event.source!==spec.source)return {ok:false,reason:'untrusted-event-source'};
  return {ok:true,receipt};
 }
+export const verifyFinalizedForceReceipt=(target,event)=>verifyFinalizedSpendReceipt(target,{...event,resource:'force'});
 function readActorPool(target,resource){
  return Number(resource==='force'?target?.system?.forcePoints?.value:
    target?.system?.destinyPoints?.value);
@@ -123,18 +131,11 @@ export class SithLordTemptationService {
     const target=event?.actor;
     if(!target?.id||!permission(target))return {handled:false};
     return locked(target,async()=>{
-      let plan;
-      if(event?.resource==='force'){
-        // Trust only the target's own FINALIZED ledger receipt and the SPEND-TIME evidence persisted on it (Decision C):
-        // never the event payload, never live combat state at delivery time.
-        const verified=verifyFinalizedForceReceipt(target,event);
-        if(!verified.ok)return {handled:false,reason:verified.reason};
-        plan=planTemptationSpendFromEvidence({target,evidence:verified.receipt.spendEvidence?.temptation,event});
-      }else{
-        const combat=activeCombat();
-        if(!combat?.id)return {handled:false};
-        plan=planTemptationSpend({target,combat,event});
-      }
+      // Trust only the target's own FINALIZED receipt in that resource's ledger and the SPEND-TIME evidence persisted on it
+      // (Decision C): never the event payload, never live combat state at delivery time.
+      const verified=verifyFinalizedSpendReceipt(target,event);
+      if(!verified.ok)return {handled:false,reason:verified.reason};
+      const plan=planTemptationSpendFromEvidence({target,evidence:verified.receipt.spendEvidence?.temptation,event});
       if(!plan.eligible)return {handled:false,reason:plan.reason};
       const prior=currentTemptationEvents(target);
       const pending=plan.consequences.map(x=>({
@@ -206,19 +207,25 @@ export class SithLordTemptationService {
     return reports;
   }
 
-  /** Re-deliver any finalized Force Point receipt whose trigger is still pending (listener failure, reload, disconnect). */
-  static async reconcileForcePointTriggers(){
+  /** Re-deliver any finalized receipt (Force or Destiny, each from its OWN ledger) whose trigger is still pending. */
+  static async reconcileSpendTriggers(){
     const out={actors:0,delivered:0};
+    const pendingIn=(actor,flag)=>{
+      const ledger=actor?.getFlag?.('swse',flag)??actor?.flags?.swse?.[flag];
+      return Array.isArray(ledger?.receipts)&&ledger.receipts.some(r=>r.state==='finalized'&&r.trigger?.state==='pending');
+    };
     for(const actor of Array.from(globalThis.game?.actors??[])){
-      const ledger=actor?.getFlag?.('swse','forcePointLedger')??actor?.flags?.swse?.forcePointLedger;
-      const any=Array.isArray(ledger?.receipts)&&ledger.receipts.some(r=>r.state==='finalized'&&r.trigger?.state==='pending');
-      if(!any||!permission(actor))continue;
+      const force=pendingIn(actor,'forcePointLedger'),destiny=pendingIn(actor,'destinyPointLedger');
+      if(!(force||destiny)||!permission(actor))continue;
       out.actors++;
-      try{out.delivered+=(await ActorEngine.dispatchForcePointTriggers(actor)).delivered;}
-      catch(error){globalThis.ui?.notifications?.error?.('Temptation reconciliation requires GM review: '+error.message);}
+      try{
+        if(force)out.delivered+=(await ActorEngine.dispatchForcePointTriggers(actor)).delivered;
+        if(destiny)out.delivered+=(await ActorEngine.dispatchDestinyPointTriggers(actor)).delivered;
+      }catch(error){globalThis.ui?.notifications?.error?.('Temptation reconciliation requires GM review: '+error.message);}
     }
     return out;
   }
+  static async reconcileForcePointTriggers(){return SithLordTemptationService.reconcileSpendTriggers();}
 
   static async expireCombat(combat,{encounterEnd=false,nextTurn=false}={}){
     if(globalThis.game?.user?.isGM!==true||!combat?.id)return;
@@ -249,27 +256,19 @@ export function registerSithLordTemptationHooks(){
  // Spend-time evidence: ActorEngine snapshots the active marks, encounter and round/turn onto the spending actor's OWN
  // receipt at the spend commit, so eligibility never depends on when finalization or delivery later runs.
  registerSpendEvidenceProvider('temptation',actor=>temptationSpendEvidence(actor,activeCombat()));
- // Force Point triggers arrive ONLY from V2's finalized-receipt outbox (ActorEngine.finalizeForcePointSpend).
- registerForcePointTriggerConsumer(async event=>{
+ // Triggers arrive ONLY from each resource's finalized-receipt outbox (ActorEngine.finalize{Force,Destiny}PointSpend).
+ const deliver=async event=>{
    const report=await SithLordTemptationService.consumeSpendReceipt(event);
    // The consequence is now stored durably on the target as pending-target-choice; acknowledging the
    // trigger does not wait on the prompt.
    if(report?.handled)void SithLordTemptationService.resolvePending(event.actor).catch(error=>
      globalThis.ui?.notifications?.error?.('Temptation consequence pending GM review: '+error.message));
- });
- if(globalThis.game?.ready===true)void SithLordTemptationService.reconcileForcePointTriggers();
- else globalThis.Hooks.once?.('ready',()=>SithLordTemptationService.reconcileForcePointTriggers());
- // Destiny Points have no V2 receipt ledger; they keep their own post-commit event (see integration matrix).
- globalThis.Hooks.on('swse.resourceSpent',async event=>{
-   if(event?.resource!=='destiny')return;
-   try{
-     const report=await SithLordTemptationService.consumeSpendReceipt(event);
-     if(report?.handled)await SithLordTemptationService.resolvePending(event.actor);
-   }catch(error){
-     globalThis.ui?.notifications?.error?.(
-       'Temptation consequence pending GM review: '+error.message);
-   }
- });
+ };
+ // Each resource has its own ledger and outbox; Destiny is never treated as a Force Point.
+ registerSpendTriggerConsumer('force',deliver);
+ registerSpendTriggerConsumer('destiny',deliver);
+ if(globalThis.game?.ready===true)void SithLordTemptationService.reconcileSpendTriggers();
+ else globalThis.Hooks.once?.('ready',()=>SithLordTemptationService.reconcileSpendTriggers());
  globalThis.Hooks.on('combatTurn',combat=>
    SithLordTemptationService.expireCombat(combat,{nextTurn:true}));
  globalThis.Hooks.on('deleteCombat',combat=>

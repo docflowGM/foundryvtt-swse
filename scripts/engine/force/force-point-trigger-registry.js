@@ -1,22 +1,34 @@
 /**
- * Force Point trigger consumers.
+ * Spend trigger consumers and spend-time evidence providers.
  *
- * ActorEngine.finalizeForcePointSpend() records a durable trigger on the FIRST committed->finalized
- * transition of a Force Point receipt and, after the Force Point queue lock is released, delivers it to
- * every registered consumer. This module is deliberately import-free so ActorEngine and consumers
- * (e.g. Sith Lord Temptation) can share it without a circular dependency.
+ * ActorEngine.finalizeForcePointSpend() and finalizeDestinyPointSpend() record a durable trigger on the FIRST
+ * committed->finalized transition of a receipt in that resource's OWN ledger and, after the queue lock is released,
+ * deliver it to every consumer registered for that resource. This module is deliberately import-free so ActorEngine and
+ * consumers (e.g. Sith Lord Temptation) can share it without a circular dependency.
  */
-const consumers = new Set();
+// Consumers are registered PER RESOURCE. Force Points and Destiny Points have separate ledgers and separate outboxes;
+// a Force Point consumer is never invoked for a Destiny spend, and vice versa.
+const consumersByResource = new Map();
+const setFor = (resource) => {
+  if (!['force', 'destiny'].includes(resource)) throw new Error(`Unknown spend resource: ${resource}`);
+  if (!consumersByResource.has(resource)) consumersByResource.set(resource, new Set());
+  return consumersByResource.get(resource);
+};
 
-/** @param {(event:Object)=>Promise<any>|any} consumer @returns {()=>boolean} unregister */
-export function registerForcePointTriggerConsumer(consumer) {
-  if (typeof consumer !== 'function') throw new Error('Force Point trigger consumer must be a function');
-  consumers.add(consumer);
-  return () => consumers.delete(consumer);
+/** @param {'force'|'destiny'} resource @param {(event:Object)=>Promise<any>|any} consumer @returns {()=>boolean} unregister */
+export function registerSpendTriggerConsumer(resource, consumer) {
+  if (typeof consumer !== 'function') throw new Error('Spend trigger consumer must be a function');
+  const set = setFor(resource);
+  set.add(consumer);
+  return () => set.delete(consumer);
 }
+export const spendTriggerConsumers = (resource) => [...setFor(resource)];
+export const hasSpendTriggerConsumers = (resource) => setFor(resource).size > 0;
 
-export function forcePointTriggerConsumers() { return [...consumers]; }
-export function hasForcePointTriggerConsumers() { return consumers.size > 0; }
+// Force Point names kept for existing callers.
+export const registerForcePointTriggerConsumer = (consumer) => registerSpendTriggerConsumer('force', consumer);
+export const forcePointTriggerConsumers = () => spendTriggerConsumers('force');
+export const hasForcePointTriggerConsumers = () => hasSpendTriggerConsumers('force');
 
 /**
  * Spend-time evidence providers (Class/Force x Force V2, Decision C).

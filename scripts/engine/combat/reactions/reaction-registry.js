@@ -1087,18 +1087,20 @@ const SWSE_FIRST_WAVE_REACTION_FALLBACKS = {
   },
 
   async "destiny-point"({ defender } = {}) {
-    const current = defender?.system?.destinyPoints?.value ?? 0;
-    if (current > 0 && typeof ActorEngine?.apply === "function") {
-      await ActorEngine.apply(defender, {
-        update: {
-          "system.destinyPoints.value": Math.max(0, current - 1)
-        }
-      });
+    // Destiny Points are spent only through ActorEngine's separate Destiny receipt ledger (no direct balance write).
+    let spent = null;
+    if ((defender?.system?.destinyPoints?.value ?? 0) > 0) {
+      const { ActorEngine: Engine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      spent = await Engine.spendDestinyPoints(defender, 1, { requestId: `reaction-destiny:${defender?.id ?? ''}:${globalThis.foundry?.utils?.randomID?.() ?? Date.now()}` });
+      if (spent?.receiptId) {
+        // The reaction card below is this fallback's entire paid effect; settle the receipt exactly.
+        try { await Engine.finalizeDestinyPointSpend(defender, spent); } catch (error) { console.error("[SWSE] Destiny Point reaction applied but finality was not persisted; receipt stays committed for audit.", error); }
+      }
     }
     return swsePostReactionFallback(swseReactionResultCard({
-      title: "Destiny Point Spent",
+      title: spent?.spent ? "Destiny Point Spent" : "Destiny Point Not Spent",
       subtitle: defender?.name ?? "Actor",
-      state: "success"
+      state: spent?.spent ? "success" : "failure"
     }));
   }
 };

@@ -1865,10 +1865,11 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
         let fpReceipt = null;
+        let dpReceipt = null;
         if (useDP) {
           const dp = actor.system.destinyPoints?.value || 0;
           if (dp > 0) {
-            await ActorEngine.spendDestinyPoints(actor, 1);
+            dpReceipt = await ActorEngine.spendDestinyPoints(actor, 1);
           }
         } else {
           const fp = actor.system.forcePoints?.value || 0;
@@ -1879,6 +1880,7 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
 
         this._applySecretEffect(secret, effects, useDP);
         // The paid enhancement now exists: settle the receipt exactly (also what lets Temptation observe the spend).
+        if (dpReceipt?.receiptId) { try { await ActorEngine.finalizeDestinyPointSpend(actor, dpReceipt); } catch (error) { console.error('[SWSE] Destiny Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); } }
         if (fpReceipt?.receiptId) { try { await ActorEngine.finalizeForcePointSpend(actor, fpReceipt); } catch (error) { console.error('[SWSE] Force Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); } }
 
         effects.secrets.push(secret);

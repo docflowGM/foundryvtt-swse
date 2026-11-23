@@ -421,6 +421,8 @@ export class SWSEActorBase extends Actor {
       message:`${this.name} has no Destiny Points remaining.`,newValue:dp.value
     };
     const newValue = receipt.remaining;
+    // The Destiny Point has been spent for its stated use: settle the receipt exactly (this is what lets Temptation observe it).
+    try { await ActorEngine.finalizeDestinyPointSpend(this, receipt); } catch (error) { console.error('[SWSE] Destiny Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); }
 
     return {
       success: true,
