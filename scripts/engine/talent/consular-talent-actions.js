@@ -212,6 +212,30 @@ export class ConsularTalentActions {
     return { spent: 1, remaining: Math.max(0, current - 1) };
   }
 
+  /**
+   * WatchCircle Initiate transfer: subtract 1 NORMAL point from the actor, add 1 to the ally. Not a spend (printed text), but the two
+   * writes are one event: exactly one point leaves and exactly one arrives. Failure handling re-reads the ally rather than assuming:
+   *  - subtract fails: nothing changed;
+   *  - ally gain throws and the ally's total did NOT rise: the actor's point is returned (exact, +1);
+   *  - ally gain throws but the ally's total DID rise (write applied, acknowledgement lost): the transfer stands, no compensation,
+   *    so a point is never duplicated.
+   * Limit: the re-read compares totals, so a concurrent unrelated gain on the ally in the same instant is indistinguishable from the
+   * transfer landing; that rare case is left for GM adjudication rather than guessed.
+   */
+  static async _transferWatchCircleForcePoint(actor, allyActor) {
+    const allyBefore = allyActor ? SchemaAdapters.getForcePoints(allyActor) : null;
+    await this._spendNormalForcePoint(actor, 'watchcircle-initiate-normal-fp');
+    if (!allyActor) return null; // no ally document: the GM applies the gain manually (stated on the card)
+    try {
+      return await this._grantNormalForcePoint(allyActor, 1, 'watchcircle-initiate-grant-fp');
+    } catch (err) {
+      const applied = SchemaAdapters.getForcePoints(allyActor) > allyBefore;
+      if (applied) return { granted: 1, total: SchemaAdapters.getForcePoints(allyActor), acknowledgementLost: true };
+      await this._grantNormalForcePoint(actor, 1, 'watchcircle-initiate-compensation');
+      throw err;
+    }
+  }
+
   static async _grantNormalForcePoint(actor, amount = 1, source = 'force-talent-grant-fp') {
     if (!actor || amount <= 0) return { granted: 0 };
     const current = SchemaAdapters.getForcePoints(actor);
@@ -713,23 +737,20 @@ export class ConsularTalentActions {
     }
     const ally = await promptToken(actor, 'WatchCircle Initiate', { relation: 'ally', fallbackLabel: 'ally', note: 'Choose one ally within line of sight to receive 1 Force Point if your DC 15 Use the Force check succeeds.' });
     if (!ally) return null;
-    const farseeing = await this._spendReadyFarseeing(actor, 'watchcircle-initiate');
+    const farseeing = this._findReadyFarseeing(actor);
+    if (!farseeing) throw new Error('A ready use of Farseeing is required.');
     const modResult = await showRollModifiersDialog({ title: 'WatchCircle Initiate — DC 15 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
-    if (modResult === null) return null;
+    if (modResult === null) return null; // cancelled before any check: Farseeing is NOT consumed
+    await this._spendReadyFarseeing(actor, 'watchcircle-initiate');
     const roll = await rollSkillCheck(actor, 'useTheForce', { ...modResult, dc: 15, source: 'watchcircle-initiate', skillUse: { key: 'watchcircle-initiate', label: 'WatchCircle Initiate' }, sourceElement });
     if (!roll) return null;
     const total = Number(roll.roll?.total ?? 0) || 0;
     const success = roll.success === true;
     let transfer = null;
     if (success) {
-      let subtracted = false;
       try {
-        await this._spendNormalForcePoint(actor, 'watchcircle-initiate-normal-fp');
-        subtracted = true;
-        if (ally.actor) transfer = await this._grantNormalForcePoint(ally.actor, 1, 'watchcircle-initiate-grant-fp');
+        transfer = await this._transferWatchCircleForcePoint(actor, ally.actor ?? null);
       } catch (err) {
-        // The transfer is one event: if the ally's gain failed, return the point so it is not lost.
-        if (subtracted && !transfer) await this._grantNormalForcePoint(actor, 1, 'watchcircle-initiate-compensation').catch(() => null);
         ui?.notifications?.warn?.(err.message);
         await postCard(actor, 'WatchCircle Initiate', `<p>Use the Force succeeds (${total} vs DC 15), but the Force Point transfer could not complete: ${esc(err.message)}</p>`, { talentName: 'WatchCircle Initiate', success: false, transferFailed: true });
         return { success: false, transferFailed: true, error: err.message };
