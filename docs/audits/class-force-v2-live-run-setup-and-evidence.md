@@ -5,7 +5,7 @@ Companion to `class-force-v2-foundry-v13-acceptance-matrix.md` (the scenario lis
 ## 0. Run record (fill in per run; one copy per session)
 | Field | Value |
 | --- | --- |
-| Branch / exact HEAD SHA | `integration/class-force-v2-20261122` @ `________` (at preparation: `f65a60410`) |
+| Build under test / exact HEAD SHA | **CURRENT TARGET: `main` @ `f734b4d33`** (merge of the integration branch, 2026-11-24). Historical: the guide was first prepared against `integration/class-force-v2-20261122` @ `f65a60410` / `5246f72f1`; those earlier snapshots are preserved, not the target. Record the SHA actually checked out: `________` |
 | System id / manifest version / compatibility | `foundryvtt-swse` / `4.3.0` / min 13, verified 14 (from `system.json`) |
 | Foundry core version / build | ________ |
 | World name, created from a CLEAN copy of | ________ |

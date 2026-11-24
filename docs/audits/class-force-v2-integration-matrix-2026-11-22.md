@@ -1,5 +1,7 @@
 # Class/Force ↔ Force V2 integration — slice status and per-contract matrix
 
+> **POST-MERGE STATUS (2026-11-24):** the integration branch was merged into `main` (merge commit `f734b4d33`, parents `82c2b083c` and `5246f72f1`) on the owner's explicit instruction, after a full rolling-suite run of 794/794 on the merged tree (run locally; no CI check run was available for that commit at the time). Headers below that say "Not for `main`" are historical. This is a source merge, **not** a release and **not** live certification: nothing is `FOUNDRY_TESTED`; the acceptance rows in `class-force-v2-foundry-v13-acceptance-matrix.md` are still to be executed against `main` @ `f734b4d33`. PR #1171 is an older draft snapshot whose head does not represent this merge; it is to be closed explicitly, not merged.
+
 **Branch:** `integration/class-force-v2-20261122` (isolated; base = Force V2 head `046f7389c`, PR #1165, pinned game-night line preserved). **Not for `main`. #1165 untouched, no rebase, no force-push.** Owner direction: PR #1171 comment, 2026-11-21. Nothing here is `FOUNDRY_TESTED`; all results are offline (Node + Foundry shim). No rules were decided.
 
 ## 0. CURRENT STATUS (consolidated 2026-11-23; read this first — later sections are historical)
