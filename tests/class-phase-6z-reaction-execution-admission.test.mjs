@@ -121,16 +121,50 @@ try {
   assert.equal(called,1);
  });
 
- await test('eligible owned paid reaction emits one committed receipt before executing',async()=>{
+ await test('eligible owned paid reaction: fails closed without a contract; with GM adjudication pays ONE V2 receipt before the handler',async()=>{
+  // V2 authority (FP-RD-003): an uncontracted reaction cannot be paid by a player; an attributable GM adjudication can authorize it.
   clear();register({conditions:{validAttackTypes:['ranged'],validDamageTypes:['energy']}});
+  const prior=globalThis.game?.user?.isGM;
+  if(globalThis.game?.user)globalThis.game.user.isGM=false;
   const a=actor();
-  const result=await roll(a);
-  assert.equal(result.success,true);
-  assert.equal(a.system.forcePoints.value,1);
-  assert.equal(receipts.length,1);
-  assert.equal(receipts[0].committed,true);
-  assert.equal(receipts[0].actorId,a.uuid);
-  assert.equal(called,1);
+  const denied=await roll(a);
+  assert.equal(denied.success,false);
+  assert.equal(a.system.forcePoints.value,2,'nothing charged on denial');
+  assert.equal(called,0,'the handler never ran');
+  if(globalThis.game?.user)globalThis.game.user.isGM=true;
+  try {
+   clear();
+   const b=actor();
+   const result=await ReactionEngine.resolveReaction({
+    reactionKey:key,defender:b,attacker:{id:'attack-source'},gmAdjudication:{reason:'GM allows the test reaction'},
+    attackContext:{trigger:'ON_ATTACK_DECLARED',attackType:'ranged',damageType:'energy',damageTypes:['energy'],originalDamageTypes:['energy'],sonicCannotBeDeflected:false,cannotBeNegatedBy:[]}
+   });
+   assert.equal(result.success,true);
+   assert.equal(b.system.forcePoints.value,1);
+   const ledger=b.flags?.swse?.forcePointLedger?.receipts??[];
+   assert.equal(ledger.length,1);
+   assert.equal(ledger[0].state,'finalized','finalized after the handler completed');
+   assert.equal(called,1);
+  } finally {
+   if(globalThis.game?.user)globalThis.game.user.isGM=prior;
+  }
+ });
+
+ await test('a caller that omits forcePointCost cannot waive the registered printed cost',async()=>{
+  clear();register({cost:1,conditions:{validAttackTypes:['ranged'],validDamageTypes:['energy']}});
+  const prior=globalThis.game?.user?.isGM;
+  if(globalThis.game?.user)globalThis.game.user.isGM=true;
+  try {
+   const b=actor();
+   const result=await ReactionEngine.resolveReaction({
+    reactionKey:key,defender:b,attacker:{id:'attack-source'},gmAdjudication:{reason:'adjudicated'},
+    attackContext:{trigger:'ON_ATTACK_DECLARED',attackType:'ranged',damageType:'energy',damageTypes:['energy'],originalDamageTypes:['energy'],sonicCannotBeDeflected:false,cannotBeNegatedBy:[]}
+   });   // note: no forcePointCost option
+   assert.equal(result.success,true);
+   assert.equal(b.system.forcePoints.value,1,'the registered 1 Force Point was still charged');
+  } finally {
+   if(globalThis.game?.user)globalThis.game.user.isGM=prior;
+  }
  });
 
  await test('non-owner is refused without spending FP',async()=>{

@@ -325,9 +325,12 @@ export class ReactionEngine {
       || (reactionDef.negationFamily && refused.includes(
         `talents-with-${reactionDef.negationFamily}-as-prerequisite`
       )));
-    if (reactionDef.trigger !== attackContext.trigger
+    // Block / Deflect / Force Fortification are authorized by the attacker-side VERIFIED attack event (AttackEventAuthority below: attack
+    // type, hit/critical, defender, single use). For them the chat dataset is only a lookup key, so it is not re-judged here.
+    const eventVerified = ['block', 'deflect', 'forceFortification'].includes(resolvedReactionKey);
+    if (!eventVerified && (reactionDef.trigger !== attackContext.trigger
       || !this._evaluateConditions(reactionDef.conditions, attackContext)
-      || excluded) {
+      || excluded)) {
       return {
         success: false,
         error: 'Reaction is not eligible for the current attack',
@@ -350,6 +353,9 @@ export class ReactionEngine {
         resultMessage: null
       };
     }
+
+    // The registered rule is the authoritative cost: a caller that omits (or understates) forcePointCost cannot waive it.
+    const effectiveForceCost = Math.max(declaredForceCost, callerForceCost);
 
     try {
       const usage = reactionDef.usage ?? {};
@@ -414,17 +420,17 @@ export class ReactionEngine {
       // A reaction that costs Force Points is authorized by ForcePointsService and paid
       // only through ActorEngine's exact receipt (no direct balance write here).
       let forcePointReceipt = null;
-      if (forcePointCost > 0 && !attackContext.forcePointPaidBy) {
+      if (effectiveForceCost > 0 && !attackContext.forcePointPaidBy) {
         const spendContext = { useKind: 'ability-option', abilitySourceRef: `reaction:${resolvedReactionKey}`, gmAdjudication: options.gmAdjudication };
-        const decision = ForcePointsService.authorizeSpend(defender, { ...spendContext, requestedCount: forcePointCost });
-        if (!decision.valid || forcePointCost !== 1) {
+        const decision = ForcePointsService.authorizeSpend(defender, { ...spendContext, requestedCount: effectiveForceCost });
+        if (!decision.valid || effectiveForceCost !== 1) {
           const reason = decision.valid ? 'Only a single Force Point reaction cost is supported' : decision.message;
           SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${reason}`);
           await postNoticeCard({ flavor: `❌ ${reactionDef.label}`, content: reason, actor: defender });
           return { success: false, error: reason, modifiedDamage: null, resultMessage: reason };
         }
         try {
-          forcePointReceipt = await ActorEngine.spendForcePoints(defender, forcePointCost, spendContext);
+          forcePointReceipt = await ActorEngine.spendForcePoints(defender, effectiveForceCost, spendContext);
         } catch (spendError) {
           return { success: false, error: spendError.message, modifiedDamage: null, resultMessage: spendError.message };
         }
