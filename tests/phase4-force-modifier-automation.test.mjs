@@ -1,8 +1,13 @@
 import assert from 'node:assert/strict';
-import {
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+// These suites import engine modules that use '/systems/foundryvtt-swse/...' paths: register the Foundry path loader BEFORE the dynamic imports.
+registerFoundryPathLoader();
+installFoundryShimGlobals();
+const {
   PHASE4_FORCE_MODIFIER_RULES,
   getBattleStrikeDamageDice
-} from '../scripts/engine/force/phase4-force-modifier-automation.js';
+} = await import('../scripts/engine/force/phase4-force-modifier-automation.js');
 
 assert.equal(getBattleStrikeDamageDice(9), null);
 assert.equal(getBattleStrikeDamageDice(10), '1d6');

@@ -1,10 +1,21 @@
 import assert from 'node:assert/strict';
-import {
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+// These suites import engine modules that use '/systems/foundryvtt-swse/...' paths: register the Foundry path loader BEFORE the dynamic imports.
+globalThis.window = globalThis.window || { location: { hostname: 'localhost' } };
+registerFoundryPathLoader();
+installFoundryShimGlobals();
+globalThis.foundry.applications = globalThis.foundry.applications ?? {};
+globalThis.foundry.applications.api = globalThis.foundry.applications.api ?? { ApplicationV2: class {}, HandlebarsApplicationV2: class {}, HandlebarsApplicationMixin: (B) => class extends B {} };
+globalThis.Hooks = globalThis.Hooks ?? { callAll: () => {}, on: () => {}, once: () => {} };
+globalThis.ChatMessage = globalThis.ChatMessage ?? { getSpeaker: () => ({}), create: async () => ({}) };
+globalThis.ui = globalThis.ui ?? { notifications: { warn() {}, info() {}, error() {} } };
+const {
   PHASE6_FORCE_DAMAGE_RULES,
   buildForceDamagePacket,
   getActorFortitude,
   getForceLightningFormula
-} from '../scripts/engine/force/phase6-force-direct-damage.js';
+} = await import('../scripts/engine/force/phase6-force-direct-damage.js');
 
 assert.equal(getForceLightningFormula(14), null);
 assert.equal(getForceLightningFormula(15), '2d6');
