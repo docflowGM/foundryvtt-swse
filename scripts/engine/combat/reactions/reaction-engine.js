@@ -164,6 +164,25 @@ function getRegisteredReactionForActor(actor, reactionKey) {
     ?? null;
 }
 
+/** Settle a reaction's Force Point receipt: one retry, then re-read the actor's own ledger (a write may have applied before the error). */
+async function settleReactionPayment(defender, receipt, mode) {
+  const wantState = mode === 'finalize' ? 'finalized' : 'rolled-back';
+  const stateNow = () => (defender.getFlag?.('swse', 'forcePointLedger') ?? defender.flags?.swse?.forcePointLedger ?? {}).receipts
+    ?.find?.((r) => r.receiptId === receipt.receiptId)?.state;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const out = mode === 'finalize'
+        ? await ActorEngine.finalizeForcePointSpend(defender, receipt)
+        : await ActorEngine.rollbackForcePointSpend(defender, receipt);
+      if (out?.finalized === true || out?.rolledBack === true) return true;
+    } catch (error) {
+      SWSELogger.warn?.(`[ReactionEngine] Force Point ${mode} attempt ${attempt + 1} threw: ${error?.message ?? error}`);
+    }
+    if (stateNow() === wantState) return true;   // applied despite the error/refusal: never act twice
+  }
+  return false;
+}
+
 export class ReactionEngine {
   /**
    * Get available reactions for a defender in a given attack context.
@@ -420,7 +439,7 @@ export class ReactionEngine {
       // A reaction that costs Force Points is authorized by ForcePointsService and paid
       // only through ActorEngine's exact receipt (no direct balance write here).
       let forcePointReceipt = null;
-      if (effectiveForceCost > 0 && !attackContext.forcePointPaidBy) {
+      if (effectiveForceCost > 0) {   // no caller-supplied 'already paid' marker: payment is always this engine's own receipt
         const spendContext = { useKind: 'ability-option', abilitySourceRef: `reaction:${resolvedReactionKey}`, gmAdjudication: options.gmAdjudication };
         const decision = ForcePointsService.authorizeSpend(defender, { ...spendContext, requestedCount: effectiveForceCost });
         if (!decision.valid || effectiveForceCost !== 1) {
@@ -474,15 +493,15 @@ export class ReactionEngine {
         await ActorEngine.releaseAttackEventAsDefender(defender, verifiedAttackEvent.id);
       }
 
-      // Exact receipt lifecycle: a handler that failed gives back exactly what was paid;
-      // a handler that completed finalizes the (now non-refundable) spend.
+      // Exact receipt lifecycle: a handler that failed gives back exactly what was paid; a handler that completed finalizes the
+      // (now non-refundable) spend. The outcome is EXPLICIT: an unresolved settlement is reported, never hidden behind a success.
+      let paymentSettlement = forcePointReceipt ? 'settled' : 'none';
       if (forcePointReceipt) {
-        if (result?.error) {
-          const outcome = await ActorEngine.rollbackForcePointSpend(defender, forcePointReceipt);
-          if (!outcome?.rolledBack) SWSELogger.error('[ReactionEngine] Force Point compensation refused', outcome);
-        } else {
-          const finality = await ActorEngine.finalizeForcePointSpend(defender, forcePointReceipt);
-          if (!finality?.finalized) SWSELogger.error('[ReactionEngine] Force Point receipt finalization failed', finality);
+        const wantRollback = Boolean(result?.error);
+        const settled = await settleReactionPayment(defender, forcePointReceipt, wantRollback ? 'rollback' : 'finalize');
+        if (!settled) {
+          paymentSettlement = 'unresolved';
+          SWSELogger.error(`[ReactionEngine] Force Point ${wantRollback ? 'compensation' : 'finalization'} unresolved for receipt ${forcePointReceipt.receiptId}; GM reconciliation required`);
         }
       }
 
@@ -490,9 +509,14 @@ export class ReactionEngine {
         ActivationLimitEngine.recordActivation(defender, resolvedReactionKey, limitType);
       }
 
-      const resultMsg = result?.resultMessage ?? `${reactionDef.label} triggered`;
+      const unresolvedNote = paymentSettlement === 'unresolved'
+        ? (result?.error
+          ? ' The Force Point paid for this failed reaction could not be returned automatically: GM reconciliation required.'
+          : ' The Force Point receipt could not be finalized automatically: GM reconciliation required (the reaction was applied and is not refunded).')
+        : '';
+      const resultMsg = (result?.resultMessage ?? `${reactionDef.label} triggered`) + unresolvedNote;
       await postNoticeCard({
-        flavor: `✓ ${reactionDef.label}`,
+        flavor: `${paymentSettlement === 'unresolved' ? '⚠' : '✓'} ${reactionDef.label}`,
         content: resultMsg,
         actor: defender
       });
@@ -501,7 +525,8 @@ export class ReactionEngine {
 
       return {
         success: !result?.error,
-        error: result?.error ?? null,
+        paymentSettlement,
+        error: result?.error ? result.error + unresolvedNote : null,
         modifiedDamage: result?.modifiedDamage ?? null,
         resultMessage: resultMsg
       };

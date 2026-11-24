@@ -19,6 +19,7 @@ globalThis.Hooks.once=globalThis.Hooks.once??(()=>{});
 const { ReactionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js');
 const { ReactionRegistry } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-registry.js');
 const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
+const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
 const { graftRealForcePointMethods, setPath } = await import('./helpers/real-force-point-engine.mjs');
 
 const key='admissionProof6Z';
@@ -166,6 +167,56 @@ try {
    if(globalThis.game?.user)globalThis.game.user.isGM=prior;
   }
  });
+
+ const gmRoll=(defender,context={})=>ReactionEngine.resolveReaction({
+  reactionKey:key,defender,attacker:{id:'attack-source'},gmAdjudication:{reason:'adjudicated'},
+  attackContext:{trigger:'ON_ATTACK_DECLARED',attackType:'ranged',damageType:'energy',damageTypes:['energy'],originalDamageTypes:['energy'],sonicCannotBeDeflected:false,cannotBeNegatedBy:[],...context}
+ });
+ const asGM=async fn=>{const prior=globalThis.game?.user?.isGM;if(globalThis.game?.user)globalThis.game.user.isGM=true;try{return await fn();}finally{if(globalThis.game?.user)globalThis.game.user.isGM=prior;}};
+ const ledgerOf=a=>a.flags?.swse?.forcePointLedger?.receipts??[];
+
+ await test('a forged forcePointPaidBy marker cannot waive payment (no prepaid bypass exists)',async()=>asGM(async()=>{
+  clear();register({cost:1,conditions:{validAttackTypes:['ranged'],validDamageTypes:['energy']}});
+  const b=actor();
+  const result=await gmRoll(b,{forcePointPaidBy:'forged-receipt-id'});
+  assert.equal(result.success,true);
+  assert.equal(b.system.forcePoints.value,1,'still charged exactly one point');
+  assert.equal(ledgerOf(b).length,1);
+ }));
+
+ await test('finalize applied but acknowledgement lost: re-read settles it, one charge, no unresolved status',async()=>asGM(async()=>{
+  clear();register({cost:1,conditions:{validAttackTypes:['ranged'],validDamageTypes:['energy']}});
+  const b=actor(); const real=ActorEngine.finalizeForcePointSpend; let threw=false;
+  ActorEngine.finalizeForcePointSpend=async(a,r)=>{const out=await real.call(ActorEngine,a,r); if(!threw){threw=true; throw new Error('ack lost');} return out;};
+  try {
+   const result=await gmRoll(b);
+   assert.equal(result.success,true); assert.equal(result.paymentSettlement,'settled');
+   assert.equal(ledgerOf(b)[0].state,'finalized'); assert.equal(b.system.forcePoints.value,1);
+  } finally { ActorEngine.finalizeForcePointSpend=real; }
+ }));
+
+ await test('finalize cannot be completed: the applied reaction is NOT refunded and the result says settlement is unresolved',async()=>asGM(async()=>{
+  clear();register({cost:1,conditions:{validAttackTypes:['ranged'],validDamageTypes:['energy']}});
+  const b=actor(); const real=ActorEngine.finalizeForcePointSpend;
+  ActorEngine.finalizeForcePointSpend=async()=>{throw new Error('write rejected');};
+  try {
+   const result=await gmRoll(b);
+   assert.equal(result.success,true,'the reaction itself was applied'); assert.equal(result.paymentSettlement,'unresolved');
+   assert.equal(called,1); assert.equal(ledgerOf(b)[0].state,'committed','the receipt stays committed for reconciliation');
+   assert.equal(b.system.forcePoints.value,1,'no refund of an applied reaction');
+  } finally { ActorEngine.finalizeForcePointSpend=real; }
+ }));
+
+ await test('handler error + compensation refused: failure with an explicit unresolved settlement',async()=>asGM(async()=>{
+  clear();
+  ReactionRegistry.registerReaction(key,{key,label:'Test Reaction',trigger:'ON_ATTACK_DECLARED',description:'Test only',conditions:{},usage:{perRound:false,perEncounter:false},cost:{action:'reaction',forcePoints:1},handler:async()=>{called++;return {error:'handler failed'};}});
+  const b=actor(); const real=ActorEngine.rollbackForcePointSpend;
+  ActorEngine.rollbackForcePointSpend=async()=>{throw new Error('write rejected');};
+  try {
+   const result=await gmRoll(b);
+   assert.equal(result.success,false); assert.equal(result.paymentSettlement,'unresolved'); assert.match(result.error,/GM reconciliation required/);
+  } finally { ActorEngine.rollbackForcePointSpend=real; }
+ }));
 
  await test('non-owner is refused without spending FP',async()=>{
   clear();register();
