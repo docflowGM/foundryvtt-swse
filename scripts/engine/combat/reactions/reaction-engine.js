@@ -17,6 +17,7 @@ import { ReactionRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat
 import { ReactionRuleAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-rule-adapter.js";
 import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scripts/engine/abilities/ActivationLimitEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { settleForcePointReceipt } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-settlement.js";
 import { postNoticeCard } from "/systems/foundryvtt-swse/scripts/chat/notice-card.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
@@ -162,25 +163,6 @@ function getRegisteredReactionForActor(actor, reactionKey) {
   return ReactionRegistry.getReaction(rawKey)
     ?? ReactionRegistry.getReaction(normalizedKey)
     ?? null;
-}
-
-/** Settle a reaction's Force Point receipt: one retry, then re-read the actor's own ledger (a write may have applied before the error). */
-async function settleReactionPayment(defender, receipt, mode) {
-  const wantState = mode === 'finalize' ? 'finalized' : 'rolled-back';
-  const stateNow = () => (defender.getFlag?.('swse', 'forcePointLedger') ?? defender.flags?.swse?.forcePointLedger ?? {}).receipts
-    ?.find?.((r) => r.receiptId === receipt.receiptId)?.state;
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    try {
-      const out = mode === 'finalize'
-        ? await ActorEngine.finalizeForcePointSpend(defender, receipt)
-        : await ActorEngine.rollbackForcePointSpend(defender, receipt);
-      if (out?.finalized === true || out?.rolledBack === true) return true;
-    } catch (error) {
-      SWSELogger.warn?.(`[ReactionEngine] Force Point ${mode} attempt ${attempt + 1} threw: ${error?.message ?? error}`);
-    }
-    if (stateNow() === wantState) return true;   // applied despite the error/refusal: never act twice
-  }
-  return false;
 }
 
 export class ReactionEngine {
@@ -498,7 +480,7 @@ export class ReactionEngine {
       let paymentSettlement = forcePointReceipt ? 'settled' : 'none';
       if (forcePointReceipt) {
         const wantRollback = Boolean(result?.error);
-        const settled = await settleReactionPayment(defender, forcePointReceipt, wantRollback ? 'rollback' : 'finalize');
+        const settled = await settleForcePointReceipt(defender, forcePointReceipt, wantRollback ? 'rollback' : 'finalize');
         if (!settled) {
           paymentSettlement = 'unresolved';
           SWSELogger.error(`[ReactionEngine] Force Point ${wantRollback ? 'compensation' : 'finalization'} unresolved for receipt ${forcePointReceipt.receiptId}; GM reconciliation required`);
