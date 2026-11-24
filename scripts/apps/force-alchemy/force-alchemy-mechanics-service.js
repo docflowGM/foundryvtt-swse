@@ -2,6 +2,7 @@
 // Mechanical application for Force Artifact / Sith Alchemy rites.
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { settleForcePointReceipt } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-settlement.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import {
   FORCE_ALCHEMY_FLAG_SCOPE,
@@ -390,59 +391,126 @@ function validateCosts(actor, detail) {
   }
 }
 
+/** A cost operation whose outcome could not be verified or compensated: stays visible for a GM; the rite is NOT retried automatically. */
+export class ForceAlchemyUnresolvedError extends Error {
+  constructor(message, detail = {}) { super(message); this.name = 'ForceAlchemyUnresolvedError'; this.code = 'FORCE_ALCHEMY_UNRESOLVED_GM_REVIEW'; this.detail = detail; }
+}
+
+const readCosts = (actor) => ({
+  darkSideScore: numberFrom(DSPEngine.getValue(actor), actor?.system?.darkSide?.value, actor?.system?.darkSideScore),
+  credits: actorCredits(actor)
+});
+
+/**
+ * Pay a rite's costs. Multi-resource, NOT atomic across documents, and never described as such:
+ *  - Force Points: V2 typed spend (authorization, round cap, contract / GM adjudication); exact receipt compensation.
+ *  - Dark Side Score and credits: ONE actor write computed from fresh state after the FP spend; compensation is by inverse DELTA
+ *    applied to the current value (unrelated concurrent changes survive), never a restore of an earlier absolute balance.
+ *  - An error from the write is not trusted: the actor is re-read to learn whether it applied. Applied => the cost stands;
+ *    not applied => FP receipt returned; partial or unverifiable => ForceAlchemyUnresolvedError (GM review, no automatic retry).
+ */
 async function applyResourceCosts(actor, detail) {
   const rite = detail?.rite ?? {};
   const fpCost = Number(rite.fpCost ?? 0) || 0;
   const dspCost = Number(rite.dspCost ?? 0) || 0;
   const creditCost = Number(rite.creditCost ?? 0) || 0;
-  const before = {
-    forcePoints: actorForcePoints(actor),
-    darkSideScore: numberFrom(DSPEngine.getValue(actor), actor?.system?.darkSide?.value, actor?.system?.darkSideScore),
-    credits: actorCredits(actor)
+  const before = { forcePoints: actorForcePoints(actor), ...readCosts(actor) };
+  let fpReceipt = null;
+  if (fpCost > 0) {
+    fpReceipt = await ActorEngine.spendForcePoints(actor, fpCost, {
+      useKind: 'ability-option',
+      abilitySourceRef: `force-alchemy:${rite.id ?? 'rite'}`,
+      ...(detail?.gmAdjudication ? { gmAdjudication: detail.gmAdjudication } : {})
+    });
+    if (!fpReceipt?.receiptId) throw new Error(`Force Point payment for ${rite.name ?? 'the rite'} was not authorized.`);
+  }
+  const returnFp = async (why) => {
+    if (fpReceipt && !(await settleForcePointReceipt(actor, fpReceipt, 'rollback'))) {
+      throw new ForceAlchemyUnresolvedError(`${why} The Force Point could not be returned automatically; GM reconciliation required.`, { fpReceiptId: fpReceipt.receiptId });
+    }
   };
-  const updates = {};
-  if (fpCost > 0) updates['system.forcePoints.value'] = Math.max(0, before.forcePoints - fpCost);
-  if (dspCost > 0) {
-    updates['system.darkSide.value'] = before.darkSideScore + dspCost;
-  }
-  if (creditCost > 0) {
-    updates[creditUpdatePath(actor)] = Math.max(0, before.credits - creditCost);
-  }
-  if (Object.keys(updates).length) {
-    await ActorEngine.updateActor(actor, updates, { source: 'force-alchemy:resource-costs' });
+  const applied = { darkSideScore: false, credits: false };
+  if (dspCost > 0 || creditCost > 0) {
+    const now = readCosts(actor);                                   // fresh state, after the FP spend
+    if (creditCost > 0 && now.credits < creditCost) {
+      await returnFp('Not enough credits/materials after the Force Point was paid.');
+      throw new Error(`${actor?.name ?? 'Actor'} does not have enough credits/materials for ${rite.name}.`);
+    }
+    const updates = {};
+    if (dspCost > 0) updates['system.darkSide.value'] = now.darkSideScore + dspCost;
+    if (creditCost > 0) updates[creditUpdatePath(actor)] = now.credits - creditCost;
+    try {
+      await ActorEngine.updateActor(actor, updates, { source: 'force-alchemy:resource-costs' });
+      applied.darkSideScore = dspCost > 0; applied.credits = creditCost > 0;
+    } catch (error) {
+      const nowAfter = readCosts(actor);
+      applied.darkSideScore = dspCost > 0 && nowAfter.darkSideScore === now.darkSideScore + dspCost;
+      applied.credits = creditCost > 0 && nowAfter.credits === now.credits - creditCost;
+      const wanted = (dspCost > 0 ? 1 : 0) + (creditCost > 0 ? 1 : 0);
+      const got = (applied.darkSideScore ? 1 : 0) + (applied.credits ? 1 : 0);
+      if (got === wanted) { /* applied; the acknowledgement was lost: the cost stands */ }
+      else if (got === 0) { await returnFp(`The Dark Side Score / credit write failed (${error?.message ?? error}).`); throw error; }
+      else {
+        throw new ForceAlchemyUnresolvedError(`Only part of the Force Alchemy costs applied (${error?.message ?? error}); GM reconciliation required.`,
+          { fpReceiptId: fpReceipt?.receiptId ?? null, applied });
+      }
+    }
   }
   const after = {
     forcePoints: fpCost > 0 ? Math.max(0, before.forcePoints - fpCost) : before.forcePoints,
-    darkSideScore: dspCost > 0 ? before.darkSideScore + dspCost : before.darkSideScore,
-    credits: creditCost > 0 ? Math.max(0, before.credits - creditCost) : before.credits
+    darkSideScore: applied.darkSideScore ? before.darkSideScore + dspCost : before.darkSideScore,
+    credits: applied.credits ? before.credits - creditCost : before.credits
   };
-  return { before, after, spent: { forcePoints: fpCost, darkSideScore: dspCost, credits: creditCost } };
+  return { before, after, spent: { forcePoints: fpCost, darkSideScore: dspCost, credits: creditCost }, fpReceipt, applied };
 }
 
+/** Exact compensation: inverse deltas on CURRENT values for what was actually applied, then the FP receipt. Never an absolute restore. */
 async function revertResourceCosts(actor, resourceChanges) {
   if (!actor || !resourceChanges?.before) return;
-  const before = resourceChanges.before;
-  const updates = {};
-  if (Object.hasOwn(before, 'forcePoints')) updates['system.forcePoints.value'] = before.forcePoints;
-  if (Object.hasOwn(before, 'darkSideScore')) {
-    updates['system.darkSide.value'] = before.darkSideScore;
+  const { applied = {}, spent = {} } = resourceChanges;
+  const problems = [];
+  if (applied.darkSideScore || applied.credits) {
+    const cur = readCosts(actor);
+    const updates = {};
+    if (applied.darkSideScore) updates['system.darkSide.value'] = Math.max(0, cur.darkSideScore - Number(spent.darkSideScore ?? 0));
+    if (applied.credits) updates[creditUpdatePath(actor)] = cur.credits + Number(spent.credits ?? 0);
+    const landed = () => { const n = readCosts(actor);
+      return (!applied.darkSideScore || n.darkSideScore === updates['system.darkSide.value'])
+        && (!applied.credits || n.credits === updates[creditUpdatePath(actor)]); };
+    let ok = false;
+    for (let attempt = 0; attempt < 2 && !ok; attempt += 1) {
+      try { await ActorEngine.updateActor(actor, updates, { source: 'force-alchemy:resource-cost-rollback' }); ok = true; }
+      catch (error) { ok = landed(); if (!ok) console.warn('[ForceAlchemy] cost compensation attempt failed', error); }
+    }
+    if (!ok) problems.push('Dark Side Score / credit compensation');
   }
-  if (Object.hasOwn(before, 'credits')) updates[creditUpdatePath(actor)] = before.credits;
-  if (Object.keys(updates).length) {
-    await ActorEngine.updateActor(actor, updates, { source: 'force-alchemy:resource-cost-rollback' });
+  if (resourceChanges.fpReceipt && !(await settleForcePointReceipt(actor, resourceChanges.fpReceipt, 'rollback'))) problems.push('Force Point receipt return');
+  if (problems.length) {
+    throw new ForceAlchemyUnresolvedError(`Force Alchemy compensation unresolved (${problems.join(', ')}); GM reconciliation required.`,
+      { fpReceiptId: resourceChanges.fpReceipt?.receiptId ?? null, applied });
   }
+}
+
+/** Finalize the FP receipt once the rite exists. Returns false (UNRESOLVED, receipt stays committed for GM reconciliation) if it cannot. */
+async function finalizeResourceCosts(actor, resourceChanges) {
+  if (!resourceChanges?.fpReceipt) return true;
+  return settleForcePointReceipt(actor, resourceChanges.fpReceipt, 'finalize');
 }
 
 async function withResourceCostRollback(actor, detail, operation) {
   const resourceChanges = await applyResourceCosts(actor, detail);
+  let result;
   try {
-    return await operation(resourceChanges);
+    result = await operation(resourceChanges);
   } catch (error) {
-    await revertResourceCosts(actor, resourceChanges).catch((rollbackError) => {
-      console.error('[ForceAlchemy] Resource rollback failed after ritual error', rollbackError);
-    });
+    // revertResourceCosts throws ForceAlchemyUnresolvedError when it cannot verify or complete the compensation: that, not the
+    // original error, is what the GM must see.
+    await revertResourceCosts(actor, resourceChanges);
     throw error;
   }
+  const settled = await finalizeResourceCosts(actor, resourceChanges);
+  if (!settled && result && typeof result === 'object') result.fpSettlement = 'unresolved';
+  return result;
 }
 
 function getOwnedItem(actor, itemId) {
@@ -1186,12 +1254,16 @@ export async function applyForceAlchemySelection(actor, detail) {
       pendingEffects: false,
       pendingCosts: false
     });
+    const fpSettled = await finalizeResourceCosts(actor, resourceChanges);
     await postRiteChat(actor, detail, { mode: status, resourceChanges, effectCount: effectIds.length }).catch((error) => console.warn('[ForceAlchemy] Chat card failed', error));
-    return { mode: 'applied', entry: state?.[stateKey] ?? initial.entry, state, effectIds, resourceChanges, item: instantItemResult?.item ?? null, alchemyFlags: instantItemResult?.alchemyFlags ?? null, mechanical: true };
+    return { mode: 'applied', entry: state?.[stateKey] ?? initial.entry, state, effectIds, resourceChanges, item: instantItemResult?.item ?? null, alchemyFlags: instantItemResult?.alchemyFlags ?? null, mechanical: true, ...(fpSettled ? {} : { fpSettlement: 'unresolved' }) };
   } catch (error) {
+    // An unresolved cost state keeps the 'applying' slot (pendingCosts) and the committed receipt as the durable evidence for GM review
+    // and is never retried automatically; only a fully compensated failure clears the slot.
+    if (error instanceof ForceAlchemyUnresolvedError) throw error;
     await deleteEntryEffects(actor, stateKey).catch(() => null);
+    if (resourceChanges) await revertResourceCosts(actor, resourceChanges);   // throws ForceAlchemyUnresolvedError => slot kept
     await ForceAlchemyStateService.clearSlot(actor, stateKey).catch(() => null);
-    if (resourceChanges) await revertResourceCosts(actor, resourceChanges).catch((rollbackError) => console.error('[ForceAlchemy] Could not roll back instant rite costs', rollbackError));
     throw error;
   }
 }

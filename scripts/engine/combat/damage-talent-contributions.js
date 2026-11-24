@@ -4,11 +4,9 @@
  *
  * Damage audit correction #1 (docs/audits/v2-damage-modifier-authority-
  * audit-correction-1.md §6) confirmed `TalentEffectEngine.calculateDamageBonus`
- * has never existed as a real class method anywhere in the codebase — the
- * only implementation was a runtime monkey-patch installed by
- * scripts/patches/runtime-bugfix-hotfixes.js#installTalentEffectDamageCompatibility(),
- * a load-order dependency the canonical Damage composition must not
- * inherit. The logic itself (Sneak Attack: countTalentsNamed × d6, gated
+ * never existed as a real class method — the only implementation was a
+ * load-order-dependent runtime monkey-patch, which (with the engine itself)
+ * has since been retired; this module is the single implementation. The logic itself (Sneak Attack: countTalentsNamed × d6, gated
  * on the target being Flat-Footed or otherwise denied its Dexterity bonus)
  * was confirmed rules-correct and is moved here verbatim as the one real,
  * production authority both the legacy monkey-patch and the new
@@ -87,9 +85,8 @@ export function resolveTalentDamageFormulaTerms(actor, context = {}) {
 /**
  * Resolve every talent-sourced damage-dice contribution for a weapon
  * attack. Returns the same {formula, bonusDice, flatBonus, breakdown,
- * notifications} shape the legacy TalentEffectEngine.calculateDamageBonus
- * contract used, so existing callers (the monkey-patch itself) keep working
- * unchanged while resolveDamageComposition() consumes the array fields
+ * notifications} shape the retired TalentEffectEngine.calculateDamageBonus
+ * contract used; resolveDamageComposition() consumes the array fields
  * (bonusDice/breakdown) directly for its typed dice ledger.
  */
 export function resolveTalentDamageContributions(actor, context = {}) {

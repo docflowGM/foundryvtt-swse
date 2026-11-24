@@ -1,5 +1,7 @@
+import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -172,7 +174,7 @@ function isForcePowerItem(item) {
 
 function forcePowerOptions(actor) {
   return Array.from(actor?.items ?? [])
-    .filter(item => isForcePowerItem(item) && item?.system?.spent !== true && item?.system?.discarded !== true)
+    .filter(item => isForcePowerItem(item) && item?.system?.discarded !== true)
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 
@@ -219,7 +221,6 @@ async function spendReadyForcePower(actor, powerId, source) {
   if (!power || !isForcePowerItem(power)) throw new Error('A ready Force Power is required.');
   await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
     _id: power.id,
-    'system.spent': true,
     'system.discarded': true,
     'system.lastSpent': Date.now(),
     'flags.swse.lastSpentBy': source
@@ -343,45 +344,44 @@ export class SentinelTalentActions {
 
     const modResult = await showRollModifiersDialog({ title: 'Force Haze — Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
     if (modResult === null) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Force Haze requires spending 1 Force Point.');
-      return null;
-    }
-    const roll = await rollSkillCheck(actor, 'useTheForce', { ...modResult, source: 'force-haze', skillUse: { key: 'force-haze', label: 'Force Haze' }, sourceElement, showRollCompanion: true });
-    if (!roll) return null;
-    const total = Number(roll.roll?.total ?? roll.total ?? 0) || 0;
-    const chosenTokens = choice.tokenIds.map(id => canvas?.tokens?.get?.(id)).filter(Boolean);
-    const hidden = chosenTokens.map(token => ({ tokenId: token.id, actorId: token.actor?.id ?? null, name: token.name ?? token.actor?.name ?? 'Hidden ally' }));
-    const persistent = hasTalent(actor, 'Persistent Haze');
-    const unseenEyes = hasTalent(actor, 'Unseen Eyes');
-    await actor.setFlag(NS, 'forceHaze', {
-      active: true,
-      rollTotal: total,
-      hidden,
-      vehicle: choice.vehicle,
-      maxCreatures,
-      persistent,
-      unseenEyes,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 60_000,
-      dismissedWhenHiddenCreatureAttacks: !persistent
+    const fp = await beginContractedForcePoint(actor, "sentinel:promptForceHaze", {}, { label: "promptForceHaze" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const roll = await rollSkillCheck(actor, 'useTheForce', { ...modResult, source: 'force-haze', skillUse: { key: 'force-haze', label: 'Force Haze' }, sourceElement, showRollCompanion: true });
+      if (!roll) return null;
+      const total = Number(roll.roll?.total ?? roll.total ?? 0) || 0;
+      const chosenTokens = choice.tokenIds.map(id => canvas?.tokens?.get?.(id)).filter(Boolean);
+      const hidden = chosenTokens.map(token => ({ tokenId: token.id, actorId: token.actor?.id ?? null, name: token.name ?? token.actor?.name ?? 'Hidden ally' }));
+      const persistent = hasTalent(actor, 'Persistent Haze');
+      const unseenEyes = hasTalent(actor, 'Unseen Eyes');
+      await actor.setFlag(NS, 'forceHaze', {
+        active: true,
+        rollTotal: total,
+        hidden,
+        vehicle: choice.vehicle,
+        maxCreatures,
+        persistent,
+        unseenEyes,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 60_000,
+        dismissedWhenHiddenCreatureAttacks: !persistent
+      });
+      for (const token of chosenTokens) {
+        if (!token.actor) continue;
+        await createEffectOnActor(token.actor, {
+          name: `Force Haze (${actor.name})`,
+          icon: 'icons/svg/invisible.svg',
+          changes: [],
+          disabled: false,
+          duration: { seconds: 60 },
+          flags: { swse: { talentName: 'Force Haze', sourceActorId: actor.id, sourceActorName: actor.name, totalConcealmentCheck: total, persistentHaze: persistent, unseenEyes, dismissedWhenAttacks: !persistent } }
+        }, { source: 'force-haze' });
+      }
+      const names = hidden.length ? hidden.map(h => esc(h.name)).join(', ') : (choice.vehicle ? 'one eligible vehicle' : 'eligible creatures chosen manually');
+      const extra = `${persistent ? '<p><strong>Persistent Haze:</strong> attackers lose their own concealment; non-attackers remain concealed.</p>' : '<p>The haze is dismissed instantly if anyone hidden by it attacks.</p>'}${unseenEyes ? '<p><strong>Unseen Eyes:</strong> hidden allies can reroll Perception checks and gain +2 damage against foes unaware of them.</p>' : ''}`;
+      await postCard(actor, 'Force Haze', `<p>${esc(actor.name)} creates a Force Haze with a Use the Force result of <strong>${total}</strong>.</p><p><strong>Hidden:</strong> ${names}</p><p>Compare ${total} to the Will Defense of opponents that move into line of sight of any hidden creature. On success, hidden creatures have Total Concealment against that opponent.</p>${extra}`, { talentName: 'Force Haze', roll: total, hidden });
+      return { success: true, roll: total, hidden };
     });
-    for (const token of chosenTokens) {
-      if (!token.actor) continue;
-      await createEffectOnActor(token.actor, {
-        name: `Force Haze (${actor.name})`,
-        icon: 'icons/svg/invisible.svg',
-        changes: [],
-        disabled: false,
-        duration: { seconds: 60 },
-        flags: { swse: { talentName: 'Force Haze', sourceActorId: actor.id, sourceActorName: actor.name, totalConcealmentCheck: total, persistentHaze: persistent, unseenEyes, dismissedWhenAttacks: !persistent } }
-      }, { source: 'force-haze' });
-    }
-    const names = hidden.length ? hidden.map(h => esc(h.name)).join(', ') : (choice.vehicle ? 'one eligible vehicle' : 'eligible creatures chosen manually');
-    const extra = `${persistent ? '<p><strong>Persistent Haze:</strong> attackers lose their own concealment; non-attackers remain concealed.</p>' : '<p>The haze is dismissed instantly if anyone hidden by it attacks.</p>'}${unseenEyes ? '<p><strong>Unseen Eyes:</strong> hidden allies can reroll Perception checks and gain +2 damage against foes unaware of them.</p>' : ''}`;
-    await postCard(actor, 'Force Haze', `<p>${esc(actor.name)} creates a Force Haze with a Use the Force result of <strong>${total}</strong>.</p><p><strong>Hidden:</strong> ${names}</p><p>Compare ${total} to the Will Defense of opponents that move into line of sight of any hidden creature. On success, hidden creatures have Total Concealment against that opponent.</p>${extra}`, { talentName: 'Force Haze', roll: total, hidden });
-    return { success: true, roll: total, hidden };
   }
 
   static async promptDampenPresence(actor, { sourceElement = null } = {}) {
@@ -398,6 +398,17 @@ export class SentinelTalentActions {
     if (!roll) return null;
     const total = Number(roll.roll?.total ?? roll.total ?? 0) || 0;
     const success = total > dc;
+    // Dampen Presence is explicitly Mind-Affecting. Apply the same class
+    // immunity policy before creating a persistent memory-suppression effect.
+    const immune = success && target.actor
+      ? resolveForceDiscipleIndomitable(target.actor, { mindAffecting:true }).immune
+      : false;
+    if (immune) {
+      await postCard(actor, 'Dampen Presence',
+        `<p>${esc(actor.name)} exceeded the Will Defense of <strong>${esc(target.name)}</strong> (${total} vs DC ${dc}), but Indomitable prevents this Mind-Affecting effect.</p>`,
+        { talentName:'Dampen Presence',success:false,immune:true,roll:total,dc });
+      return { success:false,immune:true,roll:total,dc };
+    }
     if (success && target.actor) {
       await createEffectOnActor(target.actor, { name: `Dampen Presence (${actor.name})`, icon: 'icons/svg/silenced.svg', changes: [], disabled: false, duration: { rounds: 999 }, flags: { swse: { talentName: 'Dampen Presence', sourceActorId: actor.id, mindAffecting: true, memorySuppressed: true, note: 'Target does not remember interacting with the source once the source is gone.' } } }, { source: 'dampen-presence' });
     }
@@ -424,19 +435,18 @@ export class SentinelTalentActions {
       return { powerId: String(new FormData(form).get('powerId') || 'manual') };
     }});
     if (!choice) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Dark Retaliation requires spending 1 Force Point.');
-      return null;
-    }
-    let powerName = 'a Force Power';
-    if (choice.powerId !== 'manual') {
-      const power = await spendReadyForcePower(actor, choice.powerId, 'dark-retaliation');
-      powerName = power.name;
-    }
-    await actor.setFlag(NS, 'encounterUses.darkRetaliation', { encounterId: this._encounterId(), used: true, powerName, usedAt: Date.now() });
-    await postCard(actor, 'Dark Retaliation', `<p>${esc(actor.name)} spends a Force Point and activates <strong>${esc(powerName)}</strong> as a Reaction to being targeted by a [Dark Side] Force Power.</p><p>Resolve the selected Force Power normally against eligible targets.</p>`, { talentName: 'Dark Retaliation', powerName });
-    return { success: true, powerName };
+    const fp = await beginContractedForcePoint(actor, "sentinel:promptDarkRetaliation", {}, { label: "promptDarkRetaliation" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      let powerName = 'a Force Power';
+      if (choice.powerId !== 'manual') {
+        const power = await spendReadyForcePower(actor, choice.powerId, 'dark-retaliation');
+        powerName = power.name;
+      }
+      await actor.setFlag(NS, 'encounterUses.darkRetaliation', { encounterId: this._encounterId(), used: true, powerName, usedAt: Date.now() });
+      await postCard(actor, 'Dark Retaliation', `<p>${esc(actor.name)} spends a Force Point and activates <strong>${esc(powerName)}</strong> as a Reaction to being targeted by a [Dark Side] Force Power.</p><p>Resolve the selected Force Power normally against eligible targets.</p>`, { talentName: 'Dark Retaliation', powerName });
+      return { success: true, powerName };
+    });
   }
 
   static async promptGradualResistance(actor) {

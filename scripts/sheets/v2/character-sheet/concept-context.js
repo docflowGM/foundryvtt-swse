@@ -1654,7 +1654,7 @@ function normalizeStarshipManeuver(entry, discarded = false) {
     dcRows,
     hasDcRows: dcRows.length > 0,
     fpOk: true,
-    discarded: discarded || system.spent === true,
+    discarded,
     summary: forceTextExcerpt(system.summary || system.description || entry?.summary || '', 160)
   };
 }
@@ -1670,8 +1670,8 @@ function buildStarshipSuiteTab(context) {
 
   const fallbackEntries = asArray(context.starshipManeuversPanel?.entries).map((entry) => ({ ...entry, virtual: true }));
   const sourceEntries = maneuverItems.length ? maneuverItems : fallbackEntries;
-  const ready = sourceEntries.filter((entry) => entry?.system?.spent !== true).map((entry) => normalizeStarshipManeuver(entry, false));
-  const spent = sourceEntries.filter((entry) => entry?.system?.spent === true).map((entry) => normalizeStarshipManeuver(entry, true));
+  const ready = sourceEntries.filter((entry) => entry?.system?.discarded !== true).map((entry) => normalizeStarshipManeuver(entry, false));
+  const spent = sourceEntries.filter((entry) => entry?.system?.discarded === true).map((entry) => normalizeStarshipManeuver(entry, true));
 
   const skillsEntries = asArray(context.skillsPanel?.skills ?? context.skillsPanel?.entries);
   const pilotSkill = skillsEntries.find((skill) => {

@@ -21,7 +21,6 @@ const npcImporter = await readFile(new URL('../scripts/engine/import/npc-templat
 const droidImporter = await readFile(new URL('../scripts/engine/import/stock-droid-importer-engine.js', import.meta.url), 'utf8');
 const exportModel = await readFile(new URL('../scripts/export/swse-export-model.js', import.meta.url), 'utf8');
 const npcSheetHelpers = await readFile(new URL('../scripts/sheets/v2/npc/npc-sheet-helpers.js', import.meta.url), 'utf8');
-const darkSidePowers = await readFile(new URL('../scripts/talents/DarkSidePowers.js', import.meta.url), 'utf8');
 
 // A production file "assigns a value to system.darkSideScore" if it
 // contains a quoted key literal 'system.darkSideScore' (or the object-path
@@ -40,8 +39,7 @@ for (const [name, src] of [
   ['poison-engine.js', poisonEngine],
   ['npc-template-importer-engine.js', npcImporter],
   ['stock-droid-importer-engine.js', droidImporter],
-  ['npc-sheet-helpers.js', npcSheetHelpers],
-  ['DarkSidePowers.js', darkSidePowers]
+  ['npc-sheet-helpers.js', npcSheetHelpers]
 ]) {
   assert.doesNotMatch(src, VALUE_ASSIGNMENT_PATTERN, `${name} must not assign a value to system.darkSideScore`);
 }

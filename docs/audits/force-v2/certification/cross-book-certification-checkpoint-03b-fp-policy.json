@@ -1,0 +1,1005 @@
+{
+  "schemaVersion": "0.1",
+  "date": "2026-11-18",
+  "project": "SWSE Foundry VTT v13 / Force V2",
+  "checkpoint": "03B — Force Point Authorization and Source-Exact Spending",
+  "repo": "docflowGM/foundryvtt-swse",
+  "branch": "audit/force-v2-seven-book-packages-v2-9-20261117",
+  "baselineHead": "377d5e3686ad40c8843c891fde5a1a714020b10e",
+  "status": "RAW_AND_STATIC_CALLSITE_AUDIT; IMPLEMENTATION DESIGN; NOT RUNTIME CERTIFIED",
+  "historicalForceDefinitions": 212,
+  "historicalInfluenceEdges": 178,
+  "sourcePriority": [
+    "uploaded printed SWSE sourcebooks",
+    "authenticated official errata supersedes print",
+    "indexed text for navigation",
+    "runtime code only for implementation evidence"
+  ],
+  "sources": {
+    "CORE93": {
+      "book": "Star Wars Saga Edition Core Rulebook",
+      "pages": [
+        93
+      ],
+      "evidence": "uploaded PDF page 94; October 2008 official errata p93",
+      "errata": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+    },
+    "CORE96": {
+      "book": "Star Wars Saga Edition Core Rulebook",
+      "pages": [
+        95,
+        96
+      ],
+      "evidence": "uploaded PDF pp95-96; official errata p96",
+      "errata": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+    },
+    "CORE102": {
+      "book": "Star Wars Saga Edition Core Rulebook",
+      "pages": [
+        102
+      ],
+      "evidence": "uploaded TXT cross-checked with October 2008 official errata; removes the second Force Point Recovery paragraph",
+      "errata": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+    },
+    "CORE149": {
+      "book": "Star Wars Saga Edition Core Rulebook",
+      "pages": [
+        149
+      ],
+      "evidence": "uploaded PDF page 150; condition track explicitly shows -5 at step3, -10 at step4, helpless step5"
+    },
+    "SOTG24": {
+      "book": "Starships of the Galaxy",
+      "pages": [
+        24
+      ],
+      "evidence": "uploaded PDF page 25; immediate one-maneuver recovery reaction"
+    },
+    "KOTOR_FR": {
+      "book": "Knights of the Old Republic Campaign Guide",
+      "section": "Force Readiness feat",
+      "evidence": "uploaded DJVU passage and book feat section; page not independently confirmed"
+    },
+    "JATM11": {
+      "book": "Jedi Academy Training Manual",
+      "pages": [
+        11
+      ],
+      "evidence": "uploaded PDF page 12; Sparring Practice begins on p11, continued on p12"
+    },
+    "JATM12": {
+      "book": "Jedi Academy Training Manual",
+      "pages": [
+        12
+      ],
+      "evidence": "uploaded PDF page 13; Sparring Practice and Training Remote"
+    },
+    "JATM13": {
+      "book": "Jedi Academy Training Manual",
+      "pages": [
+        13
+      ],
+      "evidence": "uploaded PDF page 14; Vo'ren's Third Cadence and Fourth Cadence"
+    },
+    "GUARDIAN": {
+      "book": "Source for Guardian Spirit",
+      "section": "Guardian Spirit bonus FP",
+      "evidence": "published source must be independently resolved before declaring source RAW; production code contains explicit restrictions"
+    },
+    "CORE41": {
+      "book": "Star Wars Saga Edition Core Rulebook",
+      "pages": [
+        41
+      ],
+      "evidence": "October 2008 official errata adds FP option to Block and Deflect for adjacent ally",
+      "errata": "https://www.swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf"
+    }
+  },
+  "rawRules": [
+    {
+      "id": "FP-R01",
+      "topic": "one-per-round",
+      "source": [
+        "CORE93"
+      ],
+      "rule": "One Force Point per round is default; individual published abilities can explicitly override; Force Readiness alone does not waive cap.",
+      "implementation": "Persist same-round spend count with authoritative actor/round identity; mandatory preflight and commit recheck."
+    },
+    {
+      "id": "FP-R02",
+      "topic": "on-turn-roll-bonus",
+      "source": [
+        "CORE93"
+      ],
+      "rule": "On own turn, ordinary FP bonus to one attack/skill/ability roll is a free action; choose once per round; heroic dice scaling 1d6/2d6 keep high/3d6 keep high.",
+      "implementation": "Bind bonus receipt to a single roll; cancel instead of silently running an unmodified requested paid roll."
+    },
+    {
+      "id": "FP-R03",
+      "topic": "force-power-recovery-reaction",
+      "source": [
+        "CORE93",
+        "CORE96"
+      ],
+      "rule": "One spent Power instance can be recovered immediately by spending one FP as a reaction; p93 errata resolves original swift-action typo.",
+      "implementation": "Typed source authorization; validate selected spent recoverable Item ID before spend and commit atomically."
+    },
+    {
+      "id": "FP-R04",
+      "topic": "starship-maneuver-recovery-reaction",
+      "source": [
+        "SOTG24"
+      ],
+      "rule": "One spent starship maneuver instance can be recovered immediately using one FP as a reaction.",
+      "implementation": "Same FP authorization and receipt type, domain-specific selected maneuver instance."
+    },
+    {
+      "id": "FP-R05",
+      "topic": "avoid-death-reaction",
+      "source": [
+        "CORE93"
+      ],
+      "rule": "Spend FP as a reaction to avoid otherwise fatal damage and fall unconscious per printed death rules; no Force Readiness requirement.",
+      "implementation": "Source-authorized reaction must validate the triggering death-resolution and remaining per-round allowance."
+    },
+    {
+      "id": "FP-R06",
+      "topic": "dark-side-score-reduction",
+      "source": [
+        "CORE93"
+      ],
+      "rule": "As swift action spend FP to decrease DSS by one; only when DSS positive; per-round restriction still applies.",
+      "implementation": "Single guarded FP debit and DSS adjustment; no spend if there is no possible reduction."
+    },
+    {
+      "id": "FP-R07",
+      "topic": "force-readiness",
+      "source": [
+        "KOTOR_FR"
+      ],
+      "rule": "Force Readiness allows spending FP as a free action even off-turn, but ALL other restrictions still apply.",
+      "implementation": "Off-turn waiver only for free-action spends; do not automatically grant unlimited FP/round or waive descriptor restrictions."
+    },
+    {
+      "id": "FP-R08",
+      "topic": "sparring-practice",
+      "source": [
+        "JATM11",
+        "JATM12"
+      ],
+      "rule": "At DC18+, Block UTF-enhancing FP spend does not count against one-FP-per-round; DC23+ grants 1 and DC28 grants 2 temporary FP limited to that exact Block UTF spend.",
+      "implementation": "Typed active regimen grant, scoped rollDomain block-activation, exception noncounting, expiring temp entry; reject same entry for Deflect or generic attack."
+    },
+    {
+      "id": "FP-R09",
+      "topic": "training-remote",
+      "source": [
+        "JATM12"
+      ],
+      "rule": "At DC18+, Deflect UTF-enhancing FP spend does not count against one-FP-per-round; DC23+ grants 1 and DC28 grants 2 temporary FP limited to that exact Deflect UTF spend.",
+      "implementation": "Typed active regimen grant, scoped rollDomain deflect-activation, exception noncounting, expiring temp entry; reject same entry for Block or generic attack."
+    },
+    {
+      "id": "FP-R10",
+      "topic": "vorens-third-cadence",
+      "source": [
+        "JATM13"
+      ],
+      "rule": "At DC33, Block and Deflect check-enhancing FP may be spent off-turn and do not count against ordinary per-round limit.",
+      "implementation": "Scope both waivers to Block/Deflect activation only; never global FP limit override."
+    },
+    {
+      "id": "FP-R11",
+      "topic": "source-restricted-bonus-pools",
+      "source": [
+        "JATM11",
+        "JATM12",
+        "JATM13",
+        "GUARDIAN"
+      ],
+      "rule": "Temporary/bonus FP availability is determined by the producing source's printed purpose and expiration, not by aggregate pool totals alone. Guardian Spirit code already carries a restrictive note needing source certification.",
+      "implementation": "Spend eligibility per pool entry id and typed restriction; expiry filtered before availability; exact entry amounts saved for potential refund."
+    },
+    {
+      "id": "FP-R12",
+      "topic": "force-point-recovery-technique",
+      "source": [
+        "CORE102"
+      ],
+      "rule": "Core p102 'Force Point Recovery' grants 1 FP spent during encounter at encounter end; official errata removes second paragraph purporting to permit repeated selections.",
+      "implementation": "Treat recovery entitlement per owned technique according to corrected version; do not auto-multiply by obsolete repeated-selection paragraph."
+    },
+    {
+      "id": "FP-R13",
+      "topic": "condition-track-validation",
+      "source": [
+        "CORE149"
+      ],
+      "rule": "Core condition-track step3 is -5 penalty, step4 -10; step5 is helpless. No blanket prohibition on FP spending at step3 is established by this page.",
+      "implementation": "Replace hard-coded >=3 'helpless' assumption in FP service; derive actual legal action capability from canonical condition/action rules."
+    },
+    {
+      "id": "FP-R14",
+      "topic": "descriptor-fp-bonus",
+      "source": [
+        "CORE96"
+      ],
+      "rule": "Core p96 prohibits using FP to modify UTF activation check for [dark side] Powers; [light side] UTF activation check similarly forbidden when DSS>=1. Applies to check modification, not necessarily every separate Force Point option.",
+      "implementation": "Power descriptor and DSS check before paid roll; distinguish paid option IDs from roll-enhancement bonus."
+    },
+    {
+      "id": "FP-R15",
+      "topic": "override-integrity",
+      "source": [
+        "CORE93",
+        "JATM13"
+      ],
+      "rule": "A source-specific exception must be actually held/active and apply to the requested FP use; a caller-supplied 'allow' boolean alone is not a rule.",
+      "implementation": "Re-derive exception from canonical feat/regimen/effect state server-side at the commit boundary; reject undocumented source strings."
+    },
+    {
+      "id": "FP-R16",
+      "topic": "vorens-fourth-cadence",
+      "source": [
+        "JATM13"
+      ],
+      "rule": "At DC38 on Vo'ren's Fourth Cadence, if damaged while maintaining a Force Power, actor may spend one FP as a reaction to avoid the usual fresh UTF concentration check.",
+      "implementation": "Source-scoped reaction authorization tied to an active maintenance/damage receipt, not a generic off-turn waiver; enforce ordinary FP cap unless another source explicitly supersedes it."
+    },
+    {
+      "id": "FP-R17",
+      "topic": "block-deflect-adjacent-ally",
+      "source": [
+        "CORE41"
+      ],
+      "rule": "Official errata allows spending an FP to use Block or Deflect against an attack on an adjacent ally; the Block/Deflect reaction remains subject to all other printed restrictions.",
+      "implementation": "Authorized reaction context includes triggering attack, adjacent target, eligible talent, and exact FP spend. No Force Readiness needed for this source's reaction; count against round limit unless separate exemption."
+    }
+  ],
+  "findings": [
+    {
+      "id": "03B-F01",
+      "priority": "P0",
+      "type": "failed-paid-roll-silently-continues",
+      "location": "scripts/engine/roll/roll-core.js:67-86",
+      "observation": "If requested FP spend fails, RollCore logs a warning but still constructs and executes the ordinary unboosted roll; result marks success rather than failing requested paid option.",
+      "fix": "Fail closed or prompt to explicitly confirm an unpaid roll; never silently downgrade."
+    },
+    {
+      "id": "03B-F02",
+      "priority": "P0",
+      "type": "refund-pool-corruption",
+      "location": "scripts/engine/force/force-point-spend-coordinator.js:126-188; scripts/engine/roll/roll-core.js:93-97,238-250",
+      "observation": "Rollback uses ActorEngine.gainForcePoints() (normal-only). If spend deducted a bonus FP, refund credits normal pool instead of the original bonus entry and restrictions, potentially lost at cap.",
+      "fix": "Use exact spent-entry receipt (normal + bonus entry ids and amounts), rollback same entries, assert idempotency."
+    },
+    {
+      "id": "03B-F03",
+      "priority": "P0",
+      "type": "round-cap-bypass",
+      "location": "scripts/governance/actor-engine/actor-engine.js:2007-2087",
+      "observation": "ActorEngine.spendForcePoints mutates resource but stores no round spend ledger or source-scoped exception; direct callers bypass service checks.",
+      "fix": "Validate source, rule, round and already spent count at mutation commit; journal receipt with actor update."
+    },
+    {
+      "id": "03B-F04",
+      "priority": "P0",
+      "type": "restricted-bonus-wallet-bypass",
+      "location": "scripts/governance/actor-engine/actor-engine.js:2014-2087; scripts/engine/feats/force-point-service-runtime-patches.js:6-65",
+      "observation": "Pool entries carry restrictions/expiry but both patched availability and spend allocation add/deduct all entries regardless of eligibility. Guardian Spirit has an explicit restricted entry at scripts/engine/talent/guardian-spirit-actions.js:157-162; JATM rules provide even narrower purpose limits.",
+      "fix": "Authorize each bonus entry by typed provenance and expiry; only eligible pool entries can be consumed; never parse free-text as standalone authority."
+    },
+    {
+      "id": "03B-F05",
+      "priority": "P0",
+      "type": "reaction-permission-blind-spot",
+      "location": "scripts/engine/force/force-points-service.js:324-330; scripts/engine/feats/force-point-service-runtime-patches.js:48-54; scripts/utils/force-points.js:250-264",
+      "observation": "Generic validator rejects any marked reaction/off-turn without Force Readiness. Some legacy rescue handlers omit isReaction entirely, so validation may inconsistently reject legitimate reactions or bypass timing validation.",
+      "fix": "Specific RAW recovery and avoid-death reactions must be whitelisted by validated event source; neither blanket reject nor blanket permission."
+    },
+    {
+      "id": "03B-F06",
+      "priority": "P0",
+      "type": "no-atomic-outcome-with-fp",
+      "location": "scripts/engine/force/force-executor.js:1063-1084; scripts/utils/force-points.js:214-229,251-267",
+      "observation": "Recovery can debit before checking target and death/DSS helper methods debit and mutate consequence separately; failure after payment can strand FP.",
+      "fix": "Validate exact outcome preconditions; commit mutation + event receipt transactionally or exact compensating rollback."
+    },
+    {
+      "id": "03B-F07",
+      "priority": "P1",
+      "type": "ignored-authority-options",
+      "location": "scripts/engine/talent/lightsaber-form-engine.js:281; scripts/governance/actor-engine/actor-engine.js:2007",
+      "observation": "Djem So caller supplies allowOncePerRoundOverride/source in a third argument but method accepts only (actor,amount); supplied purported override is ignored.",
+      "fix": "Adopt mandatory typed authorization receipt; validate Djem So printed exception before allowing it, not arbitrary boolean."
+    },
+    {
+      "id": "03B-F08",
+      "priority": "P0",
+      "type": "wrong-condition-track-level",
+      "location": "scripts/engine/force/force-points-service.js:356-366; scripts/engine/combat/ConditionEngine.js:28-89",
+      "observation": "Service assumes condition step >=3 is helpless; printed Core p149 maps step3 to -5 penalty, step4 -10 and helpless to step5. It can reject legal FP use at condition step3/4.",
+      "fix": "Use canonical condition/action capability (not numeric assumption), preserving helpless-specific restrictions only if printed rules support."
+    },
+    {
+      "id": "03B-F09",
+      "priority": "P1",
+      "type": "misleading-existing-static-test",
+      "location": "tests/force-point-transaction-integrity.test.mjs:31-33",
+      "observation": "Existing static test demands ActorEngine.gainForcePoints(actor, amount) refund; this assertion protects the incorrect normal-only refund behavior and would need replacement.",
+      "fix": "Replace with execution tests that verify exact bonus-entry restoration and normal/bonus conservation."
+    },
+    {
+      "id": "03B-F10",
+      "priority": "P1",
+      "type": "transaction-partial-spend",
+      "location": "scripts/governance/actor-engine/actor-engine.js:2047-2087",
+      "observation": "ActorEngine returns actualSpent even if less than requested; some callers check only a truthy amount instead of exact requested entitlement.",
+      "fix": "Commit exact requested amount or none; no paid effect on partial result."
+    },
+    {
+      "id": "03B-F11",
+      "priority": "P1",
+      "type": "no-source-context-on-roll-spend",
+      "location": "scripts/engine/force/force-point-spend-coordinator.js:39-58; scripts/engine/roll/roll-core.js:199-209",
+      "observation": "Coordinator only forwards reason and amount to validation, not roll context/action/actor-turn/active regimen; source-specific restrictions cannot be authorized reliably.",
+      "fix": "Forward typed trusted action/roll/provenance context and resolve actual feat/regimen proof before validation."
+    },
+    {
+      "id": "03B-F12",
+      "priority": "P1",
+      "type": "legacy-direct-roll-uncertified",
+      "location": "scripts/utils/force-points.js:19-89",
+      "observation": "ForcePointsUtil.rollForcePoint rolls FP dice and updates DSS but contains no FP debit; no active caller was certified in this pass.",
+      "fix": "Reachability prove; remove if dead, or route to canonical coordinator if active; do not assume dead."
+    },
+    {
+      "id": "03B-F13",
+      "priority": "P1",
+      "type": "source-errata-repeat-selection",
+      "location": "Core Rulebook p102 / official October 2008 errata",
+      "observation": "Printed Force Point Recovery technique permits repeat-selection in paragraph two, but the official errata removes that paragraph.",
+      "fix": "Certify repeated selections against corrected policy and avoid multiplying end-of-encounter recovery from superseded text."
+    }
+  ],
+  "callSites": [
+    {
+      "path": "scripts/engine/roll/roll-core.js",
+      "lines": [
+        200
+      ],
+      "kind": "roll-bonus-coordinator",
+      "policy": "PARTIAL"
+    },
+    {
+      "path": "scripts/engine/force/force-point-spend-coordinator.js",
+      "lines": [
+        57,
+        118,
+        186
+      ],
+      "kind": "roll-bonus-validation-spend-refund",
+      "policy": "PARTIAL"
+    },
+    {
+      "path": "scripts/governance/actor-engine/actor-engine.js",
+      "lines": [
+        1837,
+        1967,
+        2007
+      ],
+      "kind": "central-mutation",
+      "policy": "MISSING_ROUND_AND_SOURCE_GUARDS"
+    },
+    {
+      "path": "scripts/utils/force-points.js",
+      "lines": [
+        214,
+        225,
+        251,
+        262
+      ],
+      "kind": "DSS-decrease-and-death-rescue",
+      "policy": "PARTIAL"
+    },
+    {
+      "path": "scripts/engine/force/force-executor.js",
+      "lines": [
+        300,
+        623,
+        1065
+      ],
+      "kind": "Power-option-and-recovery",
+      "policy": "MIXED"
+    },
+    {
+      "path": "scripts/engine/force/force-power-final-integration.js",
+      "lines": [
+        85
+      ],
+      "kind": "Negate-Energy-optional-healing",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/components/force-suite.js",
+      "lines": [
+        308
+      ],
+      "kind": "legacy-force-suite-recovery",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/combat/rolls/force-point-transaction.js",
+      "lines": [
+        69,
+        125
+      ],
+      "kind": "attack-transactions-with-source-aware-rollback",
+      "policy": "PARTIAL"
+    },
+    {
+      "path": "scripts/engine/talent/lightsaber-form-engine.js",
+      "lines": [
+        281,
+        311
+      ],
+      "kind": "Djem-So-Juyo",
+      "policy": "DIRECT_IGNORED_THIRD_ARG"
+    },
+    {
+      "path": "scripts/engine/talent/guardian-spirit-actions.js",
+      "lines": [
+        181
+      ],
+      "kind": "Guardian-Spirit",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/engine/talent/jedi-prestige-talent-actions.js",
+      "lines": [
+        245,
+        296,
+        326,
+        427
+      ],
+      "kind": "prestige-talent-options",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/engine/talent/sith-talent-actions.js",
+      "lines": [
+        158
+      ],
+      "kind": "shared-Sith-helper",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/engine/talent/force-adept-talent-actions.js",
+      "lines": [
+        236
+      ],
+      "kind": "shared-Force-Adept-helper",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/engine/talent/lightsaber-talent-actions.js",
+      "lines": [
+        253,
+        311,
+        460,
+        482
+      ],
+      "kind": "lightsaber-abilities",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/engine/talent/consular-talent-actions.js",
+      "lines": [
+        377,
+        556,
+        571,
+        745,
+        841
+      ],
+      "kind": "consular-abilities",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/engine/talent/sentinel-talent-actions.js",
+      "lines": [
+        346,
+        427
+      ],
+      "kind": "sentinel-abilities",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/combat/rolls/enhanced-rolls.js",
+      "lines": [
+        1875
+      ],
+      "kind": "older-enhanced-roll",
+      "policy": "DIRECT"
+    },
+    {
+      "path": "scripts/engine/feats/meta-resource-feat-resolver.js",
+      "lines": [
+        525,
+        795,
+        930
+      ],
+      "kind": "meta-resource-feat",
+      "policy": "DIRECT"
+    }
+  ],
+  "transactionDesign": {
+    "name": "ForcePointsService.authorizeSpend + ActorEngine.commitAuthorizedForcePointUse",
+    "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+    "noSecondEngine": true,
+    "contextFields": [
+      "actorId",
+      "requestedCount",
+      "useKind",
+      "abilitySourceRef",
+      "rollDomain",
+      "targetItemInstanceId",
+      "actionTiming",
+      "combatId",
+      "combatRound",
+      "combatantId",
+      "sourceEventId",
+      "intendedExceptionIds",
+      "requestId",
+      "isGMAdjudicated"
+    ],
+    "trustedDerivation": [
+      "sourceEventId, rollDomain and eligibility must be verified against current actor-owned feat/talent/regimen and actual item/roll IDs; client booleans alone are not proof",
+      "ForcePointsService derives whether action may occur off turn and if it counts toward limit",
+      "bonus pools selected by typed producing-source rule; expired/ineligible entries excluded",
+      "at commit, actor's current resource pools and current round receipt are re-read; no trust in earlier snapshot"
+    ],
+    "receiptFields": [
+      "receiptId",
+      "actorId",
+      "roundKey",
+      "useKind",
+      "sourceId",
+      "sourceEventId",
+      "amount",
+      "normalSpent",
+      "bonusEntriesSpent[{id,source,amount,expires,restrictions}]",
+      "countsTowardRoundLimit",
+      "exceptionSourceId",
+      "before",
+      "after",
+      "state"
+    ],
+    "commitPath": "Validate -> reserve authorized round slot and source-constrained pool entry -> ActorEngine mutation of normal points/bonus entries and same-round receipt -> execute paid event -> finalize; rollback from EXACT pool entries if event fails pre-finalization.",
+    "concurrency": "Single actor-scoped commit lock or mutation transaction; idempotency by event/request ID, atomic actor state and spend ledger. No UI-only time/round gate. Foundry cross-client CAS is not evidenced; GM-authoritative serialized application required before claim of race safety.",
+    "onePerRound": "At most 1 counted FP expenditure per actor/round unless a current printed exception explicitly states a particular use does not count; separate zero-count exception receipts remain tracked.",
+    "allowedActions": [
+      {
+        "useKind": "roll-bonus",
+        "action": "free",
+        "offTurn": "only with verified Force Readiness or source-specific rule",
+        "counts": true
+      },
+      {
+        "useKind": "recover-one-force-power",
+        "action": "reaction",
+        "offTurn": "yes explicitly Core pp93/96",
+        "counts": true
+      },
+      {
+        "useKind": "recover-one-maneuver",
+        "action": "reaction",
+        "offTurn": "yes explicitly SotG p24",
+        "counts": true
+      },
+      {
+        "useKind": "avoid-death",
+        "action": "reaction",
+        "offTurn": "yes explicitly Core p93",
+        "counts": true
+      },
+      {
+        "useKind": "reduce-dark-side-score",
+        "action": "swift",
+        "offTurn": "no unless specific permission proves otherwise",
+        "counts": true
+      },
+      {
+        "useKind": "block-activation-bonus",
+        "action": "source-specific",
+        "offTurn": "per current regimen/feat permission",
+        "counts": "false only when source benefit says exempt"
+      },
+      {
+        "useKind": "deflect-activation-bonus",
+        "action": "source-specific",
+        "offTurn": "per current regimen/feat permission",
+        "counts": "false only when source benefit says exempt"
+      },
+      {
+        "useKind": "power-specific-option",
+        "action": "per-power printed entry",
+        "offTurn": "no blanket assumption",
+        "counts": "per explicit printed rule"
+      },
+      {
+        "useKind": "special-talent-benefit",
+        "action": "per-talent printed entry",
+        "offTurn": "must verify each rule",
+        "counts": "per source"
+      }
+    ]
+  },
+  "regressionCases": [
+    {
+      "id": "roll-paid-failure",
+      "expected": "requested paid roll cannot silently proceed as unpaid",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "roll-normal-start",
+      "expected": "on-turn normal FP roll spends exactly one and awards 1d6",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "roll-heroic-8",
+      "expected": "heroic level 8 FP rolls 2d6 keep highest",
+      "source": "CORE93",
+      "priority": "P1",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "roll-heroic-15",
+      "expected": "heroic level 15 FP rolls 3d6 keep highest",
+      "source": "CORE93",
+      "priority": "P1",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "fp-round-cap",
+      "expected": "second counted FP in same round is rejected",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "fp-new-round",
+      "expected": "next round permits a new counted FP",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "force-readiness-offturn",
+      "expected": "Force Readiness permits off-turn ordinary free-action spend",
+      "source": "KOTOR_FR",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "force-readiness-cap",
+      "expected": "Force Readiness does not bypass the once-per-round cap",
+      "source": "KOTOR_FR",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "core-power-reaction",
+      "expected": "Power recovery as reaction without Force Readiness is legal",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "sotg-maneuver-reaction",
+      "expected": "Maneuver recovery as reaction without Force Readiness is legal",
+      "source": "SOTG24",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "rescue-reaction",
+      "expected": "otherwise fatal hit allows reaction FP rescue without Force Readiness",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "rescue-no-condition",
+      "expected": "nonfatal damage cannot spend FP as rescue",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "dss-reduction",
+      "expected": "DSS 1 -> 0 as swift, costs 1 FP",
+      "source": "CORE93",
+      "priority": "P1",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "dss-zero",
+      "expected": "DSS 0 cannot consume FP for impossible reduction",
+      "source": "CORE93",
+      "priority": "P1",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "block-regimen-limit",
+      "expected": "Sparring Practice Block bonus is non-counting",
+      "source": "JATM12",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "block-regimen-temporary",
+      "expected": "Sparring Practice DC23/28 grants 1/2 restricted Block FP",
+      "source": "JATM12",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "block-regimen-reject-other",
+      "expected": "Sparring Practice bonus point cannot boost non-Block roll",
+      "source": "JATM12",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "deflect-regimen-limit",
+      "expected": "Training Remote Deflect bonus is non-counting",
+      "source": "JATM12",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "deflect-regimen-temporary",
+      "expected": "Training Remote DC23/28 grants 1/2 restricted Deflect FP",
+      "source": "JATM12",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "deflect-regimen-reject-other",
+      "expected": "Training Remote point cannot boost non-Deflect roll",
+      "source": "JATM12",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "vorens-offturn",
+      "expected": "Vo'ren's Third Cadence DC33 permits off-turn Block/Deflect FP",
+      "source": "JATM13",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "vorens-round",
+      "expected": "Vo'ren's DC33 Block/Deflect does not count per-round",
+      "source": "JATM13",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "vorens-no-global",
+      "expected": "Cadence exception does not apply to generic attack roll",
+      "source": "JATM13",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "guardian-restrict",
+      "expected": "Guardian Spirit entry cannot fund a noneligible check",
+      "source": "GUARDIAN",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "guardian-expire",
+      "expected": "Guardian Spirit daily expiry excludes stale entry",
+      "source": "GUARDIAN",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "expired-encounter",
+      "expected": "Expired encounter-only FP excluded from availability and spending",
+      "source": "JATM12",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "no-eligible-bonus",
+      "expected": "If bonus pool exists but is restricted for a different purpose, spend from eligible normal pool or refuse",
+      "source": "JATM12",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "bonus-refund",
+      "expected": "Rolled-back bonus FP restores same source entry, value and expiry",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "mixed-refund",
+      "expected": "Mixed normal/bonus failed spend restores both precisely",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "rollback-at-normal-max",
+      "expected": "Bonus FP rollback cannot be converted to normal FP or lost at normal cap",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "concurrent-one",
+      "expected": "Two simultaneously requested same-event spends produce one receipt and one debit",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "concurrent-two",
+      "expected": "Two different concurrent counted spends cannot both pass same-round rule",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "refund-failure",
+      "expected": "Rollback failure must not claim success or post paid outcome",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "spend-partial",
+      "expected": "Amount 2 request with only 1 eligible FP either refuses or invokes authorized exact exception; never partial effect",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "spend-wrong-condition-3",
+      "expected": "Condition-track step3 (-5) is not treated as helpless",
+      "source": "CORE149",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "spend-wrong-condition-4",
+      "expected": "Condition-track step4 (-10) is not treated as helpless",
+      "source": "CORE149",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "spend-helpless-5",
+      "expected": "Condition step5 (helpless) is gated by actual action rules, not a magic >=3 check",
+      "source": "CORE149",
+      "priority": "P1",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "descriptor-dark",
+      "expected": "Dark side Power UTF activation may not take normal FP bonus",
+      "source": "CORE96",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "descriptor-light-dss",
+      "expected": "Light side Power UTF cannot use FP bonus when DSS>=1",
+      "source": "CORE96",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "descriptor-typed-options",
+      "expected": "Separate legal FP Power option does not inherit roll-bonus ban without RAW evidence",
+      "source": "CORE96",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "technique-errata",
+      "expected": "Force Point Recovery official errata disallows reliance on repeated-selection paragraph",
+      "source": "CORE102",
+      "priority": "P1",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "djem-so-override",
+      "expected": "Untrusted third options argument does not silently bypass policy; only documented source exception can",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "force-recover-invalid",
+      "expected": "Invalid Power recovery target cannot cost FP",
+      "source": "CORE96",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "force-recover-duplicate",
+      "expected": "Two same-name Power instances are separately recoverable by instance ID",
+      "source": "CORE96",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "fp-no-combat",
+      "expected": "No active Foundry combat requires explicit round/adjudication context, not unbounded bypass or invented timer",
+      "source": "CORE93",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "vorens-fourth-reaction",
+      "expected": "Vo'ren's Fourth Cadence at DC38 allows one paid reaction to waive maintaining-Power concentration check after damage, subject to remaining FP and cap",
+      "source": "JATM13",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "vorens-fourth-no-other",
+      "expected": "Fourth Cadence does not authorize random unrelated off-turn FP spend or waive per-round limit",
+      "source": "JATM13",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "block-adjacent-errata",
+      "expected": "Block against adjacent ally via verified talent and attack trigger can spend FP without Force Readiness",
+      "source": "CORE41",
+      "priority": "P0",
+      "runtimeExecuted": false
+    },
+    {
+      "id": "deflect-adjacent-errata",
+      "expected": "Deflect against adjacent ally can spend FP, but no extra point if already spent one counted this round unless a source exception applies",
+      "source": "CORE41",
+      "priority": "P0",
+      "runtimeExecuted": false
+    }
+  ],
+  "existingTestAnchors": [
+    "tests/force-point-transaction-integrity.test.mjs",
+    "tests/equipment-e4c1-wp5-c3b-force-point-lifecycle.test.mjs",
+    "tests/helpers/real-force-point-engine.mjs",
+    "tests/attack-transaction-rollback.test.mjs"
+  ],
+  "execution": {
+    "foundryRuntimeRun": false,
+    "regressionsRun": false,
+    "branchCodeChanged": false,
+    "rulesPolicyImplemented": false,
+    "offLineConsistencyChecksPending": true
+  },
+  "guardrails": [
+    "Do not treat source-specific exception as generic unlimited FP spending.",
+    "Do not create a competing Force Point wallet or spend engine.",
+    "Do not trust client caller claims for legal off-turn or per-round exceptions.",
+    "Do not treat arbitrary free-text restriction as independent canonical rule.",
+    "No legacy shims, crosswalks or migrations; clean V2 cutover only after caller coverage.",
+    "A purchased roll that fails its FP authorization cannot silently become an unpaid successful result.",
+    "Refund exact consumed normal and bonus source entries.",
+    "No production actor/compendium/schema mutation at this checkpoint."
+  ]
+}

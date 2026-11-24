@@ -17,8 +17,11 @@ import { ReactionRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat
 import { ReactionRuleAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-rule-adapter.js";
 import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scripts/engine/abilities/ActivationLimitEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { settleForcePointReceipt } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-settlement.js";
+import { postNoticeCard } from "/systems/foundryvtt-swse/scripts/chat/notice-card.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { AttackEventAuthority } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-authority.js";
 import { damageTypesMatch, expandDamageTypeAliases, uniqueDamageTypes } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 function normalizeReactionKey(value) {
@@ -57,7 +60,9 @@ function normalizeReactionKey(value) {
     "feign-harmlessness": "feignHarmlessness",
     feignharmlessness: "feignHarmlessness",
     "uncanny-instincts": "uncannyInstincts",
-    uncannyinstincts: "uncannyInstincts"
+    uncannyinstincts: "uncannyInstincts",
+    "force-fortification": "forceFortification",
+    forcefortification: "forceFortification"
   };
   return aliases[key] ?? raw;
 }
@@ -111,7 +116,7 @@ function collectItemReactionKeys(item) {
   }
 
   const nameKey = normalizeReactionKey(item?.name);
-  if (["unarmedParry", "unarmedCounterstrike", "retaliationJab", "primitiveBlock", "intimidatingDefense", "deepSpaceGambit", "lightsaberEvasion", "preternaturalSenses", "feignHarmlessness", "uncannyInstincts", "block", "deflect"].includes(nameKey)) {
+  if (["unarmedParry", "unarmedCounterstrike", "retaliationJab", "primitiveBlock", "intimidatingDefense", "deepSpaceGambit", "lightsaberEvasion", "preternaturalSenses", "feignHarmlessness", "uncannyInstincts", "block", "deflect", "forceFortification"].includes(nameKey)) {
     keys.push(nameKey);
   }
 
@@ -292,6 +297,67 @@ export class ReactionEngine {
 
     const resolvedReactionKey = reactionDef.key ?? normalizeReactionKey(reactionKey);
 
+    // Global registry presence is not an actor entitlement. Recheck the
+    // same owned/derived reaction keys used by the offer UI before payment:
+    // chat buttons can be stale and a reaction key can be submitted directly.
+    const ownedKeys = collectActorReactionKeys(defender);
+    if (!ownedKeys.some(key => normalizeReactionKey(key) === normalizeReactionKey(resolvedReactionKey))) {
+      return {
+        success: false,
+        error: 'Defender does not own this reaction',
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
+    if (globalThis.game?.user?.isGM !== true && defender.isOwner === false) {
+      return {
+        success: false,
+        error: 'Current user cannot control the defender',
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
+    // The offer UI filters these already, but the execution boundary must
+    // repeat them. A stale/wrong attack type or descriptor is not a paid
+    // reaction; do not invoke the handler or spend Force Points.
+    const refused = attackContext.cannotBeNegatedBy ?? [];
+    const excluded = Array.isArray(refused) && refused.length
+      && ((reactionDef.negationAbility && refused.includes(reactionDef.negationAbility))
+      || (reactionDef.negationFamily && refused.includes(
+        `talents-with-${reactionDef.negationFamily}-as-prerequisite`
+      )));
+    // Block / Deflect / Force Fortification are authorized by the attacker-side VERIFIED attack event (AttackEventAuthority below: attack
+    // type, hit/critical, defender, single use). For them the chat dataset is only a lookup key, so it is not re-judged here.
+    const eventVerified = ['block', 'deflect', 'forceFortification'].includes(resolvedReactionKey);
+    if (!eventVerified && (reactionDef.trigger !== attackContext.trigger
+      || !this._evaluateConditions(reactionDef.conditions, attackContext)
+      || excluded)) {
+      return {
+        success: false,
+        error: 'Reaction is not eligible for the current attack',
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
+
+    // The registered rule is the authoritative reaction cost. The optional
+    // legacy caller cost may increase it, but cannot waive a printed cost.
+    const declaredForceCost = Number(reactionDef.cost?.forcePoints ?? 0);
+    const callerForceCost = Number(forcePointCost ?? 0);
+    if (![declaredForceCost, callerForceCost].every(
+      cost => Number.isSafeInteger(cost) && cost >= 0
+    )) {
+      return {
+        success: false,
+        error: 'Invalid reaction Force Point cost',
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
+
+    // The registered rule is the authoritative cost: a caller that omits (or understates) forcePointCost cannot waive it.
+    const effectiveForceCost = Math.max(declaredForceCost, callerForceCost);
+
     try {
       const usage = reactionDef.usage ?? {};
       const limitType = usage.perEncounter === true
@@ -314,7 +380,7 @@ export class ReactionEngine {
         if (!limitCheck.allowed) {
           const cadence = limitType === LimitType.ENCOUNTER ? 'encounter' : 'round';
           SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${limitCheck.reason}`);
-          await SWSEChat.postMessage({
+          await postNoticeCard({
             flavor: `❌ ${reactionDef.label}`,
             content: `Reaction already used this ${cadence}`,
             actor: defender
@@ -328,22 +394,56 @@ export class ReactionEngine {
         }
       }
 
-      if (forcePointCost > 0) {
-        const currentForce = defender.system?.forcePoints?.value ?? 0;
-        if (currentForce < forcePointCost) {
-          const reason = `Insufficient Force Points (need ${forcePointCost}, have ${currentForce})`;
+      // Block/Deflect answer a real incoming attack: the chat-button dataset (event id,
+      // DC, total) is only a lookup key. Authority is the attacker-side event record,
+      // re-read here; nothing client-supplied about the attack survives into the handler.
+      let verifiedAttackEvent = null;
+      if (['block', 'deflect', 'forceFortification'].includes(resolvedReactionKey)) {
+        const verdict = AttackEventAuthority.verify({
+          defender,
+          attackerId: attackContext.attackerId ?? attacker?.id,
+          eventId: attackContext.attackEventId ?? attackContext.eventId,
+          reactionKey: resolvedReactionKey
+        });
+        if (!verdict.valid) {
+          SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${verdict.message}`);
+          await postNoticeCard({ flavor: `❌ ${reactionDef.label}`, content: verdict.message, actor: defender });
+          return { success: false, error: verdict.message, modifiedDamage: null, resultMessage: verdict.message };
+        }
+        verifiedAttackEvent = verdict.event;
+        if (resolvedReactionKey === 'forceFortification' && !(verifiedAttackEvent.hit === true && verifiedAttackEvent.critical === true)) {
+          const message = 'Force Fortification answers a critical hit scored against you';
+          await postNoticeCard({ flavor: `❌ ${reactionDef.label}`, content: message, actor: defender });
+          return { success: false, error: message, modifiedDamage: null, resultMessage: message };
+        }
+      }
+
+      // A reaction that costs Force Points is authorized by ForcePointsService and paid
+      // only through ActorEngine's exact receipt (no direct balance write here).
+      let forcePointReceipt = null;
+      if (effectiveForceCost > 0) {   // no caller-supplied 'already paid' marker: payment is always this engine's own receipt
+        const spendContext = { useKind: 'ability-option', abilitySourceRef: `reaction:${resolvedReactionKey}`, gmAdjudication: options.gmAdjudication };
+        const decision = ForcePointsService.authorizeSpend(defender, { ...spendContext, requestedCount: effectiveForceCost });
+        if (!decision.valid || effectiveForceCost !== 1) {
+          const reason = decision.valid ? 'Only a single Force Point reaction cost is supported' : decision.message;
           SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${reason}`);
-          await SWSEChat.postMessage({
-            flavor: `❌ ${reactionDef.label}`,
-            content: reason,
-            actor: defender
-          });
-          return {
-            success: false,
-            error: reason,
-            modifiedDamage: null,
-            resultMessage: reason
-          };
+          await postNoticeCard({ flavor: `❌ ${reactionDef.label}`, content: reason, actor: defender });
+          return { success: false, error: reason, modifiedDamage: null, resultMessage: reason };
+        }
+        try {
+          forcePointReceipt = await ActorEngine.spendForcePoints(defender, effectiveForceCost, spendContext);
+        } catch (spendError) {
+          return { success: false, error: spendError.message, modifiedDamage: null, resultMessage: spendError.message };
+        }
+      }
+
+      // Single use: claim the event before the (long, interactive) handler runs so a double
+      // click or a second client cannot answer the same attack twice.
+      if (verifiedAttackEvent && resolvedReactionKey !== 'forceFortification') {
+        const claim = await AttackEventAuthority.consume(defender, verifiedAttackEvent.id);
+        if (!claim.consumed) {
+          if (forcePointReceipt) await ActorEngine.rollbackForcePointSpend(defender, forcePointReceipt);
+          return { success: false, error: claim.reason, modifiedDamage: null, resultMessage: claim.reason };
         }
       }
 
@@ -352,6 +452,12 @@ export class ReactionEngine {
       try {
         const enrichedContext = {
           ...attackContext,
+          ...(verifiedAttackEvent ? {
+            attackEventId: verifiedAttackEvent.id,
+            verifiedAttackEvent,
+            dc: verifiedAttackEvent.attackTotal,
+            attackTotal: verifiedAttackEvent.attackTotal
+          } : {}),
           defender,
           attacker
         };
@@ -365,19 +471,34 @@ export class ReactionEngine {
         };
       }
 
-      if (forcePointCost > 0) {
-        await ActorEngine.updateActor(defender, {
-          'system.forcePoints.value': Math.max(0, (defender.system?.forcePoints?.value ?? 0) - forcePointCost)
-        });
+      if (verifiedAttackEvent && result?.error && resolvedReactionKey !== 'forceFortification') {
+        await ActorEngine.releaseAttackEventAsDefender(defender, verifiedAttackEvent.id);
       }
 
-      if (limitType) {
+      // Exact receipt lifecycle: a handler that failed gives back exactly what was paid; a handler that completed finalizes the
+      // (now non-refundable) spend. The outcome is EXPLICIT: an unresolved settlement is reported, never hidden behind a success.
+      let paymentSettlement = forcePointReceipt ? 'settled' : 'none';
+      if (forcePointReceipt) {
+        const wantRollback = Boolean(result?.error);
+        const settled = await settleForcePointReceipt(defender, forcePointReceipt, wantRollback ? 'rollback' : 'finalize');
+        if (!settled) {
+          paymentSettlement = 'unresolved';
+          SWSELogger.error(`[ReactionEngine] Force Point ${wantRollback ? 'compensation' : 'finalization'} unresolved for receipt ${forcePointReceipt.receiptId}; GM reconciliation required`);
+        }
+      }
+
+      if (limitType && !result?.error) {
         ActivationLimitEngine.recordActivation(defender, resolvedReactionKey, limitType);
       }
 
-      const resultMsg = result?.resultMessage ?? `${reactionDef.label} triggered`;
-      await SWSEChat.postMessage({
-        flavor: `✓ ${reactionDef.label}`,
+      const unresolvedNote = paymentSettlement === 'unresolved'
+        ? (result?.error
+          ? ' The Force Point paid for this failed reaction could not be returned automatically: GM reconciliation required.'
+          : ' The Force Point receipt could not be finalized automatically: GM reconciliation required (the reaction was applied and is not refunded).')
+        : '';
+      const resultMsg = (result?.resultMessage ?? `${reactionDef.label} triggered`) + unresolvedNote;
+      await postNoticeCard({
+        flavor: `${paymentSettlement === 'unresolved' ? '⚠' : '✓'} ${reactionDef.label}`,
         content: resultMsg,
         actor: defender
       });
@@ -385,8 +506,9 @@ export class ReactionEngine {
       SWSELogger.log(`[ReactionEngine] SUCCESS: "${resolvedReactionKey}" resolved for ${defender.name}`);
 
       return {
-        success: true,
-        error: null,
+        success: !result?.error,
+        paymentSettlement,
+        error: result?.error ? result.error + unresolvedNote : null,
         modifiedDamage: result?.modifiedDamage ?? null,
         resultMessage: resultMsg
       };

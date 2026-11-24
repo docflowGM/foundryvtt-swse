@@ -1,8 +1,13 @@
 import assert from 'node:assert/strict';
-import {
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+// These suites import engine modules that use '/systems/foundryvtt-swse/...' paths: register the Foundry path loader BEFORE the dynamic imports.
+registerFoundryPathLoader();
+installFoundryShimGlobals();
+const {
   PHASE3_FORCE_POWER_CORRECTIONS,
   getPhase3ForcePowerCorrection
-} from '../scripts/engine/force/phase3-force-power-corrections.js';
+} = await import('../scripts/engine/force/phase3-force-power-corrections.js');
 
 const names = Object.values(PHASE3_FORCE_POWER_CORRECTIONS).map(entry => entry.name).sort();
 assert.deepEqual(names, ['Farseeing', 'Force Disarm', 'Rebuke', 'Surge'].sort());

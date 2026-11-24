@@ -178,13 +178,15 @@ export class GuardianSpiritActions {
       ui?.notifications?.warn?.('No Force Points available to manifest your Guardian Spirit.');
       return null;
     }
-    await ActorEngine.spendForcePoints(actor, 1);
+    const fpReceipt = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'guardian-spirit:manifest' });
     await actor.setFlag(NS, GUARDIAN_PATH, {
       manifested: true,
       manifestedAt: Date.now(),
       source: 'Manifest Guardian Spirit',
       note: 'Guardian Spirit is manifested for this encounter. GM/player adjudicates location and morale bonuses.'
     });
+    // The paid effect (manifestation) now exists: settle the receipt exactly.
+    try { await ActorEngine.finalizeForcePointSpend(actor, fpReceipt); } catch (error) { console.error('[SWSE] Force Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); }
     await this._post(actor, 'Manifest Guardian Spirit', 'Guardian Spirit manifested for the encounter. Position and aura bonuses are GM/player adjudicated.');
     return { manifested: true };
   }

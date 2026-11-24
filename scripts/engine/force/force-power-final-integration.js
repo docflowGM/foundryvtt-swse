@@ -82,7 +82,7 @@ async function resolveNegateEnergy({ actor, power, result, options, ForcePowerEf
       const hp = hpState(actor);
       healed = Math.max(0, Math.min(incomingDamage, hp.max - hp.value));
       try {
-        await ActorEngine.spendForcePoints(actor, 1);
+        const negateReceipt = await ActorEngine.spendForcePoints(actor, 1, { useKind: 'ability-option', abilitySourceRef: 'force-power:resolveNegateEnergy' });
         healingForcePointSpent = true;
         if (healed > 0) {
           await ActorEngine.updateActor(actor, {
@@ -92,6 +92,8 @@ async function resolveNegateEnergy({ actor, power, result, options, ForcePowerEf
             meta: { guardKey: 'force-power-negate-energy-healing' }
           });
         }
+        // The paid healing has been applied (or none was needed): settle the receipt exactly.
+        try { await ActorEngine.finalizeForcePointSpend(actor, negateReceipt); } catch (error) { console.error('[SWSE] Force Point paid effect applied but finality was not persisted; receipt stays committed for audit.', error); }
       } catch (error) {
         healed = 0;
         healingForcePointSpent = false;

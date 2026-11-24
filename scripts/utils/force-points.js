@@ -203,81 +203,49 @@ export class ForcePointsUtil {
    * @returns {Promise<boolean>} Whether the reduction was successful
    */
   static async reduceDarkSide(actor) {
+    const engine = globalThis.SWSE?.ActorEngine;
+    if (!engine) return false;
     const currentDarkSide = DSPEngine.getValue(actor);
-
-    if (currentDarkSide === 0) {
+    if (!(currentDarkSide > 0)) {
       ui.notifications.info('Your Dark Side Score is already 0.');
       return false;
     }
 
-    // Validate Force Point availability via ForcePointsService
-    const validation = ForcePointsService.validateSpend(actor, {
-      reason: 'reducing Dark Side Score',
-      amount: 1
-    });
-
-    if (!validation.valid) {
-      ui.notifications.error(`Cannot reduce Dark Side Score: ${validation.message}`);
+    const context = { useKind: 'reduce-dark-side-score' };
+    const policy = ForcePointsService.authorizeSpend(actor, context);
+    if (!policy.valid) {
+      ui.notifications.error(`Cannot reduce Dark Side Score: ${policy.message}`);
       return false;
     }
 
-    // Spend the Force Point via ActorEngine
-    await globalThis.SWSE?.ActorEngine?.spendForcePoints(actor, 1);
-
-    // Reduce Dark Side Score in canonical location
-    const nextDarkSide = DSPEngine.getNextValue(actor, -1);
-    await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSide.value': nextDarkSide });
-    ui.notifications.info(`Dark Side Score reduced to ${nextDarkSide}`);
-    return true;
-  }
-
-  /**
-   * Avoid death by spending a Force Point
-   * Uses ForcePointsService eligibility checks and ActorEngine mutation
-   *
-   * @param {Actor} actor - The actor avoiding death
-   * @param {Object} context - Death context (damage, threshold, etc.)
-   * @returns {Promise<boolean>} Whether death was avoided
-   */
-  static async avoidDeath(actor, context = {}) {
-    // Check eligibility via ForcePointsService
-    const canRescue = ForcePointsService.canRescue(actor, context);
-    if (!canRescue) {
-      ui.notifications.error('Cannot use Force Point to avoid death: requirements not met (HP not at death, already rescued, or no Force Points)');
+    let receipt;
+    try {
+      receipt = await engine.spendForcePoints(actor, 1, context);
+    } catch (error) {
+      ui.notifications.error(`Force Point was not authorized or committed: ${error.message}`);
       return false;
     }
 
-    // Validate spend
-    const validation = ForcePointsService.validateSpend(actor, {
-      reason: 'avoiding death',
-      amount: 1
-    });
-
-    if (!validation.valid) {
-      ui.notifications.error(`Cannot avoid death: ${validation.message}`);
+    try {
+      const nextDarkSide = DSPEngine.getNextValue(actor, -1);
+      await engine.updateActor(actor, { 'system.darkSide.value': nextDarkSide });
+      // No automatic refund after the mechanical benefit succeeds.
+      const finality = await engine.finalizeForcePointSpend(actor, receipt);
+      if (!finality?.finalized) console.error('Dark Side reduction applied but FP receipt finalization failed', finality);
+      ui.notifications.info(`Dark Side Score reduced to ${nextDarkSide}`);
+      return true;
+    } catch (error) {
+      // Compensate only while the consequence has not been applied.
+      if (DSPEngine.getValue(actor) === currentDarkSide) {
+        try {
+          const rollback = await engine.rollbackForcePointSpend(actor, receipt);
+          if (!rollback?.rolledBack) console.error('Force Point rollback refused', rollback);
+        } catch (refundError) { console.error('Force Point rollback indeterminate', refundError); }
+      } else {
+        console.error('Dark Side Score was reduced but transaction completion was not confirmed; no automatic refund', error);
+      }
+      ui.notifications.error('Dark Side Score reduction could not be completed or confirmed. Review the actor resources.');
       return false;
     }
-
-    // Spend the Force Point via ActorEngine (mutation authority)
-    await globalThis.SWSE?.ActorEngine?.spendForcePoints(actor, 1);
-
-    // Mark as rescued this resolution (prevents multiple rescues)
-    // This flag should be cleared at the start of the next damage resolution
-    await actor.setFlag('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
-
-    // Canonical rescue result: remain at 0 HP and move to the bottom of the condition track.
-    await globalThis.SWSE?.ActorEngine?.updateActor(actor, {
-      'system.hp.value': 0,
-      'system.conditionTrack.current': 5
-    });
-
-    // Chat notification
-    createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<p><strong>${actor.name}</strong> spends a Force Point to avoid death and falls unconscious!</p>`
-    });
-
-    ui.notifications.warn(`${actor.name} avoids death but falls unconscious!`);
-    return true;
   }
 }

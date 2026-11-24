@@ -1,3 +1,4 @@
+import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
@@ -278,14 +279,16 @@ export class LightsaberFormEngine {
       ui?.notifications?.warn?.('Djem So has already been used this round.');
       return null;
     }
-    const spend = await ActorEngine.spendForcePoints(actor, 1, { allowOncePerRoundOverride: true, source: 'djem-so' });
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Djem So requires spending 1 Force Point.');
-      return null;
-    }
-    await actor?.setFlag?.(NS, 'djemSoReaction', { roundKey: key, used: true, usedAt: Date.now() });
-    await postCard(actor, 'Djem So', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction after being hit by a melee attack and may make an immediate attack against that opponent.</p>`, { talentName: 'Djem So', forcePointSpent: true });
-    return { success: true, forcePointSpent: true };
+    // Trigger: a melee attack that HIT this actor this round, read from the attacker's verified record.
+    const reaction = latestMeleeHitAgainst(actor);
+    if (!reaction) { ui?.notifications?.warn?.('Djem So: no verified melee hit against you this round.'); return null; }
+    const fp = await beginContractedForcePoint(actor, "lightsaber-form:djem-so", { reaction }, { label: "djem-so" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      await actor?.setFlag?.(NS, 'djemSoReaction', { roundKey: key, used: true, usedAt: Date.now() });
+      await postCard(actor, 'Djem So', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction after being hit by a melee attack and may make an immediate attack against that opponent.</p>`, { talentName: 'Djem So', forcePointSpent: true });
+      return { success: true, forcePointSpent: true };
+    });
   }
 
   static async promptJuyo(actor) {
@@ -308,14 +311,13 @@ export class LightsaberFormEngine {
     }});
     if (!choice) return null;
     const targetName = choice.targetName;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Juyo requires spending 1 Force Point.');
-      return null;
-    }
-    await actor?.setFlag?.(NS, 'juyoDesignatedTarget', { encounterId: encounterId(), used: true, targetName, usedAt: Date.now() });
-    await postCard(actor, 'Juyo', `<p>${esc(actor.name)} designates <strong>${esc(targetName)}</strong> as their Juyo target for this encounter.</p><p>Reroll your first attack roll each round against that opponent, keeping the better result.</p>`, { talentName: 'Juyo', forcePointSpent: true, targetName });
-    return { success: true, forcePointSpent: true, targetName };
+    const fp = await beginContractedForcePoint(actor, "lightsaber-form:promptJuyo", {}, { label: "promptJuyo" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      await actor?.setFlag?.(NS, 'juyoDesignatedTarget', { encounterId: encounterId(), used: true, targetName, usedAt: Date.now() });
+      await postCard(actor, 'Juyo', `<p>${esc(actor.name)} designates <strong>${esc(targetName)}</strong> as their Juyo target for this encounter.</p><p>Reroll your first attack roll each round against that opponent, keeping the better result.</p>`, { talentName: 'Juyo', forcePointSpent: true, targetName });
+      return { success: true, forcePointSpent: true, targetName };
+    });
   }
 
   static async announceSokan(actor) {

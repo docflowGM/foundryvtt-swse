@@ -1,12 +1,23 @@
 import assert from 'node:assert/strict';
-import {
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+// These suites import engine modules that use '/systems/foundryvtt-swse/...' paths: register the Foundry path loader BEFORE the dynamic imports.
+globalThis.window = globalThis.window || { location: { hostname: 'localhost' } };
+registerFoundryPathLoader();
+installFoundryShimGlobals();
+globalThis.foundry.applications = globalThis.foundry.applications ?? {};
+globalThis.foundry.applications.api = globalThis.foundry.applications.api ?? { ApplicationV2: class {}, HandlebarsApplicationV2: class {}, HandlebarsApplicationMixin: (B) => class extends B {} };
+globalThis.Hooks = globalThis.Hooks ?? { callAll: () => {}, on: () => {}, once: () => {} };
+globalThis.ChatMessage = globalThis.ChatMessage ?? { getSpeaker: () => ({}), create: async () => ({}) };
+globalThis.ui = globalThis.ui ?? { notifications: { warn() {}, info() {}, error() {} } };
+const {
   FINAL_FORCE_POWER_COVERAGE,
   buildForceGripPlan,
   buildForceStunPlan,
   buildForceThrustPlan,
   buildMoveObjectPlan,
   getForceStunConditionSteps
-} from '../scripts/engine/force/force-power-final-integration.js';
+} = await import('../scripts/engine/force/force-power-final-integration.js');
 
 assert.equal(getForceStunConditionSteps(19, 20), 0);
 assert.equal(getForceStunConditionSteps(20, 20), 1);

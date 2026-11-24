@@ -139,14 +139,25 @@ function swseChatBuildReactionContext(actor, context = {}) {
     defenderId,
     attackerId,
     ownerUserId,
+    attackEventId: source.attackEventId ?? '',
     defenderName: source.defenderName ?? defender?.name ?? context.targetName ?? '',
     timerLabel: source.timerLabel ?? context.reactionTimerLabel ?? '',
-    reason: source.reason ?? context.reactionReason ?? ''
+    reason: source.reason ?? context.reactionReason ?? '',
+    attackType: source.attackType ?? context.attackType ?? '',
+    weaponId: source.weaponId ?? context.weaponId ?? '',
+    damageType: source.damageType ?? context.damageType ?? '',
+    damageTypesCsv: (Array.isArray(source.damageTypes) ? source.damageTypes : source.damageTypes ? [source.damageTypes] : [])
+      .join(','),
+    originalDamageTypesCsv: (Array.isArray(source.originalDamageTypes) ? source.originalDamageTypes
+      : source.originalDamageTypes ? [source.originalDamageTypes] : []).join(','),
+    cannotBeNegatedByCsv: (Array.isArray(source.cannotBeNegatedBy) ? source.cannotBeNegatedBy
+      : source.cannotBeNegatedBy ? [source.cannotBeNegatedBy] : []).join(','),
+    sonicCannotBeDeflected: source.sonicCannotBeDeflected === true
   };
 }
 
 function swseChatBuildEventContext(context = {}, category = 'roll', reactionContext = null) {
-  const eventId = context.eventId ?? context.attackEventId ?? (reactionContext?.reactions?.length ? `swse-${globalThis.foundry?.utils?.randomID?.() ?? Date.now()}` : '');
+  const eventId = context.eventId ?? context.attackEventId ?? (reactionContext?.attackEventId || null) ?? (reactionContext?.reactions?.length ? `swse-${globalThis.foundry?.utils?.randomID?.() ?? Date.now()}` : '');
   const hasReactionWindow = Boolean(reactionContext?.reactions?.length);
   return {
     eventId,

@@ -107,7 +107,7 @@ export function installPhase4ForceModifierAutomation(ForcePowerEffectsEngine) {
   if (!ForcePowerEffectsEngine || ForcePowerEffectsEngine.__phase4ModifierAutomationInstalled) return;
   const previous = ForcePowerEffectsEngine._buildEffectDataForPower.bind(ForcePowerEffectsEngine);
 
-  ForcePowerEffectsEngine._buildEffectDataForPower = function phase4ModifierBuilder(actor, powerItem, rollTotal) {
+  ForcePowerEffectsEngine._buildEffectDataForPower = function phase4ModifierBuilder(actor, powerItem, rollTotal, context) {
     const name = normalize(powerItem?.name);
 
     if (name === 'battle strike') return battleStrikeEffect(actor, powerItem, rollTotal);
@@ -135,7 +135,7 @@ export function installPhase4ForceModifierAutomation(ForcePowerEffectsEngine) {
       return [];
     }
 
-    return previous(actor, powerItem, rollTotal);
+    return previous(actor, powerItem, rollTotal, context);
   };
 
   Object.defineProperty(ForcePowerEffectsEngine, '__phase4ModifierAutomationInstalled', { value: true, configurable: false });

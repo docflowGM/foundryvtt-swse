@@ -401,7 +401,7 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     tags: [],
     uses: { current: 1, max: 1 },
     inSuite: false,
-    spent: false,
+    discarded: false,
     isCustom: true
   }
 });

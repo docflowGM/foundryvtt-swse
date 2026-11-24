@@ -32,6 +32,7 @@ const bonusEntries = (pool) => {
 };
 
 export function createForcePointTransaction({ actor, result, formula, reason = '', roll = null }) {
+  const requestId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
   let commitRun = null;
   let rollbackRun = null;
   let announceRun = null;
@@ -45,6 +46,8 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     final: false,    // the use is complete: it can no longer be refunded
     rollbackAccepted: false,   // a rollback was accepted for execution: nothing may finalize, announce or re-claim the commitment
     spentNormal: 0,
+    spendReceipt: null,
+    receiptFinalized: false,
     gaveBonus: [],   // [{ entry, amount }] — what this spend took from each bonus entry
     shown: null,
     chatPosted: false,
@@ -66,7 +69,9 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
       let spent;
       try {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        spent = await ActorEngine.spendForcePoints(actor, 1);   // PHASE 3: Route through ActorEngine
+        spent = await ActorEngine.spendForcePoints(actor, 1, {
+          useKind: 'roll-bonus', rollDomain: 'attack.weapon', requestId
+        });
       } catch (err) {
         console.error('Failed to spend Force Point:', err);
         const after = poolNow();
@@ -85,12 +90,12 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
         ui.notifications.error('No Force Point could be spent.');
         return false;
       }
-      const afterBonus = bonusEntries(actor.getFlag?.('swse', 'bonusForcePoints'));
-      tx.gaveBonus = beforeBonus
-        .map((e) => ({ entry: e, amount: e.value - (afterBonus.find((x) => x.id === e.id)?.value ?? 0) }))
-        .filter((x) => x.amount > 0);
-      const bonusTaken = tx.gaveBonus.reduce((n, x) => n + x.amount, 0);
-      tx.spentNormal = Math.max(0, Number.isFinite(spent?.normalSpent) ? spent.normalSpent : (Number(spent?.spent) || 0) - bonusTaken);
+      // The ActorEngine receipt is the authority for the exact consumed
+      // source entries; never infer them from before/after wallet totals.
+      tx.spendReceipt = spent;
+      tx.shown = { remaining: spent.remaining, max: pool.max ?? 0 };
+      tx.gaveBonus = (spent.bonusEntriesSpent ?? []).map(({ entry, amount }) => ({ entry, amount }));
+      tx.spentNormal = spent.normalSpent;
       tx.committed = true;
       tx.state = 'committed';
       return true;
@@ -121,30 +126,20 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     async _rollback() {
       try {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        if (tx.spentNormal > 0) {
-          await ActorEngine.gainForcePoints(actor, tx.spentNormal);
-          tx.spentNormal = 0;   // done: a retry after a later failure must not give it back twice
+        const result = await ActorEngine.rollbackForcePointSpend(actor, tx.spendReceipt);
+        if (!result?.rolledBack) {
+          ui.notifications.error('Exact Force Point refund was refused; review the receipt and actor resources.');
+          return false;
         }
-        if (tx.gaveBonus.length) {
-          const poolNow = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
-          const entries = bonusEntries(poolNow);
-          for (const { entry, amount } of tx.gaveBonus) {
-            const here = entries.find((e) => e.id === entry.id);
-            if (here) {here.value += amount;}
-            else {entries.push({ ...entry, value: amount });}
-          }
-          const value = entries.reduce((n, e) => n + e.value, 0);
-          const max = entries.reduce((n, e) => n + Math.max(0, Number(e.max ?? e.value) || 0), 0);
-          await ActorEngine.updateActor(actor, { 'flags.swse.bonusForcePoints': { ...poolNow, value, max: Math.max(value, max), sources: [...new Set(entries.map((e) => e.source).filter(Boolean))], entries } });
-          tx.gaveBonus = [];
-        }
+        tx.spentNormal = 0;
+        tx.gaveBonus = [];
         tx.committed = false;
         tx.closed = true;
         tx.state = 'rolled-back';
         return true;
       } catch (err) {
         console.error('Failed to restore Force Point after a refused attack:', err);
-        ui.notifications.error('A Force Point was spent for an attack that did not happen and could not be restored automatically. Please correct it by hand.');
+        ui.notifications.error('Force Point refund is indeterminate; manual reconciliation required.');
         return false;
       }
     },
@@ -157,6 +152,16 @@ export function createForcePointTransaction({ actor, result, formula, reason = '
     },
     async _announce() {
       tx.announceError = null;
+      if (!tx.receiptFinalized && tx.spendReceipt?.receiptId) {
+        try {
+          const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+          const finality = await ActorEngine.finalizeForcePointSpend(actor, tx.spendReceipt);
+          tx.receiptFinalized = finality?.finalized === true;
+          if (!tx.receiptFinalized) console.error('Applied Force Point receipt could not be finalized:', finality?.reason);
+        } catch (error) {
+          console.error('Applied Force Point receipt finalization failed:', error);
+        }
+      }
       if (!tx.chatPosted) {
         try {
           const message = await createChatMessage({

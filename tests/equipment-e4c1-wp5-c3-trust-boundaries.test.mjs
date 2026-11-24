@@ -132,11 +132,23 @@ const realSpendFP = ActorEngine.spendForcePoints; const realGainFP = ActorEngine
 const fpHarness = (onSpend = null) => {
   fpLedger.spends = 0; fpLedger.gains = []; fpLedger.restores = []; fpLedger.chats = []; fpLedger.attackRolls = 0; fpLedger.fpDice = 0;
   // models ActorEngine.spendForcePoints: bonus entries are spent first, then the normal pool
+  const receipts = new Map();
   ActorEngine.spendForcePoints = async (actor) => {
     fpLedger.spends += 1; const entries = actor.__bonus?.entries ?? []; const first = entries.find((e) => e.value > 0); let bonusSpent = 0, normalSpent = 0;
-    if (first) { first.value -= 1; bonusSpent = 1; actor.__bonus = { ...actor.__bonus, entries: entries.filter((e) => e.value > 0), value: entries.reduce((n, e) => n + e.value, 0) }; } else { actor.system.forcePoints.value -= 1; normalSpent = 1; }
-    if (onSpend) onSpend(actor); return { spent: 1, bonusSpent, normalSpent };
+    const used = [];
+    if (first) { used.push({ id: first.id, amount: 1, entry: { ...first } }); first.value -= 1; bonusSpent = 1; actor.__bonus = { ...actor.__bonus, entries: entries.filter((e) => e.value > 0), value: entries.reduce((n, e) => n + e.value, 0) }; } else { actor.system.forcePoints.value -= 1; normalSpent = 1; }
+    const receiptId = `rcpt-${fpLedger.spends}`; receipts.set(receiptId, { normalSpent, used, state: 'committed' });
+    if (onSpend) onSpend(actor); return { spent: 1, bonusSpent, normalSpent, receiptId };
   };
+  // models the real ActorEngine.rollbackForcePointSpend: exact sources, only the headroom below the maximum is restored
+  ActorEngine.rollbackForcePointSpend = async (actor, receipt) => {
+    const r = receipts.get(receipt?.receiptId); if (!r || r.state !== 'committed') return { rolledBack: false, reason: 'missing' };
+    const give = Math.max(0, Math.min(r.normalSpent, actor.system.forcePoints.max - actor.system.forcePoints.value));
+    if (give) { fpLedger.gains.push(give); actor.system.forcePoints.value += give; }
+    for (const u of r.used) { const entries = (actor.__bonus?.entries ?? []).map((e) => ({ ...e })); const ex = entries.find((e) => e.id === u.id); if (ex) ex.value += u.amount; else entries.push({ ...u.entry, value: u.amount }); actor.__bonus = { ...actor.__bonus, entries, value: entries.reduce((n, e) => n + e.value, 0) }; }
+    r.state = 'rolled-back'; return { rolledBack: true };
+  };
+  ActorEngine.finalizeForcePointSpend = async (actor, receipt) => { const r = receipts.get(receipt?.receiptId); if (r) r.state = 'finalized'; return { finalized: true }; };
   ActorEngine.gainForcePoints = async (actor, n) => { fpLedger.gains.push(n); actor.system.forcePoints.value = Math.min(actor.system.forcePoints.max, actor.system.forcePoints.value + n); return {}; };
   ActorEngine.updateActor = async (actor, data) => { fpLedger.restores.push(data); if ('flags.swse.bonusForcePoints' in data) actor.__bonus = data['flags.swse.bonusForcePoints']; if ('system.forcePoints.value' in data) actor.system.forcePoints.value = data['system.forcePoints.value']; return actor; };
   globalThis.ChatMessage.create = async (m) => { fpLedger.chats.push(String(m?.content ?? '')); return {}; };
@@ -206,7 +218,7 @@ const hookOnce = (name, fn) => { const real = globalThis.Hooks; globalThis.Hooks
       assert.equal(a.system.forcePoints.value, 4); assert.deepEqual(fpLedger.gains, [], 'the normal pool was not touched'); assert.equal(fpChats(), 0); }
     // (7b) a normal-pool spend is given back relatively, clamped to the maximum
     { const w = pistol('fp7b'); const a = fpActor([w], 5); fpHarness(); const tx = await SWSERoll.beginForcePointUse(a, 'test'); await tx.commit(); assert.equal(a.system.forcePoints.value, 4); a.system.forcePoints.value = 5;   // refilled by a rest
-      assert.equal(await tx.rollback(), true); assert.equal(a.system.forcePoints.value, 5, 'never above the maximum'); assert.deepEqual(fpLedger.gains, [1]); }
+      assert.equal(await tx.rollback(), true); assert.equal(a.system.forcePoints.value, 5, 'never above the maximum'); assert.deepEqual(fpLedger.gains, [], 'no headroom: nothing fabricated'); }
     // (7c) a refund is applied only if the expenditure actually succeeded; it is idempotent; the transaction is single-use
     { const w = pistol('fp7c'); const a = fpActor([w], 3); fpHarness();
       // the authority throws: nothing was spent, so there is nothing to refund

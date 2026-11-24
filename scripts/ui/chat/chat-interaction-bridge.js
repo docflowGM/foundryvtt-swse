@@ -534,6 +534,7 @@ async function handleReactionButton(event, button, message) {
     }
   }
 
+  const typedList = value => String(value ?? '').split(',').map(x => x.trim()).filter(Boolean);
   const { ReactionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js');
   await ReactionEngine.resolveReaction({
     reactionKey,
@@ -549,7 +550,16 @@ async function handleReactionButton(event, button, message) {
       reactionKey,
       attackerId: (attacker?.id ?? attackerId) || null,
       defenderId: (defender?.id ?? defenderId) || null,
-      trigger: button.dataset.swseTrigger || button.dataset.trigger || 'ON_ATTACK_DECLARED'
+      trigger: button.dataset.swseTrigger || button.dataset.trigger || 'ON_ATTACK_DECLARED',
+      attackType: button.dataset.swseAttackType || null,
+      // Resolve a real owned attacker Item; never trust weapon name markup as
+      // the authority for lightsaber/weapon-qualified reaction eligibility.
+      weapon: attacker?.items?.get?.(button.dataset.swseWeaponId ?? '') ?? null,
+      damageType: button.dataset.swseDamageType || null,
+      damageTypes: typedList(button.dataset.swseDamageTypes),
+      originalDamageTypes: typedList(button.dataset.swseOriginalDamageTypes),
+      cannotBeNegatedBy: typedList(button.dataset.swseCannotBeNegatedBy),
+      sonicCannotBeDeflected: button.dataset.swseSonicCannotBeDeflected === 'true'
     }
   });
 }
@@ -747,6 +757,24 @@ async function handleSkillChallengeReviewButton(event, button, message) {
   ui?.notifications?.warn?.('Skill Challenge roll resolver is not available.');
 }
 
+async function handleMaintainedPowerButton(event, button) {
+  event.preventDefault();
+  const { actorUuid, instanceId, swseMaintainedAction: verb, damage } = button.dataset;
+  const doc = actorUuid && globalThis.fromUuidSync ? fromUuidSync(actorUuid) : null;
+  const actor = doc?.actor ?? doc;
+  if (!actor || !userCanControlActor(actor)) { ui?.notifications?.warn?.('You do not control that Force user.'); return; }
+  button.disabled = true;
+  try {
+    const { ForcePowerMaintenance } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-power-maintenance.js');
+    await ForcePowerMaintenance.handleControl(actor, instanceId, verb, { damage: Number(damage) || 0 });
+  } catch (err) {
+    console.error('[SWSE Chat] Maintained power control failed', err);
+    ui?.notifications?.error?.(err?.message ?? 'Maintained power control failed');
+  } finally {
+    button.disabled = false;
+  }
+}
+
 function bind(root, selector, key, handler, message) {
   root.querySelectorAll(selector).forEach(button => {
     if (!markBound(button, key)) return;
@@ -794,6 +822,7 @@ export class ChatInteractionBridge {
     bind(root, '.swse-attack-reroll-btn', 'AttackReroll', handleAttackRerollButton, message);
     bind(root, '.swse-full-attack-reroll-btn', 'FullAttackReroll', handleFullAttackRerollButton, message);
     bind(root, '.swse-temp-defense-btn', 'TemporaryDefense', handleTemporaryDefenseButton, message);
+    bind(root, '[data-swse-maintained-action]', 'MaintainedPower', handleMaintainedPowerButton, message);
 
     return true;
   }

@@ -1,0 +1,3893 @@
+{
+  "packageVersion": "sotg-0.1.0",
+  "schemaVersion": "2.9.0",
+  "scope": "swse-starships-of-the-galaxy-27-maneuvers",
+  "purpose": "Printed-source, errata-first, typed Starship Maneuver definitions for Force V2 redesign; no runtime code or actor mutation.",
+  "sourceAuthority": {
+    "book": "Starships of the Galaxy",
+    "pdf": "SAGA EDITION - Starships of the Galaxy.pdf",
+    "textLookup": "Starships of the Galaxy_djvu.txt",
+    "pagesReviewed": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      40
+    ],
+    "officialErrata": {
+      "title": "Starships of the Galaxy Errata 1.0",
+      "issuer": "Wizards of the Coast",
+      "issued": "2008-01-29",
+      "url": "https://rpg.fandom.com/wiki/Star_Wars_Saga_Edition_Official_Errata",
+      "priority": "Errata supersedes printed text; Corellian Slip free-attack action and Squadron Tactics exception are mandatory."
+    }
+  },
+  "mechanicalPrinciples": {
+    "rollType": "Most maneuvers roll Pilot; five [gunner] maneuvers use vehicle weapon attack rolls vs target Reflex, and [Force] Target Sense rolls Use the Force.",
+    "tierSelection": "For fixed DC take highest qualifying DC tier; for gunner attack margin take highest matching non-overlapping Reflex margin tier. Snap Roll directly replaces Reflex and has no DC.",
+    "successPriority": [
+      "crew/vehicle/feat eligibility",
+      "timing and target declaration",
+      "action availability",
+      "execute movement or existing attack as specified",
+      "Pilot/UTF/weapon-attack roll",
+      "fixed DC or attack margin/defense comparison",
+      "apply choice of tier including failure side effects",
+      "apply vehicle damage/mitigation and effect clocks once",
+      "mark maneuver suite instance spent"
+    ],
+    "powerRecovery": [
+      "Maneuver suite has independent spent state and duplicate instances",
+      "1 minute rest after starship battle restores all",
+      "natural 20 specifically on Pilot activation restores all at end of TURN",
+      "spend 1 FP as reaction restores one",
+      "Tactical Genius talent expands recovery to natural 20 attack rolls at end of ROUND"
+    ],
+    "modifierApplication": "Apply explicit feat/talent/Force modifier relationships; Force Pilot changes Pilot modifier source only, Force Reflexes rerolls Pilot, Target Sense UTF substitutes vehicle-weapon attack modifier. No generic tag/name heuristic.",
+    "errataPriority": "January 2008 WotC Starships errata overrides printed; fighter groups and squadron maneuvers obey errata."
+  },
+  "counts": {
+    "maneuvers": 27,
+    "pilotChecks": 21,
+    "weaponAttackChecks": 5,
+    "useTheForceChecks": 1,
+    "attackPatterns": 6,
+    "gunnerManeuvers": 5,
+    "fixedDcTierRows": 61,
+    "attackMarginTierRows": 15,
+    "specialNoDcManeuvers": 1
+  },
+  "definitions": [
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/ackbar-slash",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#ackbarSlash",
+      "domain": "starship-maneuver",
+      "printedName": "Ackbar Slash",
+      "displayName": "Ackbar Slash",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 24,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "On a nearby opponent's missed attack, redirect the same attack to a different adjacent foe after a successful Pilot check.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "adjacent-hostile",
+        "rangeSquares": 1,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Redirect the missed attack; add +0 circumstance to the original attack roll.",
+            "operations": [
+              {
+                "kind": "redirect-triggering-attack",
+                "attackBonus": 0,
+                "newTargetRule": "different-opponent-adjacent-to-vehicle",
+                "compareDefense": "reflex",
+                "preventRepeatRedirect": true
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Redirect the missed attack; add +1 circumstance to the original attack roll.",
+            "operations": [
+              {
+                "kind": "redirect-triggering-attack",
+                "attackBonus": 1,
+                "newTargetRule": "different-opponent-adjacent-to-vehicle",
+                "compareDefense": "reflex",
+                "preventRepeatRedirect": true
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Redirect the missed attack; add +2 circumstance to the original attack roll.",
+            "operations": [
+              {
+                "kind": "redirect-triggering-attack",
+                "attackBonus": 2,
+                "newTargetRule": "different-opponent-adjacent-to-vehicle",
+                "compareDefense": "reflex",
+                "preventRepeatRedirect": true
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Redirect the missed attack; add +5 circumstance to the original attack roll.",
+            "operations": [
+              {
+                "kind": "redirect-triggering-attack",
+                "attackBonus": 5,
+                "newTargetRule": "different-opponent-adjacent-to-vehicle",
+                "compareDefense": "reflex",
+                "preventRepeatRedirect": true
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Only a different adjacent opponent may be the new target. The redirected attack uses the original attack roll against the new Reflex Defense, with the listed circumstance adjustment.",
+        "A redirection cannot be redirected again by Ackbar Slash."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "after-adjacent-attack-missed",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "adjacent-hostile",
+        "distanceRule": {
+          "kind": "adjacent",
+          "squares": 1
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Only a different adjacent opponent may be the new target. The redirected attack uses the original attack roll against the new Reflex Defense, with the listed circumstance adjustment.",
+          "A redirection cannot be redirected again by Ackbar Slash."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/afterburn",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#afterburn",
+      "domain": "starship-maneuver",
+      "printedName": "Afterburn",
+      "displayName": "Afterburn",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 25,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Move all-out as a free action during the activation, gaining tiered maneuver bonuses against dogfight initiation.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "full-round",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Immediate all-out movement; +1 maneuver on Pilot checks resisting dogfight initiation.",
+            "operations": [
+              {
+                "kind": "execute-all-out-movement",
+                "freeAction": true
+              },
+              {
+                "kind": "pilot-check-bonus",
+                "amount": 1,
+                "checkContext": "resist-dogfight"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Immediate all-out movement; +2 maneuver on Pilot checks resisting dogfight initiation.",
+            "operations": [
+              {
+                "kind": "execute-all-out-movement",
+                "freeAction": true
+              },
+              {
+                "kind": "pilot-check-bonus",
+                "amount": 2,
+                "checkContext": "resist-dogfight"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Immediate all-out movement; +5 maneuver on Pilot checks resisting dogfight initiation.",
+            "operations": [
+              {
+                "kind": "execute-all-out-movement",
+                "freeAction": true
+              },
+              {
+                "kind": "pilot-check-bonus",
+                "amount": 5,
+                "checkContext": "resist-dogfight"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Immediate all-out movement; +10 maneuver on Pilot checks resisting dogfight initiation.",
+            "operations": [
+              {
+                "kind": "execute-all-out-movement",
+                "freeAction": true
+              },
+              {
+                "kind": "pilot-check-bonus",
+                "amount": 10,
+                "checkContext": "resist-dogfight"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "This maneuver spends the full-round activation action; the all-out movement it grants is free, not a second full-round action."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "This maneuver spends the full-round activation action; the all-out movement it grants is free, not a second full-round action."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/angle-deflector-shields",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#angleDeflectorShields",
+      "domain": "starship-maneuver",
+      "printedName": "Angle Deflector Shields",
+      "displayName": "Angle Deflector Shields",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 25,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Choose one enemy vehicle or station: double SR against its attacks and halve SR against all others for the active pattern.",
+      "descriptors": [
+        "attack-pattern"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Active pattern: SR doubled against chosen opponent; SR halved, rounding down, against all other opponents.",
+            "operations": [
+              {
+                "kind": "shield-rating-adjustment",
+                "changeMode": "double",
+                "value": 2,
+                "scope": "own-vehicle",
+                "when": "from-chosen-opponent",
+                "phase": "mitigation"
+              },
+              {
+                "kind": "shield-rating-adjustment",
+                "changeMode": "half-floor",
+                "value": 0.5,
+                "scope": "own-vehicle",
+                "when": "from-other-opponents",
+                "phase": "mitigation"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The chosen source of attacks can be switched with a swift action. The target-sensitive SR values are effective mitigation ratings, not permanent writes to base SR.",
+        "Requires existing vehicle SR at least 5."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-gate",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": 5,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "encounter",
+        "endTriggers": [
+          "encounter-end",
+          "attack-pattern-replaced",
+          "swift-deactivation"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [
+          {
+            "kind": "choose-active-attack-pattern",
+            "replacesExisting": true,
+            "duration": "encounter",
+            "deactivationAction": "swift"
+          },
+          {
+            "kind": "change-attack-pattern-target",
+            "action": "swift",
+            "targetKind": "vehicle-or-space-station"
+          }
+        ],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "exclusive-attack-pattern",
+          "replacePrevious": true,
+          "deactivationAction": "swift"
+        },
+        "notes": [
+          "The chosen source of attacks can be switched with a swift action. The target-sensitive SR values are effective mitigation ratings, not permanent writes to base SR.",
+          "Requires existing vehicle SR at least 5."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/attack-formation-zeta-nine",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#attackFormationZetaNine",
+      "domain": "starship-maneuver",
+      "printedName": "Attack Formation Zeta Nine",
+      "displayName": "Attack Formation Zeta Nine",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 25,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Trade one die from each vehicle weapon damage roll for +20 SR while this attack pattern operates.",
+      "descriptors": [
+        "attack-pattern"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "+20 SR; -1 weapon damage die for all vehicle weapon damage rolls.",
+            "operations": [
+              {
+                "kind": "shield-rating-adjustment",
+                "changeMode": "add",
+                "value": 20,
+                "scope": "own-vehicle",
+                "when": "while-pattern-active",
+                "phase": "modifier"
+              },
+              {
+                "kind": "weapon-damage-dice-change",
+                "diceDelta": -1,
+                "scope": "all-vehicle-weapon-damage",
+                "when": "while-pattern-active"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Apply the -1 die to weapon damage dice before the damage pipeline; minimum-dice behavior is not specified by this source.",
+        "Requires SR 5 or better before activation."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-gate",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": 5,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "encounter",
+        "endTriggers": [
+          "encounter-end",
+          "attack-pattern-replaced",
+          "swift-deactivation"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [
+          {
+            "kind": "choose-active-attack-pattern",
+            "replacesExisting": true,
+            "duration": "encounter",
+            "deactivationAction": "swift"
+          }
+        ],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "exclusive-attack-pattern",
+          "replacePrevious": true,
+          "deactivationAction": "swift"
+        },
+        "notes": [
+          "Apply the -1 die to weapon damage dice before the damage pipeline; minimum-dice behavior is not specified by this source.",
+          "Requires SR 5 or better before activation."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/attack-pattern-delta",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#attackPatternDelta",
+      "domain": "starship-maneuver",
+      "printedName": "Attack Pattern Delta",
+      "displayName": "Attack Pattern Delta",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 25,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Maintain +1 Reflex maneuver bonus while adjacent to an allied fighter/airspeeder; +2 if an adjacent ally uses Delta.",
+      "descriptors": [
+        "attack-pattern"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "+1 Reflex when adjacent to qualified ally, or +2 if the ally also uses Attack Pattern Delta.",
+            "operations": [
+              {
+                "kind": "conditional-attack-pattern-bonus",
+                "stat": "reflex-defense",
+                "baseBonus": 1,
+                "matchedAllyBonus": 2,
+                "allyRequirement": "adjacent-allied-starfighter-or-airspeeder",
+                "matchingPatternRequirement": true
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The conditional adjacency bonus is recalculated from current position, and is not an unconditional encounter-long Reflex modifier."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-gate",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "encounter",
+        "endTriggers": [
+          "encounter-end",
+          "attack-pattern-replaced"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [
+          {
+            "kind": "choose-active-attack-pattern",
+            "replacesExisting": true,
+            "duration": "encounter",
+            "deactivationAction": "swift"
+          }
+        ],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "exclusive-attack-pattern",
+          "replacePrevious": true,
+          "deactivationAction": "swift"
+        },
+        "notes": [
+          "The conditional adjacency bonus is recalculated from current position, and is not an unconditional encounter-long Reflex modifier."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/corellian-slip",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#corellianSlip",
+      "domain": "starship-maneuver",
+      "printedName": "Corellian Slip",
+      "displayName": "Corellian Slip",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 25,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin",
+        "amendments": [
+          {
+            "document": "Starships of the Galaxy Errata 1.0",
+            "publicationDate": "2008-01-29",
+            "originalPrintedPage": 25,
+            "section": "Corellian Slip",
+            "kind": "errata",
+            "change": "Follow-up attack when entering target square is a free action, not swift.",
+            "url": "https://rpg.fandom.com/wiki/Star_Wars_Saga_Edition_Official_Errata"
+          }
+        ]
+      },
+      "summary": "Move in a straight line through an enemy fighter/airspeeder, make a free attack on entry, and face collision if target survives.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "full-round",
+        "targetKind": "one-enemy-starfighter-or-airspeeder",
+        "rangeSquares": null,
+        "rangeMode": "vehicle-speed-multiplier",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Free attack on entry: +0 circumstance to attack and +0 weapon-damage dice; target destruction prevents collision.",
+            "operations": [
+              {
+                "kind": "vehicle-attack",
+                "action": "free",
+                "attackPenalty": 0,
+                "attackBonus": 0,
+                "extraDamageDice": 0,
+                "target": "maneuver-target"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Free attack on entry: +1 circumstance to attack and +0 weapon-damage dice; target destruction prevents collision.",
+            "operations": [
+              {
+                "kind": "vehicle-attack",
+                "action": "free",
+                "attackPenalty": 0,
+                "attackBonus": 1,
+                "extraDamageDice": 0,
+                "target": "maneuver-target"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Free attack on entry: +1 circumstance to attack and +1 weapon-damage dice; target destruction prevents collision.",
+            "operations": [
+              {
+                "kind": "vehicle-attack",
+                "action": "free",
+                "attackPenalty": 0,
+                "attackBonus": 1,
+                "extraDamageDice": 1,
+                "target": "maneuver-target"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Free attack on entry: +2 circumstance to attack and +1 weapon-damage dice; target destruction prevents collision.",
+            "operations": [
+              {
+                "kind": "vehicle-attack",
+                "action": "free",
+                "attackPenalty": 0,
+                "attackBonus": 2,
+                "extraDamageDice": 1,
+                "target": "maneuver-target"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Free attack on entry: +2 circumstance to attack and +2 weapon-damage dice; target destruction prevents collision.",
+            "operations": [
+              {
+                "kind": "vehicle-attack",
+                "action": "free",
+                "attackPenalty": 0,
+                "attackBonus": 2,
+                "extraDamageDice": 2,
+                "target": "maneuver-target"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [
+        "When a successful attack does not destroy the target, use the normal collision adjudication. The printed source does not provide a new collision damage formula."
+      ],
+      "interactions": [],
+      "rulesNotes": [
+        "Official 2008 Errata: the entry attack is a FREE action (printed swift is superseded).",
+        "If movement is halted before entering the target square, the maneuver fails.",
+        "At DC below 15, the craft still goes through the target square; no follow-up attack and pilot cannot attempt to avoid collision. Opponent may attempt avoidance.",
+        "On success, collision is avoided only if the attack destroys the target; otherwise use the normal collision procedure."
+      ],
+      "maintenance": null,
+      "sourceStatus": "errata-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "one-enemy-starfighter-or-airspeeder",
+        "distanceRule": {
+          "kind": "twice-vehicle-speed",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [
+          {
+            "kind": "movement-through-target",
+            "speedMultiplier": 2,
+            "path": "straight-through-target-square",
+            "triggerAttackAction": "free"
+          }
+        ],
+        "onActivation": [],
+        "onFailure": [
+          {
+            "kind": "collision",
+            "actorCanAvoid": false,
+            "targetCanAvoid": true,
+            "when": "failed-activation-while-moving-through-target"
+          }
+        ],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Official 2008 Errata: the entry attack is a FREE action (printed swift is superseded).",
+          "If movement is halted before entering the target square, the maneuver fails.",
+          "At DC below 15, the craft still goes through the target square; no follow-up attack and pilot cannot attempt to avoid collision. Opponent may attempt avoidance.",
+          "On success, collision is avoided only if the attack destroys the target; otherwise use the normal collision procedure."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/counter",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#counter",
+      "domain": "starship-maneuver",
+      "printedName": "Counter",
+      "displayName": "Counter",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 26,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "After an opponent attacks you in a dogfight, Pilot DC controls one immediate action without changing your initiative.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Immediately take one swift action after the triggering attack resolves.",
+            "operations": [
+              {
+                "kind": "grant-immediate-action",
+                "action": "swift",
+                "timing": "after-triggering-attack-resolves"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Immediately take one move action after the triggering attack resolves.",
+            "operations": [
+              {
+                "kind": "grant-immediate-action",
+                "action": "move",
+                "timing": "after-triggering-attack-resolves"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Immediately take one standard action after the triggering attack resolves.",
+            "operations": [
+              {
+                "kind": "grant-immediate-action",
+                "action": "standard",
+                "timing": "after-triggering-attack-resolves"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The attack resolves before the granted action. Your initiative count remains unchanged."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "after-being-attacked-in-dogfight",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": true,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "The attack resolves before the granted action. Your initiative count remains unchanged."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/darklighter-spin",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#darklighterSpin",
+      "domain": "starship-maneuver",
+      "printedName": "Darklighter Spin",
+      "displayName": "Darklighter Spin",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 26,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Convert an autofire-capable starship weapon to a 2x2-square starship-scale area autofire attack.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "2x2-within-weapons-range",
+        "rangeSquares": null,
+        "rangeMode": "weapon-range",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 25
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 25,
+            "summary": "2x2 starship-scale autofire attack with -5 attack-roll penalty.",
+            "operations": [
+              {
+                "kind": "autofire-area-attack",
+                "areaSquares": "2x2",
+                "weaponRequirement": "autofire-capable",
+                "attackPenalty": -5
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "2x2 starship-scale autofire attack with -2 attack-roll penalty.",
+            "operations": [
+              {
+                "kind": "autofire-area-attack",
+                "areaSquares": "2x2",
+                "weaponRequirement": "autofire-capable",
+                "attackPenalty": -2
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "2x2 starship-scale autofire attack with 0 attack-roll penalty.",
+            "operations": [
+              {
+                "kind": "autofire-area-attack",
+                "areaSquares": "2x2",
+                "weaponRequirement": "autofire-capable",
+                "attackPenalty": 0
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "This enables starship-scale area autofire with a normally non-area vehicle weapon only when that weapon is capable of autofire."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": true,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "2x2-within-weapons-range",
+        "distanceRule": {
+          "kind": "weapon-range",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "This enables starship-scale area autofire with a normally non-area vehicle weapon only when that weapon is capable of autofire."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/devastating-hit",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#devastatingHit",
+      "domain": "starship-maneuver",
+      "printedName": "Devastating Hit",
+      "displayName": "Devastating Hit",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 26,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "A successful vehicle weapon attack gains +1/+2/+3 damage dice based on attack margin against vehicle Reflex.",
+      "descriptors": [
+        "gunner"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-hostile-vehicle-within-weapons-range",
+        "rangeSquares": null,
+        "rangeMode": "weapon-range",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "attack",
+          "mode": "defense-margin",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "There is no Pilot DC for this [gunner] maneuver; use the vehicle weapon attack roll against target Reflex.",
+        "Normal hit/DR/SR/damage pipeline still applies."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot-or-gunner",
+        "rollFamily": "weapon-attack",
+        "outcomeMode": "attack-defense-margin",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "gunner-on-vehicle-or-airspeeder",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "fresh-attack",
+        "targetRestriction": "one-hostile-vehicle-within-weapons-range",
+        "distanceRule": {
+          "kind": "weapon-range",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [
+          {
+            "minimumMargin": 0,
+            "maximumMargin": 4,
+            "summary": "Normal weapon damage plus 1 extra damage die(s).",
+            "operations": [
+              {
+                "kind": "weapon-damage-dice-change",
+                "diceDelta": 1,
+                "scope": "one-attack",
+                "when": "on-hit"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 5,
+            "maximumMargin": 9,
+            "summary": "Normal weapon damage plus 2 extra damage die(s).",
+            "operations": [
+              {
+                "kind": "weapon-damage-dice-change",
+                "diceDelta": 2,
+                "scope": "one-attack",
+                "when": "on-hit"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 10,
+            "maximumMargin": null,
+            "summary": "Normal weapon damage plus 3 extra damage die(s).",
+            "operations": [
+              {
+                "kind": "weapon-damage-dice-change",
+                "diceDelta": 3,
+                "scope": "one-attack",
+                "when": "on-hit"
+              }
+            ]
+          }
+        ],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "There is no Pilot DC for this [gunner] maneuver; use the vehicle weapon attack roll against target Reflex.",
+          "Normal hit/DR/SR/damage pipeline still applies."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/engine-hit",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#engineHit",
+      "domain": "starship-maneuver",
+      "printedName": "Engine Hit",
+      "displayName": "Engine Hit",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 26,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "On a qualifying critical or threshold-damaging hit, impose tiered speed loss; a full-round Mechanics check repairs the engine.",
+      "descriptors": [
+        "gunner"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "one-vehicle-just-attacked",
+        "rangeSquares": null,
+        "rangeMode": "weapon-range",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "attack",
+          "mode": "defense-margin",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Activation requires an already damaging critical hit OR attack damage meeting/exceeding the vehicle damage threshold.",
+        "Use the triggering attack roll for Reflex margin; do not roll or inflict an additional weapon attack."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot-or-gunner",
+        "rollFamily": "weapon-attack",
+        "outcomeMode": "attack-defense-margin",
+        "trigger": "after-critical-or-threshold-damage",
+        "vehicleEligibility": "gunner-on-vehicle-or-airspeeder",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "reuse-triggering-attack",
+        "targetRestriction": "one-vehicle-just-attacked",
+        "distanceRule": {
+          "kind": "weapon-range",
+          "squares": null
+        },
+        "duration": "encounter",
+        "endTriggers": [
+          "encounter-end"
+        ],
+        "marginTiers": [
+          {
+            "minimumMargin": 0,
+            "maximumMargin": 4,
+            "summary": "Enemy speed -1 square(s) for encounter; full-round Mechanics DC 20 fixes damage.",
+            "operations": [
+              {
+                "kind": "vehicle-speed-reduction",
+                "squares": 1,
+                "target": "target-vehicle",
+                "duration": "encounter"
+              },
+              {
+                "kind": "engine-repair-availability",
+                "mechanicsDC": 20,
+                "action": "full-round",
+                "restores": "engine-speed-penalty"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 5,
+            "maximumMargin": 9,
+            "summary": "Enemy speed -2 square(s) for encounter; full-round Mechanics DC 25 fixes damage.",
+            "operations": [
+              {
+                "kind": "vehicle-speed-reduction",
+                "squares": 2,
+                "target": "target-vehicle",
+                "duration": "encounter"
+              },
+              {
+                "kind": "engine-repair-availability",
+                "mechanicsDC": 25,
+                "action": "full-round",
+                "restores": "engine-speed-penalty"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 10,
+            "maximumMargin": null,
+            "summary": "Enemy speed -3 square(s) for encounter; full-round Mechanics DC 30 fixes damage.",
+            "operations": [
+              {
+                "kind": "vehicle-speed-reduction",
+                "squares": 3,
+                "target": "target-vehicle",
+                "duration": "encounter"
+              },
+              {
+                "kind": "engine-repair-availability",
+                "mechanicsDC": 30,
+                "action": "full-round",
+                "restores": "engine-speed-penalty"
+              }
+            ]
+          }
+        ],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Activation requires an already damaging critical hit OR attack damage meeting/exceeding the vehicle damage threshold.",
+          "Use the triggering attack roll for Reflex margin; do not roll or inflict an additional weapon attack."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/evasive-action",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#evasiveAction",
+      "domain": "starship-maneuver",
+      "printedName": "Evasive Action",
+      "displayName": "Evasive Action",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 26,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Attempt dogfight disengagement without using an additional action, with tiered Pilot bonuses.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "move",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Immediately attempt to disengage for no action; +2 Pilot maneuver bonus on the opposed check.",
+            "operations": [
+              {
+                "kind": "disengage-dogfight",
+                "asNoAction": true,
+                "pilotBonus": 2
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Immediately attempt to disengage for no action; +5 Pilot maneuver bonus on the opposed check.",
+            "operations": [
+              {
+                "kind": "disengage-dogfight",
+                "asNoAction": true,
+                "pilotBonus": 5
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Immediately attempt to disengage for no action; +10 Pilot maneuver bonus on the opposed check.",
+            "operations": [
+              {
+                "kind": "disengage-dogfight",
+                "asNoAction": true,
+                "pilotBonus": 10
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Immediately attempt to disengage for no action; +20 Pilot maneuver bonus on the opposed check.",
+            "operations": [
+              {
+                "kind": "disengage-dogfight",
+                "asNoAction": true,
+                "pilotBonus": 20
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Activation Pilot check and subsequent opposed disengagement Pilot check are distinct checks."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": true,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Activation Pilot check and subsequent opposed disengagement Pilot check are distinct checks."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/explosive-shot",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#explosiveShot",
+      "domain": "starship-maneuver",
+      "printedName": "Explosive Shot",
+      "displayName": "Explosive Shot",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 26,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "After destroying a vehicle with qualifying threshold damage, compare the same attack roll to each adjacent target; deal tiered explosion damage.",
+      "descriptors": [
+        "gunner"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "all-adjacent-to-destroyed-vehicle",
+        "rangeSquares": 1,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "attack",
+          "mode": "defense-margin",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Only triggers when original attack reduces target to 0 HP AND deals damage at least its damage threshold.",
+        "Original attack roll is compared separately against every adjacent target; never assume automatic area hits."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot-or-gunner",
+        "rollFamily": "weapon-attack",
+        "outcomeMode": "attack-defense-margin",
+        "trigger": "after-destroying-vehicle",
+        "vehicleEligibility": "gunner-on-vehicle-or-airspeeder",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "reuse-triggering-attack",
+        "targetRestriction": "all-adjacent-to-destroyed-vehicle",
+        "distanceRule": {
+          "kind": "adjacent",
+          "squares": 1
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [
+          {
+            "minimumMargin": 0,
+            "maximumMargin": 4,
+            "summary": "Destroyed vehicle explodes for 3d10*2 damage to each adjacent vehicle hit by the triggering attack roll.",
+            "operations": [
+              {
+                "kind": "vehicle-explosion-damage",
+                "formula": "3d10*2",
+                "targets": "vehicles-adjacent-to-destroyed-vehicle",
+                "attackRollSource": "triggering-attack",
+                "compareDefense": "reflex"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 5,
+            "maximumMargin": 9,
+            "summary": "Destroyed vehicle explodes for 4d10*2 damage to each adjacent vehicle hit by the triggering attack roll.",
+            "operations": [
+              {
+                "kind": "vehicle-explosion-damage",
+                "formula": "4d10*2",
+                "targets": "vehicles-adjacent-to-destroyed-vehicle",
+                "attackRollSource": "triggering-attack",
+                "compareDefense": "reflex"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 10,
+            "maximumMargin": null,
+            "summary": "Destroyed vehicle explodes for 5d10*2 damage to each adjacent vehicle hit by the triggering attack roll.",
+            "operations": [
+              {
+                "kind": "vehicle-explosion-damage",
+                "formula": "5d10*2",
+                "targets": "vehicles-adjacent-to-destroyed-vehicle",
+                "attackRollSource": "triggering-attack",
+                "compareDefense": "reflex"
+              }
+            ]
+          }
+        ],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Only triggers when original attack reduces target to 0 HP AND deals damage at least its damage threshold.",
+          "Original attack roll is compared separately against every adjacent target; never assume automatic area hits."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/howlrunner-formation",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#howlrunnerFormation",
+      "domain": "starship-maneuver",
+      "printedName": "Howlrunner Formation",
+      "displayName": "Howlrunner Formation",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 27,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "While adjacent to a friendly starfighter/airspeeder, +1 maneuver on vehicle weapon attacks; +2 if adjacent friendly uses Howlrunner.",
+      "descriptors": [
+        "attack-pattern"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Adjacent qualifying ally +1 vehicle attack bonus, +2 if any adjacent ally uses same formation.",
+            "operations": [
+              {
+                "kind": "conditional-attack-pattern-bonus",
+                "stat": "vehicle-weapon-attack",
+                "baseBonus": 1,
+                "matchedAllyBonus": 2,
+                "allyRequirement": "adjacent-allied-starfighter-or-airspeeder",
+                "matchingPatternRequirement": true
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Adjacency is checked at the time of each attack, not once when formation activates."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-gate",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "encounter",
+        "endTriggers": [
+          "encounter-end",
+          "attack-pattern-replaced"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [
+          {
+            "kind": "choose-active-attack-pattern",
+            "replacesExisting": true,
+            "duration": "encounter",
+            "deactivationAction": "swift"
+          }
+        ],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "exclusive-attack-pattern",
+          "replacePrevious": true,
+          "deactivationAction": "swift"
+        },
+        "notes": [
+          "Adjacency is checked at the time of each attack, not once when formation activates."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/i-have-you-now",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#iHaveYouNow",
+      "domain": "starship-maneuver",
+      "printedName": "I Have You Now",
+      "displayName": "I Have You Now",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 27,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Mark adjacent enemy this turn. On damaging weapon attacks, attack-roll result beating target Fortitude imposes -1 condition step.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "adjacent-hostile",
+        "rangeSquares": 1,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Damaging attacks this turn against designated adjacent target compare attack roll to Fort; +0 maneuver on attack; success shifts -1 CT.",
+            "operations": [
+              {
+                "kind": "vehicle-condition-track",
+                "steps": -1,
+                "trigger": "attack-deals-damage-and-beats-fortitude",
+                "comparisonRoll": "vehicle-weapon-attack-roll",
+                "comparisonDefense": "fortitude"
+              },
+              {
+                "kind": "weapon-attack-modifier",
+                "amount": 0,
+                "scope": "own-pilot-attack",
+                "when": "this-turn"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Damaging attacks this turn against designated adjacent target compare attack roll to Fort; +1 maneuver on attack; success shifts -1 CT.",
+            "operations": [
+              {
+                "kind": "vehicle-condition-track",
+                "steps": -1,
+                "trigger": "attack-deals-damage-and-beats-fortitude",
+                "comparisonRoll": "vehicle-weapon-attack-roll",
+                "comparisonDefense": "fortitude"
+              },
+              {
+                "kind": "weapon-attack-modifier",
+                "amount": 1,
+                "scope": "own-pilot-attack",
+                "when": "this-turn"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Damaging attacks this turn against designated adjacent target compare attack roll to Fort; +2 maneuver on attack; success shifts -1 CT.",
+            "operations": [
+              {
+                "kind": "vehicle-condition-track",
+                "steps": -1,
+                "trigger": "attack-deals-damage-and-beats-fortitude",
+                "comparisonRoll": "vehicle-weapon-attack-roll",
+                "comparisonDefense": "fortitude"
+              },
+              {
+                "kind": "weapon-attack-modifier",
+                "amount": 2,
+                "scope": "own-pilot-attack",
+                "when": "this-turn"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Damaging attacks this turn against designated adjacent target compare attack roll to Fort; +5 maneuver on attack; success shifts -1 CT.",
+            "operations": [
+              {
+                "kind": "vehicle-condition-track",
+                "steps": -1,
+                "trigger": "attack-deals-damage-and-beats-fortitude",
+                "comparisonRoll": "vehicle-weapon-attack-roll",
+                "comparisonDefense": "fortitude"
+              },
+              {
+                "kind": "weapon-attack-modifier",
+                "amount": 5,
+                "scope": "own-pilot-attack",
+                "when": "this-turn"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The activation Pilot check grants a conditional effect; it is a later damaging weapon attack roll that is compared to the target Fortitude Defense.",
+        "Do not substitute the activating Pilot result for the later weapon attack roll."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "adjacent-hostile",
+        "distanceRule": {
+          "kind": "adjacent",
+          "squares": 1
+        },
+        "duration": "current-turn",
+        "endTriggers": [
+          "end-current-turn"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "The activation Pilot check grants a conditional effect; it is a later damaging weapon attack roll that is compared to the target Fortitude Defense.",
+          "Do not substitute the activating Pilot result for the later weapon attack roll."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/intercept",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#intercept",
+      "domain": "starship-maneuver",
+      "printedName": "Intercept",
+      "displayName": "Intercept",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 27,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "React to fighter/airspeeder entering within two squares, initiate a dogfight as AoO with tiered Pilot bonuses.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "one-approaching-starfighter-or-airspeeder",
+        "rangeSquares": 2,
+        "rangeMode": "within-squares",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Initiate dogfight as AoO against target within 2 squares, +0 Pilot; on success move 1 square toward target.",
+            "operations": [
+              {
+                "kind": "initiate-dogfight",
+                "asAttackOfOpportunity": true,
+                "pilotBonus": 0,
+                "targetMaxSquares": 2,
+                "moveSquaresTowardTargetOnSuccess": 1
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Initiate dogfight as AoO against target within 2 squares, +1 Pilot; on success move 1 square toward target.",
+            "operations": [
+              {
+                "kind": "initiate-dogfight",
+                "asAttackOfOpportunity": true,
+                "pilotBonus": 1,
+                "targetMaxSquares": 2,
+                "moveSquaresTowardTargetOnSuccess": 1
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Initiate dogfight as AoO against target within 2 squares, +2 Pilot; on success move 1 square toward target.",
+            "operations": [
+              {
+                "kind": "initiate-dogfight",
+                "asAttackOfOpportunity": true,
+                "pilotBonus": 2,
+                "targetMaxSquares": 2,
+                "moveSquaresTowardTargetOnSuccess": 1
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Initiate dogfight as AoO against target within 2 squares, +5 Pilot; on success move 1 square toward target.",
+            "operations": [
+              {
+                "kind": "initiate-dogfight",
+                "asAttackOfOpportunity": true,
+                "pilotBonus": 5,
+                "targetMaxSquares": 2,
+                "moveSquaresTowardTargetOnSuccess": 1
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Pilot activation and normal dogfight initiation opposed check are distinct. It permits starting a dogfight out to 2 squares."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "when-enemy-enters-two-squares",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "one-approaching-starfighter-or-airspeeder",
+        "distanceRule": {
+          "kind": "up-to-n-squares",
+          "squares": 2
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Pilot activation and normal dogfight initiation opposed check are distinct. It permits starting a dogfight out to 2 squares."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/overwhelming-assault",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#overwhelmingAssault",
+      "domain": "starship-maneuver",
+      "printedName": "Overwhelming Assault",
+      "displayName": "Overwhelming Assault",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 27,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Choose enemy vehicle; for each declared attack, exchange an attack penalty N for +2N pre-multiplier damage to that designated target.",
+      "descriptors": [
+        "attack-pattern"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "one-designated-vehicle",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Declare attack penalty N; apply -N to all vehicle-weapon attacks until next turn and +2N damage before multipliers only vs designated opponent.",
+            "operations": [
+              {
+                "kind": "vehicle-weapon-attack-tradeoff",
+                "chosenAttackPenaltySource": "player-declared-nonnegative-integer",
+                "damageBonusPerAttackPenalty": 2,
+                "attackPenaltyScope": "all-user-vehicle-weapon-attacks-until-start-next-turn",
+                "damageBonusScope": "only-designated-target-before-multipliers"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Penalty is declared before the attack roll; the penalty persists for ALL vehicle weapon attacks until the start of your next turn.",
+        "The corresponding bonus damage only applies when attacking the designated target; additive damage occurs before vehicle multipliers.",
+        "Printed wording specifies no hard cap on the voluntary attack penalty; do not fabricate a limit."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-gate",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "one-designated-vehicle",
+        "distanceRule": {
+          "kind": "special-unrestricted",
+          "squares": null
+        },
+        "duration": "encounter",
+        "endTriggers": [
+          "encounter-end",
+          "attack-pattern-replaced",
+          "swift-deactivation"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [
+          {
+            "kind": "choose-active-attack-pattern",
+            "replacesExisting": true,
+            "duration": "encounter",
+            "deactivationAction": "swift"
+          },
+          {
+            "kind": "change-attack-pattern-target",
+            "action": "swift",
+            "targetKind": "vehicle-or-space-station"
+          }
+        ],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "exclusive-attack-pattern",
+          "replacePrevious": true,
+          "deactivationAction": "swift"
+        },
+        "notes": [
+          "Penalty is declared before the attack roll; the penalty persists for ALL vehicle weapon attacks until the start of your next turn.",
+          "The corresponding bonus damage only applies when attacking the designated target; additive damage occurs before vehicle multipliers.",
+          "Printed wording specifies no hard cap on the voluntary attack penalty; do not fabricate a limit."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/segnor-s-loop",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#segnorsLoop",
+      "domain": "starship-maneuver",
+      "printedName": "Segnor's Loop",
+      "displayName": "Segnor's Loop",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 28,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "When ending farther from target than at turn start, react with an immediate attack run; Pilot tier determines its Reflex penalty.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "one-target-within-weapons-range",
+        "rangeSquares": null,
+        "rangeMode": "weapon-range",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Immediate attack run; Reflex penalty -10 (the DC20 option is substantially worse than normal).",
+            "operations": [
+              {
+                "kind": "vehicle-attack-run",
+                "reflexPenalty": -10,
+                "asReaction": true,
+                "target": "maneuver-target"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Immediate attack run; Reflex penalty -5 (the DC20 option is substantially worse than normal).",
+            "operations": [
+              {
+                "kind": "vehicle-attack-run",
+                "reflexPenalty": -5,
+                "asReaction": true,
+                "target": "maneuver-target"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Immediate attack run; Reflex penalty -2 (the DC20 option is substantially worse than normal).",
+            "operations": [
+              {
+                "kind": "vehicle-attack-run",
+                "reflexPenalty": -2,
+                "asReaction": true,
+                "target": "maneuver-target"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Immediate attack run; Reflex penalty -1 (the DC20 option is substantially worse than normal).",
+            "operations": [
+              {
+                "kind": "vehicle-attack-run",
+                "reflexPenalty": -1,
+                "asReaction": true,
+                "target": "maneuver-target"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "DC20 imposes -10 Reflex, not -2; this lower-tier consequence is explicitly printed.",
+        "Must finish current turn farther from target than the turn began."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "end-turn-farther-away",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "one-target-within-weapons-range",
+        "distanceRule": {
+          "kind": "weapon-range",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "DC20 imposes -10 Reflex, not -2; this lower-tier consequence is explicitly printed.",
+          "Must finish current turn farther from target than the turn began."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/shield-hit",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#shieldHit",
+      "domain": "starship-maneuver",
+      "printedName": "Shield Hit",
+      "displayName": "Shield Hit",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 28,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Successful vehicle weapon attack deals normal damage, then reduces shield rating 5/10/15 by attack margin after normal mitigation.",
+      "descriptors": [
+        "gunner"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-hostile-vehicle-within-weapons-range",
+        "rangeSquares": null,
+        "rangeMode": "weapon-range",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "attack",
+          "mode": "defense-margin",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "DR and current SR mitigate weapon damage normally BEFORE maneuver bonus SR loss.",
+        "Standard SR loss from damage exceeding shield rating is the existing V2 vehicle damage engine rule; apply it once, not a second extra -5.",
+        "Engineer can use recharge shields normally to restore the lost SR."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot-or-gunner",
+        "rollFamily": "weapon-attack",
+        "outcomeMode": "attack-defense-margin",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "gunner-on-vehicle-or-airspeeder",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "fresh-attack",
+        "targetRestriction": "one-hostile-vehicle-within-weapons-range",
+        "distanceRule": {
+          "kind": "weapon-range",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [
+          {
+            "minimumMargin": 0,
+            "maximumMargin": 4,
+            "summary": "Normal weapon damage, then extra SR loss 5.",
+            "operations": [
+              {
+                "kind": "weapon-shield-hit",
+                "extraShieldReduction": 5,
+                "afterNormalDamage": true,
+                "baseShieldDegradation": "single-existing-damage-authority-application"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 5,
+            "maximumMargin": 9,
+            "summary": "Normal weapon damage, then extra SR loss 10.",
+            "operations": [
+              {
+                "kind": "weapon-shield-hit",
+                "extraShieldReduction": 10,
+                "afterNormalDamage": true,
+                "baseShieldDegradation": "single-existing-damage-authority-application"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 10,
+            "maximumMargin": null,
+            "summary": "Normal weapon damage, then extra SR loss 15.",
+            "operations": [
+              {
+                "kind": "weapon-shield-hit",
+                "extraShieldReduction": 15,
+                "afterNormalDamage": true,
+                "baseShieldDegradation": "single-existing-damage-authority-application"
+              }
+            ]
+          }
+        ],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "DR and current SR mitigate weapon damage normally BEFORE maneuver bonus SR loss.",
+          "Standard SR loss from damage exceeding shield rating is the existing V2 vehicle damage engine rule; apply it once, not a second extra -5.",
+          "Engineer can use recharge shields normally to restore the lost SR."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/skim-the-surface",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#skimTheSurface",
+      "domain": "starship-maneuver",
+      "printedName": "Skim the Surface",
+      "displayName": "Skim the Surface",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 28,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Fly through a Colossal (frigate)+ target space to make SR-bypassing attacks, at a Pilot-tier attack penalty; low rolls force collision.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "full-round",
+        "targetKind": "one-large-vehicle-through-space",
+        "rangeSquares": null,
+        "rangeMode": "vehicle-fighting-space",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Weapon attacks from within target fighting space ignore SR; attack penalty -10.",
+            "operations": [
+              {
+                "kind": "weapon-attack-ignore-shields",
+                "attackPenalty": -10,
+                "attackScope": "pilot-plus-readied-gunners",
+                "when": "inside-large-target-fighting-space"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Weapon attacks from within target fighting space ignore SR; attack penalty -5.",
+            "operations": [
+              {
+                "kind": "weapon-attack-ignore-shields",
+                "attackPenalty": -5,
+                "attackScope": "pilot-plus-readied-gunners",
+                "when": "inside-large-target-fighting-space"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Weapon attacks from within target fighting space ignore SR; attack penalty -2.",
+            "operations": [
+              {
+                "kind": "weapon-attack-ignore-shields",
+                "attackPenalty": -2,
+                "attackScope": "pilot-plus-readied-gunners",
+                "when": "inside-large-target-fighting-space"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Weapon attacks from within target fighting space ignore SR; attack penalty -1.",
+            "operations": [
+              {
+                "kind": "weapon-attack-ignore-shields",
+                "attackPenalty": -1,
+                "attackScope": "pilot-plus-readied-gunners",
+                "when": "inside-large-target-fighting-space"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Target vehicle or station must be Colossal (frigate) or larger. Move up to twice own speed through its fighting space and finish in an unoccupied square.",
+        "Only gunners who readied an attack can attack alongside the pilot, with the same tier penalty and SR bypass. Ready action changes their initiative order normally.",
+        "Pilot check 19 or lower forces collision, with no avoidance Pilot check by the maneuver user; the target may attempt to avoid."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "one-large-vehicle-through-space",
+        "distanceRule": {
+          "kind": "large-target-fighting-space",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [
+          {
+            "kind": "move-into-large-target-space",
+            "speedMultiplier": 2,
+            "endInUnoccupiedSquare": true
+          }
+        ],
+        "onActivation": [],
+        "onFailure": [
+          {
+            "kind": "collision",
+            "actorCanAvoid": false,
+            "targetCanAvoid": true,
+            "when": "pilot-result-below-20"
+          }
+        ],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Target vehicle or station must be Colossal (frigate) or larger. Move up to twice own speed through its fighting space and finish in an unoccupied square.",
+          "Only gunners who readied an attack can attack alongside the pilot, with the same tier penalty and SR bypass. Ready action changes their initiative order normally.",
+          "Pilot check 19 or lower forces collision, with no avoidance Pilot check by the maneuver user; the target may attempt to avoid."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/skywalker-loop",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#skywalkerLoop",
+      "domain": "starship-maneuver",
+      "printedName": "Skywalker Loop",
+      "displayName": "Skywalker Loop",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 29,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "After dogfight opponent fails its opposed Pilot check to attack you, reaction Pilot DC20 grants an AoO.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "one-dogfight-opponent",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Immediately make an attack of opportunity against the dogfight opponent.",
+            "operations": [
+              {
+                "kind": "attack-of-opportunity-conditional",
+                "trigger": "opponent-fails-dogfight-pilot-attack",
+                "target": "dogfight-opponent"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "The opposing Pilot check must already have failed; this is not triggered merely by the weapon attack missing Reflex."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-gate",
+        "trigger": "when-opponent-fails-dogfight-attack",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": true,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "one-dogfight-opponent",
+        "distanceRule": {
+          "kind": "dogfight",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "The opposing Pilot check must already have failed; this is not triggered merely by the weapon attack missing Reflex."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/snap-roll",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#snapRoll",
+      "domain": "starship-maneuver",
+      "printedName": "Snap Roll",
+      "displayName": "Snap Roll",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 29,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "React before a pending attack resolves: use Pilot result instead of vehicle Reflex if favorable until start of next turn.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "replacement-defense",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "There is no fixed DC or tier. You may retain existing Reflex Defense if higher.",
+        "Declare before incoming attack resolves and before damage is rolled. The current attack is evaluated using the resulting defense."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "pilot-replaces-defense",
+        "trigger": "before-incoming-attack-resolved",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "until-start-next-turn",
+        "endTriggers": [
+          "start-next-turn"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [
+          {
+            "kind": "replace-reflex-defense",
+            "valueSource": "pilot-check-total",
+            "minimum": "original-vehicle-reflex-defense",
+            "until": "start-next-turn",
+            "declareBeforeAttackResolved": true
+          }
+        ],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "There is no fixed DC or tier. You may retain existing Reflex Defense if higher.",
+          "Declare before incoming attack resolves and before damage is rolled. The current attack is evaluated using the resulting defense."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/strike-formation",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#strikeFormation",
+      "domain": "starship-maneuver",
+      "printedName": "Strike Formation",
+      "displayName": "Strike Formation",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 29,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "While active, all weapons aboard vehicle gain +1 damage die, while vehicle Reflex takes -2.",
+      "descriptors": [
+        "attack-pattern"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "+1 die to all shipboard weapon damage; -2 vehicle Reflex Defense.",
+            "operations": [
+              {
+                "kind": "weapon-damage-dice-change",
+                "diceDelta": 1,
+                "scope": "all-vehicle-weapon-damage",
+                "when": "while-pattern-active"
+              },
+              {
+                "kind": "vehicle-reflex-modifier",
+                "amount": -2,
+                "scope": "own-vehicle",
+                "when": "while-pattern-active"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Applies to all weapon damage rolls aboard the ship, including weapons manned by gunners."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-gate",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "encounter",
+        "endTriggers": [
+          "encounter-end",
+          "attack-pattern-replaced",
+          "swift-deactivation"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [
+          {
+            "kind": "choose-active-attack-pattern",
+            "replacesExisting": true,
+            "duration": "encounter",
+            "deactivationAction": "swift"
+          }
+        ],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "exclusive-attack-pattern",
+          "replacePrevious": true,
+          "deactivationAction": "swift"
+        },
+        "notes": [
+          "Applies to all weapon damage rolls aboard the ship, including weapons manned by gunners."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/tallon-roll",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#tallonRoll",
+      "domain": "starship-maneuver",
+      "printedName": "Tallon Roll",
+      "displayName": "Tallon Roll",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 29,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "React before dogfight disengage check; penalize opponent Pilot by tier and gain AoO if target fails.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "one-dogfight-opponent",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Opponent Pilot penalty +0 to disengage; if fails, make AoO.",
+            "operations": [
+              {
+                "kind": "target-disengage-pilot-penalty",
+                "amount": 0
+              },
+              {
+                "kind": "attack-of-opportunity-conditional",
+                "trigger": "target-fails-disengage",
+                "target": "dogfight-opponent"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Opponent Pilot penalty -1 to disengage; if fails, make AoO.",
+            "operations": [
+              {
+                "kind": "target-disengage-pilot-penalty",
+                "amount": -1
+              },
+              {
+                "kind": "attack-of-opportunity-conditional",
+                "trigger": "target-fails-disengage",
+                "target": "dogfight-opponent"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Opponent Pilot penalty -2 to disengage; if fails, make AoO.",
+            "operations": [
+              {
+                "kind": "target-disengage-pilot-penalty",
+                "amount": -2
+              },
+              {
+                "kind": "attack-of-opportunity-conditional",
+                "trigger": "target-fails-disengage",
+                "target": "dogfight-opponent"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Opponent Pilot penalty -5 to disengage; if fails, make AoO.",
+            "operations": [
+              {
+                "kind": "target-disengage-pilot-penalty",
+                "amount": -5
+              },
+              {
+                "kind": "attack-of-opportunity-conditional",
+                "trigger": "target-fails-disengage",
+                "target": "dogfight-opponent"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Must declare after enemy announces disengagement but BEFORE opposed Pilot check is rolled; AoO only if the disengage attempt fails."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "before-opponent-disengage-check",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": true,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "one-dogfight-opponent",
+        "distanceRule": {
+          "kind": "dogfight",
+          "squares": null
+        },
+        "duration": "instant",
+        "endTriggers": [],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Must declare after enemy announces disengagement but BEFORE opposed Pilot check is rolled; AoO only if the disengage attempt fails."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/target-lock",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#targetLock",
+      "domain": "starship-maneuver",
+      "printedName": "Target Lock",
+      "displayName": "Target Lock",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 30,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "While dogfighting a designated opponent, gain tiered bonuses to Pilot checks and attacks against that opponent; ends if they disengage.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "standard",
+        "targetKind": "one-dogfight-opponent",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Pilot +1 and attack +1 against designated dogfight target.",
+            "operations": [
+              {
+                "kind": "vehicle-target-lock",
+                "pilotBonus": 1,
+                "attackBonus": 1,
+                "endCondition": "designated-target-disengages-dogfight"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Pilot +2 and attack +1 against designated dogfight target.",
+            "operations": [
+              {
+                "kind": "vehicle-target-lock",
+                "pilotBonus": 2,
+                "attackBonus": 1,
+                "endCondition": "designated-target-disengages-dogfight"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Pilot +2 and attack +2 against designated dogfight target.",
+            "operations": [
+              {
+                "kind": "vehicle-target-lock",
+                "pilotBonus": 2,
+                "attackBonus": 2,
+                "endCondition": "designated-target-disengages-dogfight"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Pilot +5 and attack +2 against designated dogfight target.",
+            "operations": [
+              {
+                "kind": "vehicle-target-lock",
+                "pilotBonus": 5,
+                "attackBonus": 2,
+                "endCondition": "designated-target-disengages-dogfight"
+              }
+            ]
+          },
+          {
+            "dc": 35,
+            "summary": "Pilot +5 and attack +5 against designated dogfight target.",
+            "operations": [
+              {
+                "kind": "vehicle-target-lock",
+                "pilotBonus": 5,
+                "attackBonus": 5,
+                "endCondition": "designated-target-disengages-dogfight"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "A target leaving the dogfight ends Target Lock, even if the same target re-enters a dogfight with the user later."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": true,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "one-dogfight-opponent",
+        "distanceRule": {
+          "kind": "dogfight",
+          "squares": null
+        },
+        "duration": "current-dogfight",
+        "endTriggers": [
+          "designated-target-disengages"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "A target leaving the dogfight ends Target Lock, even if the same target re-enters a dogfight with the user later."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/target-sense",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#targetSense",
+      "domain": "starship-maneuver",
+      "printedName": "Target Sense",
+      "displayName": "Target Sense",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 30,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "Force-tagged maneuver: replace vehicle Intelligence attack modifier with character Charisma bonus; higher UTF DCs add attack bonuses.",
+      "descriptors": [
+        "force"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "use-the-force",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 20
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 20,
+            "summary": "Use Charisma bonus in place of vehicle Intelligence bonus on weapon attacks, plus 0 maneuver attack bonus.",
+            "operations": [
+              {
+                "kind": "target-sense-replace-intelligence",
+                "modifierSource": "charisma-bonus",
+                "replaces": "vehicle-intelligence-bonus",
+                "extraManeuverAttackBonus": 0,
+                "duration": "until-start-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Use Charisma bonus in place of vehicle Intelligence bonus on weapon attacks, plus 2 maneuver attack bonus.",
+            "operations": [
+              {
+                "kind": "target-sense-replace-intelligence",
+                "modifierSource": "charisma-bonus",
+                "replaces": "vehicle-intelligence-bonus",
+                "extraManeuverAttackBonus": 2,
+                "duration": "until-start-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 30,
+            "summary": "Use Charisma bonus in place of vehicle Intelligence bonus on weapon attacks, plus 5 maneuver attack bonus.",
+            "operations": [
+              {
+                "kind": "target-sense-replace-intelligence",
+                "modifierSource": "charisma-bonus",
+                "replaces": "vehicle-intelligence-bonus",
+                "extraManeuverAttackBonus": 5,
+                "duration": "until-start-next-turn"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [
+        "core/force-power/battle-strike",
+        "core/talent/force-pilot"
+      ],
+      "rulesNotes": [
+        "Only a character trained in Use the Force can use a [Force] maneuver. Activating counts as using the Force.",
+        "Explicitly stacks with the Battle Strike Force power per printed source.",
+        "Force Pilot substitutes a UTF modifier on Pilot checks, but Target Sense itself rolls Use the Force and changes subsequent weapon attack modifiers; these are distinct mechanics."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "use-the-force",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "until-start-next-turn",
+        "endTriggers": [
+          "start-next-turn"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Only a character trained in Use the Force can use a [Force] maneuver. Activating counts as using the Force.",
+          "Explicitly stacks with the Battle Strike Force power per printed source.",
+          "Force Pilot substitutes a UTF modifier on Pilot checks, but Target Sense itself rolls Use the Force and changes subsequent weapon attack modifiers; these are distinct mechanics."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/thruster-hit",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#thrusterHit",
+      "domain": "starship-maneuver",
+      "printedName": "Thruster Hit",
+      "displayName": "Thruster Hit",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 30,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "After a qualifying vehicle critical/threshold hit, impose attack-margin-based penalties to Reflex, Initiative and Pilot; high margin limits straight-line movement.",
+      "descriptors": [
+        "gunner"
+      ],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "reaction",
+        "targetKind": "one-vehicle-just-attacked",
+        "rangeSquares": null,
+        "rangeMode": "weapon-range",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "attack",
+          "mode": "defense-margin",
+          "defense": "reflex",
+          "opposed": null,
+          "minimumDC": null
+        }
+      },
+      "resolution": {
+        "dcTiers": [],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Requires damaging critical hit OR attack damage equal to/greater than damage threshold; compares triggering weapon attack roll to Reflex.",
+        "Unlike Engine Hit, this has no published Mechanics repair DC; do not invent one."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot-or-gunner",
+        "rollFamily": "weapon-attack",
+        "outcomeMode": "attack-defense-margin",
+        "trigger": "after-critical-or-threshold-damage",
+        "vehicleEligibility": "gunner-on-vehicle-or-airspeeder",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": false,
+        "attackReuse": "reuse-triggering-attack",
+        "targetRestriction": "one-vehicle-just-attacked",
+        "distanceRule": {
+          "kind": "weapon-range",
+          "squares": null
+        },
+        "duration": "encounter",
+        "endTriggers": [
+          "encounter-end"
+        ],
+        "marginTiers": [
+          {
+            "minimumMargin": 0,
+            "maximumMargin": 4,
+            "summary": "Target Reflex, Initiative and Pilot -1 for encounter.",
+            "operations": [
+              {
+                "kind": "vehicle-reflex-modifier",
+                "amount": -1,
+                "scope": "target-vehicle",
+                "when": "encounter"
+              },
+              {
+                "kind": "modifier",
+                "target": "target-vehicle",
+                "stat": "initiative-checks",
+                "amount": -1,
+                "bonusType": "untyped",
+                "when": "encounter"
+              },
+              {
+                "kind": "modifier",
+                "target": "target-vehicle",
+                "stat": "pilot-checks",
+                "amount": -1,
+                "bonusType": "untyped",
+                "when": "encounter"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 5,
+            "maximumMargin": 9,
+            "summary": "Target Reflex, Initiative and Pilot -2 for encounter.",
+            "operations": [
+              {
+                "kind": "vehicle-reflex-modifier",
+                "amount": -2,
+                "scope": "target-vehicle",
+                "when": "encounter"
+              },
+              {
+                "kind": "modifier",
+                "target": "target-vehicle",
+                "stat": "initiative-checks",
+                "amount": -2,
+                "bonusType": "untyped",
+                "when": "encounter"
+              },
+              {
+                "kind": "modifier",
+                "target": "target-vehicle",
+                "stat": "pilot-checks",
+                "amount": -2,
+                "bonusType": "untyped",
+                "when": "encounter"
+              }
+            ]
+          },
+          {
+            "minimumMargin": 10,
+            "maximumMargin": null,
+            "summary": "Target Reflex, Initiative and Pilot -5 for encounter; only straight-line movement.",
+            "operations": [
+              {
+                "kind": "vehicle-reflex-modifier",
+                "amount": -5,
+                "scope": "target-vehicle",
+                "when": "encounter"
+              },
+              {
+                "kind": "modifier",
+                "target": "target-vehicle",
+                "stat": "initiative-checks",
+                "amount": -5,
+                "bonusType": "untyped",
+                "when": "encounter"
+              },
+              {
+                "kind": "modifier",
+                "target": "target-vehicle",
+                "stat": "pilot-checks",
+                "amount": -5,
+                "bonusType": "untyped",
+                "when": "encounter"
+              },
+              {
+                "kind": "vehicle-straight-line-only",
+                "target": "target-vehicle",
+                "duration": "encounter"
+              }
+            ]
+          }
+        ],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Requires damaging critical hit OR attack damage equal to/greater than damage threshold; compares triggering weapon attack roll to Reflex.",
+          "Unlike Engine Hit, this has no published Mechanics repair DC; do not invent one."
+        ]
+      }
+    },
+    {
+      "schemaVersion": "2.9.0",
+      "definitionId": "sotg/starship-maneuver/wotan-weave",
+      "legacyPackId": null,
+      "sourceRecordId": "data/source/starship-maneuvers.json#wotanWeave",
+      "domain": "starship-maneuver",
+      "printedName": "Wotan Weave",
+      "displayName": "Wotan Weave",
+      "source": {
+        "bookId": "swse-starships-of-the-galaxy",
+        "printedPage": 30,
+        "verification": "printed-pdf-visual",
+        "claimType": "origin"
+      },
+      "summary": "When fighting defensively/total defense, halve vehicle speed (floor), gaining tiered Reflex bonus until next turn.",
+      "descriptors": [],
+      "acquisition": {
+        "method": "starship-tactics-suite",
+        "repeatable": true
+      },
+      "activation": {
+        "action": "swift",
+        "targetKind": "self",
+        "rangeSquares": null,
+        "rangeMode": "none",
+        "lineOfSightRequired": false,
+        "check": {
+          "skill": "pilot",
+          "mode": "fixed-dc",
+          "defense": null,
+          "opposed": null,
+          "minimumDC": 15
+        }
+      },
+      "resolution": {
+        "dcTiers": [
+          {
+            "dc": 15,
+            "summary": "Vehicle speed halved (floor) and Reflex +1 maneuver until next turn.",
+            "operations": [
+              {
+                "kind": "vehicle-speed-half-floor",
+                "target": "own-vehicle",
+                "duration": "until-start-next-turn",
+                "failIfSpeedBecomesZero": true
+              },
+              {
+                "kind": "vehicle-reflex-modifier",
+                "amount": 1,
+                "scope": "own-vehicle",
+                "when": "until-start-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 20,
+            "summary": "Vehicle speed halved (floor) and Reflex +2 maneuver until next turn.",
+            "operations": [
+              {
+                "kind": "vehicle-speed-half-floor",
+                "target": "own-vehicle",
+                "duration": "until-start-next-turn",
+                "failIfSpeedBecomesZero": true
+              },
+              {
+                "kind": "vehicle-reflex-modifier",
+                "amount": 2,
+                "scope": "own-vehicle",
+                "when": "until-start-next-turn"
+              }
+            ]
+          },
+          {
+            "dc": 25,
+            "summary": "Vehicle speed halved (floor) and Reflex +5 maneuver until next turn.",
+            "operations": [
+              {
+                "kind": "vehicle-speed-half-floor",
+                "target": "own-vehicle",
+                "duration": "until-start-next-turn",
+                "failIfSpeedBecomesZero": true
+              },
+              {
+                "kind": "vehicle-reflex-modifier",
+                "amount": 5,
+                "scope": "own-vehicle",
+                "when": "until-start-next-turn"
+              }
+            ]
+          }
+        ],
+        "onSuccess": [],
+        "onFailure": [],
+        "requirements": [],
+        "defenseAdjustments": []
+      },
+      "resourceOptions": [],
+      "adjudication": [],
+      "interactions": [],
+      "rulesNotes": [
+        "Requires fighting defensively or total defense in same turn.",
+        "If halving speed (round down) yields 0, maneuver activation automatically fails; speed cannot be reduced to zero to obtain the defense bonus."
+      ],
+      "maintenance": null,
+      "sourceStatus": "visually-checked",
+      "automationReadiness": "design-needs-runtime-validation",
+      "maneuverRules": {
+        "role": "pilot",
+        "rollFamily": "pilot",
+        "outcomeMode": "fixed-dc-tiers",
+        "trigger": "active-on-turn",
+        "vehicleEligibility": "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+        "minimumShieldRating": null,
+        "requiresDogfight": false,
+        "requiresAutofire": false,
+        "requiresDefensiveAction": true,
+        "attackReuse": "none",
+        "targetRestriction": "self",
+        "distanceRule": {
+          "kind": "self",
+          "squares": null
+        },
+        "duration": "until-start-next-turn",
+        "endTriggers": [
+          "start-next-turn"
+        ],
+        "marginTiers": [],
+        "initialOperations": [],
+        "onActivation": [],
+        "onFailure": [],
+        "suiteSpend": "every-attempt-including-failure",
+        "pattern": {
+          "kind": "none",
+          "replacePrevious": false,
+          "deactivationAction": "none"
+        },
+        "notes": [
+          "Requires fighting defensively or total defense in same turn.",
+          "If halving speed (round down) yields 0, maneuver activation automatically fails; speed cannot be reduced to zero to obtain the defense bonus."
+        ]
+      }
+    }
+  ],
+  "modifiers": [
+    {
+      "modifierId": "sotg/rule/corellian-slip-errata",
+      "sourceName": "WotC Starships of the Galaxy Errata 1.0",
+      "sourceType": "rule",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 25,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "enter-target-square",
+      "effect": "Corellian Slip follow-up attack uses a free action, not swift.",
+      "constraints": [
+        "Applies only to Corellian Slip."
+      ]
+    },
+    {
+      "modifierId": "sotg/feat/starship-tactics",
+      "sourceName": "Starship Tactics",
+      "sourceType": "feat",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 20,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "feat-acquired-or-wisdom-increases",
+      "effect": "Maneuver slots max(1,1+Wisdom modifier) for each feat instance; duplicate maneuvers permitted.",
+      "constraints": [
+        "Requires Vehicular Combat and Pilot trained."
+      ]
+    },
+    {
+      "modifierId": "sotg/talent/force-reflexes",
+      "sourceName": "Force Reflexes",
+      "sourceType": "talent",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 16,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "pilot-roll-for-maneuver",
+      "effect": "May spend 1 Force Point to reroll Pilot and keep higher result.",
+      "constraints": [
+        "Requires Force Sensitivity, Starship Tactics, Force Pilot.",
+        "Does not reroll Target Sense UTF or gunner weapon attack rolls."
+      ]
+    },
+    {
+      "modifierId": "sotg/feat/tactical-genius",
+      "sourceName": "Tactical Genius",
+      "sourceType": "feat",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 20,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "natural-20-on-attack-roll",
+      "effect": "Recover all spent maneuvers at end of round.",
+      "constraints": [
+        "Requires Vehicular Combat, Starship Tactics and trained Pilot."
+      ]
+    },
+    {
+      "modifierId": "sotg/talent/squadron-tactics",
+      "sourceName": "Squadron Tactics",
+      "sourceType": "talent",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 18,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "use-maneuver-once-per-encounter",
+      "effect": "Squadron allies can each use same NON-attack-pattern maneuver once next turn, rolling their own checks.",
+      "constraints": [
+        "Official Errata restricts to maneuvers without attack-pattern descriptor.",
+        "Each recipient makes own check and does not inherit leader roll."
+      ]
+    },
+    {
+      "modifierId": "sotg/equipment/combat-thrusters",
+      "sourceName": "Combat Thrusters",
+      "sourceType": "equipment",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 40,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "vehicle-eligibility",
+      "effect": "A space transport with combat thrusters qualifies as starfighter for dogfight/maneuver purposes.",
+      "constraints": [
+        "Must be an installed functional modification; capital ship not granted maneuver eligibility."
+      ]
+    },
+    {
+      "modifierId": "core/talent/force-pilot-to-sotg",
+      "sourceName": "Force Pilot",
+      "sourceType": "talent",
+      "sourceBookId": "core",
+      "sourcePrintedPage": 101,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "pilot-check",
+      "effect": "Pilot checks use Use the Force skill modifier, but remain Pilot checks.",
+      "constraints": [
+        "No transformation of gunner attack or Target Sense UTF check."
+      ]
+    },
+    {
+      "modifierId": "sotg/maneuver/target-sense-stacks-battle-strike",
+      "sourceName": "Target Sense stacking permission",
+      "sourceType": "rule",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 30,
+      "targetDomains": [
+        "starship-maneuver",
+        "force-power"
+      ],
+      "trigger": "weapon-attack-after-target-sense",
+      "effect": "Target Sense maneuver bonus explicitly stacks with Battle Strike power attack bonus.",
+      "constraints": [
+        "Each effect must first qualify independently."
+      ]
+    },
+    {
+      "modifierId": "sotg/rule/one-attack-pattern",
+      "sourceName": "Attack Pattern Exclusivity",
+      "sourceType": "rule",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 24,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "activate-attack-pattern",
+      "effect": "New pattern replaces any currently active pattern on that vehicle; old maneuver remains spent.",
+      "constraints": [
+        "Only one active pattern.",
+        "Duration until encounter ends or explicit deactivation where listed."
+      ]
+    },
+    {
+      "modifierId": "sotg/rule/fighter-group-errata",
+      "sourceName": "Fighter Group Errata",
+      "sourceType": "rule",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 31,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "fighter-group-joint-use",
+      "effect": "Every fighter in group must know the selected maneuver; each member uses it; joining group removes individual attack pattern.",
+      "constraints": [
+        "Errata also limits leader changes to once per round and joining ends actions."
+      ]
+    },
+    {
+      "modifierId": "sotg/rule/pilot-20-recovery",
+      "sourceName": "Pilot Natural 20 Recovery",
+      "sourceType": "rule",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 24,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "natural-20-on-maneuver-pilot-check",
+      "effect": "Recover all spent starship maneuvers at end of turn.",
+      "constraints": [
+        "Not on unrelated Pilot checks, gunner attacks, or Target Sense UTF rolls unless an independent published rule grants recovery."
+      ]
+    },
+    {
+      "modifierId": "sotg/rule/fp-recovery",
+      "sourceName": "Force Point Maneuver Recovery",
+      "sourceType": "rule",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 24,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "reaction-fp-spend",
+      "effect": "Spend one Force Point as reaction to immediately recover one spent maneuver instance.",
+      "constraints": [
+        "Must not grant an extra maneuver beyond suite entitlement."
+      ]
+    },
+    {
+      "modifierId": "sotg/rule/after-combat-rest-recovery",
+      "sourceName": "After Combat Rest Recovery",
+      "sourceType": "rule",
+      "sourceBookId": "sotg",
+      "sourcePrintedPage": 24,
+      "targetDomains": [
+        "starship-maneuver"
+      ],
+      "trigger": "one-minute-rest-after-space-combat",
+      "effect": "Recover all spent starship maneuvers.",
+      "constraints": [
+        "One minute rest must be available."
+      ]
+    }
+  ],
+  "unresolvedSourceInterpretations": [
+    {
+      "id": "sotg/maneuver/shield-hit/sr-degradation",
+      "severity": "review",
+      "issue": "Confirm the V2 vehicle damage pipeline already decrements SR 5 when damage beats current SR, and apply that standard decrement once before maneuver-specific SR loss."
+    },
+    {
+      "id": "sotg/maneuver/corellian-slip/collision-normal",
+      "severity": "review",
+      "issue": "Normal collision resolution when the target survives uses shared V2 vehicle collision authority; the maneuver defines avoidance on failure but not a bespoke collision damage formula."
+    },
+    {
+      "id": "sotg/maneuver/attack-formation-zeta-nine/minimum-dice",
+      "severity": "blocks-full-automation",
+      "issue": "Removing 1 vehicle weapon damage die when a weapon has only one damage die has no explicit floor in the printed maneuver. Shared V2 vehicle damage grammar must establish the legal lower bound; otherwise escalate."
+    },
+    {
+      "id": "sotg/maneuver/shield-hit/attack-margin-equality",
+      "severity": "review",
+      "issue": "Gunner tables say attack exceeds Reflex by 0-4; use the general hit comparison (hit on meeting or beating defense) while applying margin 0 at exact equality. Verify shared combat authority matches this rule."
+    },
+    {
+      "id": "sotg/maneuver/overwhelming-assault/unbounded-penalty",
+      "severity": "review",
+      "issue": "Printed rule gives no numeric upper bound on voluntarily chosen attack penalty N. Do not invent an undocumented cap; user-choice legality must respect the canonical attack modifier rules."
+    },
+    {
+      "id": "sotg/maneuver/target-sense/charisma-bonus",
+      "severity": "review",
+      "issue": "Printed Source says Charisma bonus rather than Charisma modifier. Use nonnegative bonus as the substitution; confirm shared V2 ability stat semantics, and avoid adding Cha bonus atop ship Int."
+    }
+  ],
+  "nextBook": "Knights of the Old Republic Campaign Guide"
+}

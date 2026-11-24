@@ -1,5 +1,7 @@
+import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionEngine.js";
+import { resolveForceDiscipleIndomitable } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/force-disciple-features.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -180,11 +182,11 @@ export class ConsularTalentActions {
   }
 
   static _findReadyFarseeing(actor) {
-    return this._forcePowerItems(actor).find(item => this._isFarseeing(item) && item?.system?.spent !== true && item?.system?.discarded !== true) ?? null;
+    return this._forcePowerItems(actor).find(item => this._isFarseeing(item) && item?.system?.discarded !== true) ?? null;
   }
 
   static _findSpentFarseeing(actor) {
-    return this._forcePowerItems(actor).filter(item => this._isFarseeing(item) && (item?.system?.spent === true || item?.system?.discarded === true));
+    return this._forcePowerItems(actor).filter(item => this._isFarseeing(item) && (item?.system?.discarded === true));
   }
 
   static async _spendReadyFarseeing(actor, source = 'farseeing-talent') {
@@ -192,7 +194,6 @@ export class ConsularTalentActions {
     if (!farseeing) throw new Error('A ready use of Farseeing is required.');
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
       _id: farseeing.id,
-      'system.spent': true,
       'system.discarded': true,
       'system.lastSpent': Date.now(),
       'flags.swse.lastSpentBy': source
@@ -200,11 +201,50 @@ export class ConsularTalentActions {
     return farseeing;
   }
 
+  // WatchCircle Initiate (canonical talent text, packs/talents.db): "You subtract 1 from your Force Point total (this cannot be
+  // subtracted from temporary Force Points, and does not count as spending a Force Point)". It is therefore deliberately NOT routed
+  // through ActorEngine.spendForcePoints (no V2 receipt, no round-cap count, no Temptation trigger): a documented ability-specific
+  // exemption by source (Decision A). Slice 6T (#1133) proposed the opposite and was NOT merged for that reason.
   static async _spendNormalForcePoint(actor, source = 'force-talent-normal-fp') {
     const current = SchemaAdapters.getForcePoints(actor);
     if (current <= 0) throw new Error('This talent requires 1 normal Force Point; temporary/bonus Force Points cannot be used.');
     await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(Math.max(0, current - 1)), { source });
     return { spent: 1, remaining: Math.max(0, current - 1) };
+  }
+
+  /**
+   * WatchCircle Initiate transfer: subtract 1 NORMAL point from the actor, add 1 to the ally. Not a spend (printed text), but the two
+   * writes are one event: exactly one point leaves and exactly one arrives. Failure handling re-reads the ally rather than assuming:
+   *  - no ally actor: refused before any debit;
+   *  - subtract fails and the actor's total is unchanged: nothing changed; subtract throws but the total DID drop (ack lost): the debit
+   *    stands and the transfer continues;
+   *  - ally gain throws and the ally's total did NOT rise: the actor's point is returned (exact, +1);
+   *  - ally gain throws but the ally's total DID rise (write applied, acknowledgement lost): the transfer stands, no compensation,
+   *    so a point is never duplicated.
+   * Limit: the re-read compares totals, so a concurrent unrelated gain on the ally in the same instant is indistinguishable from the
+   * transfer landing; that rare case is left for GM adjudication rather than guessed.
+   */
+  static async _transferWatchCircleForcePoint(actor, allyActor) {
+    // Fail closed BEFORE any debit: with no resolvable ally actor the point would leave with nothing to receive it and no durable
+    // pending grant to reconcile it later.
+    if (!allyActor) throw new Error('WatchCircle Initiate needs a resolvable ally actor to receive the Force Point; no point was subtracted.');
+    const allyBefore = SchemaAdapters.getForcePoints(allyActor);
+    const sourceBefore = SchemaAdapters.getForcePoints(actor);
+    try {
+      await this._spendNormalForcePoint(actor, 'watchcircle-initiate-normal-fp');
+    } catch (err) {
+      // The subtraction may have been applied before the error surfaced (acknowledgement lost): re-read the authoritative total.
+      // Unchanged => nothing happened, report the failure. Reduced => the debit stands and the transfer continues.
+      if (SchemaAdapters.getForcePoints(actor) >= sourceBefore) throw err;
+    }
+    try {
+      return await this._grantNormalForcePoint(allyActor, 1, 'watchcircle-initiate-grant-fp');
+    } catch (err) {
+      const applied = SchemaAdapters.getForcePoints(allyActor) > allyBefore;
+      if (applied) return { granted: 1, total: SchemaAdapters.getForcePoints(allyActor), acknowledgementLost: true };
+      await this._grantNormalForcePoint(actor, 1, 'watchcircle-initiate-compensation');
+      throw err;
+    }
   }
 
   static async _grantNormalForcePoint(actor, amount = 1, source = 'force-talent-grant-fp') {
@@ -281,11 +321,26 @@ export class ConsularTalentActions {
       return { success: false, roll: total, dc };
     }
 
+    const targetActor = target?.actor ?? null;
+    // Adept Negotiator and Master Negotiator are explicitly Mind-Affecting.
+    // This is the active Consular talent path, distinct from the older
+    // LightSideTalentMechanics implementation. A succeeded check must never
+    // create a CT shift, embedded effect, or mark on an Indomitable target.
+    const immunity = targetActor
+      ? resolveForceDiscipleIndomitable(targetActor, { mindAffecting: true })
+      : { immune: false };
+    if (immunity.immune) {
+      await postCard(actor, 'Adept Negotiator',
+        `<p>${esc(actor.name)} succeeded against <strong>${esc(targetName)}</strong> (${total} vs Will DC ${dc}), but the target is immune to Mind-Affecting effects (Force Disciple — Indomitable).</p><p>No Condition Track movement or Broken Resolve is applied.</p>`,
+        { talentName:'Adept Negotiator',success:false,immune:true,roll:total,dc,
+          targetActorId:targetActor?.id??null });
+      return { success:false,immune:true,roll:total,dc,conditionTrackOnly:true };
+    }
+
     const hasMaster = hasTalent(actor, 'Master Negotiator');
     const steps = AdeptNegotiatorSchema.conditionTrack.baseSteps + (hasMaster ? AdeptNegotiatorSchema.conditionTrack.masterNegotiatorAdditionalSteps : 0);
     let conditionResult = null;
     let brokenResolve = false;
-    const targetActor = target?.actor ?? null;
     if (targetActor) {
       const before = ConditionEngine.calculateConditionStep(targetActor, { source: 'adept-negotiator-precheck' });
       const oldStep = Number(before?.currentStep ?? 0) || 0;
@@ -373,13 +428,10 @@ export class ConsularTalentActions {
   }
 
   static async applySkilledAdvisor(actor, ally, { skillKey = 'useTheForce', useForcePoint = false } = {}) {
-    if (useForcePoint) {
-      const spend = await ActorEngine.spendForcePoints(actor, 1);
-      if (!spend?.spent) {
-        ui?.notifications?.warn?.('No Force Point available for Skilled Advisor +10.');
-        return null;
-      }
-    }
+    // The Force Point is optional (+10 instead of +5); without it the Full-Round advice is still the talent's normal use.
+    const fp = useForcePoint ? await beginContractedForcePoint(actor, 'consular:applySkilledAdvisor', {}, { label: 'Skilled Advisor' }) : null;
+    if (fp && !fp.ok) return null;
+    const run = async () => {
     const bonus = useForcePoint ? 10 : 5;
     const allyActor = ally?.actor ?? null;
     if (allyActor) {
@@ -409,6 +461,8 @@ export class ConsularTalentActions {
     }
     await postCard(actor, 'Skilled Advisor', `<p>${esc(actor.name)} advises <strong>${esc(ally?.name ?? allyActor?.name ?? 'an ally')}</strong>.</p><p><strong>Effect:</strong> +${bonus} on the ally's next ${esc(getSkillLabel(allyActor ?? actor, skillKey))} check.${useForcePoint ? ' One Force Point was spent.' : ''}</p>${masterAdvisorPending ? '<p><strong>Master Advisor:</strong> one temporary Force Point is queued for that ally at the end of their next turn; it expires at the end of the encounter if unspent.</p>' : ''}<p><strong>Descriptor:</strong> Mind-Affecting.</p>`, { talentName: 'Skilled Advisor', bonus, skillKey, masterAdvisorPending });
     return { success: true, bonus, skillKey, masterAdvisorPending };
+    };
+    return fp ? fp.settle(run) : run();
   }
 
   static async promptAdversaryLore(actor, { sourceElement = null } = {}) {
@@ -553,14 +607,13 @@ export class ConsularTalentActions {
       ui?.notifications?.warn?.(`${ally.name} has already aided you since the end of your last turn.`);
       return null;
     }
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Entreat Aid requires spending 1 Force Point.');
-      return null;
-    }
-    await actor.setFlag(NS, 'entreatAid', { turnKey, usedThisTurn: [...used, allyKey], pending: { allyName: ally.name, allyActorId: ally.actor?.id ?? null, createdAt: Date.now(), expires: 'end-of-turn' } });
-    await postCard(actor, 'Entreat Aid', `<p>${esc(actor.name)} spends a Force Point. <strong>${esc(ally.name)}</strong> may use Aid Another as a Reaction to assist ${esc(actor.name)}'s next Skill Check before the end of this turn.</p><p>The benefit is lost if the Skill Check is not made before the end of the turn.</p>`, { talentName: 'Entreat Aid', allyActorId: ally.actor?.id ?? null });
-    return { success: true, allyName: ally.name };
+    const fp = await beginContractedForcePoint(actor, "consular:promptEntreatAid", {}, { label: "promptEntreatAid" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      await actor.setFlag(NS, 'entreatAid', { turnKey, usedThisTurn: [...used, allyKey], pending: { allyName: ally.name, allyActorId: ally.actor?.id ?? null, createdAt: Date.now(), expires: 'end-of-turn' } });
+      await postCard(actor, 'Entreat Aid', `<p>${esc(actor.name)} spends a Force Point. <strong>${esc(ally.name)}</strong> may use Aid Another as a Reaction to assist ${esc(actor.name)}'s next Skill Check before the end of this turn.</p><p>The benefit is lost if the Skill Check is not made before the end of the turn.</p>`, { talentName: 'Entreat Aid', allyActorId: ally.actor?.id ?? null });
+      return { success: true, allyName: ally.name };
+    });
   }
 
   static async promptForceOfWill(actor) {
@@ -568,30 +621,29 @@ export class ConsularTalentActions {
       ui?.notifications?.warn?.('Force of Will talent required.');
       return null;
     }
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Force of Will requires spending 1 Force Point.');
-      return null;
-    }
-    const allies = tokenOptions(actor, { relation: 'ally', maxSquares: 6 });
-    const affected = [];
-    for (const row of allies) {
-      const token = canvas?.tokens?.get?.(row.id);
-      const allyActor = token?.actor ?? null;
-      if (!allyActor) continue;
-      affected.push(allyActor.name);
-      await createEffectOnActor(allyActor, {
-        name: `Force of Will (${actor.name})`,
-        icon: 'icons/svg/shield.svg',
-        changes: [],
-        disabled: false,
-        duration: { rounds: 999 },
-        flags: { swse: { talentName: 'Force of Will', sourceActorId: actor.id, mindAffecting: true, manualDefenseAdjustment: true, insightWillBonus: 2, rangeSquares: 6, expires: 'encounter', note: 'Ally keeps this +2 insight Will bonus only while within 6 squares of the source and while the source is conscious/alive.' } }
-      }, { source: 'force-of-will' });
-    }
-    const list = affected.length ? affected.map(esc).join(', ') : 'all eligible allies within 6 squares (GM adjudicates)';
-    await postCard(actor, 'Force of Will', `<p>${esc(actor.name)} spends a Force Point to grant a +2 insight bonus to Will Defense to <strong>${list}</strong> for the remainder of the encounter.</p><p>Affected allies must remain within 6 squares and lose the bonus if ${esc(actor.name)} is knocked unconscious or killed. Mind-Affecting.</p><p>${esc(actor.name)}'s personal +2 insight Will Defense is a passive benefit of the talent.</p>`, { talentName: 'Force of Will', affected });
-    return { success: true, affected };
+    const fp = await beginContractedForcePoint(actor, "consular:promptForceOfWill", {}, { label: "promptForceOfWill" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const allies = tokenOptions(actor, { relation: 'ally', maxSquares: 6 });
+      const affected = [];
+      for (const row of allies) {
+        const token = canvas?.tokens?.get?.(row.id);
+        const allyActor = token?.actor ?? null;
+        if (!allyActor) continue;
+        affected.push(allyActor.name);
+        await createEffectOnActor(allyActor, {
+          name: `Force of Will (${actor.name})`,
+          icon: 'icons/svg/shield.svg',
+          changes: [],
+          disabled: false,
+          duration: { rounds: 999 },
+          flags: { swse: { talentName: 'Force of Will', sourceActorId: actor.id, mindAffecting: true, manualDefenseAdjustment: true, insightWillBonus: 2, rangeSquares: 6, expires: 'encounter', note: 'Ally keeps this +2 insight Will bonus only while within 6 squares of the source and while the source is conscious/alive.' } }
+        }, { source: 'force-of-will' });
+      }
+      const list = affected.length ? affected.map(esc).join(', ') : 'all eligible allies within 6 squares (GM adjudicates)';
+      await postCard(actor, 'Force of Will', `<p>${esc(actor.name)} spends a Force Point to grant a +2 insight bonus to Will Defense to <strong>${list}</strong> for the remainder of the encounter.</p><p>Affected allies must remain within 6 squares and lose the bonus if ${esc(actor.name)} is knocked unconscious or killed. Mind-Affecting.</p><p>${esc(actor.name)}'s personal +2 insight Will Defense is a passive benefit of the talent.</p>`, { talentName: 'Force of Will', affected });
+      return { success: true, affected };
+    });
   }
 
   static async promptGuidingStrikes(actor) {
@@ -638,7 +690,7 @@ export class ConsularTalentActions {
       ui?.notifications?.info?.('No expended uses of Farseeing to recover.');
       return null;
     }
-    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', spent.map(power => ({ _id: power.id, 'system.spent': false, 'system.discarded': false, 'system.lastRecovered': Date.now(), 'flags.swse.lastRecoverySource': 'renew-vision' })), { source: 'renew-vision', render: false });
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', spent.map(power => ({ _id: power.id, 'system.discarded': false, 'system.lastRecovered': Date.now(), 'flags.swse.lastRecoverySource': 'renew-vision' })), { source: 'renew-vision', render: false });
     await actor.setFlag(NS, 'encounterUses.renewVision', { encounterId: this._encounterId(), used: true, recovered: spent.length, usedAt: Date.now() });
     await postCard(actor, 'Renew Vision', `<p>${esc(actor.name)} regains all expended uses of <strong>Farseeing</strong> (${spent.length} recovered).</p><p><strong>Action:</strong> Swift Action · once per encounter.</p>`, { talentName: 'Renew Vision', recovered: spent.length });
     return { success: true, recovered: spent.length };
@@ -696,9 +748,14 @@ export class ConsularTalentActions {
     }
     const ally = await promptToken(actor, 'WatchCircle Initiate', { relation: 'ally', fallbackLabel: 'ally', note: 'Choose one ally within line of sight to receive 1 Force Point if your DC 15 Use the Force check succeeds.' });
     if (!ally) return null;
-    const farseeing = await this._spendReadyFarseeing(actor, 'watchcircle-initiate');
+    // Refuse BEFORE Farseeing is consumed or any check is rolled when the transfer could not complete.
+    if (!ally.actor) { ui?.notifications?.warn?.('WatchCircle Initiate needs a resolvable ally actor to receive the Force Point.'); return null; }
+    if (SchemaAdapters.getForcePoints(actor) <= 0) { ui?.notifications?.warn?.('WatchCircle Initiate requires 1 normal Force Point; temporary/bonus Force Points cannot be used.'); return null; }
+    const farseeing = this._findReadyFarseeing(actor);
+    if (!farseeing) throw new Error('A ready use of Farseeing is required.');
     const modResult = await showRollModifiersDialog({ title: 'WatchCircle Initiate — DC 15 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
-    if (modResult === null) return null;
+    if (modResult === null) return null; // cancelled before any check: Farseeing is NOT consumed
+    await this._spendReadyFarseeing(actor, 'watchcircle-initiate');
     const roll = await rollSkillCheck(actor, 'useTheForce', { ...modResult, dc: 15, source: 'watchcircle-initiate', skillUse: { key: 'watchcircle-initiate', label: 'WatchCircle Initiate' }, sourceElement });
     if (!roll) return null;
     const total = Number(roll.roll?.total ?? 0) || 0;
@@ -706,8 +763,7 @@ export class ConsularTalentActions {
     let transfer = null;
     if (success) {
       try {
-        await this._spendNormalForcePoint(actor, 'watchcircle-initiate-normal-fp');
-        if (ally.actor) transfer = await this._grantNormalForcePoint(ally.actor, 1, 'watchcircle-initiate-grant-fp');
+        transfer = await this._transferWatchCircleForcePoint(actor, ally.actor ?? null);
       } catch (err) {
         ui?.notifications?.warn?.(err.message);
         await postCard(actor, 'WatchCircle Initiate', `<p>Use the Force succeeds (${total} vs DC 15), but the Force Point transfer could not complete: ${esc(err.message)}</p>`, { talentName: 'WatchCircle Initiate', success: false, transferFailed: true });
@@ -742,63 +798,62 @@ export class ConsularTalentActions {
       return null;
     }
     const useImproved = improved === true || hasTalent(actor, 'Improved Battle Meditation');
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Battle Meditation requires spending 1 Force Point.');
-      return null;
-    }
-    const range = useImproved ? 12 : 6;
-    const attackBonus = hasTalent(actor, 'Jedi Battle Commander') ? 2 : 1;
-    const allies = tokenOptions(actor, { relation: 'ally', maxSquares: range });
-    const enemies = useImproved ? tokenOptions(actor, { relation: 'enemy', maxSquares: range }) : [];
-    const affectedAllies = [actor.name];
-    await createEffectOnActor(actor, {
-      name: 'Battle Meditation',
-      icon: 'icons/svg/aura.svg',
-      changes: [],
-      disabled: false,
-      duration: { rounds: 999 },
-      flags: { swse: { talentName: 'Battle Meditation', sourceActorId: actor.id, insightAttackBonus: attackBonus, rangeSquares: range, mindAffecting: true, starshipScaleGunners: true, manualAttackAdjustment: true, expires: 'encounter' } }
-    }, { source: 'battle-meditation' });
-    for (const row of allies) {
-      const token = canvas?.tokens?.get?.(row.id);
-      const allyActor = token?.actor ?? null;
-      if (!allyActor) continue;
-      affectedAllies.push(allyActor.name);
-      await createEffectOnActor(allyActor, {
-        name: 'Battle Meditation (' + actor.name + ')',
+    const fp = await beginContractedForcePoint(actor, "consular:promptBattleMeditation", {}, { label: "promptBattleMeditation" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const range = useImproved ? 12 : 6;
+      const attackBonus = hasTalent(actor, 'Jedi Battle Commander') ? 2 : 1;
+      const allies = tokenOptions(actor, { relation: 'ally', maxSquares: range });
+      const enemies = useImproved ? tokenOptions(actor, { relation: 'enemy', maxSquares: range }) : [];
+      const affectedAllies = [actor.name];
+      await createEffectOnActor(actor, {
+        name: 'Battle Meditation',
         icon: 'icons/svg/aura.svg',
         changes: [],
         disabled: false,
         duration: { rounds: 999 },
-        flags: { swse: { talentName: 'Battle Meditation', sourceActorId: actor.id, insightAttackBonus: attackBonus, rangeSquares: range, mindAffecting: true, starshipScaleGunners: true, manualAttackAdjustment: true, expires: 'encounter', note: 'Retain the bonus only while within the Battle Meditation radius and while the source is conscious/alive.' } }
+        flags: { swse: { talentName: 'Battle Meditation', sourceActorId: actor.id, insightAttackBonus: attackBonus, rangeSquares: range, mindAffecting: true, starshipScaleGunners: true, manualAttackAdjustment: true, expires: 'encounter' } }
       }, { source: 'battle-meditation' });
-    }
-    const affectedEnemies = [];
-    for (const row of enemies) {
-      const token = canvas?.tokens?.get?.(row.id);
-      const enemyActor = token?.actor ?? null;
-      if (!enemyActor) continue;
-      affectedEnemies.push(enemyActor.name);
-      await createEffectOnActor(enemyActor, {
-        name: 'Improved Battle Meditation Penalty (' + actor.name + ')',
-        icon: 'icons/svg/downgrade.svg',
-        changes: [],
-        disabled: false,
-        duration: { rounds: 999 },
-        flags: { swse: { talentName: 'Improved Battle Meditation', sourceActorId: actor.id, attackPenalty: -1, rangeSquares: range, mindAffecting: true, manualAttackAdjustment: true, expires: 'encounter', note: 'Opponent suffers -1 attack while within the Battle Meditation radius.' } }
-      }, { source: 'improved-battle-meditation' });
-    }
-    const improvedLine = useImproved
-      ? '<p><strong>Improved effect:</strong> enemies within ' + range + ' squares suffer a -1 penalty on attack rolls while in the radius.' + (affectedEnemies.length ? ' Current enemies tagged: ' + esc(affectedEnemies.join(', ')) + '.' : '') + '</p>'
-      : '';
-    await postCard(actor, useImproved ? 'Improved Battle Meditation' : 'Battle Meditation',
-      '<p>' + esc(actor.name) + ' spends 1 Force Point and enters Battle Meditation.</p>'
-      + '<p><strong>Allied effect:</strong> ' + esc(affectedAllies.join(', ')) + ' gain a +' + attackBonus + ' insight bonus on attack rolls while eligible and within ' + range + ' squares until the end of the encounter. This also affects allied Gunners at Starship Scale.</p>'
-      + improvedLine
-      + '<p><strong>Descriptor:</strong> Mind-Affecting. Range changes after activation remain GM/player adjudicated.</p>',
-      { talentName: useImproved ? 'Improved Battle Meditation' : 'Battle Meditation', rangeSquares: range, affectedAllies, affectedEnemies });
-    return { success: true, rangeSquares: range, affectedAllies, affectedEnemies };
+      for (const row of allies) {
+        const token = canvas?.tokens?.get?.(row.id);
+        const allyActor = token?.actor ?? null;
+        if (!allyActor) continue;
+        affectedAllies.push(allyActor.name);
+        await createEffectOnActor(allyActor, {
+          name: 'Battle Meditation (' + actor.name + ')',
+          icon: 'icons/svg/aura.svg',
+          changes: [],
+          disabled: false,
+          duration: { rounds: 999 },
+          flags: { swse: { talentName: 'Battle Meditation', sourceActorId: actor.id, insightAttackBonus: attackBonus, rangeSquares: range, mindAffecting: true, starshipScaleGunners: true, manualAttackAdjustment: true, expires: 'encounter', note: 'Retain the bonus only while within the Battle Meditation radius and while the source is conscious/alive.' } }
+        }, { source: 'battle-meditation' });
+      }
+      const affectedEnemies = [];
+      for (const row of enemies) {
+        const token = canvas?.tokens?.get?.(row.id);
+        const enemyActor = token?.actor ?? null;
+        if (!enemyActor) continue;
+        affectedEnemies.push(enemyActor.name);
+        await createEffectOnActor(enemyActor, {
+          name: 'Improved Battle Meditation Penalty (' + actor.name + ')',
+          icon: 'icons/svg/downgrade.svg',
+          changes: [],
+          disabled: false,
+          duration: { rounds: 999 },
+          flags: { swse: { talentName: 'Improved Battle Meditation', sourceActorId: actor.id, attackPenalty: -1, rangeSquares: range, mindAffecting: true, manualAttackAdjustment: true, expires: 'encounter', note: 'Opponent suffers -1 attack while within the Battle Meditation radius.' } }
+        }, { source: 'improved-battle-meditation' });
+      }
+      const improvedLine = useImproved
+        ? '<p><strong>Improved effect:</strong> enemies within ' + range + ' squares suffer a -1 penalty on attack rolls while in the radius.' + (affectedEnemies.length ? ' Current enemies tagged: ' + esc(affectedEnemies.join(', ')) + '.' : '') + '</p>'
+        : '';
+      await postCard(actor, useImproved ? 'Improved Battle Meditation' : 'Battle Meditation',
+        '<p>' + esc(actor.name) + ' spends 1 Force Point and enters Battle Meditation.</p>'
+        + '<p><strong>Allied effect:</strong> ' + esc(affectedAllies.join(', ')) + ' gain a +' + attackBonus + ' insight bonus on attack rolls while eligible and within ' + range + ' squares until the end of the encounter. This also affects allied Gunners at Starship Scale.</p>'
+        + improvedLine
+        + '<p><strong>Descriptor:</strong> Mind-Affecting. Range changes after activation remain GM/player adjudicated.</p>',
+        { talentName: useImproved ? 'Improved Battle Meditation' : 'Battle Meditation', rangeSquares: range, affectedAllies, affectedEnemies });
+      return { success: true, rangeSquares: range, affectedAllies, affectedEnemies };
+    });
   }
 
   static async promptResilience(actor) {
@@ -838,23 +893,25 @@ export class ConsularTalentActions {
     }
     const target = await promptToken(actor, 'Exposing Strike', { relation: 'enemy', fallbackLabel: 'target damaged by your lightsaber', note: 'Use after you deal damage with a lightsaber. Spend 1 Force Point to make that target Flat-Footed until the end of your next turn.' });
     if (!target) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Exposing Strike requires spending 1 Force Point.');
-      return null;
-    }
-    if (target.actor) {
-      await createEffectOnActor(target.actor, {
-        name: 'Exposing Strike: Flat-Footed (' + actor.name + ')',
-        icon: 'icons/svg/eye.svg',
-        changes: [],
-        disabled: false,
-        duration: { rounds: 1, turns: 1 },
-        flags: { swse: { talentName: 'Exposing Strike', sourceActorId: actor.id, flatFooted: true, expiresEndOfSourceNextTurn: true, note: "Target is Flat-Footed until the end of the source actor's next turn." } }
-      }, { source: 'exposing-strike' });
-    }
-    await postCard(actor, 'Exposing Strike', '<p>' + esc(actor.name) + ' spends 1 Force Point after damaging <strong>' + esc(target.name) + '</strong> with a lightsaber.</p><p><strong>Effect:</strong> ' + esc(target.name) + ' is Flat-Footed until the end of ' + esc(actor.name) + "'s next turn.</p>", { talentName: 'Exposing Strike', targetActorId: target.actor?.id ?? null });
-    return { success: true, targetName: target.name };
+    // Trigger: this actor's own verified lightsaber hit on that target this round (re-verified by the contract).
+    const attackEvent = latestOwnAttackEvent(actor, { targetId: target.actor?.id ?? null });
+    if (!attackEvent) { ui?.notifications?.warn?.('Exposing Strike: no verified lightsaber hit on that target this round.'); return null; }
+    const fp = await beginContractedForcePoint(actor, "consular:promptExposingStrike", { attackEvent }, { label: "promptExposingStrike" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      if (target.actor) {
+        await createEffectOnActor(target.actor, {
+          name: 'Exposing Strike: Flat-Footed (' + actor.name + ')',
+          icon: 'icons/svg/eye.svg',
+          changes: [],
+          disabled: false,
+          duration: { rounds: 1, turns: 1 },
+          flags: { swse: { talentName: 'Exposing Strike', sourceActorId: actor.id, flatFooted: true, expiresEndOfSourceNextTurn: true, note: "Target is Flat-Footed until the end of the source actor's next turn." } }
+        }, { source: 'exposing-strike' });
+      }
+      await postCard(actor, 'Exposing Strike', '<p>' + esc(actor.name) + ' spends 1 Force Point after damaging <strong>' + esc(target.name) + '</strong> with a lightsaber.</p><p><strong>Effect:</strong> ' + esc(target.name) + ' is Flat-Footed until the end of ' + esc(actor.name) + "'s next turn.</p>", { talentName: 'Exposing Strike', targetActorId: target.actor?.id ?? null });
+      return { success: true, targetName: target.name };
+    });
   }
 
   static async promptGrenadeDefense(actor, { sourceElement = null } = {}) {

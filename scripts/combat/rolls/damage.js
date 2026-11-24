@@ -28,7 +28,6 @@ import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowConte
 import { buildDamagePacket, resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { damageTypesFromContext, physicalDamageTypesOf } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { resolveDamageComposition, buildDamageFormula } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
-import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 import { isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { WeaponRuntimeError, reportWeaponRuntimeError } from "/systems/foundryvtt-swse/scripts/items/weapon-runtime/errors.js";
@@ -243,21 +242,8 @@ export async function rollDamageWithEffects(actor, weapon, target, context = {})
   const roll = await rollDamage(actor, weapon, { ...context, target });
   if (!roll) {return null;}
 
-  // Apply post-damage effects if we have a target
+  // Per-target bookkeeping when there is a target
   if (target) {
-    const effectContext = {
-      ...context,
-      weapon,
-      target,
-      damageDealt: roll.total
-    };
-
-    try {
-      await TalentEffectEngine.applyPostDamageEffects(actor, target, effectContext);
-    } catch (err) {
-      swseLogger.warn('Failed to apply post-damage effects:', err);
-    }
-
     // Track last attack target for Skirmisher
     await actor.setFlag('foundryvtt-swse', 'lastAttackTarget', target.id);
 

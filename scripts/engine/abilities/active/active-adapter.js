@@ -20,7 +20,7 @@ import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scrip
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { postNoticeCard } from "/systems/foundryvtt-swse/scripts/chat/notice-card.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
@@ -87,7 +87,7 @@ export class ActiveAdapter {
    * @param {Object} ability - ACTIVE/EFFECT ability item
    * @returns {Promise<Object>} Result { success, reason, targetCount, duration }
    */
-  static async handleEffect(actor, ability) {
+  static async handleEffect(actor, ability, options = {}) {
     try {
       const meta = ability.system?.abilityMeta;
       const activation = meta?.activation;
@@ -105,7 +105,7 @@ export class ActiveAdapter {
         if (!check.allowed) {
           const reason = `Insufficient ${activation.actionType} action available`;
           SWSELogger.log(`[ActiveAdapter] EFFECT blocked (action economy): ${ability.name} — ${reason}`);
-          await SWSEChat.postMessage({
+          await postNoticeCard({
             flavor: `❌ ${ability.name}`,
             content: reason,
             actor
@@ -121,7 +121,7 @@ export class ActiveAdapter {
 
       if (!limitCheck.allowed) {
         SWSELogger.log(`[ActiveAdapter] EFFECT blocked (frequency): ${ability.name} — ${limitCheck.reason}`);
-        await SWSEChat.postMessage({
+        await postNoticeCard({
           flavor: `❌ ${ability.name}`,
           content: limitCheck.reason,
           actor
@@ -129,20 +129,9 @@ export class ActiveAdapter {
         return { success: false, reason: limitCheck.reason };
       }
 
-      // ─── 3. Verify cost ─────────────────────────────────────────────────────
+      // ─── 3. Cost (described here; PAID in step 4b through the canonical V2 Force Point transaction) ──────
       let costDetails = '';
       if (cost?.forcePoints > 0) {
-        const currentForce = actor.system?.forcePoints?.available ?? 0;
-        if (currentForce < cost.forcePoints) {
-          const reason = `Insufficient Force Points (need ${cost.forcePoints}, have ${currentForce})`;
-          SWSELogger.log(`[ActiveAdapter] EFFECT blocked (cost): ${ability.name} — ${reason}`);
-          await SWSEChat.postMessage({
-            flavor: `❌ ${ability.name}`,
-            content: reason,
-            actor
-          });
-          return { success: false, reason };
-        }
         costDetails = `${cost.forcePoints} Force Point${cost.forcePoints !== 1 ? 's' : ''}`;
       }
 
@@ -151,7 +140,7 @@ export class ActiveAdapter {
       if (targets.length === 0 && targeting?.targetType !== 'SELF') {
         const reason = `No valid targets found`;
         SWSELogger.log(`[ActiveAdapter] EFFECT blocked (targeting): ${ability.name} — ${reason}`);
-        await SWSEChat.postMessage({
+        await postNoticeCard({
           flavor: `❌ ${ability.name}`,
           content: reason,
           actor
@@ -161,25 +150,61 @@ export class ActiveAdapter {
 
       const effectTargets = targets.length > 0 ? targets : [actor];
 
+      // ─── 4b. Pay (Class/Force x Force V2, Decision A) ────────────────────────────────────────────────
+      // Spend through ActorEngine.spendForcePoints BEFORE any effect exists. ForcePointsService.authorizeSpend decides
+      // (eligible points, round cap, certified ability contract FP-RD-003 or explicit GM adjudication). A denial means the
+      // effect is NOT applied and nothing is charged. The former code applied the effect first and then wrote
+      // system.forcePoints.value from a non-canonical `forcePoints.available` field.
+      let fpReceipt = null;
+      if (cost?.forcePoints > 0) {
+        try {
+          fpReceipt = await ActorEngine.spendForcePoints(actor, cost.forcePoints, {
+            useKind: 'ability-option',
+            abilitySourceRef: `active-ability:${ability.id}`,
+            ...(options?.gmAdjudication ? { gmAdjudication: options.gmAdjudication } : {})
+          });
+        } catch (denied) {
+          const reason = denied?.message ?? 'Force Point spend was not authorized';
+          SWSELogger.log(`[ActiveAdapter] EFFECT blocked (cost): ${ability.name} — ${reason}`);
+          await postNoticeCard({ flavor: `❌ ${ability.name}`, content: reason, actor });
+          return { success: false, reason };
+        }
+        if (!fpReceipt?.receiptId) {
+          const reason = `Insufficient Force Points (need ${cost.forcePoints})`;
+          await postNoticeCard({ flavor: `❌ ${ability.name}`, content: reason, actor });
+          return { success: false, reason };
+        }
+      }
+
       // ─── 5. Apply effect to each target ──────────────────────────────────────
       const duration = effect?.duration;
       const durationRounds = this._parseDuration(duration);
 
-      for (const target of effectTargets) {
-        await this._applyEffect(target, ability, effect);
+      let appliedTargets = 0;
+      try {
+        for (const target of effectTargets) {
+          await this._applyEffect(target, ability, effect);
+          appliedTargets += 1;
 
-        // Track duration if applicable
-        if (durationRounds > 0) {
-          const currentRound = game?.combat?.round ?? 0;
-          DurationEngine.trackEffect(target, ability.id, durationRounds, currentRound);
+          // Track duration if applicable
+          if (durationRounds > 0) {
+            const currentRound = game?.combat?.round ?? 0;
+            DurationEngine.trackEffect(target, ability.id, durationRounds, currentRound);
+          }
         }
+      } catch (applyError) {
+        if (fpReceipt) {
+          // Nothing took effect: compensate ONLY this receipt, exactly. Some targets already carry the paid effect: it
+          // exists, so the point is finalized (never refund an applied effect).
+          if (appliedTargets === 0) await ActorEngine.rollbackForcePointSpend(actor, fpReceipt);
+          else await ActorEngine.finalizeForcePointSpend(actor, fpReceipt);
+        }
+        throw applyError;
       }
 
-      // ─── 6. Deduct cost ─────────────────────────────────────────────────────
-      if (cost?.forcePoints > 0) {
-        await ActorEngine.updateActor(actor, {
-          'system.forcePoints.value': Math.max(0, (actor.system?.forcePoints?.available ?? 0) - cost.forcePoints)
-        });
+      // ─── 6. Settle the cost: the paid effect now exists, so finalize the receipt exactly ─────────────────
+      if (fpReceipt) {
+        await ActorEngine.finalizeForcePointSpend(actor, fpReceipt);
       }
 
       // ─── 7. Record activation ─────────────────────────────────────────────────
@@ -191,7 +216,7 @@ export class ActiveAdapter {
         .filter(Boolean)
         .join(' • ');
 
-      await SWSEChat.postMessage({
+      await postNoticeCard({
         flavor: `✓ ${ability.name}`,
         content: successMsg + (details ? `\n${details}` : ''),
         actor
@@ -250,7 +275,7 @@ export class ActiveAdapter {
         // Deactivate the mode
         await ability.setFlag('foundryvtt-swse', 'modeActive', false);
 
-        await SWSEChat.postMessage({
+        await postNoticeCard({
           flavor: `◯ ${ability.name}`,
           content: `**${ability.name}** deactivated`,
           actor
@@ -290,7 +315,7 @@ export class ActiveAdapter {
         if (!check.allowed) {
           const reason = `Insufficient ${activation.actionType} action available`;
           SWSELogger.log(`[ActiveAdapter] MODE blocked (action economy): ${ability.name}`);
-          await SWSEChat.postMessage({
+          await postNoticeCard({
             flavor: `❌ ${ability.name}`,
             content: reason,
             actor
@@ -312,7 +337,7 @@ export class ActiveAdapter {
       // 2e. Activate the mode
       await ability.setFlag('foundryvtt-swse', 'modeActive', true);
 
-      await SWSEChat.postMessage({
+      await postNoticeCard({
         flavor: `● ${ability.name}`,
         content: `**${ability.name}** activated`,
         actor

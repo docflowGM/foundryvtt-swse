@@ -24,6 +24,7 @@ import {
 import { rollDamage as canonicalRollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
 import { isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
+import { AttackEventAuthority } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-authority.js";
 import { buildLedgerFromComponents, buildInvocationLedgerEntry, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
@@ -746,6 +747,7 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
     attacker,
     weapon,
     attackType: damageContext.attackType,
+    weaponId: weapon?.id ?? '',
     damageType: damageContext.damageType,
     damageTypes: damageContext.damageTypes,
     originalDamageTypes: damageContext.originalDamageTypes,
@@ -764,15 +766,37 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
     defenderName: defender.name,
     timerLabel: '6.0 s',
     reason: `Incoming ${damageContext.attackType} attack total ${attackTotal}.`,
+    // Carry the original weapon eligibility context to chat. The resolver
+    // independently rechecks these typed fields before charging a reaction.
+    attackType: damageContext.attackType,
     damageType: damageContext.damageType,
     damageTypes: damageContext.damageTypes,
     originalDamageTypes: damageContext.originalDamageTypes,
+    sonicCannotBeDeflected: damageContext.sonicCannotBeDeflected,
+    cannotBeNegatedBy: damageContext.cannotBeNegatedBy,
     reactions: available.map(reaction => ({
       ...reaction,
       available: true,
       sublabel: reaction.key === 'block' || reaction.key === 'deflect' ? `DC ${attackTotal} · UTF` : ''
     }))
   };
+}
+
+/**
+ * Mint the authoritative incoming-attack event for a reaction window (03B
+ * Block/Deflect). Called only AFTER the roll outcome is known; the id is carried
+ * into the chat card, but the chat dataset is never the authority
+ * (AttackEventAuthority.verify re-reads the attacker-side record).
+ */
+async function attachAttackEvent(reactionContext, { actor, target, weapon, attackTotal, naturalD20 = null, hit = null, critical = null }) {
+  if (!reactionContext || !actor || !target) return reactionContext;
+  const { attackType, damageTypes } = damageContextForReaction({ weapon });
+  const event = await AttackEventAuthority.produce({ attacker: actor, defender: target, weapon, attackType, damageTypes, attackTotal, naturalD20, hit, critical });
+  if (event) {
+    reactionContext.attackEventId = event.id;
+    // Provisional attack events can still be cancelled/superseded later by the attack workflow.
+  }
+  return reactionContext;
 }
 
 // Damage SSOT migration: die-size-step/extra-weapon-dice formula assembly
@@ -1148,7 +1172,7 @@ export async function rollAttack(actor, weapon, options = {}) {
   const isCritical = outcome.critical;
   // Phase 5D-G: the shot was fired -- record owned fire state (cooldown, reload, reset, preparation) for the next attack
   await FireStateStore.commitFired(actor, weapon, rollOptions.weaponRuntime, rollOptions, temporalSpend.paid);
-  const reactionContext = buildReactionContextForAttack(actor, target, weapon, roll.total);
+  const reactionContext = await attachAttackEvent(buildReactionContextForAttack(actor, target, weapon, roll.total), { actor, target, weapon, attackTotal: roll.total, naturalD20: d20, hit: isHit, critical: isCritical });
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
     ...rollOptions,
     formula: rollFormula,
@@ -1574,7 +1598,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
 
   const atkTotal = attackRoll?.total;
   const dmgTotal = damageRoll?.total;
-  const reactionContext = buildReactionContextForAttack(actor, target, weapon, attackRoll.total);
+  const reactionContext = await attachAttackEvent(buildReactionContextForAttack(actor, target, weapon, attackRoll.total), { actor, target, weapon, attackTotal: attackRoll.total, hit: isHit, critical: isCritical });
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, attackRoll, {
     ...rollOptions,
     formula: rollFormula,

@@ -1,10 +1,15 @@
 import assert from 'node:assert/strict';
-import {
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+// These suites import engine modules that use '/systems/foundryvtt-swse/...' paths: register the Foundry path loader BEFORE the dynamic imports.
+registerFoundryPathLoader();
+installFoundryShimGlobals();
+const {
   buildMitigationEffectData,
   buildVitalTransferTransaction,
   getVitalTransferMultiplier
-} from '../scripts/engine/force/force-power-outcome-service.js';
-import { VITAL_TRANSFER_RESOLUTION } from '../scripts/engine/force/phase5-force-healing-mitigation.js';
+} = await import('../scripts/engine/force/force-power-outcome-service.js');
+const { VITAL_TRANSFER_RESOLUTION } = await import('../scripts/engine/force/phase5-force-healing-mitigation.js');
 
 assert.equal(getVitalTransferMultiplier(14), 0);
 assert.equal(getVitalTransferMultiplier(15), 2);

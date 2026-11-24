@@ -37,7 +37,12 @@ import { MutationInterceptor } from "./scripts/governance/mutation/MutationInter
 import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
 import { openEnforcerResourceDelivery } from "./scripts/apps/enforcer-resource-delivery-dialog.js";
 import { openOfficerShareTalentAction } from "./scripts/apps/officer-share-talent-dialog.js";
+import { openJediMasterSerenity } from "./scripts/apps/jedi-master-serenity-dialog.js";
+import { openSithLordTemptation, reviewSithLordTemptationConsequences } from "./scripts/apps/sith-lord-temptation-dialog.js";
+import { openProphetGmVisionReview } from "./scripts/apps/force-disciple-prophet-review-dialog.js";
 import { registerOfficerShareTalentCleanup } from "./scripts/engine/combat/officer-share-talent-service.js";
+import { registerJediMasterSerenityCleanup } from "./scripts/engine/combat/jedi-master-serenity-service.js";
+import { registerSithLordTemptationHooks } from "./scripts/engine/combat/sith-lord-temptation-service.js";
 import { ConditionTrackFeatActions } from "./scripts/engine/feats/condition-track-feat-actions.js";
 import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
@@ -135,9 +140,20 @@ Hooks.once("init", async () => {
     EntityCreateBrowser,
     openEntityCreateBrowser,
     openForceAlchemyWorkbench,
+    // GM tools for a paid effect whose Force Point receipt never settled (client closed, write rejected): inventory + a recorded GM decision.
+    forcePointReceipts: {
+      listUnsettled: (actor) => ActorEngine.listUnsettledForcePointReceipts(actor),
+      reconcile: (actor, receiptId, options) => ActorEngine.reconcileForcePointReceipt(actor, receiptId, options)
+    },
     classFeatures: {
       enforcerResources: { open: openEnforcerResourceDelivery },
-      officerShareTalent: { open: openOfficerShareTalentAction }
+      officerShareTalent: { open: openOfficerShareTalentAction },
+      jediMasterSerenity: { open: openJediMasterSerenity },
+      sithLordTemptation: {
+        open: openSithLordTemptation,
+        reviewConsequences: reviewSithLordTemptationConsequences
+      },
+      forceDiscipleProphet: { review: openProphetGmVisionReview }
     }
   };
 
@@ -221,6 +237,8 @@ Hooks.once("init", async () => {
   registerForceExecutorChatHooks();
   registerActionEconomyHooks();
   registerOfficerShareTalentCleanup();
+  registerJediMasterSerenityCleanup();
+  registerSithLordTemptationHooks();
   registerFeatHousekeepingRuntimePatches();
   registerConsularTalentActions();
   registerSentinelTalentActions();

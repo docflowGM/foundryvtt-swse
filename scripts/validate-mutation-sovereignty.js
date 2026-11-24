@@ -18,7 +18,6 @@ const PROTECTED_PATHS = [
   'scripts/infrastructure/hooks/talent-effects-hooks.js',
   'scripts/engine/force/force-power-effects-engine.js',
   'scripts/engine/combat/CombatEngine.js',
-  'scripts/talents/DarkSidePowers.js',
   'scripts/houserules/houserule-status-effects.js',
   'scripts/utils/force-power-manager.js',
   'scripts/infrastructure/hooks/actor-hooks.js',

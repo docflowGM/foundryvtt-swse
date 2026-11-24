@@ -1,0 +1,461 @@
+{
+  "schemaVersion": "2.9.0",
+  "package": "starships-of-the-galaxy",
+  "purpose": "First-class feat, talent, equipment, power and shared-rule influence on starship maneuver acquisition and activation; no runtime name heuristics.",
+  "applicationOrder": [
+    "eligibility",
+    "grant",
+    "pre-action",
+    "pre-target",
+    "pre-roll",
+    "after-roll",
+    "pre-damage",
+    "apply-effects",
+    "spend-recovery"
+  ],
+  "eventSemantics": {
+    "Pilot check invariance": "Force Pilot only substitutes the Pilot skill modifier. The check is still classified Pilot, so the natural-20 restoration rule and Force Reflexes remain eligible.",
+    "Gunner check invariance": "Gunner maneuvers make/consume weapon attack rolls. Neither Force Pilot nor Force Reflexes substitutes or rerolls a weapon attack.",
+    "Force maneuver invariance": "Target Sense uses Use the Force; not Pilot. It may benefit from UTF-specific feats but not Pilot-only rerolls or nat-20 Pilot suite recovery.",
+    "Corellian Slip errata": "Follow-up attack is free action after entering square. Errata has precedence over first printing.",
+    "Fighter-group errata": "Every group member must know maneuver, must use it together, and joining a group terminates individually active attack patterns.",
+    "Attack-pattern lifecycle": "Only one pattern active at a time. A new pattern replaces prior; old suite instance remains spent until recovered.",
+    "Shared property rule": "No additional damage or action benefit is granted by source-name matching. Positive, negative and scoped influence edges apply only to explicitly matching typed targets."
+  },
+  "edges": [
+    {
+      "ruleId": "sotg/influence/starship-tactics-slots",
+      "sourceDefinitionId": "sotg/feat/starship-tactics",
+      "sourceDomain": "feat",
+      "sourceName": "Starship Tactics",
+      "sourcePage": 20,
+      "targetSelector": {
+        "domain": "starship-maneuver"
+      },
+      "event": "feat-acquisition",
+      "phase": "grant",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "maneuver-suite-grant",
+          "formula": "max(1,1+wisdomModifier)",
+          "featInstances": "per-instance",
+          "allowRepeatManeuver": true,
+          "recalculateOnPermanentWisdomIncrease": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Requires trained Pilot and Vehicular Combat; repeat feat and repeated maneuver are legal.",
+        "WIS increase creates one extra slot per previously taken Starship Tactics feat."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/force-reflexes",
+      "sourceDefinitionId": "sotg/talent/force-reflexes",
+      "sourceDomain": "talent",
+      "sourceName": "Force Reflexes",
+      "sourcePage": 16,
+      "targetSelector": {
+        "domain": "starship-maneuver",
+        "rollFamily": "pilot"
+      },
+      "event": "maneuver-pilot-activation",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [
+        "Actor has Force Sensitivity, Starship Tactics, Force Pilot, and the Force Reflexes talent."
+      ],
+      "operations": [
+        {
+          "op": "maneuver-force-reflexes-reroll",
+          "forcePointCost": 1,
+          "checkSkill": "pilot",
+          "keep": "higher",
+          "notApplicableTo": [
+            "weapon-attack",
+            "use-the-force"
+          ]
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Keep higher of original and reroll.",
+        "Consumes exactly one Force Point, not a standard Force bonus die.",
+        "Does not work on Target Sense or any [gunner] weapon attack."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/tactical-genius",
+      "sourceDefinitionId": "sotg/feat/tactical-genius",
+      "sourceDomain": "feat",
+      "sourceName": "Tactical Genius",
+      "sourcePage": 20,
+      "targetSelector": {
+        "domain": "starship-maneuver"
+      },
+      "event": "natural-20-attack",
+      "phase": "spend-recovery",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "maneuver-recover-all",
+          "trigger": "natural-20-on-attack-roll",
+          "when": "end-round"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Natural 20 on an attack roll restores all maneuvers at end of ROUND; does not change Pilot nat20 recovery time."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/squadron-tactics-errata",
+      "sourceDefinitionId": "sotg/talent/squadron-tactics",
+      "sourceDomain": "talent",
+      "sourceName": "Squadron Tactics",
+      "sourcePage": 18,
+      "targetSelector": {
+        "domain": "starship-maneuver",
+        "excludedDescriptors": [
+          "attack-pattern"
+        ]
+      },
+      "event": "squadron-maneuver-shared",
+      "phase": "grant",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "squadron-share-maneuver",
+          "oncePerEncounter": true,
+          "sharedDuration": "next-turn-once",
+          "requiresDescriptorAbsent": "attack-pattern",
+          "independentChecks": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Cannot share any attack-pattern maneuver under WotC errata.",
+        "Each ally rolls its own check when it uses granted maneuver."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/combat-thrusters",
+      "sourceDefinitionId": "sotg/equipment/combat-thrusters",
+      "sourceDomain": "equipment",
+      "sourceName": "Combat Thrusters",
+      "sourcePage": 40,
+      "targetSelector": {
+        "domain": "starship-maneuver"
+      },
+      "event": "pilot-vehicle-eligibility",
+      "phase": "eligibility",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "combat-thrusters-qualify",
+          "vehicleCategory": "space-transport",
+          "treatAs": "starfighter-for-dogfights-and-maneuvers",
+          "doesNotChange": "reflex-size-modifier"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Transport qualifies for pilot maneuvers if equipped; native Reflex size modifier remains unchanged."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/one-active-pattern",
+      "sourceDefinitionId": "sotg/rule/one-active-attack-pattern",
+      "sourceDomain": "rule",
+      "sourceName": "Attack Pattern Exclusivity",
+      "sourcePage": 24,
+      "targetSelector": {
+        "domain": "starship-maneuver",
+        "requiredDescriptor": "attack-pattern"
+      },
+      "event": "activate-maneuver",
+      "phase": "apply-effects",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "maneuver-exclusive-pattern",
+          "activeLimit": 1,
+          "replacesExisting": true,
+          "oldInstanceRemainsSpent": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Exactly one active pattern.",
+        "Switching patterns does not instantly recover the old maneuver."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/fighter-group-errata",
+      "sourceDefinitionId": "sotg/rule/fighter-group",
+      "sourceDomain": "rule",
+      "sourceName": "Fighter Groups (Errata)",
+      "sourcePage": 31,
+      "targetSelector": {
+        "domain": "starship-maneuver"
+      },
+      "event": "fighter-group-member-maneuver",
+      "phase": "eligibility",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "fighter-group-joint-maneuver",
+          "everyMemberMustKnow": true,
+          "allMembersUse": true,
+          "joiningEndsIndividualPattern": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "All members must have maneuver; joining group removes an individual pattern."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/force-pilot-applies-only-pilot",
+      "sourceDefinitionId": "core/talent/force-pilot",
+      "sourceDomain": "talent",
+      "sourceName": "Force Pilot",
+      "sourcePage": 101,
+      "targetSelector": {
+        "domain": "starship-maneuver",
+        "rollFamily": "pilot"
+      },
+      "event": "maneuver-pilot-check",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "check-modifier-source-override",
+          "checkRemains": "pilot",
+          "modifierSource": "use-the-force",
+          "trainedPilotGlobally": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Still Pilot roll for natural 20 and Force Reflexes.",
+        "Never changes [gunner] attack or Target Sense UTF roll."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/force-pilot-does-not-apply-gunner",
+      "sourceDefinitionId": "core/talent/force-pilot",
+      "sourceDomain": "talent",
+      "sourceName": "Force Pilot",
+      "sourcePage": 101,
+      "targetSelector": {
+        "domain": "starship-maneuver",
+        "rollFamily": "weapon-attack"
+      },
+      "event": "maneuver-weapon-attack",
+      "phase": "pre-roll",
+      "interactionMode": "deny",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "attack-substitution-exclusion",
+          "blockedRollFamily": "weapon-attack",
+          "explanation": "Force Pilot only substitutes a modifier on Pilot checks, not vehicle weapon attacks."
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Gunner weapon attack uses vehicle attack authority as normal."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/force-pilot-does-not-apply-target-sense",
+      "sourceDefinitionId": "core/talent/force-pilot",
+      "sourceDomain": "talent",
+      "sourceName": "Force Pilot",
+      "sourcePage": 101,
+      "targetSelector": {
+        "definitionIds": [
+          "sotg/starship-maneuver/target-sense"
+        ]
+      },
+      "event": "maneuver-use-the-force-check",
+      "phase": "pre-roll",
+      "interactionMode": "deny",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "attack-substitution-exclusion",
+          "blockedRollFamily": "use-the-force",
+          "explanation": "Target Sense already uses UTF; no second substitution or Pilot-only reroll."
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No double Use the Force ability modifier."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/target-sense-battle-strike",
+      "sourceDefinitionId": "sotg/rule/target-sense-battle-strike",
+      "sourceDomain": "rule",
+      "sourceName": "Target Sense and Battle Strike",
+      "sourcePage": 30,
+      "targetSelector": {
+        "definitionIds": [
+          "sotg/starship-maneuver/target-sense",
+          "core/force-power/battle-strike"
+        ]
+      },
+      "event": "weapon-attack-after-power-and-maneuver",
+      "phase": "pre-roll",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "battle-strike-target-sense-stacking",
+          "oneBonusType": "force",
+          "otherBonusType": "maneuver",
+          "noDoubleSourceStat": true
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Both bonuses stack only if both effects applied legally and have remaining duration."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/corellian-slip-errata",
+      "sourceDefinitionId": "sotg/rule/corellian-slip-errata",
+      "sourceDomain": "rule",
+      "sourceName": "Corellian Slip Errata",
+      "sourcePage": 25,
+      "targetSelector": {
+        "definitionIds": [
+          "sotg/starship-maneuver/corellian-slip"
+        ]
+      },
+      "event": "enter-target-square",
+      "phase": "pre-action",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "corellian-slip-errata",
+          "attackAction": "free",
+          "replacesPrintedAction": "swift"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Do not charge a swift action for the maneuver follow-up attack."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/pilot-natural-20-recovery",
+      "sourceDefinitionId": "sotg/rule/pilot-nat20",
+      "sourceDomain": "rule",
+      "sourceName": "Maneuver Pilot Natural 20",
+      "sourcePage": 24,
+      "targetSelector": {
+        "domain": "starship-maneuver",
+        "rollFamily": "pilot"
+      },
+      "event": "maneuver-pilot-natural-20",
+      "phase": "spend-recovery",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "maneuver-recover-all",
+          "trigger": "natural-20-on-maneuver-pilot-check",
+          "when": "end-turn"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "No recovery on unrelated Pilot, a [gunner] weapon attack, or Target Sense UTF."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/fp-recover-one",
+      "sourceDefinitionId": "sotg/rule/fp-recovery",
+      "sourceDomain": "rule",
+      "sourceName": "Force Point Maneuver Recovery",
+      "sourcePage": 24,
+      "targetSelector": {
+        "domain": "starship-maneuver"
+      },
+      "event": "force-point-reaction-recovery",
+      "phase": "spend-recovery",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "maneuver-recover-one",
+          "forcePointCost": 1,
+          "action": "reaction",
+          "fromPool": "spent-maneuver-instance"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Recover exactly one existing spent instance; never grant new definition or slot."
+      ]
+    },
+    {
+      "ruleId": "sotg/influence/rest-recover-all",
+      "sourceDefinitionId": "sotg/rule/rest-recovery",
+      "sourceDomain": "rule",
+      "sourceName": "Maneuver After-Combat Rest",
+      "sourcePage": 24,
+      "targetSelector": {
+        "domain": "starship-maneuver"
+      },
+      "event": "one-minute-rest-after-encounter",
+      "phase": "spend-recovery",
+      "interactionMode": "modify",
+      "conditions": [],
+      "operations": [
+        {
+          "op": "maneuver-recover-all",
+          "trigger": "one-minute-rest-after-combat",
+          "when": "after-rest"
+        }
+      ],
+      "resourceChoices": [],
+      "testAssertions": [
+        "Rest without one minute or before starship battle ends is not this recovery event."
+      ]
+    }
+  ],
+  "excludedScope": [
+    "Active runtime code and migration",
+    "Unrelated vehicle customization rules",
+    "Generic NPC maneuver selection policy (a different source-backed GM layer)",
+    "Feats and talents not demonstrated to modify maneuver or vehicle checks"
+  ],
+  "schemaEvolutionPolicy": {
+    "newPublicationMayAdd": [
+      "selector",
+      "event",
+      "phase",
+      "operation-kind",
+      "resource-lifecycle",
+      "target-domain",
+      "vehicle-role",
+      "crew-capability"
+    ],
+    "previousRecordsMustRevalidate": true,
+    "cannotBeAddedAsUntypedFreeText": true,
+    "ambiguousPublishedEffect": "Escalate as source review; no automatic invention by implementer."
+  }
+}

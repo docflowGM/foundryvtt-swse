@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0.5",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 503,
+    "totalAbilities": 500,
     "lastModified": "2026-06-12",
     "multiOptionTalents": 9,
     "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced) (27 Starship Maneuvers from Ace Pilot tree) (27 Starship Maneuvers from Ace Pilot tree) Sith/Dark Side pasted talent batch backchecked; Sith Alchemy talisman UI deferred. Dark Side Devotee and Beastwarden pasted talent batch backchecked; Dark Side Talisman automation deferred."
@@ -219,40 +219,22 @@
       "name": "Force Focus",
       "talentName": "Force Focus",
       "talentTree": "Jedi Consular",
-      "description": "Add one-half your character level (rounded down) to Use the Force checks. Once per encounter, you may regain one spent Force power as a swift action. You may also spend a Force Point as a swift action to regain a spent Force power.",
+      "description": "As a full-round action, you may make a DC 15 Use the Force check. If the check succeeds, you regain one spent Force power of your choice.",
       "actionType": "passive",
-      "effects": [
-        {
-          "type": "skillBonus",
-          "skillKey": "useTheForce",
-          "value": "floor(level/2)",
-          "permanent": true
-        }
-      ],
-      "specialAction": {
-        "name": "Regain Force Power",
-        "actionType": "swift",
-        "uses": {
-          "max": 1,
-          "perEncounter": true
-        },
-        "effect": "Regain one spent Force power"
-      },
-      "alternativeAction": {
-        "name": "Regain via Force Point",
-        "actionType": "swift",
-        "cost": {
-          "forcePoints": 1
-        },
-        "effect": "Spend a Force Point to regain one spent Force power (no limit)"
-      },
+      "effects": [],
       "tags": [
         "force",
         "skill",
-        "power-recovery",
-        "force-point"
+        "power-recovery"
       ],
-      "icon": "fas fa-atom"
+      "icon": "fas fa-atom",
+      "metadataAudit": {
+        "state": "CORRECTED_FROM_CANONICAL",
+        "canonicalRecord": "packs/talents.db:Force Focus",
+        "printedSource": "Core Rulebook p.101",
+        "automation": "none (descriptive card only; no Force Point spend)",
+        "audit": "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md"
+      }
     },
     "inspire-confidence": {
       "id": "inspire-confidence",
@@ -1881,26 +1863,22 @@
       "name": "Severing Strike",
       "talentName": "Severing Strike",
       "talentTree": "Lightsaber Combat",
-      "description": "When you score a critical hit with a lightsaber, you may spend a Force Point to sever one of the target's limbs (your choice). The target loses the limb and takes a persistent -5 penalty to related checks.",
-      "actionType": "reaction",
-      "trigger": "Critical hit with lightsaber",
-      "cost": {
-        "forcePoints": 1
-      },
-      "effects": [
-        {
-          "type": "sever",
-          "target": "limb"
-        }
-      ],
+      "description": "When lightsaber damage equals or exceeds both the target's current hit points and damage threshold, you may deal half damage instead, move the target -1 step on the condition track, and sever one arm or leg. A severed arm prevents use of that hand and imposes -5 on Strength- and Dexterity-based checks and skills. A severed leg knocks the target prone, halves speed and carrying capacity, and imposes the same -5 penalty. The injury is a persistent condition that can be removed by successful surgery; a cybernetic replacement negates these reductions and penalties.",
+      "actionType": "passive",
+      "effects": [],
       "tags": [
         "lightsaber",
-        "damage",
-        "force-point",
-        "reaction"
+        "damage"
       ],
       "icon": "fas fa-cut",
-      "linkedAction": "lightsaber-critical"
+      "linkedAction": "lightsaber-critical",
+      "metadataAudit": {
+        "state": "CORRECTED_FROM_CANONICAL",
+        "canonicalRecord": "packs/talents.db:Severing Strike",
+        "printedSource": "Core Rulebook p.218",
+        "automation": "none (descriptive card only; no Force Point spend)",
+        "audit": "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md"
+      }
     },
     "dark-side-sense": {
       "id": "dark-side-sense",
@@ -2033,23 +2011,21 @@
       "name": "Shien",
       "talentName": "Shien",
       "talentTree": "Lightsaber Forms",
-      "description": "While active, gain +5 on ranged attack rolls made with Redirect Shot. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
-      "actionType": "swift",
-      "trigger": "After successfully using Deflect",
-      "cost": {
-        "forcePoints": 1
-      },
+      "description": "Whenever you redirect a deflected blaster bolt with Redirect Shot, you gain a +5 bonus on your ranged attack roll.",
+      "actionType": "passive",
       "effects": [],
       "tags": [
-        "lightsaber",
-        "form",
-        "active-form-only"
+        "lightsaber"
       ],
       "icon": "fas fa-jedi",
       "linkedAction": "adopt-lightsaber-form-shien",
-      "requiresActiveLightsaberForm": true,
-      "exclusiveGroup": "lightsaber-form",
-      "activationAction": "swift"
+      "metadataAudit": {
+        "state": "CORRECTED_FROM_CANONICAL",
+        "canonicalRecord": "packs/talents.db:Shien",
+        "printedSource": "Core Rulebook p.218",
+        "automation": "none (descriptive card only; no Force Point spend)",
+        "audit": "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md"
+      }
     },
     "shii-cho": {
       "id": "shii-cho",
@@ -2138,154 +2114,44 @@
       "name": "Acrobatic Recovery",
       "talentName": "Acrobatic Recovery",
       "talentTree": "Martial Arts",
-      "description": "When knocked prone, you may spend a Force Point to immediately stand up as a free action.",
-      "actionType": "reaction",
-      "trigger": "Knocked prone",
-      "cost": {
-        "forcePoints": 1
-      },
-      "effects": [
-        {
-          "type": "standUp",
-          "actionType": "free"
-        }
-      ],
+      "description": "If any effect causes you to fall Prone, you can make a DC 20 Acrobatics check to remain on your feet.",
+      "actionType": "passive",
+      "effects": [],
       "tags": [
-        "mobility",
-        "force-point",
-        "reaction"
+        "mobility"
       ],
       "icon": "fas fa-redo",
-      "linkedAction": "acrobatics-prone"
+      "linkedAction": "acrobatics-prone",
+      "metadataAudit": {
+        "state": "CORRECTED_FROM_CANONICAL",
+        "canonicalRecord": "packs/talents.db:Acrobatic Recovery",
+        "printedSource": "Core Rulebook p.40",
+        "automation": "none (descriptive card only; no Force Point spend)",
+        "audit": "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md"
+      }
     },
     "force-haze": {
       "id": "force-haze",
       "name": "Force Haze",
       "talentName": "Force Haze",
       "talentTree": "Telekinesis",
-      "description": "Spend a Force Point as a standard action to create a distortion in the Force. All creatures within 6 squares must succeed on a Will save (DC 15 + your Cha modifier) or be dazed for 1 round.",
-      "actionType": "standard",
-      "cost": {
-        "forcePoints": 1
-      },
-      "roll": {
-        "dc": "15 + charMod",
-        "dcLabel": "DC 15 + Charisma modifier",
-        "label": "Force Haze"
-      },
-      "effects": [
-        {
-          "type": "condition",
-          "condition": "dazed",
-          "duration": 1,
-          "target": "enemies",
-          "range": 6
-        }
-      ],
+      "description": "You can spend a Force Point as a Standard Action to create a \"Haze\" that hides you and your allies from the perception of others. You can hide a number of creatures in line of sight equal to your Class Level. Make a Use the Force check and compare the result to the Will Defense of any opponent that moves into line of sight of any creature hidden by your Force Haze. If your check result equals or exceeds the opponent's Will Defense, all hidden creatures are treated as if they had Total Concealment against the opponent. The Force Haze lasts for up to 1 minute but is dismissed instantly if anyone hidden by the Force Haze makes an attack.",
+      "actionType": "passive",
+      "effects": [],
       "tags": [
         "force",
-        "control",
-        "force-point",
-        "standard"
+        "control"
       ],
       "icon": "fas fa-cloud",
-      "linkedAction": "force-power-aoe"
-    },
-    "improved-dark-rage": {
-      "id": "improved-dark-rage",
-      "name": "Improved Dark Rage",
-      "talentName": "Improved Dark Rage",
-      "talentTree": "Dark Side",
-      "description": "When using Dark Rage, you may spend a Force Point to gain an additional +2 bonus to attack rolls, damage rolls, and Fortitude Defense for the duration.",
-      "actionType": "modifier",
-      "modifies": "dark-rage",
-      "cost": {
-        "forcePoints": 1
-      },
-      "effects": [
-        {
-          "type": "attackBonus",
-          "value": 2
-        },
-        {
-          "type": "damageBonus",
-          "value": 2
-        },
-        {
-          "type": "defenseBonus",
-          "defense": "fortitude",
-          "value": 2
-        }
-      ],
-      "tags": [
-        "dark-side",
-        "force-point",
-        "modifier"
-      ],
-      "icon": "fas fa-angry",
-      "linkedAction": "dark-rage-enhancement"
-    },
-    "surge-of-power": {
-      "id": "surge-of-power",
-      "name": "Surge of Power",
-      "talentName": "Surge of Power",
-      "talentTree": "Force Adept",
-      "description": "Spend a Force Point as a swift action to add your heroic level to the damage dealt by your next Force power used this turn.",
-      "actionType": "swift",
-      "cost": {
-        "forcePoints": 1
-      },
-      "effects": [
-        {
-          "type": "damageBonus",
-          "value": "heroicLevel",
-          "appliesTo": "forcePower",
-          "duration": "turn"
-        }
-      ],
-      "tags": [
-        "force",
-        "damage",
-        "force-point",
-        "swift"
-      ],
-      "icon": "fas fa-bolt",
-      "linkedAction": "force-point-boost"
-    },
-    "force-point-recovery": {
-      "id": "force-point-recovery",
-      "name": "Force Point Recovery",
-      "talentName": "Force Point Recovery",
-      "talentTree": "Jedi Master",
-      "description": "Once per day, when you spend a Force Point, you may immediately regain 1 Force Point. You may spend a second Force Point to regain 2 Force Points instead.",
-      "actionType": "reaction",
-      "trigger": "After spending a Force Point",
-      "alternativeAction": {
-        "name": "Enhanced Recovery",
-        "cost": {
-          "forcePoints": 1
-        },
-        "effect": "Regain 2 Force Points instead of 1"
-      },
-      "uses": {
-        "max": 1,
-        "perDay": true
-      },
-      "effects": [
-        {
-          "type": "resourceRecovery",
-          "resource": "forcePoints",
-          "value": 1
-        }
-      ],
-      "tags": [
-        "force",
-        "recovery",
-        "force-point",
-        "reaction"
-      ],
-      "icon": "fas fa-sync",
-      "linkedAction": "force-point-recovery"
+      "linkedAction": "force-power-aoe",
+      "metadataAudit": {
+        "state": "CORRECTED_FROM_CANONICAL",
+        "canonicalRecord": "packs/talents.db:Force Haze",
+        "printedSource": "Core Rulebook pp.40-41",
+        "automation": "none (descriptive card only; no Force Point spend)",
+        "audit": "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md",
+        "note": "Cost (1 Force Point, standard action) is part of the printed rule and stays in the description; automation is a later canonical implementation."
+      }
     },
     "force-fortification": {
       "name": "Force Fortification",

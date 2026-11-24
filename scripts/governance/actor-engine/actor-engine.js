@@ -2,6 +2,7 @@
 import { claimIndependentSkills } from '/systems/foundryvtt-swse/scripts/species/species-grant-reconciliation.js';
 import { getEffectiveRechargeShieldsAmount } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-published-derived.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { forcePointTriggerConsumers, hasForcePointTriggerConsumers, spendTriggerConsumers, hasSpendTriggerConsumers, captureSpendEvidence } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-trigger-registry.js";
 import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/actor-utils.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
 import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
@@ -37,6 +38,47 @@ import { normalizeActiveEffectDataForRuntime } from "/systems/foundryvtt-swse/sc
  */
 // Track instrumented actors to avoid re-patching
 const _instrumentedActors = new WeakMap();
+
+// Serialize Force Point commits/compensations for one Actor document in this
+// client. Foundry has no cross-client compare-and-swap; live multi-client
+// authority remains a separate acceptance requirement.
+const _forcePointQueues = new WeakMap();
+async function withForcePointQueue(actor, operation) {
+  const prior = _forcePointQueues.get(actor) ?? Promise.resolve();
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  const tail = prior.then(() => pending);
+  _forcePointQueues.set(actor, tail);
+  await prior;
+  try { return await operation(); }
+  finally {
+    release();
+    if (_forcePointQueues.get(actor) === tail) _forcePointQueues.delete(actor);
+  }
+}
+
+
+// Force Point trigger outbox support (see finalizeForcePointSpend / dispatchForcePointTriggers).
+const _forcePointTriggersInFlight = new Set();
+
+// Destiny Point ledger support: a SEPARATE actor-owned ledger (flags.swse.destinyPointLedger), queue and outbox. Destiny is
+// never treated as a Force Point and its entries are never written to the Force Point ledger.
+const _destinyPointQueues = new WeakMap();
+const _destinyTriggersInFlight = new Set();
+async function withDestinyPointQueue(actor, operation) {
+  const prior = _destinyPointQueues.get(actor) ?? Promise.resolve();
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  const tail = prior.then(() => pending);
+  _destinyPointQueues.set(actor, tail);
+  await prior;
+  try { return await operation(); }
+  finally {
+    release();
+    if (_destinyPointQueues.get(actor) === tail) _destinyPointQueues.delete(actor);
+  }
+}
+const destinyLedgerOf = (actor) => actor.getFlag?.('swse', 'destinyPointLedger') ?? actor.flags?.swse?.destinyPointLedger ?? {};
 
 export const ActorEngine = {
   // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
@@ -909,7 +951,19 @@ export const ActorEngine = {
         count: data.length
       });
 
-      const safeData = embeddedName === 'ActiveEffect' ? normalizeActiveEffectDataForRuntime(data) : data;
+      let safeData = embeddedName === 'ActiveEffect' ? normalizeActiveEffectDataForRuntime(data) : data;
+      if(embeddedName==='ActiveEffect'){
+        const {filterForceClassImmuneActiveEffects} = await import(
+          '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-class-effect-ingress.js'
+        );
+        const gate=filterForceClassImmuneActiveEffects(actor,safeData);
+        if(gate.suppressed.length)SWSELogger.log('Force-class immunity blocked typed ActiveEffects', {
+          actor:actor.name,count:gate.suppressed.length,
+          reasons:gate.suppressed.map(x=>x.decision.reason)
+        });
+        safeData=gate.accepted;
+        if(!safeData.length)return [];
+      }
 
       MutationInterceptor.setContext(`ActorEngine.createEmbeddedDocuments[${embeddedName}]`);
       try {
@@ -1459,9 +1513,19 @@ export const ActorEngine = {
       // RENDER SEQUENCING FIX: Suppress intermediate renders. Damage application affects
       // both HP and condition track, which both impact derived values. After updateActor
       // completes recalcAll(), _refreshOpenActorApps() will render with stable data.
-      await this.updateActor(actor, updates, {
-        render: false
-      });
+      const rescueReceipt = resolution.forcePointRescueReceipt ?? null;
+      try {
+        await this.updateActor(actor, updates, {
+          render: false
+        });
+      } catch (writeErr) {
+        if (rescueReceipt) await this._settleForcePointRescue(actor, rescueReceipt, resolution, writeErr);
+        throw writeErr;
+      }
+      if (rescueReceipt) await this._settleForcePointRescue(actor, rescueReceipt, resolution, null);
+      // Notification only (local to the client that applied the damage): consumers such as Force power maintenance
+      // react to damage actually taken; they never alter this resolution.
+      try { globalThis.Hooks?.callAll?.('swse.damageApplied', { actor, damageToHP: resolution.damageToHP ?? 0, source: damagePacket.source ?? null }); } catch (_e) { /* listeners never break damage */ }
 
       SWSELogger.log(`Damage applied to ${actor.name}: ${damagePacket.amount} incoming → ${resolution.damageToHP} HP`, {
         source: damagePacket.source,
@@ -1787,6 +1851,30 @@ export const ActorEngine = {
   },
 
   /**
+   * Applied-effect boundary for the Force Point death rescue (Core p.146).
+   * The point is finalized only when the rescued HP state is observably
+   * persisted; otherwise the exact spend is compensated. An applied-then-threw
+   * write is classified by reading the actor, never assumed.
+   * @private
+   */
+  async _settleForcePointRescue(actor, receipt, resolution, writeError) {
+    try {
+      const applied = !writeError || Number(actor.system?.hp?.value) === Number(resolution.hpAfter) &&
+        Number(actor.system?.conditionTrack?.current ?? 0) === Number(resolution.conditionAfter);
+      if (applied) {
+        const finality = await this.finalizeForcePointSpend(actor, receipt);
+        if (!finality?.finalized) SWSELogger.error('Force Point rescue applied but receipt finalization failed', finality);
+        return;
+      }
+      const outcome = await this.rollbackForcePointSpend(actor, receipt);
+      if (!outcome?.rolledBack) SWSELogger.error('Force Point rescue failed and compensation was refused; manual reconciliation required', outcome);
+      await actor.unsetFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution');
+    } catch (settleErr) {
+      SWSELogger.error('Force Point rescue settlement indeterminate; manual reconciliation required', { error: settleErr });
+    }
+  },
+
+  /**
    * Offer Force Point rescue for lethal/destructive threshold hits.
    *
    * Mutation contract — fields written to resolution on success:
@@ -1834,11 +1922,33 @@ export const ActorEngine = {
         return false;
       }
 
-      const spend = await this.spendForcePoints(actor, 1);
+      // This method is the damage owner: it has just verified the lethal hit
+      // (forceRescueEligible + canRescue) and the player's confirmation, so it
+      // persists the event receipt that ForcePointsService.authorizeSpend
+      // requires for 'avoid-death'. Core p.93: the rescue is a reaction.
+      const sourceEventId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
+      if (!sourceEventId) throw new Error('Death-rescue event identity unavailable');
+      await this.updateActor(actor, {
+        'flags.swse.forceDeathRescueEvent': { id: sourceEventId, actorId: actor.id, state: 'eligible', createdAt: Date.now() }
+      });
+      let spend;
+      try {
+        spend = await this.spendForcePoints(actor, 1, { useKind: 'avoid-death', sourceEventId });
+      } catch (spendErr) {
+        ui.notifications?.warn?.(`${actor.name}: Force Point rescue not permitted — ${spendErr.message}`);
+        return false;
+      } finally {
+        // Single-use: the receipt can never authorize a second spend.
+        await this.updateActor(actor, { 'flags.swse.forceDeathRescueEvent': { id: sourceEventId, actorId: actor.id, state: 'consumed' } });
+      }
       if (!spend?.spent) {
         ui.notifications?.warn?.(`${actor.name}: Force Point rescue failed — no Force Points remaining.`);
         return false;
       }
+      // Finality is NOT granted here: the rescue is only real once applyDamage
+      // persists the rescued HP/condition state. applyDamage finalizes (or
+      // compensates) the receipt at that boundary.
+      resolution.forcePointRescueReceipt = spend;
       await actor.setFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
 
       resolution.forceRescueUsed = true;
@@ -1999,103 +2109,352 @@ export const ActorEngine = {
   },
 
   /**
-   * spendForcePoints() — Reduce actor's force points
-   *
-   * @param {Actor} actor - target actor
-   * @param {number} amount - number of points to spend
+   * Canonical Force Point mutation: re-authorize inside the actor queue and
+   * debit one exact eligible source together with its persisted receipt.
+   * Unclassified two-argument callers must be cut over, not silently allowed.
    */
-  async spendForcePoints(actor, amount = 1) {
-    try {
-      if (!actor) {throw new Error('spendForcePoints() called with no actor');}
-      if (typeof amount !== 'number' || amount < 0) {
-        throw new Error(`Invalid force point amount: ${amount}`);
-      }
+  async spendForcePoints(actor, amount = 1, context = {}) {
+    if (!actor?.id) throw new Error('spendForcePoints requires an identified actor');
+    return withForcePointQueue(actor, async () => {
+      const requestId = String(context?.requestId ||
+        globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.() || '');
+      if (!requestId) throw new Error('Force Point transaction request identity unavailable');
+      const decision = ForcePointsService.authorizeSpend(actor, {
+        ...context, requestedCount: amount, requestId
+      });
+      if (!decision.valid) throw new Error(decision.message);
 
-      const normalizeBonusEntries = (pool = {}) => {
-        const entries = Array.isArray(pool.entries) ? pool.entries.map((entry, index) => ({
-          id: String(entry?.id ?? `bonus-${index}`),
-          source: String(entry?.source ?? 'Bonus Force Point'),
-          value: Math.max(0, Number(entry?.value ?? 0) || 0),
-          max: Math.max(0, Number(entry?.max ?? entry?.value ?? 0) || 0),
-          restrictions: entry?.restrictions ?? entry?.restriction ?? '',
-          expires: entry?.expires ?? '',
-          encounterId: entry?.encounterId ?? null,
-          createdAt: entry?.createdAt ?? null
-        })).filter(entry => entry.value > 0) : [];
-        const legacyValue = Math.max(0, Number(pool.value ?? 0) || 0);
-        const entryTotal = entries.reduce((sum, entry) => sum + entry.value, 0);
-        if (!entries.length && legacyValue > 0) {
-          entries.push({ id: 'legacy-bonus-force-points', source: Array.isArray(pool.sources) && pool.sources.length ? pool.sources.join(', ') : 'Bonus Force Point', value: legacyValue, max: Math.max(legacyValue, Number(pool.max ?? legacyValue) || legacyValue), restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
-        } else if (legacyValue > entryTotal) {
-          entries.push({ id: 'legacy-bonus-force-points', source: 'Bonus Force Point', value: legacyValue - entryTotal, max: legacyValue - entryTotal, restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
+      const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+      const sourceEntries = Array.isArray(pool.entries) ? pool.entries.map(entry => ({ ...entry })) : [];
+      const debit = decision.bonusEntriesSpent ?? [];
+      for (const spentEntry of debit) {
+        const found = sourceEntries.find(entry => entry.id === spentEntry.id);
+        if (!found || Number(found.value) < spentEntry.amount) {
+          throw new Error('Bonus Force Point source changed before commit');
         }
-        return entries;
+        found.value = Number(found.value) - spentEntry.amount;
+      }
+      const normal = Number(actor.system?.forcePoints?.value ?? 0);
+      if (normal < decision.normalSpent) throw new Error('Normal Force Points changed before commit');
+      const kept = sourceEntries.filter(entry => Number(entry.value ?? 0) > 0);
+      const bonusAfter = kept.reduce((sum, entry) => sum + Number(entry.value), 0);
+      const normalAfter = normal - decision.normalSpent;
+      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+      const entries = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
+      if (entries.some(entry => entry.requestId === requestId)) throw new Error('Duplicate Force Point transaction');
+      const receiptId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
+      if (!receiptId) throw new Error('Force Point receipt identity unavailable');
+      const receipt = {
+        receiptId, requestId, actorId: actor.id,
+        roundKey: decision.roundKey, useKind: decision.useKind, reactionEventId: decision.reactionEventId ?? null, entitlement: decision.entitlement ?? null, abilitySourceRef: decision.abilitySourceRef ?? null, adjudicatedBy: decision.adjudicatedBy ?? null,
+        countsTowardRoundLimit: decision.countsTowardRoundLimit,
+        // Campaign clock at the spend (once-per-day contract limits read it; null when the world has no clock).
+        worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null,
+        normalSpent: decision.normalSpent,
+        bonusEntriesSpent: debit.map(({ id, source, amount, entry }) =>
+          ({ id, source, amount, entry: { ...entry } })),
+        spent: amount, state: 'committed',
+        // Immutable spend-time evidence for delayed, feature-defined consequences. Captured from authoritative state HERE (the
+        // commit), never from a caller flag and never re-derived at finalization/delivery time.
+        spendEvidence: captureSpendEvidence(actor, 'force')
       };
-      const buildBonusPool = (entries = [], existing = {}) => {
-        const clean = entries.filter(entry => Math.max(0, Number(entry.value) || 0) > 0);
-        const value = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
-        const max = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
-        return {
-          ...existing,
-          value,
-          max: Math.max(value, max),
-          sources: [...new Set(clean.map(entry => entry.source).filter(Boolean))],
-          entries: clean,
-          note: existing.note || 'Bonus Force Points are spent before normal Force Points and may have source-specific restrictions.'
+      // Bounded retention: only settled receipts (finalized/rolled-back) older than
+      // the newest 200 are dropped; committed receipts are never dropped, so the
+      // round limit and replay guard for any live use are unaffected.
+      let retained = [...entries, receipt];
+      if (retained.length > 200) {
+        let drop = retained.length - 200;
+        retained = retained.filter(r => !(drop > 0 && r.state !== 'committed' && r.trigger?.state !== 'pending' && drop--));
+      }
+      const ledger = { receipts: retained };
+      const update = {
+        'system.forcePoints.value': normalAfter,
+        'flags.swse.forcePointLedger': ledger
+      };
+      if (debit.length > 0) {
+        update['flags.swse.bonusForcePoints'] = {
+          ...pool,
+          entries: kept,
+          value: bonusAfter,
+          max: Math.max(bonusAfter, kept.reduce((sum, entry) => sum + Number(entry.max ?? entry.value ?? 0), 0)),
+          sources: [...new Set(kept.map(entry => entry.source).filter(Boolean))]
         };
-      };
-
-      const bonusPool = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
-      const bonusEntries = normalizeBonusEntries(bonusPool);
-      const bonusCurrent = bonusEntries.reduce((sum, entry) => sum + entry.value, 0);
-      const bonusSpent = Math.min(bonusCurrent, amount);
-      const normalToSpend = Math.max(0, amount - bonusSpent);
-
-      let remainingBonusSpend = bonusSpent;
-      const remainingEntries = [];
-      for (const entry of bonusEntries) {
-        if (remainingBonusSpend <= 0) {
-          remainingEntries.push(entry);
-          continue;
-        }
-        const used = Math.min(entry.value, remainingBonusSpend);
-        remainingBonusSpend -= used;
-        const left = entry.value - used;
-        if (left > 0) remainingEntries.push({ ...entry, value: left });
       }
-
-      // Delegate normal FP calculation to ForcePointsService; mutation stays here.
-      const { newValue: newFP, actualSpent: normalSpent } = ForcePointsService.calcSpend(actor, normalToSpend);
-      const actualSpent = bonusSpent + normalSpent;
-
-      if (actualSpent === 0) {
-        SWSELogger.debug(`${actor.name} has no force points to spend`);
-        return { spent: 0, remaining: newFP, bonusSpent: 0, normalSpent: 0, bonusRemaining: bonusCurrent };
-      }
-
-      const update = { 'system.forcePoints.value': newFP };
-      if (bonusSpent > 0) {
-        update['flags.swse.bonusForcePoints'] = buildBonusPool(remainingEntries, bonusPool);
-      }
-
+      // A rejected or thrown write is never interpreted as a successful
+      // payment; an applied-then-threw write is indeterminate, not retried.
       await this.updateActor(actor, update);
+      return {
+        ...receipt, remaining: normalAfter, bonusRemaining: bonusAfter,
+        bonusSpent: debit.reduce((sum, entry) => sum + entry.amount, 0)
+      };
+    });
+  },
 
-      SWSELogger.log(`Force points spent: ${actor.name} used ${actualSpent}FP (${bonusSpent} bonus, ${normalSpent} normal; normal now: ${newFP})`, {
-        amount: actualSpent,
-        bonusSpent,
-        normalSpent,
-        bonusRemaining: remainingEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0)
-      });
+  /**
+   * Receipts left `committed` on the actor's OWN ledger: a paid effect whose settlement (finalize or exact rollback) never
+   * completed (client closed, write rejected twice). Read-only. `inFlight` receipt ids (operations still running on this
+   * client) are excluded by the caller. A committed receipt is never settled automatically: whether the paid effect applied
+   * is not knowable from the ledger alone, so settlement is a recorded GM decision (reconcileForcePointReceipt).
+   */
+  listUnsettledForcePointReceipts(actor, { inFlight = [] } = {}) {
+    const ledger = actor?.getFlag?.('swse', 'forcePointLedger') ?? actor?.flags?.swse?.forcePointLedger ?? {};
+    const skip = new Set(inFlight);
+    return (Array.isArray(ledger.receipts) ? ledger.receipts : [])
+      .filter(r => r?.state === 'committed' && !skip.has(r.receiptId))
+      .map(r => ({
+        receiptId: r.receiptId, actorId: r.actorId, requestId: r.requestId ?? null, spent: r.spent ?? null,
+        abilitySourceRef: r.abilitySourceRef ?? null, reactionEventId: r.reactionEventId ?? null,
+        roundKey: r.roundKey ?? null, adjudicatedBy: r.adjudicatedBy ?? null
+      }));
+  },
 
-      return { spent: actualSpent, remaining: newFP, bonusSpent, normalSpent, bonusRemaining: remainingEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0) };
+  /**
+   * GM reconciliation of ONE unsettled receipt. `decision` is 'finalize' (the paid effect applied: make the spend final and
+   * deliver its trigger) or 'rollback' (it did not: return exactly this receipt). Requires a live GM and a written reason,
+   * records both on the receipt, never guesses, and is idempotent (a settled receipt is reported, not touched twice).
+   */
+  async reconcileForcePointReceipt(actor, receiptId, { decision, reason } = {}) {
+    if (globalThis.game?.user?.isGM !== true) throw new Error('Only a GM may reconcile an unsettled Force Point receipt');
+    if (!actor?.id || !receiptId) throw new Error('Identified actor and receipt id required');
+    if (!['finalize', 'rollback'].includes(decision)) throw new Error("decision must be 'finalize' or 'rollback'");
+    if (typeof reason !== 'string' || !reason.trim()) throw new Error('A written reason is required to reconcile a receipt');
+    const ledger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+    const record = (Array.isArray(ledger.receipts) ? ledger.receipts : []).find(r => r.receiptId === receiptId && r.actorId === actor.id);
+    if (!record) return { reconciled: false, reason: 'Receipt not found on this actor' };
+    if (record.state !== 'committed') return { reconciled: false, reason: `Receipt is already ${record.state}`, state: record.state };
+    const meta = { decision, reason: reason.trim(), userId: globalThis.game.user.id ?? null, worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null };
+    const outcome = decision === 'finalize'
+      ? await this.finalizeForcePointSpend(actor, record, meta)
+      : await this.rollbackForcePointSpend(actor, record, meta);
+    return { reconciled: Boolean(outcome?.finalized || outcome?.rolledBack), decision, outcome };
+  },
 
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.spendForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
-        error: err,
-        amount
-      });
-      throw err;
+  /**
+   * Exact compensation of one committed, not-yet-finalized expenditure.
+   * Read the actor-owned journal, never trust a caller-supplied debit amount.
+   */
+  async rollbackForcePointSpend(actor, spentReceipt, reconciliation = null) {
+    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Identified actor and Force Point receipt required');
+    return withForcePointQueue(actor, async () => {
+      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+      const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
+      const index = records.findIndex(entry => entry.receiptId === spentReceipt.receiptId && entry.actorId === actor.id);
+      if (index < 0 || records[index].state !== 'committed') return { rolledBack: false, reason: 'Receipt missing or already compensated' };
+      const own = records[index];
+      const normal = Number(actor.system?.forcePoints?.value ?? 0);
+      const max = Number(actor.system?.forcePoints?.max ?? normal);
+      // The normal pool can never exceed its maximum. If the actor was refilled
+      // after the debit, only the headroom is restored (nothing is fabricated);
+      // the receipt is still closed so the cancelled use frees its round slot.
+      // Bonus entries are never converted into normal points, nor vice versa.
+      const normalRestored = Math.max(0, Math.min(own.normalSpent, max - normal));
+      const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+      const merged = Array.isArray(pool.entries) ? pool.entries.map(e => ({ ...e })) : [];
+      for (const used of own.bonusEntriesSpent ?? []) {
+        const existing = merged.find(e => e.id === used.id);
+        if (existing) {
+          const e = used.entry;
+          if (existing.source !== e.source || existing.expires !== e.expires ||
+              JSON.stringify(existing.restrictions ?? existing.restriction ?? '') !== JSON.stringify(e.restrictions ?? e.restriction ?? '')) {
+            return { rolledBack: false, reason: 'Bonus Force Point entry identity has changed' };
+          }
+          if (Number(existing.value ?? 0) + used.amount > Number(existing.max ?? e.max ?? 0)) {
+            return { rolledBack: false, reason: 'Bonus Force Point entry has no capacity for exact refund' };
+          }
+          existing.value = Number(existing.value) + used.amount;
+        } else {
+          merged.push({ ...used.entry, value: used.amount });
+        }
+      }
+      const bonusValue = merged.reduce((sum, e) => sum + Number(e.value ?? 0), 0);
+      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'rolled-back', ...(reconciliation ? { reconciliation } : {}) } : r);
+      const update = {
+        'system.forcePoints.value': normal + normalRestored,
+        'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords }
+      };
+      if (own.bonusEntriesSpent?.length) {
+        update['flags.swse.bonusForcePoints'] = {
+          ...pool,
+          entries: merged,
+          value: bonusValue,
+          max: Math.max(bonusValue, merged.reduce((sum, e) => sum + Number(e.max ?? e.value ?? 0), 0)),
+          sources: [...new Set(merged.map(e => e.source).filter(Boolean))]
+        };
+      }
+      await this.updateActor(actor, update);
+      return { rolledBack: true, receiptId: own.receiptId, normalRestored,
+        bonusRestored: (own.bonusEntriesSpent ?? []).reduce((sum, e) => sum + e.amount, 0) };
+    });
+  },
+
+  /**
+   * Persist finality after the paid effect actually occurred. Finalized
+   * receipts still count toward the round limit, but are never refundable.
+   */
+  async finalizeForcePointSpend(actor, spentReceipt, reconciliation = null) {
+    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Force Point finalization requires an actor and receipt');
+    let firstFinalization = false;
+    const outcome = await withForcePointQueue(actor, async () => {
+      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+      const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
+      if (index < 0) return { finalized: false, reason: 'Receipt not found' };
+      if (records[index].state === 'finalized') return { finalized: true, alreadyFinalized: true };
+      if (records[index].state !== 'committed') return { finalized: false, reason: 'Receipt is not pending finalization' };
+      // Durable outbox: the trigger is recorded in the SAME write that makes the receipt final, so a
+      // listener failure or client disconnect after this point can always be reconciled from the ledger.
+      // Only the first committed->finalized transition records it; an alreadyFinalized retry never does.
+      const trigger = hasForcePointTriggerConsumers()
+        ? { state: 'pending', recordedAt: Date.now() }
+        : undefined;
+      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'finalized', ...(trigger ? { trigger } : {}), ...(reconciliation ? { reconciliation } : {}) } : r);
+      await this.updateActor(actor, { 'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords } });
+      firstFinalization = Boolean(trigger);
+      return { finalized: true, receiptId: spentReceipt.receiptId };
+    });
+    // Delivered AFTER the queue lock is released so a consumer may call ActorEngine writers without
+    // re-entering the Force Point queue. A delivery failure never reverses the applied paid effect.
+    if (firstFinalization) {
+      try { await this.dispatchForcePointTriggers(actor, { receiptId: outcome.receiptId }); }
+      catch (error) { SWSELogger.error('[ActorEngine] Force Point trigger delivery failed; receipt stays final, trigger stays pending for reconcile', error); }
     }
+    return outcome;
+  },
+
+  /**
+   * Deliver pending Force Point triggers from the actor's OWN ledger (never from caller-supplied payloads).
+   * Events are built from the finalized receipt; a consumer that throws leaves the trigger pending.
+   */
+  async dispatchForcePointTriggers(actor, { receiptId = null } = {}) {
+    if (!actor?.id) throw new Error('dispatchForcePointTriggers requires an identified actor');
+    const consumers = forcePointTriggerConsumers();
+    const report = { delivered: 0, pending: 0, invalid: 0 };
+    if (!consumers.length) return report;
+    const ledger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+    const rows = (Array.isArray(ledger.receipts) ? ledger.receipts : []).filter(r =>
+      r.actorId === actor.id && r.state === 'finalized' && r.trigger?.state === 'pending'
+      && (receiptId === null || r.receiptId === receiptId));
+    for (const r of rows) {
+      const key = `${actor.id}:${r.receiptId}`;
+      if (_forcePointTriggersInFlight.has(key)) continue;
+      _forcePointTriggersInFlight.add(key);
+      try {
+        if (!Number.isSafeInteger(r.spent) || r.spent < 1) { await this.ackForcePointTrigger(actor, r.receiptId, 'invalid'); report.invalid++; continue; }
+        const event = {
+          actor, actorId: String(actor.uuid || actor.id), resource: 'force', spent: r.spent, committed: true,
+          receiptId: r.receiptId, source: 'ActorEngine.finalizeForcePointSpend'
+        };
+        let allOk = true;
+        for (const consume of consumers) {
+          try { await consume(event); }
+          catch (error) { allOk = false; SWSELogger.error(`[ActorEngine] Force Point trigger consumer failed for receipt ${r.receiptId}; stays pending`, error); }
+        }
+        if (allOk) { await this.ackForcePointTrigger(actor, r.receiptId, 'delivered'); report.delivered++; } else report.pending++;
+      } finally { _forcePointTriggersInFlight.delete(key); }
+    }
+    return report;
+  },
+
+  /** Mark a trigger settled. Only the trigger sub-record changes; the spend/finality state is never touched. */
+  async ackForcePointTrigger(actor, receiptId, outcome = 'delivered') {
+    if (!actor?.id || !receiptId) throw new Error('ackForcePointTrigger requires an actor and receiptId');
+    return withForcePointQueue(actor, async () => {
+      const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+      const records = Array.isArray(currentLedger.receipts) ? currentLedger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === receiptId && r.actorId === actor.id);
+      if (index < 0 || records[index].trigger?.state !== 'pending') return { acked: false };
+      const updated = records.map((r, i) => i === index ? { ...r, trigger: { ...r.trigger, state: outcome, ackedAt: Date.now() } } : r);
+      await this.updateActor(actor, { 'flags.swse.forcePointLedger': { ...currentLedger, receipts: updated } });
+      return { acked: true, outcome };
+    });
+  },
+
+  /**
+   * Incoming-attack event ledger (03B Block/Deflect). Each side writes ONLY its
+   * own Actor, so no cross-user write permission is needed:
+   *  - the ATTACKER's actor records the events its attack rolls produced
+   *    (state pending -> superseded/cancelled);
+   *  - the DEFENDER's actor records which event ids it has already consumed.
+   * An event is valid for a reaction only if the attacker-side record is pending
+   * AND the defender has not consumed it (see AttackEventAuthority.verify).
+   * Bounded retention; never trusts a caller-supplied event as proof.
+   */
+  async recordOutgoingAttackEvent(attacker, event) {
+    if (!attacker?.id || !event?.id) throw new Error('recordOutgoingAttackEvent requires an attacker and an event id');
+    const current = attacker.getFlag?.('swse', 'outgoingAttackEvents') ?? attacker.flags?.swse?.outgoingAttackEvents ?? {};
+    const events = Array.isArray(current.events) ? current.events : [];
+    if (events.some(e => e.id === event.id)) throw new Error('Duplicate attack event');
+    const kept = [...events, { ...event, state: 'pending' }].slice(-20);
+    await this.updateActor(attacker, { 'flags.swse.outgoingAttackEvents': { events: kept } });
+    return kept[kept.length - 1];
+  },
+
+  async setOutgoingAttackEventState(attacker, eventId, state, extra = {}) {
+    if (!attacker?.id || !eventId) return { updated: false, reason: 'Attacker and event id required' };
+    if (!['superseded', 'cancelled'].includes(state)) throw new Error(`Unsupported attack event state: ${state}`);
+    const current = attacker.getFlag?.('swse', 'outgoingAttackEvents') ?? attacker.flags?.swse?.outgoingAttackEvents ?? {};
+    const events = Array.isArray(current.events) ? current.events : [];
+    if (!events.some(e => e.id === eventId && e.state === 'pending')) return { updated: false, reason: 'No pending event' };
+    await this.updateActor(attacker, { 'flags.swse.outgoingAttackEvents': {
+      events: events.map(e => e.id === eventId && e.state === 'pending' ? { ...e, ...extra, state } : e)
+    } });
+    return { updated: true };
+  },
+
+  /**
+   * Record a completed regimen's typed Force Point entitlement (JATM pp.11-13): one grant per 24h
+   * of campaign time, none for a regimen that failed within the last 24h, and the temporary points
+   * it gives (independently expiring, typed). Fail closed without a world clock.
+   */
+  async grantRegimenEntitlement(actor, built, { now, failedAt = null } = {}) {
+    if (!actor?.id || !built?.entitlement) return { granted: false, reason: 'No entitlement to grant' };
+    if (now == null || !Number.isFinite(Number(now))) return { granted: false, reason: 'World time unavailable' };
+    const e = built.entitlement;
+    if (failedAt != null && now - Number(failedAt) < 24 * 60 * 60) return { granted: false, reason: 'That regimen failed within the last 24 hours' };
+    const current = actor.getFlag?.('swse', 'regimenEntitlement') ?? actor.flags?.swse?.regimenEntitlement ?? null;
+    if (current && Number.isFinite(Number(current.expiresWorldTime)) && now < Number(current.expiresWorldTime) && current.grantId !== e.grantId) {
+      return { granted: false, reason: 'Only one Force regimen can be in effect in a 24-hour period' };
+    }
+    const pool = actor.getFlag?.('swse', 'bonusForcePoints') ?? actor.flags?.swse?.bonusForcePoints ?? {};
+    const kept = (Array.isArray(pool.entries) ? pool.entries : []).filter(en => !en?.entitlement || en.entitlement.grantId === e.grantId);
+    const entries = [...kept.filter(en => !built.temporaryEntries.some(t => t.id === en.id)), ...built.temporaryEntries];
+    const value = entries.reduce((n, en) => n + Number(en.value ?? 0), 0);
+    const update = { 'flags.swse.regimenEntitlement': e };
+    if (built.temporaryEntries.length || kept.length !== (pool.entries ?? []).length) {
+      update['flags.swse.bonusForcePoints'] = { ...pool, entries, value, max: Math.max(value, entries.reduce((n, en) => n + Number(en.max ?? en.value ?? 0), 0)), sources: [...new Set(entries.map(en => en.source).filter(Boolean))] };
+    }
+    await this.updateActor(actor, update);
+    return { granted: true, entitlement: e, temporaryGranted: built.temporaryEntries.reduce((n, t) => n + t.value, 0) };
+  },
+
+  async recordRegimenFailure(actor, regimenKey, now) {
+    if (!actor?.id || !regimenKey || now == null || !Number.isFinite(Number(now))) return { recorded: false };
+    const current = actor.getFlag?.('swse', 'regimenFailures') ?? actor.flags?.swse?.regimenFailures ?? {};
+    await this.updateActor(actor, { 'flags.swse.regimenFailures': { ...current, [regimenKey]: Number(now) } });
+    return { recorded: true };
+  },
+
+  /** The reaction did not happen (cancelled/failed): the attack stays answerable. */
+  async releaseAttackEventAsDefender(defender, eventId) {
+    if (!defender?.id || !eventId) return { released: false };
+    return withForcePointQueue(defender, async () => {
+      const current = defender.getFlag?.('swse', 'consumedAttackEvents') ?? defender.flags?.swse?.consumedAttackEvents ?? {};
+      const ids = Array.isArray(current.ids) ? current.ids : [];
+      if (!ids.includes(eventId)) return { released: false };
+      await this.updateActor(defender, { 'flags.swse.consumedAttackEvents': { ids: ids.filter(id => id !== eventId) } });
+      return { released: true };
+    });
+  },
+
+  async consumeAttackEventAsDefender(defender, eventId) {
+    if (!defender?.id || !eventId) throw new Error('consumeAttackEventAsDefender requires a defender and an event id');
+    return withForcePointQueue(defender, async () => {
+      const current = defender.getFlag?.('swse', 'consumedAttackEvents') ?? defender.flags?.swse?.consumedAttackEvents ?? {};
+      const ids = Array.isArray(current.ids) ? current.ids : [];
+      if (ids.includes(eventId)) return { consumed: false, reason: 'Attack event already consumed' };
+      await this.updateActor(defender, { 'flags.swse.consumedAttackEvents': { ids: [...ids, eventId].slice(-50) } });
+      return { consumed: true };
+    });
   },
 
   /**
@@ -2104,31 +2463,53 @@ export const ActorEngine = {
    * @param {Actor} actor - target actor
    * @param {number} amount - number of points to spend
    */
-  async spendDestinyPoints(actor, amount = 1) {
+  async spendDestinyPoints(actor, amount = 1, context = {}) {
     try {
       if (!actor) {throw new Error('spendDestinyPoints() called with no actor');}
       if (typeof amount !== 'number' || amount < 0) {
         throw new Error(`Invalid destiny point amount: ${amount}`);
       }
+      if (!actor.id) {throw new Error('spendDestinyPoints requires an identified actor');}
 
-      // Delegate calculation to ForcePointsService; mutation stays here
-      const { newValue: newDP, actualSpent } = ForcePointsService.calcDestinySpend(actor, amount);
+      return await withDestinyPointQueue(actor, async () => {
+        // Delegate calculation to ForcePointsService; mutation stays here
+        const { newValue: newDP, actualSpent } = ForcePointsService.calcDestinySpend(actor, amount);
 
-      if (actualSpent === 0) {
-        SWSELogger.debug(`${actor.name} has no destiny points to spend`);
-        return { spent: 0, remaining: newDP };
-      }
+        if (actualSpent === 0) {
+          SWSELogger.debug(`${actor.name} has no destiny points to spend`);
+          return { spent: 0, remaining: newDP };
+        }
 
-      await this.updateActor(actor, {
-        'system.destinyPoints.value': newDP
+        const ledger = destinyLedgerOf(actor);
+        const entries = Array.isArray(ledger.receipts) ? ledger.receipts : [];
+        const requestId = String(context?.requestId ||
+          globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.() || '');
+        const receiptId = globalThis.foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.();
+        if (!requestId || !receiptId) throw new Error('Destiny Point transaction identity unavailable');
+        if (entries.some(entry => entry.requestId === requestId)) throw new Error('Duplicate Destiny Point transaction');
+        const receipt = {
+          receiptId, requestId, actorId: actor.id, spent: actualSpent, state: 'committed',
+          worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null,
+          // Immutable spend-time evidence (Decision C), persisted with the debit; never a caller flag.
+          spendEvidence: captureSpendEvidence(actor, 'destiny')
+        };
+        // Bounded retention: only settled receipts with no pending trigger are ever dropped.
+        let retained = [...entries, receipt];
+        if (retained.length > 200) {
+          let drop = retained.length - 200;
+          retained = retained.filter(r => !(drop > 0 && r.state !== 'committed' && r.trigger?.state !== 'pending' && drop--));
+        }
+        // The debit and its receipt are ONE write: there is never a spend without a receipt or a receipt without a spend.
+        await this.updateActor(actor, {
+          'system.destinyPoints.value': newDP,
+          'flags.swse.destinyPointLedger': { receipts: retained }
+        });
+
+        SWSELogger.log(`Destiny points spent: ${actor.name} used ${actualSpent}DP (now: ${newDP})`, {
+          amount: actualSpent
+        });
+        return { ...receipt, remaining: newDP };
       });
-
-      SWSELogger.log(`Destiny points spent: ${actor.name} used ${actualSpent}DP (now: ${newDP})`, {
-        amount: actualSpent
-      });
-
-      return { spent: actualSpent, remaining: newDP };
-
     } catch (err) {
       SWSELogger.error(`ActorEngine.spendDestinyPoints failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
@@ -2136,6 +2517,96 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  /** Exact compensation of ONE committed, not-yet-finalized Destiny spend. Never restores a historical balance. */
+  async rollbackDestinyPointSpend(actor, spentReceipt) {
+    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Identified actor and Destiny Point receipt required');
+    return withDestinyPointQueue(actor, async () => {
+      const ledger = destinyLedgerOf(actor);
+      const records = Array.isArray(ledger.receipts) ? ledger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
+      if (index < 0 || records[index].state !== 'committed') return { rolledBack: false, reason: 'Receipt missing or already settled' };
+      const own = records[index];
+      const current = Number(actor.system?.destinyPoints?.value ?? 0);
+      const updated = records.map((r, i) => i === index ? { ...r, state: 'rolled-back' } : r);
+      await this.updateActor(actor, {
+        'system.destinyPoints.value': current + own.spent,
+        'flags.swse.destinyPointLedger': { ...ledger, receipts: updated }
+      });
+      return { rolledBack: true, receiptId: own.receiptId, restored: own.spent };
+    });
+  },
+
+  /**
+   * Persist finality after the paid Destiny effect actually occurred. The durable trigger is recorded in the SAME write on
+   * the first committed->finalized transition and delivered after the queue lock is released.
+   */
+  async finalizeDestinyPointSpend(actor, spentReceipt) {
+    if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Destiny Point finalization requires an actor and receipt');
+    let firstFinalization = false;
+    const outcome = await withDestinyPointQueue(actor, async () => {
+      const ledger = destinyLedgerOf(actor);
+      const records = Array.isArray(ledger.receipts) ? ledger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === spentReceipt.receiptId && r.actorId === actor.id);
+      if (index < 0) return { finalized: false, reason: 'Receipt not found' };
+      if (records[index].state === 'finalized') return { finalized: true, alreadyFinalized: true };
+      if (records[index].state !== 'committed') return { finalized: false, reason: 'Receipt is not pending finalization' };
+      const trigger = hasSpendTriggerConsumers('destiny') ? { state: 'pending', recordedAt: Date.now() } : undefined;
+      const updated = records.map((r, i) => i === index ? { ...r, state: 'finalized', ...(trigger ? { trigger } : {}) } : r);
+      await this.updateActor(actor, { 'flags.swse.destinyPointLedger': { ...ledger, receipts: updated } });
+      firstFinalization = Boolean(trigger);
+      return { finalized: true, receiptId: spentReceipt.receiptId };
+    });
+    if (firstFinalization) {
+      try { await this.dispatchDestinyPointTriggers(actor, { receiptId: outcome.receiptId }); }
+      catch (error) { SWSELogger.error('[ActorEngine] Destiny Point trigger delivery failed; receipt stays final, trigger stays pending for reconcile', error); }
+    }
+    return outcome;
+  },
+
+  /** Deliver pending Destiny triggers built from the actor's OWN Destiny ledger (never from a caller payload). */
+  async dispatchDestinyPointTriggers(actor, { receiptId = null } = {}) {
+    if (!actor?.id) throw new Error('dispatchDestinyPointTriggers requires an identified actor');
+    const consumers = spendTriggerConsumers('destiny');
+    const report = { delivered: 0, pending: 0, invalid: 0 };
+    if (!consumers.length) return report;
+    const rows = (Array.isArray(destinyLedgerOf(actor).receipts) ? destinyLedgerOf(actor).receipts : []).filter(r =>
+      r.actorId === actor.id && r.state === 'finalized' && r.trigger?.state === 'pending'
+      && (receiptId === null || r.receiptId === receiptId));
+    for (const r of rows) {
+      const key = `${actor.id}:${r.receiptId}`;
+      if (_destinyTriggersInFlight.has(key)) continue;
+      _destinyTriggersInFlight.add(key);
+      try {
+        if (!Number.isSafeInteger(r.spent) || r.spent < 1) { await this.ackDestinyPointTrigger(actor, r.receiptId, 'invalid'); report.invalid++; continue; }
+        const event = {
+          actor, actorId: String(actor.uuid || actor.id), resource: 'destiny', spent: r.spent, committed: true,
+          receiptId: r.receiptId, source: 'ActorEngine.finalizeDestinyPointSpend'
+        };
+        let allOk = true;
+        for (const consume of consumers) {
+          try { await consume(event); }
+          catch (error) { allOk = false; SWSELogger.error(`[ActorEngine] Destiny Point trigger consumer failed for receipt ${r.receiptId}; stays pending`, error); }
+        }
+        if (allOk) { await this.ackDestinyPointTrigger(actor, r.receiptId, 'delivered'); report.delivered++; } else report.pending++;
+      } finally { _destinyTriggersInFlight.delete(key); }
+    }
+    return report;
+  },
+
+  /** Mark a Destiny trigger settled. Only the trigger sub-record changes; spend/finality is never touched. */
+  async ackDestinyPointTrigger(actor, receiptId, outcome = 'delivered') {
+    if (!actor?.id || !receiptId) throw new Error('ackDestinyPointTrigger requires an actor and receiptId');
+    return withDestinyPointQueue(actor, async () => {
+      const ledger = destinyLedgerOf(actor);
+      const records = Array.isArray(ledger.receipts) ? ledger.receipts : [];
+      const index = records.findIndex(r => r.receiptId === receiptId && r.actorId === actor.id);
+      if (index < 0 || records[index].trigger?.state !== 'pending') return { acked: false };
+      const updated = records.map((r, i) => i === index ? { ...r, trigger: { ...r.trigger, state: outcome, ackedAt: Date.now() } } : r);
+      await this.updateActor(actor, { 'flags.swse.destinyPointLedger': { ...ledger, receipts: updated } });
+      return { acked: true, outcome };
+    });
   },
 
   /**
@@ -2553,229 +3024,6 @@ export const ActorEngine = {
         packet: progressionPacket
       });
       throw err;
-    }
-  },
-
-  // ============================================================================
-  // PHASE 5: TALENT EFFECT ORCHESTRATION
-  // ============================================================================
-
-  /**
-   * applyTalentEffect() — COORDINATED TALENT EFFECT MUTATIONS
-   *
-   * Executes a pre-computed talent effect plan.
-   *
-   * Contract:
-   * - Plan is pre-computed (from TalentEffectEngine)
-   * - Each actor mutation is individually governed
-   * - Derived recalculation happens per-actor
-   * - No cross-actor atomicity (domain-level coordination only)
-   * - If any mutation fails, error is thrown (no automatic rollback)
-   *
-   * @param {Object} plan - Effect plan from TalentEffectEngine.build*Plan()
-   * @param {Object} [options={}] - Optional execution options
-   * @returns {Promise<{success, effect, damageAmount, roll, results}>}
-   */
-  async applyTalentEffect(plan, options = {}) {
-    try {
-      if (!plan) {
-        throw new Error('applyTalentEffect() called with no plan');
-      }
-
-      if (!plan.success) {
-        // Plan computation failed; return failure as-is
-        return {
-          success: false,
-          reason: plan.reason,
-          effect: plan.effect
-        };
-      }
-
-      if (!Array.isArray(plan.mutations) || plan.mutations.length === 0) {
-        throw new Error('applyTalentEffect() plan has no mutations');
-      }
-
-      SWSELogger.log(`[TALENT EFFECT] Applying ${plan.effect} with ${plan.mutations.length} mutations`, {
-        damageAmount: plan.damageAmount,
-        roll: plan.roll?.result
-      });
-
-      const results = [];
-      const appliedMutations = [];
-
-      // ====================================================================
-      // PHASE 1: Apply each mutation through ActorEngine
-      // ====================================================================
-      for (let i = 0; i < plan.mutations.length; i++) {
-        const mutation = plan.mutations[i];
-
-        try {
-          // Execute mutation based on type
-          if (mutation.type === 'update') {
-            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: update ${mutation.actor.name}`, {
-              data: mutation.data
-            });
-
-            await this.updateActor(mutation.actor, mutation.data);
-
-            results.push({
-              actor: mutation.actor.id,
-              type: 'update',
-              success: true
-            });
-
-            appliedMutations.push(mutation);
-
-          } else if (mutation.type === 'setFlag') {
-            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: setFlag ${mutation.actor.name}`, {
-              scope: mutation.scope,
-              key: mutation.key,
-              value: mutation.value
-            });
-
-            await mutation.actor.setFlag(mutation.scope, mutation.key, mutation.value);
-
-            results.push({
-              actor: mutation.actor.id,
-              type: 'setFlag',
-              success: true
-            });
-
-            appliedMutations.push(mutation);
-
-          } else if (mutation.type === 'unsetFlag') {
-            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: unsetFlag ${mutation.actor.name}`, {
-              scope: mutation.scope,
-              key: mutation.key
-            });
-
-            await mutation.actor.unsetFlag(mutation.scope, mutation.key);
-
-            results.push({
-              actor: mutation.actor.id,
-              type: 'unsetFlag',
-              success: true
-            });
-
-            appliedMutations.push(mutation);
-
-          } else if (mutation.type === 'createEmbedded') {
-            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: createEmbedded ${mutation.actor.name}`, {
-              embeddedName: mutation.embeddedName,
-              count: mutation.data.length
-            });
-
-            await this.createEmbeddedDocuments(
-              mutation.actor,
-              mutation.embeddedName,
-              mutation.data
-            );
-
-            results.push({
-              actor: mutation.actor.id,
-              type: 'createEmbedded',
-              success: true,
-              count: mutation.data.length
-            });
-
-            appliedMutations.push(mutation);
-
-          } else if (mutation.type === 'deleteEmbedded') {
-            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: deleteEmbedded ${mutation.actor.name}`, {
-              embeddedName: mutation.embeddedName,
-              count: mutation.ids.length
-            });
-
-            await this.deleteEmbeddedDocuments(
-              mutation.actor,
-              mutation.embeddedName,
-              mutation.ids
-            );
-
-            results.push({
-              actor: mutation.actor.id,
-              type: 'deleteEmbedded',
-              success: true,
-              count: mutation.ids.length
-            });
-
-            appliedMutations.push(mutation);
-
-          } else if (mutation.type === 'updateOwnedItems') {
-            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: updateOwnedItems ${mutation.actor.name}`, {
-              itemCount: mutation.items.length
-            });
-
-            await this.updateOwnedItems(mutation.actor, mutation.items);
-
-            results.push({
-              actor: mutation.actor.id,
-              type: 'updateOwnedItems',
-              success: true,
-              count: mutation.items.length
-            });
-
-            appliedMutations.push(mutation);
-
-          } else {
-            throw new Error(`Unknown mutation type: ${mutation.type}`);
-          }
-
-        } catch (mutationErr) {
-          SWSELogger.error(`[TALENT EFFECT] Mutation ${i + 1} failed: ${mutation.type} on ${mutation.actor.name}`, {
-            error: mutationErr,
-            appliedSoFar: appliedMutations.length,
-            totalMutations: plan.mutations.length
-          });
-
-          // Report which mutations succeeded, which failed
-          results.push({
-            actor: mutation.actor.id,
-            type: mutation.type,
-            success: false,
-            error: mutationErr.message
-          });
-
-          // Throw to prevent partial execution
-          throw new Error(
-            `Talent effect ${plan.effect} failed at mutation ${i + 1}: ${mutationErr.message}`
-          );
-        }
-      }
-
-      // ====================================================================
-      // PHASE 2: All mutations succeeded
-      // ====================================================================
-      SWSELogger.log(`[TALENT EFFECT] ✅ ${plan.effect} applied successfully`, {
-        mutationCount: plan.mutations.length,
-        damageAmount: plan.damageAmount,
-        resultSummary: results.map(r => `${r.type}:${r.success ? 'OK' : 'FAIL'}`)
-      });
-
-      return {
-        success: true,
-        effect: plan.effect,
-        damageAmount: plan.damageAmount,
-        roll: plan.roll,
-        results: results,
-        mutationCount: plan.mutations.length,
-        timestamp: new Date().toISOString()
-      };
-
-    } catch (err) {
-      SWSELogger.error(`ActorEngine.applyTalentEffect failed`, {
-        error: err,
-        effect: plan?.effect,
-        plan: plan
-      });
-
-      // Return error result (do not throw; let caller decide)
-      return {
-        success: false,
-        effect: plan?.effect,
-        reason: err.message,
-        timestamp: new Date().toISOString()
-      };
     }
   },
 
@@ -4050,7 +4298,16 @@ export const ActorEngine = {
       });
       try {
         const normalizedEffectData = normalizeActiveEffectDataForRuntime(effectData);
-        const result = await actor.createEmbeddedDocuments('ActiveEffect', normalizedEffectData, options);
+        const {filterForceClassImmuneActiveEffects} = await import(
+          '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-class-effect-ingress.js'
+        );
+        const gate=filterForceClassImmuneActiveEffects(actor,normalizedEffectData);
+        if(gate.suppressed.length)SWSELogger.log('Force-class immunity blocked typed ActiveEffects', {
+          actor:actor.name,count:gate.suppressed.length,
+          reasons:gate.suppressed.map(x=>x.decision.reason)
+        });
+        if(!gate.accepted.length)return [];
+        const result = await actor.createEmbeddedDocuments('ActiveEffect', gate.accepted, options);
         await this.recalcAll(actor);
         return result;
       } finally {

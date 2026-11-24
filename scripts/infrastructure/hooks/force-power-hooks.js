@@ -9,8 +9,17 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ForcePowerManager } from "/systems/foundryvtt-swse/scripts/utils/force-power-manager.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+import { TemptationOfTheDarkSide } from "/systems/foundryvtt-swse/scripts/engine/force/temptation-of-the-dark-side.js";
+import { ForcePowerMaintenance } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-maintenance.js";
+import { SuiteInstanceRecovery } from "/systems/foundryvtt-swse/scripts/engine/force/suite-instance-recovery.js";
 import { installFinalForcePowerIntegration } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-final-integration.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+
+// Exactly one client acts: the first active GM (mirrors the other combat hooks).
+function isResponsibleGm() {
+  const gms = (globalThis.game?.users ?? []).filter?.(u => u.isGM && u.active) ?? [];
+  return globalThis.game?.user?.isGM === true && (gms.length === 0 || gms[0]?.id === globalThis.game.user.id);
+}
 
 function isProgressionManagedForceMutation(itemOrActor, options = {}) {
   const source = String(options?.source || options?.meta?.source || '').toLowerCase();
@@ -40,6 +49,10 @@ function isProgressionManagedForceMutation(itemOrActor, options = {}) {
 
 export function initializeForcePowerHooks() {
   installFinalForcePowerIntegration({ ForcePowerEffectsEngine, ForceExecutor });
+  // GM macro access to the optional FUCG p.85 Temptation rule and to maintained-power instances (no sheet UI yet).
+  globalThis.game.swse = globalThis.game.swse || {};
+  globalThis.game.swse.temptation = TemptationOfTheDarkSide;
+  globalThis.game.swse.forcePowerMaintenance = ForcePowerMaintenance;
 
   Hooks.on('createItem', async (item, options, userId) => {
     if (game.user.id !== userId) {return;}
@@ -111,31 +124,27 @@ export function initializeForcePowerHooks() {
     await ForcePowerManager.handleAbilityIncrease(actor, oldAbilities, newAbilities);
   });
 
-  Hooks.on('deleteCombat', async (combat, options, userId) => {
-    SWSELogger.log('SWSE | Force Powers | Combat ended, regaining Force Powers for all combatants');
+  // Core, "Regaining Force Powers": combat over AND a chance to rest for 1 minute. The combat document being deleted
+  // proves neither; the proven event is the GM-confirmed `restCompleted` (SuiteInstanceRecovery verifies it).
+  Hooks.on('restCompleted', async (event) => {
+    if (!isResponsibleGm()) return;
+    await SuiteInstanceRecovery.regainAfterRest(event);
+  });
 
-    for (const combatant of combat.combatants) {
-      if (!combatant.actor) {continue;}
+  // Natural 20 on a Force Power / starship maneuver activation check: regain at the END of that actor's turn.
+  Hooks.on('updateCombat', async (combat, changed, options, userId) => {
+    if (!isResponsibleGm()) return;
+    if (changed?.turn === undefined && changed?.round === undefined) return;
+    await SuiteInstanceRecovery.regainAtEndOfTurn(combat);
+    // The previous combatant's turn just ended: their unmaintained Force power instances lapse.
+    const prev = combat?.previous;
+    const prevActor = prev?.combatantId ? (combat.combatants?.get?.(prev.combatantId)?.actor ?? null) : null;
+    if (prevActor) await ForcePowerMaintenance.lapseUnmaintained(prevActor, { combat, round: prev.round });
+  });
 
-      const spentPowers = combatant.actor.items.filter(i =>
-        i.type === 'force-power' && i.system.spent
-      );
-
-      if (spentPowers.length > 0) {
-        const updates = spentPowers.map(power => ({
-          _id: power.id,
-          'system.spent': false
-        }));
-
-        await ActorEngine.updateOwnedItems(combatant.actor, updates, {
-          meta: { guardKey: 'force-power-grant' }
-        });
-
-        if (combatant.actor.isOwner) {
-          ui.notifications.info(`Combat ended. ${combatant.actor.name} regained ${spentPowers.length} Force Power(s)`);
-        }
-      }
-    }
+  // Damage taken while maintaining: prompt the concentration check for each named instance (posted where it was applied).
+  Hooks.on('swse.damageApplied', async ({ actor, damageToHP } = {}) => {
+    await ForcePowerMaintenance.onDamageTaken(actor, damageToHP);
   });
 
   Hooks.on('deleteItem', async (item, options, userId) => {

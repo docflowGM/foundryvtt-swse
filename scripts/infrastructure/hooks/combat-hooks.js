@@ -1,3 +1,4 @@
+import { TemptationOfTheDarkSide } from "/systems/foundryvtt-swse/scripts/engine/force/temptation-of-the-dark-side.js";
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 /**
  * Combat Lifecycle Hooks
@@ -352,6 +353,11 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
  * @param {Object} options - Deletion options
  * @param {string} userId - The user ID deleting the combat
  */
+function isResponsibleGmForCombatEnd() {
+    const gms = (game.users ?? []).filter?.(u => u.isGM && u.active) ?? [];
+    return game.user?.isGM === true && (gms.length === 0 || gms[0]?.id === game.user.id);
+}
+
 async function handleCombatEnd(combat, options, userId) {
     SWSELogger.log('Combat ended - resetting encounter-limited features');
 
@@ -366,6 +372,9 @@ async function handleCombatEnd(combat, options, userId) {
 
             // Familiar Foe / Targeted Suspect last until the end of the encounter (reads already ignore other combats; this is hygiene)
             if (actor.isOwner) {await pruneObservations(actor, combat.id); await pruneMarks(actor, combat.id); await pruneMasterOfMovement(actor, combat.id);}
+
+            // FUCG p.85 Temptation of the Dark Side: temporary powers/talents end with the encounter (one client acts).
+            if (isResponsibleGmForCombatEnd()) await TemptationOfTheDarkSide.endEncounter(actor, { combatId: combat?.id ?? null });
 
             // Reset species encounter traits
             await SpeciesRerollHandler.resetEncounterTraits(actor);

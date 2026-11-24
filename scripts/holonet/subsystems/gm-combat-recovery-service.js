@@ -820,6 +820,7 @@ export class GMCombatRecoveryService {
     Hooks.callAll('restCompleted', {
       isFullRest,
       duration,
+      durationUnit: 'minutes',
       restType,
       triggeredByGM: true,
       triggerTime: Date.now(),

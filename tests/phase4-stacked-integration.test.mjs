@@ -62,7 +62,7 @@ assert.match(modifierEngine, /static async resolveTarget\(actor, target, options
 // attacks correctly have NO Force Point path fabricated for them (abstract
 // crew has no actor to own points; a real gunner actor already goes
 // through the same reroll handler as a character).
-assert.match(resolverFeat, /ActorEngine\.spendForcePoints\(actor, 1\)/);
+assert.match(resolverFeat, /ActorEngine\.spendForcePoints\(actor, 1, \{ useKind: 'ability-option'/);
 assert.doesNotMatch(vehicleMath, /ForcePoint|forcePoint/);
 
 // 5. AttackOutcomeResolver: exactly one call site in rollAttack(), fed the

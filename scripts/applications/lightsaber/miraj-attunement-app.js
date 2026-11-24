@@ -88,7 +88,7 @@ export class MirajAttunementApp extends BaseSWSEAppV2 {
       const result = await WeaponsEngine.attuneLightsaber(this.actor, this.weapon);
 
       if (!result.success) {
-        ui.notifications.warn(`Attunement failed: ${result.reason}`);
+        ui.notifications.warn(`Attunement failed: ${result.message ?? result.reason}`);
         return;
       }
 

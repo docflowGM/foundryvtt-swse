@@ -1,3 +1,4 @@
+import { beginContractedForcePoint, latestOwnAttackEvent, latestMeleeHitAgainst } from "/systems/foundryvtt-swse/scripts/engine/force/contracted-force-point.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
@@ -45,11 +46,11 @@ function forcePowers(actor) {
 }
 
 function isReadyPower(item) {
-  return item?.system?.spent !== true && item?.system?.discarded !== true;
+  return item?.system?.discarded !== true;
 }
 
 function isSpentPower(item) {
-  return item?.system?.spent === true || item?.system?.discarded === true;
+  return item?.system?.discarded === true;
 }
 
 function selectedTargetActors() {
@@ -242,16 +243,15 @@ export class JediPrestigeTalentActions {
   static async promptForceRevive(actor) {
     const target = await chooseTargetActor('Force Revive', 'ally at 0 HP affected by Battle Meditation');
     if (!target) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Force Revive requires spending 1 Force Point.');
-      return null;
-    }
-    let secondWind = null;
-    if (target.actor) {
-      secondWind = await ActorEngine.applySecondWind(target.actor, { validateCombat: false, source: 'force-revive' });
-    }
-    return postCard(actor, 'Force Revive', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction to let <strong>${esc(target.name)}</strong> take Second Wind as a Reaction after being reduced to 0 HP.</p>${secondWind ? `<p><strong>Second Wind:</strong> ${secondWind.success ? `healed ${secondWind.healed} HP` : esc(secondWind.reason || 'not applied')}.</p>` : '<p>No targeted actor was available, so apply the target Second Wind manually.</p>'}`, { targetActorId: target.actor?.id ?? null, secondWindSuccess: secondWind?.success ?? null });
+    const fp = await beginContractedForcePoint(actor, "jedi-prestige:promptForceRevive", {}, { label: "promptForceRevive" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      let secondWind = null;
+      if (target.actor) {
+        secondWind = await ActorEngine.applySecondWind(target.actor, { validateCombat: false, source: 'force-revive' });
+      }
+      return postCard(actor, 'Force Revive', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction to let <strong>${esc(target.name)}</strong> take Second Wind as a Reaction after being reduced to 0 HP.</p>${secondWind ? `<p><strong>Second Wind:</strong> ${secondWind.success ? `healed ${secondWind.healed} HP` : esc(secondWind.reason || 'not applied')}.</p>` : '<p>No targeted actor was available, so apply the target Second Wind manually.</p>'}`, { targetActorId: target.actor?.id ?? null, secondWindSuccess: secondWind?.success ?? null });
+    });
   }
 
   static async announceJediBattleCommander(actor) {
@@ -271,7 +271,7 @@ export class JediPrestigeTalentActions {
     if (!choice) return null;
     const power = spent.find(p => p.id === choice.powerId);
     if (!power) return null;
-    await ActorEngine.updateEmbeddedDocuments(target.actor, 'Item', [{ _id: power.id, 'system.spent': false, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'direct' }], { source: 'direct', render: false });
+    await ActorEngine.updateEmbeddedDocuments(target.actor, 'Item', [{ _id: power.id, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'direct' }], { source: 'direct', render: false });
     return postCard(actor, 'Direct', `<p>${esc(actor.name)} returns <strong>${esc(power.name)}</strong> to <strong>${esc(target.actor.name)}</strong>'s Force Power Suite.</p>`, { targetActorId: target.actor.id, powerId: power.id });
   }
 
@@ -293,13 +293,12 @@ export class JediPrestigeTalentActions {
   static async promptApprenticeBoon(actor) {
     const target = await chooseTargetActor('Apprentice Boon', 'ally within 12 squares with lower UTF bonus');
     if (!target) return null;
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Apprentice Boon requires spending 1 Force Point.');
-      return null;
-    }
-    const fpRoll = await rollForcePointBonus(actor);
-    return postCard(actor, 'Apprentice Boon', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction to add <strong>+${fpRoll.total}</strong> to <strong>${esc(target.name)}</strong>'s Use the Force check.</p><p><strong>Force Point roll:</strong> ${esc(fpRoll.formula)} = ${fpRoll.total}. Use ${esc(actor.name)}'s level for the dice.</p>`, { targetActorId: target.actor?.id ?? null, bonus: fpRoll.total });
+    const fp = await beginContractedForcePoint(actor, "jedi-prestige:promptApprenticeBoon", {}, { label: "promptApprenticeBoon" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      const fpRoll = await rollForcePointBonus(actor);
+      return postCard(actor, 'Apprentice Boon', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction to add <strong>+${fpRoll.total}</strong> to <strong>${esc(target.name)}</strong>'s Use the Force check.</p><p><strong>Force Point roll:</strong> ${esc(fpRoll.formula)} = ${fpRoll.total}. Use ${esc(actor.name)}'s level for the dice.</p>`, { targetActorId: target.actor?.id ?? null, bonus: fpRoll.total });
+    });
   }
 
   static async promptShareChoice(actor, title, choiceType, { exclude = [] } = {}) {
@@ -323,12 +322,11 @@ export class JediPrestigeTalentActions {
     const target = await chooseTargetActor('Share Talent', 'ally within 12 squares able to see and hear you');
     if (!target) return null;
     const maxAllies = Math.max(1, Math.floor(actorLevel(actor) / 2));
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Share Talent requires spending 1 Force Point.');
-      return null;
-    }
-    return postCard(actor, 'Share Talent', `<p>${esc(actor.name)} spends 1 Force Point as a Standard Action to share the selected lightsaber/duelist/lightsaber-form talent with eligible allies until the end of the encounter.</p><p><strong>Maximum allies:</strong> ${maxAllies}. Ally must be within 12 squares, able to see and hear you, and Trained in Use the Force.</p><p><strong>Selected/targeted ally:</strong> ${esc(target.name)}.</p>`, { maxAllies, targetActorId: target.actor?.id ?? null });
+    const fp = await beginContractedForcePoint(actor, "jedi-prestige:promptShareTalent", {}, { label: "promptShareTalent" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      return postCard(actor, 'Share Talent', `<p>${esc(actor.name)} spends 1 Force Point as a Standard Action to share the selected lightsaber/duelist/lightsaber-form talent with eligible allies until the end of the encounter.</p><p><strong>Maximum allies:</strong> ${maxAllies}. Ally must be within 12 squares, able to see and hear you, and Trained in Use the Force.</p><p><strong>Selected/targeted ally:</strong> ${esc(target.name)}.</p>`, { maxAllies, targetActorId: target.actor?.id ?? null });
+    });
   }
 
   static async promptTransferPower(actor) {
@@ -344,7 +342,7 @@ export class JediPrestigeTalentActions {
     if (!choice) return null;
     const power = ready.find(p => p.id === choice.powerId);
     if (!power) return null;
-    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: power.id, 'system.spent': true, 'system.discarded': true, 'flags.swse.lastSpentBy': 'transfer-power' }], { source: 'transfer-power', render: false });
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: power.id, 'system.discarded': true, 'flags.swse.lastSpentBy': 'transfer-power' }], { source: 'transfer-power', render: false });
     const data = power.toObject ? power.toObject() : foundry.utils.deepClone(power);
     delete data._id;
     data.system = foundry.utils.mergeObject(data.system || {}, { spent: false, discarded: false, transferredUse: true, grantedBy: 'Transfer Power' }, { inplace: false, recursive: true });
@@ -407,8 +405,8 @@ export class JediPrestigeTalentActions {
     if (!choice) return null;
     const power = spent.find(p => p.id === choice.powerId);
     await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [
-      { _id: farseeing.id, 'system.spent': true, 'system.discarded': true, 'flags.swse.lastSpentBy': 'prepared-for-danger' },
-      { _id: power.id, 'system.spent': false, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'prepared-for-danger' }
+      { _id: farseeing.id, 'system.discarded': true, 'flags.swse.lastSpentBy': 'prepared-for-danger' },
+      { _id: power.id, 'system.discarded': false, 'flags.swse.lastRecoverySource': 'prepared-for-danger' }
     ], { source: 'prepared-for-danger', render: false });
     return postCard(actor, 'Prepared for Danger', `<p>${esc(actor.name)} spends <strong>Farseeing</strong> to recover <strong>${esc(power.name)}</strong>.</p>`, { recoveredPowerId: power.id });
   }
@@ -424,12 +422,11 @@ export class JediPrestigeTalentActions {
   }
 
   static async promptUncloudedJudgement(actor) {
-    const spend = await ActorEngine.spendForcePoints(actor, 1);
-    if (!spend?.spent) {
-      ui?.notifications?.warn?.('Unclouded Judgement requires spending 1 Force Point.');
-      return null;
-    }
-    return postCard(actor, 'Unclouded Judgement', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting them. No skill check is required.</p>`, { forcePointSpent: true });
+    const fp = await beginContractedForcePoint(actor, "jedi-prestige:promptUncloudedJudgement", {}, { label: "promptUncloudedJudgement" });
+    if (!fp.ok) return null;
+    return fp.settle(async () => {
+      return postCard(actor, 'Unclouded Judgement', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting them. No skill check is required.</p>`, { forcePointSpent: true });
+    });
   }
 
   static async promptCombatTrance(actor) {

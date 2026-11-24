@@ -437,7 +437,7 @@ async function handleForceSuiteRecoverAll(button) {
   }
   button.disabled = true;
   try {
-    const result = await ForceExecutor.recoverForcePowers(actor);
+    const result = await ForceExecutor.recoverForcePowers(actor, null, { proof: { kind: 'gm', reason: 'Recover all from the Force suite panel' } });
     if (result?.success) {
       ui?.notifications?.info?.('All spent Force powers recovered.');
       actor.sheet?.render?.(false);

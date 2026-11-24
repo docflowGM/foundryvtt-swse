@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "2.9.0",
+  "dataset": "Legacy Era book 7 plus books 1–6 revalidated",
+  "validationKind": "JSON Schema Draft 2020-12 + source page images + crossbook identity tests",
+  "allRanOffline": true,
+  "foundryTestsExecuted": false,
+  "priorBooks": [
+    {
+      "book": "Core",
+      "definitionCount": 28,
+      "status": "passes-strict-v2.9-shape"
+    },
+    {
+      "book": "Starships",
+      "definitionCount": 27,
+      "status": "passes-strict-v2.9-shape"
+    },
+    {
+      "book": "KOTOR",
+      "definitionCount": 20,
+      "status": "passes-strict-v2.9-shape"
+    },
+    {
+      "book": "ForceUnleashed",
+      "definitionCount": 31,
+      "status": "passes-strict-v2.9-shape"
+    },
+    {
+      "book": "CloneWars",
+      "definitionCount": 19,
+      "status": "passes-strict-v2.9-shape"
+    },
+    {
+      "book": "JATM",
+      "definitionCount": 69,
+      "status": "passes-strict-v2.9-shape"
+    }
+  ],
+  "newBook": {
+    "definitions": 18,
+    "powers": 9,
+    "techniques": 9,
+    "reprintedPowerClaims": 1,
+    "fixedDcTierRows": 11,
+    "crossDomainEdges": 16,
+    "acceptanceCases": 166
+  },
+  "cumulative": {
+    "definitions": 212,
+    "influenceEdges": 178,
+    "newBookSchemaOperations": 14,
+    "totalTypedOperations": 159
+  },
+  "unresolved": [
+    {
+      "id": "LEG-001",
+      "severity": "blocks-full-automation",
+      "issue": "Potential FP stacking: base Ballistakinesis half-on-miss versus Improved Ballistakinesis area-expansion. No text authorizes both from one FP; encode distinct choices until adjudicated."
+    },
+    {
+      "id": "LEG-002",
+      "severity": "blocks-full-automation",
+      "issue": "Competing base/technique FP modes for Obscure, Stagger, and Force Shield. Do not silently combine, double-charge, or treat a single point as paying multiple enhancements."
+    },
+    {
+      "id": "LEG-003",
+      "severity": "review",
+      "issue": "Combustion ongoing fire uses initial UTF check TOTAL as fire attack bonus; confirm how fire attacks are scheduled/resolved by shared Core fire service without a duplicate fire subsystem."
+    },
+    {
+      "id": "LEG-004",
+      "severity": "review",
+      "issue": "Dark Transfer persistent condition cost applies to each use, including a failed healing check. Treatment alongside revival variant and Dark Preservation must respect explicit source costs and resource expenditure timing."
+    },
+    {
+      "id": "LEG-005",
+      "severity": "review",
+      "issue": "Legacy uses `equal or exceeds` for ability hit checks, and Ballistakinesis FP says targets you `fail to exceed`: treat equality as hit based on complete rule, not as half-damage miss."
+    },
+    {
+      "id": "LEG-006",
+      "severity": "review",
+      "issue": "Detonate printed damage type unspecified. Improved Detonate gives nearby targets slashing damage based on actual object damage; object hardness/DR and half rounding owned by shared DamageSystem."
+    },
+    {
+      "id": "LEG-007",
+      "severity": "review",
+      "issue": "Force Shield is a Legacy reprint of FUCG original, not a second learnable definition; repeated text read matches known origin, but verify formal published errata."
+    },
+    {
+      "id": "LEG-008",
+      "severity": "review",
+      "issue": "Official Legacy Era-specific errata was not independently authenticated in this pass. Printed pages 53–56 remain authority pending an official source."
+    },
+    {
+      "id": "LEG-009",
+      "severity": "review",
+      "issue": "Enlighten defense substitution scope: one chosen defense until next turn versus consumed one roll. Store source-specific distinction and do not invent repeated or unrestricted substitution."
+    },
+    {
+      "id": "LEG-010",
+      "severity": "review",
+      "issue": "Original Obscure “another creature adjacent to it” uses “target” for attacking enemy. Explicitly resolve adjacent-to-attacker for implementation; retain review if contradictory official clarification found."
+    }
+  ],
+  "sourcePageToPhysicalPDFPage": {
+    "53": 54,
+    "54": 55,
+    "55": 56,
+    "56": 57
+  },
+  "sourceAuthority": "Legacy Era printed PDF verified; official standalone errata unconfirmed; Force Shield as FUCG reprint"
+}

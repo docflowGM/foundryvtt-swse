@@ -41,7 +41,6 @@ import { registerGrappleFeatNormalizationHooks } from "/systems/foundryvtt-swse/
 import { registerForcePointFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-normalization-hooks.js";
 import { registerForcePointFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-actions.js";
 import { registerForceTrainingEntitlementRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/force-training-entitlement-runtime-patches.js";
-import { registerForcePointServiceRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-service-runtime-patches.js";
 import { registerTelekineticProdigyRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js";
 import { registerDroidCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/droid-combat-feat-normalization-hooks.js";
 import { registerDroidCombatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/droid-combat-runtime-patches.js";
@@ -95,7 +94,6 @@ export function registerFeatRuntime() {
     registerForcePointFeatNormalizationHooks();
     registerForcePointFeatActions();
     registerForceTrainingEntitlementRuntimePatches();
-    registerForcePointServiceRuntimePatches();
     registerTelekineticProdigyRuntimePatches();
     SWSELogger.log('Force Point Feat Hooks initialized');
 

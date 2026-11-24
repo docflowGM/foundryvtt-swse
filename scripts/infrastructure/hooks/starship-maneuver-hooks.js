@@ -87,29 +87,5 @@ export function initializeStarshipManeuverHooks() {
     await StarshipManeuverManager.handleAbilityIncrease(actor, oldAbilities, newAbilities);
   });
 
-  /**
-   * Hook into combat end to regain all Starship Maneuvers
-   */
-  Hooks.on('deleteCombat', async (combat, options, userId) => {
-    SWSELogger.log('SWSE | Starship Maneuvers | Combat ended, regaining Starship Maneuvers for all combatants');
-
-    // Regain Starship Maneuvers for all actors who were in combat
-    for (const combatant of combat.combatants) {
-      if (!combatant.actor) {continue;}
-
-      const spentManeuvers = combatant.actor.items.filter(i =>
-        i.type === 'maneuver' && i.system.spent
-      );
-
-      if (spentManeuvers.length > 0) {
-        // PHASE 3.0: Route through ActorEngine for governance
-        const updates = spentManeuvers.map(m => ({
-          _id: m.id,
-          'system.spent': false
-        }));
-        await ActorEngine.updateItems(combatant.actor, updates);
-        SWSELogger.log(`SWSE | Starship Maneuvers | Regained ${spentManeuvers.length} maneuvers for ${combatant.actor.name}`);
-      }
-    }
-  });
+  // Maneuvers are regained by SuiteInstanceRecovery (GM-confirmed rest / natural 20 Pilot activation), not by the Combat document being deleted.
 }

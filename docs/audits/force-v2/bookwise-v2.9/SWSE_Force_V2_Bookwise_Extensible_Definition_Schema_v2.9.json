@@ -1,0 +1,6657 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://swse.local/schema/force-v2-bookwise-definitions-v2.9.json",
+  "title": "SWSE Force V2 Bookwise Definition Contract v2.9.0 (Legacy Era)",
+  "description": "v2.6 adds Clone Wars domain semantics without weakening previous v2.5 constraints. Revision v2.8 adds separately identified Form Power definitions and strict form-talent rider contracts. Book rule says possessing talent; project override additionally requires active form state, kept in its own policy field. Legacy Era adds explicit dual-action activation, per-target area half damage and persistent spell costs; forbid text-only mechanic inference.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "packageVersion",
+    "schemaVersion",
+    "scope",
+    "purpose",
+    "sourceAuthority",
+    "mechanicalPrinciples",
+    "counts",
+    "definitions",
+    "modifiers",
+    "unresolvedSourceInterpretations",
+    "nextBook"
+  ],
+  "properties": {
+    "packageVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "const": "2.9.0"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "book",
+        "pdf",
+        "textLookup",
+        "pagesReviewed",
+        "officialErrata"
+      ],
+      "properties": {
+        "book": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pdf": {
+          "type": "string",
+          "minLength": 1
+        },
+        "textLookup": {
+          "type": "string",
+          "minLength": 1
+        },
+        "officialErrata": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "title",
+            "issuer",
+            "issued",
+            "url",
+            "priority"
+          ],
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "issuer": {
+              "type": "string",
+              "minLength": 1
+            },
+            "issued": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "type": "string",
+              "minLength": 1
+            },
+            "priority": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "pagesReviewed": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "mechanicalPrinciples": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rollType",
+        "tierSelection",
+        "successPriority",
+        "powerRecovery",
+        "modifierApplication",
+        "errataPriority"
+      ],
+      "properties": {
+        "rollType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tierSelection": {
+          "type": "string",
+          "minLength": 1
+        },
+        "successPriority": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "powerRecovery": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "modifierApplication": {
+          "type": "string",
+          "minLength": 1
+        },
+        "errataPriority": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "definitions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/definition"
+      }
+    },
+    "modifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/modifier"
+      }
+    },
+    "unresolvedSourceInterpretations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "severity",
+          "issue"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "enum": [
+              "editorial",
+              "blocks-full-automation",
+              "review"
+            ]
+          },
+          "issue": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "nextBook": {
+      "type": "string",
+      "minLength": 1
+    },
+    "maneuverSharedRules": {
+      "$ref": "#/$defs/maneuverSharedRules"
+    },
+    "reprints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "definitionId",
+          "reprintPage",
+          "sourceBookId",
+          "sameMechanics",
+          "countedAsNewDefinition"
+        ],
+        "properties": {
+          "definitionId": {
+            "type": "string"
+          },
+          "reprintPage": {
+            "type": "integer"
+          },
+          "sourceBookId": {
+            "type": "string"
+          },
+          "sameMechanics": {
+            "type": "boolean"
+          },
+          "countedAsNewDefinition": {
+            "const": false
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "definitionId",
+        "legacyPackId",
+        "domain",
+        "printedName",
+        "displayName",
+        "source",
+        "summary",
+        "descriptors",
+        "acquisition",
+        "activation",
+        "resolution",
+        "resourceOptions",
+        "adjudication",
+        "interactions",
+        "rulesNotes",
+        "maintenance",
+        "sourceStatus",
+        "automationReadiness"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": "2.9.0"
+        },
+        "definitionId": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+/(force-power|lightsaber-form-power|force-technique|force-secret|force-regimen|starship-maneuver|unleashed-overlay)/[a-z0-9-]+$"
+        },
+        "legacyPackId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "domain": {
+          "enum": [
+            "force-power",
+            "force-technique",
+            "force-secret",
+            "force-regimen",
+            "starship-maneuver",
+            "unleashed-overlay",
+            "lightsaber-form-power"
+          ]
+        },
+        "printedName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bookId",
+            "printedPage",
+            "verification",
+            "claimType"
+          ],
+          "properties": {
+            "bookId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "printedPage": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "verification": {
+              "enum": [
+                "printed-pdf-visual",
+                "verified-errata",
+                "candidate"
+              ]
+            },
+            "claimType": {
+              "enum": [
+                "origin",
+                "reprint",
+                "variant",
+                "errata"
+              ]
+            },
+            "amendments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "document",
+                  "publicationDate",
+                  "originalPrintedPage",
+                  "section",
+                  "kind",
+                  "change",
+                  "url"
+                ],
+                "properties": {
+                  "document": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "publicationDate": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "originalPrintedPage": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "section": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "kind": {
+                    "enum": [
+                      "errata",
+                      "clarification"
+                    ]
+                  },
+                  "change": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "url": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "descriptors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "acquisition": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "method",
+            "repeatable"
+          ],
+          "properties": {
+            "method": {
+              "type": "string",
+              "minLength": 1
+            },
+            "repeatable": {
+              "type": "boolean"
+            }
+          }
+        },
+        "activation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "action",
+            "targetKind",
+            "rangeSquares",
+            "rangeMode",
+            "lineOfSightRequired",
+            "check"
+          ],
+          "properties": {
+            "action": {
+              "enum": [
+                "none",
+                "free",
+                "swift",
+                "move",
+                "standard",
+                "full-round",
+                "reaction"
+              ]
+            },
+            "targetKind": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rangeSquares": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "rangeMode": {
+              "enum": [
+                "none",
+                "unlimited",
+                "and-line-of-sight",
+                "or-line-of-sight",
+                "cone-and-line-of-sight",
+                "touch",
+                "weapon-range",
+                "vehicle-speed-multiplier",
+                "within-squares",
+                "vehicle-fighting-space"
+              ]
+            },
+            "lineOfSightRequired": {
+              "type": "boolean"
+            },
+            "check": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "skill",
+                "mode",
+                "defense",
+                "opposed",
+                "minimumDC"
+              ],
+              "properties": {
+                "skill": {
+                  "enum": [
+                    "use-the-force",
+                    "pilot",
+                    "attack",
+                    "none"
+                  ]
+                },
+                "mode": {
+                  "enum": [
+                    "none",
+                    "fixed-dc",
+                    "defense",
+                    "defense-per-target",
+                    "defense-margin",
+                    "opposed",
+                    "fixed-dc-and-defense",
+                    "fixed-dc-with-target-conditions",
+                    "attack-substitution",
+                    "damage-threshold",
+                    "replacement-defense"
+                  ]
+                },
+                "defense": {
+                  "enum": [
+                    "reflex",
+                    "fortitude",
+                    "will",
+                    null
+                  ]
+                },
+                "opposed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "minimumDC": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0
+                }
+              }
+            },
+            "alternateActions": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "free",
+                  "swift",
+                  "move",
+                  "standard",
+                  "full-round",
+                  "reaction"
+                ]
+              }
+            },
+            "resolutionTiming": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "resolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "dcTiers",
+            "onSuccess",
+            "onFailure",
+            "requirements",
+            "defenseAdjustments"
+          ],
+          "properties": {
+            "dcTiers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/tier"
+              }
+            },
+            "onSuccess": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/operation"
+              }
+            },
+            "onFailure": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/operation"
+              }
+            },
+            "requirements": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "defenseAdjustments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "defense",
+                  "reason",
+                  "bonuses"
+                ],
+                "properties": {
+                  "defense": {
+                    "enum": [
+                      "reflex",
+                      "fortitude",
+                      "will"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "bonuses": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "integer"
+                    },
+                    "propertyNames": {
+                      "enum": [
+                        "large",
+                        "huge",
+                        "gargantuan",
+                        "colossal"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "onExpiry": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/operation"
+              }
+            },
+            "onMaintenanceBreak": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/operation"
+              }
+            },
+            "onAttempt": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/operation"
+              }
+            }
+          }
+        },
+        "resourceOptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/option"
+          }
+        },
+        "adjudication": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rulesNotes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "maintenance": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "allowed",
+                "action",
+                "repeatEachRound"
+              ],
+              "properties": {
+                "allowed": {
+                  "const": true
+                },
+                "action": {
+                  "enum": [
+                    "swift",
+                    "move",
+                    "standard",
+                    "full-round",
+                    "reaction",
+                    "free"
+                  ]
+                },
+                "repeatEachRound": {
+                  "type": "boolean"
+                },
+                "repeatCheck": {
+                  "type": "boolean"
+                },
+                "targetPersistence": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "onDamageConcentrationDC": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "requiresFortitudeSuccess": {
+                  "type": "boolean"
+                },
+                "endsOnDealingDamage": {
+                  "type": "boolean"
+                },
+                "optionalRepeatAction": {
+                  "enum": [
+                    "standard",
+                    "move",
+                    "swift",
+                    "free",
+                    "reaction"
+                  ]
+                },
+                "repeatEffect": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/operation"
+                  }
+                },
+                "repeatResultCanChangeTier": {
+                  "type": "boolean"
+                },
+                "forcedEndTriggers": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "sourceStatus": {
+          "enum": [
+            "candidate",
+            "visually-checked",
+            "text-checked",
+            "errata-checked"
+          ]
+        },
+        "automationReadiness": {
+          "enum": [
+            "design-needs-runtime-validation",
+            "blocked-on-ruling",
+            "ready-for-implementation",
+            "implemented-and-tested"
+          ]
+        },
+        "sourceRecordId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maneuverRules": {
+          "$ref": "#/$defs/maneuverRules"
+        },
+        "powerRules": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "outcomeGate": {
+              "enum": [
+                "dc",
+                "defense",
+                "dc-and-defense",
+                "opposed",
+                "none"
+              ]
+            },
+            "defenseEvaluatedPerTarget": {
+              "type": "boolean"
+            },
+            "damageTiming": {
+              "enum": [
+                "immediate",
+                "end-of-caster-turn",
+                "per-maintained-turn",
+                "none"
+              ]
+            },
+            "ionDamageProfile": {
+              "enum": [
+                "standard-ion-damage-threshold-then-half",
+                "none"
+              ]
+            },
+            "effectEndsOn": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "duration-expiry",
+                  "maintenance-failure",
+                  "target-attacked-by-caster-or-ally",
+                  "target-damaged-by-caster-or-ally",
+                  "target-condition-track-reduced-by-caster-or-ally",
+                  "controlled-weapon-exceeds-range",
+                  "source-discard",
+                  "target-unavailable",
+                  "shield-rating-zero"
+                ]
+              }
+            },
+            "damageConcentrationCheck": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "skill",
+                "formula",
+                "onFailure"
+              ],
+              "properties": {
+                "skill": {
+                  "const": "use-the-force"
+                },
+                "formula": {
+                  "const": "15+damageTaken"
+                },
+                "onFailure": {
+                  "const": "end-effect"
+                }
+              }
+            },
+            "maintenanceRepeatOutcomeSelection": {
+              "type": "boolean"
+            },
+            "separateAttackAfterActivation": {
+              "type": "boolean"
+            },
+            "usesExistingSkillApplication": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scope": {
+              "type": "string"
+            },
+            "duration": {
+              "type": "string"
+            },
+            "defenseComparator": {
+              "enum": [
+                "at-least",
+                "strictly-greater-than"
+              ]
+            },
+            "roundingPolicy": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "damageSchedule": {
+              "type": "string"
+            },
+            "areaRule": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "widthSquares",
+                "heightSquares",
+                "perTargetDefense",
+                "halfDamageOnMiss",
+                "damageRollReuse"
+              ],
+              "properties": {
+                "widthSquares": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "heightSquares": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "perTargetDefense": {
+                  "enum": [
+                    "reflex",
+                    "fortitude",
+                    "will"
+                  ]
+                },
+                "halfDamageOnMiss": {
+                  "type": "boolean"
+                },
+                "damageRollReuse": {
+                  "const": true
+                },
+                "areaAttack": {
+                  "const": true
+                }
+              }
+            },
+            "rollSubstitutionRule": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "resultSource",
+                "validRolls",
+                "consumptionLimit",
+                "expires",
+                "defenseSelectionMode"
+              ],
+              "properties": {
+                "resultSource": {
+                  "const": "activator-use-the-force-total"
+                },
+                "validRolls": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "enum": [
+                      "attack-roll",
+                      "skill-check",
+                      "opposed-check",
+                      "defense"
+                    ]
+                  }
+                },
+                "consumptionLimit": {
+                  "const": 1
+                },
+                "expires": {
+                  "type": "string"
+                },
+                "defenseSelectionMode": {
+                  "type": "string"
+                }
+              }
+            },
+            "persistentExpenditure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "trigger",
+                "conditionSteps",
+                "conditionPersistent",
+                "recoveryRestHours",
+                "darkSidePoints",
+                "forcePointAlternativeAvoidsConditionOnly"
+              ],
+              "properties": {
+                "trigger": {
+                  "type": "string"
+                },
+                "conditionSteps": {
+                  "type": "integer"
+                },
+                "conditionPersistent": {
+                  "const": true
+                },
+                "recoveryRestHours": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "darkSidePoints": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "forcePointAlternativeAvoidsConditionOnly": {
+                  "const": true
+                }
+              }
+            },
+            "fireRule": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ignitesOnlyOnHit",
+                "burningAttackBonusSource",
+                "burningRulesOwner"
+              ],
+              "properties": {
+                "ignitesOnlyOnHit": {
+                  "const": true
+                },
+                "burningAttackBonusSource": {
+                  "const": "initial-use-the-force-total"
+                },
+                "burningRulesOwner": {
+                  "const": "core-fire-rules"
+                }
+              }
+            },
+            "allDefenseChecks": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "reflex",
+                  "fortitude",
+                  "will"
+                ]
+              }
+            },
+            "missHalfDamageWithoutCondition": {
+              "type": "boolean"
+            },
+            "damageSourceBasis": {
+              "type": "string"
+            }
+          }
+        },
+        "unleashedRules": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "underlyingDefinitionId",
+            "unleashedFeatRequired",
+            "forceSensitivityRequired",
+            "chosenDestinyRequired",
+            "destinyPointCost",
+            "benefitTrigger",
+            "notAnIndependentActivation"
+          ],
+          "properties": {
+            "underlyingDefinitionId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unleashedFeatRequired": {
+              "const": true
+            },
+            "forceSensitivityRequired": {
+              "const": true
+            },
+            "chosenDestinyRequired": {
+              "const": true
+            },
+            "destinyPointCost": {
+              "const": 1
+            },
+            "benefitTrigger": {
+              "enum": [
+                "when-using-power",
+                "when-using-talent",
+                "after-successful-power",
+                "when-power-damages-target"
+              ]
+            },
+            "notAnIndependentActivation": {
+              "const": true
+            },
+            "resourceExclusivity": {
+              "type": "string"
+            }
+          }
+        },
+        "lightsaberFormRules": {
+          "$ref": "#/$defs/lightsaberFormRules"
+        },
+        "regimenRules": {
+          "$ref": "#/$defs/regimenRules"
+        },
+        "techniqueRules": {
+          "$ref": "#/$defs/techniqueRules"
+        },
+        "secretRules": {
+          "$ref": "#/$defs/secretRules"
+        },
+        "tierMetrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/tierMetric"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "domain": {
+                "const": "lightsaber-form-power"
+              },
+              "source": {
+                "properties": {
+                  "bookId": {
+                    "const": "swse-jedi-academy"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "lightsaberFormRules"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "domain": {
+                "const": "force-regimen"
+              },
+              "source": {
+                "properties": {
+                  "bookId": {
+                    "const": "swse-jedi-academy"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "regimenRules"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "domain": {
+                "const": "force-technique"
+              },
+              "source": {
+                "properties": {
+                  "bookId": {
+                    "const": "swse-jedi-academy"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "techniqueRules"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "domain": {
+                "const": "force-secret"
+              },
+              "source": {
+                "properties": {
+                  "bookId": {
+                    "const": "swse-jedi-academy"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "secretRules"
+            ]
+          }
+        }
+      ]
+    },
+    "modifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modifierId",
+        "sourceName",
+        "sourceType",
+        "sourceBookId",
+        "sourcePrintedPage",
+        "targetDomains",
+        "trigger",
+        "effect",
+        "constraints"
+      ],
+      "properties": {
+        "modifierId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceType": {
+          "enum": [
+            "feat",
+            "talent",
+            "force-technique",
+            "force-secret",
+            "species-trait",
+            "equipment",
+            "class-feature",
+            "condition",
+            "force-power",
+            "rule",
+            "unleashed-overlay"
+          ]
+        },
+        "sourceBookId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourcePrintedPage": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "targetDomains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "trigger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effect": {
+          "type": "string",
+          "minLength": 1
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "tier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dc",
+        "summary",
+        "operations"
+      ],
+      "properties": {
+        "dc": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resource",
+        "trigger",
+        "timing",
+        "summary",
+        "operations"
+      ],
+      "properties": {
+        "resource": {
+          "enum": [
+            "force-point",
+            "destiny-point",
+            "none"
+          ]
+        },
+        "trigger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timing": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        },
+        "exclusiveGroup": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "operation": {
+      "oneOf": [
+        {
+          "title": "action-override",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "fromAction",
+            "toAction"
+          ],
+          "properties": {
+            "fromAction": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "action-override"
+            },
+            "target": {
+              "type": "string"
+            },
+            "toAction": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "action-restriction",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "action-restriction"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "allow-take-ten",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "allow-take-ten"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "area-override",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "shape"
+          ],
+          "properties": {
+            "kind": {
+              "const": "area-override"
+            },
+            "lengthFormula": {
+              "type": "string"
+            },
+            "rangeFormula": {
+              "type": "string"
+            },
+            "shape": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "widthSquares": {
+              "type": "integer"
+            },
+            "radiusSquares": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "origin": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "attitude",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "stepsFormula"
+          ],
+          "properties": {
+            "kind": {
+              "const": "attitude"
+            },
+            "stepsFormula": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "choice",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "choice"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "condition",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "condition"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "condition-track",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target"
+          ],
+          "properties": {
+            "kind": {
+              "const": "condition-track"
+            },
+            "steps": {
+              "type": "integer"
+            },
+            "stepsFormula": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "steps"
+              ]
+            },
+            {
+              "required": [
+                "stepsFormula"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "damage-dice",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "dice"
+          ],
+          "properties": {
+            "cap": {
+              "type": "string"
+            },
+            "damageType": {
+              "type": "string"
+            },
+            "dice": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "damage-dice"
+            },
+            "multiplier": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "damage-dice-multiplier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "factor"
+          ],
+          "properties": {
+            "factor": {
+              "type": "number"
+            },
+            "kind": {
+              "const": "damage-dice-multiplier"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "damage-formula",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "formula"
+          ],
+          "properties": {
+            "formula": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "damage-formula"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "disarm",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "disarm"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "duration-multiplier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "factor"
+          ],
+          "properties": {
+            "factor": {
+              "type": "number"
+            },
+            "kind": {
+              "const": "duration-multiplier"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "duration-override",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target"
+          ],
+          "properties": {
+            "durationFormula": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "duration-override"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "value"
+              ]
+            },
+            {
+              "required": [
+                "durationFormula"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "forced-movement",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "squaresFormula"
+          ],
+          "properties": {
+            "direction": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "forced-movement"
+            },
+            "squaresFormula": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "heal",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "formula"
+          ],
+          "properties": {
+            "formula": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "heal"
+            },
+            "target": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "information",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "information"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "jump-movement-exception",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target"
+          ],
+          "properties": {
+            "kind": {
+              "const": "jump-movement-exception"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "modifier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "stat",
+            "amount"
+          ],
+          "properties": {
+            "amount": {
+              "type": "number"
+            },
+            "bonusType": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "modifier"
+            },
+            "stat": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "negate-damage",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "negate-damage"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "negate-force-power",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "negate-force-power"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "range-multiplier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "factor"
+          ],
+          "properties": {
+            "factor": {
+              "type": "number"
+            },
+            "kind": {
+              "const": "range-multiplier"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "range-override",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "range-override"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "recover-resource",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "resource",
+            "amount"
+          ],
+          "properties": {
+            "amount": {
+              "type": "number"
+            },
+            "kind": {
+              "const": "recover-resource"
+            },
+            "limit": {
+              "type": "string"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "reflection",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target"
+          ],
+          "properties": {
+            "kind": {
+              "const": "reflection"
+            },
+            "target": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "reroll",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "keep"
+          ],
+          "properties": {
+            "keep": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "reroll"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "restrict-resource",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "resource",
+            "durationFormula"
+          ],
+          "properties": {
+            "durationFormula": {
+              "type": "string"
+            },
+            "kind": {
+              "const": "restrict-resource"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "size-limit",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "size"
+          ],
+          "properties": {
+            "kind": {
+              "const": "size-limit"
+            },
+            "size": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "size-step",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "steps",
+            "maxSize"
+          ],
+          "properties": {
+            "kind": {
+              "const": "size-step"
+            },
+            "maxSize": {
+              "type": "string"
+            },
+            "steps": {
+              "type": "integer"
+            },
+            "target": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "suppress-operation",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "suppress-operation"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "target-count",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target"
+          ],
+          "properties": {
+            "formula": {
+              "type": "string"
+            },
+            "increase": {
+              "type": "integer"
+            },
+            "kind": {
+              "const": "target-count"
+            },
+            "mode": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "increase"
+              ]
+            },
+            {
+              "required": [
+                "formula"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "target-lockout",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "target-lockout"
+            },
+            "scope": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "redirect-triggering-attack",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "attackBonus",
+            "newTargetRule",
+            "compareDefense",
+            "preventRepeatRedirect"
+          ],
+          "properties": {
+            "kind": {
+              "const": "redirect-triggering-attack"
+            },
+            "attackBonus": {
+              "type": "integer"
+            },
+            "newTargetRule": {
+              "const": "different-opponent-adjacent-to-vehicle"
+            },
+            "compareDefense": {
+              "const": "reflex"
+            },
+            "preventRepeatRedirect": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "execute-all-out-movement",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "freeAction"
+          ],
+          "properties": {
+            "kind": {
+              "const": "execute-all-out-movement"
+            },
+            "freeAction": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "pilot-check-bonus",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "amount",
+            "checkContext"
+          ],
+          "properties": {
+            "kind": {
+              "const": "pilot-check-bonus"
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "checkContext": {
+              "enum": [
+                "resist-dogfight",
+                "disengage",
+                "initiate-dogfight",
+                "attack-target-in-dogfight"
+              ]
+            }
+          }
+        },
+        {
+          "title": "vehicle-reflex-modifier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "amount",
+            "scope",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-reflex-modifier"
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "scope": {
+              "enum": [
+                "own-vehicle",
+                "target-vehicle"
+              ]
+            },
+            "when": {
+              "enum": [
+                "until-start-next-turn",
+                "encounter",
+                "while-adjacent-ally",
+                "while-pattern-active",
+                "while-fighting-defensively"
+              ]
+            }
+          }
+        },
+        {
+          "title": "weapon-attack-modifier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "amount",
+            "scope",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "weapon-attack-modifier"
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "scope": {
+              "enum": [
+                "own-vehicle-weapons",
+                "own-pilot-attack",
+                "targeted-vehicle-weapons",
+                "all-vehicle-weapons-in-ship"
+              ]
+            },
+            "when": {
+              "enum": [
+                "single-attack",
+                "until-start-next-turn",
+                "while-pattern-active",
+                "while-adjacent-ally",
+                "target-lock",
+                "this-turn"
+              ]
+            }
+          }
+        },
+        {
+          "title": "weapon-damage-dice-change",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "diceDelta",
+            "scope",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "weapon-damage-dice-change"
+            },
+            "diceDelta": {
+              "type": "integer"
+            },
+            "scope": {
+              "enum": [
+                "one-attack",
+                "all-vehicle-weapon-attacks",
+                "all-vehicle-weapon-damage"
+              ]
+            },
+            "when": {
+              "enum": [
+                "on-hit",
+                "while-pattern-active",
+                "single-attack"
+              ]
+            }
+          }
+        },
+        {
+          "title": "shield-rating-adjustment",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "changeMode",
+            "value",
+            "scope",
+            "when",
+            "phase"
+          ],
+          "properties": {
+            "kind": {
+              "const": "shield-rating-adjustment"
+            },
+            "changeMode": {
+              "enum": [
+                "double",
+                "half-floor",
+                "add",
+                "subtract"
+              ]
+            },
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "scope": {
+              "enum": [
+                "own-vehicle",
+                "target-vehicle"
+              ]
+            },
+            "when": {
+              "enum": [
+                "from-chosen-opponent",
+                "from-other-opponents",
+                "while-pattern-active",
+                "after-normal-damage"
+              ]
+            },
+            "phase": {
+              "enum": [
+                "mitigation",
+                "post-damage",
+                "modifier"
+              ]
+            }
+          }
+        },
+        {
+          "title": "vehicle-speed-reduction",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "squares",
+            "target",
+            "duration"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-speed-reduction"
+            },
+            "squares": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "target": {
+              "enum": [
+                "target-vehicle",
+                "own-vehicle"
+              ]
+            },
+            "duration": {
+              "enum": [
+                "encounter",
+                "until-start-next-turn"
+              ]
+            }
+          }
+        },
+        {
+          "title": "engine-repair-availability",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "mechanicsDC",
+            "action",
+            "restores"
+          ],
+          "properties": {
+            "kind": {
+              "const": "engine-repair-availability"
+            },
+            "mechanicsDC": {
+              "type": "integer"
+            },
+            "action": {
+              "const": "full-round"
+            },
+            "restores": {
+              "const": "engine-speed-penalty"
+            }
+          }
+        },
+        {
+          "title": "grant-immediate-action",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "action",
+            "timing"
+          ],
+          "properties": {
+            "kind": {
+              "const": "grant-immediate-action"
+            },
+            "action": {
+              "enum": [
+                "swift",
+                "move",
+                "standard"
+              ]
+            },
+            "timing": {
+              "enum": [
+                "after-triggering-attack-resolves",
+                "on-activation"
+              ]
+            }
+          }
+        },
+        {
+          "title": "autofire-area-attack",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "areaSquares",
+            "weaponRequirement",
+            "attackPenalty"
+          ],
+          "properties": {
+            "kind": {
+              "const": "autofire-area-attack"
+            },
+            "areaSquares": {
+              "const": "2x2"
+            },
+            "weaponRequirement": {
+              "const": "autofire-capable"
+            },
+            "attackPenalty": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "vehicle-attack",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "action",
+            "attackPenalty",
+            "attackBonus",
+            "extraDamageDice",
+            "target"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-attack"
+            },
+            "action": {
+              "enum": [
+                "free",
+                "as-maneuver",
+                "attack-of-opportunity"
+              ]
+            },
+            "attackPenalty": {
+              "type": "integer"
+            },
+            "attackBonus": {
+              "type": "integer"
+            },
+            "extraDamageDice": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "target": {
+              "enum": [
+                "maneuver-target",
+                "dogfight-opponent",
+                "intercepted-vehicle",
+                "large-vehicle-through-space"
+              ]
+            }
+          }
+        },
+        {
+          "title": "vehicle-explosion-damage",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "formula",
+            "targets",
+            "attackRollSource",
+            "compareDefense"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-explosion-damage"
+            },
+            "formula": {
+              "enum": [
+                "3d10*2",
+                "4d10*2",
+                "5d10*2"
+              ]
+            },
+            "targets": {
+              "const": "vehicles-adjacent-to-destroyed-vehicle"
+            },
+            "attackRollSource": {
+              "const": "triggering-attack"
+            },
+            "compareDefense": {
+              "const": "reflex"
+            }
+          }
+        },
+        {
+          "title": "vehicle-condition-track",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "steps",
+            "trigger",
+            "comparisonRoll",
+            "comparisonDefense"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-condition-track"
+            },
+            "steps": {
+              "type": "integer"
+            },
+            "trigger": {
+              "const": "attack-deals-damage-and-beats-fortitude"
+            },
+            "comparisonRoll": {
+              "const": "vehicle-weapon-attack-roll"
+            },
+            "comparisonDefense": {
+              "const": "fortitude"
+            }
+          }
+        },
+        {
+          "title": "initiate-dogfight",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "asAttackOfOpportunity",
+            "pilotBonus",
+            "targetMaxSquares",
+            "moveSquaresTowardTargetOnSuccess"
+          ],
+          "properties": {
+            "kind": {
+              "const": "initiate-dogfight"
+            },
+            "asAttackOfOpportunity": {
+              "const": true
+            },
+            "pilotBonus": {
+              "type": "integer"
+            },
+            "targetMaxSquares": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "moveSquaresTowardTargetOnSuccess": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "title": "disengage-dogfight",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "asNoAction",
+            "pilotBonus"
+          ],
+          "properties": {
+            "kind": {
+              "const": "disengage-dogfight"
+            },
+            "asNoAction": {
+              "const": true
+            },
+            "pilotBonus": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "target-disengage-pilot-penalty",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "amount"
+          ],
+          "properties": {
+            "kind": {
+              "const": "target-disengage-pilot-penalty"
+            },
+            "amount": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "attack-of-opportunity-conditional",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "trigger",
+            "target"
+          ],
+          "properties": {
+            "kind": {
+              "const": "attack-of-opportunity-conditional"
+            },
+            "trigger": {
+              "enum": [
+                "target-fails-disengage",
+                "opponent-fails-dogfight-pilot-attack"
+              ]
+            },
+            "target": {
+              "enum": [
+                "dogfight-opponent",
+                "maneuver-target"
+              ]
+            }
+          }
+        },
+        {
+          "title": "vehicle-attack-run",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "reflexPenalty",
+            "asReaction",
+            "target"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-attack-run"
+            },
+            "reflexPenalty": {
+              "type": "integer"
+            },
+            "asReaction": {
+              "const": true
+            },
+            "target": {
+              "const": "maneuver-target"
+            }
+          }
+        },
+        {
+          "title": "vehicle-weapon-attack-tradeoff",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "chosenAttackPenaltySource",
+            "damageBonusPerAttackPenalty",
+            "attackPenaltyScope",
+            "damageBonusScope"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-weapon-attack-tradeoff"
+            },
+            "chosenAttackPenaltySource": {
+              "const": "player-declared-nonnegative-integer"
+            },
+            "damageBonusPerAttackPenalty": {
+              "const": 2
+            },
+            "attackPenaltyScope": {
+              "const": "all-user-vehicle-weapon-attacks-until-start-next-turn"
+            },
+            "damageBonusScope": {
+              "const": "only-designated-target-before-multipliers"
+            }
+          }
+        },
+        {
+          "title": "weapon-attack-ignore-shields",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "attackPenalty",
+            "attackScope",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "weapon-attack-ignore-shields"
+            },
+            "attackPenalty": {
+              "type": "integer"
+            },
+            "attackScope": {
+              "const": "pilot-plus-readied-gunners"
+            },
+            "when": {
+              "const": "inside-large-target-fighting-space"
+            }
+          }
+        },
+        {
+          "title": "collision",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "actorCanAvoid",
+            "targetCanAvoid",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "collision"
+            },
+            "actorCanAvoid": {
+              "type": "boolean"
+            },
+            "targetCanAvoid": {
+              "type": "boolean"
+            },
+            "when": {
+              "enum": [
+                "failed-activation-while-moving-through-target",
+                "target-survives-ram",
+                "pilot-result-below-20"
+              ]
+            }
+          }
+        },
+        {
+          "title": "movement-through-target",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "speedMultiplier",
+            "path",
+            "triggerAttackAction"
+          ],
+          "properties": {
+            "kind": {
+              "const": "movement-through-target"
+            },
+            "speedMultiplier": {
+              "const": 2
+            },
+            "path": {
+              "const": "straight-through-target-square"
+            },
+            "triggerAttackAction": {
+              "const": "free"
+            }
+          }
+        },
+        {
+          "title": "move-into-large-target-space",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "speedMultiplier",
+            "endInUnoccupiedSquare"
+          ],
+          "properties": {
+            "kind": {
+              "const": "move-into-large-target-space"
+            },
+            "speedMultiplier": {
+              "const": 2
+            },
+            "endInUnoccupiedSquare": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "weapon-shield-hit",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "extraShieldReduction",
+            "afterNormalDamage",
+            "baseShieldDegradation"
+          ],
+          "properties": {
+            "kind": {
+              "const": "weapon-shield-hit"
+            },
+            "extraShieldReduction": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "afterNormalDamage": {
+              "const": true
+            },
+            "baseShieldDegradation": {
+              "const": "single-existing-damage-authority-application"
+            }
+          }
+        },
+        {
+          "title": "replace-reflex-defense",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "valueSource",
+            "minimum",
+            "until",
+            "declareBeforeAttackResolved"
+          ],
+          "properties": {
+            "kind": {
+              "const": "replace-reflex-defense"
+            },
+            "valueSource": {
+              "const": "pilot-check-total"
+            },
+            "minimum": {
+              "const": "original-vehicle-reflex-defense"
+            },
+            "until": {
+              "const": "start-next-turn"
+            },
+            "declareBeforeAttackResolved": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "vehicle-target-lock",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "pilotBonus",
+            "attackBonus",
+            "endCondition"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-target-lock"
+            },
+            "pilotBonus": {
+              "type": "integer"
+            },
+            "attackBonus": {
+              "type": "integer"
+            },
+            "endCondition": {
+              "const": "designated-target-disengages-dogfight"
+            }
+          }
+        },
+        {
+          "title": "target-sense-replace-intelligence",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "modifierSource",
+            "replaces",
+            "extraManeuverAttackBonus",
+            "duration"
+          ],
+          "properties": {
+            "kind": {
+              "const": "target-sense-replace-intelligence"
+            },
+            "modifierSource": {
+              "const": "charisma-bonus"
+            },
+            "replaces": {
+              "const": "vehicle-intelligence-bonus"
+            },
+            "extraManeuverAttackBonus": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "duration": {
+              "const": "until-start-next-turn"
+            }
+          }
+        },
+        {
+          "title": "vehicle-straight-line-only",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "duration"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-straight-line-only"
+            },
+            "target": {
+              "const": "target-vehicle"
+            },
+            "duration": {
+              "const": "encounter"
+            }
+          }
+        },
+        {
+          "title": "vehicle-speed-half-floor",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "duration",
+            "failIfSpeedBecomesZero"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vehicle-speed-half-floor"
+            },
+            "target": {
+              "const": "own-vehicle"
+            },
+            "duration": {
+              "const": "until-start-next-turn"
+            },
+            "failIfSpeedBecomesZero": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "change-attack-pattern-target",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "action",
+            "targetKind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "change-attack-pattern-target"
+            },
+            "action": {
+              "const": "swift"
+            },
+            "targetKind": {
+              "const": "vehicle-or-space-station"
+            }
+          }
+        },
+        {
+          "title": "choose-active-attack-pattern",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "replacesExisting",
+            "duration",
+            "deactivationAction"
+          ],
+          "properties": {
+            "kind": {
+              "const": "choose-active-attack-pattern"
+            },
+            "replacesExisting": {
+              "const": true
+            },
+            "duration": {
+              "const": "encounter"
+            },
+            "deactivationAction": {
+              "enum": [
+                "swift",
+                "none"
+              ]
+            }
+          }
+        },
+        {
+          "title": "conditional-attack-pattern-bonus",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "stat",
+            "baseBonus",
+            "matchedAllyBonus",
+            "allyRequirement",
+            "matchingPatternRequirement"
+          ],
+          "properties": {
+            "kind": {
+              "const": "conditional-attack-pattern-bonus"
+            },
+            "stat": {
+              "enum": [
+                "reflex-defense",
+                "vehicle-weapon-attack"
+              ]
+            },
+            "baseBonus": {
+              "type": "integer"
+            },
+            "matchedAllyBonus": {
+              "type": "integer"
+            },
+            "allyRequirement": {
+              "enum": [
+                "adjacent-allied-starfighter-or-airspeeder"
+              ]
+            },
+            "matchingPatternRequirement": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "damage-reduction",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "amount",
+            "damageTypes",
+            "expires"
+          ],
+          "properties": {
+            "kind": {
+              "const": "damage-reduction"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "amount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "damageTypes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "expires": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "title": "action-budget",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "allowedAction",
+            "maxActions",
+            "duration"
+          ],
+          "properties": {
+            "kind": {
+              "const": "action-budget"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "allowedAction": {
+              "enum": [
+                "standard",
+                "move",
+                "swift",
+                "none"
+              ]
+            },
+            "maxActions": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "duration": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "title": "damage-threshold-adjustment",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "amount",
+            "expires"
+          ],
+          "properties": {
+            "kind": {
+              "const": "damage-threshold-adjustment"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "expires": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "title": "telekinetic-weapon-control",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "weaponCount",
+            "allowedWeapon",
+            "maximumDistanceSquares",
+            "attackFormula",
+            "damageBonusFormula",
+            "excludeWeaponEnhancementFeatsAndTalents",
+            "threatensAdjacentSquares",
+            "attacksOfOpportunityCountAsCaster"
+          ],
+          "properties": {
+            "kind": {
+              "const": "telekinetic-weapon-control"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "weaponCount": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "allowedWeapon": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maximumDistanceSquares": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "attackFormula": {
+              "type": "string",
+              "minLength": 1
+            },
+            "damageBonusFormula": {
+              "type": "string",
+              "minLength": 1
+            },
+            "excludeWeaponEnhancementFeatsAndTalents": {
+              "type": "boolean"
+            },
+            "threatensAdjacentSquares": {
+              "type": "boolean"
+            },
+            "attacksOfOpportunityCountAsCaster": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "speed-reduction",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "squares",
+            "duration"
+          ],
+          "properties": {
+            "kind": {
+              "const": "speed-reduction"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "squares": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "duration": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "title": "skill-check-penalty",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "skills",
+            "amount",
+            "duration"
+          ],
+          "properties": {
+            "kind": {
+              "const": "skill-check-penalty"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "skills": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "duration": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "title": "selected-defense-bonus",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "defensesToSelect",
+            "qualifyingEffects",
+            "expires"
+          ],
+          "properties": {
+            "kind": {
+              "const": "selected-defense-bonus"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "amountFrom": {
+              "enum": [
+                "resolved-tier"
+              ]
+            },
+            "defensesToSelect": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+            },
+            "qualifyingEffects": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expires": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "title": "persistent-condition",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "trigger",
+            "removal",
+            "treatInjuryDC"
+          ],
+          "properties": {
+            "kind": {
+              "const": "persistent-condition"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "trigger": {
+              "type": "string",
+              "minLength": 1
+            },
+            "removal": {
+              "type": "string",
+              "minLength": 1
+            },
+            "treatInjuryDC": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "title": "target-substitution",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "replaces",
+            "newTarget",
+            "rangeSquares",
+            "requiresAlly"
+          ],
+          "properties": {
+            "kind": {
+              "const": "target-substitution"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "replaces": {
+              "type": "string",
+              "minLength": 1
+            },
+            "newTarget": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rangeSquares": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "requiresAlly": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "additional-target",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "newTarget",
+            "identicalOutcome"
+          ],
+          "properties": {
+            "kind": {
+              "const": "additional-target"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "newTarget": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identicalOutcome": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "ion-damage-rule-override",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "afterDamageThreshold",
+            "damageFraction"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ion-damage-rule-override"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "afterDamageThreshold": {
+              "type": "boolean"
+            },
+            "damageFraction": {
+              "enum": [
+                "full",
+                "half"
+              ]
+            }
+          }
+        },
+        {
+          "title": "temporary-language-acquisition",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "durationHours",
+            "unwillingTargetDefense",
+            "skillApplication"
+          ],
+          "properties": {
+            "kind": {
+              "const": "temporary-language-acquisition"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "durationHours": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "unwillingTargetDefense": {
+              "enum": [
+                "will"
+              ]
+            },
+            "skillApplication": {
+              "const": "telepathy"
+            }
+          }
+        },
+        {
+          "title": "tier-reduction-on-failed-counter",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "stepCount",
+            "onlyVariableTiers",
+            "excludeStaticEffects"
+          ],
+          "properties": {
+            "kind": {
+              "const": "tier-reduction-on-failed-counter"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "stepCount": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "onlyVariableTiers": {
+              "type": "boolean"
+            },
+            "excludeStaticEffects": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "temporary-force-point",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "amount",
+            "expires",
+            "grantCondition"
+          ],
+          "properties": {
+            "kind": {
+              "const": "temporary-force-point"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "amount": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "expires": {
+              "type": "string",
+              "minLength": 1
+            },
+            "grantCondition": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "title": "borrow-force-power",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "requiresConsent",
+            "usesPerEncounter",
+            "maxLinkedAllies",
+            "rangeKilometers"
+          ],
+          "properties": {
+            "kind": {
+              "const": "borrow-force-power"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "requiresConsent": {
+              "type": "boolean"
+            },
+            "usesPerEncounter": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maxLinkedAllies": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "rangeKilometers": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "title": "immune-to-power-tier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "value"
+          ],
+          "properties": {
+            "kind": {
+              "const": "immune-to-power-tier"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "title": "weapon-control-action",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "moveSquares",
+            "action",
+            "attacksPerAction"
+          ],
+          "properties": {
+            "kind": {
+              "const": "weapon-control-action"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "moveSquares": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "action": {
+              "enum": [
+                "standard"
+              ]
+            },
+            "attacksPerAction": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "title": "scheduled-damage",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "fraction",
+            "trigger",
+            "tickCount",
+            "basedOn",
+            "requiresInitialTargetHit"
+          ],
+          "properties": {
+            "kind": {
+              "const": "scheduled-damage"
+            },
+            "target": {
+              "type": "string"
+            },
+            "fraction": {
+              "type": "number"
+            },
+            "trigger": {
+              "enum": [
+                "start-of-target-next-turn",
+                "start-of-target-turn",
+                "end-of-caster-turn"
+              ]
+            },
+            "tickCount": {
+              "type": "integer"
+            },
+            "basedOn": {
+              "enum": [
+                "actual-damage-rolled",
+                "original-damage-total"
+              ]
+            },
+            "requiresInitialTargetHit": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "personal-shield-rating",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "rating",
+            "expires",
+            "rechargeable",
+            "endsWhenZero"
+          ],
+          "properties": {
+            "kind": {
+              "const": "personal-shield-rating"
+            },
+            "target": {
+              "type": "string"
+            },
+            "rating": {
+              "type": "integer"
+            },
+            "expires": {
+              "type": "string"
+            },
+            "rechargeable": {
+              "type": "boolean"
+            },
+            "endsWhenZero": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "personal-shield-rating-adjustment",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "amount",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "personal-shield-rating-adjustment"
+            },
+            "target": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "damage-bonus-scaling",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "formula",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "damage-bonus-scaling"
+            },
+            "target": {
+              "type": "string"
+            },
+            "formula": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "periodic-damage",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "dice",
+            "damageType",
+            "trigger",
+            "affectedArea",
+            "forDuration"
+          ],
+          "properties": {
+            "kind": {
+              "const": "periodic-damage"
+            },
+            "target": {
+              "type": "string"
+            },
+            "dice": {
+              "type": "string"
+            },
+            "damageType": {
+              "type": "string"
+            },
+            "trigger": {
+              "enum": [
+                "end-of-caster-turn",
+                "start-of-target-turn"
+              ]
+            },
+            "affectedArea": {
+              "type": "string"
+            },
+            "forDuration": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "opposed-check-penalty",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "check",
+            "amount"
+          ],
+          "properties": {
+            "kind": {
+              "const": "opposed-check-penalty"
+            },
+            "target": {
+              "type": "string"
+            },
+            "check": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "damage-dice-override",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "dice",
+            "replacement"
+          ],
+          "properties": {
+            "kind": {
+              "const": "damage-dice-override"
+            },
+            "target": {
+              "type": "string"
+            },
+            "dice": {
+              "type": "string"
+            },
+            "replacement": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "descriptor-injection",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "descriptor",
+            "expires"
+          ],
+          "properties": {
+            "kind": {
+              "const": "descriptor-injection"
+            },
+            "target": {
+              "type": "string"
+            },
+            "descriptor": {
+              "type": "string"
+            },
+            "expires": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "defense-penalty-conditional",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "amount",
+            "condition",
+            "duration"
+          ],
+          "properties": {
+            "kind": {
+              "const": "defense-penalty-conditional"
+            },
+            "target": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "condition": {
+              "type": "string"
+            },
+            "duration": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "damage-total-multiplier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "factor",
+            "onlyIf"
+          ],
+          "properties": {
+            "kind": {
+              "const": "damage-total-multiplier"
+            },
+            "target": {
+              "type": "string"
+            },
+            "factor": {
+              "type": "number"
+            },
+            "onlyIf": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "autonomous-maintenance",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "roundsFormula",
+            "minimumRounds",
+            "requiresDamageConcentration",
+            "noResumptionAfter"
+          ],
+          "properties": {
+            "kind": {
+              "const": "autonomous-maintenance"
+            },
+            "target": {
+              "type": "string"
+            },
+            "roundsFormula": {
+              "type": "string"
+            },
+            "minimumRounds": {
+              "type": "integer"
+            },
+            "requiresDamageConcentration": {
+              "type": "boolean"
+            },
+            "noResumptionAfter": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "size-bonus-suppression",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "check",
+            "removePositiveOnly",
+            "preservePenalties"
+          ],
+          "properties": {
+            "kind": {
+              "const": "size-bonus-suppression"
+            },
+            "target": {
+              "type": "string"
+            },
+            "check": {
+              "type": "string"
+            },
+            "removePositiveOnly": {
+              "type": "boolean"
+            },
+            "preservePenalties": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "collision-damage-per-square",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "dicePerSquare",
+            "condition"
+          ],
+          "properties": {
+            "kind": {
+              "const": "collision-damage-per-square"
+            },
+            "target": {
+              "type": "string"
+            },
+            "dicePerSquare": {
+              "type": "string"
+            },
+            "condition": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "burst-on-power-end",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "action",
+            "radiusSquares",
+            "dice",
+            "endsPower"
+          ],
+          "properties": {
+            "kind": {
+              "const": "burst-on-power-end"
+            },
+            "target": {
+              "type": "string"
+            },
+            "action": {
+              "enum": [
+                "swift",
+                "standard",
+                "reaction",
+                "free",
+                "move",
+                "full-round"
+              ]
+            },
+            "radiusSquares": {
+              "type": "integer"
+            },
+            "dice": {
+              "type": "string"
+            },
+            "endsPower": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "origin-substitution",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "maxDistanceSquares",
+            "lineOfSightOnly",
+            "directionFromNewOrigin"
+          ],
+          "properties": {
+            "kind": {
+              "const": "origin-substitution"
+            },
+            "target": {
+              "type": "string"
+            },
+            "maxDistanceSquares": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "lineOfSightOnly": {
+              "type": "boolean"
+            },
+            "directionFromNewOrigin": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "natural20-recovery-replacement",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "requiredRoll",
+            "mustDealDirectDamage",
+            "followupFraction",
+            "followupTrigger"
+          ],
+          "properties": {
+            "kind": {
+              "const": "natural20-recovery-replacement"
+            },
+            "target": {
+              "type": "string"
+            },
+            "requiredRoll": {
+              "type": "string"
+            },
+            "mustDealDirectDamage": {
+              "type": "boolean"
+            },
+            "followupFraction": {
+              "type": "number"
+            },
+            "followupTrigger": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "attack-rolls-in-full-attack",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "includeDamageBonus",
+            "allAttacksInAction"
+          ],
+          "properties": {
+            "kind": {
+              "const": "attack-rolls-in-full-attack"
+            },
+            "target": {
+              "type": "string"
+            },
+            "includeDamageBonus": {
+              "type": "boolean"
+            },
+            "allAttacksInAction": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "power-restriction-removal",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "restriction",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "power-restriction-removal"
+            },
+            "target": {
+              "type": "string"
+            },
+            "restriction": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "bonus-damage-on-collision",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "dice",
+            "condition"
+          ],
+          "properties": {
+            "kind": {
+              "const": "bonus-damage-on-collision"
+            },
+            "target": {
+              "type": "string"
+            },
+            "dice": {
+              "type": "string"
+            },
+            "condition": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "technique-sustained-exception",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "extraRounds",
+            "action",
+            "requiresForcePoint",
+            "resumptionAllowed"
+          ],
+          "properties": {
+            "kind": {
+              "const": "technique-sustained-exception"
+            },
+            "target": {
+              "type": "string"
+            },
+            "extraRounds": {
+              "type": "integer"
+            },
+            "action": {
+              "type": "string"
+            },
+            "requiresForcePoint": {
+              "type": "boolean"
+            },
+            "resumptionAllowed": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "ally-rebuke-substitution",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "rangeSquares",
+            "lineOfSightRequired"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ally-rebuke-substitution"
+            },
+            "target": {
+              "type": "string"
+            },
+            "rangeSquares": {
+              "type": "integer"
+            },
+            "lineOfSightRequired": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "temporarily-granted-force-talent",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "talentTree",
+            "duration",
+            "requiresTalentPrerequisites",
+            "forcePointsEach",
+            "darkSideScoreAtEndPerPoint"
+          ],
+          "properties": {
+            "kind": {
+              "const": "temporarily-granted-force-talent"
+            },
+            "target": {
+              "type": "string"
+            },
+            "talentTree": {
+              "type": "string"
+            },
+            "duration": {
+              "type": "string"
+            },
+            "requiresTalentPrerequisites": {
+              "type": "boolean"
+            },
+            "forcePointsEach": {
+              "type": "integer"
+            },
+            "darkSideScoreAtEndPerPoint": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "temporary-power-instance",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "chosenPowerId",
+            "removeExistingPowerCount",
+            "newPowerCount",
+            "persistentCTSteps",
+            "recovery"
+          ],
+          "properties": {
+            "kind": {
+              "const": "temporary-power-instance"
+            },
+            "target": {
+              "type": "string"
+            },
+            "chosenPowerId": {
+              "type": "string"
+            },
+            "removeExistingPowerCount": {
+              "type": "integer"
+            },
+            "newPowerCount": {
+              "type": "integer"
+            },
+            "persistentCTSteps": {
+              "type": "integer"
+            },
+            "recovery": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "temp-suite-entitlement",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "chosenPowerDescriptor",
+            "maxPerFeatInstance",
+            "requiresChosenPowerId"
+          ],
+          "properties": {
+            "kind": {
+              "const": "temp-suite-entitlement"
+            },
+            "target": {
+              "type": "string"
+            },
+            "chosenPowerDescriptor": {
+              "type": "string"
+            },
+            "maxPerFeatInstance": {
+              "type": "integer"
+            },
+            "requiresChosenPowerId": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "damage-delta-on-natural20",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "multiplier",
+            "timing"
+          ],
+          "properties": {
+            "kind": {
+              "const": "damage-delta-on-natural20"
+            },
+            "target": {
+              "type": "string"
+            },
+            "multiplier": {
+              "type": "number"
+            },
+            "timing": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "attack-defense-margin-control",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "requiredCheck",
+            "minimumMargin",
+            "effect"
+          ],
+          "properties": {
+            "kind": {
+              "const": "attack-defense-margin-control"
+            },
+            "target": {
+              "type": "string"
+            },
+            "requiredCheck": {
+              "type": "string"
+            },
+            "minimumMargin": {
+              "type": "integer"
+            },
+            "effect": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "damage-threshold-gate",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "threshold",
+            "comparison",
+            "effect"
+          ],
+          "properties": {
+            "kind": {
+              "const": "damage-threshold-gate"
+            },
+            "target": {
+              "type": "string"
+            },
+            "threshold": {
+              "type": "string"
+            },
+            "comparison": {
+              "enum": [
+                "gte",
+                "gt"
+              ]
+            },
+            "effect": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "targeting-multiplier",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "distanceFactor",
+            "onlySourceOrigin"
+          ],
+          "properties": {
+            "kind": {
+              "const": "targeting-multiplier"
+            },
+            "target": {
+              "type": "string"
+            },
+            "distanceFactor": {
+              "type": "integer"
+            },
+            "onlySourceOrigin": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "area-reach",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "shape",
+            "distanceSquares",
+            "origin"
+          ],
+          "properties": {
+            "kind": {
+              "const": "area-reach"
+            },
+            "target": {
+              "type": "string"
+            },
+            "shape": {
+              "type": "string"
+            },
+            "distanceSquares": {
+              "type": "integer"
+            },
+            "origin": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "condition-track-extra-steps",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "steps",
+            "ignoreDamageThreshold",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "condition-track-extra-steps"
+            },
+            "target": {
+              "type": "string"
+            },
+            "steps": {
+              "type": "integer"
+            },
+            "ignoreDamageThreshold": {
+              "type": "boolean"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "damage-distribution",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "fraction",
+            "includeAdjacent",
+            "requiresDefense",
+            "noSecondaryTicks"
+          ],
+          "properties": {
+            "kind": {
+              "const": "damage-distribution"
+            },
+            "target": {
+              "type": "string"
+            },
+            "fraction": {
+              "type": "number"
+            },
+            "includeAdjacent": {
+              "type": "boolean"
+            },
+            "requiresDefense": {
+              "type": "string"
+            },
+            "noSecondaryTicks": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "self-duration",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "duration"
+          ],
+          "properties": {
+            "kind": {
+              "const": "self-duration"
+            },
+            "target": {
+              "type": "string"
+            },
+            "duration": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "swift-power-termination",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "radiusSquares",
+            "dice"
+          ],
+          "properties": {
+            "kind": {
+              "const": "swift-power-termination"
+            },
+            "target": {
+              "type": "string"
+            },
+            "radiusSquares": {
+              "type": "integer"
+            },
+            "dice": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "bypass-concentration-restrictions",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "allowsSkills",
+            "allowsSurpriseWhenSurprised"
+          ],
+          "properties": {
+            "kind": {
+              "const": "bypass-concentration-restrictions"
+            },
+            "target": {
+              "type": "string"
+            },
+            "allowsSkills": {
+              "type": "boolean"
+            },
+            "allowsSurpriseWhenSurprised": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "space-scale-allies",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "scope",
+            "sourceBonus"
+          ],
+          "properties": {
+            "kind": {
+              "const": "space-scale-allies"
+            },
+            "target": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            },
+            "sourceBonus": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "surprise-round-permission",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "evenWhenSurprised"
+          ],
+          "properties": {
+            "kind": {
+              "const": "surprise-round-permission"
+            },
+            "target": {
+              "type": "string"
+            },
+            "evenWhenSurprised": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "force-power-activation-resource",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "resource",
+            "amount",
+            "purpose"
+          ],
+          "properties": {
+            "kind": {
+              "const": "force-power-activation-resource"
+            },
+            "target": {
+              "type": "string"
+            },
+            "resource": {
+              "enum": [
+                "force-point",
+                "destiny-point"
+              ]
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "purpose": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "unconscious-target-force-trance-eligibility",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "whenAlreadyUnconscious",
+            "treatedWilling",
+            "requiresLiving"
+          ],
+          "properties": {
+            "kind": {
+              "const": "unconscious-target-force-trance-eligibility"
+            },
+            "target": {
+              "type": "string"
+            },
+            "whenAlreadyUnconscious": {
+              "type": "boolean"
+            },
+            "treatedWilling": {
+              "type": "boolean"
+            },
+            "requiresLiving": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "filter-targets-by-type",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "allowedTypes",
+            "otherTypesExcluded"
+          ],
+          "properties": {
+            "kind": {
+              "const": "filter-targets-by-type"
+            },
+            "target": {
+              "type": "string"
+            },
+            "allowedTypes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              }
+            },
+            "otherTypesExcluded": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "technometry-fp-exclusive-choice",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "selectedModeRequired",
+            "choices"
+          ],
+          "properties": {
+            "kind": {
+              "const": "technometry-fp-exclusive-choice"
+            },
+            "target": {
+              "type": "string"
+            },
+            "selectedModeRequired": {
+              "type": "boolean"
+            },
+            "choices": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "mode",
+                  "eligibility",
+                  "amount"
+                ],
+                "properties": {
+                  "mode": {
+                    "enum": [
+                      "add-information-pieces",
+                      "extend-chosen-droid-effect-rounds"
+                    ]
+                  },
+                  "eligibility": {
+                    "type": "string"
+                  },
+                  "amount": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "total-concealment",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "duration",
+            "against"
+          ],
+          "properties": {
+            "kind": {
+              "const": "total-concealment"
+            },
+            "target": {
+              "type": "string"
+            },
+            "duration": {
+              "type": "string"
+            },
+            "against": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "vertical-flight",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "speedSquares",
+            "verticalOnly",
+            "freeStepOntoAdjacentSurface",
+            "fallIfUnsupportedNextTurn"
+          ],
+          "properties": {
+            "kind": {
+              "const": "vertical-flight"
+            },
+            "target": {
+              "type": "string"
+            },
+            "speedSquares": {
+              "type": "integer"
+            },
+            "verticalOnly": {
+              "type": "boolean"
+            },
+            "freeStepOntoAdjacentSurface": {
+              "type": "boolean"
+            },
+            "fallIfUnsupportedNextTurn": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "safe-fall-by-vertical-speed",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "reduceSquaresBySelectedFlySpeed",
+            "safeIfDistanceBecomesZero",
+            "reactionForcePointCost"
+          ],
+          "properties": {
+            "kind": {
+              "const": "safe-fall-by-vertical-speed"
+            },
+            "target": {
+              "type": "string"
+            },
+            "reduceSquaresBySelectedFlySpeed": {
+              "type": "boolean"
+            },
+            "safeIfDistanceBecomesZero": {
+              "type": "boolean"
+            },
+            "reactionForcePointCost": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "title": "phasing-movement",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "speedSquares",
+            "capAtBaseSpeed",
+            "mayTraverseObstacles",
+            "mustEndMovementLegalUnoccupied"
+          ],
+          "properties": {
+            "kind": {
+              "const": "phasing-movement"
+            },
+            "target": {
+              "type": "string"
+            },
+            "speedSquares": {
+              "type": "integer"
+            },
+            "capAtBaseSpeed": {
+              "type": "boolean"
+            },
+            "mayTraverseObstacles": {
+              "type": "boolean"
+            },
+            "mustEndMovementLegalUnoccupied": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "death-or-trance-at-bottom",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "condition",
+            "livingOnly",
+            "ignoreConsentForTrance",
+            "options"
+          ],
+          "properties": {
+            "kind": {
+              "const": "death-or-trance-at-bottom"
+            },
+            "target": {
+              "type": "string"
+            },
+            "condition": {
+              "type": "string"
+            },
+            "livingOnly": {
+              "type": "boolean"
+            },
+            "ignoreConsentForTrance": {
+              "type": "boolean"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 2
+            }
+          }
+        },
+        {
+          "title": "critical-double-on-natural20-utf",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "rollFamily",
+            "multiplier",
+            "noAttackRollRequired"
+          ],
+          "properties": {
+            "kind": {
+              "const": "critical-double-on-natural20-utf"
+            },
+            "target": {
+              "type": "string"
+            },
+            "rollFamily": {
+              "type": "string"
+            },
+            "multiplier": {
+              "type": "integer"
+            },
+            "noAttackRollRequired": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "rend-split-on-zero-hp",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "threshold",
+            "livingInstantDeath"
+          ],
+          "properties": {
+            "kind": {
+              "const": "rend-split-on-zero-hp"
+            },
+            "target": {
+              "type": "string"
+            },
+            "threshold": {
+              "type": "integer"
+            },
+            "livingInstantDeath": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "memory-access-will-margin",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "defense",
+            "basePieces",
+            "additionalPerMargin",
+            "reference"
+          ],
+          "properties": {
+            "kind": {
+              "const": "memory-access-will-margin"
+            },
+            "target": {
+              "type": "string"
+            },
+            "defense": {
+              "type": "string"
+            },
+            "basePieces": {
+              "type": "integer"
+            },
+            "additionalPerMargin": {
+              "type": "integer"
+            },
+            "reference": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "droid-control-choice",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "choices",
+            "requiresSuccessfulWillComparison"
+          ],
+          "properties": {
+            "kind": {
+              "const": "droid-control-choice"
+            },
+            "target": {
+              "type": "string"
+            },
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "mode",
+                  "effect",
+                  "expires"
+                ],
+                "properties": {
+                  "mode": {
+                    "type": "string"
+                  },
+                  "effect": {
+                    "type": "string"
+                  },
+                  "expires": {
+                    "type": "string"
+                  }
+                }
+              },
+              "minItems": 1
+            },
+            "requiresSuccessfulWillComparison": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "ignore-damage-reduction",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "scope"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ignore-damage-reduction"
+            },
+            "target": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "replace-threshold-penalty",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "originalAmount",
+            "replacementAmount",
+            "expires"
+          ],
+          "properties": {
+            "kind": {
+              "const": "replace-threshold-penalty"
+            },
+            "target": {
+              "type": "string"
+            },
+            "originalAmount": {
+              "type": "integer"
+            },
+            "replacementAmount": {
+              "type": "integer"
+            },
+            "expires": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "maintain-action-override",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "fromAction",
+            "toAction",
+            "scope"
+          ],
+          "properties": {
+            "kind": {
+              "const": "maintain-action-override"
+            },
+            "target": {
+              "type": "string"
+            },
+            "fromAction": {
+              "type": "string"
+            },
+            "toAction": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "halt-forced-movement-before-precipice",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "lastSquareBeforeEdge",
+            "requiresInvoluntaryMovement"
+          ],
+          "properties": {
+            "kind": {
+              "const": "halt-forced-movement-before-precipice"
+            },
+            "target": {
+              "type": "string"
+            },
+            "lastSquareBeforeEdge": {
+              "type": "boolean"
+            },
+            "requiresInvoluntaryMovement": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "end-move-within-occupied-space",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "allowedPerActivation",
+            "endTurnMustBeLegalUnoccupied"
+          ],
+          "properties": {
+            "kind": {
+              "const": "end-move-within-occupied-space"
+            },
+            "target": {
+              "type": "string"
+            },
+            "allowedPerActivation": {
+              "type": "integer"
+            },
+            "endTurnMustBeLegalUnoccupied": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "persistent-ct-on-shatterpoint-attack",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "trigger",
+            "requiresConditionTrackMovement",
+            "livingRemoval",
+            "nonlivingRemoval"
+          ],
+          "properties": {
+            "kind": {
+              "const": "persistent-ct-on-shatterpoint-attack"
+            },
+            "target": {
+              "type": "string"
+            },
+            "trigger": {
+              "type": "string"
+            },
+            "requiresConditionTrackMovement": {
+              "type": "boolean"
+            },
+            "livingRemoval": {
+              "type": "string"
+            },
+            "nonlivingRemoval": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "full-healing-condition-clear",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "healAllDamage",
+            "removeAllDebilitatingConditions"
+          ],
+          "properties": {
+            "kind": {
+              "const": "full-healing-condition-clear"
+            },
+            "target": {
+              "type": "string"
+            },
+            "healAllDamage": {
+              "type": "boolean"
+            },
+            "removeAllDebilitatingConditions": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "deferred-linked-power",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "delayedRounds",
+            "delayedAction",
+            "triggerTime",
+            "forbidModifiers",
+            "requireTwoEligiblePowerUses",
+            "rollSecondAtScheduledTime"
+          ],
+          "properties": {
+            "kind": {
+              "const": "deferred-linked-power"
+            },
+            "target": {
+              "type": "string"
+            },
+            "delayedRounds": {
+              "type": "integer"
+            },
+            "delayedAction": {
+              "type": "string"
+            },
+            "triggerTime": {
+              "type": "string"
+            },
+            "forbidModifiers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "requireTwoEligiblePowerUses": {
+              "type": "boolean"
+            },
+            "rollSecondAtScheduledTime": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "ignore-condition-track-utf-penalty",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "onlySelfTargetingPower",
+            "ignoreOtherPenalties"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ignore-condition-track-utf-penalty"
+            },
+            "target": {
+              "type": "string"
+            },
+            "onlySelfTargetingPower": {
+              "type": "boolean"
+            },
+            "ignoreOtherPenalties": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "talisman-regain-all-selected-uses",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "requiresWornTalisman",
+            "sameSelectedPower",
+            "allExpendedCopies",
+            "exemptFpOncePerTurnLimit"
+          ],
+          "properties": {
+            "kind": {
+              "const": "talisman-regain-all-selected-uses"
+            },
+            "target": {
+              "type": "string"
+            },
+            "requiresWornTalisman": {
+              "type": "boolean"
+            },
+            "sameSelectedPower": {
+              "type": "boolean"
+            },
+            "allExpendedCopies": {
+              "type": "boolean"
+            },
+            "exemptFpOncePerTurnLimit": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "exclusive-effect-mode",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "selectionRequired",
+            "modes"
+          ],
+          "properties": {
+            "kind": {
+              "const": "exclusive-effect-mode"
+            },
+            "target": {
+              "type": "string"
+            },
+            "selectionRequired": {
+              "type": "boolean"
+            },
+            "modes": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "mode",
+                  "eligibility",
+                  "operations"
+                ],
+                "properties": {
+                  "mode": {
+                    "type": "string"
+                  },
+                  "eligibility": {
+                    "type": "string"
+                  },
+                  "operations": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/operation"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "increase-existing-force-bonus",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "stat",
+            "amount",
+            "baseBonusFromTier"
+          ],
+          "properties": {
+            "kind": {
+              "const": "increase-existing-force-bonus"
+            },
+            "target": {
+              "type": "string"
+            },
+            "stat": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "integer"
+            },
+            "baseBonusFromTier": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "increase-phasing-speed",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "squares",
+            "capAtBaseSpeed"
+          ],
+          "properties": {
+            "kind": {
+              "const": "increase-phasing-speed"
+            },
+            "target": {
+              "type": "string"
+            },
+            "squares": {
+              "type": "integer"
+            },
+            "capAtBaseSpeed": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "title": "jatm-source-typed-tier-effect",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "mechanicKey",
+            "value",
+            "unit",
+            "phase",
+            "sourceDefinitionId"
+          ],
+          "properties": {
+            "kind": {
+              "const": "jatm-source-typed-tier-effect"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mechanicKey": {
+              "type": "string",
+              "minLength": 1
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  }
+                }
+              ]
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "phase": {
+              "enum": [
+                "activation-roll",
+                "attack-resolution",
+                "incoming-damage",
+                "target-turn-start",
+                "regimen-completion",
+                "duration-window"
+              ]
+            },
+            "sourceDefinitionId": {
+              "type": "string",
+              "pattern": "^jatm/"
+            }
+          }
+        },
+        {
+          "title": "detoxify-poison",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "checkDcSource",
+            "checkResultSource",
+            "replacesHealing",
+            "successEffect"
+          ],
+          "properties": {
+            "kind": {
+              "const": "detoxify-poison"
+            },
+            "target": {
+              "type": "string"
+            },
+            "checkDcSource": {
+              "const": "active-poison-dc"
+            },
+            "checkResultSource": {
+              "const": "vital-transfer-utf-check"
+            },
+            "replacesHealing": {
+              "const": true
+            },
+            "successEffect": {
+              "const": "treat-injury-detoxify-poison"
+            }
+          }
+        },
+        {
+          "title": "replace-push-distance",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "fromSquares",
+            "toSquares",
+            "additive"
+          ],
+          "properties": {
+            "kind": {
+              "const": "replace-push-distance"
+            },
+            "target": {
+              "type": "string"
+            },
+            "fromSquares": {
+              "const": 1
+            },
+            "toSquares": {
+              "const": 2
+            },
+            "additive": {
+              "const": false
+            }
+          }
+        },
+        {
+          "title": "area-half-damage-on-miss",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "fraction",
+            "damageSource",
+            "conditionsExcludedOnMiss"
+          ],
+          "properties": {
+            "kind": {
+              "const": "area-half-damage-on-miss"
+            },
+            "target": {
+              "type": "string"
+            },
+            "fraction": {
+              "const": 0.5
+            },
+            "damageSource": {
+              "type": "string"
+            },
+            "conditionsExcludedOnMiss": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "title": "ignite-burning",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "attackBonusSource",
+            "fireRulesOwner",
+            "onlyOnHit"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ignite-burning"
+            },
+            "target": {
+              "type": "string"
+            },
+            "attackBonusSource": {
+              "const": "initial-use-the-force-total"
+            },
+            "fireRulesOwner": {
+              "const": "core-fire-rules"
+            },
+            "onlyOnHit": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "persistent-force-cost",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "steps",
+            "persistent",
+            "recoveryHours",
+            "darkSidePointGain",
+            "trigger"
+          ],
+          "properties": {
+            "kind": {
+              "const": "persistent-force-cost"
+            },
+            "target": {
+              "type": "string"
+            },
+            "steps": {
+              "const": -1
+            },
+            "persistent": {
+              "const": true
+            },
+            "recoveryHours": {
+              "const": 8
+            },
+            "darkSidePointGain": {
+              "const": 1
+            },
+            "trigger": {
+              "const": "power-use-attempt"
+            }
+          }
+        },
+        {
+          "title": "suppress-persistent-condition-cost",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "conditionFromDefinition",
+            "darkSidePointStillApplies"
+          ],
+          "properties": {
+            "kind": {
+              "const": "suppress-persistent-condition-cost"
+            },
+            "target": {
+              "type": "string"
+            },
+            "conditionFromDefinition": {
+              "type": "string"
+            },
+            "darkSidePointStillApplies": {
+              "const": true
+            }
+          }
+        },
+        {
+          "title": "conditional-attack-redirection",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "afterOriginalMiss",
+            "adjacentTo",
+            "rollAgain",
+            "attackPenalty",
+            "newTarget"
+          ],
+          "properties": {
+            "kind": {
+              "const": "conditional-attack-redirection"
+            },
+            "target": {
+              "type": "string"
+            },
+            "afterOriginalMiss": {
+              "const": true
+            },
+            "adjacentTo": {
+              "const": "original-attacker"
+            },
+            "rollAgain": {
+              "const": true
+            },
+            "attackPenalty": {
+              "const": -5
+            },
+            "newTarget": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "insight-result-substitution",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "resultSource",
+            "allowedTypes",
+            "uses",
+            "expires",
+            "defenseAppliesUntil"
+          ],
+          "properties": {
+            "kind": {
+              "const": "insight-result-substitution"
+            },
+            "target": {
+              "type": "string"
+            },
+            "resultSource": {
+              "const": "activator-use-the-force-total"
+            },
+            "allowedTypes": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "attack-roll",
+                  "skill-check",
+                  "opposed-check",
+                  "defense"
+                ]
+              }
+            },
+            "uses": {
+              "const": 1
+            },
+            "expires": {
+              "type": "string"
+            },
+            "defenseAppliesUntil": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "relative-insight-bonus",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "enemyReference",
+            "amount",
+            "bonusType",
+            "attackScope",
+            "defenseScope",
+            "expires"
+          ],
+          "properties": {
+            "kind": {
+              "const": "relative-insight-bonus"
+            },
+            "target": {
+              "type": "string"
+            },
+            "enemyReference": {
+              "const": "chosen-enemy"
+            },
+            "amount": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "bonusType": {
+              "const": "insight"
+            },
+            "attackScope": {
+              "const": "against-chosen-enemy"
+            },
+            "defenseScope": {
+              "const": "originating-from-chosen-enemy"
+            },
+            "expires": {
+              "const": "end-of-caster-next-turn"
+            }
+          }
+        },
+        {
+          "title": "source-object-damage-share",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "damageBasis",
+            "fraction",
+            "objectRadiusSquares",
+            "checkPerTargetDefense",
+            "attackType"
+          ],
+          "properties": {
+            "kind": {
+              "const": "source-object-damage-share"
+            },
+            "target": {
+              "type": "string"
+            },
+            "damageBasis": {
+              "const": "actual-damage-sustained-by-object"
+            },
+            "fraction": {
+              "const": 0.5
+            },
+            "objectRadiusSquares": {
+              "const": 2
+            },
+            "checkPerTargetDefense": {
+              "const": "reflex"
+            },
+            "attackType": {
+              "const": "area"
+            }
+          }
+        },
+        {
+          "title": "restore-recently-dead",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "deathWindow",
+            "dc",
+            "result",
+            "healsHp"
+          ],
+          "properties": {
+            "kind": {
+              "const": "restore-recently-dead"
+            },
+            "target": {
+              "type": "string"
+            },
+            "deathWindow": {
+              "const": "since-end-of-caster-last-turn"
+            },
+            "dc": {
+              "const": 25
+            },
+            "result": {
+              "const": "unconscious-not-dead"
+            },
+            "healsHp": {
+              "const": false
+            }
+          }
+        },
+        {
+          "title": "multi-defense-required",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "requiredDefenses",
+            "when"
+          ],
+          "properties": {
+            "kind": {
+              "const": "multi-defense-required"
+            },
+            "target": {
+              "type": "string"
+            },
+            "requiredDefenses": {
+              "type": "array",
+              "minItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "reflex",
+                  "fortitude",
+                  "will"
+                ]
+              }
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "extend-all-target-attacks",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "attackPenalty",
+            "expires",
+            "sourceAttack"
+          ],
+          "properties": {
+            "kind": {
+              "const": "extend-all-target-attacks"
+            },
+            "target": {
+              "type": "string"
+            },
+            "attackPenalty": {
+              "const": -5
+            },
+            "expires": {
+              "const": "start-of-target-next-turn"
+            },
+            "sourceAttack": {
+              "const": "original-triggering-attack"
+            }
+          }
+        },
+        {
+          "title": "protect-vehicle-with-force-shield",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "target",
+            "shieldSourceId",
+            "occupancyRequired",
+            "vehicleSizeLimit",
+            "shieldStacking"
+          ],
+          "properties": {
+            "kind": {
+              "const": "protect-vehicle-with-force-shield"
+            },
+            "target": {
+              "type": "string"
+            },
+            "shieldSourceId": {
+              "const": "fucg/force-power/force-shield"
+            },
+            "occupancyRequired": {
+              "const": true
+            },
+            "vehicleSizeLimit": {
+              "const": false
+            },
+            "shieldStacking": {
+              "const": "non-stacking-higher-applicable-sr"
+            }
+          }
+        }
+      ]
+    },
+    "marginTier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minimumMargin",
+        "maximumMargin",
+        "summary",
+        "operations"
+      ],
+      "properties": {
+        "minimumMargin": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maximumMargin": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        }
+      }
+    },
+    "maneuverRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "rollFamily",
+        "outcomeMode",
+        "trigger",
+        "vehicleEligibility",
+        "minimumShieldRating",
+        "requiresDogfight",
+        "requiresAutofire",
+        "requiresDefensiveAction",
+        "attackReuse",
+        "targetRestriction",
+        "distanceRule",
+        "duration",
+        "endTriggers",
+        "marginTiers",
+        "initialOperations",
+        "onActivation",
+        "onFailure",
+        "suiteSpend",
+        "pattern"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "pilot",
+            "pilot-or-gunner"
+          ]
+        },
+        "rollFamily": {
+          "enum": [
+            "pilot",
+            "use-the-force",
+            "weapon-attack"
+          ]
+        },
+        "outcomeMode": {
+          "enum": [
+            "fixed-dc-tiers",
+            "fixed-dc-gate",
+            "attack-defense-margin",
+            "pilot-replaces-defense"
+          ]
+        },
+        "trigger": {
+          "enum": [
+            "active-on-turn",
+            "after-adjacent-attack-missed",
+            "after-being-attacked-in-dogfight",
+            "after-critical-or-threshold-damage",
+            "after-destroying-vehicle",
+            "when-enemy-enters-two-squares",
+            "end-turn-farther-away",
+            "when-opponent-fails-dogfight-attack",
+            "before-incoming-attack-resolved",
+            "before-opponent-disengage-check"
+          ]
+        },
+        "vehicleEligibility": {
+          "enum": [
+            "pilot-starfighter-airspeeder-or-combat-thrusters-transport",
+            "gunner-on-vehicle-or-airspeeder"
+          ]
+        },
+        "minimumShieldRating": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "requiresDogfight": {
+          "type": "boolean"
+        },
+        "requiresAutofire": {
+          "type": "boolean"
+        },
+        "requiresDefensiveAction": {
+          "type": "boolean"
+        },
+        "attackReuse": {
+          "enum": [
+            "none",
+            "fresh-attack",
+            "reuse-triggering-attack"
+          ]
+        },
+        "targetRestriction": {
+          "enum": [
+            "self",
+            "adjacent-hostile",
+            "one-enemy-starfighter-or-airspeeder",
+            "one-hostile-vehicle",
+            "one-hostile-vehicle-within-weapons-range",
+            "one-designated-vehicle",
+            "one-dogfight-opponent",
+            "one-approaching-starfighter-or-airspeeder",
+            "all-adjacent-to-destroyed-vehicle",
+            "one-large-vehicle-through-space",
+            "2x2-within-weapons-range",
+            "one-vehicle-just-attacked",
+            "one-target-within-weapons-range"
+          ]
+        },
+        "distanceRule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "squares"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "self",
+                "adjacent",
+                "up-to-n-squares",
+                "twice-vehicle-speed",
+                "weapon-range",
+                "large-target-fighting-space",
+                "dogfight",
+                "special-unrestricted"
+              ]
+            },
+            "squares": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        },
+        "duration": {
+          "enum": [
+            "instant",
+            "until-start-next-turn",
+            "current-dogfight",
+            "encounter",
+            "single-attack",
+            "current-turn"
+          ]
+        },
+        "endTriggers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "attack-pattern-replaced",
+              "encounter-end",
+              "swift-deactivation",
+              "start-next-turn",
+              "end-current-turn",
+              "designated-target-disengages",
+              "attack-resolution",
+              "immediate-action-resolution",
+              "ship-no-longer-adjacent-to-ally"
+            ]
+          }
+        },
+        "marginTiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/marginTier"
+          }
+        },
+        "initialOperations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        },
+        "onActivation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        },
+        "onFailure": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        },
+        "suiteSpend": {
+          "const": "every-attempt-including-failure"
+        },
+        "pattern": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "replacePrevious",
+            "deactivationAction"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "none",
+                "exclusive-attack-pattern"
+              ]
+            },
+            "replacePrevious": {
+              "type": "boolean"
+            },
+            "deactivationAction": {
+              "enum": [
+                "swift",
+                "none"
+              ]
+            }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "maneuverSharedRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "featRequired",
+        "featPrerequisites",
+        "newSlotsPerFeat",
+        "duplicatesAllowed",
+        "wisdomIncreaseExtraSlots",
+        "spentOnAttempt",
+        "failedAttemptActionWasted",
+        "pilotNatural20Recovery",
+        "forcePointRecovery",
+        "restRecovery",
+        "attackPatternPolicy",
+        "dogfightPolicy",
+        "forceDescriptorPolicy",
+        "gunnerDescriptorPolicy",
+        "fighterGroupPolicy"
+      ],
+      "properties": {
+        "featRequired": {
+          "const": "sotg/feat/starship-tactics"
+        },
+        "featPrerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "newSlotsPerFeat": {
+          "const": "max(1,1+wisdomModifier)"
+        },
+        "duplicatesAllowed": {
+          "const": true
+        },
+        "wisdomIncreaseExtraSlots": {
+          "const": "increaseInWisdomModifier * numberOfStarshipTacticsFeatInstances"
+        },
+        "spentOnAttempt": {
+          "const": true
+        },
+        "failedAttemptActionWasted": {
+          "const": true
+        },
+        "pilotNatural20Recovery": {
+          "const": "end-of-turn-recover-all-if-natural-20-on-pilot-activation-check"
+        },
+        "forcePointRecovery": {
+          "const": "reaction-spend-one-force-point-recover-one-spent-maneuver"
+        },
+        "restRecovery": {
+          "const": "one-minute-rest-after-starship-combat-recover-all"
+        },
+        "attackPatternPolicy": {
+          "const": "only-one-active-replaces-previous-encounter-duration"
+        },
+        "dogfightPolicy": {
+          "const": "dogfight-descriptor-requires-active-dogfight"
+        },
+        "forceDescriptorPolicy": {
+          "const": "trained-use-the-force-required-and-activation-counts-as-using-the-force"
+        },
+        "gunnerDescriptorPolicy": {
+          "const": "pilot-or-gunner-uses-own-vehicle-weapon-attack-not-pilot"
+        },
+        "fighterGroupPolicy": {
+          "const": "all-group-members-know-maneuver-and-use-it-together;joining-group-ends-existing-pattern"
+        }
+      }
+    },
+    "formRiderEffect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "description",
+        "triggerEvent",
+        "scope",
+        "timing",
+        "mechanicalArgs"
+      ],
+      "properties": {
+        "operation": {
+          "enum": [
+            "add-deflection-bonus-to-block-deflect",
+            "allow-reaction-on-adjacent-attack",
+            "charge-attack-substitution",
+            "extra-damage-die-on-opportunity-attack",
+            "flat-footed-target",
+            "force-bonus-to-attacks-of-opportunity",
+            "grant-restricted-temporary-force-point",
+            "ignore-lightsaber-defense-deflection",
+            "increase-power-range-squares",
+            "interattack-movement",
+            "next-attack-extra-damage-dice",
+            "opponent-block-check-penalty",
+            "post-attack-movement",
+            "provoke-opportunity-on-followup-attack",
+            "redirect-one-missed-blaster-bolt",
+            "reflex-bonus-vs-movement-opportunity",
+            "retain-power-on-both-attacks-miss",
+            "secondary-adjacent-target-push",
+            "suppress-dark-side-descriptor",
+            "suspend-multiple-deflect-penalty",
+            "triple-lightsaber-defense-deflection",
+            "unlock-force-point-redirect"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 12
+        },
+        "triggerEvent": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timing": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mechanicalArgs": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "integer",
+                    "number",
+                    "boolean"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "lightsaberFormRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "associatedForm",
+        "requiredTalentRef",
+        "baseActivation",
+        "publishedRiderGate",
+        "rider",
+        "rebukePolicy",
+        "sameForceTrainingSuite",
+        "riderNeverRequiredToLearn"
+      ],
+      "properties": {
+        "associatedForm": {
+          "type": "string",
+          "minLength": 1
+        },
+        "requiredTalentRef": {
+          "type": "string",
+          "pattern": "^talent/lightsaber-form/[a-z0-9-]+$"
+        },
+        "baseActivation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "requiresWieldedActivatedLightsabers",
+            "count"
+          ],
+          "properties": {
+            "requiresWieldedActivatedLightsabers": {
+              "const": true
+            },
+            "count": {
+              "enum": [
+                1,
+                2
+              ]
+            }
+          }
+        },
+        "publishedRiderGate": {
+          "const": "actor-knows-named-form-talent"
+        },
+        "rider": {
+          "$ref": "#/$defs/formRiderEffect"
+        },
+        "rebukePolicy": {
+          "enum": [
+            "immune-to-rebuke",
+            "normal-rebuke-exception"
+          ]
+        },
+        "sameForceTrainingSuite": {
+          "const": true
+        },
+        "riderNeverRequiredToLearn": {
+          "const": true
+        }
+      },
+      "description": "A Form Power requires its printed activated lightsaber equipment prerequisite. Its named rider is granted by knowing the associated form talent; no separate active-form stance is required unless an individual printed rider expressly states otherwise."
+    },
+    "regimenRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preparationHours",
+        "benefitDurationHours",
+        "exclusiveBenefitWindow",
+        "failedRegimenLockHours",
+        "preparationRequirements",
+        "entitlementAbility",
+        "tierBenefitMode",
+        "targetEligibility"
+      ],
+      "properties": {
+        "preparationHours": {
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "benefitDurationHours": {
+          "const": 24
+        },
+        "exclusiveBenefitWindow": {
+          "const": "only-one-active-regimen-benefit-per-24h"
+        },
+        "failedRegimenLockHours": {
+          "const": 24
+        },
+        "preparationRequirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "entitlementAbility": {
+          "const": "permanent-wisdom"
+        },
+        "tierBenefitMode": {
+          "const": "highest-met-tier-only"
+        },
+        "targetEligibility": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "techniqueRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relatedPowerId",
+        "relationType",
+        "requiresRelatedPowerToLearn",
+        "sourceBenefit"
+      ],
+      "properties": {
+        "relatedPowerId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relationType": {
+          "const": "modify-existing-power-on-use"
+        },
+        "requiresRelatedPowerToLearn": {
+          "const": false
+        },
+        "sourceBenefit": {
+          "type": "string",
+          "minLength": 10
+        }
+      }
+    },
+    "secretRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "activationTrigger",
+        "initiationCost",
+        "temporaryGrant",
+        "expiration",
+        "recoverable",
+        "sourceBenefit"
+      ],
+      "properties": {
+        "activationTrigger": {
+          "const": "on-power-activation"
+        },
+        "initiationCost": {
+          "const": "one-force-point"
+        },
+        "temporaryGrant": {
+          "enum": [
+            "borrow-nearby-ally-known-power",
+            "grant-current-power-to-nearby-ally"
+          ]
+        },
+        "expiration": {
+          "enum": [
+            "end-owner-next-turn",
+            "end-recipient-next-turn"
+          ]
+        },
+        "recoverable": {
+          "const": false
+        },
+        "sourceBenefit": {
+          "type": "string",
+          "minLength": 20
+        }
+      }
+    },
+    "tierMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dc",
+        "metric",
+        "value",
+        "scope",
+        "semantics"
+      ],
+      "properties": {
+        "dc": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "metric": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": [
+                  "integer",
+                  "number",
+                  "string"
+                ]
+              }
+            }
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "semantics": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

@@ -240,15 +240,9 @@ static async applySelected(actor, selectedItems = []) {
     return { success: false, error: validation.error };
   }
 
-  const existing = new Set(
-    actor.items
-      .filter(i => i.type === 'power' || i.type === 'force-power')
-      .map(i => i.name.toLowerCase())
-  );
-
-  const filtered = selectedItems.filter(
-    p => p?.name && !existing.has(p.name.toLowerCase())
-  );
+  // Core Rulebook, Force Powers: "you can select the same Force power more than once" -- every selection is its own
+  // owned copy with its own identity, so ownership by NAME must never filter a selection out.
+  const filtered = selectedItems.filter(p => p?.name);
 
   try {
     const toCreate = [];

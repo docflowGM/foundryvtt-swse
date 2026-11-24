@@ -250,7 +250,7 @@ function distanceSquaresBetweenTokens(a, b) {
   return Number.isFinite(dist) ? dist : null;
 }
 
-function bestDistanceSquares(actorA, actorB) {
+export function bestDistanceSquares(actorA, actorB) {
   const tokensA = actorTokens(actorA);
   const tokensB = actorTokens(actorB);
   let best = null;
