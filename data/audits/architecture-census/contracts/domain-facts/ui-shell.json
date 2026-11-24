@@ -1,0 +1,1306 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "ui-shell",
+ "name": "Sheets, Holopad shell, apps, dialogs, UI framework, themes",
+ "kind": "presentation",
+ "files": 464,
+ "runtimeSloc": 55411,
+ "runtimeFiles": 179,
+ "counts": {
+  "files": 464,
+  "runtimeModules": 179,
+  "runtimeSloc": 55411,
+  "reachability": {
+   "reachable-static": 117,
+   "orphan-unreferenced": 39,
+   "reachable-dynamic": 18,
+   "unreachable-importers-only": 5
+  },
+  "nonRuntimeByRole": {
+   "asset": 51,
+   "evidence-or-doc": 11,
+   "tool": 5,
+   "presentation-style": 95,
+   "presentation-template": 83,
+   "test": 40
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/apps/dialogs/swse-dialog-v2.js",
+   "consumers": 79,
+   "sloc": 164,
+   "role": "presentation",
+   "exports": [
+    "SWSEDialogV2"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/apps/base/base-swse-appv2.js",
+   "consumers": 30,
+   "sloc": 94,
+   "role": "presentation",
+   "exports": [
+    "BaseSWSEAppV2"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 59
+  },
+  {
+   "path": "scripts/ui/shell/request-shell-render.js",
+   "consumers": 23,
+   "sloc": 20,
+   "role": "presentation",
+   "exports": [
+    "requestShellRender"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/apps/base/swse-application-v2.js",
+   "consumers": 16,
+   "sloc": 139,
+   "role": "presentation",
+   "exports": [
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/ui/theme/theme-resolution-service.js",
+   "consumers": 16,
+   "sloc": 320,
+   "role": "presentation",
+   "exports": [
+    "ThemeResolutionService",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 53
+  },
+  {
+   "path": "scripts/ui/shell/ShellRouter.js",
+   "consumers": 15,
+   "sloc": 94,
+   "role": "presentation",
+   "exports": [
+    "ShellRouter"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/sheets/v2/context/PanelContextBuilder.js",
+   "consumers": 13,
+   "sloc": 1103,
+   "role": "presentation",
+   "exports": [
+    "PanelContextBuilder"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 23
+  },
+  {
+   "path": "scripts/ui/shell/mutate-and-repaint.js",
+   "consumers": 12,
+   "sloc": 73,
+   "role": "presentation",
+   "exports": [
+    "mutateAndRepaint",
+    "mutateShellOnly",
+    "getShellMutationQueueStatus"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 11
+  },
+  {
+   "path": "scripts/ui/shell/gm/GMCampaignContextService.js",
+   "consumers": 10,
+   "sloc": 602,
+   "role": "presentation",
+   "exports": [
+    "GMCampaignContextService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 9
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/concept-context.js",
+   "consumers": 9,
+   "sloc": 1942,
+   "role": "presentation",
+   "exports": [
+    "buildActionGroupsForTest",
+    "buildForceTab",
+    "buildActorCombatLoadout",
+    "buildActorEquipmentWorkspace",
+    "buildConceptSheetViewModel"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/ui/discovery/tooltip-registry.js",
+   "consumers": 9,
+   "sloc": 155,
+   "role": "registry",
+   "exports": [
+    "TooltipRegistry",
+    "bindTooltipGlobalDismissals"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/ui/shell/ShellMutationGuard.js",
+   "consumers": 9,
+   "sloc": 263,
+   "role": "presentation",
+   "exports": [
+    "ShellMutationGuard"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/ui/shell/gm/GMLocationsSurfaceService.js",
+   "consumers": 9,
+   "sloc": 752,
+   "role": "presentation",
+   "exports": [
+    "GMLocationsSurfaceService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 9
+  },
+  {
+   "path": "scripts/ui/shell/gm/controllers/GMLocationsSurfaceController.js",
+   "consumers": 9,
+   "sloc": 864,
+   "role": "presentation",
+   "exports": [
+    "GMLocationsSurfaceController"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 8
+  },
+  {
+   "path": "scripts/ui/shell/gm/utils/gm-party-roster-service.js",
+   "consumers": 9,
+   "sloc": 135,
+   "role": "presentation",
+   "exports": [
+    "GMPartyRosterService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 10
+  },
+  {
+   "path": "scripts/ui/shell/AssetBaySurfaceService.js",
+   "consumers": 8,
+   "sloc": 321,
+   "role": "presentation",
+   "exports": [
+    "assetOwnershipEvidence",
+    "assetModifyAuthorization",
+    "listOwnedAssets",
+    "AssetBaySurfaceService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 15
+  },
+  {
+   "path": "scripts/ui/shell/gm/GMJobBoardSurfaceService.js",
+   "consumers": 8,
+   "sloc": 1025,
+   "role": "presentation",
+   "exports": [
+    "jobForThread",
+    "jobStatus",
+    "statusLabel",
+    "factionConsequenceEntries",
+    "resolveIssuerFaction",
+    "resolveIssuerContact",
+    "resolveJobLocations",
+    "resolveJobIntel",
+    "resolveConsequenceFactions",
+    "GMJobBoardSurfaceService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 19
+  },
+  {
+   "path": "scripts/apps/base/swse-form-application-v2.js",
+   "consumers": 6,
+   "sloc": 30,
+   "role": "presentation",
+   "exports": [
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/sheets/v2/character-like-sheet.js",
+   "consumers": 6,
+   "sloc": 6764,
+   "role": "presentation-with-writes",
+   "exports": [
+    "SWSEV2CharacterLikeSheet"
+   ],
+   "writes": 11,
+   "actorEngineCalls": 32,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/ui/dragdrop/dossier-drag-drop-service.js",
+   "consumers": 6,
+   "sloc": 102,
+   "role": "presentation",
+   "exports": [
+    "DossierDragDropService",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 11
+  },
+  {
+   "path": "scripts/ui/shell/AlliesSurfaceService.js",
+   "consumers": 6,
+   "sloc": 1815,
+   "role": "presentation-with-writes",
+   "exports": [
+    "buildDefaultAllyAssignmentModalState",
+    "findFollowerSlotById",
+    "followerTemplateLabel",
+    "normalizeAllyAssignmentSearchQuery",
+    "filterNpcAssignmentCandidates",
+    "findNpcAssignmentCandidate",
+    "isAllyAssignmentModeAvailable",
+    "resolveFollowerTemplateSelectionForSlot",
+    "resolveFollowerSlotSelectionOnModeChange",
+    "resolveFollowerSlotSelection",
+    "canConfirmAllyAssignment",
+    "buildAllyAssignmentResult"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 3,
+   "ciTests": 6
+  },
+  {
+   "path": "scripts/ui/shell/gm/GMCampaignTargetService.js",
+   "consumers": 6,
+   "sloc": 49,
+   "role": "presentation",
+   "exports": [
+    "GMCampaignTargetService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/ui/shell/gm/GMFactionRelationshipSurfaceService.js",
+   "consumers": 6,
+   "sloc": 405,
+   "role": "presentation",
+   "exports": [
+    "GMFactionRelationshipSurfaceService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 6
+  },
+  {
+   "path": "scripts/apps/gm-datapad.js",
+   "consumers": 5,
+   "sloc": 2011,
+   "role": "presentation",
+   "exports": [
+    "GMDatapad",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/ui/chat/chat-interaction-bridge.js",
+   "consumers": 5,
+   "sloc": 678,
+   "role": "adapter",
+   "exports": [
+    "ChatInteractionBridge",
+    "registerChatInteractionBridge",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/sheets/v2/character-like-sheet.js",
+   "sloc": 6764,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/gm-datapad.js",
+   "sloc": 2011,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/concept-context.js",
+   "sloc": 1942,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/ui/shell/AlliesSurfaceService.js",
+   "sloc": 1815,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/ui/shell/MessengerSurfaceController.js",
+   "sloc": 1301,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/ui/shell/gm/controllers/GMJobBoardSurfaceController.js",
+   "sloc": 1175,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/ui/shell/HomeSurfaceService.js",
+   "sloc": 1137,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/sheets/v2/context/PanelContextBuilder.js",
+   "sloc": 1103,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/ui/shell/gm/GMJobBoardSurfaceService.js",
+   "sloc": 1025,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/ui/shell/ShellHost.js",
+   "sloc": 1009,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/drag-drop/drop-handler.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 402,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/shared/SentinelPartialMonitor.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 365,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet-integration-audit.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 348,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/acceptance-verification.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 322,
+   "tests": 0
+  },
+  {
+   "path": "scripts/gm-tools/homebrew-manager.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 269,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/step-controller.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 252,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/prerequisite-builder-dialog.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 246,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/discovery/hardpoint-audit.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 243,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/repair/repair-panel.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 232,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/runtime-verifier.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 231,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/seraphim-narrator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 219,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/shared/PartialValidator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 217,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/sheet-diagnostics.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 202,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/proficiency-selection-dialog.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 193,
+   "tests": 0
+  },
+  {
+   "path": "scripts/visual/energy-shield-visual-service.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 174,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/xp-calculator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 169,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/shared/PartialRegistry.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 164,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/wishlist-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 142,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/cursor-authority.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 138,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/drop-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 122,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/shared/SentinelIntegration.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 113,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/utils/repaint.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 109,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/shared/RowTransformerHelpers.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 108,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/utils/RenderLifecycle.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 105,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/utils/ui-formatters.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 97,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/context/LocalizationFormatters.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 95,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/destiny-spending-dialog.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 92,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/components/PerformanceOptimizer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 92,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/sheet-diagnostics-p0.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 89,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/modal-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 75,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/maintenance/maintenance-app.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 48,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/base/swse-form-application.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 47,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/components/ThemeControl.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 45,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/components/UIInteractions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 45,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/components/ModifierBreakdown.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 43,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/mobile-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 38,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/swse-ui-assets.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 26,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/shell/ShellDrawerManager.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 24,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/theme/theme-init.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 23,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/components/Accordion.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 22,
+   "tests": 0
+  },
+  {
+   "path": "scripts/ui/framework/BaseAppV2.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 15,
+   "tests": 0
+  },
+  {
+   "path": "scripts/canvas-ui/canvas-ui-manager.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 8,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/context/PanelTypeDefinitions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 2,
+   "tests": 0
+  },
+  {
+   "path": "scripts/sheets/v2/context/SCHEMA.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 1,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "holonet": 88,
+  "infrastructure": 77,
+  "combat": 56,
+  "equipment": 39,
+  "progression": 33,
+  "actor-core": 32,
+  "store-economy": 25,
+  "npc-followers": 25,
+  "games": 22,
+  "galactic-profiles": 20,
+  "skills": 17,
+  "force": 15,
+  "customization": 14,
+  "talents": 12,
+  "vehicles": 11,
+  "feats": 9,
+  "abilities-effects": 8,
+  "houserules": 8,
+  "governance": 7,
+  "species": 7,
+  "droids": 6,
+  "dev-tooling": 5,
+  "mentor-suggestion": 4,
+  "rolls": 3,
+  "chat": 2,
+  "settings-config": 1
+ },
+ "dependedOnByDomains": {
+  "infrastructure": 30,
+  "actor-core": 25,
+  "progression": 17,
+  "talents": 17,
+  "combat": 11,
+  "store-economy": 11,
+  "mentor-suggestion": 11,
+  "customization": 10,
+  "npc-followers": 10,
+  "force": 10,
+  "vehicles": 9,
+  "equipment": 9,
+  "houserules": 7,
+  "holonet": 7,
+  "compat-patches": 5,
+  "droids": 3,
+  "rolls": 2,
+  "governance": 2,
+  "species": 2,
+  "feats": 1,
+  "abilities-effects": 1,
+  "skills": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 13,
+   "sites": [
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      2825,
+      2845,
+      3616,
+      5332
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/SettingsSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      92,
+      141,
+      238,
+      239
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      179,
+      215
+     ]
+    },
+    {
+     "path": "scripts/dialogs/entity-dialog/entity-create-browser.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      289
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/HelpModeManager.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      75
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      665
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 13,
+   "sites": [
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      2825,
+      2845,
+      3616,
+      5332
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/SettingsSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      92,
+      141,
+      238,
+      239
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      179,
+      215
+     ]
+    },
+    {
+     "path": "scripts/dialogs/entity-dialog/entity-create-browser.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      289
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/HelpModeManager.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      75
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/gm/controllers/GMWorkspaceSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      665
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 5,
+   "sites": [
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      7055,
+      7093,
+      7832
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/AlliesSurfaceService.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      2096
+     ]
+    },
+    {
+     "path": "scripts/ui/shell/AtlasSurfaceController.js",
+     "domain": "ui-shell",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      167
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A10-credit-writes-outside-transaction-engine",
+   "invariant": "A-10",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "line": 656,
+     "text": "'system.credits': 'number',"
+    },
+    {
+     "path": "scripts/sheets/v2/character-like-sheet.js",
+     "line": 6087,
+     "text": "'system.credits': next,"
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/form.js",
+     "line": 111,
+     "text": "'system.credits': 'number',"
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "defense-totals",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure",
+    "npc-followers",
+    "progression",
+    "talents"
+   ],
+   "sites": [
+    "scripts/ui/defense-tooltip.js:226 getDefenseBreakdown"
+   ]
+  },
+  {
+   "responsibility": "prerequisite-evaluation",
+   "otherDomains": [
+    "data-registries",
+    "droids",
+    "progression",
+    "talents"
+   ],
+   "sites": [
+    "scripts/dialogs/entity-dialog/prereq-engine.js:244 evaluatePrerequisites"
+   ]
+  },
+  {
+   "responsibility": "upgrade-slots",
+   "otherDomains": [
+    "compat-patches",
+    "customization",
+    "droids",
+    "npc-followers",
+    "progression",
+    "store-economy",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/ui/shell/AlliesSurfaceService.js:383 resolveFollowerTemplateSelectionForSlot"
+   ]
+  },
+  {
+   "responsibility": "second-wind",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "feats",
+    "holonet"
+   ],
+   "sites": [
+    "scripts/sheets/v2/context/PanelContextBuilder.js:881 buildSecondWindPanel",
+    "scripts/sheets/v2/context/PanelValidators.js:291 validateSecondWindPanel"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 696,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:156 buildSheetActionEconomyContext",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:73 buildSheetActionEconomyContext"
+   ]
+  },
+  {
+   "tokens": 559,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:508 sanitizeSheetRenderContext",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:211 sanitizeSheetRenderContext"
+   ]
+  },
+  {
+   "tokens": 520,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:512",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:215"
+   ]
+  },
+  {
+   "tokens": 170,
+   "sites": [
+    "scripts/apps/custom-item-dialog.js:30 scalarFormValue",
+    "scripts/engine/items/safe-item-factory.js:67 normalizeScalarText",
+    "scripts/items/item-defaults.js:121 normalizeScalarText",
+    "scripts/sheets/v2/context/RowTransformers.js:22 safeText"
+   ]
+  },
+  {
+   "tokens": 302,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:467 documentToTemplateData",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:170 documentToTemplateData"
+   ]
+  },
+  {
+   "tokens": 285,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:416",
+    "scripts/sheets/v2/character-sheet/concept-context.js:156"
+   ]
+  },
+  {
+   "tokens": 151,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:4101",
+    "scripts/sheets/v2/character-sheet/combat-ui.js:40"
+   ]
+  },
+  {
+   "tokens": 145,
+   "sites": [
+    "scripts/sheets/v2/character-like-sheet.js:184",
+    "scripts/sheets/v2/vehicle-actor-sheet.js:101"
+   ]
+  },
+  {
+   "tokens": 134,
+   "sites": [
+    "scripts/sheets/v2/acceptance-verification.js:382",
+    "scripts/sheets/v2/contract-enforcer.js:465"
+   ]
+  },
+  {
+   "tokens": 127,
+   "sites": [
+    "scripts/apps/gm-store-dashboard.js:86",
+    "scripts/ui/shell/gm/GMApprovalOperationsService.js:184"
+   ]
+  },
+  {
+   "tokens": 125,
+   "sites": [
+    "scripts/ui/shell/gm/controllers/GMFactionRelationshipSurfaceController.js:130 resolveIssuerContact",
+    "tests/pre8d4-faction-contact-identity-hardening.test.mjs:1579 resolveIssuerContactLike"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "debounce",
+   "files": [
+    "scripts/sheets/v2/character-sheet/utils.js",
+    "scripts/utils/performance-utils.js"
+   ]
+  },
+  {
+   "name": "evaluatePrerequisites",
+   "files": [
+    "scripts/dialogs/entity-dialog/prereq-engine.js",
+    "scripts/engine/progression/prerequisites/prerequisite-evaluator.js"
+   ]
+  },
+  {
+   "name": "formatModifier",
+   "files": [
+    "scripts/ui/utils/ui-formatters.js",
+    "scripts/utils/string-utils.js"
+   ]
+  },
+  {
+   "name": "hideItemSelectionModal",
+   "files": [
+    "scripts/sheets/v2/character-sheet/modal-ui.js",
+    "scripts/sheets/v2/character-sheet/utils.js"
+   ]
+  },
+  {
+   "name": "ModifierBreakdown",
+   "files": [
+    "scripts/engine/effects/modifiers/modifier-unification-schema.js",
+    "scripts/ui/components/ModifierBreakdown.js"
+   ]
+  },
+  {
+   "name": "PANEL_REGISTRY",
+   "files": [
+    "scripts/sheets/v2/context/PANEL_REGISTRY.js",
+    "scripts/sheets/v2/npc/PANEL_REGISTRY.js"
+   ]
+  },
+  {
+   "name": "PanelVisibilityManager",
+   "files": [
+    "scripts/sheets/v2/PanelVisibilityManager.js",
+    "scripts/sheets/v2/shared/PanelVisibilityManager.js"
+   ]
+  },
+  {
+   "name": "showItemSelectionModal",
+   "files": [
+    "scripts/sheets/v2/character-sheet/modal-ui.js",
+    "scripts/sheets/v2/character-sheet/utils.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/ui/shell/shell-responsive-observer.js:334",
+    "scripts/ui/ui-manager.js:14"
+   ]
+  },
+  {
+   "name": "init",
+   "sites": [
+    "scripts/ui/ui-manager.js:13"
+   ]
+  },
+  {
+   "name": "renderApplication",
+   "sites": [
+    "scripts/ui/discovery/index.js:39",
+    "scripts/ui/shell/shell-responsive-observer.js:335"
+   ]
+  },
+  {
+   "name": "updateSetting",
+   "sites": [
+    "scripts/ui/ui-manager.js:87",
+    "scripts/ui/ui-manager.js:95"
+   ]
+  },
+  {
+   "name": "(expr:hook)",
+   "sites": [
+    "scripts/ui/shell/AlliesSurfaceController.js:112"
+   ]
+  },
+  {
+   "name": "createChatMessage",
+   "sites": [
+    "scripts/ui/chat/chat-interaction-bridge.js:794"
+   ]
+  },
+  {
+   "name": "renderChatMessageHTML",
+   "sites": [
+    "scripts/ui/chat/chat-interaction-bridge.js:790"
+   ]
+  },
+  {
+   "name": "renderActorSheet",
+   "sites": [
+    "scripts/ui/discovery/index.js:40",
+    "scripts/ui/shell/shell-responsive-observer.js:339"
+   ]
+  },
+  {
+   "name": "renderItemSheet",
+   "sites": [
+    "scripts/ui/discovery/index.js:41",
+    "scripts/ui/shell/shell-responsive-observer.js:343"
+   ]
+  },
+  {
+   "name": "swseHolonetUpdated",
+   "sites": [
+    "scripts/ui/shell/ShellHost.js:334",
+    "scripts/ui/shell/TransmissionDecryptionSurfaceController.js:36"
+   ]
+  },
+  {
+   "name": "getSceneControlButtons",
+   "sites": [
+    "scripts/scene-controls/api.js:250"
+   ]
+  },
+  {
+   "name": "updateUser",
+   "sites": [
+    "scripts/ui/mobile-mode-manager.js:92"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/UI_ENGINE_SEPARATION.md",
+  "docs/audits/app-responsive-contracts-phase2.md",
+  "docs/audits/character-sheet-ssot-resolution-plan.md",
+  "docs/audits/gm-datapad-ecosystem-redesign.md",
+  "docs/audits/partials-cleanup-report.md",
+  "docs/audits/partials-usage-audit.md",
+  "docs/audits/shell-responsive-contract-audit.md",
+  "docs/audits/v2-phase-4-sheet-architecture.md",
+  "docs/long-stride-walk-speed-sheet-scope.json",
+  "docs/templates/partials-readme.md"
+ ],
+ "tests": [
+  "tests/asset-bay-ownership-hardening.test.mjs",
+  "tests/dsp-click-handler-authorization.test.mjs",
+  "tests/equipment-weight-convergence.test.mjs",
+  "tests/gm-approvals-stable-target-identity.test.mjs",
+  "tests/gm-campaign-attention-items.test.mjs",
+  "tests/gm-campaign-context-actor-location-phase7.test.mjs",
+  "tests/gm-campaign-context-parity.test.mjs",
+  "tests/gm-campaign-party-location-authority.test.mjs",
+  "tests/gm-campaign-target-adapter.test.mjs",
+  "tests/gm-campaign-target-workspace-actor.test.mjs",
+  "tests/gm-datapad-context-navigation-contract.test.mjs",
+  "tests/gm-datapad-interaction-repair-lifecycle.test.mjs",
+  "tests/gm-datapad-navigation-destination-selection.test.mjs",
+  "tests/gm-datapad-no-duplicate-handler-regression.test.mjs",
+  "tests/gm-datapad-wizard-contract.test.mjs",
+  "tests/gm-datapad-wizard-progression-execution.test.mjs",
+  "tests/gm-faction-context-navigation-controller.test.mjs",
+  "tests/gm-faction-ecosystem-view-model.test.mjs",
+  "tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs",
+  "tests/gm-intel-context-navigation-controller.test.mjs",
+  "tests/gm-intel-ecosystem-view-model.test.mjs",
+  "tests/gm-job-context-navigation-controller.test.mjs",
+  "tests/gm-job-ecosystem-view-model.test.mjs",
+  "tests/gm-locations-atlas-lead-operations.test.mjs",
+  "tests/gm-locations-context-navigation-controller.test.mjs",
+  "tests/gm-locations-ecosystem-view-model.test.mjs",
+  "tests/gm-locations-import-selection-persistence.test.mjs",
+  "tests/gm-locations-importer-controller-behavior.test.mjs",
+  "tests/gm-locations-links-scenes-encounters.test.mjs",
+  "tests/gm-locations-surface-context-contract.test.mjs",
+  "tests/gm-locations-truthful-ui-contract.test.mjs",
+  "tests/gm-phase7-correction-pass.test.mjs",
+  "tests/gm-phase7-pre-broadcast-integrity.test.mjs",
+  "tests/gm-workspace-faction-contact-navigation-controller.test.mjs",
+  "tests/gm-workspace-selected-actor-vm.test.mjs",
+  "tests/ooc-chat-card-surface.test.mjs",
+  "tests/phase4-sheet-architecture-contract.test.mjs",
+  "tests/ti4c0-g35-droid-rejection-post-commit.test.mjs",
+  "tests/v2-derived-panel-cache-coherency.test.mjs",
+  "tests/vehicle-universal-phase4e-p13-designer-ui.test.mjs"
+ ]
+}

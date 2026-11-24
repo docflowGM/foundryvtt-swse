@@ -1,0 +1,1205 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "talents",
+ "name": "Talents and talent trees",
+ "kind": "mechanical",
+ "files": 440,
+ "runtimeSloc": 16252,
+ "runtimeFiles": 36,
+ "counts": {
+  "files": 440,
+  "runtimeModules": 35,
+  "runtimeSloc": 16096,
+  "reachability": {
+   "reachable-static": 31,
+   "unreachable-importers-only": 2,
+   "orphan-unreferenced": 2
+  },
+  "nonRuntimeByRole": {
+   "data": 19,
+   "evidence-data": 104,
+   "evidence-or-doc": 143,
+   "module": 1,
+   "presentation-style": 5,
+   "presentation-template": 12,
+   "test": 54,
+   "tool": 67
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/data/talent-tree-db.js",
+   "consumers": 29,
+   "sloc": 335,
+   "role": "module",
+   "exports": [
+    "TalentTreeDB"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 370
+  },
+  {
+   "path": "scripts/registries/talent-registry.js",
+   "consumers": 22,
+   "sloc": 221,
+   "role": "registry",
+   "exports": [
+    "TalentRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 371
+  },
+  {
+   "path": "scripts/data/talent-source-identity.js",
+   "consumers": 13,
+   "sloc": 91,
+   "role": "module",
+   "exports": [
+    "TALENT_PACK",
+    "canonicalTalentId",
+    "canonicalTalentUuid",
+    "sameTalentUuid",
+    "swseTalentIdOf",
+    "sourceIdentityOf",
+    "sourceUuidOfEmbedded",
+    "sourceUuidOfPending",
+    "targetIdentityOfLeaf",
+    "compareToTarget",
+    "treeRuntimeIdOfCanonical",
+    "treeRuntimeIdOfItem"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 368
+  },
+  {
+   "path": "scripts/data/talent-tree-normalizer.js",
+   "consumers": 10,
+   "sloc": 62,
+   "role": "normalizer",
+   "exports": [
+    "normalizeTalentTreeId",
+    "normalizeTalentTree",
+    "findTalentTreeByName",
+    "validateTalentTree",
+    "normalizeDocumentTalent",
+    "validateTalentTreeAssignment"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 370
+  },
+  {
+   "path": "scripts/engine/talent/lightsaber-talent-actions.js",
+   "consumers": 7,
+   "sloc": 658,
+   "role": "module-with-writes",
+   "exports": [
+    "LIGHTSABER_TALENT_IO",
+    "LightsaberTalentActions",
+    "registerLightsaberTalentActions"
+   ],
+   "writes": 7,
+   "actorEngineCalls": 7,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/talent/talent-ability-helpers.js",
+   "consumers": 7,
+   "sloc": 4,
+   "role": "module",
+   "exports": [
+    "getTalentAbilityMod"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 9
+  },
+  {
+   "path": "scripts/data/talent-db.js",
+   "consumers": 5,
+   "sloc": 157,
+   "role": "module",
+   "exports": [
+    "TalentDB"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-model.js",
+   "consumers": 4,
+   "sloc": 164,
+   "role": "presentation",
+   "exports": [
+    "CUSTOM_TALENT_TREE_MIRROR_PATHS",
+    "slugifyCustomTalentTree",
+    "getActorCustomTalentTrees",
+    "getCustomTalentTree",
+    "normalizeCustomTalentTree",
+    "createBlankCustomTalentTree",
+    "saveCustomTalentTree"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/talent/consular-talent-actions.js",
+   "consumers": 3,
+   "sloc": 964,
+   "role": "module-with-writes",
+   "exports": [
+    "AdeptNegotiatorSchema",
+    "ConsularTalentActions",
+    "registerConsularTalentActions"
+   ],
+   "writes": 16,
+   "actorEngineCalls": 7,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/engine/talent/force-adept-talent-actions.js",
+   "consumers": 3,
+   "sloc": 644,
+   "role": "module-with-writes",
+   "exports": [
+    "ForceAdeptTalentActions",
+    "registerForceAdeptTalentActions"
+   ],
+   "writes": 8,
+   "actorEngineCalls": 5,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/engine/talent/lightsaber-form-engine.js",
+   "consumers": 3,
+   "sloc": 313,
+   "role": "authority-or-orchestrator",
+   "exports": [
+    "LIGHTSABER_FORMS",
+    "LightsaberFormEngine",
+    "default"
+   ],
+   "writes": 5,
+   "actorEngineCalls": 1,
+   "ciTests": 11
+  },
+  {
+   "path": "scripts/engine/talent/sith-talent-actions.js",
+   "consumers": 3,
+   "sloc": 780,
+   "role": "module-with-writes",
+   "exports": [
+    "SithTalentActions",
+    "registerSithTalentActions"
+   ],
+   "writes": 27,
+   "actorEngineCalls": 14,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+   "consumers": 2,
+   "sloc": 187,
+   "role": "presentation-with-writes",
+   "exports": [
+    "openCustomTalentEffectWizard",
+    "registerCustomTalentEffectWizardIntegration",
+    "default"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-workbench.js",
+   "consumers": 2,
+   "sloc": 669,
+   "role": "presentation",
+   "exports": [
+    "openCustomTalentTreeWorkbench",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/engine/talent/guardian-spirit-actions.js",
+   "consumers": 2,
+   "sloc": 269,
+   "role": "module-with-writes",
+   "exports": [
+    "GuardianSpiritActions"
+   ],
+   "writes": 5,
+   "actorEngineCalls": 3,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/engine/talent/jedi-prestige-talent-actions.js",
+   "consumers": 2,
+   "sloc": 435,
+   "role": "module-with-writes",
+   "exports": [
+    "JediPrestigeTalentActions",
+    "registerJediPrestigeTalentActions"
+   ],
+   "writes": 7,
+   "actorEngineCalls": 6,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/engine/talent/sentinel-talent-actions.js",
+   "consumers": 2,
+   "sloc": 600,
+   "role": "module-with-writes",
+   "exports": [
+    "SentinelTalentActions",
+    "registerSentinelTalentActions"
+   ],
+   "writes": 7,
+   "actorEngineCalls": 2,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/engine/talent/talent-action-linker.js",
+   "consumers": 2,
+   "sloc": 123,
+   "role": "module",
+   "exports": [
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/data/talent-normalizer.js",
+   "consumers": 2,
+   "sloc": 89,
+   "role": "normalizer",
+   "exports": [
+    "normalizeTalent",
+    "getTalentsByTree",
+    "checkTalentPrerequisites",
+    "validateTalent",
+    "filterTalentsByRole"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 58
+  },
+  {
+   "path": "scripts/apps/officer-share-talent-dialog.js",
+   "consumers": 1,
+   "sloc": 75,
+   "role": "presentation",
+   "exports": [
+    "openOfficerShareTalentAction"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-content-approval-service.js",
+   "consumers": 1,
+   "sloc": 282,
+   "role": "presentation-with-writes",
+   "exports": [
+    "CustomContentApprovalService",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 2,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js",
+   "consumers": 1,
+   "sloc": 109,
+   "role": "presentation",
+   "exports": [
+    "registerCustomContentGmApprovalIntegration",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-importer.js",
+   "consumers": 1,
+   "sloc": 365,
+   "role": "presentation",
+   "exports": [
+    "openExistingTalentImportDialog"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js",
+   "consumers": 1,
+   "sloc": 301,
+   "role": "presentation",
+   "exports": [
+    "getActorAccessibleCustomTalentTrees",
+    "registerActorCustomTalentTreesForProgression",
+    "getCustomTalentTreeMembership",
+    "registerCustomTalentTreeProgressionOverlay",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-workbench-hooks.js",
+   "consumers": 1,
+   "sloc": 45,
+   "role": "presentation",
+   "exports": [
+    "registerCustomTalentTreeWorkbenchHooks",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/data/authority/talent-prerequisite-authority.js",
+   "sloc": 5985,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/talent/talents.js",
+   "sloc": 1499,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/engine/talent/consular-talent-actions.js",
+   "sloc": 964,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/talent/sith-talent-actions.js",
+   "sloc": 780,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-workbench.js",
+   "sloc": 669,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/talent/lightsaber-talent-actions.js",
+   "sloc": 658,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/talent/force-adept-talent-actions.js",
+   "sloc": 644,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/talent/sentinel-talent-actions.js",
+   "sloc": 600,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/talent/jedi-prestige-talent-actions.js",
+   "sloc": 435,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/talent-tree-workbench/custom-talent-tree-importer.js",
+   "sloc": 365,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/engine/talent/talents.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 1499,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/talent/TalentNormalizerEngine.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 145,
+   "tests": 0
+  },
+  {
+   "path": "scripts/infrastructure/hooks/talent-effects-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 89,
+   "tests": 0
+  },
+  {
+   "path": "scripts/data/talent-relationship-registry.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 54,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 18,
+  "ui-shell": 17,
+  "actor-core": 15,
+  "force": 14,
+  "rolls": 12,
+  "progression": 9,
+  "equipment": 8,
+  "chat": 8,
+  "combat": 5,
+  "settings-config": 2,
+  "data-registries": 2,
+  "npc-followers": 2,
+  "governance": 1,
+  "abilities-effects": 1,
+  "compat-patches": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 31,
+  "infrastructure": 16,
+  "ui-shell": 12,
+  "combat": 6,
+  "data-registries": 4,
+  "mentor-suggestion": 4,
+  "force": 2,
+  "dev-tooling": 2,
+  "compat-patches": 2,
+  "classes": 1,
+  "skills": 1,
+  "houserules": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 72,
+   "sites": [
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 25,
+     "lines": [
+      270,
+      423,
+      478,
+      502,
+      520,
+      532,
+      574,
+      575,
+      619,
+      649,
+      660,
+      676,
+      705,
+      711,
+      716,
+      723,
+      747,
+      760,
+      783,
+      816,
+      830,
+      850,
+      852,
+      853,
+      855
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/consular-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 12,
+     "lines": [
+      351,
+      449,
+      547,
+      590,
+      613,
+      694,
+      884,
+      969,
+      1004,
+      1008,
+      1012,
+      1020
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/force-adept-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 8,
+     "lines": [
+      284,
+      382,
+      494,
+      511,
+      529,
+      550,
+      630,
+      707
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 7,
+     "lines": [
+      282,
+      294,
+      375,
+      459,
+      539,
+      569,
+      740
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/sentinel-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 5,
+     "lines": [
+      296,
+      357,
+      446,
+      505,
+      593
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/guardian-spirit-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      91,
+      182,
+      208,
+      272
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-form-engine.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      182,
+      194,
+      288,
+      317
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/jedi-prestige-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      371,
+      392,
+      468
+     ]
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      125,
+      127
+     ]
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-content-approval-service.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      305
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/armor-talent-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      121
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      125,
+      127
+     ]
+    },
+    {
+     "path": "scripts/apps/talent-tree-workbench/custom-content-approval-service.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      305
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/engine/talent/guardian-spirit-actions.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      283
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/minion-actions-mechanics.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      45
+     ]
+    },
+    {
+     "path": "scripts/engine/talent/squad-actions-mechanics.js",
+     "domain": "talents",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      67
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A07-engine-imports-ui",
+   "invariant": "A-07",
+   "count": 11,
+   "sites": [
+    {
+     "path": "scripts/engine/talent/armor-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/consular-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/force-adept-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/force-adept-talent-actions.js",
+     "target": "scripts/apps/force-alchemy/force-alchemy-workbench-app.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/guardian-spirit-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/jedi-prestige-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-form-engine.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/lightsaber-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/sentinel-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/talent/sith-talent-actions.js",
+     "target": "scripts/apps/force-alchemy/force-alchemy-workbench-app.js",
+     "kind": "static"
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "defense-totals",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure",
+    "npc-followers",
+    "progression",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/engine/talent/consular-talent-actions.js:45 getDefense",
+    "scripts/engine/talent/sentinel-talent-actions.js:86 getDefense"
+   ]
+  },
+  {
+   "responsibility": "base-attack-bonus",
+   "otherDomains": [
+    "data-registries",
+    "infrastructure",
+    "progression"
+   ],
+   "sites": [
+    "scripts/engine/talent/sentinel-talent-actions.js:71 getBab"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/engine/talent/lightsaber-form-engine.js:37 actorAbilityMod"
+   ]
+  },
+  {
+   "responsibility": "force-point-spend",
+   "otherDomains": [
+    "actor-core",
+    "force"
+   ],
+   "sites": [
+    "scripts/engine/talent/guardian-spirit-actions.js:110 adjustBonusForcePoints",
+    "scripts/engine/talent/guardian-spirit-actions.js:127 spendBonusForcePoints"
+   ]
+  },
+  {
+   "responsibility": "dark-side-score",
+   "otherDomains": [
+    "force"
+   ],
+   "sites": [
+    "scripts/engine/talent/force-adept-talent-actions.js:265 increaseDarkSideScore",
+    "scripts/engine/talent/sith-talent-actions.js:198 increaseDarkSideScore"
+   ]
+  },
+  {
+   "responsibility": "prerequisite-evaluation",
+   "otherDomains": [
+    "data-registries",
+    "droids",
+    "progression",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/data/talent-normalizer.js:166 checkTalentPrerequisites"
+   ]
+  },
+  {
+   "responsibility": "force-power-dc-or-roll",
+   "otherDomains": [
+    "combat",
+    "force",
+    "infrastructure",
+    "npc-followers"
+   ],
+   "sites": [
+    "scripts/engine/talent/force-adept-talent-actions.js:295 rollUseTheForce"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 351,
+   "sites": [
+    "scripts/engine/force/force-executor.js:660",
+    "scripts/engine/talent/guardian-spirit-actions.js:29"
+   ]
+  },
+  {
+   "tokens": 149,
+   "sites": [
+    "scripts/apps/talent-tree-workbench/custom-talent-tree-workbench-hooks.js:12 actorFromElement",
+    "scripts/engine/combat/features/combat-feature-action-router.js:23 actorFromElement",
+    "scripts/engine/combat/features/combat-feature-legacy-action-bridge.js:27 actorFromElement"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "normalizeAuthorityKey",
+   "files": [
+    "scripts/data/authority/authority-key-normalizer.js",
+    "scripts/data/authority/feat-prerequisite-authority.js",
+    "scripts/data/authority/talent-prerequisite-authority.js"
+   ]
+  },
+  {
+   "name": "TalentRegistry",
+   "files": [
+    "scripts/engine/progression/talents/talent-registry-ui.js",
+    "scripts/registries/talent-registry.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/engine/talent/talent-action-linker.js:208",
+    "scripts/talents/minion-actions-init.js:11",
+    "scripts/talents/squad-actions-init.js:18"
+   ]
+  },
+  {
+   "name": "preUpdateActor",
+   "sites": [
+    "scripts/engine/talent/sith-talent-actions.js:823"
+   ]
+  },
+  {
+   "name": "combatTurn",
+   "sites": [
+    "scripts/engine/talent/jedi-prestige-talent-actions.js:460",
+    "scripts/engine/talent/lightsaber-talent-actions.js:736",
+    "scripts/engine/talent/sith-talent-actions.js:795"
+   ]
+  },
+  {
+   "name": "deleteCombat",
+   "sites": [
+    "scripts/engine/talent/sith-talent-actions.js:838"
+   ]
+  },
+  {
+   "name": "swse.attack-resolved",
+   "sites": [
+    "scripts/engine/talent/consular-talent-actions.js:996",
+    "scripts/engine/talent/sentinel-talent-actions.js:617"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "data/audits/talent-canonical-blob-correction-kotor-illusion-2026-11-22.json",
+  "data/audits/talent-canonical-tree-registry.json",
+  "data/audits/talent-feat-pass3a-baseline.json",
+  "data/audits/talent-feat-pass3a-semantic-authority.json",
+  "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+  "data/audits/talent-feat-pass3a-skill-sweep.json",
+  "data/audits/talent-feat-pass3b-1-mechanical-primitives-owner-packet.json",
+  "data/audits/talent-feat-pass3b-2a-damage-critical-owner-packet.json",
+  "data/audits/talent-feat-pass3b-2b-control-reactive-owner-packet.json",
+  "data/audits/talent-feat-pass3b-2c-combat-mode-owner-packet.json",
+  "data/audits/talent-feat-pass3b-2d-weapon-scope-owner-packet.json",
+  "data/audits/talent-feat-pass3b-exact-mechanic-convergence.json",
+  "data/audits/talent-feat-pass3b-mechanic-baseline.json",
+  "data/audits/talent-feat-pass3b-owner-adjudication.json",
+  "data/audits/talent-feat-pass3b-policy-closure.json",
+  "data/audits/talent-feat-pass3b-policy-gaps.json",
+  "data/audits/talent-feat-pass3b-semantic-authority.json",
+  "data/audits/talent-feat-pass3c-closeout.json",
+  "data/audits/talent-feat-pass3c-cross-domain-analysis.json",
+  "data/audits/talent-feat-pass3c-tag-census.json",
+  "data/audits/talent-feat-phase3-closeout.json",
+  "data/audits/talent-feat-phase3-final-ontology.json",
+  "data/audits/talent-feat-phase3-final-owner-policy-packet.json",
+  "data/audits/talent-feat-phase3-final-owner-rulings.json",
+  "data/audits/talent-feat-phase3-final-semantic-authority.json",
+  "data/audits/talent-feat-phase3d-ontology-authority.json",
+  "data/audits/talent-phase-11-2a-deletion-manifest.json",
+  "data/audits/talent-phase-11-2a-dry-run-report.json",
+  "data/audits/talent-phase-11-2b-cleanup-manifest.json",
+  "data/audits/talent-phase-11-2b-dry-run-report.json",
+  "data/audits/talent-phase-11-2c-cleanup-manifest.json",
+  "data/audits/talent-phase-11-2c-dry-run-report.json",
+  "data/audits/talent-phase-12-1-cleanup-manifest.json",
+  "data/audits/talent-phase-12-1-dry-run-report.json",
+  "data/audits/talent-phase-12-1-semantic-tag-authority.json",
+  "data/audits/talent-phase-12-2-cleanup-manifest.json",
+  "data/audits/talent-phase-12-2-dry-run-report.json",
+  "data/audits/talent-phase-12-2-existing-tag-authority.json",
+  "data/audits/talent-phase-12-final-cleanup-manifest.json",
+  "data/audits/talent-phase-12-final-dry-run-report.json",
+  "data/audits/talent-phase-12-final-ontology-adjudication.json",
+  "data/audits/talent-phase-12-global-semantic-authority-qa5.json",
+  "data/audits/talent-phase-1d-structural-correction-manifest.json",
+  "data/audits/talent-phase-2-clone-wars-campaign-guide-content.json",
+  "data/audits/talent-phase-2-clone-wars-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-closeout.json",
+  "data/audits/talent-phase-2-core-certification.json",
+  "data/audits/talent-phase-2-core-content-certification.json",
+  "data/audits/talent-phase-2-core-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-core-rulebook-content.json",
+  "data/audits/talent-phase-2-galaxy-at-war-content.json",
+  "data/audits/talent-phase-2-galaxy-at-war-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-galaxy-of-intrigue-content.json",
+  "data/audits/talent-phase-2-galaxy-of-intrigue-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+  "data/audits/talent-phase-2-jedi-academy-training-manual-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+  "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-legacy-era-campaign-guide-content.json",
+  "data/audits/talent-phase-2-legacy-era-campaign-guide-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-legacy-era-checkpoint.json",
+  "data/audits/talent-phase-2-rebellion-era-campaign-guide-content.json",
+  "data/audits/talent-phase-2-rebellion-era-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-scum-and-villainy-content.json",
+  "data/audits/talent-phase-2-scum-and-villainy-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-threats-of-the-galaxy-content.json",
+  "data/audits/talent-phase-2-threats-of-the-galaxy-discrepancy-manifest.json",
+  "data/audits/talent-phase-2-unknown-regions-content.json",
+  "data/audits/talent-phase-2-unknown-regions-discrepancy-manifest.json",
+  "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
+  "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+  "data/audits/talent-phase-3b-galaxy-at-war-manifest.json",
+  "data/audits/talent-phase-3b-galaxy-of-intrigue-manifest.json",
+  "data/audits/talent-phase-3b-global-closeout.json",
+  "data/audits/talent-phase-3b-jedi-academy-training-manual-checkpoint.json",
+  "data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json",
+  "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+  "data/audits/talent-phase-3b-legacy-era-campaign-guide-manifest.json",
+  "data/audits/talent-phase-3b-rebellion-era-campaign-guide-manifest.json",
+  "data/audits/talent-phase-3b-scum-and-villainy-manifest.json",
+  "data/audits/talent-phase-3b-source-text-corrections.json",
+  "data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json",
+  "data/audits/talent-phase-3b-unknown-regions-manifest.json",
+  "data/audits/talent-phase-3c-dry-run-report.json",
+  "data/audits/talent-phase-3d-dispositions.json",
+  "data/audits/talent-phase-3d-dry-run-report.json",
+  "data/audits/talent-phase-3d-production-extras-census.json",
+  "data/audits/talent-phase-3d-reference-impact.json",
+  "data/audits/talent-phase-3e-canonical-additions.json",
+  "data/audits/talent-phase-3e-core-gunslinger-census.json",
+  "data/audits/talent-phase-3e-discovery-census.json",
+  "data/audits/talent-phase-3e-publication-reconciliation.json",
+  "data/audits/talent-phase-3e4-dry-run-report.json",
+  "data/audits/talent-phase-3e4-repair-manifest.json",
+  "data/audits/talent-phase-3e5-dry-run-report.json",
+  "data/audits/talent-phase-3e5-text-defect-manifest.json",
+  "data/audits/talent-phase-3f-dry-run-report.json",
+  "data/audits/talent-phase-3f-normalization-manifest.json",
+  "data/audits/talent-phase-3f-tree-identity-census.json",
+  "data/audits/talent-phase-3g-dry-run-report.json",
+  "data/audits/talent-phase-3g-identity-experiments.json",
+  "data/audits/talent-phase-3g-migration-manifest.json",
+  "data/audits/talent-phase-3g-prerequisite-identity-census.json",
+  "data/audits/talent-phase-3g-source-corrections.json",
+  "docs/audits/combat-phase-0e-affected-feat-talent-crosswalk.md",
+  "docs/audits/combat-phase-0f-feat-talent-crosswalk.md",
+  "docs/audits/combat-phase-0j-healing-feat-talent-crosswalk.md",
+  "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
+  "docs/audits/combat-phase-0k-feat-talent-context-crosswalk.md",
+  "docs/audits/prestige-cross-class-talent-tree-access-source-audit-2026-11-15.md",
+  "docs/audits/talent-canonical-production-reference.md",
+  "docs/audits/talent-canonical-text-and-summary-repair-spec.md",
+  "docs/audits/talent-feat-pass3a-semantic-authority.md",
+  "docs/audits/talent-feat-pass3a-skill-owner-adjudication.md",
+  "docs/audits/talent-feat-pass3a-skill-sweep.md",
+  "docs/audits/talent-feat-pass3b-1-mechanical-primitives-owner-packet.md",
+  "docs/audits/talent-feat-pass3b-2a-damage-critical-owner-packet.md",
+  "docs/audits/talent-feat-pass3b-2b-control-reactive-owner-packet.md",
+  "docs/audits/talent-feat-pass3b-2c-combat-mode-owner-packet.md",
+  "docs/audits/talent-feat-pass3b-2d-weapon-scope-owner-packet.md",
+  "docs/audits/talent-feat-pass3b-exact-mechanic-convergence.md",
+  "docs/audits/talent-feat-pass3b-owner-adjudication.md",
+  "docs/audits/talent-feat-pass3b-policy-closure.md",
+  "docs/audits/talent-feat-pass3b-policy-gaps.md",
+  "docs/audits/talent-feat-pass3b-semantic-authority.md",
+  "docs/audits/talent-feat-pass3c-closeout.md",
+  "docs/audits/talent-feat-pass3c-cross-domain-analysis.md",
+  "docs/audits/talent-feat-pass3c-tag-census.md",
+  "docs/audits/talent-feat-phase3-closeout.md",
+  "docs/audits/talent-feat-phase3-final-ontology.md",
+  "docs/audits/talent-feat-phase3-final-owner-policy-packet.md",
+  "docs/audits/talent-feat-phase3-final-owner-rulings.md",
+  "docs/audits/talent-feat-phase3-final-semantic-authority.md",
+  "docs/audits/talent-feat-phase3d-ontology-authority.md",
+  "docs/audits/talent-granted-abilities-metadata-audit-2026-11-23.md",
+  "docs/audits/talent-phase-0-reconciliation.md",
+  "docs/audits/talent-phase-11-2a-junk-tag-deletion.md",
+  "docs/audits/talent-phase-11-2b-consumer-findings.md",
+  "docs/audits/talent-phase-11-2b-reconsider-cleanup.md",
+  "docs/audits/talent-phase-11-2c-bespoke-cleanup.md",
+  "docs/audits/talent-phase-11-2c-consumer-findings.md",
+  "docs/audits/talent-phase-12-1-dry-run.md",
+  "docs/audits/talent-phase-12-1-execution-closeout.md",
+  "docs/audits/talent-phase-12-1-semantic-tag-authority.md",
+  "docs/audits/talent-phase-12-2-dry-run.md",
+  "docs/audits/talent-phase-12-final-dry-run.md",
+  "docs/audits/talent-phase-12-final-ontology-adjudication.md",
+  "docs/audits/talent-phase-12-global-consistency-sweep-report-qa5.md",
+  "docs/audits/talent-phase-12-production-closeout.md",
+  "docs/audits/talent-phase-1a-repository-graph-census.md",
+  "docs/audits/talent-phase-1b-fandom-reference-diff.md",
+  "docs/audits/talent-phase-1c-galaxy-at-war-structural-adjudication.md",
+  "docs/audits/talent-phase-1c-galaxy-of-intrigue-structural-adjudication.md",
+  "docs/audits/talent-phase-1c-legacy-provocateur-structural-adjudication.md",
+  "docs/audits/talent-phase-1c-primary-source-structural-summary.md",
+  "docs/audits/talent-phase-1c-scum-and-villainy-genoharadan-adjudication.md",
+  "docs/audits/talent-phase-1c-unknown-regions-structural-adjudication.md",
+  "docs/audits/talent-phase-1d-a-canonical-tree-registry-seed.md",
+  "docs/audits/talent-phase-1d-access-provenance-closeout.md",
+  "docs/audits/talent-phase-1d-b-core-tree-verification.md",
+  "docs/audits/talent-phase-1d-c-clone-wars-tree-verification.md",
+  "docs/audits/talent-phase-1d-c2-clone-wars-expansions.md",
+  "docs/audits/talent-phase-1d-closeout.md",
+  "docs/audits/talent-phase-1d-e-kotor-tree-verification.md",
+  "docs/audits/talent-phase-1d-expansion-publication-closeout.md",
+  "docs/audits/talent-phase-1d-legacy-era-tree-verification.md",
+  "docs/audits/talent-phase-1d-noncanonical-special-tree-classification.md",
+  "docs/audits/talent-phase-1d-published-special-tree-verification.md",
+  "docs/audits/talent-phase-1d-rebellion-era-tree-verification.md",
+  "docs/audits/talent-phase-1d-remaining-class-trees-checkpoint.md",
+  "docs/audits/talent-phase-1d-special-tree-checkpoint.md",
+  "docs/audits/talent-phase-2-clone-wars-campaign-guide.md",
+  "docs/audits/talent-phase-2-clone-wars-checkpoint.md",
+  "docs/audits/talent-phase-2-closeout.md",
+  "docs/audits/talent-phase-2-core-certification.md",
+  "docs/audits/talent-phase-2-core-content-certification.md",
+  "docs/audits/talent-phase-2-core-rulebook.md",
+  "docs/audits/talent-phase-2-galaxy-at-war.md",
+  "docs/audits/talent-phase-2-galaxy-of-intrigue.md",
+  "docs/audits/talent-phase-2-jedi-academy-training-manual.md",
+  "docs/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide.md",
+  "docs/audits/talent-phase-2-legacy-era-campaign-guide.md",
+  "docs/audits/talent-phase-2-legacy-era-checkpoint.md",
+  "docs/audits/talent-phase-2-rebellion-era-campaign-guide.md",
+  "docs/audits/talent-phase-2-scum-and-villainy.md",
+  "docs/audits/talent-phase-2-threats-of-the-galaxy.md",
+  "docs/audits/talent-phase-2-unknown-regions.md",
+  "docs/audits/talent-phase-3-claude-production-handoff.md",
+  "docs/audits/talent-phase-3-production-canonicalization-plan.md",
+  "docs/audits/talent-phase-3a-canonical-authority.md",
+  "docs/audits/talent-phase-3b-clone-wars-campaign-guide.md",
+  "docs/audits/talent-phase-3b-core-rulebook.md",
+  "docs/audits/talent-phase-3b-galaxy-at-war.md",
+  "docs/audits/talent-phase-3b-galaxy-of-intrigue.md",
+  "docs/audits/talent-phase-3b-global-closeout.md",
+  "docs/audits/talent-phase-3b-jedi-academy-training-manual-checkpoint.md",
+  "docs/audits/talent-phase-3b-jedi-academy-training-manual.md",
+  "docs/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide.md",
+  "docs/audits/talent-phase-3b-legacy-era-campaign-guide.md",
+  "docs/audits/talent-phase-3b-rebellion-era-campaign-guide.md"
+ ],
+ "tests": [
+  "tests/class-force-v2-watchcircle-exemption.test.mjs",
+  "tests/elite-droid-talent-tree-hydration.test.mjs",
+  "tests/officer-share-talent-step-wiring.test.mjs",
+  "tests/phase-2b-closure-fixes.test.mjs",
+  "tests/talent-ability-helpers-fail-before-proof.test.mjs",
+  "tests/talent-canonical-blob-correction-record.test.mjs",
+  "tests/talent-feat-pass3a-skill-convergence.test.mjs",
+  "tests/talent-feat-pass3b-1-owner-adjudication.test.mjs",
+  "tests/talent-feat-pass3b-1-owner-packet.test.mjs",
+  "tests/talent-feat-pass3b-2a-owner-adjudication.test.mjs",
+  "tests/talent-feat-pass3b-2a-owner-packet.test.mjs",
+  "tests/talent-feat-pass3b-2b-owner-adjudication.test.mjs",
+  "tests/talent-feat-pass3b-2b-owner-packet.test.mjs",
+  "tests/talent-feat-pass3b-2c-owner-adjudication.test.mjs",
+  "tests/talent-feat-pass3b-2c-owner-packet.test.mjs",
+  "tests/talent-feat-pass3b-2d-owner-packet.test.mjs",
+  "tests/talent-feat-pass3b-exact-mechanic-convergence.test.mjs",
+  "tests/talent-feat-pass3b-policy-closure.test.mjs",
+  "tests/talent-feat-pass3c-census.test.mjs",
+  "tests/talent-feat-phase3-final-adjudication.test.mjs",
+  "tests/talent-feat-phase3d-freeze-prep.test.mjs",
+  "tests/talent-feats-ability-authority.test.mjs",
+  "tests/talent-granted-abilities-metadata-guard.test.mjs",
+  "tests/talent-illusion-size-penalty-evidence.test.mjs",
+  "tests/talent-phase-11-2a-tag-deletion.test.mjs",
+  "tests/talent-phase-11-2b-reconsider-cleanup.test.mjs",
+  "tests/talent-phase-11-2c-bespoke-cleanup.test.mjs",
+  "tests/talent-phase-11-2d-category-tree-credit.test.mjs",
+  "tests/talent-phase-12-1-semantic-tags.test.mjs",
+  "tests/talent-phase-12-2-semantic-tags.test.mjs",
+  "tests/talent-phase-12-final-ontology.test.mjs",
+  "tests/talent-phase-3b-source-text-corrections.test.mjs",
+  "tests/talent-phase-3c-applicator.test.mjs",
+  "tests/talent-phase-3c-independent-review.test.mjs",
+  "tests/talent-phase-3c-migration-flow.test.mjs",
+  "tests/talent-phase-3c-text-quality.test.mjs",
+  "tests/talent-phase-3d-applicator.test.mjs",
+  "tests/talent-phase-3d-census.test.mjs",
+  "tests/talent-phase-3d-post-state.test.mjs",
+  "tests/talent-phase-3d-review-extras.test.mjs",
+  "tests/talent-phase-3e-additions.test.mjs",
+  "tests/talent-phase-3e-core-gunslinger-census.test.mjs",
+  "tests/talent-phase-3e-discovery-census.test.mjs",
+  "tests/talent-phase-3e-publication-reconciliation.test.mjs",
+  "tests/talent-phase-3e4-repair.test.mjs",
+  "tests/talent-phase-3e5-defect-manifest.test.mjs",
+  "tests/talent-phase-3f-normalization.test.mjs",
+  "tests/talent-phase-3f-tree-identity.test.mjs",
+  "tests/talent-phase-3g-dry-run.test.mjs",
+  "tests/talent-phase-3g-prerequisite-census.test.mjs",
+  "tests/talent-tree-membership-authority-repair.test.mjs",
+  "tests/talent-tree-membership-review-extras.test.mjs",
+  "tests/talent-tree-registry-generator.test.mjs",
+  "tests/talent-tree-registry-runtime.test.mjs"
+ ]
+}

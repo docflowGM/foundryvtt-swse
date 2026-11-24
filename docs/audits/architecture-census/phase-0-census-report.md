@@ -27,7 +27,7 @@ This report summarizes the machine-readable census. Every number below is read f
 | Runtime modules (`index.js` + `scripts/**`) | 2,379 |
 | Runtime SLOC (non-blank, non-comment) | **525,153** of 706,825 JS SLOC overall |
 | Import edges | 8,521 static · 3,167 dynamic · 135 re-export |
-| Test files | 828 (794 top-level `tests/*.test.mjs` run by CI; 34 nested files are **not** run by CI) |
+| Test files | 828 JS/ESM files under `tests/`: **794 test suites** (`tests/*.test.mjs`, all run by CI via `tools/run-rolling-tests.mjs`), 26 helpers, 5 fixtures, 3 committed scratch scripts (`tests/_scratch*.mjs`) |
 | Templates (`.hbs`) | 518 |
 | Stylesheets (`.css`) | 233 (127 declared in `system.json`) |
 | Assets (images, fonts, media) | 921 |

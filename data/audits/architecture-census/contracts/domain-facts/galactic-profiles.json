@@ -1,0 +1,1344 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "galactic-profiles",
+ "name": "Galactic profiles and world/content generation",
+ "kind": "feature",
+ "files": 211,
+ "runtimeSloc": 29047,
+ "runtimeFiles": 167,
+ "counts": {
+  "files": 211,
+  "runtimeModules": 159,
+  "runtimeSloc": 28878,
+  "reachability": {
+   "unreachable-importers-only": 2,
+   "test-only-import": 150,
+   "reachable-static": 7
+  },
+  "nonRuntimeByRole": {
+   "evidence-or-doc": 17,
+   "data": 7,
+   "presentation-style": 1,
+   "presentation-template": 7,
+   "test": 19,
+   "tool": 1
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/locations/location-registry-service.js",
+   "consumers": 26,
+   "sloc": 978,
+   "role": "registry",
+   "exports": [
+    "registerLocationRegistrySettings",
+    "LocationRegistryService"
+   ],
+   "writes": 6,
+   "actorEngineCalls": 0,
+   "ciTests": 38
+  },
+  {
+   "path": "scripts/locations/location-library-seeds.js",
+   "consumers": 8,
+   "sloc": 5227,
+   "role": "module",
+   "exports": [
+    "LOCATION_LIBRARY_BIOMES",
+    "isLocationLibraryBiome",
+    "LOCATION_LIBRARY_SEEDS",
+    "getLocationLibrarySeed",
+    "isKnownLibraryPlanetName",
+    "filterLocationLibrarySeeds",
+    "buildLocationLibraryRecords"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 38
+  },
+  {
+   "path": "scripts/ui/shell/gm/FactionJobBridgeService.js",
+   "consumers": 6,
+   "sloc": 534,
+   "role": "adapter",
+   "exports": [
+    "FactionJobBridgeService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 23
+  },
+  {
+   "path": "scripts/ui/shell/gm/FactionIntelBridgeService.js",
+   "consumers": 2,
+   "sloc": 190,
+   "role": "adapter",
+   "exports": [
+    "FactionIntelBridgeService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 2
+  },
+  {
+   "path": "scripts/ui/shell/gm/LocationIntelBridgeService.js",
+   "consumers": 2,
+   "sloc": 65,
+   "role": "adapter",
+   "exports": [
+    "LocationIntelBridgeService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 9
+  },
+  {
+   "path": "scripts/ui/shell/gm/LocationJobBridgeService.js",
+   "consumers": 2,
+   "sloc": 120,
+   "role": "adapter",
+   "exports": [
+    "LocationJobBridgeService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 9
+  },
+  {
+   "path": "scripts/ui/shell/gm/LocationSceneBridgeService.js",
+   "consumers": 1,
+   "sloc": 128,
+   "role": "adapter",
+   "exports": [
+    "LocationSceneBridgeService"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 0,
+   "ciTests": 8
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/locations/location-library-seeds.js",
+   "sloc": 5227,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/generation/objective-template.js",
+   "sloc": 3022,
+   "reach": "test-only-import"
+  },
+  {
+   "path": "scripts/generation/data/location-population-profiles.js",
+   "sloc": 2032,
+   "reach": "test-only-import"
+  },
+  {
+   "path": "scripts/generation/data/npc-flavor-qualities-organic.js",
+   "sloc": 1005,
+   "reach": "test-only-import"
+  },
+  {
+   "path": "scripts/locations/location-registry-service.js",
+   "sloc": 978,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/generation/jobs/job-bundle.js",
+   "sloc": 770,
+   "reach": "test-only-import"
+  },
+  {
+   "path": "scripts/ui/shell/gm/FactionJobBridgeService.js",
+   "sloc": 534,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/generation/data/procedural-planet-names.js",
+   "sloc": 506,
+   "reach": "test-only-import"
+  },
+  {
+   "path": "scripts/generation/data/npc-flavor-qualities-droid.js",
+   "sloc": 505,
+   "reach": "test-only-import"
+  },
+  {
+   "path": "scripts/generation/planets/planet-draft.js",
+   "sloc": 502,
+   "reach": "test-only-import"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/generation/objective-template.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 3022,
+   "tests": 3
+  },
+  {
+   "path": "scripts/generation/data/location-population-profiles.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 2032,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-flavor-qualities-organic.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 1005,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-bundle.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 770,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/procedural-planet-names.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 506,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/data/npc-flavor-qualities-droid.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 505,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/planet-draft.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 502,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/data/poi-place-name-components.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 367,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/settlement-name-components.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 363,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-occupations.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 323,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/planet-name-syllables.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 321,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/factions/faction-bundle.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 321,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-appearance-traits.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 304,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/planet-population.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 304,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/npc/npc-bundle.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 277,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/job-complications.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 266,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/planet-profile.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 263,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/data/npc-relationship-hooks.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 258,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-complications.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 256,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-secrets.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 253,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-draft.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 247,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/lib/draft-field-authoring.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 211,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/poi-templates.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 207,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/data/job-secrets.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 205,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-speech-styles.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 205,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-agendas.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 203,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-mannerisms.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 202,
+   "tests": 1
+  },
+  {
+   "path": "scripts/apps/galactic-records-browser.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 201,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/data/faction-presets.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 196,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/npc/npc-characterization.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 193,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/npc/npc-location-link.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 193,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/npc-concept.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 191,
+   "tests": 4
+  },
+  {
+   "path": "scripts/generation/data/galactic-commodities.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 189,
+   "tests": 3
+  },
+  {
+   "path": "scripts/generation/data/npc-fears.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 166,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-motivations.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 164,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/job-hooks.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 158,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/job-reward-suggestions.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 158,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-desires.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 153,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-mannerisms-droid.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 152,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/planet-presets.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 149,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-roles.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 147,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/ship-name-adjectives.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 147,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/rank-metadata.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 142,
+   "tests": 3
+  },
+  {
+   "path": "scripts/generation/data/ship-name-nouns.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 131,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/population-profile.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 130,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/data/planet-traits.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 124,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/poi-generator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 123,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/data/npc-faction-roles.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 113,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/faction-draft.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 112,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/location-population-profile.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 111,
+   "tests": 3
+  },
+  {
+   "path": "scripts/generation/data/planet-history-hooks.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 110,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/planet-quality-tables.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 105,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/data/npc-voice-qualities-droid.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 103,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-voice-qualities-organic.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 102,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/location-draft.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 101,
+   "tests": 3
+  },
+  {
+   "path": "scripts/generation/data/npc-social-roles.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 99,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/organization-metadata.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 97,
+   "tests": 5
+  },
+  {
+   "path": "scripts/generation/npc/npc-location-link-actions.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 94,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/reward-estimator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 94,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/planet-hazards.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 93,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/npc/npc-flavor.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 93,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/planet-trade.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 89,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/npc/npc-competence.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 86,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/faction-goals.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 85,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/npc/npc-narrative-generator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 85,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/faction-name-components.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 83,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-social-styles.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 83,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/faction-doctrine-draft.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 80,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/planets/planet-bundle.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 77,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/cargo-concept.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 74,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/opposition-request.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 74,
+   "tests": 1
+  },
+  {
+   "path": "scripts/core/galactic-records-category-registry.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 74,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/lib/weighted-random.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 73,
+   "tests": 4
+  },
+  {
+   "path": "scripts/generation/lib/description-composer.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 72,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/recruitment-profile.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 71,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/names/settlement-name-generator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 70,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-context.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 69,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-narrative-functions.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 66,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/planet-hook-archetypes.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 64,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/planet-economies.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 63,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-loyalty-profiles.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 62,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-temperaments.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 59,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/names/faction-name-generator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 59,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/job-stakes.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 58,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/planet-governments.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 58,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/planet-stability.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 56,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/faction-institutional-characters.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 55,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-personality-traits.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 49,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/faction-internal-problems.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 47,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/names/poi-place-name-generator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 47,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/faction-relationship-draft.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 45,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/planet-hooks.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 45,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/npc-location-relationships.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 43,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-field-authoring.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 43,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/npc/npc-field-authoring.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 43,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/objective-economy.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 43,
+   "tests": 3
+  },
+  {
+   "path": "scripts/generation/reward-package.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 43,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/data/npc-location-relationship-types.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 42,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/data/faction-leadership-structures.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 40,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-legality-visibility.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 39,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/data/faction-resource-flavors.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 38,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/names/planet-name-generator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 37,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/lib/generator-diagnostics.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 34,
+   "tests": 4
+  },
+  {
+   "path": "scripts/generation/data/npc-droid-roles.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 33,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/location-events.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 30,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/data/planet-secrets.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 30,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/npc/npc-role.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 30,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/location-event.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 29,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/poi-template.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 29,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/ship-names/ship-name-generator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 28,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/technology-specialties.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 26,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/provenance.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 25,
+   "tests": 3
+  },
+  {
+   "path": "scripts/generation/data/intel-clue-concepts.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 24,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/data/job-consequences.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 24,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/data/job-twists.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 24,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/data/mission-subject-archetypes.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 24,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/data/objective-constraints.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 24,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/party-capability.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 24,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/planet-region-bias.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 22,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/factions/faction-resource-profile.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 22,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/encounter-phase.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 22,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/lib/tag-utils.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 22,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-urgency.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 20,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/jobs/job-archetype-metadata.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 19,
+   "tests": 3
+  },
+  {
+   "path": "scripts/generation/names/system-name-generator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 19,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-reward-suggestion.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 15,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/lib/reference-duality.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 15,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/system-name-designations.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 14,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/factions/faction-goals.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 14,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-consequence.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 14,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/mission-subject.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 14,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/data/cargo-concepts.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 13,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/npc/npc-occupation.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 13,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/lib/draft-id.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 12,
+   "tests": 2
+  },
+  {
+   "path": "scripts/generation/npc/npc-field-definitions.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 11,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/planets/planet-economy.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 11,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-field-definitions.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 8,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/factions/faction-archetype.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 7,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/factions/faction-institutional-character.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/factions/faction-internal-problems.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/factions/faction-leadership-structure.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/intel-clue-concept.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-complication.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/job-hook.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/jobs/job-secret.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/jobs/job-stake.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/jobs/job-twist.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/jobs/objective-constraint.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 1
+  },
+  {
+   "path": "scripts/generation/planets/planet-government.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/planets/planet-hazards.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/planets/planet-history-hooks.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 0
+  },
+  {
+   "path": "scripts/generation/planets/planet-traits.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 5,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 6,
+  "npc-followers": 6,
+  "droids": 2,
+  "holonet": 2,
+  "progression": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 20,
+  "actor-core": 1,
+  "infrastructure": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 5,
+   "sites": [
+    {
+     "path": "scripts/locations/location-registry-service.js",
+     "domain": "galactic-profiles",
+     "reach": "reachable-static",
+     "count": 5,
+     "lines": [
+      805,
+      826,
+      840,
+      880,
+      917
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "clamp",
+   "files": [
+    "scripts/generation/lib/weighted-random.js",
+    "scripts/utils/validation-utils.js"
+   ]
+  },
+  {
+   "name": "CONTACT_LOCATION_RELATIONSHIP",
+   "files": [
+    "scripts/generation/data/npc-location-relationship-types.js",
+    "scripts/generation/npc/npc-location-link.js"
+   ]
+  },
+  {
+   "name": "hasForbiddenMechanicalFields",
+   "files": [
+    "scripts/generation/faction-doctrine-draft.js",
+    "scripts/generation/npc-concept.js"
+   ]
+  },
+  {
+   "name": "rerollPlanetName",
+   "files": [
+    "scripts/generation/names/planet-name-generator.js",
+    "scripts/generation/planets/planet-draft.js"
+   ]
+  }
+ ],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [
+  "docs/audits/SWSE_Galactic_Profile_Rolling_Audit.md",
+  "docs/audits/SWSE_Galactic_Profiles_v3_Certification_Matrix.md",
+  "docs/audits/SWSE_Galactic_Profiles_v3_Claude_Implementation_Handoff.md",
+  "docs/audits/SWSE_Galactic_Profiles_v3_Implementation_Review.md",
+  "docs/audits/SWSE_Galactic_Profiles_v3_Unification_Audit.md",
+  "docs/audits/galactic-profiles-v3-audit-scripts/README.md",
+  "docs/audits/galactic-profiles-v3-audit-scripts/attrbasis.mjs",
+  "docs/audits/galactic-profiles-v3-audit-scripts/attrmd.mjs",
+  "docs/audits/galactic-profiles-v3-audit-scripts/catalog-and-arithmetic.mjs",
+  "docs/audits/galactic-profiles-v3-audit-scripts/ev.mjs",
+  "docs/audits/galactic-profiles-v3-audit-scripts/ev2.mjs",
+  "docs/audits/galactic-profiles-v3-audit-scripts/genmatrix.mjs",
+  "docs/audits/galactic-profiles-v3-audit-scripts/pack-resolution-probe.mjs",
+  "docs/audits/galactic-profiles-v3-audit-scripts/schema-validate.mjs",
+  "docs/audits/gm-locations-phase-0-functional-recovery.md"
+ ],
+ "tests": [
+  "tests/galactic-profile-cutover.test.mjs",
+  "tests/galactic-profile-service-wiring.test.mjs",
+  "tests/galactic-profile-status-matrix.test.mjs",
+  "tests/gm-generation-phase8d1-foundation.test.mjs",
+  "tests/gm-generation-phase8d2-foundation.test.mjs",
+  "tests/gm-generation-phase8d3a-production.test.mjs",
+  "tests/gm-generation-phase8d3b-production.test.mjs",
+  "tests/gm-generation-phase8d3c-jobs-production.test.mjs",
+  "tests/gm-intel-location-fact-identity.test.mjs",
+  "tests/gm-locations-container-responsive-layout.test.mjs",
+  "tests/gm-locations-ecosystem-template-contract.test.mjs",
+  "tests/gm-locations-identity-and-hierarchy-integrity.test.mjs",
+  "tests/gm-locations-importer-contract.test.mjs",
+  "tests/gm-locations-library-catalog-contract.test.mjs",
+  "tests/gm-locations-library-identity-and-fact-integrity.test.mjs",
+  "tests/gm-locations-library-import-service.test.mjs",
+  "tests/gm-locations-operational-ui-action-matrix.test.mjs",
+  "tests/gm-locations-scene-creation-safety.test.mjs",
+  "tests/pre8d4-faction-contact-identity-hardening.test.mjs"
+ ]
+}

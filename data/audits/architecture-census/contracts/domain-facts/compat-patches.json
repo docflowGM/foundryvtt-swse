@@ -1,0 +1,499 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "compat-patches",
+ "name": "Runtime hotfix/compatibility patch layer",
+ "kind": "infrastructure",
+ "files": 19,
+ "runtimeSloc": 3939,
+ "runtimeFiles": 17,
+ "counts": {
+  "files": 19,
+  "runtimeModules": 17,
+  "runtimeSloc": 3939,
+  "reachability": {
+   "reachable-static": 17
+  },
+  "nonRuntimeByRole": {
+   "test": 2
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/patches/armor-hydration-defense-hotfix.js",
+   "consumers": 3,
+   "sloc": 134,
+   "role": "compat-patch",
+   "exports": [
+    "registerArmorHydrationDefenseHotfix",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 2
+  },
+  {
+   "path": "scripts/patches/attack-dialog-combat-corrections-hotfix.js",
+   "consumers": 2,
+   "sloc": 253,
+   "role": "compat-patch",
+   "exports": [
+    "registerAttackDialogCombatCorrectionsHotfix"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+   "consumers": 2,
+   "sloc": 403,
+   "role": "compat-patch",
+   "exports": [
+    "orphanFollowersForOwner",
+    "getEligibleFollowerTransferSlots",
+    "transferOrphanFollower",
+    "promptFollowerReassignment",
+    "registerFollowerOrphanTransferHotfix"
+   ],
+   "writes": 6,
+   "actorEngineCalls": 6,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/patches/follower-species-repair-hook.js",
+   "consumers": 2,
+   "sloc": 90,
+   "role": "compat-patch",
+   "exports": [
+    "repairExistingFollowers",
+    "registerFollowerSpeciesRepairHook"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+   "consumers": 2,
+   "sloc": 215,
+   "role": "compat-patch",
+   "exports": [
+    "registerProgressionLedgerReconciliationHotfix",
+    "default"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 1,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/patches/weapon-branch-coherence-hotfix.js",
+   "consumers": 2,
+   "sloc": 37,
+   "role": "compat-patch",
+   "exports": [
+    "registerWeaponBranchCoherenceHotfix",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/patches/canonical-ability-prerequisite-hotfix.js",
+   "consumers": 1,
+   "sloc": 152,
+   "role": "compat-patch",
+   "exports": [
+    "registerCanonicalAbilityPrerequisiteHotfix"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/combat-ui-behavior-hotfix.js",
+   "consumers": 1,
+   "sloc": 606,
+   "role": "compat-patch",
+   "exports": [
+    "registerCombatUiBehaviorHotfixes",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+   "consumers": 1,
+   "sloc": 467,
+   "role": "compat-patch",
+   "exports": [
+    "registerFollowerNpcSheetParityHotfix"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 2,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/follower-progression-live-state-hotfix.js",
+   "consumers": 1,
+   "sloc": 316,
+   "role": "compat-patch",
+   "exports": [
+    "registerFollowerProgressionLiveStateHotfix"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+   "consumers": 1,
+   "sloc": 246,
+   "role": "compat-patch",
+   "exports": [
+    "repairRepeatableFollowerEntitlements",
+    "registerFollowerRepeatableEntitlementHotfix"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 1,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/follower-species-materialization-hotfix.js",
+   "consumers": 1,
+   "sloc": 244,
+   "role": "compat-patch",
+   "exports": [
+    "registerFollowerSpeciesMaterializationHotfix"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 3,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/force-suite-render-guard-hotfix.js",
+   "consumers": 1,
+   "sloc": 36,
+   "role": "compat-patch",
+   "exports": [
+    "registerForceSuiteRenderGuardHotfix",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/progression-choice-language-hotfix.js",
+   "consumers": 1,
+   "sloc": 290,
+   "role": "compat-patch",
+   "exports": [
+    "registerProgressionChoiceLanguageHotfix"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 2,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/progression-feat-chain-hotfix.js",
+   "consumers": 1,
+   "sloc": 75,
+   "role": "compat-patch",
+   "exports": [
+    "registerProgressionFeatChainHotfix"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/runtime-bugfix-hotfixes-init.js",
+   "consumers": 1,
+   "sloc": 38,
+   "role": "compat-patch",
+   "exports": [],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/patches/runtime-bugfix-hotfixes.js",
+   "consumers": 1,
+   "sloc": 337,
+   "role": "compat-patch",
+   "exports": [
+    "registerRuntimeBugfixHotfixes",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/patches/combat-ui-behavior-hotfix.js",
+   "sloc": 606,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/patches/follower-npc-sheet-parity-hotfix.js",
+   "sloc": 467,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+   "sloc": 403,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/patches/runtime-bugfix-hotfixes.js",
+   "sloc": 337,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/patches/follower-progression-live-state-hotfix.js",
+   "sloc": 316,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/patches/progression-choice-language-hotfix.js",
+   "sloc": 290,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/patches/attack-dialog-combat-corrections-hotfix.js",
+   "sloc": 253,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+   "sloc": 246,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/patches/follower-species-materialization-hotfix.js",
+   "sloc": 244,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+   "sloc": 215,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [],
+ "dependsOnDomains": {
+  "combat": 13,
+  "progression": 13,
+  "infrastructure": 10,
+  "actor-core": 10,
+  "npc-followers": 8,
+  "ui-shell": 5,
+  "equipment": 5,
+  "species": 3,
+  "vehicles": 3,
+  "data-registries": 2,
+  "rolls": 2,
+  "talents": 2,
+  "abilities-effects": 1,
+  "chat": 1,
+  "store-economy": 1,
+  "droids": 1
+ },
+ "dependedOnByDomains": {
+  "talents": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 8,
+   "sites": [
+    {
+     "path": "scripts/patches/follower-orphan-transfer-hotfix.js",
+     "domain": "compat-patches",
+     "reach": "reachable-static",
+     "count": 6,
+     "lines": [
+      99,
+      100,
+      159,
+      225,
+      226,
+      334
+     ]
+    },
+    {
+     "path": "scripts/patches/follower-repeatable-entitlement-hotfix.js",
+     "domain": "compat-patches",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      170
+     ]
+    },
+    {
+     "path": "scripts/patches/progression-ledger-reconciliation-hotfix.js",
+     "domain": "compat-patches",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      212
+     ]
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "upgrade-slots",
+   "otherDomains": [
+    "customization",
+    "droids",
+    "npc-followers",
+    "progression",
+    "store-economy",
+    "ui-shell",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/patches/follower-orphan-transfer-hotfix.js:193 getEligibleFollowerTransferSlots"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 176,
+   "sites": [
+    "scripts/engine/combat/features/combat-feature-handlers.js:182 applyForcedAttackOption",
+    "scripts/patches/combat-ui-behavior-hotfix.js:493 applyForcedAttackOption"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/patches/armor-hydration-defense-hotfix.js:179",
+    "scripts/patches/attack-dialog-combat-corrections-hotfix.js:369",
+    "scripts/patches/follower-npc-sheet-parity-hotfix.js:506",
+    "scripts/patches/follower-orphan-transfer-hotfix.js:429",
+    "scripts/patches/follower-progression-live-state-hotfix.js:349",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js:265",
+    "scripts/patches/follower-species-repair-hook.js:95",
+    "scripts/patches/force-suite-render-guard-hotfix.js:38",
+    "scripts/patches/progression-ledger-reconciliation-hotfix.js:232",
+    "scripts/patches/runtime-bugfix-hotfixes.js:281"
+   ]
+  },
+  {
+   "name": "createItem",
+   "sites": [
+    "scripts/patches/follower-progression-live-state-hotfix.js:326",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js:239",
+    "scripts/patches/progression-choice-language-hotfix.js:277",
+    "scripts/patches/progression-ledger-reconciliation-hotfix.js:238"
+   ]
+  },
+  {
+   "name": "updateItem",
+   "sites": [
+    "scripts/patches/follower-progression-live-state-hotfix.js:333",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js:243",
+    "scripts/patches/progression-ledger-reconciliation-hotfix.js:241"
+   ]
+  },
+  {
+   "name": "init",
+   "sites": [
+    "scripts/patches/armor-hydration-defense-hotfix.js:175"
+   ]
+  },
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/patches/follower-orphan-transfer-hotfix.js:416",
+    "scripts/patches/progression-ledger-reconciliation-hotfix.js:233"
+   ]
+  },
+  {
+   "name": "renderApplicationV2",
+   "sites": [
+    "scripts/patches/combat-ui-behavior-hotfix.js:674",
+    "scripts/patches/combat-ui-behavior-hotfix.js:675",
+    "scripts/patches/follower-orphan-transfer-hotfix.js:427",
+    "scripts/patches/follower-progression-live-state-hotfix.js:344",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js:260",
+    "scripts/patches/force-suite-render-guard-hotfix.js:37"
+   ]
+  },
+  {
+   "name": "createActor",
+   "sites": [
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js:251"
+   ]
+  },
+  {
+   "name": "deleteItem",
+   "sites": [
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js:247"
+   ]
+  },
+  {
+   "name": "swse:progression:completed",
+   "sites": [
+    "scripts/patches/follower-progression-live-state-hotfix.js:340",
+    "scripts/patches/follower-repeatable-entitlement-hotfix.js:255"
+   ]
+  },
+  {
+   "name": "renderSWSEV2CharacterSheet",
+   "sites": [
+    "scripts/patches/combat-ui-behavior-hotfix.js:673",
+    "scripts/patches/force-suite-render-guard-hotfix.js:36"
+   ]
+  },
+  {
+   "name": "preUpdateItem",
+   "sites": [
+    "scripts/patches/weapon-branch-coherence-hotfix.js:122"
+   ]
+  },
+  {
+   "name": "preCreateItem",
+   "sites": [
+    "scripts/patches/progression-choice-language-hotfix.js:251",
+    "scripts/patches/weapon-branch-coherence-hotfix.js:101"
+   ]
+  },
+  {
+   "name": "renderChatMessageHTML",
+   "sites": [
+    "scripts/patches/runtime-bugfix-hotfixes.js:221"
+   ]
+  },
+  {
+   "name": "renderSWSEDialogV2",
+   "sites": [
+    "scripts/patches/combat-ui-behavior-hotfix.js:676"
+   ]
+  },
+  {
+   "name": "preDeleteActor",
+   "sites": [
+    "scripts/patches/follower-orphan-transfer-hotfix.js:411"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [],
+ "tests": [
+  "tests/ti4c0-g11-caller-outcomes.test.mjs",
+  "tests/ti4c0-g34-progression-ledger-sync-authority.test.mjs"
+ ]
+}

@@ -1,0 +1,1435 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "infrastructure",
+ "name": "Bootstrap, hooks wiring, caching, generic utilities",
+ "kind": "infrastructure",
+ "files": 117,
+ "runtimeSloc": 14539,
+ "runtimeFiles": 110,
+ "counts": {
+  "files": 117,
+  "runtimeModules": 106,
+  "runtimeSloc": 13901,
+  "reachability": {
+   "reachable-static": 49,
+   "orphan-unreferenced": 33,
+   "reachable-dynamic": 2,
+   "unreachable-importers-only": 18,
+   "string-referenced-only": 3,
+   "test-only-import": 1
+  },
+  "nonRuntimeByRole": {
+   "module": 3,
+   "data": 1,
+   "other": 1,
+   "normalizer": 1,
+   "test": 4,
+   "tool": 1
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/utils/logger.js",
+   "consumers": 699,
+   "sloc": 36,
+   "role": "module",
+   "exports": [
+    "SWSELogger",
+    "swseLogger"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 426
+  },
+  {
+   "path": "scripts/utils/schema-adapters.js",
+   "consumers": 51,
+   "sloc": 259,
+   "role": "adapter",
+   "exports": [
+    "SchemaAdapters"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 385
+  },
+  {
+   "path": "scripts/utils/settings-helper.js",
+   "consumers": 42,
+   "sloc": 30,
+   "role": "module",
+   "exports": [
+    "SettingsHelper"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 370
+  },
+  {
+   "path": "scripts/core/document-api-v13.js",
+   "consumers": 41,
+   "sloc": 226,
+   "role": "module-with-writes",
+   "exports": [
+    "createActor",
+    "createItemInActor",
+    "updateActor",
+    "deleteActor",
+    "deleteItemInActor",
+    "createChatMessage",
+    "createEffectOnActor",
+    "deleteEffectFromActor",
+    "patchDocument",
+    "createItem",
+    "getOrCreateOwnedItem"
+   ],
+   "writes": 10,
+   "actorEngineCalls": 7,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/adapters/ActorAbilityBridge.js",
+   "consumers": 34,
+   "sloc": 111,
+   "role": "adapter",
+   "exports": [
+    "ActorAbilityBridge"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 363
+  },
+  {
+   "path": "scripts/core/logger.js",
+   "consumers": 31,
+   "sloc": 1,
+   "role": "module",
+   "exports": [],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/infrastructure/hooks/hooks-registry.js",
+   "consumers": 16,
+   "sloc": 178,
+   "role": "registry",
+   "exports": [
+    "HooksRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/utils/performance-utils.js",
+   "consumers": 10,
+   "sloc": 234,
+   "role": "module",
+   "exports": [
+    "isPerformanceDiagnosticsEnabled",
+    "SWSEPerf",
+    "debounce",
+    "throttle",
+    "rafThrottle",
+    "memoize",
+    "batch",
+    "lazy",
+    "timed",
+    "chunkProcess",
+    "ObjectPool",
+    "once"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/core/foundry-env.js",
+   "consumers": 9,
+   "sloc": 141,
+   "role": "module",
+   "exports": [
+    "getSystemId",
+    "getActorByUuid",
+    "getActorById",
+    "getItemByUuid",
+    "getItemById",
+    "getCompendium",
+    "getCompendiumDocument",
+    "getSetting",
+    "setSetting",
+    "getCurrentUser",
+    "isGameMaster",
+    "getWorld"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/utils/flags/swse-flags.js",
+   "consumers": 8,
+   "sloc": 59,
+   "role": "module-with-writes",
+   "exports": [
+    "installSwseFlagScopeCompatibility",
+    "getSwseFlag",
+    "setSwseFlag",
+    "unsetSwseFlag",
+    "getSwseFlags"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/shared/xp-system.js",
+   "consumers": 6,
+   "sloc": 39,
+   "role": "module",
+   "exports": [
+    "XP_LEVEL_THRESHOLDS",
+    "XP_MAX_LEVEL",
+    "determineLevelFromXP",
+    "getXPFromCL"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/utils/stable-id.js",
+   "consumers": 6,
+   "sloc": 21,
+   "role": "module",
+   "exports": [
+    "slugify",
+    "stableHexId",
+    "stableJsonId"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 66
+  },
+  {
+   "path": "scripts/utils/stable-key.js",
+   "consumers": 6,
+   "sloc": 14,
+   "role": "module",
+   "exports": [
+    "toStableKey",
+    "ensureStableKey"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 370
+  },
+  {
+   "path": "scripts/core/structured-logger.js",
+   "consumers": 5,
+   "sloc": 121,
+   "role": "module",
+   "exports": [
+    "StructuredLogger",
+    "DOMAINS",
+    "SEVERITY"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 59
+  },
+  {
+   "path": "scripts/utils/hydration-diagnostics.js",
+   "consumers": 5,
+   "sloc": 134,
+   "role": "module",
+   "exports": [
+    "isHydrationSensitivePath",
+    "collectHydrationSensitivePaths",
+    "captureHydrationSnapshot",
+    "summarizeDefensePanel",
+    "summarizeBiographyPanel",
+    "recordHydrationMutation",
+    "getRecentHydrationMutation",
+    "emitHydrationWarning",
+    "emitHydrationError"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/utils/mutation-trace.js",
+   "consumers": 5,
+   "sloc": 91,
+   "role": "module",
+   "exports": [
+    "isMutationTraceEnabled",
+    "MutationDepth",
+    "actorSummary",
+    "payloadSummary",
+    "traceLog"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/utils/sheet-position.js",
+   "consumers": 5,
+   "sloc": 112,
+   "role": "presentation",
+   "exports": [
+    "computeCenteredPosition",
+    "getApplicationTargetSize",
+    "centerApplication",
+    "centerApplicationDuringStartup",
+    "resetApplicationCentering"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/animation-engine.js",
+   "consumers": 4,
+   "sloc": 246,
+   "role": "engine-or-service",
+   "exports": [
+    "AnimationEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/core/render-assertions.js",
+   "consumers": 4,
+   "sloc": 148,
+   "role": "presentation",
+   "exports": [
+    "RenderAssertions"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/utils/security-utils.js",
+   "consumers": 4,
+   "sloc": 181,
+   "role": "module",
+   "exports": [
+    "sanitizeHTML",
+    "sanitizeChatMessage",
+    "canUserModifyActor",
+    "canUserModifyItem",
+    "withPermissionCheck",
+    "withGMCheck",
+    "escapeHTML",
+    "validateUserInput"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/interactions/drop-resolution-engine.js",
+   "consumers": 3,
+   "sloc": 391,
+   "role": "engine-or-service",
+   "exports": [
+    "DropResolutionEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/utils/icon-constants.js",
+   "consumers": 3,
+   "sloc": 212,
+   "role": "module",
+   "exports": [
+    "ICONS",
+    "applyIcon",
+    "createIcon",
+    "getIconClass"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/utils/ui-utils.js",
+   "consumers": 3,
+   "sloc": 31,
+   "role": "module",
+   "exports": [
+    "notify",
+    "confirm",
+    "prompt",
+    "createDialog"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 2
+  },
+  {
+   "path": "scripts/engine/MetaTuning.js",
+   "consumers": 2,
+   "sloc": 57,
+   "role": "module",
+   "exports": [
+    "MetaTuning",
+    "registerMetaTuningSettings"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/interactions/adoption-engine.js",
+   "consumers": 2,
+   "sloc": 76,
+   "role": "engine-or-service",
+   "exports": [
+    "AdoptionEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/core/compendium-directory-click-repair.js",
+   "sloc": 570,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/core/settings.js",
+   "sloc": 559,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/load-templates.js",
+   "sloc": 416,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/interactions/drop-resolution-engine.js",
+   "sloc": 391,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/core/error-handler.js",
+   "sloc": 340,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/core/world-data-loader.js",
+   "sloc": 329,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "index.js",
+   "sloc": 317,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/core/tooltip-discovery.js",
+   "sloc": 296,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/core/hardening-init.js",
+   "sloc": 277,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/core/sidebar-icon-diagnostics.js",
+   "sloc": 266,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/core/error-handler.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 340,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/tooltip-discovery.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 296,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/hardening-init.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 277,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/compendium-diagnostics.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 263,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/forensic-sheet-diagnostic.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 225,
+   "tests": 0
+  },
+  {
+   "path": "scripts/export/pdf-field-map.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 225,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/schema-validator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 214,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/lazy-loader.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 211,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/compendium-pack-registration-repair.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 206,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/sidebar-icon-comparison.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 206,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/first-run-experience.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 197,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/feature-flags.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 194,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/css-auditor.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 191,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/runtime-safety.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 188,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/sidebar-sentinel-trace.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 183,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/typing-animation.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 183,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/sidebar-icon-instrumentation.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 174,
+   "tests": 0
+  },
+  {
+   "path": "scripts/export/swse-export-model.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 174,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/reason-inspector.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 167,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/hook-performance.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 162,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/devmode-validation.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 157,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/v1-api-scanner.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 154,
+   "tests": 0
+  },
+  {
+   "path": "scripts/services/drop-service.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 154,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/migration-integrity-adapter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 127,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/version-adapter.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 124,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/init.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 110,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/movement-normalizer.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 110,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/correlation-id.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 101,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/phase5-init.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 95,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/swse-api.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 91,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/data-utils.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 88,
+   "tests": 0
+  },
+  {
+   "path": "scripts/export/pdf-exporter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 86,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/_architecture-guard.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 85,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/hooks-emitter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 81,
+   "tests": 0
+  },
+  {
+   "path": "scripts/helpers/swse-dialog-helper.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 75,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/keybindings.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 74,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/wishlist-helpers.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 70,
+   "tests": 0
+  },
+  {
+   "path": "scripts/infrastructure/hooks/directory-hooks.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 66,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/string-utils.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 63,
+   "tests": 0
+  },
+  {
+   "path": "scripts/theme-loader.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 58,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/character-utils.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 47,
+   "tests": 0
+  },
+  {
+   "path": "scripts/infrastructure/hooks/destiny-hooks.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-self-registering",
+   "sloc": 32,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/sheet-stabilizer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 26,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/utils-init.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 26,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/flag-registry.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 24,
+   "tests": 0
+  },
+  {
+   "path": "scripts/bootstrap/holo-init.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 22,
+   "tests": 0
+  },
+  {
+   "path": "scripts/core/pack-existence-check.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 16,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/object-utils.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 16,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/render-guard.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 16,
+   "tests": 0
+  },
+  {
+   "path": "scripts/automation/upkeep.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 11,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/macro-functions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 11,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/warn-gm.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 9,
+   "tests": 0
+  },
+  {
+   "path": "scripts/infrastructure/hooks/gm-datapad-scene-control.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 7,
+   "tests": 0
+  },
+  {
+   "path": "scripts/infrastructure/hooks/index.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 7,
+   "tests": 0
+  },
+  {
+   "path": "scripts/rules/rules-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 6,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "ui-shell": 30,
+  "actor-core": 22,
+  "combat": 17,
+  "talents": 16,
+  "progression": 12,
+  "force": 11,
+  "feats": 11,
+  "mentor-suggestion": 9,
+  "houserules": 8,
+  "equipment": 7,
+  "governance": 7,
+  "vehicles": 6,
+  "classes": 6,
+  "npc-followers": 4,
+  "store-economy": 3,
+  "dev-tooling": 3,
+  "rolls": 3,
+  "customization": 3,
+  "species": 3,
+  "settings-config": 2,
+  "abilities-effects": 2,
+  "holonet": 2,
+  "games": 2,
+  "chat": 2,
+  "droids": 1,
+  "migration": 1,
+  "galactic-profiles": 1,
+  "skills": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 225,
+  "mentor-suggestion": 119,
+  "feats": 86,
+  "ui-shell": 77,
+  "combat": 58,
+  "actor-core": 39,
+  "governance": 34,
+  "force": 33,
+  "abilities-effects": 33,
+  "store-economy": 24,
+  "houserules": 24,
+  "talents": 18,
+  "rolls": 17,
+  "npc-followers": 15,
+  "customization": 15,
+  "vehicles": 15,
+  "droids": 15,
+  "skills": 13,
+  "compat-patches": 10,
+  "holonet": 9,
+  "data-registries": 8,
+  "equipment": 8,
+  "species": 8,
+  "dev-tooling": 7,
+  "migration": 7,
+  "galactic-profiles": 6,
+  "classes": 5,
+  "chat": 2
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 16,
+   "sites": [
+    {
+     "path": "scripts/core/mutation-safety.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 5,
+     "lines": [
+      26,
+      46,
+      93,
+      119,
+      156
+     ]
+    },
+    {
+     "path": "scripts/core/document-api-v13.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      34,
+      181,
+      392,
+      422
+     ]
+    },
+    {
+     "path": "scripts/utils/hardening.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      131,
+      147,
+      148,
+      149
+     ]
+    },
+    {
+     "path": "scripts/utils/flags/swse-flags.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      103,
+      114
+     ]
+    },
+    {
+     "path": "scripts/core/world-data-loader.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      473
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/core/document-api-v13.js",
+     "domain": "infrastructure",
+     "reach": "reachable-static",
+     "count": 3,
+     "lines": [
+      8,
+      8,
+      252
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A16-module-caches",
+   "invariant": "A-16",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/core/cache-manager.js",
+     "maps": 5,
+     "cacheMentions": 28,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/utils/performance-utils.js",
+     "maps": 2,
+     "cacheMentions": 4,
+     "hasInvalidate": true
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "defense-totals",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "force",
+    "npc-followers",
+    "progression",
+    "talents",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/utils/math-utils.js:37 calculateDefense",
+    "scripts/utils/schema-adapters.js:453 getDefense"
+   ]
+  },
+  {
+   "responsibility": "base-attack-bonus",
+   "otherDomains": [
+    "data-registries",
+    "progression",
+    "talents"
+   ],
+   "sites": [
+    "scripts/utils/math-utils.js:20 calculateBAB",
+    "scripts/utils/schema-adapters.js:467 getBAB"
+   ]
+  },
+  {
+   "responsibility": "hit-points-max",
+   "otherDomains": [],
+   "sites": [
+    "scripts/utils/schema-adapters.js:194 getMaxHP"
+   ]
+  },
+  {
+   "responsibility": "damage-threshold",
+   "otherDomains": [
+    "combat",
+    "feats"
+   ],
+   "sites": [
+    "scripts/utils/math-utils.js:48 calculateDamageThreshold",
+    "scripts/utils/schema-adapters.js:226 getDamageThreshold"
+   ]
+  },
+  {
+   "responsibility": "condition-track-penalty",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "force",
+    "species"
+   ],
+   "sites": [
+    "scripts/utils/schema-adapters.js:526 getConditionPenalty"
+   ]
+  },
+  {
+   "responsibility": "skill-total",
+   "otherDomains": [
+    "combat",
+    "mentor-suggestion",
+    "progression",
+    "rolls",
+    "skills"
+   ],
+   "sites": [
+    "scripts/utils/schema-adapters.js:495 getSkillTotal"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/utils/schema-adapters.js:337 getAbilityMod"
+   ]
+  },
+  {
+   "responsibility": "initiative",
+   "otherDomains": [
+    "combat",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/utils/schema-adapters.js:507 getInitiativeTotal"
+   ]
+  },
+  {
+   "responsibility": "encumbrance",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "equipment",
+    "progression"
+   ],
+   "sites": [
+    "scripts/utils/math-utils.js:83 calculateCarryingCapacity"
+   ]
+  },
+  {
+   "responsibility": "xp-level",
+   "otherDomains": [
+    "mentor-suggestion",
+    "progression"
+   ],
+   "sites": [
+    "scripts/engine/shared/xp-system.js:68 getXPFromCL"
+   ]
+  },
+  {
+   "responsibility": "force-power-dc-or-roll",
+   "otherDomains": [
+    "combat",
+    "force",
+    "npc-followers",
+    "talents"
+   ],
+   "sites": [
+    "scripts/core/data-preloader.js:310 getForcePower"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 124,
+   "sites": [
+    "scripts/core/css-auditor.js:115 auditIcons",
+    "scripts/governance/sentinel/css-auditor.js:116 auditIcons"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "calculateAbilityModifier",
+   "files": [
+    "scripts/engine/suggestion/shared-suggestion-utilities.js",
+    "scripts/rolls/skills-reference.js",
+    "scripts/utils/math-utils.js"
+   ]
+  },
+  {
+   "name": "slugify",
+   "files": [
+    "scripts/engine/combat/damage-profile-registry.js",
+    "scripts/utils/stable-id.js",
+    "scripts/utils/string-utils.js"
+   ]
+  },
+  {
+   "name": "auditCSSHealth",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditCSSVariable",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditForbiddenStyles",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditHidden",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditIcons",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditOverflow",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditStackingContext",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "auditZeroSize",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "calculateBAB",
+   "files": [
+    "scripts/engine/progression/data/progression-data.js",
+    "scripts/utils/math-utils.js"
+   ]
+  },
+  {
+   "name": "calculateDamageThreshold",
+   "files": [
+    "scripts/rolls/defenses.js",
+    "scripts/utils/math-utils.js"
+   ]
+  },
+  {
+   "name": "calculateDefense",
+   "files": [
+    "scripts/rolls/defenses.js",
+    "scripts/utils/math-utils.js"
+   ]
+  },
+  {
+   "name": "debounce",
+   "files": [
+    "scripts/sheets/v2/character-sheet/utils.js",
+    "scripts/utils/performance-utils.js"
+   ]
+  },
+  {
+   "name": "deepClone",
+   "files": [
+    "scripts/mentor/mentor-survey-v2/contract.js",
+    "scripts/utils/data-utils.js"
+   ]
+  },
+  {
+   "name": "determineLevelFromXP",
+   "files": [
+    "scripts/engine/progression/xp-engine.js",
+    "scripts/engine/shared/xp-system.js"
+   ]
+  },
+  {
+   "name": "formatModifier",
+   "files": [
+    "scripts/ui/utils/ui-formatters.js",
+    "scripts/utils/string-utils.js"
+   ]
+  },
+  {
+   "name": "getIconClass",
+   "files": [
+    "scripts/ui/suggestions/presentation-map.js",
+    "scripts/utils/icon-constants.js"
+   ]
+  },
+  {
+   "name": "getSkills",
+   "files": [
+    "scripts/core/swse-data.js",
+    "scripts/utils/item-filters.js"
+   ]
+  },
+  {
+   "name": "getXPFromCL",
+   "files": [
+    "scripts/engine/progression/xp-constants.js",
+    "scripts/engine/shared/xp-system.js"
+   ]
+  },
+  {
+   "name": "initializeFirstRunExperience",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "name": "notify",
+   "files": [
+    "scripts/core/foundry-env.js",
+    "scripts/utils/ui-utils.js"
+   ]
+  },
+  {
+   "name": "registerFirstRunConsoleHelpers",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "name": "registerFirstRunSettings",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "name": "resetWelcome",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "name": "runFullCSSAudit",
+   "files": [
+    "scripts/core/css-auditor.js",
+    "scripts/governance/sentinel/css-auditor.js"
+   ]
+  },
+  {
+   "name": "safeActorUpdate",
+   "files": [
+    "scripts/core/runtime-safety.js",
+    "scripts/utils/actor-utils.js"
+   ]
+  },
+  {
+   "name": "WelcomeDialog",
+   "files": [
+    "scripts/core/first-run-experience.js",
+    "scripts/holonet/scripts/core/first-run-experience.js"
+   ]
+  },
+  {
+   "name": "XP_LEVEL_THRESHOLDS",
+   "files": [
+    "scripts/engine/progression/xp-constants.js",
+    "scripts/engine/shared/xp-system.js"
+   ]
+  },
+  {
+   "name": "XP_MAX_LEVEL",
+   "files": [
+    "scripts/engine/progression/xp-constants.js",
+    "scripts/engine/shared/xp-system.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "index.js:282",
+    "scripts/core/sidebar-icon-fallback.js:269",
+    "scripts/infrastructure/hooks/init-hooks.js:50"
+   ]
+  },
+  {
+   "name": "init",
+   "sites": [
+    "index.js:99"
+   ]
+  },
+  {
+   "name": "preUpdateActor",
+   "sites": [
+    "scripts/core/token-name-sync.js:74"
+   ]
+  },
+  {
+   "name": "renderSidebar",
+   "sites": [
+    "scripts/core/compendium-directory-click-repair.js:683",
+    "scripts/core/sidebar-icon-fallback.js:258"
+   ]
+  },
+  {
+   "name": "preCreateActor",
+   "sites": [
+    "scripts/core/token-name-sync.js:66"
+   ]
+  },
+  {
+   "name": "renderCompendiumDirectory",
+   "sites": [
+    "scripts/core/compendium-directory-click-repair.js:648"
+   ]
+  },
+  {
+   "name": "sidebarCollapse",
+   "sites": [
+    "scripts/core/compendium-directory-click-repair.js:685",
+    "scripts/core/sidebar-icon-fallback.js:264"
+   ]
+  },
+  {
+   "name": "collapseSidebar",
+   "sites": [
+    "scripts/core/compendium-directory-click-repair.js:684"
+   ]
+  },
+  {
+   "name": "preCreateToken",
+   "sites": [
+    "scripts/core/token-name-sync.js:91"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [],
+ "tests": [
+  "tests/class-phase-6p-force-class-sheet-controls.test.mjs",
+  "tests/perf-agg.test.mjs",
+  "tests/schema-adapters-ability-authority.test.mjs",
+  "tests/target-defense-shared-authority.test.mjs"
+ ]
+}

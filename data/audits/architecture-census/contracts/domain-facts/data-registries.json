@@ -1,0 +1,317 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "data-registries",
+ "name": "Canonical data, registries, compendium loading and normalizers",
+ "kind": "infrastructure",
+ "files": 54,
+ "runtimeSloc": 3710,
+ "runtimeFiles": 12,
+ "counts": {
+  "files": 54,
+  "runtimeModules": 12,
+  "runtimeSloc": 3710,
+  "reachability": {
+   "reachable-static": 7,
+   "unreachable-importers-only": 1,
+   "orphan-unreferenced": 4
+  },
+  "nonRuntimeByRole": {
+   "asset": 1,
+   "data": 24,
+   "evidence-data": 2,
+   "evidence-or-doc": 2,
+   "test": 2,
+   "tool": 11
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/data/prerequisite-checker.js",
+   "consumers": 15,
+   "sloc": 2988,
+   "role": "module",
+   "exports": [
+    "PrerequisiteChecker",
+    "checkPrerequisites",
+    "getAvailablePrestigeClasses",
+    "getQualifiedPrestigeClasses"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 363
+  },
+  {
+   "path": "scripts/registries/language-registry.js",
+   "consumers": 9,
+   "sloc": 131,
+   "role": "registry",
+   "exports": [
+    "LanguageRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 60
+  },
+  {
+   "path": "scripts/data/authority/authority-key-normalizer.js",
+   "consumers": 4,
+   "sloc": 10,
+   "role": "normalizer",
+   "exports": [
+    "normalizeAuthorityKey"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 372
+  },
+  {
+   "path": "scripts/data/authority/prerequisite-text-helpers.js",
+   "consumers": 4,
+   "sloc": 24,
+   "role": "module",
+   "exports": [
+    "getCanonicalContentAuthority",
+    "getCanonicalPrerequisiteText",
+    "getCanonicalDescriptionText",
+    "getCanonicalBenefitText",
+    "hasCanonicalAuthority"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 372
+  },
+  {
+   "path": "scripts/data/blade-colors.js",
+   "consumers": 3,
+   "sloc": 27,
+   "role": "module",
+   "exports": [
+    "BLADE_COLOR_MAP",
+    "VARIES_COLOR_LIST",
+    "getBladeColorHex",
+    "DEFAULT_BLADE_COLOR"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/data/adapters/ClassModelAdapters.js",
+   "consumers": 1,
+   "sloc": 145,
+   "role": "module",
+   "exports": [
+    "adaptClassForProgression",
+    "adaptClassForCharGen",
+    "adaptClassForEngineMutation",
+    "adaptClassForLoaderCompatibility",
+    "getAdapterFor",
+    "logAdapterSelection"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 365
+  },
+  {
+   "path": "scripts/data/stable-key-migration.js",
+   "consumers": 1,
+   "sloc": 7,
+   "role": "migration",
+   "exports": [
+    "StableKeyMigration"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/data/prerequisite-checker.js",
+   "sloc": 2988,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/adapters/ClassModelAdapters.js",
+   "sloc": 145,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/registries/language-registry.js",
+   "sloc": 131,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/uuid-map.js",
+   "sloc": 117,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/data/contracts/DisplayContract.js",
+   "sloc": 112,
+   "reach": "unreachable-importers-only"
+  },
+  {
+   "path": "scripts/data/normalizers/display-normalizer.js",
+   "sloc": 63,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/data/models/ClassModel.js",
+   "sloc": 45,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/data/prerequisite-checker-regression-guard.js",
+   "sloc": 41,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/data/blade-colors.js",
+   "sloc": 27,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/data/authority/prerequisite-text-helpers.js",
+   "sloc": 24,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/data/uuid-map.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 117,
+   "tests": 0
+  },
+  {
+   "path": "scripts/data/contracts/DisplayContract.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 112,
+   "tests": 0
+  },
+  {
+   "path": "scripts/data/normalizers/display-normalizer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 63,
+   "tests": 0
+  },
+  {
+   "path": "scripts/data/models/ClassModel.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 45,
+   "tests": 0
+  },
+  {
+   "path": "scripts/data/prerequisite-checker-regression-guard.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 41,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "progression": 9,
+  "infrastructure": 8,
+  "talents": 4,
+  "force": 2,
+  "classes": 2,
+  "feats": 1,
+  "houserules": 1,
+  "skills": 1,
+  "droids": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 15,
+  "feats": 2,
+  "talents": 2,
+  "equipment": 2,
+  "compat-patches": 2,
+  "customization": 1,
+  "dev-tooling": 1,
+  "abilities-effects": 1,
+  "governance": 1,
+  "migration": 1
+ },
+ "probeHits": [],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "base-attack-bonus",
+   "otherDomains": [
+    "infrastructure",
+    "progression",
+    "talents"
+   ],
+   "sites": [
+    "scripts/data/prerequisite-checker.js:3072 getBaseAttackBonus"
+   ]
+  },
+  {
+   "responsibility": "heroic-level",
+   "otherDomains": [
+    "actor-core",
+    "force",
+    "progression"
+   ],
+   "sites": [
+    "scripts/data/prerequisite-checker.js:3060 getTotalLevel"
+   ]
+  },
+  {
+   "responsibility": "attack-bonus",
+   "otherDomains": [
+    "combat",
+    "equipment",
+    "rolls",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/data/prerequisite-checker.js:3072 getBaseAttackBonus"
+   ]
+  },
+  {
+   "responsibility": "prerequisite-evaluation",
+   "otherDomains": [
+    "droids",
+    "progression",
+    "talents",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/data/prerequisite-checker.js:668 checkPrerequisites",
+    "scripts/data/prerequisite-checker.js:692 checkFeatPrerequisites",
+    "scripts/data/prerequisite-checker.js:773 checkTalentPrerequisites",
+    "scripts/data/prerequisite-checker.js:841 checkClassLevelPrerequisites",
+    "scripts/data/prerequisite-checker.js:906 checkPrestigeClassPrerequisites",
+    "scripts/data/prerequisite-checker.js:1070 checkClassDocumentPrerequisites"
+   ]
+  }
+ ],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "normalizeAuthorityKey",
+   "files": [
+    "scripts/data/authority/authority-key-normalizer.js",
+    "scripts/data/authority/feat-prerequisite-authority.js",
+    "scripts/data/authority/talent-prerequisite-authority.js"
+   ]
+  }
+ ],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [
+  "data/audits/phase-5c-authority-classification.json",
+  "data/audits/phase-5c-precutover-census.json",
+  "docs/audits/compendium-diagnostic-report.md",
+  "docs/audits/compendium-interaction-forensics-2026-08.md"
+ ],
+ "tests": [
+  "tests/phase-5c-canonical-production-negative.test.mjs",
+  "tests/prerequisite-ability-score-authority.test.mjs"
+ ]
+}

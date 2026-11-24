@@ -1,0 +1,158 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "migration",
+ "name": "Data migrations and world maintenance",
+ "kind": "infrastructure",
+ "files": 31,
+ "runtimeSloc": 4051,
+ "runtimeFiles": 24,
+ "counts": {
+  "files": 31,
+  "runtimeModules": 7,
+  "runtimeSloc": 917,
+  "reachability": {
+   "orphan-unreferenced": 5,
+   "reachable-static": 1,
+   "string-referenced-only": 1
+  },
+  "nonRuntimeByRole": {
+   "evidence-or-doc": 1,
+   "presentation": 1,
+   "module": 4,
+   "migration": 11,
+   "module-with-writes": 1,
+   "data": 2,
+   "test": 2,
+   "tool": 2
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/migration/dark-side-points-migration.js",
+   "consumers": 3,
+   "sloc": 127,
+   "role": "migration",
+   "exports": [
+    "computeDarkSidePointsMigration",
+    "migrateDarkSidePoints",
+    "MIGRATION_VERSION"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 2
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/migration/armor-system-migration-v4.js",
+   "sloc": 230,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/migration/weapon-talents-migration.js",
+   "sloc": 139,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/migrations/phase5-compendium-heal.js",
+   "sloc": 137,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/migration/weapon-properties-migration.js",
+   "sloc": 130,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/migration/dark-side-points-migration.js",
+   "sloc": 127,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/migrations/json-backed-ids-migration.js",
+   "sloc": 80,
+   "reach": "string-referenced-only"
+  },
+  {
+   "path": "scripts/migration/migrate-force-powers-type.js",
+   "sloc": 74,
+   "reach": "orphan-unreferenced"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/migration/armor-system-migration-v4.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 230,
+   "tests": 0
+  },
+  {
+   "path": "scripts/migration/weapon-talents-migration.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 139,
+   "tests": 0
+  },
+  {
+   "path": "scripts/migrations/phase5-compendium-heal.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 137,
+   "tests": 0
+  },
+  {
+   "path": "scripts/migration/weapon-properties-migration.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 130,
+   "tests": 0
+  },
+  {
+   "path": "scripts/migrations/json-backed-ids-migration.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 80,
+   "tests": 0
+  },
+  {
+   "path": "scripts/migration/migrate-force-powers-type.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 74,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 7,
+  "actor-core": 7,
+  "progression": 2,
+  "houserules": 2,
+  "force": 1,
+  "data-registries": 1
+ },
+ "dependedOnByDomains": {
+  "infrastructure": 1
+ },
+ "probeHits": [],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [
+  {
+   "name": "MIGRATION_VERSION",
+   "files": [
+    "scripts/migration/dark-side-points-migration.js",
+    "scripts/migrations/json-backed-ids-migration.js"
+   ]
+  }
+ ],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [
+  "docs/migrations/readme.md"
+ ],
+ "tests": [
+  "tests/dsp-migration-behavior.test.mjs",
+  "tests/dsp-migration-consolidation.test.mjs"
+ ]
+}

@@ -1,0 +1,234 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "chat",
+ "name": "Chat output and chat cards",
+ "kind": "infrastructure",
+ "files": 15,
+ "runtimeSloc": 1365,
+ "runtimeFiles": 7,
+ "counts": {
+  "files": 15,
+  "runtimeModules": 7,
+  "runtimeSloc": 1365,
+  "reachability": {
+   "reachable-dynamic": 1,
+   "orphan-unreferenced": 1,
+   "reachable-static": 5
+  },
+  "nonRuntimeByRole": {
+   "asset": 3,
+   "presentation-style": 3,
+   "presentation-template": 1,
+   "test": 1
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/chat/swse-chat.js",
+   "consumers": 97,
+   "sloc": 605,
+   "role": "module",
+   "exports": [
+    "SWSEChat"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/chat/action-chat-engine.js",
+   "consumers": 2,
+   "sloc": 67,
+   "role": "engine-or-service",
+   "exports": [
+    "ActionChatEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/chat/notice-card.js",
+   "consumers": 2,
+   "sloc": 13,
+   "role": "module",
+   "exports": [
+    "postNoticeCard"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/chat/chat-svg-assets.js",
+   "consumers": 1,
+   "sloc": 39,
+   "role": "module",
+   "exports": [
+    "CHAT_SVG_ASSETS",
+    "buildChatSvgContext",
+    "buildChatStateContext"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/chat/holonet-chat-card.js",
+   "consumers": 1,
+   "sloc": 57,
+   "role": "module",
+   "exports": [
+    "registerHolonetChatCards",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  },
+  {
+   "path": "scripts/chat/store-receipt-chat.js",
+   "consumers": 1,
+   "sloc": 369,
+   "role": "module",
+   "exports": [
+    "registerStoreReceiptChatCards",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 0
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/chat/swse-chat.js",
+   "sloc": 605,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/chat/store-receipt-chat.js",
+   "sloc": 369,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/chat/chat-commands.js",
+   "sloc": 215,
+   "reach": "orphan-unreferenced"
+  },
+  {
+   "path": "scripts/chat/action-chat-engine.js",
+   "sloc": 67,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/chat/holonet-chat-card.js",
+   "sloc": 57,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/chat/chat-svg-assets.js",
+   "sloc": 39,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/chat/notice-card.js",
+   "sloc": 13,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/chat/chat-commands.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 215,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 2,
+  "combat": 2,
+  "rolls": 2,
+  "holonet": 1
+ },
+ "dependedOnByDomains": {
+  "combat": 14,
+  "rolls": 12,
+  "talents": 8,
+  "force": 3,
+  "skills": 3,
+  "ui-shell": 2,
+  "vehicles": 2,
+  "infrastructure": 2,
+  "abilities-effects": 1,
+  "feats": 1,
+  "compat-patches": 1,
+  "npc-followers": 1
+ },
+ "probeHits": [],
+ "mechanicalResponsibilities": [],
+ "exactClones": [],
+ "duplicateSymbolNames": [],
+ "liveHooks": [
+  {
+   "name": "swseStoreTransactionComplete",
+   "sites": [
+    "scripts/chat/store-receipt-chat.js:410"
+   ]
+  },
+  {
+   "name": "swseCustomPurchaseApproved",
+   "sites": [
+    "scripts/chat/store-receipt-chat.js:416"
+   ]
+  },
+  {
+   "name": "swseCustomPurchaseDenied",
+   "sites": [
+    "scripts/chat/store-receipt-chat.js:417"
+   ]
+  },
+  {
+   "name": "swseHolonet:recordPublished",
+   "sites": [
+    "scripts/chat/holonet-chat-card.js:71"
+   ]
+  },
+  {
+   "name": "swseStoreSaleComplete",
+   "sites": [
+    "scripts/chat/store-receipt-chat.js:411"
+   ]
+  },
+  {
+   "name": "swseStoreSaleDenied",
+   "sites": [
+    "scripts/chat/store-receipt-chat.js:412"
+   ]
+  },
+  {
+   "name": "swseCreditTransferComplete",
+   "sites": [
+    "scripts/chat/store-receipt-chat.js:413"
+   ]
+  },
+  {
+   "name": "swseCreditGrantComplete",
+   "sites": [
+    "scripts/chat/store-receipt-chat.js:414"
+   ]
+  },
+  {
+   "name": "swseCreditAdjustmentComplete",
+   "sites": [
+    "scripts/chat/store-receipt-chat.js:415"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [],
+ "tests": [
+  "tests/swse-chat-no-phantom-postmessage.test.mjs"
+ ]
+}

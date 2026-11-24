@@ -1,0 +1,738 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "store-economy",
+ "name": "Store, credits and transactions",
+ "kind": "mechanical",
+ "files": 162,
+ "runtimeSloc": 10897,
+ "runtimeFiles": 39,
+ "counts": {
+  "files": 162,
+  "runtimeModules": 32,
+  "runtimeSloc": 10673,
+  "reachability": {
+   "reachable-dynamic": 1,
+   "reachable-static": 31
+  },
+  "nonRuntimeByRole": {
+   "asset": 1,
+   "evidence-data": 2,
+   "data": 5,
+   "evidence-or-doc": 74,
+   "presentation-style": 7,
+   "presentation-template": 16,
+   "test": 21,
+   "tool": 4
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/engine/store/transaction-engine.js",
+   "consumers": 36,
+   "sloc": 1818,
+   "role": "engine-or-service",
+   "exports": [
+    "parseTransactionCost",
+    "TransactionEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 19,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/store/ledger-service.js",
+   "consumers": 23,
+   "sloc": 135,
+   "role": "engine-or-service",
+   "exports": [
+    "LedgerService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/utils/credit-normalization.js",
+   "consumers": 15,
+   "sloc": 15,
+   "role": "normalizer",
+   "exports": [
+    "normalizeCredits",
+    "calculatePercentageFloor",
+    "calculateRawSellPrice",
+    "validateCreditValue"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/store/store-catalog.js",
+   "consumers": 10,
+   "sloc": 194,
+   "role": "registry",
+   "exports": [
+    "STORE_ITEM_DOMAINS",
+    "INDEX_SYSTEM_KEYS",
+    "rarityOf",
+    "buildIndexedListing",
+    "buildVehicleListing",
+    "loadStoreCatalog",
+    "hydrateStoreListing",
+    "hydrateStoreListings",
+    "storeItemDocumentData",
+    "isListingOfferable",
+    "buildStoreIndex"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 355
+  },
+  {
+   "path": "scripts/apps/store/store-main.js",
+   "consumers": 9,
+   "sloc": 1724,
+   "role": "presentation-with-writes",
+   "exports": [
+    "SWSEStore"
+   ],
+   "writes": 2,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/apps/store/store-checkout.js",
+   "consumers": 7,
+   "sloc": 770,
+   "role": "presentation",
+   "exports": [
+    "addItemToCart",
+    "addDroidToCart",
+    "addVehicleToCart",
+    "createCustomStarship",
+    "removeFromCartById",
+    "clearCart",
+    "calculateCartTotal",
+    "createItemPlans",
+    "createDroidPlans",
+    "createVehiclePlans",
+    "checkout",
+    "buildDroidWithBuilder"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/store/store-engine.js",
+   "consumers": 7,
+   "sloc": 304,
+   "role": "engine-or-service",
+   "exports": [
+    "StoreEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 54
+  },
+  {
+   "path": "scripts/engine/store/acquisition-record.js",
+   "consumers": 6,
+   "sloc": 70,
+   "role": "module",
+   "exports": [
+    "ACQUISITION_FLAG_PATH",
+    "PURCHASE_CONTEXTS",
+    "publishedUnitCostOf",
+    "buildAcquisitionMarker",
+    "lotIdFor",
+    "stampAcquisitions",
+    "ledgerLineFields",
+    "verifyAcquisition"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/store/acquisition-service.js",
+   "consumers": 6,
+   "sloc": 255,
+   "role": "engine-or-service",
+   "exports": [
+    "StoreAcquisitionService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/store/store-droid-construction.js",
+   "consumers": 6,
+   "sloc": 110,
+   "role": "module-with-writes",
+   "exports": [
+    "STORE_DROID_APPROVAL_KIND",
+    "beginStoreDroidConstruction",
+    "consumeStoreDroidConstructionToken",
+    "_resetStoreDroidConstructionTokens",
+    "buildDroidConstructionRequest",
+    "verifyDroidConstructionApproval",
+    "buildCustomDroidActorData",
+    "constructionAlreadyDelivered",
+    "submitStoreDroidConstruction"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 80
+  },
+  {
+   "path": "scripts/apps/store/store-shared.js",
+   "consumers": 5,
+   "sloc": 1025,
+   "role": "presentation",
+   "exports": [
+    "normalizeNumber",
+    "getCostValue",
+    "getCostDisplay",
+    "safeString",
+    "safeImg",
+    "safeSystem",
+    "tryRender",
+    "isValidItemForStore",
+    "getRendarrDialogue",
+    "getRandomDialogue",
+    "getRarityClass",
+    "getRarityLabel"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 52
+  },
+  {
+   "path": "scripts/engine/store/policy-service.js",
+   "consumers": 5,
+   "sloc": 324,
+   "role": "engine-or-service",
+   "exports": [
+    "STORE_AVAILABILITY_DEFAULTS",
+    "STORE_TYPE_DEFAULTS",
+    "STORE_CATEGORY_MARKUP_DEFAULTS",
+    "getStoreTypeKey",
+    "getStoreAvailabilityKey",
+    "getStorePolicySettings",
+    "getStoreCategoryMarkupForItem",
+    "getRawStorePolicyForItem",
+    "buildEffectiveStorePolicy",
+    "applyStorePolicyToItem",
+    "applyStorePoliciesToIndex",
+    "isStoreItemPurchasable"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 54
+  },
+  {
+   "path": "scripts/engine/store/pricing.js",
+   "consumers": 4,
+   "sloc": 47,
+   "role": "module",
+   "exports": [
+    "applyPricing",
+    "freezePricing",
+    "unfreezePricing"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 355
+  },
+  {
+   "path": "scripts/engine/store/resale-authority.js",
+   "consumers": 4,
+   "sloc": 178,
+   "role": "engine-or-service",
+   "exports": [
+    "RESALE_AUTHORITY",
+    "STACKABLE_ITEM_TYPES",
+    "UNIQUE_ITEM_TYPES",
+    "MAX_RESALE_CREDITS",
+    "DEFAULT_RESALE_PERCENT",
+    "normalizeResalePercent",
+    "ownedQuantity",
+    "customizationMarkers",
+    "RESALE_BASIS",
+    "DEFAULT_RESALE_BASIS",
+    "normalizeResaleBasis",
+    "quoteItemResale"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/apps/gm-store-dashboard.js",
+   "consumers": 3,
+   "sloc": 490,
+   "role": "presentation",
+   "exports": [
+    "GMStoreDashboard"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 2
+  },
+  {
+   "path": "scripts/apps/store/store-vehicle-ammunition.js",
+   "consumers": 3,
+   "sloc": 88,
+   "role": "presentation",
+   "exports": [
+    "initVehicleAmmunitionContext",
+    "buildVehicleAmmunitionView",
+    "confirmVehicleAmmunition",
+    "bindVehicleAmmunition"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/store/cost-registry.js",
+   "consumers": 3,
+   "sloc": 49,
+   "role": "registry",
+   "exports": [
+    "buildStoreCostRecord",
+    "resolveStoreCost",
+    "isStorePurchasable"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 355
+  },
+  {
+   "path": "scripts/engine/store/resale-service.js",
+   "consumers": 3,
+   "sloc": 205,
+   "role": "engine-or-service",
+   "exports": [
+    "quoteEvidenceLines",
+    "AUTOMATIC_CREDIT_CREATION_TRUSTED",
+    "ResaleService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/store/store-approval-quote.js",
+   "consumers": 3,
+   "sloc": 32,
+   "role": "module",
+   "exports": [
+    "currentOfferFor",
+    "verifyApprovalQuote"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 6
+  },
+  {
+   "path": "scripts/ui/shell/StoreSurfaceService.js",
+   "consumers": 3,
+   "sloc": 802,
+   "role": "presentation",
+   "exports": [
+    "StoreSurfaceService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/apps/store/resale-ui.js",
+   "consumers": 2,
+   "sloc": 67,
+   "role": "presentation",
+   "exports": [
+    "initiateResale",
+    "initiateAssetResale"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  },
+  {
+   "path": "scripts/apps/store/store-description-resolver.js",
+   "consumers": 2,
+   "sloc": 136,
+   "role": "normalizer",
+   "exports": [
+    "resolveStoreDescription",
+    "getStoreCurrencySymbol"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/store/store-constants.js",
+   "consumers": 2,
+   "sloc": 29,
+   "role": "module",
+   "exports": [
+    "STORE_PACKS"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 356
+  },
+  {
+   "path": "scripts/engine/store/store-taxonomy.js",
+   "consumers": 2,
+   "sloc": 61,
+   "role": "module",
+   "exports": [
+    "UNCLASSIFIED",
+    "classifyWeapon",
+    "classifyArmor",
+    "classifyEquipment",
+    "classifyDroid",
+    "classifyVehicle",
+    "classifyListing",
+    "UNIVERSAL_VEHICLE_PACKS"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 355
+  },
+  {
+   "path": "scripts/ui/shell/StoreSurfaceController.js",
+   "consumers": 2,
+   "sloc": 610,
+   "role": "presentation",
+   "exports": [
+    "StoreSurfaceController"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 4
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/engine/store/transaction-engine.js",
+   "sloc": 1818,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/store/store-main.js",
+   "sloc": 1724,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/store/store-shared.js",
+   "sloc": 1025,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/ui/shell/StoreSurfaceService.js",
+   "sloc": 802,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/store/store-checkout.js",
+   "sloc": 770,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/ui/shell/StoreSurfaceController.js",
+   "sloc": 610,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/gm-store-dashboard.js",
+   "sloc": 490,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/apps/store/store-splash.js",
+   "sloc": 473,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/store/policy-service.js",
+   "sloc": 324,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/store/store-engine.js",
+   "sloc": 304,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [],
+ "dependsOnDomains": {
+  "infrastructure": 24,
+  "vehicles": 13,
+  "ui-shell": 11,
+  "progression": 10,
+  "actor-core": 6,
+  "equipment": 6,
+  "mentor-suggestion": 6,
+  "houserules": 3,
+  "droids": 3,
+  "testing": 2,
+  "customization": 2,
+  "combat": 2,
+  "governance": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 25,
+  "customization": 14,
+  "vehicles": 10,
+  "progression": 7,
+  "games": 4,
+  "infrastructure": 3,
+  "holonet": 3,
+  "force": 2,
+  "actor-core": 2,
+  "mentor-suggestion": 1,
+  "compat-patches": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/apps/store/store-main.js",
+     "domain": "store-economy",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1040,
+      1437
+     ]
+    },
+    {
+     "path": "scripts/engine/store/store-droid-construction.js",
+     "domain": "store-economy",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      45
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/apps/store/store-main.js",
+     "domain": "store-economy",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1040,
+      1437
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A08-writes-in-render-or-prepare",
+   "invariant": "A-08",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/apps/store/store-main.js",
+     "line": 1437,
+     "method": "_onRender",
+     "call": "this.actor.setFlag"
+    }
+   ]
+  },
+  {
+   "probe": "P-A10-credit-writes-outside-transaction-engine",
+   "invariant": "A-10",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/engine/store/ledger-service.js",
+     "line": 149,
+     "text": "'system.credits': newCredits"
+    },
+    {
+     "path": "scripts/engine/store/ledger-service.js",
+     "line": 211,
+     "text": "'system.credits': newCredits"
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "damage-reduction",
+   "otherDomains": [
+    "abilities-effects"
+   ],
+   "sites": [
+    "scripts/apps/store/store-shared.js:764 getVehicleShieldRating"
+   ]
+  },
+  {
+   "responsibility": "price-computation",
+   "otherDomains": [
+    "combat",
+    "customization",
+    "droids",
+    "equipment",
+    "feats",
+    "mentor-suggestion",
+    "skills"
+   ],
+   "sites": [
+    "scripts/apps/store/store-checkout.js:37 getVehicleConditionCost",
+    "scripts/engine/store/cost-registry.js:46 resolveStoreCost"
+   ]
+  },
+  {
+   "responsibility": "upgrade-slots",
+   "otherDomains": [
+    "compat-patches",
+    "customization",
+    "droids",
+    "npc-followers",
+    "progression",
+    "ui-shell",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/apps/store/store-splash.js:240 getHotDeckForSlot"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 127,
+   "sites": [
+    "scripts/apps/gm-store-dashboard.js:86",
+    "scripts/ui/shell/gm/GMApprovalOperationsService.js:184"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "UNIVERSAL_VEHICLE_PACKS",
+   "files": [
+    "scripts/domain/vehicles/universal-vehicle-pack-registry.js",
+    "scripts/engine/store/store-taxonomy.js"
+   ]
+  }
+ ],
+ "liveHooks": [],
+ "nonRuntimeEvidence": [
+  "data/audits/talent-phase-11-2c-tree-credit-repair-reference.json",
+  "data/audits/talent-phase-11-2c-tree-credit-repair.json",
+  "docs/audits/combat-phase-2c-ammo-resource-transactions.md",
+  "docs/audits/follower-mutation-transaction-authority-phase-6-addendum.md",
+  "docs/audits/generated/implant-store-catalog-report.json",
+  "docs/audits/generated/implant-store-catalog-report.md",
+  "docs/audits/implant-store-catalog.md",
+  "docs/audits/store-npc-compendium-ssot-audit.md",
+  "docs/audits/store-v2-final-merge-readiness.md",
+  "docs/audits/store-v2-foundry-acceptance-checklist.md",
+  "docs/audits/store-v2-s0-coverage.json",
+  "docs/audits/store-v2-s0-cutover-authority-ledger.md",
+  "docs/audits/store-v2-s9-resale-authority.md",
+  "docs/audits/talent-phase-11-2d-category-tree-credit.md",
+  "docs/audits/transaction-integrity/authority-and-call-path-map.md",
+  "docs/audits/transaction-integrity/failure-injection-test-inventory.md",
+  "docs/audits/transaction-integrity/repro/README.md",
+  "docs/audits/transaction-integrity/repro/_boot.mjs",
+  "docs/audits/transaction-integrity/repro/captured-output.txt",
+  "docs/audits/transaction-integrity/repro/repro-tx01-upgrade-order.mjs",
+  "docs/audits/transaction-integrity/repro/repro-tx03-action-rollback.mjs",
+  "docs/audits/transaction-integrity/repro/repro-tx05-tx06-equipment-coordinator.mjs",
+  "docs/audits/transaction-integrity/repro/repro-tx07-actorengine-plan.mjs",
+  "docs/audits/transaction-integrity/repro/repro-tx08-store-snapshot.mjs",
+  "docs/audits/transaction-integrity/repro/repro-tx11-follower-contract.mjs",
+  "docs/audits/transaction-integrity/repro/run-all.sh",
+  "docs/audits/transaction-integrity/ti-0-checkpoint.md",
+  "docs/audits/transaction-integrity/ti-2-checkpoint.md",
+  "docs/audits/transaction-integrity/ti-3-checkpoint.md",
+  "docs/audits/transaction-integrity/ti-4/baseline/ti4a-inventory-lineageA-ti1-abb81d9.json",
+  "docs/audits/transaction-integrity/ti-4/baseline/ti4a-inventory-lineageA-ti1-abb81d9.md",
+  "docs/audits/transaction-integrity/ti-4/baseline/ti4a-inventory-lineageB-ti3-4e51a15.json",
+  "docs/audits/transaction-integrity/ti-4/baseline/ti4a-inventory-lineageB-ti3-4e51a15.md",
+  "docs/audits/transaction-integrity/ti-4/baseline/ti4a-inventory-main-4392c90.json",
+  "docs/audits/transaction-integrity/ti-4/baseline/ti4a-inventory-main-4392c90.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-authority-inventory.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-checkpoint.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-contract-v1-proposal.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-cross-domain-test-plan.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-decision-register.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-enforcement-gap-register.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-implementation-roadmap.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-l2-l3-feasibility.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-replay-and-recovery-design.md",
+  "docs/audits/transaction-integrity/ti-4/ti4-transaction-compliance-matrix.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-action-economy-result-compatibility-spec.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-baseline-classification-and-exceptions.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-checkpoint.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-contract-conformance-checklist.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-gm-reconciliation-design-and-negative-tests.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-od1-recovery-risk-matrix-proposal.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-operation-id-interface-proposal.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-q033-outcome-and-containment-compatibility-spec.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-receipt-storage-certification-spec.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-report-only-authority-inventory.md",
+  "docs/audits/transaction-integrity/ti-4/ti4a-static-analysis-coverage-and-limitations.md",
+  "docs/audits/transaction-integrity/ti-audit-chain-recovery-provenance-2026-11-21.md",
+  "docs/audits/transaction-integrity/ti4-c0-closure-report.md",
+  "docs/audits/transaction-integrity/ti4-c0-credit-adjustment-safety-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g06-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g06s1-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g11-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g16-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g20-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g21-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g22-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g24-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g26-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g34-checkpoint.md",
+  "docs/audits/transaction-integrity/ti4-c0-g35-checkpoint.md",
+  "docs/audits/transaction-integrity/transaction-contract-proposal.md",
+  "docs/audits/transaction-integrity/tx-remediation-ledger.md",
+  "docs/design/implant-store-catalog-phase4e.md"
+ ],
+ "tests": [
+  "tests/attack-transaction-rollback.test.mjs",
+  "tests/fixtures/ti4a/scripts/engine/combat/action/action-economy-persistence.js",
+  "tests/fixtures/ti4a/scripts/engine/store/transaction-engine.js",
+  "tests/fixtures/ti4a/scripts/new-unreviewed/new-caller.js",
+  "tests/fixtures/ti4a/scripts/new-unreviewed/new-writer.js",
+  "tests/fixtures/ti4a/scripts/sheets/v2/character-like-sheet.js",
+  "tests/store-v2-purchase-integrity.test.mjs",
+  "tests/store-v2-s1-catalog.test.mjs",
+  "tests/store-v2-s2-approval-quote.test.mjs",
+  "tests/store-v2-s2-commerce-closure.test.mjs",
+  "tests/store-v2-s2-strict-quote.test.mjs",
+  "tests/store-v2-s8-architecture.test.mjs",
+  "tests/store-v2-s8-query.test.mjs",
+  "tests/store-v2-s9-resale-authority.test.mjs",
+  "tests/ti2-commerce-integrity.test.mjs",
+  "tests/ti3-progression-followers-approvals.test.mjs",
+  "tests/ti4a-authority-inventory.test.mjs",
+  "tests/ti4c0-g20-rollback-replay.test.mjs",
+  "tests/ti4c0-g21-legacy-dashboard-reversal.test.mjs",
+  "tests/ti4c0-g24-pending-sale-identity.test.mjs",
+  "tests/ti4c0-te-credit-adjustment-safety.test.mjs"
+ ]
+}

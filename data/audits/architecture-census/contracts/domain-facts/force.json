@@ -1,0 +1,1003 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "force",
+ "name": "Force powers, Force points, Dark Side, traditions and alchemy",
+ "kind": "mechanical",
+ "files": 322,
+ "runtimeSloc": 13704,
+ "runtimeFiles": 55,
+ "counts": {
+  "files": 322,
+  "runtimeModules": 53,
+  "runtimeSloc": 13637,
+  "reachability": {
+   "unreachable-importers-only": 3,
+   "reachable-static": 47,
+   "test-only-import": 1,
+   "orphan-unreferenced": 2
+  },
+  "nonRuntimeByRole": {
+   "asset": 86,
+   "data": 21,
+   "evidence-data": 15,
+   "evidence-or-doc": 83,
+   "presentation-style": 6,
+   "presentation-template": 25,
+   "test": 27,
+   "tool": 6
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/engine/darkside/dsp-engine.js",
+   "consumers": 33,
+   "sloc": 243,
+   "role": "engine-or-service",
+   "exports": [
+    "hasOwnPath",
+    "parseCanonicalDarkSideNumber",
+    "parseLegacyDarkSideValue",
+    "DSPEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 372
+  },
+  {
+   "path": "scripts/engine/registries/force-registry.js",
+   "consumers": 19,
+   "sloc": 585,
+   "role": "registry",
+   "exports": [
+    "ForceRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 364
+  },
+  {
+   "path": "scripts/engine/force/force-points-service.js",
+   "consumers": 15,
+   "sloc": 330,
+   "role": "engine-or-service",
+   "exports": [
+    "ForcePointsService"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/utils/force-knowledge.js",
+   "consumers": 14,
+   "sloc": 315,
+   "role": "module",
+   "exports": [
+    "forceKnowledgeKey",
+    "resolveCanonicalForcePowerName",
+    "isKnownForcePowerItem",
+    "isKnownForceTechniqueItem",
+    "isKnownForceSecretItem",
+    "collectKnownForcePowers",
+    "collectKnownForceTechniques",
+    "collectKnownForceSecrets",
+    "forceKnowledgeEntryMatchesName",
+    "forceKnowledgeToLedgerEntries"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 364
+  },
+  {
+   "path": "scripts/engine/force/force-executor.js",
+   "consumers": 11,
+   "sloc": 1491,
+   "role": "module-with-writes",
+   "exports": [
+    "ForceExecutor",
+    "registerForceExecutorChatHooks"
+   ],
+   "writes": 22,
+   "actorEngineCalls": 14,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/force/ForceRules.js",
+   "consumers": 8,
+   "sloc": 51,
+   "role": "engine-or-service",
+   "exports": [
+    "ForceRules"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/force/contracted-force-point.js",
+   "consumers": 8,
+   "sloc": 117,
+   "role": "module",
+   "exports": [
+    "runContractedForcePoint",
+    "beginContractedForcePoint",
+    "latestOwnAttackEvent",
+    "latestMeleeHitAgainst",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 9,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/apps/force-alchemy/force-alchemy-workbench-app.js",
+   "consumers": 6,
+   "sloc": 436,
+   "role": "presentation",
+   "exports": [
+    "ForceAlchemyWorkbenchApp",
+    "openForceAlchemyWorkbench",
+    "registerForceAlchemyWorkbench",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 6
+  },
+  {
+   "path": "scripts/engine/force/ability-option-contracts.js",
+   "consumers": 6,
+   "sloc": 177,
+   "role": "module",
+   "exports": [
+    "ABILITY_OPTION_CONTRACTS",
+    "checkContractLimit",
+    "verifyAdjacentAllyEvent",
+    "evaluateAbilityContract"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/force/suite-instance-recovery.js",
+   "consumers": 6,
+   "sloc": 104,
+   "role": "module-with-writes",
+   "exports": [
+    "SUITE_KINDS",
+    "isSpentInstance",
+    "restMinutes",
+    "suiteKindForActivationDomain",
+    "verifyRegainProof",
+    "SuiteInstanceRecovery"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 3,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/apps/force-alchemy/force-alchemy-data.js",
+   "consumers": 5,
+   "sloc": 424,
+   "role": "presentation",
+   "exports": [
+    "FORCE_ALCHEMY_FLAG_SCOPE",
+    "FORCE_ALCHEMY_FLAG_KEY",
+    "FORCE_ALCHEMY_CATEGORIES",
+    "FORCE_ALCHEMY_DEFENSES",
+    "FORCE_ALCHEMY_TEMPLATES",
+    "FORCE_ALCHEMY_SPECIALIST_TRAITS",
+    "FORCE_ALCHEMY_RITES",
+    "normalizeForceAlchemyKey",
+    "FORCE_ALCHEMY_TALENT_RITE_MAP",
+    "getForceAlchemyLaunchForTalentName",
+    "getForceAlchemyRite",
+    "getForceAlchemyCategory"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 14
+  },
+  {
+   "path": "scripts/apps/force-alchemy/force-alchemy-state-service.js",
+   "consumers": 5,
+   "sloc": 391,
+   "role": "presentation-with-writes",
+   "exports": [
+    "getDefaultForceAlchemyState",
+    "readForceAlchemyState",
+    "recordForceAlchemySelection",
+    "clearForceAlchemySlot",
+    "destroyForceAlchemySlot",
+    "updateForceAlchemySlot",
+    "cancelForceAlchemyProject",
+    "advanceForceAlchemyProject",
+    "completeForceAlchemyProject",
+    "ForceAlchemyStateService",
+    "default"
+   ],
+   "writes": 1,
+   "actorEngineCalls": 0,
+   "ciTests": 8
+  },
+  {
+   "path": "scripts/engine/force/force-power-effects-engine.js",
+   "consumers": 5,
+   "sloc": 648,
+   "role": "engine-or-service",
+   "exports": [
+    "ForcePowerEffectsEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 3,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/force/force-power-maintenance.js",
+   "consumers": 5,
+   "sloc": 232,
+   "role": "module",
+   "exports": [
+    "CONCENTRATION_BASE_DC",
+    "MAINTENANCE_CONTRACTS",
+    "maintenanceContractFor",
+    "turnKey",
+    "ENHANCEMENT_CONTRACT_REFS",
+    "verifyEnhancementReceipt",
+    "conditionalDefenseBonuses",
+    "ForcePowerMaintenance",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/force/temptation-of-the-dark-side.js",
+   "consumers": 5,
+   "sloc": 106,
+   "role": "module-with-writes",
+   "exports": [
+    "TEMPTATION_TALENT_TREES",
+    "temptationMeta",
+    "isTemptationInstance",
+    "TemptationOfTheDarkSide",
+    "default"
+   ],
+   "writes": 4,
+   "actorEngineCalls": 9,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/force/force-regimen-executor.js",
+   "consumers": 4,
+   "sloc": 335,
+   "role": "module-with-writes",
+   "exports": [
+    "ForceRegimenExecutor",
+    "default"
+   ],
+   "writes": 3,
+   "actorEngineCalls": 7,
+   "ciTests": 5
+  },
+  {
+   "path": "scripts/engine/force/regimen-entitlement.js",
+   "consumers": 4,
+   "sloc": 41,
+   "role": "module",
+   "exports": [
+    "REGIMEN_DURATION_SECONDS",
+    "REGIMEN_CONTRACTS",
+    "regimenKeyFor",
+    "worldTimeNow",
+    "buildRegimenEntitlement",
+    "evaluateRegimenEntitlement"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 354
+  },
+  {
+   "path": "scripts/engine/force/starship-maneuver-suite.js",
+   "consumers": 4,
+   "sloc": 62,
+   "role": "module",
+   "exports": [
+    "StarshipManeuverSuite"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 5,
+   "ciTests": 6
+  },
+  {
+   "path": "scripts/apps/force-alchemy/force-alchemy-context-resolver.js",
+   "consumers": 3,
+   "sloc": 703,
+   "role": "normalizer",
+   "exports": [
+    "getForceAlchemyTargetKinds",
+    "getForceAlchemySuggestedRiteForItem",
+    "ForceAlchemyContextResolver",
+    "resolveForceAlchemyActor"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 6
+  },
+  {
+   "path": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+   "consumers": 3,
+   "sloc": 1314,
+   "role": "presentation-with-writes",
+   "exports": [
+    "ForceAlchemyUnresolvedError",
+    "applyForceAlchemySelection",
+    "completeForceAlchemyMechanicalProject",
+    "clearForceAlchemyMechanicalSlot",
+    "destroyForceAlchemyMechanicalSlot",
+    "consumeRapidAlchemySurge",
+    "ForceAlchemyMechanicsService",
+    "default"
+   ],
+   "writes": 7,
+   "actorEngineCalls": 12,
+   "ciTests": 8
+  },
+  {
+   "path": "scripts/engine/darkside/dark-side-score-access-policy.js",
+   "consumers": 3,
+   "sloc": 28,
+   "role": "module",
+   "exports": [
+    "DarkSideScoreAccessPolicy"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 26
+  },
+  {
+   "path": "scripts/engine/force/ForceTrainingEngine.js",
+   "consumers": 3,
+   "sloc": 73,
+   "role": "engine-or-service",
+   "exports": [
+    "ForceTrainingEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 1
+  },
+  {
+   "path": "scripts/engine/force/force-engine.js",
+   "consumers": 3,
+   "sloc": 52,
+   "role": "engine-or-service",
+   "exports": [
+    "ForceEngine"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 3,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/force/force-point-spend-coordinator.js",
+   "consumers": 3,
+   "sloc": 147,
+   "role": "module",
+   "exports": [
+    "ForcePointSpendCoordinator",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 2,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/engine/force/force-point-trigger-registry.js",
+   "consumers": 3,
+   "sloc": 33,
+   "role": "registry",
+   "exports": [
+    "registerSpendTriggerConsumer",
+    "spendTriggerConsumers",
+    "hasSpendTriggerConsumers",
+    "registerForcePointTriggerConsumer",
+    "forcePointTriggerConsumers",
+    "hasForcePointTriggerConsumers",
+    "registerSpendEvidenceProvider",
+    "captureSpendEvidence"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 353
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/engine/force/force-executor.js",
+   "sloc": 1491,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+   "sloc": 1314,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/force-alchemy/force-alchemy-context-resolver.js",
+   "sloc": 703,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/force/force-power-effects-engine.js",
+   "sloc": 648,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/registries/force-registry.js",
+   "sloc": 585,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+   "sloc": 556,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/engine/force/force-power-categories.js",
+   "sloc": 528,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/sheets/v2/character-sheet/force-roll-dialog.js",
+   "sloc": 490,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/force-alchemy/force-alchemy-workbench-app.js",
+   "sloc": 436,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/force-alchemy/force-alchemy-data.js",
+   "sloc": 424,
+   "reach": "reachable-static"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/components/force-suite.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 226,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/force-points.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 180,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/force-enhancement-dialog.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 176,
+   "tests": 0
+  },
+  {
+   "path": "scripts/utils/force-enhancement-detector.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 158,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/force/force-power-resolution-schema.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 142,
+   "tests": 1
+  },
+  {
+   "path": "scripts/apps/dialogs/forceful-recovery-picker.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 86,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 33,
+  "actor-core": 26,
+  "combat": 10,
+  "ui-shell": 10,
+  "progression": 9,
+  "rolls": 6,
+  "abilities-effects": 5,
+  "feats": 4,
+  "houserules": 4,
+  "chat": 3,
+  "store-economy": 2,
+  "equipment": 2,
+  "talents": 2,
+  "settings-config": 1,
+  "classes": 1
+ },
+ "dependedOnByDomains": {
+  "progression": 36,
+  "ui-shell": 15,
+  "talents": 14,
+  "infrastructure": 11,
+  "combat": 9,
+  "mentor-suggestion": 9,
+  "actor-core": 7,
+  "abilities-effects": 3,
+  "feats": 3,
+  "equipment": 3,
+  "data-registries": 2,
+  "rolls": 2,
+  "classes": 1,
+  "vehicles": 1,
+  "skills": 1,
+  "houserules": 1,
+  "migration": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 23,
+   "sites": [
+    {
+     "path": "scripts/engine/force/force-executor.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 16,
+     "lines": [
+      87,
+      581,
+      734,
+      771,
+      817,
+      1034,
+      1065,
+      1689,
+      1690,
+      1691,
+      1692,
+      1693,
+      1694,
+      1695,
+      1696,
+      1697
+     ]
+    },
+    {
+     "path": "scripts/data/force-points.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 6,
+     "lines": [
+      232,
+      235,
+      243,
+      248,
+      291,
+      300
+     ]
+    },
+    {
+     "path": "scripts/apps/force-alchemy/force-alchemy-state-service.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      209
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/apps/force-alchemy/force-alchemy-state-service.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      209
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+     "domain": "force",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1201,
+      1418
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A07-engine-imports-ui",
+   "invariant": "A-07",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/engine/force/force-executor.js",
+     "target": "scripts/apps/dialogs/swse-dialog-v2.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/force/force-suite-runtime-repairs.js",
+     "target": "scripts/sheets/v2/character-sheet/force-roll-dialog.js",
+     "kind": "static"
+    }
+   ]
+  },
+  {
+   "probe": "P-A10-credit-writes-outside-transaction-engine",
+   "invariant": "A-10",
+   "count": 1,
+   "sites": [
+    {
+     "path": "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js",
+     "line": 462,
+     "text": "credits: applied.credits ? before.credits - creditCost : bef"
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "defense-totals",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "infrastructure",
+    "npc-followers",
+    "progression",
+    "talents",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/engine/force/phase6-force-direct-damage.js:40 getActorFortitude"
+   ]
+  },
+  {
+   "responsibility": "condition-track-penalty",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "infrastructure",
+    "species"
+   ],
+   "sites": [
+    "scripts/engine/force/force-power-final-integration.js:139 getForceStunConditionSteps"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "progression",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/engine/force/ForceTrainingEngine.js:26 getForceAbilityModifier"
+   ]
+  },
+  {
+   "responsibility": "heroic-level",
+   "otherDomains": [
+    "actor-core",
+    "data-registries",
+    "progression"
+   ],
+   "sites": [
+    "scripts/data/force-points.js:94 getBuildPlanTotalLevel",
+    "scripts/data/force-points.js:166 getTotalCharacterLevel"
+   ]
+  },
+  {
+   "responsibility": "force-point-spend",
+   "otherDomains": [
+    "actor-core",
+    "talents"
+   ],
+   "sites": [
+    "scripts/engine/force/force-engine.js:22 spendForcePoint"
+   ]
+  },
+  {
+   "responsibility": "dark-side-score",
+   "otherDomains": [
+    "talents"
+   ],
+   "sites": [
+    "scripts/engine/force/ForceTrainingEngine.js:53 getMaxDarkSideScore"
+   ]
+  },
+  {
+   "responsibility": "force-power-dc-or-roll",
+   "otherDomains": [
+    "combat",
+    "infrastructure",
+    "npc-followers",
+    "talents"
+   ],
+   "sites": [
+    "scripts/engine/force/force-power-maintenance.js:75 rollUseTheForce"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 351,
+   "sites": [
+    "scripts/engine/force/force-executor.js:660",
+    "scripts/engine/talent/guardian-spirit-actions.js:29"
+   ]
+  },
+  {
+   "tokens": 158,
+   "sites": [
+    "scripts/engine/feats/force-point-feat-actions.js:62 buildBonusPool",
+    "scripts/engine/force/force-executor.js:681"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "ForceRegistry",
+   "files": [
+    "scripts/engine/progression/force/force-registry-ui.js",
+    "scripts/engine/registries/force-registry.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "createItem",
+   "sites": [
+    "scripts/infrastructure/hooks/force-power-hooks.js:57"
+   ]
+  },
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/infrastructure/hooks/force-power-hooks.js:100"
+   ]
+  },
+  {
+   "name": "renderApplicationV2",
+   "sites": [
+    "scripts/engine/force/force-suite-runtime-repairs.js:618",
+    "scripts/engine/force/force-suite-runtime-repairs.js:619"
+   ]
+  },
+  {
+   "name": "preUpdateActor",
+   "sites": [
+    "scripts/infrastructure/hooks/force-power-hooks.js:94"
+   ]
+  },
+  {
+   "name": "deleteItem",
+   "sites": [
+    "scripts/infrastructure/hooks/force-power-hooks.js:150"
+   ]
+  },
+  {
+   "name": "renderSWSEV2CharacterSheet",
+   "sites": [
+    "scripts/apps/force-tradition/force-tradition-picker.js:397",
+    "scripts/engine/force/force-suite-runtime-repairs.js:616",
+    "scripts/engine/force/force-suite-runtime-repairs.js:617"
+   ]
+  },
+  {
+   "name": "renderApplication",
+   "sites": [
+    "scripts/apps/force-tradition/force-tradition-picker.js:400"
+   ]
+  },
+  {
+   "name": "deleteCombat",
+   "sites": [
+    "scripts/engine/force/force-executor.js:1683"
+   ]
+  },
+  {
+   "name": "restCompleted",
+   "sites": [
+    "scripts/infrastructure/hooks/force-power-hooks.js:129"
+   ]
+  },
+  {
+   "name": "renderChatMessageHTML",
+   "sites": [
+    "scripts/engine/force/force-executor.js:1704"
+   ]
+  },
+  {
+   "name": "renderSWSEV2NpcSheet",
+   "sites": [
+    "scripts/apps/force-tradition/force-tradition-picker.js:398"
+   ]
+  },
+  {
+   "name": "renderSWSEV2DroidSheet",
+   "sites": [
+    "scripts/apps/force-tradition/force-tradition-picker.js:399"
+   ]
+  },
+  {
+   "name": "updateCombat",
+   "sites": [
+    "scripts/infrastructure/hooks/force-power-hooks.js:135"
+   ]
+  },
+  {
+   "name": "swse.damageApplied",
+   "sites": [
+    "scripts/infrastructure/hooks/force-power-hooks.js:146"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "data/audits/droids/force-census-identity.json",
+  "data/audits/droids/force-field-evidence.json",
+  "data/audits/droids/force-review-backlog.json",
+  "data/audits/droids/force-visual-field-review.json",
+  "data/audits/item-weapons-phase-2d-force-unleashed-standalone-authority.json",
+  "data/audits/talent-phase-12-force-talent-census.json",
+  "data/audits/talent-phase-2-force-unleashed-campaign-guide-content.json",
+  "data/audits/talent-phase-2-force-unleashed-campaign-guide-discrepancy-manifest.json",
+  "data/audits/talent-phase-3b-force-unleashed-campaign-guide-manifest.json",
+  "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-ledger.json",
+  "data/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure-mount-backlog.json",
+  "data/audits/vehicles/swse-phase2c-force-unleashed-book-schema-discovery.json",
+  "data/audits/vehicles/swse-universal-phase1e-force-unleashed.json",
+  "data/audits/vehicles/swse-universal-phase2e-force-unleashed-new-fixtures.json",
+  "data/audits/vehicles/swse-universal-phase2e-force-unleashed-staged.json",
+  "docs/architecture/force-power-resolution-v1.md",
+  "docs/audits/aid-another-and-force-scoundrel-combat-addendum-2026-07-06.json",
+  "docs/audits/class-force-phase-6z-reaction-execution-admission.md",
+  "docs/audits/class-force-v2-foundry-v13-acceptance-matrix.md",
+  "docs/audits/class-force-v2-integration-matrix-2026-11-22.md",
+  "docs/audits/class-force-v2-live-run-setup-and-evidence.md",
+  "docs/audits/class-phase-6i-force-prestige-convergence.md",
+  "docs/audits/class-phase-6p-force-feature-sheet-actions.md",
+  "docs/audits/droids/force-local-state.json",
+  "docs/audits/droids/force-local-validation.json",
+  "docs/audits/droids/hydration-force-rolling.md",
+  "docs/audits/feat-implementation-readiness-force-unleashed.md",
+  "docs/audits/feat-source-parity-phase-6-force-unleashed.md",
+  "docs/audits/force-point-feat-implementation-addendum-2026-07-07.json",
+  "docs/audits/force-power-final-integration.md",
+  "docs/audits/force-power-phase-2-source-reconciliation.md",
+  "docs/audits/force-power-phase-3-critical-corrections.md",
+  "docs/audits/force-power-phase-4-modifier-automation.md",
+  "docs/audits/force-power-phase-5-healing-mitigation.md",
+  "docs/audits/force-power-phase-6-direct-damage.md",
+  "docs/audits/force-v2/bookwise-v2.9/README.md",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_CloneWars_Definitions_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_CloneWars_Influences_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_Core_Definitions_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_Core_Influences_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_ForceUnleashed_Definitions_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_ForceUnleashed_Influences_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_JATM_Definitions_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_JATM_Influences_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_KOTOR_Definitions_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_KOTOR_Influences_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_Starships_Definitions_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/REVALIDATED_Starships_Influences_for_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/SHA256SUMS",
+  "docs/audits/force-v2/bookwise-v2.9/SWSE_Force_V2_Bookwise_Extensible_Definition_Schema_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/SWSE_Force_V2_Cross_Domain_Influence_Graph_Schema_v2.9.json",
+  "docs/audits/force-v2/bookwise-v2.9/SWSE_Force_V2_Legacy_Era_Book_7_Acceptance_Cases_v0.1.json",
+  "docs/audits/force-v2/bookwise-v2.9/SWSE_Force_V2_Legacy_Era_Book_7_Canonical_Definitions_and_DC_Tables_v0.1.json",
+  "docs/audits/force-v2/bookwise-v2.9/SWSE_Force_V2_Legacy_Era_Book_7_Cross_Domain_Influence_Graph_v0.1.json",
+  "docs/audits/force-v2/bookwise-v2.9/SWSE_Force_V2_Legacy_Era_Book_7_Editorial_Review_v0.1.md",
+  "docs/audits/force-v2/bookwise-v2.9/SWSE_Force_V2_Legacy_Era_Book_7_Validation_Ledger_v0.1.json",
+  "docs/audits/force-v2/bookwise-v2.9/SWSE_Force_V2_Rolling_Source_Audit.md",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-01.json",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-01.md",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-02-owner-crosswalk.json",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-02-raw-policy-owners.json",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-02-raw-policy-report.md",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-02.md",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-03-shared-semantics.json",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-03-shared-semantics.md",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-03b-ability-contract-ledger.md",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-03b-fp-policy.json",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-03b-fp-policy.md",
+  "docs/audits/force-v2/certification/cross-book-certification-checkpoint-03b-implementation-report.md",
+  "docs/audits/force-v2/certification/force-v2-03b-03e-consolidated-report.md",
+  "docs/audits/generated/force-unleashed-feat-implementation-readiness-report.json",
+  "docs/audits/generated/force-unleashed-feat-implementation-readiness-report.md",
+  "docs/audits/generated/force-unleashed-feat-parity-report.json",
+  "docs/audits/generated/force-unleashed-feat-parity-report.md",
+  "docs/audits/item-weapons-phase-2d-force-unleashed-standalone-authority.md",
+  "docs/audits/non-force-talent-macro-sweep-2026-11-24.md",
+  "docs/audits/progression-force-hardening-batch-b-plan.md",
+  "docs/audits/talent-phase-12-force-talent-consumer-correction.md",
+  "docs/audits/talent-phase-1d-d-force-unleashed-tree-verification.md",
+  "docs/audits/talent-phase-1d-d2-force-unleashed-expansions.md",
+  "docs/audits/talent-phase-1d-d3-force-unleashed-special-trees.md",
+  "docs/audits/talent-phase-2-force-unleashed-campaign-guide.md",
+  "docs/audits/talent-phase-3b-force-unleashed-campaign-guide.md",
+  "docs/audits/transaction-integrity/repro/repro-c3-force-point-transaction-vs-real-engine.mjs",
+  "docs/audits/transaction-integrity/repro/repro-tx04-force-point-refund.mjs",
+  "docs/audits/vehicles/swse-phase2b-force-unleashed-book-source-closure.md",
+  "docs/audits/vehicles/universal-vehicle-phase2e-force-unleashed.md",
+  "docs/design/feat-implementation-readiness-phase9f-force-unleashed.md",
+  "docs/design/force-unleashed-feat-implementation-fit.md",
+  "docs/feat-force-regimen-skill-swap-phase22.json",
+  "docs/force-regimen-details-phase19.json",
+  "docs/force-regimen-selection-ui-phase20.json",
+  "docs/force-regimen-stubs-phase18.json",
+  "docs/poison-engine-phase3-natural-healing-sith-alchemy.md",
+  "docs/species-phase7-rage-immunity-force-like.md",
+  "docs/talent-core-force-traditions-cleanup-phase-t22.json",
+  "docs/talent-force-prestige-cleanup-phase-t9.json"
+ ],
+ "tests": [
+  "tests/class-force-v2-alchemy-atomicity.test.mjs",
+  "tests/class-force-v2-alchemy-cutover.test.mjs",
+  "tests/class-force-v2-direct-fp-writer-classification.test.mjs",
+  "tests/class-force-v2-legacy-talent-retirement.test.mjs",
+  "tests/class-force-v2-receipt-reconciliation.test.mjs",
+  "tests/class-force-v2-temptation-trigger.test.mjs",
+  "tests/dsp-engine-behavior.test.mjs",
+  "tests/dsp-panel-context-visibility.test.mjs",
+  "tests/dsp-permission-policy.test.mjs",
+  "tests/force-point-transaction-integrity.test.mjs",
+  "tests/force-power-final-integration.test.mjs",
+  "tests/force-power-resolution-schema.test.mjs",
+  "tests/force-power-source-reconciliation.test.mjs",
+  "tests/force-targeting-regression.test.mjs",
+  "tests/force-v2-03b-lightsaber-contracts.test.mjs",
+  "tests/force-v2-03b-regimen-entitlements.test.mjs",
+  "tests/force-v2-03b-talent-contracts.test.mjs",
+  "tests/force-v2-03b-transaction-behavior.test.mjs",
+  "tests/force-v2-03c-suite-recovery.test.mjs",
+  "tests/force-v2-03d-maintained-effects.test.mjs",
+  "tests/force-v2-game-night-integration.test.mjs",
+  "tests/force-v2-release-gate.test.mjs",
+  "tests/phase3-force-power-corrections.test.mjs",
+  "tests/phase4-force-modifier-automation.test.mjs",
+  "tests/phase5-force-healing-mitigation.test.mjs",
+  "tests/phase6-force-direct-damage.test.mjs",
+  "tests/vehicle-universal-phase2e-force-unleashed.test.mjs"
+ ]
+}

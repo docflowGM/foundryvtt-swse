@@ -1,0 +1,2059 @@
+{
+ "schema": "swse.architecture-census.domain-facts/1",
+ "auditedCommit": "f734b4d33f0e7603856b262f06dd705cc02ab5b8",
+ "domain": "progression",
+ "name": "Character generation, level-up and the progression framework shell",
+ "kind": "mechanical",
+ "files": 571,
+ "runtimeSloc": 97737,
+ "runtimeFiles": 367,
+ "counts": {
+  "files": 571,
+  "runtimeModules": 366,
+  "runtimeSloc": 96872,
+  "reachability": {
+   "reachable-static": 236,
+   "reachable-dynamic": 55,
+   "orphan-unreferenced": 52,
+   "string-referenced-only": 1,
+   "test-only-import": 4,
+   "unreachable-importers-only": 18
+  },
+  "nonRuntimeByRole": {
+   "asset": 5,
+   "data": 3,
+   "evidence-or-doc": 10,
+   "tool": 4,
+   "normalizer": 1,
+   "presentation-template": 41,
+   "other": 1,
+   "presentation-style": 37,
+   "test": 103
+  }
+ },
+ "topModulesByConsumers": [
+  {
+   "path": "scripts/engine/progression/utils/snapshot-manager.js",
+   "consumers": 34,
+   "sloc": 208,
+   "role": "engine-or-service",
+   "exports": [
+    "STATBLOCK_ORIGIN_KIND",
+    "SnapshotManager"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 3,
+   "ciTests": 353
+  },
+  {
+   "path": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+   "consumers": 31,
+   "sloc": 2026,
+   "role": "presentation",
+   "exports": [
+    "invalidateReconciliationForRuleChange",
+    "ProgressionReconciler"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 78
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/mentor-step-integration.js",
+   "consumers": 26,
+   "sloc": 665,
+   "role": "presentation",
+   "exports": [
+    "STEP_TO_CHOICE_TYPE",
+    "validateMentorDialogueRegistry",
+    "getMentorDialogueCoverageReport",
+    "resolveStepMentorContext",
+    "setSessionMentorContext",
+    "getStepMentorObject",
+    "resolveStepMentorGuidance",
+    "getStepGuidance",
+    "handleAskMentor",
+    "getStepMentorContext",
+    "handleAskMentorWithSuggestions",
+    "handleAskMentorWithPicker"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/step-plugin-base.js",
+   "consumers": 26,
+   "sloc": 241,
+   "role": "presentation",
+   "exports": [
+    "ProgressionStepPlugin"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+   "consumers": 21,
+   "sloc": 3301,
+   "role": "presentation",
+   "exports": [
+    "ProgressionFinalizer"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 1,
+   "ciTests": 57
+  },
+  {
+   "path": "scripts/engine/progression/content/progression-content-authority.js",
+   "consumers": 20,
+   "sloc": 385,
+   "role": "engine-or-service",
+   "exports": [
+    "ProgressionContentAuthority"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 60
+  },
+  {
+   "path": "scripts/engine/progression/utils/class-resolution.js",
+   "consumers": 20,
+   "sloc": 368,
+   "role": "module",
+   "exports": [
+    "resolveClassModel",
+    "resolveSelectedClassFromShell",
+    "resolveClassFromActor",
+    "resolveClassSkillReference",
+    "getClassSkillEntries",
+    "getClassSkills",
+    "getClassBonusFeatsLookupKeys",
+    "getClassTalentTreeLookupKeys",
+    "getClassHitDie",
+    "getClassBaseHp",
+    "getClassDefenses",
+    "getClassStartingCredits"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 365
+  },
+  {
+   "path": "scripts/engine/progression/ProgressionRules.js",
+   "consumers": 16,
+   "sloc": 74,
+   "role": "engine-or-service",
+   "exports": [
+    "ProgressionRules"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 79
+  },
+  {
+   "path": "scripts/engine/progression/feats/feat-grant-entitlement-resolver.js",
+   "consumers": 15,
+   "sloc": 399,
+   "role": "normalizer",
+   "exports": [
+    "FeatGrantEntitlementResolver",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 81
+  },
+  {
+   "path": "scripts/engine/progression/skills/skill-registry.js",
+   "consumers": 15,
+   "sloc": 138,
+   "role": "registry",
+   "exports": [
+    "SkillRegistry",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 366
+  },
+  {
+   "path": "scripts/apps/progression-framework/detail-rail-normalizer.js",
+   "consumers": 14,
+   "sloc": 532,
+   "role": "normalizer",
+   "exports": [
+    "initializeDetailRailNormalizer",
+    "normalizeDetailPanelData",
+    "extractDescriptionText",
+    "normalizeDescriptionCandidate"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/progression/feats/feat-choice-resolver.js",
+   "consumers": 14,
+   "sloc": 1382,
+   "role": "normalizer",
+   "exports": [
+    "FeatChoiceResolver",
+    "normalizeFeatChoiceKey",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 363
+  },
+  {
+   "path": "scripts/engine/progression/suggestion/suggestion-context-builder.js",
+   "consumers": 14,
+   "sloc": 198,
+   "role": "module",
+   "exports": [
+    "SuggestionContextBuilder",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/progression/utils/nonheroic-class-model.js",
+   "consumers": 14,
+   "sloc": 285,
+   "role": "module",
+   "exports": [
+    "isNonheroicClassRef",
+    "createNonheroicClassModel",
+    "NONHEROIC_CLASS_MODEL",
+    "NONHEROIC_STARTING_FEAT_SLOT_TYPE",
+    "NONHEROIC_STARTING_FEAT_SOURCE",
+    "NONHEROIC_STARTING_FEAT_RULE",
+    "getStartingFeatChoiceKey",
+    "matchNonheroicStartingFeatOption",
+    "isNonheroicStartingFeatFamily",
+    "getStartingFeatSelectionKey",
+    "validateNonheroicStartingFeats",
+    "buildNonheroicClassSelection"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 371
+  },
+  {
+   "path": "scripts/apps/progression-framework/progression-entry.js",
+   "consumers": 13,
+   "sloc": 768,
+   "role": "presentation",
+   "exports": [
+    "launchNewProgression",
+    "launchProgression",
+    "launchFollowerProgression",
+    "launchMinionCreation",
+    "SWSEProgressionSplashV2"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/apps/progression-framework/shell/reconciliation/reconciliation-findings.js",
+   "consumers": 13,
+   "sloc": 164,
+   "role": "presentation",
+   "exports": [
+    "IGNORE_FLAG_PATH",
+    "MAX_IGNORED",
+    "buildFindings",
+    "buildOptionalActions",
+    "readIgnored",
+    "partitionFindings",
+    "addIgnored",
+    "removeIgnored",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 78
+  },
+  {
+   "path": "scripts/engine/progression/data/progression-data.js",
+   "consumers": 13,
+   "sloc": 245,
+   "role": "module",
+   "exports": [
+    "CORE_CLASSES",
+    "REQUIRED_PRESTIGE_LEVEL",
+    "GENERAL_FEAT_LEVELS",
+    "CLASS_BONUS_FEAT_LEVELS",
+    "isGeneralFeatLevel",
+    "doesClassGrantBonusFeatAtLevel",
+    "PROGRESSION_RULES",
+    "calculateBAB",
+    "calculateSaveBonus",
+    "FORCE_POWER_DATA"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 365
+  },
+  {
+   "path": "scripts/engine/progression/droids/droid-trait-rules.js",
+   "consumers": 13,
+   "sloc": 347,
+   "role": "engine-or-service",
+   "exports": [
+    "UNIVERSAL_DROID_TRAITS",
+    "getUniversalDroidTrait",
+    "getAllUniversalDroidTraits",
+    "DROID_DEGREE_PACKAGES",
+    "getDroidDegreePackage",
+    "getDroidDegreeAbilityMods",
+    "getDroidBehavioralProfile",
+    "getDroidBehavioralInhibitorText",
+    "getDroidTalentTreeName",
+    "hasDroidNonviolenceInhibitor",
+    "hasDroidObedienceInhibitor",
+    "DROID_SIZE_PACKAGES"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 373
+  },
+  {
+   "path": "scripts/engine/progression/talents/tree-authority.js",
+   "consumers": 13,
+   "sloc": 373,
+   "role": "engine-or-service",
+   "exports": [
+    "getCanonicalForceTalentTreeIds",
+    "isCanonicalForceTalentTree",
+    "classifyForceTalent",
+    "isForceTalent",
+    "countForceTalents",
+    "actorHasForceSensitivity",
+    "getActorCustomForceTraditions",
+    "getActorForceTraditions",
+    "getForceTalentTreeAccessKeys",
+    "getAllowedTalentTrees",
+    "isTreeAccessible",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 365
+  },
+  {
+   "path": "scripts/engine/progression/utils/class-grant-ledger-builder.js",
+   "consumers": 13,
+   "sloc": 197,
+   "role": "engine-or-service",
+   "exports": [
+    "buildClassGrantLedger",
+    "mergeLedgerIntoPending"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 82
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/talent-step.js",
+   "consumers": 12,
+   "sloc": 2849,
+   "role": "presentation",
+   "exports": [
+    "TalentStep",
+    "GeneralTalentStep",
+    "ClassTalentStep"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/apps/progression-framework/utils/progression-search.js",
+   "consumers": 12,
+   "sloc": 197,
+   "role": "presentation",
+   "exports": [
+    "buildProgressionSearchText",
+    "compileProgressionSearchQuery",
+    "matchesProgressionSearch"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 51
+  },
+  {
+   "path": "scripts/engine/progression/utils/force-disciple-features.js",
+   "consumers": 12,
+   "sloc": 88,
+   "role": "module",
+   "exports": [
+    "forceDiscipleClassLevel",
+    "isExplicitMindAffecting",
+    "resolveForceDiscipleIndomitable",
+    "planForceDiscipleProphetAward"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 361
+  },
+  {
+   "path": "scripts/engine/progression/utils/levelup-event-context.js",
+   "consumers": 12,
+   "sloc": 194,
+   "role": "module",
+   "exports": [
+    "BASE_CLASS_IDS",
+    "normalizeClassKey",
+    "getSelectedClassFromSession",
+    "buildLevelUpEventContext",
+    "getClassLevelProgressionEntry",
+    "countClassFeatureChoicesAtLevel",
+    "actorHasClass",
+    "default"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 80
+  },
+  {
+   "path": "scripts/registries/background-registry.js",
+   "consumers": 11,
+   "sloc": 138,
+   "role": "registry",
+   "exports": [
+    "BackgroundRegistry"
+   ],
+   "writes": 0,
+   "actorEngineCalls": 0,
+   "ciTests": 60
+  }
+ ],
+ "largestModules": [
+  {
+   "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+   "sloc": 3436,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+   "sloc": 3301,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/talent-step.js",
+   "sloc": 2849,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/feat-step.js",
+   "sloc": 2111,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+   "sloc": 2026,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/summary-step.js",
+   "sloc": 1722,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/attribute-step.js",
+   "sloc": 1688,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/intro-step.js",
+   "sloc": 1639,
+   "reach": "reachable-dynamic"
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/skills-step.js",
+   "sloc": 1571,
+   "reach": "reachable-static"
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/species-step.js",
+   "sloc": 1527,
+   "reach": "reachable-dynamic"
+  }
+ ],
+ "unreachableModules": [
+  {
+   "path": "scripts/engine/progression/prerequisites/prerequisite-evaluator.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 803,
+   "tests": 2
+  },
+  {
+   "path": "scripts/apps/progression-framework/ux/summary-step-enhancement.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 625,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/contracts/content-contracts.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 529,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/confirm-step.js",
+   "reach": "test-only-import",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 483,
+   "tests": 1
+  },
+  {
+   "path": "scripts/apps/progression-framework/ux/explanation-display.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 448,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/ux/recovery-display.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 391,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/coverage/support-tracker.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 388,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/follower-steps/follower-details-step.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 356,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/validation/content-validator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 352,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/target-path-definitions.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 351,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/packaged-build-registry.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 327,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/ProgressionCompiler.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 310,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/shell/progression-rail-resizer.js",
+   "reach": "string-referenced-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 304,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/ux/progression-diagnostics-panel.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 300,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/bridge-to-store.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 293,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/faction-kit-bridge.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 286,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/ux/recovery-coordinator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 272,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/ux/progression-shell-explainability-integration.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 269,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/debugging/progression-debug-helpers.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 246,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/template-personalization-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 243,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/chargen/CharacterGenerationEngine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 242,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/bridge-to-starting-equipment.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 239,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/content-growth-validator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 232,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/governance/architecture-governance.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 217,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/rollout/legacy-entry-point-manager.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 212,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/forecast/advisory-result-formatter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 210,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/manual-step-processor.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 209,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/force-provenance-migrator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 204,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/ux/user-explainability.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 197,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/forecast/build-signals-normalizer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 196,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/ux/progression-recovery-manager.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 194,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/campaign-preset-bridge.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 186,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/droids/droid-trait-passive-adapter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 173,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/feature-normalizer.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 172,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/forecast/forecast-engine.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 159,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/forecast/suggestion-context-adapter.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 155,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/forecast/suggestion-result-contract.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 155,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/shell/build-analysis-integration.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 151,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/follower-steps/follower-feat-step.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 147,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/validators/advisory-validator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 145,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/advisory-domain-profiles.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 139,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/follower-steps/follower-human-bonus-step.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 139,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/steps/name-step.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 139,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/engine-helpers.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 127,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/tools/prestige-readiness.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 118,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/talents/slot-validator.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 111,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/RuleEngine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 106,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/content/domain-support-closure.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 94,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/starship-maneuver-suggestion-engine.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 91,
+   "tests": 1
+  },
+  {
+   "path": "scripts/engine/progression/talents/TalentTreeRegistry.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 91,
+   "tests": 0
+  },
+  {
+   "path": "scripts/apps/progression-framework/ux/step-explainability-mixin.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 90,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/talents/tree-unlock-manager.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 89,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/hooks/immutability-hook.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-self-registering",
+   "sloc": 88,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/tools/rollback-store.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 83,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/feats/feat-slot-migrator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 74,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/talents/slot-migrator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 72,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/skills/skill-resolver.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 58,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/feats/feat-registry-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 55,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/skills/skill-registry-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 50,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/talents/TalentTreeGraph.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 49,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/talents/talent-registry-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 49,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/autogrants/force-training.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 45,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/talents/talent-slot-schema.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 44,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/feats/feat-dispatcher.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 39,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/talents/slot-calculator.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 37,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/apply-progression-patch.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 36,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/force/force-registry-ui.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 34,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/validators/feat-duplication.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 32,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/engine/autocalc/derived-stats.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 31,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/talents/TalentNode.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 28,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/xp-constants.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 28,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/utils/PrerequisiteEnricher.js",
+   "reach": "unreachable-importers-only",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 17,
+   "tests": 0
+  },
+  {
+   "path": "scripts/engine/progression/utils/class-bab-table.js",
+   "reach": "test-only-import",
+   "confidence": "static-proof-no-runtime-path",
+   "sloc": 15,
+   "tests": 1
+  },
+  {
+   "path": "scripts/apps/progression-framework/registries/progression-node-registry.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 9,
+   "tests": 0
+  },
+  {
+   "path": "scripts/progression-engine.js",
+   "reach": "orphan-unreferenced",
+   "confidence": "unverified-name-mentioned-at-runtime",
+   "sloc": 4,
+   "tests": 0
+  }
+ ],
+ "dependsOnDomains": {
+  "infrastructure": 225,
+  "mentor-suggestion": 66,
+  "actor-core": 60,
+  "force": 36,
+  "talents": 31,
+  "classes": 28,
+  "abilities-effects": 26,
+  "species": 25,
+  "houserules": 23,
+  "ui-shell": 17,
+  "feats": 16,
+  "data-registries": 15,
+  "droids": 12,
+  "npc-followers": 11,
+  "vehicles": 7,
+  "store-economy": 7,
+  "settings-config": 3,
+  "skills": 3,
+  "equipment": 2,
+  "governance": 2,
+  "dev-tooling": 1,
+  "rolls": 1
+ },
+ "dependedOnByDomains": {
+  "ui-shell": 33,
+  "mentor-suggestion": 33,
+  "actor-core": 19,
+  "compat-patches": 13,
+  "infrastructure": 12,
+  "combat": 12,
+  "store-economy": 10,
+  "force": 9,
+  "talents": 9,
+  "data-registries": 9,
+  "droids": 8,
+  "npc-followers": 7,
+  "skills": 7,
+  "documentation": 5,
+  "feats": 3,
+  "vehicles": 3,
+  "dev-tooling": 2,
+  "abilities-effects": 2,
+  "rolls": 2,
+  "species": 2,
+  "migration": 2,
+  "classes": 1,
+  "games": 1,
+  "galactic-profiles": 1,
+  "holonet": 1,
+  "houserules": 1
+ },
+ "probeHits": [
+  {
+   "probe": "P-A02-direct-document-writes",
+   "invariant": "A-02",
+   "count": 15,
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/shell/session-storage.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      285,
+      329,
+      516,
+      518
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/chargen-persistence.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      118,
+      195
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-actor-persistence.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      51,
+      66
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1138,
+      3068
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/force-power-step.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      367,
+      403
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/engine/attribute-increase-handler.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      260
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/utils/enforcer-resources-transaction-guard.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      24
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/chargen-onboarding.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      92
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A03-derived-writes-outside-actor-classes",
+   "invariant": "A-03",
+   "count": 2,
+   "sites": [
+    {
+     "path": "scripts/engine/progression/xp-engine.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      106,
+      123
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A04-presentation-direct-writes",
+   "invariant": "A-04",
+   "count": 13,
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/shell/session-storage.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 4,
+     "lines": [
+      285,
+      329,
+      516,
+      518
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/chargen-persistence.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      118,
+      195
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-actor-persistence.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      51,
+      66
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      1138,
+      3068
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/force-power-step.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      367,
+      403
+     ]
+    },
+    {
+     "path": "scripts/sheets/v2/character-sheet/chargen-onboarding.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      92
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A05-chat-outside-swse-chat",
+   "invariant": "A-05",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/engine/progression/utils/level-diff-inspector.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      202,
+      214
+     ]
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/attribute-step.js",
+     "domain": "progression",
+     "reach": "reachable-dynamic",
+     "count": 1,
+     "lines": [
+      417
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A06-settings-get-in-engines",
+   "invariant": "A-06",
+   "count": 4,
+   "sites": [
+    {
+     "path": "scripts/engine/progression/ProgressionEngineV2.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 2,
+     "lines": [
+      14,
+      18
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/prerequisites/legacy-prereq-registry.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      89
+     ]
+    },
+    {
+     "path": "scripts/engine/progression/skills/skill-registry.js",
+     "domain": "progression",
+     "reach": "reachable-static",
+     "count": 1,
+     "lines": [
+      85
+     ]
+    }
+   ]
+  },
+  {
+   "probe": "P-A07-engine-imports-ui",
+   "invariant": "A-07",
+   "count": 15,
+   "sites": [
+    {
+     "path": "scripts/engine/progression/engine/starship-maneuver-engine.js",
+     "target": "scripts/apps/progression-framework/progression-suite-launcher.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/engine/suite-reselection-engine.js",
+     "target": "scripts/apps/progression-framework/progression-suite-launcher.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/steps/force-power-step.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/steps/talent-step.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/steps/feat-step.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/steps/talent-step.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js",
+     "target": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/helpers/build-pending-species-context.js",
+     "target": "scripts/apps/progression-framework/shared/species-patch.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/hooks/system-init-hooks.js",
+     "target": "scripts/apps/progression-framework/rollout/rollout-settings.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/profile/galactic-profile-compiler.js",
+     "target": "scripts/apps/progression-framework/steps/step-normalizers.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/profile/galactic-profile-service.js",
+     "target": "scripts/apps/progression-framework/adapters/progression-subtype-adapter-registry.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/profile/galactic-profile-service.js",
+     "target": "scripts/apps/progression-framework/shell/progression-session.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/profile/galactic-profile-service.js",
+     "target": "scripts/apps/progression-framework/shell/active-step-computer.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/utils/acquisition-authority.js",
+     "target": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+     "kind": "static"
+    },
+    {
+     "path": "scripts/engine/progression/utils/force-suite-resolution.js",
+     "target": "scripts/apps/progression-framework/services/pending-entitlement-service.js",
+     "kind": "static"
+    }
+   ]
+  },
+  {
+   "probe": "P-A10-credit-writes-outside-transaction-engine",
+   "invariant": "A-10",
+   "count": 3,
+   "sites": [
+    {
+     "path": "scripts/apps/progression-framework/steps/summary-step.js",
+     "line": 740,
+     "text": "'system.credits': 'Credits',"
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/summary-step.js",
+     "line": 1786,
+     "text": "'system.credits': nextCredits,"
+    },
+    {
+     "path": "scripts/engine/progression/engine/equipment-engine.js",
+     "line": 68,
+     "text": "'system.credits': amount"
+    }
+   ]
+  },
+  {
+   "probe": "P-A16-module-caches",
+   "invariant": "A-16",
+   "count": 5,
+   "sites": [
+    {
+     "path": "scripts/apps/chargen/chargen-shared.js",
+     "maps": 1,
+     "cacheMentions": 51,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/progression/utils/class-data-loader.js",
+     "maps": 1,
+     "cacheMentions": 26,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/shell/progression-shell.js",
+     "maps": 7,
+     "cacheMentions": 12,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/engine/progression/feats/class-feat-registry.js",
+     "maps": 4,
+     "cacheMentions": 5,
+     "hasInvalidate": true
+    },
+    {
+     "path": "scripts/apps/progression-framework/steps/talent-step.js",
+     "maps": 13,
+     "cacheMentions": 4,
+     "hasInvalidate": false
+    }
+   ]
+  }
+ ],
+ "mechanicalResponsibilities": [
+  {
+   "responsibility": "defense-totals",
+   "otherDomains": [
+    "actor-core",
+    "combat",
+    "force",
+    "infrastructure",
+    "npc-followers",
+    "talents",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/engine/progression/utils/class-resolution.js:454 getClassDefenses"
+   ]
+  },
+  {
+   "responsibility": "base-attack-bonus",
+   "otherDomains": [
+    "data-registries",
+    "infrastructure",
+    "talents"
+   ],
+   "sites": [
+    "scripts/apps/levelup/levelup-shared.js:256 calculateTotalBAB",
+    "scripts/apps/progression-framework/adapters/follower-deriver.js:89 getProfileBab",
+    "scripts/engine/progression/data/progression-data.js:255 calculateBAB",
+    "scripts/engine/progression/prerequisites/actor-prerequisite-snapshot.js:293 calculateBab",
+    "scripts/engine/progression/utils/class-suggestion-utilities.js:162 calculateTotalBAB"
+   ]
+  },
+  {
+   "responsibility": "skill-total",
+   "otherDomains": [
+    "combat",
+    "infrastructure",
+    "mentor-suggestion",
+    "rolls",
+    "skills"
+   ],
+   "sites": [
+    "scripts/engine/progression/skills/skill-validator.js:83 calculateSkillModifier"
+   ]
+  },
+  {
+   "responsibility": "ability-modifier",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "combat",
+    "feats",
+    "force",
+    "infrastructure",
+    "mentor-suggestion",
+    "npc-followers",
+    "rolls",
+    "species",
+    "talents",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/apps/progression-framework/adapters/follower-deriver.js:33 abilityMod",
+    "scripts/apps/progression-framework/adapters/follower-deriver.js:38 recalcAbilityMods",
+    "scripts/apps/progression-framework/adapters/follower-deriver.js:127 extractSpeciesAbilityMods",
+    "scripts/apps/progression-framework/shell/active-step-computer.js:349 _abilityModifier",
+    "scripts/apps/progression-framework/shell/active-step-computer.js:354 _getActorAbilityModifier",
+    "scripts/apps/progression-framework/steps/feat-step.js:2384 _getPendingAbilityModifier",
+    "scripts/apps/progression-framework/steps/follower-steps/follower-step-base.js:313 _extractSpeciesAbilityMods",
+    "scripts/apps/progression-framework/steps/language-step.js:713 _abilityModifier",
+    "scripts/apps/progression-framework/steps/language-step.js:718 _getActorAbilityModifier",
+    "scripts/apps/progression-framework/steps/skills-step.js:966 _abilityModifier",
+    "scripts/apps/progression-framework/steps/skills-step.js:971 _getAbilityModifier",
+    "scripts/engine/progression/droids/droid-trait-rules.js:398 combineDroidAbilityMods",
+    "scripts/engine/progression/engine/force-power-engine.js:112 _countFromAbilityMod",
+    "scripts/engine/progression/engine/force-provenance-engine.js:73 getConfiguredAbilityMod",
+    "scripts/engine/progression/feats/feat-grant-entitlement-resolver.js:26 getAbilityModifier",
+    "scripts/engine/progression/feats/feat-grant-entitlement-resolver.js:88 getForceTrainingAbilityModifier",
+    "scripts/engine/progression/profile/galactic-profile-resolvers.js:91 speciesAbilityMods",
+    "scripts/engine/progression/skills/skill-validator.js:71 getOptimalAbilityMod",
+    "scripts/engine/progression/utils/force-suite-resolution.js:215 getAbilityModifier"
+   ]
+  },
+  {
+   "responsibility": "heroic-level",
+   "otherDomains": [
+    "actor-core",
+    "data-registries",
+    "force"
+   ],
+   "sites": [
+    "scripts/engine/progression/engine/progression-state-normalizer.js:151 getTotalLevel"
+   ]
+  },
+  {
+   "responsibility": "credit-mutation",
+   "otherDomains": [],
+   "sites": [
+    "scripts/engine/progression/engine/equipment-engine.js:66 setCredits",
+    "scripts/engine/progression/engine/equipment-engine.js:79 addCredits"
+   ]
+  },
+  {
+   "responsibility": "encumbrance",
+   "otherDomains": [
+    "abilities-effects",
+    "actor-core",
+    "equipment",
+    "infrastructure"
+   ],
+   "sites": [
+    "scripts/engine/progression/engine/equipment-engine.js:268 getCarryingCapacity"
+   ]
+  },
+  {
+   "responsibility": "speed-movement",
+   "otherDomains": [],
+   "sites": [
+    "scripts/apps/progression-framework/steps/droid-builder-view-model.js:844 calculateSpeed"
+   ]
+  },
+  {
+   "responsibility": "xp-level",
+   "otherDomains": [
+    "infrastructure",
+    "mentor-suggestion"
+   ],
+   "sites": [
+    "scripts/apps/progression-framework/steps/droid-builder-step.js:1205 getBlockerExplanation",
+    "scripts/apps/progression-framework/steps/feat-step.js:2561 getBlockerExplanation",
+    "scripts/apps/progression-framework/steps/step-plugin-base.js:244 getBlockerExplanation",
+    "scripts/apps/progression-framework/steps/talent-step.js:3383 getBlockerExplanation",
+    "scripts/engine/progression/xp-engine.js:36 calculateEncounterXP",
+    "scripts/engine/progression/xp-engine.js:103 computeXpDerived"
+   ]
+  },
+  {
+   "responsibility": "prerequisite-evaluation",
+   "otherDomains": [
+    "data-registries",
+    "droids",
+    "talents",
+    "ui-shell"
+   ],
+   "sites": [
+    "scripts/engine/progression/utils/acquisition-authority.js:60 assessPrerequisites",
+    "scripts/engine/progression/validation/finalization-prerequisite-validator.js:244 validateFinalProgressionPrerequisites"
+   ]
+  },
+  {
+   "responsibility": "feat-talent-grant",
+   "otherDomains": [
+    "npc-followers",
+    "skills"
+   ],
+   "sites": [
+    "scripts/engine/progression/engine/feature-dispatcher.js:48 applyGrantedFeat",
+    "scripts/engine/progression/feats/feat-state.js:38 addFeat",
+    "scripts/engine/progression/talents/talent-cadence-engine.js:85 grantsHeroicTalent",
+    "scripts/engine/progression/talents/talent-cadence-engine.js:105 grantsClassTalent",
+    "scripts/engine/progression/utils/apply-handlers.js:52 applyFeat",
+    "scripts/engine/progression/utils/apply-handlers.js:64 applyTalent"
+   ]
+  },
+  {
+   "responsibility": "upgrade-slots",
+   "otherDomains": [
+    "compat-patches",
+    "customization",
+    "droids",
+    "npc-followers",
+    "store-economy",
+    "ui-shell",
+    "vehicles"
+   ],
+   "sites": [
+    "scripts/apps/progression-framework/adapters/follower-session-seeder.js:184 getAvailableFollowerSlots",
+    "scripts/engine/progression/utils/force-suite-resolution.js:127 resolveTelekineticProdigyBonusSlots"
+   ]
+  }
+ ],
+ "exactClones": [
+  {
+   "tokens": 401,
+   "sites": [
+    "scripts/apps/progression-framework/steps/language-step.js:71",
+    "scripts/apps/progression-framework/steps/talent-step.js:243"
+   ]
+  },
+  {
+   "tokens": 228,
+   "sites": [
+    "scripts/apps/progression-framework/steps/language-step.js:95",
+    "scripts/apps/progression-framework/steps/talent-step.js:267"
+   ]
+  },
+  {
+   "tokens": 204,
+   "sites": [
+    "scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js:49 collectSelectionEntries",
+    "scripts/apps/progression-framework/shell/progression-finalizer.js:1960"
+   ]
+  },
+  {
+   "tokens": 194,
+   "sites": [
+    "scripts/apps/progression-framework/steps/follower-steps/follower-droid-builder-step.js:336",
+    "scripts/apps/progression-framework/steps/follower-steps/follower-step-base.js:384"
+   ]
+  },
+  {
+   "tokens": 124,
+   "sites": [
+    "scripts/apps/progression-framework/shell/progression-session.js:823",
+    "scripts/apps/progression-framework/shell/session-storage.js:684",
+    "scripts/apps/progression-framework/steps/summary-step.js:1685"
+   ]
+  },
+  {
+   "tokens": 163,
+   "sites": [
+    "scripts/apps/progression-framework/shell/active-step-computer.js:334",
+    "scripts/apps/progression-framework/steps/language-step.js:698"
+   ]
+  },
+  {
+   "tokens": 137,
+   "sites": [
+    "scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js:13",
+    "scripts/apps/progression-framework/shell/progression-finalizer.js:2219"
+   ]
+  },
+  {
+   "tokens": 131,
+   "sites": [
+    "scripts/apps/progression-framework/steps/droid-builder-step.js:463",
+    "scripts/apps/progression-framework/steps/final-droid-configuration-step.js:544"
+   ]
+  }
+ ],
+ "duplicateSymbolNames": [
+  {
+   "name": "FeatRegistry",
+   "files": [
+    "scripts/engine/progression/feats/feat-registry-ui.js",
+    "scripts/engine/progression/feats/feat-registry.js",
+    "scripts/engine/registries/feat-registry.js",
+    "scripts/registries/feat-registry.js"
+   ]
+  },
+  {
+   "name": "CLASS_SYNERGY_DATA",
+   "files": [
+    "scripts/engine/progression/utils/class-suggestion-utilities.js",
+    "scripts/engine/suggestion/ClassSuggestionEngine.js",
+    "scripts/engine/suggestion/shared-suggestion-utilities.js"
+   ]
+  },
+  {
+   "name": "clearCache",
+   "files": [
+    "scripts/engine/progression/prerequisites/class-prerequisites-cache.js",
+    "scripts/engine/progression/talents/talent-tree-membership-authority.js",
+    "scripts/engine/suggestion/ArchetypeLoader.js"
+   ]
+  },
+  {
+   "name": "BASE_CLASSES",
+   "files": [
+    "scripts/apps/levelup/levelup-shared.js",
+    "scripts/engine/progression/utils/class-suggestion-utilities.js"
+   ]
+  },
+  {
+   "name": "BuildIntent",
+   "files": [
+    "scripts/apps/progression-framework/shell/build-intent.js",
+    "scripts/engine/suggestion/BuildIntent.js"
+   ]
+  },
+  {
+   "name": "calculateBAB",
+   "files": [
+    "scripts/engine/progression/data/progression-data.js",
+    "scripts/utils/math-utils.js"
+   ]
+  },
+  {
+   "name": "calculateTotalBAB",
+   "files": [
+    "scripts/apps/levelup/levelup-shared.js",
+    "scripts/engine/progression/utils/class-suggestion-utilities.js"
+   ]
+  },
+  {
+   "name": "determineLevelFromXP",
+   "files": [
+    "scripts/engine/progression/xp-engine.js",
+    "scripts/engine/shared/xp-system.js"
+   ]
+  },
+  {
+   "name": "enforcerEligibleInventory",
+   "files": [
+    "scripts/engine/progression/utils/enforcer-equipment-delivery-plan.js",
+    "scripts/engine/progression/utils/enforcer-equipment-delivery.js"
+   ]
+  },
+  {
+   "name": "evaluatePrerequisites",
+   "files": [
+    "scripts/dialogs/entity-dialog/prereq-engine.js",
+    "scripts/engine/progression/prerequisites/prerequisite-evaluator.js"
+   ]
+  },
+  {
+   "name": "ForceRegistry",
+   "files": [
+    "scripts/engine/progression/force/force-registry-ui.js",
+    "scripts/engine/registries/force-registry.js"
+   ]
+  },
+  {
+   "name": "getClassLevel",
+   "files": [
+    "scripts/actors/derived/level-split.js",
+    "scripts/apps/levelup/levelup-shared.js"
+   ]
+  },
+  {
+   "name": "getSkillAbility",
+   "files": [
+    "scripts/apps/progression-framework/utils/skill-display.js",
+    "scripts/engine/suggestion/attribute-planner.js"
+   ]
+  },
+  {
+   "name": "getXPFromCL",
+   "files": [
+    "scripts/engine/progression/xp-constants.js",
+    "scripts/engine/shared/xp-system.js"
+   ]
+  },
+  {
+   "name": "normalizeClass",
+   "files": [
+    "scripts/apps/progression-framework/steps/step-normalizers.js",
+    "scripts/data/class-normalizer.js"
+   ]
+  },
+  {
+   "name": "normalizeClassPrerequisites",
+   "files": [
+    "scripts/engine/progression/prerequisites/class-prereq-normalizer.js",
+    "scripts/engine/progression/prerequisites/prerequisite-normalizer.js"
+   ]
+  },
+  {
+   "name": "normalizePrerequisiteString",
+   "files": [
+    "scripts/engine/progression/prerequisites/prerequisite-normalizer.js",
+    "scripts/engine/progression/utils/prerequisite-normalizer.js"
+   ]
+  },
+  {
+   "name": "normalizeSkillKey",
+   "files": [
+    "scripts/apps/chargen/chargen-property-accessor.js",
+    "scripts/apps/progression-framework/utils/skill-display.js"
+   ]
+  },
+  {
+   "name": "ParticipantKind",
+   "files": [
+    "scripts/apps/progression-framework/adapters/default-subtypes.js",
+    "scripts/apps/progression-framework/adapters/progression-subtype-adapter.js"
+   ]
+  },
+  {
+   "name": "planEnforcerEquipmentDeferral",
+   "files": [
+    "scripts/engine/progression/utils/enforcer-equipment-delivery-plan.js",
+    "scripts/engine/progression/utils/enforcer-equipment-delivery.js"
+   ]
+  },
+  {
+   "name": "planEnforcerEquipmentDelivery",
+   "files": [
+    "scripts/engine/progression/utils/enforcer-equipment-delivery-plan.js",
+    "scripts/engine/progression/utils/enforcer-equipment-delivery.js"
+   ]
+  },
+  {
+   "name": "ProgressionEngine",
+   "files": [
+    "scripts/engine/progression/engine/progression-engine-instance.js",
+    "scripts/engine/progression/engine/progression-engine.js"
+   ]
+  },
+  {
+   "name": "ProgressionValidationError",
+   "files": [
+    "scripts/engine/progression/engine/manual-step-processor.js",
+    "scripts/governance/mutation/mutation-errors.js"
+   ]
+  },
+  {
+   "name": "ReasonType",
+   "files": [
+    "scripts/engine/progression/forecast/suggestion-result-contract.js",
+    "scripts/engine/suggestion/SuggestionV2Contract.js"
+   ]
+  },
+  {
+   "name": "SkillRegistry",
+   "files": [
+    "scripts/engine/progression/skills/skill-registry-ui.js",
+    "scripts/engine/progression/skills/skill-registry.js"
+   ]
+  },
+  {
+   "name": "TalentRegistry",
+   "files": [
+    "scripts/engine/progression/talents/talent-registry-ui.js",
+    "scripts/registries/talent-registry.js"
+   ]
+  },
+  {
+   "name": "TemplateEngine",
+   "files": [
+    "scripts/engine/customization/template-engine.js",
+    "scripts/engine/progression/engine/template-engine.js"
+   ]
+  },
+  {
+   "name": "XP_LEVEL_THRESHOLDS",
+   "files": [
+    "scripts/engine/progression/xp-constants.js",
+    "scripts/engine/shared/xp-system.js"
+   ]
+  },
+  {
+   "name": "XP_MAX_LEVEL",
+   "files": [
+    "scripts/engine/progression/xp-constants.js",
+    "scripts/engine/shared/xp-system.js"
+   ]
+  }
+ ],
+ "liveHooks": [
+  {
+   "name": "ready",
+   "sites": [
+    "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:462",
+    "scripts/engine/progression/hooks/system-init-hooks.js:53"
+   ]
+  },
+  {
+   "name": "updateActor",
+   "sites": [
+    "scripts/engine/progression/modules/language-module.js:35",
+    "scripts/sheets/v2/character-sheet/chargen-onboarding.js:275"
+   ]
+  },
+  {
+   "name": "createActor",
+   "sites": [
+    "scripts/sheets/v2/character-sheet/chargen-onboarding.js:269"
+   ]
+  },
+  {
+   "name": "swse:progression:completed",
+   "sites": [
+    "scripts/engine/progression/modules/language-module.js:18"
+   ]
+  },
+  {
+   "name": "canvasReady",
+   "sites": [
+    "scripts/sheets/v2/character-sheet/chargen-onboarding.js:267"
+   ]
+  },
+  {
+   "name": "updateSetting",
+   "sites": [
+    "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:483"
+   ]
+  },
+  {
+   "name": "swse:houserule-changed",
+   "sites": [
+    "scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js:482"
+   ]
+  },
+  {
+   "name": "swse:progression:initialized",
+   "sites": [
+    "scripts/engine/progression/utils/class-data-readiness.js:59"
+   ]
+  }
+ ],
+ "nonRuntimeEvidence": [
+  "docs/architecture/progression-architecture.md",
+  "docs/audits/progression-evidence-foundry-v13-acceptance.md",
+  "docs/audits/progression-evidence-implementation-report.md",
+  "docs/audits/progression-responsive-layout-audit.md",
+  "docs/audits/progression-runtime-integrity-audit.md",
+  "docs/audits/progression-runtime-integrity-status.json",
+  "docs/audits/reconciliation-v2-progression-authority-audit.md",
+  "docs/systems/PROGRESSION_COMPILER_UNIFICATION.md",
+  "docs/systems/V2-PROGRESSION-UI.md"
+ ],
+ "tests": [
+  "tests/ability-acknowledgment-hardening.test.mjs",
+  "tests/ability-acknowledgment-service.test.mjs",
+  "tests/ability-increase-entitlement-integrity.test.mjs",
+  "tests/acquisition-authority.test.mjs",
+  "tests/beast-readiness-fail-closed.test.mjs",
+  "tests/chargen-splash-prewarm.test.mjs",
+  "tests/class-bab-canonical-progression.test.mjs",
+  "tests/class-force-v2-temptation-activation-stages.test.mjs",
+  "tests/class-force-v2-temptation-owner-routing.test.mjs",
+  "tests/class-force-v2-temptation-turn-identity.test.mjs",
+  "tests/class-phase-6d-share-talent-finalization.test.mjs",
+  "tests/class-phase-6f10-quick-sabotage.test.mjs",
+  "tests/class-phase-6f12-saboteur-skill-dispatch.test.mjs",
+  "tests/class-phase-6f2-master-privateer-piracy.test.mjs",
+  "tests/class-phase-6h1-apex-feature-access.test.mjs",
+  "tests/class-phase-6i-force-prestige-convergence.test.mjs",
+  "tests/class-phase-6j-fallen-jedi-execution.test.mjs",
+  "tests/class-phase-6k-force-class-immunity-policy.test.mjs",
+  "tests/class-phase-6l-prophet-vision-choice.test.mjs",
+  "tests/class-phase-6m-serenity-temporal-roll.test.mjs",
+  "tests/class-phase-6n-sith-lord-temptation.test.mjs",
+  "tests/class-phase-6o-typed-effect-ingress.test.mjs",
+  "tests/class-phase-6p-prophet-gm-review.test.mjs",
+  "tests/class-phase-6q-indomitable-consumer-gates.test.mjs",
+  "tests/class-phase-6r-satisfied-by-6o.test.mjs",
+  "tests/class-phase-6s-species-mind-affecting-immunity.test.mjs",
+  "tests/class-realignment-iv-wave-b-target-observation.test.mjs",
+  "tests/class-scaling-feature-upsert.test.mjs",
+  "tests/enforcer-equipment-delivery.test.mjs",
+  "tests/enforcer-resources-entitlement.test.mjs",
+  "tests/enforcer-resources-transaction-guard.test.mjs",
+  "tests/feat-housekeeping-houserule-hook.test.mjs",
+  "tests/follower-droid-chassis-applicability.test.mjs",
+  "tests/follower-droid-chassis-compat.test.mjs",
+  "tests/follower-droid-context.test.mjs",
+  "tests/follower-mutation-planning.test.mjs",
+  "tests/follower-mutation-transaction.test.mjs",
+  "tests/follower-step-visibility.test.mjs",
+  "tests/force-system-ability-authority.test.mjs",
+  "tests/force-v2-03e-duplicates-temptation.test.mjs",
+  "tests/galactic-profile-compiler.test.mjs",
+  "tests/galactic-profile-economy.test.mjs",
+  "tests/galactic-profile-end-to-end.test.mjs",
+  "tests/galactic-profile-mutation-plan.test.mjs",
+  "tests/galactic-profile-readiness.test.mjs",
+  "tests/galactic-profile-service-integration.test.mjs",
+  "tests/galactic-profile-session-apply.test.mjs",
+  "tests/galactic-profile-step.test.mjs",
+  "tests/galactic-profiles-v3-schema.test.mjs",
+  "tests/grapple-static-modifier-composition.test.mjs",
+  "tests/helpers/galactic-profile-fixtures.mjs",
+  "tests/helpers/session-harness.mjs",
+  "tests/helpers/species-actor-sim.mjs",
+  "tests/helpers/talent-progression-harness.mjs",
+  "tests/hp-house-rule-authority.test.mjs",
+  "tests/krath-talent-tree-hydration.test.mjs",
+  "tests/mentor-atomic-utterances.test.mjs",
+  "tests/mentor-recommendation-architecture.test.mjs",
+  "tests/mentor-survey-step.test.mjs",
+  "tests/nonheroic-chargen-class-item.test.mjs",
+  "tests/officer-share-talent-authority.test.mjs",
+  "tests/progression-attribute-touch-drag.test.mjs",
+  "tests/progression-attribute-viewport-density.test.mjs",
+  "tests/progression-background-drop-adoption-contract.test.mjs",
+  "tests/progression-card-select-actions.test.mjs",
+  "tests/progression-completion-reader.test.mjs",
+  "tests/progression-data-jedi-class-skills.test.mjs",
+  "tests/progression-derived-class-stat-audit-contract.test.mjs",
+  "tests/progression-details-panel-compact-layout-contract.test.mjs",
+  "tests/progression-entitlement-budget.test.mjs",
+  "tests/progression-evidence-reconciliation.test.mjs",
+  "tests/progression-evidence-review-ui.test.mjs",
+  "tests/progression-inline-surface-performance.test.mjs",
+  "tests/progression-interaction-lifecycle.test.mjs",
+  "tests/progression-intro-datapad-containment.test.mjs",
+  "tests/progression-mentor-nonblocking.test.mjs",
+  "tests/progression-render-scheduler-budgets.test.mjs",
+  "tests/progression-search.test.mjs",
+  "tests/progression-session-persistence-writebehind.test.mjs",
+  "tests/progression-sheet-free-add-single-step-contract.test.mjs",
+  "tests/progression-suggestion-and-render-contracts.test.mjs",
+  "tests/reconciliation-domain-adapters.test.mjs",
+  "tests/reconciliation-force-training-diagnostic.test.mjs",
+  "tests/reconciliation-house-rules.test.mjs",
+  "tests/reconciliation-phase2-species.test.mjs",
+  "tests/reconciliation-phase3-equipment.test.mjs",
+  "tests/reconciliation-phase4-droid.test.mjs",
+  "tests/reconciliation-phase5-integration.test.mjs",
+  "tests/reconciliation-phase6-advisory.test.mjs",
+  "tests/reconciliation-phase6-review-fixes.test.mjs",
+  "tests/species-ability-choice-profiles.test.mjs",
+  "tests/species-conditional-feat-lifecycle.test.mjs",
+  "tests/species-drop-atomicity.test.mjs",
+  "tests/species-primitive-class-grants.test.mjs",
+  "tests/species-republic-clone-allocation.test.mjs",
+  "tests/starship-maneuver-suggestion-ability-authority.test.mjs",
+  "tests/superior-skills-talent-hydration.test.mjs",
+  "tests/talent-force-talent-structural-authority.test.mjs",
+  "tests/talent-phase-3g-runtime-identity.test.mjs",
+  "tests/talent-progression-policy.test.mjs",
+  "tests/talent-step-focus-render-authority.test.mjs",
+  "tests/transaction-engine-snapshot-restoration-migration.test.mjs",
+  "tests/v2-gm-authoritative-time.test.mjs"
+ ]
+}
