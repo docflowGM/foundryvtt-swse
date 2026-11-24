@@ -637,6 +637,23 @@ try {
   const withJump = async (ms, fn) => { const real = Date.now; Date.now = () => real() + ms; try { return await fn(); } finally { Date.now = real; } };
   const snapshotState = (a) => JSON.stringify({ fp: a.system.forcePoints, dp: a.system.destinyPoints, fl: ledger(a), dl: dledger(a), ev: EVENTS(a) });
 
+  // W10 (slice 6W re-derived). Two receipts for the SAME target delivered concurrently both apply: the second QUEUES behind the first
+  // (per-actor serialization) instead of being rejected as 'already running'.
+  {
+    const t = makeTarget('w10');
+    const rf = await spend(t); const rd = await dspend(t);                 // one Force and one Destiny spend, both committed
+    await Promise.all([ActorEngine.finalizeForcePointSpend(t, rf), ActorEngine.finalizeDestinyPointSpend(t, rd)]);
+    assert.equal(EVENTS(t).length, 2, 'both concurrent receipts produced a pending consequence');
+    assert.deepEqual(new Set(EVENTS(t).map((e) => e.receiptId)), new Set([rf.receiptId, rd.receiptId]));
+    assert.equal(ledger(t)[0].trigger.state, 'delivered'); assert.equal(dledger(t)[0].trigger.state, 'delivered');
+    // structural: expiry computes its plan INSIDE the actor's turn from fresh state (a queued expiry never clobbers a newer write)
+    const src = (await import('node:fs')).readFileSync(new URL('../scripts/engine/combat/sith-lord-temptation-service.js', import.meta.url), 'utf8');
+    const e = src.slice(src.indexOf('static async expireCombat('));
+    assert.ok(e.indexOf('await locked(target') < e.indexOf('expireTemptationEntries(target,combat'), 'plan computed after taking the actor turn');
+    assert.doesNotMatch(src, /already running/, 'no reject-the-second guard remains');
+    ok('W10: concurrent receipts for one target serialize and both apply; expiry re-reads inside the turn');
+  }
+
   // W7. wall-clock time passing never expires a pending trigger or a mark; only combat events/GM actions do.
   {
     const t = makeTarget('w7');

@@ -3,6 +3,7 @@
  * A GM confirms LOS; target player owns the eventual resource-spend
  * consequence. All operations use existing V2 authorities.
  */
+import {createTemptationActorSerializer} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/temptation-actor-serializer.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { rollSkill } from '/systems/foundryvtt-swse/scripts/rolls/skills.js';
@@ -17,11 +18,13 @@ import {
   planTemptationMark,planTemptationSpendFromEvidence,temptationSpendEvidence,expireTemptationEntries,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/sith-lord-temptation-state.js';
 
-const locks=new Set();
+// Per-actor serialization (slice 6W re-derived): two receipts for the same target must QUEUE, not drop the second. Execution order only;
+// every work function re-reads the actor's persisted state inside the turn it is given.
+const serializeActor=createTemptationActorSerializer();
 function key(actor){return actorIdentity(actor);}
 async function locked(actor,action){
- const id=key(actor);if(!id||locks.has(id))throw new Error('Temptation action already running');
- locks.add(id);try{return await action();}finally{locks.delete(id);}
+ const id=key(actor);if(!id)throw new Error('Temptation requires a stable Actor identity');
+ return serializeActor(id,action);
 }
 function permission(target){
  return globalThis.game?.user?.isGM===true
@@ -268,12 +271,15 @@ export class SithLordTemptationService {
       ...Array.from(globalThis.canvas?.tokens?.placeables??[]).map(t=>t.actor).filter(Boolean),
     ];
     for(const target of new Map(actors.filter(x=>x?.id).map(x=>[actorIdentity(x),x])).values()){
-      const plan=expireTemptationEntries(target,combat,{encounterEnd,nextTurn});
-      if(!plan.changed)continue;
       try{
-        await locked(target,()=>ActorEngine.applyMutationPlan(target,{
-          set:{[TEMPTATION_PATH]:plan.entries}
-        },{source:'SithLordTemptationService.expire',transactional:true}));
+        // The plan is computed INSIDE the actor's turn from fresh state, so a queued expiry never overwrites a newer write.
+        await locked(target,async()=>{
+          const plan=expireTemptationEntries(target,combat,{encounterEnd,nextTurn});
+          if(!plan.changed)return;
+          await ActorEngine.applyMutationPlan(target,{
+            set:{[TEMPTATION_PATH]:plan.entries}
+          },{source:'SithLordTemptationService.expire',transactional:true});
+        });
       }catch(error){
         globalThis.ui?.notifications?.error?.(
           'Temptation expiry requires GM review: '+error.message);
