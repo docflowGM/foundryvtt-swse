@@ -33,7 +33,7 @@ const order = [];
 const wrap = (name) => { const orig = ActorEngine[name]; ActorEngine[name] = async function (...a) { order.push(name); return orig.apply(this, a); }; return () => { ActorEngine[name] = orig; }; };
 const unwrap = ['spendForcePoints', 'finalizeForcePointSpend', 'rollbackForcePointSpend'].map(wrap);
 
-const savedPost = SWSEChat.postMessage; SWSEChat.postMessage = async () => {};
+const savedPost = SWSEChat.postHTML; SWSEChat.postHTML = async () => ({});
 const savedCan = ActivationLimitEngine.canActivate; ActivationLimitEngine.canActivate = () => ({ allowed: true });
 const savedRec = ActivationLimitEngine.recordActivation; let recorded = 0; ActivationLimitEngine.recordActivation = () => { recorded += 1; };
 const savedResolve = ActiveAdapter._resolveTargets; const savedApply = ActiveAdapter._applyEffect;
@@ -135,18 +135,29 @@ try {
     ok('a no-cost ability is unchanged');
   }
 
+  // 6b. a chat failure never changes the decided outcome (SWSEChat.postMessage never existed; chat goes through postHTML, isolated)
+  {
+    globalThis.game.user.isGM = false; reset(); const a = makeActor('a6b'); ActiveAdapter._resolveTargets = () => [a];
+    const keep = SWSEChat.postHTML; SWSEChat.postHTML = async () => { throw new Error('chat down'); };
+    const r = await ActiveAdapter.handleEffect(a, ability({ forcePoints: 1 }));
+    SWSEChat.postHTML = keep; globalThis.game.user.isGM = true;
+    assert.equal(r.success, false); assert.match(r.reason, /certified Force Point contract|GM adjudication/, 'the real denial reason survives a chat failure');
+    ok('a chat failure does not replace the denial reason or change the outcome');
+  }
+
   // 7. structural
   {
     const src = readFileSync(new URL('../scripts/engine/abilities/active/active-adapter.js', import.meta.url), 'utf8');
     const code = src.split('\n').filter((l) => !l.trim().startsWith('//')).join('\n');
     assert.doesNotMatch(code, /forcePoints\??\.available/, 'the non-canonical field is never read');
     assert.doesNotMatch(code, /'system\.forcePoints\.value'\s*:/, 'no direct balance write');
+    assert.doesNotMatch(code, /SWSEChat\.postMessage/, 'SWSEChat.postMessage does not exist');
     assert.ok(code.indexOf('spendForcePoints(') < code.indexOf('_applyEffect(target'), 'payment is written before the effect loop');
     ok('structural: no non-canonical read or direct write; payment precedes the effect loop');
   }
 } finally {
   unwrap.forEach((u) => u());
-  SWSEChat.postMessage = savedPost; ActivationLimitEngine.canActivate = savedCan; ActivationLimitEngine.recordActivation = savedRec;
+  SWSEChat.postHTML = savedPost; ActivationLimitEngine.canActivate = savedCan; ActivationLimitEngine.recordActivation = savedRec;
   ActiveAdapter._resolveTargets = savedResolve; ActiveAdapter._applyEffect = savedApply;
   restore();
 }

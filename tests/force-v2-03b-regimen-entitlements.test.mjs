@@ -214,8 +214,8 @@ try {
     const { ReactionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js');
     const { LightsaberTalentActions } = await import('/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js');
     const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
-    const savedB = LightsaberTalentActions.promptBlock; const savedD = LightsaberTalentActions.promptDeflect; const savedPost = SWSEChat.postMessage;
-    SWSEChat.postMessage = async () => ({});
+    const savedB = LightsaberTalentActions.promptBlock; const savedD = LightsaberTalentActions.promptDeflect; const savedPost = SWSEChat.postHTML;
+    SWSEChat.postHTML = async () => ({});
     defender.items = [{ id: 'b', type: 'talent', name: 'Block', system: {} }, { id: 'd', type: 'talent', name: 'Deflect', system: {} }];
     const calls = [];
     try {
@@ -230,7 +230,7 @@ try {
       const replay = await ReactionEngine.resolveReaction({ reactionKey: 'block', defender, attacker, attackContext: { attackerId: 'attacker', eventId: m1.id } });
       assert.equal(replay.success, false, 'the same attack cannot be answered twice');
       check('no per-round Block/Deflect frequency cap: distinct attacks all reach the talent; a replayed attack is rejected');
-    } finally { LightsaberTalentActions.promptBlock = savedB; LightsaberTalentActions.promptDeflect = savedD; SWSEChat.postMessage = savedPost; }
+    } finally { LightsaberTalentActions.promptBlock = savedB; LightsaberTalentActions.promptDeflect = savedD; SWSEChat.postHTML = savedPost; }
   }
   {
     // The real regimen executor grants the entitlement at completion (and only at a qualifying tier).

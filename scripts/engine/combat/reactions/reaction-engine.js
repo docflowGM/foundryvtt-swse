@@ -17,7 +17,7 @@ import { ReactionRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat
 import { ReactionRuleAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-rule-adapter.js";
 import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scripts/engine/abilities/ActivationLimitEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { postNoticeCard } from "/systems/foundryvtt-swse/scripts/chat/notice-card.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { AttackEventAuthority } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/attack-event-authority.js";
@@ -296,6 +296,13 @@ export class ReactionEngine {
 
     const resolvedReactionKey = reactionDef.key ?? normalizeReactionKey(reactionKey);
 
+    // Execution-boundary admission (slice 6Z, re-derived): chat buttons can be stale or replayed by another client, so control of the
+    // defender is rechecked here BEFORE any limit claim, Force Point payment or handler. (Trigger/condition re-evaluation needs the
+    // chat context plumbing of #1159 and is a documented follow-up; it is not enforced here because callers do not yet all pass it.)
+    if (globalThis.game?.user?.isGM !== true && defender.isOwner === false) {
+      return { success: false, error: 'Current user cannot control the defender', modifiedDamage: null, resultMessage: null };
+    }
+
     try {
       const usage = reactionDef.usage ?? {};
       const limitType = usage.perEncounter === true
@@ -318,7 +325,7 @@ export class ReactionEngine {
         if (!limitCheck.allowed) {
           const cadence = limitType === LimitType.ENCOUNTER ? 'encounter' : 'round';
           SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${limitCheck.reason}`);
-          await SWSEChat.postMessage({
+          await postNoticeCard({
             flavor: `❌ ${reactionDef.label}`,
             content: `Reaction already used this ${cadence}`,
             actor: defender
@@ -345,13 +352,13 @@ export class ReactionEngine {
         });
         if (!verdict.valid) {
           SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${verdict.message}`);
-          await SWSEChat.postMessage({ flavor: `❌ ${reactionDef.label}`, content: verdict.message, actor: defender });
+          await postNoticeCard({ flavor: `❌ ${reactionDef.label}`, content: verdict.message, actor: defender });
           return { success: false, error: verdict.message, modifiedDamage: null, resultMessage: verdict.message };
         }
         verifiedAttackEvent = verdict.event;
         if (resolvedReactionKey === 'forceFortification' && !(verifiedAttackEvent.hit === true && verifiedAttackEvent.critical === true)) {
           const message = 'Force Fortification answers a critical hit scored against you';
-          await SWSEChat.postMessage({ flavor: `❌ ${reactionDef.label}`, content: message, actor: defender });
+          await postNoticeCard({ flavor: `❌ ${reactionDef.label}`, content: message, actor: defender });
           return { success: false, error: message, modifiedDamage: null, resultMessage: message };
         }
       }
@@ -365,7 +372,7 @@ export class ReactionEngine {
         if (!decision.valid || forcePointCost !== 1) {
           const reason = decision.valid ? 'Only a single Force Point reaction cost is supported' : decision.message;
           SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${reason}`);
-          await SWSEChat.postMessage({ flavor: `❌ ${reactionDef.label}`, content: reason, actor: defender });
+          await postNoticeCard({ flavor: `❌ ${reactionDef.label}`, content: reason, actor: defender });
           return { success: false, error: reason, modifiedDamage: null, resultMessage: reason };
         }
         try {
@@ -430,7 +437,7 @@ export class ReactionEngine {
       }
 
       const resultMsg = result?.resultMessage ?? `${reactionDef.label} triggered`;
-      await SWSEChat.postMessage({
+      await postNoticeCard({
         flavor: `✓ ${reactionDef.label}`,
         content: resultMsg,
         actor: defender

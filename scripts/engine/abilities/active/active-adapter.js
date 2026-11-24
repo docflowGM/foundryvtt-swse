@@ -20,7 +20,7 @@ import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scrip
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { postNoticeCard } from "/systems/foundryvtt-swse/scripts/chat/notice-card.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
@@ -105,7 +105,7 @@ export class ActiveAdapter {
         if (!check.allowed) {
           const reason = `Insufficient ${activation.actionType} action available`;
           SWSELogger.log(`[ActiveAdapter] EFFECT blocked (action economy): ${ability.name} — ${reason}`);
-          await SWSEChat.postMessage({
+          await postNoticeCard({
             flavor: `❌ ${ability.name}`,
             content: reason,
             actor
@@ -121,7 +121,7 @@ export class ActiveAdapter {
 
       if (!limitCheck.allowed) {
         SWSELogger.log(`[ActiveAdapter] EFFECT blocked (frequency): ${ability.name} — ${limitCheck.reason}`);
-        await SWSEChat.postMessage({
+        await postNoticeCard({
           flavor: `❌ ${ability.name}`,
           content: limitCheck.reason,
           actor
@@ -140,7 +140,7 @@ export class ActiveAdapter {
       if (targets.length === 0 && targeting?.targetType !== 'SELF') {
         const reason = `No valid targets found`;
         SWSELogger.log(`[ActiveAdapter] EFFECT blocked (targeting): ${ability.name} — ${reason}`);
-        await SWSEChat.postMessage({
+        await postNoticeCard({
           flavor: `❌ ${ability.name}`,
           content: reason,
           actor
@@ -166,12 +166,12 @@ export class ActiveAdapter {
         } catch (denied) {
           const reason = denied?.message ?? 'Force Point spend was not authorized';
           SWSELogger.log(`[ActiveAdapter] EFFECT blocked (cost): ${ability.name} — ${reason}`);
-          await SWSEChat.postMessage({ flavor: `❌ ${ability.name}`, content: reason, actor });
+          await postNoticeCard({ flavor: `❌ ${ability.name}`, content: reason, actor });
           return { success: false, reason };
         }
         if (!fpReceipt?.receiptId) {
           const reason = `Insufficient Force Points (need ${cost.forcePoints})`;
-          await SWSEChat.postMessage({ flavor: `❌ ${ability.name}`, content: reason, actor });
+          await postNoticeCard({ flavor: `❌ ${ability.name}`, content: reason, actor });
           return { success: false, reason };
         }
       }
@@ -216,7 +216,7 @@ export class ActiveAdapter {
         .filter(Boolean)
         .join(' • ');
 
-      await SWSEChat.postMessage({
+      await postNoticeCard({
         flavor: `✓ ${ability.name}`,
         content: successMsg + (details ? `\n${details}` : ''),
         actor
@@ -275,7 +275,7 @@ export class ActiveAdapter {
         // Deactivate the mode
         await ability.setFlag('foundryvtt-swse', 'modeActive', false);
 
-        await SWSEChat.postMessage({
+        await postNoticeCard({
           flavor: `◯ ${ability.name}`,
           content: `**${ability.name}** deactivated`,
           actor
@@ -315,7 +315,7 @@ export class ActiveAdapter {
         if (!check.allowed) {
           const reason = `Insufficient ${activation.actionType} action available`;
           SWSELogger.log(`[ActiveAdapter] MODE blocked (action economy): ${ability.name}`);
-          await SWSEChat.postMessage({
+          await postNoticeCard({
             flavor: `❌ ${ability.name}`,
             content: reason,
             actor
@@ -337,7 +337,7 @@ export class ActiveAdapter {
       // 2e. Activate the mode
       await ability.setFlag('foundryvtt-swse', 'modeActive', true);
 
-      await SWSEChat.postMessage({
+      await postNoticeCard({
         flavor: `● ${ability.name}`,
         content: `**${ability.name}** activated`,
         actor

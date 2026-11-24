@@ -110,8 +110,8 @@ try {
     const { ReactionEngine } = await import('/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js');
     const { LightsaberTalentActions } = await import('/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js');
     const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
-    const savedPrompt = LightsaberTalentActions.promptBlock; const savedPost = SWSEChat.postMessage;
-    SWSEChat.postMessage = async () => ({});
+    const savedPrompt = LightsaberTalentActions.promptBlock; const savedPost = SWSEChat.postHTML;
+    SWSEChat.postHTML = async () => ({});
     const seen = [];
     defender.items = [{ id: 't-block', type: 'talent', name: 'Block', system: {} }];
     try {
@@ -133,8 +133,18 @@ try {
       const cancelled = await ReactionEngine.resolveReaction({ reactionKey: 'block', defender, attacker, attackContext: { attackerId: 'attacker', eventId: e2.id } });
       assert.equal(cancelled.success, false, 'a reaction that was not rolled is not a success');
       assert.equal(verify(e2).valid, true, 'cancelled reaction leaves the attack answerable');
+      // A client that does not control the defender cannot spend its reaction (stale/replayed chat button); a GM can.
+      const e3 = await mint({ attackTotal: 22 });
+      const wasGM = globalThis.game.user.isGM; const wasOwner = defender.isOwner;
+      globalThis.game.user.isGM = false; defender.isOwner = false; seen.length = 0;
+      LightsaberTalentActions.promptBlock = async (actor, opts) => { seen.push(opts); return { success: true }; };
+      const denied = await ReactionEngine.resolveReaction({ reactionKey: 'block', defender, attacker, attackContext: { attackerId: 'attacker', eventId: e3.id } });
+      globalThis.game.user.isGM = wasGM; defender.isOwner = wasOwner;
+      assert.equal(denied.success, false); assert.match(denied.error, /cannot control the defender/); assert.equal(seen.length, 0, 'the handler never ran');
+      assert.equal(verify(e3).valid, true, 'the attack stays answerable by its real owner');
+      check('a non-owner, non-GM client cannot answer for the defender');
       check('ReactionEngine -> registry -> promptBlock: forged refused, DC from the event, single use, cancel releases');
-    } finally { LightsaberTalentActions.promptBlock = savedPrompt; SWSEChat.postMessage = savedPost; }
+    } finally { LightsaberTalentActions.promptBlock = savedPrompt; SWSEChat.postHTML = savedPost; }
   }
   {
     // Source checks: the real producer/consumer wiring exists and the competing debits are gone.
