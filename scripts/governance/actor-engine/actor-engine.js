@@ -2191,10 +2191,49 @@ export const ActorEngine = {
   },
 
   /**
+   * Receipts left `committed` on the actor's OWN ledger: a paid effect whose settlement (finalize or exact rollback) never
+   * completed (client closed, write rejected twice). Read-only. `inFlight` receipt ids (operations still running on this
+   * client) are excluded by the caller. A committed receipt is never settled automatically: whether the paid effect applied
+   * is not knowable from the ledger alone, so settlement is a recorded GM decision (reconcileForcePointReceipt).
+   */
+  listUnsettledForcePointReceipts(actor, { inFlight = [] } = {}) {
+    const ledger = actor?.getFlag?.('swse', 'forcePointLedger') ?? actor?.flags?.swse?.forcePointLedger ?? {};
+    const skip = new Set(inFlight);
+    return (Array.isArray(ledger.receipts) ? ledger.receipts : [])
+      .filter(r => r?.state === 'committed' && !skip.has(r.receiptId))
+      .map(r => ({
+        receiptId: r.receiptId, actorId: r.actorId, requestId: r.requestId ?? null, spent: r.spent ?? null,
+        abilitySourceRef: r.abilitySourceRef ?? null, reactionEventId: r.reactionEventId ?? null,
+        roundKey: r.roundKey ?? null, adjudicatedBy: r.adjudicatedBy ?? null
+      }));
+  },
+
+  /**
+   * GM reconciliation of ONE unsettled receipt. `decision` is 'finalize' (the paid effect applied: make the spend final and
+   * deliver its trigger) or 'rollback' (it did not: return exactly this receipt). Requires a live GM and a written reason,
+   * records both on the receipt, never guesses, and is idempotent (a settled receipt is reported, not touched twice).
+   */
+  async reconcileForcePointReceipt(actor, receiptId, { decision, reason } = {}) {
+    if (globalThis.game?.user?.isGM !== true) throw new Error('Only a GM may reconcile an unsettled Force Point receipt');
+    if (!actor?.id || !receiptId) throw new Error('Identified actor and receipt id required');
+    if (!['finalize', 'rollback'].includes(decision)) throw new Error("decision must be 'finalize' or 'rollback'");
+    if (typeof reason !== 'string' || !reason.trim()) throw new Error('A written reason is required to reconcile a receipt');
+    const ledger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
+    const record = (Array.isArray(ledger.receipts) ? ledger.receipts : []).find(r => r.receiptId === receiptId && r.actorId === actor.id);
+    if (!record) return { reconciled: false, reason: 'Receipt not found on this actor' };
+    if (record.state !== 'committed') return { reconciled: false, reason: `Receipt is already ${record.state}`, state: record.state };
+    const meta = { decision, reason: reason.trim(), userId: globalThis.game.user.id ?? null, worldTime: Number.isFinite(Number(globalThis.game?.time?.worldTime)) ? Number(globalThis.game.time.worldTime) : null };
+    const outcome = decision === 'finalize'
+      ? await this.finalizeForcePointSpend(actor, record, meta)
+      : await this.rollbackForcePointSpend(actor, record, meta);
+    return { reconciled: Boolean(outcome?.finalized || outcome?.rolledBack), decision, outcome };
+  },
+
+  /**
    * Exact compensation of one committed, not-yet-finalized expenditure.
    * Read the actor-owned journal, never trust a caller-supplied debit amount.
    */
-  async rollbackForcePointSpend(actor, spentReceipt) {
+  async rollbackForcePointSpend(actor, spentReceipt, reconciliation = null) {
     if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Identified actor and Force Point receipt required');
     return withForcePointQueue(actor, async () => {
       const currentLedger = actor.getFlag?.('swse', 'forcePointLedger') ?? actor.flags?.swse?.forcePointLedger ?? {};
@@ -2228,7 +2267,7 @@ export const ActorEngine = {
         }
       }
       const bonusValue = merged.reduce((sum, e) => sum + Number(e.value ?? 0), 0);
-      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'rolled-back' } : r);
+      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'rolled-back', ...(reconciliation ? { reconciliation } : {}) } : r);
       const update = {
         'system.forcePoints.value': normal + normalRestored,
         'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords }
@@ -2252,7 +2291,7 @@ export const ActorEngine = {
    * Persist finality after the paid effect actually occurred. Finalized
    * receipts still count toward the round limit, but are never refundable.
    */
-  async finalizeForcePointSpend(actor, spentReceipt) {
+  async finalizeForcePointSpend(actor, spentReceipt, reconciliation = null) {
     if (!actor?.id || !spentReceipt?.receiptId) throw new Error('Force Point finalization requires an actor and receipt');
     let firstFinalization = false;
     const outcome = await withForcePointQueue(actor, async () => {
@@ -2268,7 +2307,7 @@ export const ActorEngine = {
       const trigger = hasForcePointTriggerConsumers()
         ? { state: 'pending', recordedAt: Date.now() }
         : undefined;
-      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'finalized', ...(trigger ? { trigger } : {}) } : r);
+      const updatedRecords = records.map((r, i) => i === index ? { ...r, state: 'finalized', ...(trigger ? { trigger } : {}), ...(reconciliation ? { reconciliation } : {}) } : r);
       await this.updateActor(actor, { 'flags.swse.forcePointLedger': { ...currentLedger, receipts: updatedRecords } });
       firstFinalization = Boolean(trigger);
       return { finalized: true, receiptId: spentReceipt.receiptId };

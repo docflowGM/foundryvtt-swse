@@ -140,6 +140,11 @@ Hooks.once("init", async () => {
     EntityCreateBrowser,
     openEntityCreateBrowser,
     openForceAlchemyWorkbench,
+    // GM tools for a paid effect whose Force Point receipt never settled (client closed, write rejected): inventory + a recorded GM decision.
+    forcePointReceipts: {
+      listUnsettled: (actor) => ActorEngine.listUnsettledForcePointReceipts(actor),
+      reconcile: (actor, receiptId, options) => ActorEngine.reconcileForcePointReceipt(actor, receiptId, options)
+    },
     classFeatures: {
       enforcerResources: { open: openEnforcerResourceDelivery },
       officerShareTalent: { open: openOfficerShareTalentAction },

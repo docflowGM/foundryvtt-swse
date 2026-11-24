@@ -4,12 +4,14 @@
 export async function graftRealForcePointMethods(updateActor) {
   const fake = (await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js')).ActorEngine;
   const real = (await import(new URL('../../scripts/governance/actor-engine/actor-engine.js', import.meta.url).href)).ActorEngine;
-  const saved = { updateActor: fake.updateActor, spendForcePoints: fake.spendForcePoints, gainForcePoints: fake.gainForcePoints, rollbackForcePointSpend: fake.rollbackForcePointSpend, finalizeForcePointSpend: fake.finalizeForcePointSpend, dispatchForcePointTriggers: fake.dispatchForcePointTriggers, ackForcePointTrigger: fake.ackForcePointTrigger, spendDestinyPoints: fake.spendDestinyPoints, rollbackDestinyPointSpend: fake.rollbackDestinyPointSpend, finalizeDestinyPointSpend: fake.finalizeDestinyPointSpend, dispatchDestinyPointTriggers: fake.dispatchDestinyPointTriggers, ackDestinyPointTrigger: fake.ackDestinyPointTrigger };
+  const saved = { listUnsettledForcePointReceipts: fake.listUnsettledForcePointReceipts, reconcileForcePointReceipt: fake.reconcileForcePointReceipt, updateActor: fake.updateActor, spendForcePoints: fake.spendForcePoints, gainForcePoints: fake.gainForcePoints, rollbackForcePointSpend: fake.rollbackForcePointSpend, finalizeForcePointSpend: fake.finalizeForcePointSpend, dispatchForcePointTriggers: fake.dispatchForcePointTriggers, ackForcePointTrigger: fake.ackForcePointTrigger, spendDestinyPoints: fake.spendDestinyPoints, rollbackDestinyPointSpend: fake.rollbackDestinyPointSpend, finalizeDestinyPointSpend: fake.finalizeDestinyPointSpend, dispatchDestinyPointTriggers: fake.dispatchDestinyPointTriggers, ackDestinyPointTrigger: fake.ackDestinyPointTrigger };
   fake.updateActor = updateActor;
   fake.spendForcePoints = real.spendForcePoints;
   fake.gainForcePoints = real.gainForcePoints;
   fake.rollbackForcePointSpend = real.rollbackForcePointSpend;
   fake.finalizeForcePointSpend = real.finalizeForcePointSpend;
+  fake.listUnsettledForcePointReceipts = real.listUnsettledForcePointReceipts;
+  fake.reconcileForcePointReceipt = real.reconcileForcePointReceipt;
   fake.dispatchForcePointTriggers = real.dispatchForcePointTriggers;
   fake.ackForcePointTrigger = real.ackForcePointTrigger;
   fake.spendDestinyPoints = real.spendDestinyPoints;
