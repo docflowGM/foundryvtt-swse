@@ -211,3 +211,27 @@ Fail-closed is a safe state, not functional completion; this table is the work l
 - Net effect: no player-facing regression from the Decision A gate was found in shipped content. The per-ability certification list remains a work list only if an owner chooses to wire any of these as real automated spends.
 
 Open for the owner: whether any of the eight should become an automated Force Point spend at all (each needs printed source, trigger, action cost, and a contract; none is decided here).
+
+## 14. Slice 8 — 6T disposition and an INCOMPLETE earlier Decision A inventory (2026-11-24)
+
+**Correction (mine).** §6B/§10/§11 and my earlier report said no direct Force Point decrement remained "on any path I found". The inventory behind that claim was too narrow (it searched for `system.forcePoints.value` writes in a few engine files). A wider search finds more writers. §6B/§11 are **not** a complete list.
+
+**6T (#1133) — NOT merged, exemption documented.** 6T routes WatchCircle Initiate's loss through the spend path so Temptation fires. The canonical talent text (`packs/talents.db`) says the point is subtracted from the normal total, "cannot be subtracted from temporary Force Points, and **does not count as spending a Force Point**". Treating it as a spend would impose the round cap, the FP-RD-003 contract gate and a Temptation trigger the printed rule says do not apply. So `_spendNormalForcePoint` stays a direct normal-pool subtraction as a **documented ability-specific exemption by source** (Decision A). Engineering change made: a failed ally gain now returns the subtracted point (the transfer is one event). Test: `class-force-v2-watchcircle-exemption` (3 checks). 6T's census doc is superseded by this section.
+
+**Direct Force Point writers found by the wider search** (`grep` for update objects writing `forcePoints`):
+
+| File | Sites | What it is | Reachability |
+| --- | --- | --- | --- |
+| `scripts/engine/talent/talent-effect-engine.js` | 15 (`build*Plan` planners: Channel Aggression/Anger, Crippling Strike, Dark Side Talisman, Exposing Strike, Dark Retaliation, Skilled Advisor, Apprentice Boon, Dark Healing ×3, Wicked Strike, Drain Force, Sith Talisman) | pure mutation planners that put `system.forcePoints.value: current - 1` into a plan; callers apply the plan | callers: `dark-side-devotee-mechanics.js`, `light-side-talent-mechanics.js`, `scripts/talents/DarkSidePowers.js`. `buildDarkSideTalismanPlan` has no caller. |
+| `scripts/talents/DarkSidePowers.js` | 6 | direct FP deductions (`_spendFP`) | entry points installed only by `scripts/talents/dark-side-powers-init.js` |
+| `scripts/engine/talent/dark-side-devotee-mechanics.js` | 1 | Dark Side Talisman deduction | installed only by `dark-side-devotee-init.js` / `-macros.js` |
+| `scripts/engine/talent/sith-talent-actions.js` | 1 | direct deduction | referenced from the V2 character sheet and `index.js` — **likely reachable**, needs a per-site audit |
+| `scripts/engine/combat/reactions/reaction-rule-adapter.js` | 1 | reaction cost write | used by `reaction-engine.js` — needs audit against the V2 reaction finalize path |
+| `scripts/sheets/v2/character-like-sheet.js` | 6112–6141 | the sheet's manual +/- Force Point buttons | **not a spend** (user-managed adjustment); left alone |
+| `scripts/actors/base/swse-actor-base.js:354`, `GMWorkspaceSurfaceController.js:396`, `actor-engine.js` regain/rollback | — | regain / GM reset / V2 internals | not spends |
+
+**Reachability finding (static, not proof):** `scripts/talents/dark-side-powers-init.js`, `dark-side-devotee-init.js` and `light-side-init.js` are **not imported by `index.js`** (only `squad-actions-init.js` and `minion-actions-init.js` are, and `system.json` loads only `index.js`). Those files install the `window.SWSE.macros.*` / `window.SWSE.talents.*` entry points for the Dark Side and Light Side talent planners, so those planners appear **unreachable from the shipped runtime** (`NOT_FOUND_STATIC` — dynamic or macro use not excluded). This matches the project's classification **E: macro-only/global legacy utility** — deletion or rerouting needs the owner's macro-compatibility policy. Nothing was changed here.
+
+**Impact if rerouted:** each planner would need a V2 `ability-option` contract (published source, trigger, action cost) or GM adjudication; until certified, players would be denied. That is a large behavior change across ~20 talents, so it is held for the owner (see the decision below), not done silently.
+
+**Decision needed (owner):** for the Dark Side / Light Side talent planners and macro entry points — (a) retire them as legacy (the `-init` files are already unimported), (b) certify contracts talent by talent and route them through `spendForcePoints`, or (c) leave them as-is and unreachable. `sith-talent-actions.js` and `reaction-rule-adapter.js` I will audit and fix myself if reachable.

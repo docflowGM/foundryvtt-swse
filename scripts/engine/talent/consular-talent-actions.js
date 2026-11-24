@@ -201,6 +201,10 @@ export class ConsularTalentActions {
     return farseeing;
   }
 
+  // WatchCircle Initiate (canonical talent text, packs/talents.db): "You subtract 1 from your Force Point total (this cannot be
+  // subtracted from temporary Force Points, and does not count as spending a Force Point)". It is therefore deliberately NOT routed
+  // through ActorEngine.spendForcePoints (no V2 receipt, no round-cap count, no Temptation trigger): a documented ability-specific
+  // exemption by source (Decision A). Slice 6T (#1133) proposed the opposite and was NOT merged for that reason.
   static async _spendNormalForcePoint(actor, source = 'force-talent-normal-fp') {
     const current = SchemaAdapters.getForcePoints(actor);
     if (current <= 0) throw new Error('This talent requires 1 normal Force Point; temporary/bonus Force Points cannot be used.');
@@ -718,10 +722,14 @@ export class ConsularTalentActions {
     const success = roll.success === true;
     let transfer = null;
     if (success) {
+      let subtracted = false;
       try {
         await this._spendNormalForcePoint(actor, 'watchcircle-initiate-normal-fp');
+        subtracted = true;
         if (ally.actor) transfer = await this._grantNormalForcePoint(ally.actor, 1, 'watchcircle-initiate-grant-fp');
       } catch (err) {
+        // The transfer is one event: if the ally's gain failed, return the point so it is not lost.
+        if (subtracted && !transfer) await this._grantNormalForcePoint(actor, 1, 'watchcircle-initiate-compensation').catch(() => null);
         ui?.notifications?.warn?.(err.message);
         await postCard(actor, 'WatchCircle Initiate', `<p>Use the Force succeeds (${total} vs DC 15), but the Force Point transfer could not complete: ${esc(err.message)}</p>`, { talentName: 'WatchCircle Initiate', success: false, transferFailed: true });
         return { success: false, transferFailed: true, error: err.message };
