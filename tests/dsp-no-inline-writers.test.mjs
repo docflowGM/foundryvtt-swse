@@ -86,8 +86,7 @@ assert.deepEqual(
 const mustNotTrip = [
   'utils/force-points.js',
   'components/force-suite.js',
-  'engine/talent/talent-effect-engine.js',
-  'talents/DarkSidePowers.js'
+  'engine/talent/talent-effect-engine.js'
 ];
 for (const relPath of mustNotTrip) {
   const src = await readFile(path.join(scriptsRoot, relPath), 'utf8');

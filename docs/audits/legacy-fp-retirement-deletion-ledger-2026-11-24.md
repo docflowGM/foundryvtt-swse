@@ -1,4 +1,24 @@
-# Legacy Dark/Light Side talent execution graph — PROPOSED deletion ledger (nothing deleted yet)
+# Legacy Dark/Light Side talent execution graph — deletion ledger (EXECUTED 2026-11-24)
+
+**Authorization:** the project owner, directly in chat (2026-11-24): clean V2 cutover, no compatibility architecture, delete verified-dead systems; published talents and active services preserved; WatchCircle and Drain Force stay non-spend exceptions. Git history is the recovery record (parent of the retirement commit).
+
+## Deleted (verified: not in the static import graph from `index.js`, no dynamic/data reference, no importer outside the dead set)
+`scripts/talents/DarkSidePowers.js`, `dark-side-powers-init.js`, `dark-side-devotee-macros.js`, `dark-side-devotee-init.js`, `light-side-talent-macros.js`, `light-side-init.js`, `dark-side-talent-macros.js`, `dark-side-init.js`; `scripts/engine/talent/dark-side-devotee-mechanics.js`, `light-side-talent-mechanics.js`, `dark-side-talent-mechanics.js` — 11 files, 7,236 lines.
+
+## Removed from the still-loaded `talent-effect-engine.js` (method by method; the module itself stays)
+29 static planners with no caller anywhere (scripts, tests, tools, index.js; no computed access): `buildChannelAggression/ChannelAnger/CripplingStrike/DarkSideTalisman/EndChannelAnger/SwiftPower/DarkSideSavant/WrathOfDarkSide/Direct/ConsularsWisdom/ExposingStrike/DarkRetaliation/SkilledAdvisor/ApprenticeBoon/RenewVision/AdeptNegotiator/DarkHealing/ImprovedDarkHealing/DarkHealingField/WickedStrike/DrainForce/RemoveCripplingStrike/DestroyDarkSideTalisman/SithTalisman/DestroySithTalisman/ClearSithAlchemicalBonus/SetStolenFormTalent/CreateSithAlchemicalWeapon/ActivateSithAlchemicalBonus` + the three imports they alone used. 25 active planners remain. The engine now writes no Force Point balance.
+
+## Tests changed
+Deleted `dark-side-powers-damage-type-authority.test` (source-pattern test over a deleted file). Removed the retired-file reads/asserts from `dsp-engine-consolidation`, `dsp-migration-consolidation`, `dsp-no-inline-writers` and one case from `class-phase-6i-force-prestige-convergence` (Adept Negotiator's Indomitable gate lives in the active `consular-talent-actions.js` and is covered by `class-phase-6q`). `scripts/validate-mutation-sovereignty.js` no longer lists the deleted file. New guard: `tests/class-force-v2-legacy-talent-retirement.test.mjs` (files stay deleted, nothing imports them, legacy globals not installed, planners stay gone, the loaded engine is not deleted wholesale, published talents remain pack Items; mutation-checked). `class-force-v2-direct-fp-writer-classification` updated to the new tree.
+
+## Not deleted, by design
+`packs/talents.db` (published Channel Aggression, Channel Anger, Wicked Strike, Drain Force, Dark Healing …), V2 authorities, the active talent services (`sith-talent-actions.js` already implements Channel Aggression, Drain Force, Embrace the Dark Side …), WatchCircle (printed non-spend), Drain Force target loss, manual sheet/GM adjustments, chargen grants.
+
+## Functionality that was NOT live and is therefore not "lost"
+None of the retired code was reachable from the shipped runtime, so no player-facing behavior changed. Any published talent that has no active V2 implementation (it never had a working one through this graph) is a candidate for proper V2 implementation later, source-certified per talent; nothing here pre-decides that.
+
+---
+## Original proposal (preserved for provenance)
 
 Status: **prepared, not executed.** The retirement authorization reached this session only as a relayed GitHub comment on PR #1171 (quoting the owner: "The game is not shipped. If we need to strip out dead or toxic systems then let's strip it."). Earlier relayed owner decisions in this session were acted on only after the owner confirmed in chat; no chat confirmation of this one has been seen, so the deletion waits for it. Everything below is read-only evidence so the cut is one reviewable step once confirmed (and one `git revert` if it was premature).
 

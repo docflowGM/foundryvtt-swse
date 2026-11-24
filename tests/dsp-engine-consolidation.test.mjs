@@ -33,11 +33,9 @@ const forceEngine = await readFile(new URL('../scripts/engine/force/force-engine
 const sithTalentActions = await readFile(new URL('../scripts/engine/talent/sith-talent-actions.js', import.meta.url), 'utf8');
 const forceAdeptTalentActions = await readFile(new URL('../scripts/engine/talent/force-adept-talent-actions.js', import.meta.url), 'utf8');
 const forceAlchemyMechanicsService = await readFile(new URL('../scripts/apps/force-alchemy/force-alchemy-mechanics-service.js', import.meta.url), 'utf8');
-const lightSideTalentMechanics = await readFile(new URL('../scripts/engine/talent/light-side-talent-mechanics.js', import.meta.url), 'utf8');
 const sentinelTalentActions = await readFile(new URL('../scripts/engine/talent/sentinel-talent-actions.js', import.meta.url), 'utf8');
 const forcePointFeatRules = await readFile(new URL('../scripts/engine/feats/force-point-feat-rules.js', import.meta.url), 'utf8');
 const skillFeatResolver = await readFile(new URL('../scripts/engine/skills/skill-feat-resolver.js', import.meta.url), 'utf8');
-const darkSidePowers = await readFile(new URL('../scripts/talents/DarkSidePowers.js', import.meta.url), 'utf8');
 
 // 1. The two broken DSPEngine method-name crashes are fixed.
 assert.match(mentorSuggestionBias, /DSPEngine\.getBiasMultiplier\(actor\)/);
@@ -145,17 +143,11 @@ assert.match(forceAlchemyMechanicsService, /numberFrom\(DSPEngine\.getValue\(act
 
 // 12. Non-canonical DSP fallback chains consolidated onto
 //     DSPEngine.getValue() in the five talent/feat modules.
-assert.match(lightSideTalentMechanics, /import \{ DSPEngine \}/);
-assert.match(lightSideTalentMechanics, /DSPEngine\.getValue\(target\)/);
-assert.doesNotMatch(lightSideTalentMechanics, /target\.system\?\.darkSideScore \|\| target\.system\?\.dsp/);
 assert.match(sentinelTalentActions, /import \{ DSPEngine \}/);
 assert.match(sentinelTalentActions, /function getDarkSideScore\(actor\) \{\s*\n\s*return DSPEngine\.getValue\(actor\);/);
 assert.match(forcePointFeatRules, /import \{ DSPEngine \}/);
 assert.match(forcePointFeatRules, /function darkSideScore\(actor\) \{\s*\n\s*return DSPEngine\.getValue\(actor\);/);
 assert.match(skillFeatResolver, /import \{ DSPEngine \}/);
 assert.match(skillFeatResolver, /case 'halfDarkSideScore': \{\s*\n\s*const dsp = DSPEngine\.getValue\(actor\);/);
-assert.match(darkSidePowers, /import \{ DSPEngine \}/);
-assert.match(darkSidePowers, /export function _getDSP\(actor\) \{\s*\n\s*return DSPEngine\.getValue\(actor\);/);
-assert.match(darkSidePowers, /DSPEngine\.getNextValue\(actor, amount\)/);
 
 console.log('DSP engine consolidation static guards passed.');
