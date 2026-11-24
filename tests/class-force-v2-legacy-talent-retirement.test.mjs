@@ -46,8 +46,11 @@ const RETIRED_FILES = [
   assert.ok(!existsSync(join(root, 'scripts/engine/talent/talent-effect-engine.js')), 'TalentEffectEngine stays deleted (no empty facade)');
   const hits = [];
   for (const f of [...walk(join(root, 'scripts')), join(root, 'index.js')]) { const src = readFileSync(f, 'utf8'); if (/TalentEffectEngine|talent-effect-engine|installTalentEffectDamageCompatibility|applyPostDamageEffects/.test(src)) hits.push(relative(root, f)); }
-  assert.deepEqual(hits.filter((h) => !h.endsWith('damage-talent-contributions.js') && !h.endsWith('actor-engine.js')), [], `production code still references the retired talent engine: ${hits.join(', ')}`);
-  ok('TalentEffectEngine, its damage call and its runtime hotfix shim stay deleted (no production reference)');
+  assert.deepEqual(hits.filter((h) => !h.endsWith('damage-talent-contributions.js')), [], `production code still references the retired talent engine: ${hits.join(', ')}`);
+  const ae = readFileSync(join(root, 'scripts/governance/actor-engine/actor-engine.js'), 'utf8');
+  assert.doesNotMatch(ae, /applyTalentEffect/, 'ActorEngine.applyTalentEffect (the orphaned plan executor) stays deleted');
+  assert.match(ae, /async spendForcePoints\(/); assert.match(ae, /async applyMutationPlan\(/); assert.match(ae, /async updateActor\(/); // primitives intact
+  ok('TalentEffectEngine, its damage call, its hotfix shim and ActorEngine.applyTalentEffect stay deleted; ActorEngine primitives intact');
 }
 {
   // Published content is untouched: the talents themselves remain canonical Items.
