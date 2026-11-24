@@ -649,7 +649,7 @@ try {
     // structural: expiry computes its plan INSIDE the actor's turn from fresh state (a queued expiry never clobbers a newer write)
     const src = (await import('node:fs')).readFileSync(new URL('../scripts/engine/combat/sith-lord-temptation-service.js', import.meta.url), 'utf8');
     const e = src.slice(src.indexOf('static async expireCombat('));
-    assert.ok(e.indexOf('await locked(target') < e.indexOf('expireTemptationEntries(target,combat'), 'plan computed after taking the actor turn');
+    const lockAt = e.indexOf('await locked(target'); assert.ok(lockAt > 0 && e.indexOf('const plan=expireTemptationEntries(target,combat', lockAt) > lockAt, 'the authoritative plan is computed after taking the actor turn');
     assert.doesNotMatch(src, /already running/, 'no reject-the-second guard remains');
     ok('W10: concurrent receipts for one target serialize and both apply; expiry re-reads inside the turn');
   }
